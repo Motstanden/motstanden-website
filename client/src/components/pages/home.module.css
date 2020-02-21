@@ -1,0 +1,78 @@
+.frontImage {
+    background-image: url("../../images/forohmingen.jpg");
+    width: 100%;
+    height: 300px;
+    background-size: cover;
+}
+
+.silhuett {
+    background-image: url("../../images/silhuett_liten.png");
+    width: 100%;
+    height: 155px;
+    background-size: cover;
+}
+
+.text {
+    padding: 0px 1% 10px 1%;
+}
+
+@media (max-width: 650px){
+    .text {
+        /* padding: 0px 0px 10px 0px; */
+    }
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    padding: 2% 2%;
+    gap: 4%;
+}
+
+.gridItem {
+    text-align: center;
+}
+
+.item1 {
+    grid-column-start: 1;
+    grid-column-end: 3;
+}
+
+@media (max-width: 900px){
+    .gridContainer {
+        grid-template-columns: min-content min-content;
+    }    
+
+    .gridContainer {
+        grid-column: 1;
+
+    }
+
+    .item1 {
+        grid-column-start: 1;
+        grid-column-end: 4;
+    }
+
+    .silhuett {
+        display: none;
+        /*grid-column-start: 2;
+        grid-column-end: 3;
+        max-width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+        position: absolute;*/
+
+    }
+
+    .gridItem {
+        grid-column-start: 1;
+        grid-column-end: 4;
+    }
+
+    .faceBox {
+        padding-bottom: 0;
+        overflow: hidden;
+        margin-bottom: 50px;
+    }
+
+}

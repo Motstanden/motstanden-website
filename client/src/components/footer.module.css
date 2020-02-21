@@ -1,0 +1,56 @@
+.footer {
+    background-color: #333333;
+    color: white;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: min-content min-content auto;
+    justify-content: space-evenly;
+    align-items: center;
+    justify-items: center;
+
+}
+
+.grid ul {
+    list-style: none;
+    /* margin: 0; */
+    padding: 0;
+}
+
+.bigLogo {
+    height: 100px;
+    padding: 0px 10px 0px 0px;
+}
+
+.bigLogoAndInfoContainer {
+    display: flex;
+    padding: 20px 0px;
+}
+
+.grid a:visited {
+    color: #1cbb0a;
+}
+
+@media only screen and (max-width: 700px){
+    .grid {
+        grid-template-columns: min-content min-content;
+    }    
+
+    .grid .AddressInfo {
+        grid-column: 1 /3;
+
+    }
+
+}
+
+@media only screen and (max-width: 500px){
+    .grid {
+        grid-template-columns: min-content;
+    }    
+
+    .grid .AddressInfo {
+        grid-column: 1 /2;
+
+    }
+}

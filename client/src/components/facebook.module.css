@@ -1,0 +1,12 @@
+/*For smale skjermer*/
+.fbPage {
+    width: 700px;
+    height: 250px;
+}
+
+/*For brede skjermer*/
+@media (min-width: 800){
+    .fbPage {
+        width: 400px;
+    }
+}
