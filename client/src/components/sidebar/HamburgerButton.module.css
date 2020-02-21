@@ -1,0 +1,14 @@
+.hamburgerButton {
+    background-color: inherit;
+    border: none;
+
+    width: 2rem;
+    height: 2rem;
+}
+
+.hamburgerButtonLine {
+    width: 100%;
+    background-color: white;
+    height: 3px;
+    margin: 20% 0px;
+}
