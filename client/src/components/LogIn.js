@@ -46,7 +46,7 @@ class LogIn extends React.Component {
 
     render(){
         return(
-            <main className={styles.main}>
+            <div className={styles.main}>
                 <h1>Logg inn</h1>
                 <form onSubmit={this.onSubmit}>
                     <label htmlFor="username"><b>Brukernavn:</b></label> 
@@ -76,7 +76,7 @@ class LogIn extends React.Component {
                     </input>
                 </form> 
                 <h3>{this.state.response}</h3>
-            </main>
+            </div>
         )
     }
 }
