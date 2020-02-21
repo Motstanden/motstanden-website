@@ -10,7 +10,7 @@ import Home from "./components/pages/Home.js"
 import Header from "./components/Header.js"
 import Footer from "./components/Footer.js"
 import MusicArcivePage from "./components/pages/MusicArcivePage.js"
-import LogIn from "./components/LogIn.js"
+import LogInPage from "./components/pages/LogInPage.js"
 import Ping from "./components/Ping.js"
 import Lyrics from "./components/Lyrics.js"
 import NotFound from "./components/pages/NotFound.js"
@@ -29,7 +29,7 @@ class App extends React.Component{
                             <MusicArcivePage/>
                         </Route>
                         <Route exact path="/logg-inn">
-                            <LogIn/>
+                            <LogInPage/>
                         </Route>
                         <Route exact path="/ping">
                             <Ping/>
