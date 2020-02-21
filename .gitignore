@@ -105,4 +105,7 @@ dist
 # TernJS port file
 .tern-port
 
+# SQL scripts
+SQLscripts/
+
 deploy/
