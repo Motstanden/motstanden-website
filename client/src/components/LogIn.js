@@ -47,7 +47,6 @@ class LogIn extends React.Component {
     render(){
         return(
             <div className={styles.main}>
-                <h1>Logg inn</h1>
                 <form onSubmit={this.onSubmit}>
                     <label htmlFor="username"><b>Brukernavn:</b></label> 
                     <br/>
