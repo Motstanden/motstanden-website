@@ -1,8 +1,5 @@
 .header {
     background-color: #333333;
-
-
-    color: white;
     border-bottom: 5px #18912c solid;
     padding: 1rem 0;
 }
@@ -12,6 +9,7 @@
     grid-template-columns: auto auto;
     align-items: center;
     justify-content: center;
+    justify-items: center;
     column-gap: 5%;
 
     width: 75%;
@@ -20,7 +18,7 @@
 
 .headerTitle {
     text-align: center;
-    margin: 0;    
+    margin: 0;
 }
 
 .headerTitle a {
@@ -33,3 +31,27 @@
     color: #18912c;
 }
 
+.loginButton {
+    display: none;
+}
+
+.hamburgerButton {
+    grid-column: 2;
+    display: inline;
+    top: 0;
+}
+
+/* For desktop */
+@media (min-width: 400px){
+    /* Gjør plass til LOGG INN-button */
+    .grid {
+        grid-template-columns: auto auto auto;
+    }
+
+    .hamburgerButton {
+        grid-column: 3;
+        display: inline;
+    }
+
+
+}
