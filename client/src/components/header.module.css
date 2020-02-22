@@ -33,3 +33,15 @@
     color: #18912c;
 }
 
+.loginButton {
+    display: none;
+}
+
+
+/* For desktop */
+@media (min-width: 650px){
+    .grid {
+        grid-template-columns: auto auto auto;
+    }
+
+}
