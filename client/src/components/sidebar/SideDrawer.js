@@ -15,7 +15,7 @@ class SideDrawer extends React.Component {
             <div className={style.sideDrawer + " " + animateIntoVisibility}>
                 <div className={style.sidebarHeader}>
                     <img src={motstandenLogo} className={style.logo} alt="Logoen til Motstanden"></img>
-                    <h3>Motstanden</h3>
+                    <h3 className={style.sidebarTitle}>Motstanden</h3>
                 </div>
                 <nav>
                     <ul className={style.navItems}>
