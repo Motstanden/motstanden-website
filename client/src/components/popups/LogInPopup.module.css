@@ -1,16 +1,47 @@
 .loginButton {
-    background-color: #18912c;
-    border: none;
-    color: white;
-    padding: 15px 12px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    box-shadow: 2px 2px 4px #000000;
-    /* border-radius: 44px; */
+    display: none;
 }
 
-.loginButton:hover {
-    background-color: #1ba532;
+.logInPopup main {
+    
+    margin: 0 auto;
+    width: 100%;
+}
+
+.logInPopup {
+    position: fixed;
+    display: block;
+    top: 50;
+    left: 0;
+    min-width: 400px;
+    z-index: 200;
+    margin: 0 auto;
+
+    width: 50%;
+    max-width: 400px;
+    left: 50%;
+    margin-left: -25%;
+    
+    /* border: 3px solid red; */
+
+}
+
+/* For desktop */
+@media (min-width: 650px){
+    .loginButton {
+        background-color: #18912c;
+        border: none;
+        color: white;
+        padding: 15px 12px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        box-shadow: 2px 2px 4px #000000;
+        /* border-radius: 44px; */
+    }
+
+    .loginButton:hover {
+        background-color: #1ba532;
+    }
 }

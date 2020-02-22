@@ -18,7 +18,7 @@ class Header extends React.Component {
                         
                     </h1>
                     <LogInPopup className={styles.loginButton}/>
-                    <Sidebar/> 
+                    <Sidebar className={styles.hamburgerButton}/> 
                 </div>
             </header>
         )

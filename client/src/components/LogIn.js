@@ -78,11 +78,14 @@ class LogIn extends React.Component {
                         value={this.state.password} 
                         onChange={this.onInputChange}
                     ></input><br/>
-                    <input 
-                        type="submit" 
-                        value="Logg inn"
-                        >
-                    </input>
+                    <div className={styles.buttonDiv}>
+                        <input className={styles.logInButton}
+                            type="submit" 
+                            value="Logg inn"
+                            >
+                        </input>
+                    </div>
+                    
                 </form> 
                 <h3>{this.state.response}</h3>
             </div>
