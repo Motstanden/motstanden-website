@@ -3,8 +3,8 @@ import styles from "./LogInPage.module.css"
 
 import LogIn from "./../LogIn.js"
 
-import avatarGirl from "./../../images/avatar_girl.png"
-import avatarBoy from "./../../images/avatar_boy.png"
+import avatarGirl from "./../../images/login_avatar/avatar_girl.png"
+import avatarBoy from "./../../images/login_avatar/avatar_boy.png"
 
 class LogInPage extends React.Component{
 
