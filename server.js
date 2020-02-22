@@ -45,14 +45,17 @@ app.post("/api/login",
             accessToken: req.user.accessToken,
             message: "Authentication was succesfful"
         })
-
         res.send()
 })
 
 app.get("/api/protected",
     passport.authenticate("jwt", {session: false}),
     (req, res) => {
-        res.send("Secret route was accessed")
+        // console.log(req.user)
+        res.json({
+            username: req.user.username,
+            message: "You are logged in as: " + req.user.username
+        })
     }
 )
 
