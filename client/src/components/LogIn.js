@@ -7,8 +7,8 @@ class LogIn extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            username: "motstanden",
-            password: "kirchhoff",
+            username: "",
+            password: "",
             response: "",
             secretResponse: ""
         }
