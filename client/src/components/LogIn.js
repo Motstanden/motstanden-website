@@ -10,7 +10,6 @@ class LogIn extends React.Component {
             username: "",
             password: "",
             response: "",
-            secretResponse: ""
         }
     }
 
@@ -26,7 +25,6 @@ class LogIn extends React.Component {
         event.preventDefault();
         this.setState({
             response: "",
-            secretResponse: ""
         })
 
         this.props.onLoginClick()
@@ -60,33 +58,6 @@ class LogIn extends React.Component {
         .finally( () => {
             this.props.onLoginRequestCompleted()
         })
-    }
-
-    onQuerySecretClick = () => {
-
-        const accessToken = localStorage.getItem("accessToken")
-        const config = {
-            headers: {'Authorization': "Bearer " +  accessToken}
-        }
-        
-        axios.get("/api/protected",
-            config)
-            .then( res => {
-                console.log(res)
-                this.setState({
-                    secretResponse: res.data
-                })
-            })
-            .catch( (err) => {
-                let errorMessage = "Failed to connect to api"
-                if(err.response){
-                    errorMessage = err.response.statusText
-                }            
-                console.log("Error: ", err)
-                this.setState( {
-                    response: errorMessage
-                })
-            })
     }
 
     render(){
@@ -123,7 +94,6 @@ class LogIn extends React.Component {
                     </div>
                     
                 </form> 
-                <button onClick={this.onQuerySecretClick}>Query secret</button>
                 <h3>{this.state.response}</h3>
                 <h3>{this.state.secretResponse}</h3>
             </div>
