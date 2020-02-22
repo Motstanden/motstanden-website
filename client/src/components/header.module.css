@@ -40,6 +40,7 @@
 
 /* For desktop */
 @media (min-width: 650px){
+    /* Gjør plass til LOGG INN-button */
     .grid {
         grid-template-columns: auto auto auto;
     }
