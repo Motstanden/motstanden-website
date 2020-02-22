@@ -3,6 +3,7 @@
 }
 
 .logInPopup main {
+    transform: rotate(0deg);
     margin: 0 auto;
     width: 100%;   
 
@@ -13,7 +14,7 @@
 .logInPopup {
     position: absolute;
     display: block;
-    top: 50;
+    top: 86px;
     z-index: 200;
 
     width: 400px;
