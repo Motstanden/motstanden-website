@@ -16,26 +16,47 @@ class LogInPage extends React.Component{
         super(props)
 
         this.state = {
-            loadedImage: avatarGirl
+            loadedImage: avatarGirl,
+            isLoading: false
         }
     }
 
     startAnimation = () => {
         this.setState({
-            loadedImage: avatarGirlAnim1
+            isLoading: true
         })
         console.log("Sart animation")
     }
 
     endAnimation = () => {
-        this.setState({
-            loadedImage: avatarGirl
-        })
+        // this.setState({
+        //     loadedImage: avatarGirl,
+        //     isLoading: false
+        // })
         console.log("Stop animation")
-
     }
 
     render() {
+
+        if(this.state.isLoading) {
+            setTimeout( () => {
+                this.setState({
+                    loadedImage: avatarGirlAnim1
+                })
+                setTimeout( () => {
+                    this.setState({
+                        loadedImage:avatarGirlAnim2
+                    }) 
+                },200)
+            }, 200)
+            setTimeout( () => {
+                this.setState({
+                    loadedImage: avatarGirl,
+                    isLoading: false
+                })
+            }, 1000)
+        }
+
         return(
             <main className={styles.grid}>
                 
