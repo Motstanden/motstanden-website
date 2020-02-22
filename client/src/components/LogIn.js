@@ -25,29 +25,38 @@ class LogIn extends React.Component {
 
     onSubmit = (event) => {
         event.preventDefault();
+        this.props.onLoginClick()
+        this.validateLoginCredentials()
+    }
+
+    validateLoginCredentials = () => {
+
         axios.post("/api/login", {
-                username: this.state.username,
-                password: this.state.password           
+            username: this.state.username,
+            password: this.state.password           
+        })
+        .then( res => {
+            this.setState( {
+                response: res.data
             })
-            .then( res => {
-                this.setState( {
-                    response: res.data
-                })
-                console.log(res)
+            console.log(res)
+        })
+        .catch( (err) => {
+            console.log("Error: ", err)
+            this.setState( {
+                response: "Failed to connect to api"
             })
-            .catch( (err) => {
-                console.log("Error: ", err)
-                this.setState( {
-                    response: "Failed to connect to api"
-                })
-                console.log(err)
-            })
+            console.log(err)
+        })
+        .finally( () => {
+            this.props.onLoginRequestCompleted()
+        })
     }
 
     render(){
         return(
             <div className={styles.main}>
-                <form onSubmit={this.onSubmit}>
+                <form className={styles.form} onSubmit={this.onSubmit}>
                     <label htmlFor="username"><b>Brukernavn:</b></label> 
                     <br/>
                     <input 
@@ -60,7 +69,7 @@ class LogIn extends React.Component {
                         >
                     </input>
                     <br/>
-                    <label htmlFor="password"><b>Passord</b></label> <br/>
+                    <label htmlFor="password"><b>Passord:</b></label> <br/>
                     <input 
                         type="password" 
                         id="password" 
@@ -71,7 +80,8 @@ class LogIn extends React.Component {
                     ></input><br/>
                     <input 
                         type="submit" 
-                        value="Logg inn">
+                        value="Logg inn"
+                        >
                     </input>
                 </form> 
                 <h3>{this.state.response}</h3>
