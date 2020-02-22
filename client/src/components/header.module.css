@@ -37,6 +37,9 @@
     display: none;
 }
 
+.hamburgerButton {
+    grid-column: 2;
+}
 
 /* For desktop */
 @media (min-width: 650px){
@@ -44,5 +47,11 @@
     .grid {
         grid-template-columns: auto auto auto;
     }
+
+    .hamburgerButton {
+        grid-column: 3;
+        display: inline;
+    }
+
 
 }

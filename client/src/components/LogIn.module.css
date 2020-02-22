@@ -1,8 +1,22 @@
-.main {
-    /* padding: 10px; */
-    /* border: 2px dotted black; */
+.buttonDiv {
+    display: grid;
+    justify-items: center;
+    margin-top: 15px;
 }
 
-.form {
-    /* border: 2px dotted black; */
+.logInButton {
+    background-color: #18912c;
+    border: none;
+    color: white;
+    padding: 7px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    box-shadow: 1px 1px 2px 1px #000000;
+    /* border-radius: 44px; */
+}
+
+.logInButton:hover {
+    background-color: #1ba532;
 }
