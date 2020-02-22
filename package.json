@@ -19,12 +19,16 @@
   },
   "homepage": "https://github.com/MotstandenWeb/MotstandenWeb#readme",
   "dependencies": {
-    "bcrypt": "^3.0.8",
+    "bcrgiypt": "^3.0.8",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "helmet": "^3.21.2",
+    "jsonwebtoken": "^8.5.1",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
     "pg": "^7.18.1"
   },
   "devDependencies": {

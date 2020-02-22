@@ -9,15 +9,14 @@ class LogIn extends React.Component {
         this.state = {
             username: "",
             password: "",
-            response: ""
+            response: "",
+            secretResponse: ""
         }
     }
 
     // When there a change in the form update the state
     onInputChange = (event) => {
         const { value, name } = event.target;
-        console.log(value)
-        console.log(name)
         this.setState({
           [name]: value
         });
@@ -25,6 +24,11 @@ class LogIn extends React.Component {
 
     onSubmit = (event) => {
         event.preventDefault();
+        this.setState({
+            response: "",
+            secretResponse: ""
+        })
+
         this.props.onLoginClick()
         this.validateLoginCredentials()
     }
@@ -36,21 +40,53 @@ class LogIn extends React.Component {
             password: this.state.password           
         })
         .then( res => {
+
+            localStorage.setItem("accessToken", res.data.accessToken)
+
             this.setState( {
-                response: res.data
+                response: res.data.message
             })
-            console.log(res)
         })
         .catch( (err) => {
+            let errorMessage = "Failed to connect to api"
+            if(err.response){
+                errorMessage = err.response.statusText
+            }            
             console.log("Error: ", err)
             this.setState( {
-                response: "Failed to connect to api"
+                response: errorMessage
             })
-            console.log(err)
         })
         .finally( () => {
             this.props.onLoginRequestCompleted()
         })
+    }
+
+    onQuerySecretClick = () => {
+
+        const accessToken = localStorage.getItem("accessToken")
+        const config = {
+            headers: {'Authorization': "Bearer " +  accessToken}
+        }
+        
+        axios.get("/api/protected",
+            config)
+            .then( res => {
+                console.log(res)
+                this.setState({
+                    secretResponse: res.data
+                })
+            })
+            .catch( (err) => {
+                let errorMessage = "Failed to connect to api"
+                if(err.response){
+                    errorMessage = err.response.statusText
+                }            
+                console.log("Error: ", err)
+                this.setState( {
+                    response: errorMessage
+                })
+            })
     }
 
     render(){
@@ -87,7 +123,9 @@ class LogIn extends React.Component {
                     </div>
                     
                 </form> 
+                <button onClick={this.onQuerySecretClick}>Query secret</button>
                 <h3>{this.state.response}</h3>
+                <h3>{this.state.secretResponse}</h3>
             </div>
         )
     }
