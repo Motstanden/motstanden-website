@@ -50,6 +50,24 @@ app.post("/api/login",
         })
 })
 
+app.get("/api/song_lyric", (req, res) => {
+
+    dbQuery = "SELECT title FROM song_lyric ORDER BY title ASC"
+
+    client = new Client(dbConfig)
+    client.connect()
+    client.query(dbQuery)
+        .then( dbRes => {
+            res.json({lyricsArray: dbRes.rows})
+            console.log(dbRes.rows)
+        })
+        .catch( err => console.log(err))
+        .finally( () => {
+            client.end()
+            res.end() 
+        })
+})
+
 // Allows us to use files from the paths: './' and './client/.build'
 // app.use(express.static(__dirname))
 app.use(express.static(path.join(__dirname, "client", "build")))
