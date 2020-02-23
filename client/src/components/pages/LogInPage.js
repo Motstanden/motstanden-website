@@ -25,7 +25,7 @@ class LogInPage extends React.Component{
         this.setState({
             isLoading: true
         })
-        console.log("Sart animation")
+        // console.log("Sart animation")
     }
 
     endAnimation = () => {
@@ -33,7 +33,7 @@ class LogInPage extends React.Component{
         //     loadedImage: avatarGirl,
         //     isLoading: false
         // })
-        console.log("Stop animation")
+        // console.log("Stop animation")
     }
 
     render() {

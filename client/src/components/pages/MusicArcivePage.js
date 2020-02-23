@@ -7,7 +7,8 @@ class MusicArcivePage extends React.Component {
     render(){
         return (
             <main className={styles.main}>
-                <h1>Notearkiv kommer snart...</h1>
+                <h1>Notearkiv</h1>
+                <p className={styles.errorMessage}>Du må være logget inn for å se notearkivet.</p>
             </main>
         )
     }
