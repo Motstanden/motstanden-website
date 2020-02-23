@@ -95,7 +95,6 @@ class LogIn extends React.Component {
                     
                 </form> 
                 <h3>{this.state.response}</h3>
-                <h3>{this.state.secretResponse}</h3>
             </div>
         )
     }
