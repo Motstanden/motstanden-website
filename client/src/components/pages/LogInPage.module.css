@@ -8,10 +8,9 @@
 
 .grid {
     display: grid;
-    grid-template-columns: auto;
+    grid-template-columns: min-content;
     justify-content: center;
     justify-items: center;
-    column-gap: 5%;
 
     width: 100%;
     height: 100%;
