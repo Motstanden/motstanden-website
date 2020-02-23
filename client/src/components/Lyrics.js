@@ -15,13 +15,13 @@ class Lyrics extends React.Component {
             lyricsTitleArray: []
         }
 
-        axios.get("/api/song_lyric")
-            .then( (res) => {
+        // axios.get("/api/song_lyric")
+        //     .then( (res) => {
                 
-                this.setState({
-                    lyricsTitleArray: res.data.lyricsArray
-                })
-            })
+        //         this.setState({
+        //             lyricsTitleArray: res.data.lyricsArray
+        //         })
+        //     })
         
     }
 
@@ -29,9 +29,9 @@ class Lyrics extends React.Component {
     render(){
         return(
             <main className={styles.main}>
-                <h1>Studenttraller</h1>
-                <List itemSource={this.state.lyricsTitleArray} />
-                {/* <LyricsData/> */}
+                {/* <h1>Studenttraller</h1>
+                <List itemSource={this.state.lyricsTitleArray} /> */}
+                <LyricsData/>
             </main>
         )
     }

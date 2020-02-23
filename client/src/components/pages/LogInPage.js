@@ -61,8 +61,14 @@ class LogInPage extends React.Component{
             <main >
                 <div className={styles.grid}>
                     <h1>Logg inn</h1>
-                    <img src={this.state.loadedImage} className={styles.avatarImage} ></img>
-                    <LogIn onLoginClick={this.startAnimation} onLoginRequestCompleted={this.endAnimation}/>
+                    <img 
+                        src={this.state.loadedImage} 
+                        className={styles.avatarImage}>
+                    </img>
+                <LogIn 
+                        className={styles.loginComponent}
+                        onLoginClick={this.startAnimation} onLoginRequestCompleted={this.endAnimation}
+                    />
                 </div>
             </main>
         )
