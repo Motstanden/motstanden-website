@@ -1,3 +1,4 @@
+require("dotenv").config()
 
 module.exports =  {
         // Gets the secret content from the .env file

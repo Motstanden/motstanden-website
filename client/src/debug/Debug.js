@@ -2,7 +2,7 @@ import React from "react"
 import axios from "axios"
 
 
-class Ping extends React.Component {
+class Debug extends React.Component {
 
     constructor(props){
         super(props)
@@ -66,4 +66,4 @@ class Ping extends React.Component {
     }   
 }
 
-export default Ping
+export default Debug

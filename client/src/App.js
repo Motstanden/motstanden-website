@@ -1,8 +1,7 @@
 import React from "react"
 import {BrowserRouter as Router,
     Route,
-    Switch,
-    Redirect
+    Switch
 } from "react-router-dom"
 
 import "./app.css"
@@ -11,7 +10,7 @@ import Header from "./components/Header.js"
 import Footer from "./components/Footer.js"
 import MusicArcivePage from "./components/pages/MusicArcivePage.js"
 import LogInPage from "./components/pages/LogInPage.js"
-import Ping from "./components/Ping.js"
+import Debug from "./debug/Debug.js"
 import Lyrics from "./components/Lyrics.js"
 import NotFound from "./components/pages/NotFound.js"
 
@@ -31,11 +30,11 @@ class App extends React.Component{
                         <Route exact path="/logg-inn">
                             <LogInPage/>
                         </Route>
-                        <Route exact path="/ping">
-                            <Ping/>
-                        </Route>
                         <Route exact path="/studenttraller">
                             <Lyrics/>
+                        </Route>
+                        <Route exact path="/debug">
+                            <Debug/>
                         </Route>
                         <Route path="*">
                             <NotFound/>
