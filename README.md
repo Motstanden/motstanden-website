@@ -151,7 +151,7 @@ Her er noen praktiske programmer:
     `ctrl + b + %` splitter terminalen vertikalt  
     `ctrl + b + "` splitter terminalen horisontalt  
     `ctrl + b + piltaster` bytter mellom terminalene  
-    `ctrl + b` og så `ctrl + piltaster` resizer den valgte terminalen
+    `ctrl + b` og så `ctrl + piltaster` resizer den valgte terminalen  
     `ctrl + b + z` toggler fullskjerm på én av terminalene  
     `ctrl + b + x` fjerner den markerte terminalen og stopper prosessene i den  
     `ctrl + b + d` *disown* tmux-session, for å få den tilbake bruk `tmux a` for *"attach"*  
