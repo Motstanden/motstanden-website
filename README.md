@@ -147,14 +147,14 @@ Her er noen praktiske programmer:
   * `python filename.py` kjører python-script
 * `tmux` er en *"terminal multiplexer"*. Den er ekstremt praktisk siden du kan dele skjermen (terminalen) opp i mindre terminaler og dermed enkelt kjøre mange programmer samtidig.
   * kjør `tmux`
-  * bruk `ctrl + b` for å gjøre tmux-hotkeys, f.eks:
+  * bruk `ctrl + b` for å gjøre tmux-hotkeys, f.eks:  
     `ctrl + b + %` splitter terminalen vertikalt  
     `ctrl + b + "` splitter terminalen horisontalt  
     `ctrl + b + piltaster` bytter mellom terminalene  
     `ctrl + b + z` toggler fullskjerm på én av terminalene  
     `ctrl + b + x` fjerner den markerte terminalen og stopper prosessene i den  
     `ctrl + b + d` *disown* tmux-session, for å få den tilbake bruk `tmux a` for *"attach"*  
-  * optional: konfigurer tmux i ~/.tmux.conf så du slipper å trykke ting som `ctrl + b + shift + 5` (default keybindings funker ikke bra på norske tastatur). Skriv dette inn i ~/.tmux.conf: (bare lag fila om den ikke allerede eksisterer)
+  * optional: konfigurer tmux i ~/.tmux.conf så du slipper å trykke ting som `ctrl + b + shift + 5` (default keybindings funker ikke bra på norske tastatur). Hiv dette inn i ~/.tmux.conf
    ```
    bind-key -r j resize-pane -D 1
    bind-key -r k resize-pane -U 1
@@ -163,13 +163,14 @@ Her er noen praktiske programmer:
    bind-key - split-window -v
    bind-key | split-window -h
    ```
+   (Bare lag fila om den ikke allerede eksisterer.)
 Annen nyttig info
 -----------------
 `^C` (betyr `ctrl+c`) avbryter et program. Noen programmer (ncurses-type) må avbrytes med `q`.
 
-*Home directory* referer til `/home/USERNAME`, der USERNAME er brukeren du er logget inn med. *Home directory* refereres ofte til med kun en *tilde*: `~/`. Er du logget inn som *root* er det `/root` som er *home directory*. Skriver du `cd` uten noe mer kommer du til `~`
+*Home directory* referer til `/home/USERNAME`, der USERNAME er brukeren du er logget inn med. *Home directory* refereres ofte til med kun en *tilde*: `~/`. Er du logget inn som *root* er det `/root` som er *home directory*. Skriver du `cd` uten argumenter kommer du til `~`
 
-Programmer kan installeres med pakkenedlasteren til OSet. Ubuntu bruker **apt**. Siden serveren verken kjører en *Display Server* (som xorg) eller en *Desktop Enviroment* (som Gnome) kan du kun kjøre programmer med CLI (*Command Line Interface*).
+I Ubuntu kan programmer installeres med pakkenedlasteren **apt**, f.eks.: `sudo apt install tmux`. Siden serveren verken kjører en *Display Server* (som xorg) eller en *Desktop Enviroment* (som Gnome) kan du kun kjøre programmer med CLI (*Command Line Interface*). 
 
 En *daemon* er en bakgrunnsprosess, f.eks kjører **pm2** som en *daemon*. De startes av initsystemet (på Ubuntu: *systemd*) og kan konfigureres vha. `systemctl` (avansert).
 
