@@ -38,7 +38,7 @@ class FacebookComponent extends React.Component {
                         cite="https://www.facebook.com/Motstanden">
                             <a href="https://www.facebook.com/Motstanden"  
                             >
-                                Besøk Motstandens side på facebook 
+                                Besøk Motstandens side på facebook.
                             </a>
                         </blockquote>
                     </div>
