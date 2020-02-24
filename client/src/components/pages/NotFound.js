@@ -17,7 +17,10 @@ class NotFound extends React.Component {
                             Beklager, siden du leter etter er i London
                     </h2>
                 </div>
-                <img src={londonImage} className={styles.londonImageStyle}></img>
+                <img src={londonImage} 
+                    className={styles.londonImageStyle}
+                    alt="Motstanden-medlem i London"
+                ></img>
                 <div />
                 <h1 className={styles.londonFacts}>
                     Fakta om London på engelsk:
