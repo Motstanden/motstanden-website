@@ -6,12 +6,12 @@
 Laste opp og deploye nettsiden på serveren
 ==========================================
 Motstanden.no kjører for øyeblikket på *DigitalOcean*. Styremailene for økonomi, web og dirigent har per nå tilgang til MotstandenWeb på *digitalocean.com*.
-Denne serveren kjører Ubuntu, og enkleste måten å gjøre endringer er å logge inn via SSH (terminal). Noen endringer kan også gjøres på webinterfacen til DigitalOcean, og der finnes det også en terminal (men den suger [jan. 2020]).
+Denne serveren kjører Ubuntu, og enkleste måten å gjøre endringer er å logge inn via SSH (terminal) til vår Ubuntu-instans (*droplet*). Noen endringer kan også gjøres på webinterfacen til DigitalOcean, og der finnes det også en terminal (men den suger [feb. 2020]).
 
 I korte trekk foregår en deploy slik:
 * Du logger inn på serveren med ssh
 * Du puller *github*-repositoriet til /MOTSTANDEN/motstanden-website
-* Du kjører bygger /build ved å kjøre `sudo npm serverdeploy`
+* Du bygger /build ved å kjøre `sudo npm serverdeploy`
 * Reboot serveren med `sudo reboot`
 
 Logge inn via ssh fra terminal
@@ -41,7 +41,7 @@ I mappa `motstanden-website`, kjør kommandoen
 ```
 sudo npm serverdeploy
 ```
-Serverdeploy er et custom script som installerer dependencies i `motstanden-website` og `motstanden-website/client` og kjører `npm run build`. Å installere dependencies kan gjøres manuelt ved å kjøre `sudo npm install -g --unsafe-perm=true --allow-root`.
+Serverdeploy er et custom script som installerer dependencies og kjører `npm run build`. Å installere dependencies kan også gjøres manuelt ved å kjøre `sudo npm install -g --unsafe-perm=true --allow-root` i `motstanden-website` og `motstanden-website/client`.
 
 Reboot serveren med `sudo reboot`, nettsida skal være oppe igjen etter ca 15 sek.
 
@@ -53,7 +53,7 @@ For at sida skal funke må:
 * Nettsiden bygget med `npm run build`. Dette skal ha blitt gjort av `serverdeploy`-scriptet.
 Dersom nettsida ikke starter opp etter reboot, prøv å kjøre nettsida manuelt med `npm run start`. Om nettsida svarer nå er det bra, men den må settes opp med en *process manager* slik at den automatisk starter når Ubuntu starter.
 
-Vi har brukt *process-manageren* **pm2**. Sjekk om den kjører, f.eks med `htop` eller `pm2 status`. Dersom den allerede gjør det er det noe galt med **pm2**s konfigurasjon. Sjekk dokumentasjon om pm2, config ligger bl.a. i `/etc/systemd/systed/pm2-root.service`.
+Vi har brukt *process-manageren* **pm2**. Sjekk om den kjører, f.eks med `htop` eller `pm2 status`. Dersom den allerede gjør det uten at *"motstanden.no"* funker er det noe galt med **pm2**s konfigurasjon. Sjekk dokumentasjon om pm2, config ligger bl.a. i `/etc/systemd/systed/pm2-root.service`.
 
 Dersom den ikke kjører kan du starte den på nytt.
 ```
@@ -64,9 +64,34 @@ sudo pm2 start server.js
 ```
 Årsaken til å starte serveren i root er at alle nå har tilgang til prosessen. Om du starter den i en personlig bruker er det vanskeligere for andre å endre
 
-TODO: refaktor.. kanskje en dårlig idé å kjøre serveren som root...... lage en "web"-user som alle har tilgang til?
+TODO: refaktor.. selv om dette er vanlig er det kanskje en dårlig idé å kjøre serveren som root...... lage en "web"-user som alle har tilgang til?
 
+Brannmur
+--------
+Kanskje det er noe galt med brannmuren?
+```
+ufw status
+```
 
+NGINX
+-----
+Nginx setter opp en reverse proxy fra motstanden.no:80 til localhost:5000
+Peker *nginx* riktig?
+```
+sudo nano /etc/nginx/sites-available/default
+```
+Denne fila blir også endra (appenda) av **certbot**
+
+Certbot
+-------
+Certbot er et python-script som setter opp *secure connection*.
+Den skal automatisk redirecte til `https`. Dersom dette ikke lenger skjer, kjør:
+```
+certbot renew
+```
+Domeneserver
+------------
+Peker ikke domeneshop.no? Prøv å skrive IP i webbrowser.
 
 Linux shell for dummies
 =======================
@@ -80,9 +105,9 @@ Merk at du kan autocomplete med *tab*, så du trenger ofte bare skrive den førs
 * `cd` *change directory*
 * `cd ..` gå opp et nivå
 * `ls` lister filer og mapper
-* `ls -la` lister alt (også skjulte, de som starter med en .) filer og mapper. Det som står lengste til venstre er lese/skrive/execute-privilegier
+* `ls -la` lister alle (også skjulte, de filene og mappene som starter med et punktum) filer og mapper. Det som står lengst til venstre er lese/skrive/execute-privilegier
 * `pwd` *post working directory*, viser hvor du er
-* `sudo` kjører en kommando som root
+* `sudo` kjører en kommando som root (dvs. som admin)
 * `sudo !!` utropstegnene representerer den forrige kommandoen du kjørte, hendig om du glemmer å skrive "sudo"
 * `mv` brukes for å flytte eller rename en fil
 * `cp` som mv, men beholder originalen (kopier)
@@ -116,16 +141,20 @@ Her er noen praktiske programmer:
 * `cat` er nice for å lese små tekstfiler, eller sende dem inn i andre filer som f.eks med `cat textfile.txt > newfile.txt`
 * `nano` er en enkel teksteditor. Uunværlig for å bruke linux.
   * `nano textfile.txt` åpner *"textfile.txt"* i nano. Lagre med `ctrl + o` eller avslutt med `ctrl + x`
+  * Dersom `textfile.txt` ikke eksisterer fra før blir den laget
+* `touch filename.py` lager en tom fil, her `filename.py`
+  * `echo "print(\"Hello World\")" > filename.py` sender string inn i fil
+  * `python filename.py` kjører python-script
 * `tmux` er en *"terminal multiplexer"*. Den er ekstremt praktisk siden du kan dele skjermen (terminalen) opp i mindre terminaler og dermed enkelt kjøre mange programmer samtidig.
   * kjør `tmux`
   * bruk `ctrl + b` for å gjøre tmux-hotkeys, f.eks:
-    `ctrl + b + %` splitter terminalen vertikalt
-    `ctrl + b + "` splitter terminalen horisontalt
-    `ctrl + b + piltaster` bytter mellom terminalene
-    `ctrl + b + z` toggler fullskjerm på én av terminalene
-    `ctrl + b + x` fjerner den markerte terminalen og stopper prosessene i den
-    `ctrl + b + d` *"disown"*er tmux-session, for å få den tilbake bruk `tmux a` for *"attatch"*
-  * optional: konfigurer tmux i ~/.tmux.conf så du slipper å trykke ting som `ctrl + b + shift + 5` (default keybindings funker ikke bra på norske tastatur)
+    `ctrl + b + %` splitter terminalen vertikalt  
+    `ctrl + b + "` splitter terminalen horisontalt  
+    `ctrl + b + piltaster` bytter mellom terminalene  
+    `ctrl + b + z` toggler fullskjerm på én av terminalene  
+    `ctrl + b + x` fjerner den markerte terminalen og stopper prosessene i den  
+    `ctrl + b + d` *disown* tmux-session, for å få den tilbake bruk `tmux a` for *"attach"*  
+  * optional: konfigurer tmux i ~/.tmux.conf så du slipper å trykke ting som `ctrl + b + shift + 5` (default keybindings funker ikke bra på norske tastatur). Skriv dette inn i ~/.tmux.conf: (bare lag fila om den ikke allerede eksisterer)
    ```
    bind-key -r j resize-pane -D 1
    bind-key -r k resize-pane -U 1
@@ -134,11 +163,17 @@ Her er noen praktiske programmer:
    bind-key - split-window -v
    bind-key | split-window -h
    ```
-
+Annen nyttig info
+-----------------
 `^C` (betyr `ctrl+c`) avbryter et program. Noen programmer (ncurses-type) må avbrytes med `q`.
-*home directory* referer til `/home/USERNAME`, der USERNAME er brukeren du er logget inn med. *Home directory* refereres ofte til med kun en *tilde*: `~/`. Er du logget inn som *root* er det `/root` som er *home directory*.
 
-Større programmer kan installeres med pakkenedlasteren til OSet. Ubuntu bruker **apt**. Siden serveren verken kjører en *Display Server* (som xorg) eller en *Desktop Enviroment* (som Gnome) kan du kun kjøre programmer med CLI (*Command Line Interface*).
+*Home directory* referer til `/home/USERNAME`, der USERNAME er brukeren du er logget inn med. *Home directory* refereres ofte til med kun en *tilde*: `~/`. Er du logget inn som *root* er det `/root` som er *home directory*. Skriver du `cd` uten noe mer kommer du til `~`
+
+Programmer kan installeres med pakkenedlasteren til OSet. Ubuntu bruker **apt**. Siden serveren verken kjører en *Display Server* (som xorg) eller en *Desktop Enviroment* (som Gnome) kan du kun kjøre programmer med CLI (*Command Line Interface*).
+
+En *daemon* er en bakgrunnsprosess, f.eks kjører **pm2** som en *daemon*. De startes av initsystemet (på Ubuntu: *systemd*) og kan konfigureres vha. `systemctl` (avansert).
+
+*Locales* er konfigurasjonen av tegnsett og språk, osv. Kjør `locale` for å se innstillinger. Har du feil tegnsett kan du prøve `loadkeys no-latin1`.
 
 [Sjekk denne guiden om du vil lære mer om ssh](https://youtu.be/hQWRp-FdTpc).
 >I en sluttet krets!
