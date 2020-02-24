@@ -55,15 +55,13 @@ class LogIn extends React.Component {
         .catch( (err) => {
             let errorMessage = "Fikk ikke kontakt med serveren. prøv igjen senere"
             if(err.response){
-                console.log(err.response) // 400 "Bad request"
-                if (err.response.status === 400) {
+                if (err.response.status === 400) { // Bad request
                     errorMessage = "Serveren avviste forespørselen"
                 }
-                if(err.response.status === 401){
+                if(err.response.status === 401){ // Unauthorized
                     errorMessage = "Brukernavn eller passord er feil"
                 }
             }            
-            console.log("Error: ", err)
             this.setState( {
                 response: errorMessage
             })

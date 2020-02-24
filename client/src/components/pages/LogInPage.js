@@ -88,7 +88,9 @@ class LogInPage extends React.Component{
                     <h1>Logg inn</h1>
                     <img 
                         src={this.state.loadedImage} 
-                        className={styles.avatarImage}>
+                        className={styles.avatarImage}
+                        alt="Person kledd i Motstanden-uniform"
+                        >
                     </img>
                     <LogIn 
                         className={styles.loginComponent}
