@@ -16,6 +16,9 @@ import NotFound from "./components/pages/NotFound.js"
 
 class App extends React.Component{
     render() {
+
+        console.log("Velkommen til Motstanden sin hjemmeside!")
+
         return(
             <div>
                 <Router>
