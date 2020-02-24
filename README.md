@@ -126,7 +126,7 @@ man rm
 for å se en god forklaring på hvordan `rm` brukes. Dette er ofte minst like nyttig som å skrive f.eks `rm --help`.
 Du kan også bruke disse kommandoene:
 * `whatis rm` søker opp *description* fra alle manualene som passer `rm`
-* `which rm` poster hvor programmet ligger
+* `which rm` sier hvor programmet ligger
 * `apropos remove` søker i manualene etter noe som inneholder *"remove"*. Hendig når du ikke vet navnet på kommandoen men vet hva du vil.
 Den siste kommandoen gir en vegg av tekst. Du kan søke etter en *string* med `grep`. Slik *"piper"* du tekst inn i grep:
 ```
@@ -143,7 +143,7 @@ Her er noen praktiske programmer:
   * `nano textfile.txt` åpner *"textfile.txt"* i nano. Lagre med `ctrl + o` eller avslutt med `ctrl + x`
   * Dersom `textfile.txt` ikke eksisterer fra før blir den laget
 * `touch filename.py` lager en tom fil, her `filename.py`
-  * `echo "print(\"Hello World\")" > filename.py` sender string inn i fil
+  * `echo "print('Hello World')" > filename.py` sender string inn i fil
   * `python filename.py` kjører python-script
 * `tmux` er en *"terminal multiplexer"*. Den er ekstremt praktisk siden du kan dele skjermen (terminalen) opp i mindre terminaler og dermed enkelt kjøre mange programmer samtidig.
   * kjør `tmux`
@@ -151,19 +151,17 @@ Her er noen praktiske programmer:
     `ctrl + b + %` splitter terminalen vertikalt  
     `ctrl + b + "` splitter terminalen horisontalt  
     `ctrl + b + piltaster` bytter mellom terminalene  
+    `ctrl + b` og så `ctrl + piltaster` resizer den valgte terminalen
     `ctrl + b + z` toggler fullskjerm på én av terminalene  
     `ctrl + b + x` fjerner den markerte terminalen og stopper prosessene i den  
     `ctrl + b + d` *disown* tmux-session, for å få den tilbake bruk `tmux a` for *"attach"*  
   * optional: konfigurer tmux i ~/.tmux.conf så du slipper å trykke ting som `ctrl + b + shift + 5` (default keybindings funker ikke bra på norske tastatur). Hiv dette inn i ~/.tmux.conf
    ```
-   bind-key -r j resize-pane -D 1
-   bind-key -r k resize-pane -U 1
-   bind-key -r h resize-pane -L 3
-   bind-key -r l resize-pane -R 3
    bind-key - split-window -v
    bind-key | split-window -h
    ```
    (Bare lag fila om den ikke allerede eksisterer.)
+
 Annen nyttig info
 -----------------
 `^C` (betyr `ctrl+c`) avbryter et program. Noen programmer (ncurses-type) må avbrytes med `q`.
