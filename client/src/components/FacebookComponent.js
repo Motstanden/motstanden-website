@@ -34,9 +34,11 @@ class FacebookComponent extends React.Component {
                         data-href="https://www.facebook.com/Motstanden" data-small-header="false"
                         data-adapt-container-width="true" data-hide-cover="false"
                         data-show-facepile="true">
-                        <blockquote className="fb-xfbml-parse-ignore" cite="https://www.facebook.com/Motstanden">
-                            <a href="https://www.facebook.com/Motstanden">
-                                
+                        <blockquote className="fb-xfbml-parse-ignore" 
+                        cite="https://www.facebook.com/Motstanden">
+                            <a href="https://www.facebook.com/Motstanden"  
+                            >
+                                Besøk Motstandens side på facebook.
                             </a>
                         </blockquote>
                     </div>
