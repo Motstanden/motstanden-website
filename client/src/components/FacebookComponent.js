@@ -1,5 +1,4 @@
 import React from "react"
-import styles from "./facebook.module.css"
 
 const script = document.createElement("script");
 script.async = true;
@@ -17,6 +16,7 @@ class FacebookComponent extends React.Component {
         document.body.appendChild(script);
         this.setState({mounted: true});
         console.log("FacebookComponent mounted");
+        // this.forceUpdate()
     }
 
     componentWillUnmount() {

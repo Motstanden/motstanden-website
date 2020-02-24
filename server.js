@@ -18,7 +18,7 @@ const app = express()
 app.use(helmet())
 
 // Alows us to make request from localhost:3000 and whatever domain the server is running on
-const whiteList = [ "http://localhost:3000"]
+const whiteList = [ "https://localhost:3000", "http://localhost:3000", "https://motstanden.no"]
 const corsOptions = {
     origin: (origin, callback) => {
         if(whiteList.indexOf(origin) !== -1 || !origin){
@@ -47,6 +47,24 @@ app.post("/api/login",
         res.json({
             accessToken: req.user.accessToken,
             message: "Du er logget inn som " + req.user.username
+        })
+})
+
+app.get("/api/song_lyric", (req, res) => {
+
+    dbQuery = "SELECT title FROM song_lyric ORDER BY title ASC"
+
+    client = new Client(dbConfig)
+    client.connect()
+    client.query(dbQuery)
+        .then( dbRes => {
+            res.json({lyricsArray: dbRes.rows})
+            console.log(dbRes.rows)
+        })
+        .catch( err => console.log(err))
+        .finally( () => {
+            client.end()
+            res.end() 
         })
 })
 

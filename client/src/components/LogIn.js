@@ -23,12 +23,19 @@ class LogIn extends React.Component {
 
     onSubmit = (event) => {
         event.preventDefault();
-        this.setState({
-            response: "",
-        })
 
-        this.props.onLoginClick()
-        this.validateLoginCredentials()
+        if(this.state.username && this.state.password){
+            this.setState({
+                response: ""
+            })
+            this.props.onLoginClick()
+            this.validateLoginCredentials()
+        }
+        else {
+            this.setState({
+                response: "Alle feltene må fylles ut"
+            })
+        }
     }
 
     validateLoginCredentials = () => {
@@ -46,11 +53,15 @@ class LogIn extends React.Component {
             })
         })
         .catch( (err) => {
-            let errorMessage = "Failed to connect to api"
+            let errorMessage = "Fikk ikke kontakt med serveren. prøv igjen senere"
             if(err.response){
-                errorMessage = err.response.statusText
+                if (err.response.status === 400) { // Bad request
+                    errorMessage = "Serveren avviste forespørselen"
+                }
+                if(err.response.status === 401){ // Unauthorized
+                    errorMessage = "Brukernavn eller passord er feil"
+                }
             }            
-            console.log("Error: ", err)
             this.setState( {
                 response: errorMessage
             })
@@ -62,8 +73,8 @@ class LogIn extends React.Component {
 
     render(){
         return(
-            <div className={styles.main}>
-                <form className={styles.form} onSubmit={this.onSubmit}>
+            <div className={styles.logInStyles}>
+                <form onSubmit={this.onSubmit} className={styles.formStyle}>
                     <label htmlFor="username"><b>Brukernavn:</b></label> 
                     <br/>
                     <input 
@@ -91,10 +102,9 @@ class LogIn extends React.Component {
                             value="Logg inn"
                             >
                         </input>
+                        <p className={styles.responseText}>{this.state.response}</p>
                     </div>
-                    
                 </form> 
-                <h3>{this.state.response}</h3>
             </div>
         )
     }

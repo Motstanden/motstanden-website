@@ -1,3 +1,7 @@
 .main {
     padding: 0px 1% 10px 1%;
 }
+
+.errorMessage {
+    color: red;
+}
