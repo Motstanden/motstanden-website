@@ -36,7 +36,7 @@ class FacebookComponent extends React.Component {
                         data-show-facepile="true">
                         <blockquote className="fb-xfbml-parse-ignore" cite="https://www.facebook.com/Motstanden">
                             <a href="https://www.facebook.com/Motstanden">
-                                Motstanden på Facebook
+                                
                             </a>
                         </blockquote>
                     </div>
