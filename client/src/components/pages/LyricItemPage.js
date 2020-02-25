@@ -2,17 +2,15 @@ import React from "react"
 import {Route} from "react-router-dom"
 import axios from "axios"
 
+import styles from "./LyricItemPage.module.css"
+
+
 class LyricItemPage extends React.Component {
     constructor(props){
         super(props)
 
-        let lyricData = null
-        if(sessionStorage.getItem(this.props.title)){
-            lyricData = sessionStorage.getItem(this.props.title)
-        }
-
         this.state ={
-            lyric: lyricData
+            lyric: null
         }
     }
 
@@ -25,8 +23,6 @@ class LyricItemPage extends React.Component {
                 .then( res => {
 
                     let lyricData = res.data.lyricsData
-                    sessionStorage.setItem(this.props.title, lyricData)
-
                     this.setState({
                         lyric: lyricData
                     })
@@ -37,9 +33,9 @@ class LyricItemPage extends React.Component {
     render() {
 
         return (
-            <main>
+            <main className={styles.main}>
                 <h1> {this.props.title}</h1>
-                <div dangerouslySetInnerHTML={{
+                <div className={styles.lyricContainer} dangerouslySetInnerHTML={{
                     __html: this.state.lyric}}>
                 
                 </div> 

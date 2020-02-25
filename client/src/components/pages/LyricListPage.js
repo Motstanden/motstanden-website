@@ -7,6 +7,8 @@ import {Route,
 import LyricItemPage from "./LyricItemPage.js"
 import axios from "axios"
 
+import styles from "./LyricListPage.module.css"
+
 class LyricListPage extends React.Component {
 
     constructor(props){
@@ -32,18 +34,21 @@ class LyricListPage extends React.Component {
         return(
             <Switch>            
                 <Route exact path="/studenttraller">
-                    <main>
+                    <main className={styles.main}>
                         <h1>Studenttraller</h1>
-                        <ul> 
+
+                        <ul className={styles.ul}> 
+
                             {this.state.lyricsTitleArray.map( (item) => (
                                 <div key={item.title}>
-                                    <li>
+                                    <li className={styles.li}>
                                         <Link to={this.state.path + "/" + item.title}>
                                             {item.title}
                                         </Link>
                                     </li>
                                 </div>
                             ))}
+
                         </ul>
                     </main>
                 </Route>
