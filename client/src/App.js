@@ -11,7 +11,7 @@ import Footer from "./components/Footer.js"
 import MusicArcivePage from "./components/pages/MusicArcivePage.js"
 import LogInPage from "./components/pages/LogInPage.js"
 import Debug from "./debug/Debug.js"
-import Lyrics from "./components/Lyrics.js"
+import LyricListPage from "./components/pages/LyricListPage"
 import NotFound from "./components/pages/NotFound.js"
 
 class App extends React.Component{
@@ -27,16 +27,16 @@ class App extends React.Component{
                         <Route exact path="/">
                             <Home/>
                         </Route>
-                        <Route exact path="/notearkiv">
+                        <Route path="/notearkiv">
                             <MusicArcivePage/>
                         </Route>
-                        <Route exact path="/logg-inn">
+                        <Route path="/logg-inn">
                             <LogInPage/>
                         </Route>
-                        <Route exact path="/studenttraller">
-                            <Lyrics/>
+                        <Route path="/studenttraller">
+                            <LyricListPage/>
                         </Route>
-                        <Route exact path="/debug">
+                        <Route path="/debug">
                             <Debug/>
                         </Route>
                         <Route path="*">

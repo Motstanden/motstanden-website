@@ -50,7 +50,7 @@ app.post("/api/login",
         })
 })
 
-app.get("/api/song_lyric", (req, res) => {
+app.get("/api/song_lyric_title", (req, res) => {
 
     dbQuery = "SELECT title FROM song_lyric ORDER BY title ASC"
 
@@ -60,6 +60,27 @@ app.get("/api/song_lyric", (req, res) => {
         .then( dbRes => {
             res.json({lyricsArray: dbRes.rows})
             console.log(dbRes.rows)
+        })
+        .catch( err => console.log(err))
+        .finally( () => {
+            client.end()
+            res.end() 
+        })
+})
+
+app.get("/api/song_lyric_data", (req, res) => {
+
+    const dbQuery = {
+        text: "SELECT lyric_html_content FROM song_lyric WHERE title = $1",
+        values: [req.query.title]
+    } 
+
+    client = new Client(dbConfig)
+    client.connect()
+    client.query(dbQuery)
+        .then( dbRes => {
+            console.log({lyricsData: dbRes.rows[0].lyric_html_content})
+            res.json({lyricsData: dbRes.rows[0].lyric_html_content})
         })
         .catch( err => console.log(err))
         .finally( () => {
