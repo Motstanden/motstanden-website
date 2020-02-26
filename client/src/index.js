@@ -12,7 +12,7 @@ if(clientUrl === devUrl){
     axios.defaults.baseURL = "http://localhost:5000/"
 }
 else {
-    axios.defaults.withCredentials = false
+    axios.defaults.withCredentials = true
 }
 
 
