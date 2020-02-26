@@ -1,6 +1,6 @@
 import React from "react"
+import ReactDOM from "react-dom"
 import styles from "./LogInPage.module.css"
-
 import LogIn from "./../LogIn.js"
 
 import avatarGirl from "./../../images/login_avatar/avatar_girl.png"
@@ -38,8 +38,6 @@ class LogInPage extends React.Component{
         }
 
         this.state = {
-            // avatarArray: avatarArray,
-            // loadedImage: avatarArray[avatarIndex],
             avatarGender: avatarGender,
             avatarIndex: avatarIndex,
             animmationHandler: null
@@ -48,19 +46,16 @@ class LogInPage extends React.Component{
 
     startAnimation = () => {
         this.setState({
-            animmationHandler: setInterval(this.toggleImage, 1000)
+            animmationHandler: setInterval(this.toggleImage, 200)
         })
     }
 
     endAnimation = () => {
-
-        setTimeout(() => {
-            clearInterval(this.state.animmationHandler)
-            this.setState({
-                animmationHandler: null
-            })
-            this.resetImage()
-        }, 10000);
+        clearInterval(this.state.animmationHandler)
+        this.setState({
+            animmationHandler: null
+        })
+        this.resetImage()
     }
 
     toggleImage = () => {
@@ -73,16 +68,16 @@ class LogInPage extends React.Component{
         }
         console.log(avatarArray[newIndex])
         console.log(this.state.avatarIndex)
-        this.setState({
-            // loadedImage: this.state.avatarArray[newIndex],
-            avatarIndex: newIndex
+        ReactDOM.unstable_batchedUpdates( () => {
+            this.setState({
+                avatarIndex: newIndex
+            })
         })
     }
 
     resetImage = () => {
         let initIndex = this.state.avatarGender === "girl" ? 0 : 3
         this.setState({
-            // loadedImage: this.state.avatarArray[initIndex],
             avatarIndex: initIndex
         })
     }
