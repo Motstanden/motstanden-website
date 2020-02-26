@@ -48,16 +48,19 @@ class LogInPage extends React.Component{
 
     startAnimation = () => {
         this.setState({
-            animmationHandler: setInterval(this.toggleImage, 150)
+            animmationHandler: setInterval(this.toggleImage, 1000)
         })
     }
 
     endAnimation = () => {
-        clearInterval(this.state.animmationHandler)
-        this.setState({
-            animmationHandler: null
-        })
-        this.resetImage()
+
+        setTimeout(() => {
+            clearInterval(this.state.animmationHandler)
+            this.setState({
+                animmationHandler: null
+            })
+            this.resetImage()
+        }, 10000);
     }
 
     toggleImage = () => {
@@ -69,7 +72,7 @@ class LogInPage extends React.Component{
             newIndex = this.state.avatarIndex === 5 ? 4 : this.state.avatarIndex + 1
         }
         console.log(avatarArray[newIndex])
-        console.log(this.state.savatarIndex)
+        console.log(this.state.avatarIndex)
         this.setState({
             // loadedImage: this.state.avatarArray[newIndex],
             avatarIndex: newIndex
