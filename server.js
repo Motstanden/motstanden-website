@@ -28,15 +28,16 @@ const whiteList = [
     "http://motstanden.no/", 
     "https://motstanden.no/"
 ]
-
 const corsOptions = {
     origin: (origin, callback) => {
         if(whiteList.indexOf(origin) !== -1 || !origin){
+            console.log(origin, " was allowed")
             callback(null, true)
         } else {
         callback(new Error('Not allowed by CORS'))
         }
-    }
+    },
+    credentials: true,
 }
 app.use(cors(corsOptions))
 
