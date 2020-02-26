@@ -67,7 +67,8 @@ class LogInPage extends React.Component{
         else {
             newIndex = this.state.avatarIndex === 5 ? 4 : this.state.avatarIndex + 1
         }
-
+        console.log(this.state.avatarArray[newIndex])
+        console.log(this.state.avatarIndex)
         this.setState({
             loadedImage: this.state.avatarArray[newIndex],
             avatarIndex: newIndex
