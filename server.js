@@ -24,7 +24,11 @@ const whiteList = [
     "http://localhost:5000", 
     "https://localhost:5000",
     "http://motstanden.no", 
-    "https://motstanden.no"]
+    "https://motstanden.no",
+    "http://motstanden.no/", 
+    "https://motstanden.no/"
+]
+
 const corsOptions = {
     origin: (origin, callback) => {
         if(whiteList.indexOf(origin) !== -1 || !origin){
