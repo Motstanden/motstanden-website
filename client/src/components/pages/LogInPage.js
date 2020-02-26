@@ -66,8 +66,9 @@ class LogInPage extends React.Component{
         else {
             newIndex = this.state.avatarIndex === 5 ? 4 : this.state.avatarIndex + 1
         }
-        console.log(avatarArray[newIndex])
-        console.log(this.state.avatarIndex)
+
+        // If states are set consecutively too quickly, react will optimize and batch all the state changes together before rendering.
+        // unstable_batchedUpdates will force React to render the state change immediately.
         ReactDOM.unstable_batchedUpdates( () => {
             this.setState({
                 avatarIndex: newIndex
