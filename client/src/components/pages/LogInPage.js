@@ -1,6 +1,6 @@
 import React from "react"
+import ReactDOM from "react-dom"
 import styles from "./LogInPage.module.css"
-
 import LogIn from "./../LogIn.js"
 
 import avatarGirl from "./../../images/login_avatar/avatar_girl.png"
@@ -11,18 +11,19 @@ import avatarBoy from "./../../images/login_avatar/avatar_boy.png"
 import avatarBoyAnim1 from "./../../images/login_avatar/avatarBoyLoading1.png"
 import avatarBoyAnim2 from "./../../images/login_avatar/avatarBoyLoading2.png"
 
+
+const avatarArray = [
+    avatarGirl,
+    avatarGirlAnim1,
+    avatarGirlAnim2,
+    avatarBoy,
+    avatarBoyAnim1,
+    avatarBoyAnim2,
+]
+
 class LogInPage extends React.Component{
     constructor(props){
         super(props)
-
-        const avatarArray = [
-            avatarGirl,
-            avatarGirlAnim1,
-            avatarGirlAnim2,
-            avatarBoy,
-            avatarBoyAnim1,
-            avatarBoyAnim2,
-        ]
 
         // Randomly chooses what gender the avatar should have
         let avatarGender;
@@ -37,8 +38,6 @@ class LogInPage extends React.Component{
         }
 
         this.state = {
-            avatarArray: avatarArray,
-            loadedImage: avatarArray[avatarIndex],
             avatarGender: avatarGender,
             avatarIndex: avatarIndex,
             animmationHandler: null
@@ -47,7 +46,7 @@ class LogInPage extends React.Component{
 
     startAnimation = () => {
         this.setState({
-            animmationHandler: setInterval(this.toggleImage, 150)
+            animmationHandler: setInterval(this.toggleImage, 200)
         })
     }
 
@@ -67,17 +66,18 @@ class LogInPage extends React.Component{
         else {
             newIndex = this.state.avatarIndex === 5 ? 4 : this.state.avatarIndex + 1
         }
-
-        this.setState({
-            loadedImage: this.state.avatarArray[newIndex],
-            avatarIndex: newIndex
+        console.log(avatarArray[newIndex])
+        console.log(this.state.avatarIndex)
+        ReactDOM.unstable_batchedUpdates( () => {
+            this.setState({
+                avatarIndex: newIndex
+            })
         })
     }
 
     resetImage = () => {
         let initIndex = this.state.avatarGender === "girl" ? 0 : 3
         this.setState({
-            loadedImage: this.state.avatarArray[initIndex],
             avatarIndex: initIndex
         })
     }
@@ -88,7 +88,7 @@ class LogInPage extends React.Component{
                 <div className={styles.grid}>
                     <h1>Logg inn</h1>
                     <img 
-                        src={this.state.loadedImage} 
+                        src={avatarArray[this.state.avatarIndex]} 
                         className={styles.avatarImage}
                         alt="Person kledd i Motstanden-uniform"
                         >
