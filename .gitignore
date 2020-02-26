@@ -108,4 +108,6 @@ dist
 # SQL scripts
 SQLscripts/
 
-deploy/
+pdfinsert.js
+
+pdf
