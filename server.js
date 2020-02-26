@@ -25,8 +25,8 @@ const whiteList = [
     "https://localhost:5000",
     "http://motstanden.no", 
     "https://motstanden.no",
-    "http://motstanden.no/", 
-    "https://motstanden.no/"
+    "http://www.motstanden.no",
+    "https://www.motstanden.no"
 ]
 const corsOptions = {
     origin: (origin, callback) => {
@@ -37,7 +37,6 @@ const corsOptions = {
         callback(new Error('Not allowed by CORS'))
         }
     },
-    credentials: true,
 }
 app.use(cors(corsOptions))
 

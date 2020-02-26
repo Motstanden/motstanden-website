@@ -11,10 +11,5 @@ const devUrl = "http://localhost:3000"
 if(clientUrl === devUrl){
     axios.defaults.baseURL = "http://localhost:5000/"
 }
-else {
-    axios.defaults.withCredentials = true
-}
-
-
 
 ReactDOM.render(<App/>, document.getElementById("root"))
