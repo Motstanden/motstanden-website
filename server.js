@@ -59,7 +59,7 @@ app.get("/api/song_lyric_title", (req, res) => {
     client.query(dbQuery)
         .then( dbRes => {
             res.json({lyricsArray: dbRes.rows})
-            console.log(dbRes.rows)
+            // console.log(dbRes.rows)
         })
         .catch( err => console.log(err))
         .finally( () => {
@@ -79,7 +79,7 @@ app.get("/api/song_lyric_data", (req, res) => {
     client.connect()
     client.query(dbQuery)
         .then( dbRes => {
-            console.log({lyricsData: dbRes.rows[0].lyric_html_content})
+            // console.log({lyricsData: dbRes.rows[0].lyric_html_content})
             res.json({lyricsData: dbRes.rows[0].lyric_html_content})
         })
         .catch( err => console.log(err))
