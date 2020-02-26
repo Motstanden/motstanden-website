@@ -43,7 +43,8 @@ class LogIn extends React.Component {
 
         axios.post("/api/login", {
             username: this.state.username,
-            password: this.state.password,         
+            password: this.state.password,  
+            withCredentials: true       
         })
         .then( res => {
 
