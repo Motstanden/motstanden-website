@@ -11,18 +11,19 @@ import avatarBoy from "./../../images/login_avatar/avatar_boy.png"
 import avatarBoyAnim1 from "./../../images/login_avatar/avatarBoyLoading1.png"
 import avatarBoyAnim2 from "./../../images/login_avatar/avatarBoyLoading2.png"
 
+
+const avatarArray = [
+    avatarGirl,
+    avatarGirlAnim1,
+    avatarGirlAnim2,
+    avatarBoy,
+    avatarBoyAnim1,
+    avatarBoyAnim2,
+]
+
 class LogInPage extends React.Component{
     constructor(props){
         super(props)
-
-        const avatarArray = [
-            avatarGirl,
-            avatarGirlAnim1,
-            avatarGirlAnim2,
-            avatarBoy,
-            avatarBoyAnim1,
-            avatarBoyAnim2,
-        ]
 
         // Randomly chooses what gender the avatar should have
         let avatarGender;
@@ -37,8 +38,8 @@ class LogInPage extends React.Component{
         }
 
         this.state = {
-            avatarArray: avatarArray,
-            loadedImage: avatarArray[avatarIndex],
+            // avatarArray: avatarArray,
+            // loadedImage: avatarArray[avatarIndex],
             avatarGender: avatarGender,
             avatarIndex: avatarIndex,
             animmationHandler: null
@@ -67,10 +68,10 @@ class LogInPage extends React.Component{
         else {
             newIndex = this.state.avatarIndex === 5 ? 4 : this.state.avatarIndex + 1
         }
-        console.log(this.state.avatarArray[newIndex])
-        console.log(this.state.avatarIndex)
+        console.log(avatarArray[newIndex])
+        console.log(this.state.savatarIndex)
         this.setState({
-            loadedImage: this.state.avatarArray[newIndex],
+            // loadedImage: this.state.avatarArray[newIndex],
             avatarIndex: newIndex
         })
     }
@@ -78,7 +79,7 @@ class LogInPage extends React.Component{
     resetImage = () => {
         let initIndex = this.state.avatarGender === "girl" ? 0 : 3
         this.setState({
-            loadedImage: this.state.avatarArray[initIndex],
+            // loadedImage: this.state.avatarArray[initIndex],
             avatarIndex: initIndex
         })
     }
@@ -89,7 +90,7 @@ class LogInPage extends React.Component{
                 <div className={styles.grid}>
                     <h1>Logg inn</h1>
                     <img 
-                        src={this.state.loadedImage} 
+                        src={avatarArray[this.state.avatarIndex]} 
                         className={styles.avatarImage}
                         alt="Person kledd i Motstanden-uniform"
                         >
