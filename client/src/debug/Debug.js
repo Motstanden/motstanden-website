@@ -26,11 +26,12 @@ class Debug extends React.Component {
     }
 
     onLoginCheckClick = () => {      
+
         const accessToken = localStorage.getItem("accessToken")
         const config = {
             headers: {'Authorization': "Bearer " +  accessToken}
         }
-        
+       
         axios.get("/api/protected", config)
             .then( res => {
                 console.log(res)
@@ -45,7 +46,7 @@ class Debug extends React.Component {
                 }            
                 console.log("Error: ", err)
                 this.setState( {
-                    response: errorMessage
+                    loginCheckResponse: errorMessage
                 })
             })
     }
