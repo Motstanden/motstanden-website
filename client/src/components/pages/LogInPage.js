@@ -11,18 +11,18 @@ import avatarBoy from "./../../images/login_avatar/avatar_boy.png"
 import avatarBoyAnim1 from "./../../images/login_avatar/avatarBoyLoading1.png"
 import avatarBoyAnim2 from "./../../images/login_avatar/avatarBoyLoading2.png"
 
-const avatarArray = [
-    avatarGirl,
-    avatarGirlAnim1,
-    avatarGirlAnim2,
-    avatarBoy,
-    avatarBoyAnim1,
-    avatarBoyAnim2,
-]
-
 class LogInPage extends React.Component{
     constructor(props){
         super(props)
+
+        const avatarArray = [
+            avatarGirl,
+            avatarGirlAnim1,
+            avatarGirlAnim2,
+            avatarBoy,
+            avatarBoyAnim1,
+            avatarBoyAnim2,
+        ]
 
         // Randomly chooses what gender the avatar should have
         let avatarGender;
@@ -37,10 +37,11 @@ class LogInPage extends React.Component{
         }
 
         this.state = {
+            avatarArray: avatarArray,
             loadedImage: avatarArray[avatarIndex],
             avatarGender: avatarGender,
             avatarIndex: avatarIndex,
-            animmationHandler: null 
+            animmationHandler: null
         }
     }
 
@@ -68,7 +69,7 @@ class LogInPage extends React.Component{
         }
 
         this.setState({
-            loadedImage: avatarArray[newIndex],
+            loadedImage: this.state.avatarArray[newIndex],
             avatarIndex: newIndex
         })
     }
@@ -76,7 +77,7 @@ class LogInPage extends React.Component{
     resetImage = () => {
         let initIndex = this.state.avatarGender === "girl" ? 0 : 3
         this.setState({
-            loadedImage: avatarArray[initIndex],
+            loadedImage: this.state.avatarArray[initIndex],
             avatarIndex: initIndex
         })
     }
