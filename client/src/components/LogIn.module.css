@@ -6,6 +6,7 @@
 
 .logInButton {
     background-color: #18912c;
+
     border: none;
     color: white;
     padding: 7px 12px;
@@ -19,6 +20,29 @@
 
 .logInButton:hover {
     background-color: #1ba532;
+}
+
+
+
+.loginSuccessStyle {
+    background-color: lightgreen;
+}
+
+.loginFailedStyle {
+    background-color: pink ;
+}
+
+/* Defines styling for the login button when the user is 
+waiting for the login request to finish .
+This styling will only override the base styling if */
+.disabledLoginButton {
+    background-color: #999999;
+    color: #dddddd;
+}
+
+.disabledLoginButton:hover {
+    background-color: #999999;
+    color: #dddddd;
 }
 
 .responseText {

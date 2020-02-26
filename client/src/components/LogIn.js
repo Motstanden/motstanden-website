@@ -10,6 +10,8 @@ class LogIn extends React.Component {
             username: "",
             password: "",
             response: "",
+            submitDisabled: false,
+            loginWasSuccess: null
         }
     }
 
@@ -24,32 +26,32 @@ class LogIn extends React.Component {
     onSubmit = (event) => {
         event.preventDefault();
 
-        if(this.state.username && this.state.password){
-            this.setState({
-                response: ""
-            })
-            this.props.onLoginClick()
-            this.validateLoginCredentials()
-        }
-        else {
-            this.setState({
-                response: "Alle feltene må fylles ut"
-            })
-        }
+        this.setState({
+            response: ""
+        })
+        this.props.onLoginClick()
+        this.validateLoginCredentials()
     }
 
     validateLoginCredentials = () => {
 
+        // Prevent the user from spaming the submit button, and apply waiting styling
+        this.setState({
+            submitDisabled: true,
+            loginWasSuccess: null
+        })
+
         axios.post("/api/login", {
             username: this.state.username,
-            password: this.state.password           
+            password: this.state.password,         
         })
         .then( res => {
 
             localStorage.setItem("accessToken", res.data.accessToken)
 
             this.setState( {
-                response: res.data.message
+                response: res.data.message,
+                loginWasSuccess: true
             })
         })
         .catch( (err) => {
@@ -63,15 +65,31 @@ class LogIn extends React.Component {
                 }
             }            
             this.setState( {
-                response: errorMessage
+                response: errorMessage,
+                loginWasSuccess: false
             })
         })
         .finally( () => {
             this.props.onLoginRequestCompleted()
+            this.setState({
+                submitDisabled: false
+            })
         })
     }
 
     render(){
+
+        let disabledStyle
+        if(this.state.submitDisabled){
+            disabledStyle = styles.disabledLoginButton
+        }
+
+        let loginAttemptStyle
+        if(this.state.loginWasSuccess != null)
+        {
+            loginAttemptStyle = this.state.loginWasSuccess ? styles.loginSuccessStyle : styles.loginFailedStyle
+        }
+
         return(
             <div className={styles.logInStyles}>
                 <form onSubmit={this.onSubmit} className={styles.formStyle}>
@@ -82,8 +100,14 @@ class LogIn extends React.Component {
                         id="username" 
                         name="username" 
                         placeholder="Brukernavn..."
+                        required
+                        autoFocus
+                        autoComplete = "off"
                         value={this.state.username} 
                         onChange={this.onInputChange}
+                        disabled={this.state.submitDisabled}
+                        className={loginAttemptStyle}
+                        
                         >
                     </input>
                     <br/>
@@ -93,13 +117,17 @@ class LogIn extends React.Component {
                         id="password" 
                         name="password" 
                         placeholder="Passord..."
+                        required
                         value={this.state.password} 
                         onChange={this.onInputChange}
+                        disabled={this.state.submitDisabled}
+                        className={loginAttemptStyle}
                     ></input><br/>
                     <div className={styles.buttonDiv}>
-                        <input className={styles.logInButton}
+                        <input className={styles.logInButton + " " + disabledStyle}
                             type="submit" 
                             value="Logg inn"
+                            disabled = {this.state.submitDisabled}
                             >
                         </input>
                         <p className={styles.responseText}>{this.state.response}</p>
