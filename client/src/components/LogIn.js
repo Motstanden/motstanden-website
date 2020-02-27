@@ -11,7 +11,8 @@ class LogIn extends React.Component {
             password: "",
             response: "",
             submitDisabled: false,
-            loginWasSuccess: null
+            loginWasSuccess: null,
+            logoutWasSuccess: null
         }
     }
 
@@ -49,11 +50,13 @@ class LogIn extends React.Component {
         .then( res => {
 
             localStorage.setItem("accessToken", res.data.accessToken)
-
+            let response = res.data.message
             this.setState( {
-                response: res.data.message,
-                loginWasSuccess: true
+                response: response,
+                loginWasSuccess: true,
+                logoutWasSuccess: false
             })
+            // alert(response)
         })
         .catch( (err) => {
             let errorMessage = "Fikk ikke kontakt med serveren. prøv igjen senere"
@@ -78,6 +81,16 @@ class LogIn extends React.Component {
         })
     }
 
+    onLogOutClick = () => {
+        localStorage.removeItem("accessToken")
+        let response = "Du er logget ut"
+        this.setState({
+            response: response,
+            logoutWasSuccess: true
+        })
+        alert(response)
+    }
+
     render(){
 
         let disabledStyle
@@ -86,9 +99,16 @@ class LogIn extends React.Component {
         }
 
         let loginAttemptStyle
+        let responseTextStyle
         if(this.state.loginWasSuccess != null)
         {
             loginAttemptStyle = this.state.loginWasSuccess ? styles.loginSuccessStyle : styles.loginFailedStyle
+            responseTextStyle = this.state.loginWasSuccess ? styles.green : styles.red
+        }
+
+        if(this.state.logoutWasSuccess){
+            loginAttemptStyle = null
+            responseTextStyle = styles.green
         }
 
         return(
@@ -131,7 +151,14 @@ class LogIn extends React.Component {
                             disabled = {this.state.submitDisabled}
                             >
                         </input>
-                        <p className={styles.responseText}>{this.state.response}</p>
+                        <input className={styles.logInButton + " " + disabledStyle}
+                            type="button" 
+                            value="Logg ut"
+                            disabled = {this.state.submitDisabled}
+                            onClick = {this.onLogOutClick}
+                            >
+                        </input>
+                        <p className={styles.responseText + " " + responseTextStyle}>{this.state.response}</p>
                     </div>
                 </form> 
             </div>
