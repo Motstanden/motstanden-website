@@ -7,14 +7,14 @@ const path = require("path")
 const dbConfig = require("./databaseConfig")
 
 
-filePath = path.join(__dirname, "pdf", "happy", "Happy - Altsax.pdf")
+filePath = path.join(__dirname, "pdf", "The bare necessities.pdf")
 
 fs.readFile(filePath, "hex", (err, file) => {
     if (err) throw err
     file = "\\x" + file
 
     const dbQuery = {
-        text: "INSERT INTO sheet_arcive(song_id, instrument_id, sheet_file) VALUES (2, 1, $1)",
+        text: "INSERT INTO sheet_arcive(song_id, sheet_file) VALUES (9, $1)",
         values: [file]
     }
 

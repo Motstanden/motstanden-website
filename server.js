@@ -102,7 +102,7 @@ app.get("/api/sheet_arcive_song",
     passport.authenticate("jwt", {session: false}),
         (req, res) => {
         const dbQuery = {
-            text: "SELECT song_id, title FROM song"
+            text: "SELECT song_id, title FROM song ORDER BY title ASC"
         }
         client = new Client(dbConfig)
         client.connect()
@@ -123,7 +123,7 @@ app.get("/api/sheet_arcive_file",
     passport.authenticate("jwt", {session: false}),
     (req, res) => {
         const dbQuery = {
-            text: "SELECT sheet_file FROM sheet_arcive WHERE song_id = $1",
+            text: "SELECT sheet_file FROM sheet_arcive WHERE song_id = $1 LIMIT 1",
             values: [req.query.song_id]
         }
         
