@@ -24,7 +24,7 @@
 }
 
 /* For desktop */
-@media (min-width: 650px){
+@media (min-width: 850px){
     .loginButton {
         background-color: #18912c;
         border: none;
@@ -40,5 +40,12 @@
 
     .loginButton:hover {
         background-color: #1ba532;
+    }
+
+    .buttonContainer {
+        display: grid;
+        grid-template-columns: auto auto;
+        column-gap: 15px;
+        justify-content: space-between;
     }
 }

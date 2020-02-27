@@ -1,7 +1,6 @@
 .buttonDiv {
     display: grid;
     justify-items: center;
-    margin-top: 15px;
 }
 
 .logInButton {
@@ -16,12 +15,13 @@
     font-size: 16px;
     box-shadow: 1px 1px 2px 1px #000000;
     /* border-radius: 44px; */
+    margin-top: 15px;
+    width: 100px;
 }
 
 .logInButton:hover {
     background-color: #1ba532;
 }
-
 
 
 .loginSuccessStyle {
@@ -32,6 +32,13 @@
     background-color: pink ;
 }
 
+.green {
+    color: green;
+}
+
+.red {
+    color: red ;
+}
 /* Defines styling for the login button when the user is 
 waiting for the login request to finish .
 This styling will only override the base styling if */

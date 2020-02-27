@@ -21,6 +21,11 @@ class LogInPopup extends React.Component{
         this.setState({popupIsVisible: false})
     }
 
+    logoutButtonClick = () => {
+        localStorage.removeItem("accessToken")
+        window.location.reload()
+    }
+
     render() {
 
         let backdrop
@@ -38,7 +43,10 @@ class LogInPopup extends React.Component{
         return(
             <div>
                 {backdrop}
-                <button className={styles.loginButton} onClick={this.loginButtonClick}>LOGG INN</button>
+                <div className={styles.buttonContainer}>
+                    <button className={styles.loginButton} onClick={this.loginButtonClick}>LOGG INN</button>
+                    <button className={styles.loginButton} onClick={this.logoutButtonClick}>LOGG UT</button>
+                </div>
                 <div className={styles.logInPopup}>
                         {login}
                 </div>
