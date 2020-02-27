@@ -31,7 +31,6 @@ const whiteList = [
 const corsOptions = {
     origin: (origin, callback) => {
         if(whiteList.indexOf(origin) !== -1 || !origin){
-            console.log(origin, " was allowed")
             callback(null, true)
         } else {
         callback(new Error('Not allowed by CORS'))
@@ -98,6 +97,55 @@ app.get("/api/song_lyric_data", (req, res) => {
             res.end() 
         })
 })
+
+app.get("/api/sheet_arcive_song", 
+    passport.authenticate("jwt", {session: false}),
+        (req, res) => {
+        const dbQuery = {
+            text: "SELECT song_id, title FROM song"
+        }
+        client = new Client(dbConfig)
+        client.connect()
+        client.query(dbQuery)
+            .then( dbRes => {
+                console.log(dbRes.rows)
+                res.send(dbRes.rows) 
+            })
+            .catch( err => console.log(err))
+            .finally( () => {
+                client.end()
+                res.end()
+            } )
+})
+
+
+app.get("/api/sheet_arcive_file", 
+    passport.authenticate("jwt", {session: false}),
+    (req, res) => {
+        const dbQuery = {
+            text: "SELECT sheet_file FROM sheet_arcive WHERE song_id = $1",
+            values: [req.query.song_id]
+        }
+        
+        client = new Client(dbConfig)
+        client.connect()
+        client.query(dbQuery)
+            .then( dbRes => {
+                let file = dbRes.rows[0].sheet_file
+                
+                res.writeHead(200, {
+                    'Content-Type': 'application/pdf',
+                    'Content-Disposition': 'attachment; filename=some_file.pdf',
+                    'Content-Length': file.length
+                });
+                res.end(file)
+            })
+            .catch(err => console.log(err))
+            .finally( () => {
+                client.end()
+                res.end()
+            })
+    })
 
 // Allows us to use files from the paths: './' and './client/.build'
 // app.use(express.static(__dirname))
