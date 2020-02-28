@@ -1,0 +1,20 @@
+.buttonStyle {
+    background-color: transparent;
+    border: none;
+    font-size: x-large;
+    /* padding: 50px 0; */
+}
+
+.buttonHoverStyle:hover {
+    color: #18912c;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.grid{
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: start;
+    column-gap: 10px;
+    margin: 20px 0px;
+}
