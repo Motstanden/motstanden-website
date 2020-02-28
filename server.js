@@ -146,6 +146,48 @@ app.get("/api/sheet_arcive_file",
             })
     })
 
+app.get("/api/quotes", 
+    passport.authenticate("jwt", {session: false}),
+        (req, res) => {
+        const dbQuery = {
+            text: "SELECT utterer, quote FROM quote ORDER BY quote_id DESC"
+        }
+        client = new Client(dbConfig)
+        client.connect()
+        client.query(dbQuery)
+            .then( dbRes => {
+                res.send(dbRes.rows) 
+            })
+            .catch( err => console.log(err))
+            .finally( () => {
+                client.end()
+                res.end()
+            } )
+})
+
+
+app.post("/api/insert_quote",    
+    passport.authenticate("jwt", {session: false}),
+    (req, res) => {
+
+        const dbQuery = {
+            text: "INSERT INTO quote(utterer, quote) VALUES ($1, $2)",
+            values: [req.body.utterer, req.body.quote]
+        }
+        console.log(dbQuery)
+        client = new Client(dbConfig)
+        client.connect()
+        client.query(dbQuery)
+            .then(  res => {
+                console.log("Quote inserted")
+            })
+            .catch( err => console.log("error: ", err))
+            .finally( () => {
+                client.end()
+                res.send()
+            })
+    })
+
 // Allows us to use files from the paths: './' and './client/.build'
 // app.use(express.static(__dirname))
 app.use(express.static(path.join(__dirname, "client", "build")))
