@@ -7,7 +7,7 @@ const path = require("path")
 const dbConfig = require("./databaseConfig")
 
 
-filePath = path.join(__dirname, "pdf", "The bare necessities.pdf")
+filePath = path.join(__dirname, "pdf", "The Bare Necessities.pdf")
 
 fs.readFile(filePath, "hex", (err, file) => {
     if (err) throw err

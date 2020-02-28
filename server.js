@@ -108,7 +108,7 @@ app.get("/api/sheet_arcive_song",
         client.connect()
         client.query(dbQuery)
             .then( dbRes => {
-                console.log(dbRes.rows)
+                // console.log(dbRes.rows)
                 res.send(dbRes.rows) 
             })
             .catch( err => console.log(err))
@@ -126,13 +126,12 @@ app.get("/api/sheet_arcive_file",
             text: "SELECT sheet_file FROM sheet_arcive WHERE song_id = $1 LIMIT 1",
             values: [req.query.song_id]
         }
-        
+
         client = new Client(dbConfig)
         client.connect()
         client.query(dbQuery)
             .then( dbRes => {
                 let file = dbRes.rows[0].sheet_file
-                
                 res.writeHead(200, {
                     'Content-Type': 'application/pdf',
                     'Content-Disposition': 'attachment; filename=some_file.pdf',

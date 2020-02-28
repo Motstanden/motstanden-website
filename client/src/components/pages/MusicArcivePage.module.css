@@ -6,19 +6,6 @@
     list-style: none;
 }
 
-.buttonStyle {
-    background-color: transparent;
-    border: none;
-    font-size: x-large;
-    padding: 0 0 15px 0;
-}
-
-.buttonStyle:hover {
-    color: #18912c;
-    text-decoration: underline;
-    cursor: pointer;
-}
-
 .errorMessage {
     color: red;
 }
