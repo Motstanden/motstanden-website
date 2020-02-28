@@ -21,7 +21,7 @@ class MusicArciveListItem extends React.Component {
 
     onItemClick = (event) => {
         
-        if(this.state.url) return
+        // if(this.state.url) return
 
         console.log(event.target)
         this.setState({
