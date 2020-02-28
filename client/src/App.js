@@ -5,14 +5,17 @@ import {BrowserRouter as Router,
 } from "react-router-dom"
 
 import "./app.css"
-import Home from "./components/pages/Home.js"
+
 import Header from "./components/Header.js"
-import Footer from "./components/Footer.js"
+import Home from "./components/pages/Home.js"
 import MusicArcivePage from "./components/pages/MusicArcivePage.js"
+import LyricListPage from "./components/pages/LyricListPage"
+import QuotesPage from "./components/pages/QuotesPage.js"
 import LogInPage from "./components/pages/LogInPage.js"
 import Debug from "./debug/Debug.js"
-import LyricListPage from "./components/pages/LyricListPage"
 import NotFound from "./components/pages/NotFound.js"
+import Footer from "./components/Footer.js"
+
 
 class App extends React.Component{
     render() {
@@ -30,11 +33,14 @@ class App extends React.Component{
                         <Route path="/notearkiv">
                             <MusicArcivePage/>
                         </Route>
-                        <Route path="/logg-inn">
-                            <LogInPage/>
-                        </Route>
                         <Route path="/studenttraller">
                             <LyricListPage/>
+                        </Route>
+                        <Route path="/sitater">
+                            <QuotesPage/>
+                        </Route>
+                        <Route path="/logg-inn">
+                            <LogInPage/>
                         </Route>
                         <Route path="/debug">
                             <Debug/>

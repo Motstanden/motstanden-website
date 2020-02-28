@@ -25,11 +25,6 @@ main {
  
 }
 
-main > h1 {
-    margin: 0;
-    padding-top: 1rem;
-}
-
 @media (max-width: 650px){
     main {
         width: 100%;
