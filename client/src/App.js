@@ -8,6 +8,7 @@ import "./app.css"
 
 import Header from "./components/Header.js"
 import Home from "./components/pages/Home.js"
+import BecomeAMember from "./components/pages/BecomeAMember.js"
 import MusicArcivePage from "./components/pages/MusicArcivePage.js"
 import LyricListPage from "./components/pages/LyricListPage"
 import QuotesPage from "./components/pages/QuotesPage.js"
@@ -29,6 +30,9 @@ class App extends React.Component{
                     <Switch>
                         <Route exact path="/">
                             <Home/>
+                        </Route>
+                        <Route path="/bli-medlem">
+                            <BecomeAMember/>
                         </Route>
                         <Route path="/notearkiv">
                             <MusicArcivePage/>
