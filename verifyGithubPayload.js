@@ -2,35 +2,25 @@
 
 const crypto = require('crypto');
 
-const createComparisonSignature = (body) => {
-    const hmac = crypto.createHmac('sha1', process.env.GITHUB_SIGNATURE);
-    // const self_signature = hmac.update(JSON.stringify(body)).digest('hex');
-    return `sha1=${hmac}`; // shape in GitHub header
-}
-
-const compareSignatures = (signature, comparison_signature) => {
-    const source = Buffer.from(signature);
-    const comparison = Buffer.from(comparison_signature);
-    return crypto.timingSafeEqual(source, comparison); // constant time comparison
-}
-
 const verifyGithubPayload = (req, res, next) => {
-    const { headers, body } = req;
-
-    const signature = headers['x-hub-signature'];
-    const comparison_signature = createComparisonSignature(body);
-    console.log(signature, comparison_signature)
-    if (!compareSignatures(signature, comparison_signature)) {
-        console.log("Mismatched signature, returning")
-        return res.status(401).send('Mismatched signatures');
+    const payload = JSON.stringify(req.body)
+    if (!payload) {
+        return next('Request body empty')
     }
 
-    const { action, ...payload } = body;
-    req.eventType = headers['x-github-event']; // one of: https://developer.github.com/v3/activity/events/types/ 
-    req.action = action;
-    req.payload = payload;
-    console.log("Validation successful");
-    next();
+    const sig = req.get('x-hub-signature') || ''
+    const hmac = crypto.createHmac('sha1', secret)
+    const digest = Buffer.from('sha1=' + hmac.update(payload).digest('hex'), 'utf8')
+    const checksum = Buffer.from(sig, 'utf8')
+    if (checksum.length !== digest.length || !crypto.timingSafeEqual(digest, checksum)) {
+
+        var message = `Request body digest (${digest}) did not match ${'x-hub-signature'} (${checksum})`
+        console.log(message)
+        return next(message)
+    }
+
+    console.log("Validated")
+    return next()
 }
 
 module.exports = verifyGithubPayload;

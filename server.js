@@ -196,10 +196,7 @@ app.post("/api/insert_quote",
 app.post("/api/repository-update",
     verifyGithubPayload,
     (req, res) => {
-
-        console.log(req.eventType)
-        console.log(req.action)
-        console.log(req.payload)
+        console.log("Update server here")
 
         // test num: 2
 })
