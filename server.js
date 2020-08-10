@@ -188,6 +188,25 @@ app.post("/api/insert_quote",
             })
     })
 
+app.post("/api/repository-update", (req, res) => {
+    console.log(req)
+
+    const signature = process.env.GITHUB_SIGNATURE;
+    const isAllowed = req.headers['x-hub-signature'] === signature;
+    const body = JSON.parse(chunk);
+    const isMaster = body?.ref === 'refs/heads/master';
+
+    console.log("signature:", signature)
+    console.log("isAllowed:", isAllowed)
+    console.log("isMaster", isMaster)
+    console.log("body:", body)
+
+    if (isAllowed && isMaster) {
+      // do something
+    }
+
+})
+
 // Allows us to use files from the paths: './' and './client/.build'
 // app.use(express.static(__dirname))
 app.use(express.static(path.join(__dirname, "client", "build")))
