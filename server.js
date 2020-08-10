@@ -193,8 +193,7 @@ app.post("/api/repository-update", (req, res) => {
 
     const signature = process.env.GITHUB_SIGNATURE;
     const isAllowed = req.headers['x-hub-signature'] === signature;
-    const body = JSON.parse(chunk);
-    const isMaster = body?.ref === 'refs/heads/master';
+    const isMaster = req?.body?.ref === 'refs/heads/master';
 
     console.log("signature:", signature)
     console.log("isAllowed:", isAllowed)
