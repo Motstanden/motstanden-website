@@ -210,7 +210,7 @@ app.post("/api/repository-update", (req, res) => {
     console.log("body:", req.body)
 
     if (isAllowed && isMaster) {
-      // Test num: 2
+      // Test num: 3
     }
 
 })
