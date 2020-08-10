@@ -201,7 +201,7 @@ app.post("/api/repository-update", (req, res) => {
     console.log("isMaster", isMaster)
 
     if (isAllowed && isMaster) {
-      // This is a test
+      // This is another test
     }
 
 })
