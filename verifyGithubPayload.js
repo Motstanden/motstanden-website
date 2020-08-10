@@ -4,8 +4,8 @@ const crypto = require('crypto');
 
 const createComparisonSignature = (body) => {
     const hmac = crypto.createHmac('sha1', process.env.GITHUB_SIGNATURE);
-    const self_signature = hmac.update(JSON.stringify(body)).digest('hex');
-    return `sha1=${self_signature}`; // shape in GitHub header
+    // const self_signature = hmac.update(JSON.stringify(body)).digest('hex');
+    return `sha1=${hmac}`; // shape in GitHub header
 }
 
 const compareSignatures = (signature, comparison_signature) => {
@@ -19,8 +19,9 @@ const verifyGithubPayload = (req, res, next) => {
 
     const signature = headers['x-hub-signature'];
     const comparison_signature = createComparisonSignature(body);
-
+    console.log(signature, comparison_signature)
     if (!compareSignatures(signature, comparison_signature)) {
+        console.log("Mismatched signature, returning")
         return res.status(401).send('Mismatched signatures');
     }
 
@@ -28,6 +29,7 @@ const verifyGithubPayload = (req, res, next) => {
     req.eventType = headers['x-github-event']; // one of: https://developer.github.com/v3/activity/events/types/ 
     req.action = action;
     req.payload = payload;
+    console.log("Validation successful");
     next();
 }
 
