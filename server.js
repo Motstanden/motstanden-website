@@ -8,7 +8,9 @@ const cors = require("cors")
 const helmet = require("helmet")
 const { Client } = require("pg")
 const passport = require("passport")
-const dbConfig = require("./databaseConfig")
+const dbConfig = require("./databaseConfig");
+const { json } = require("express");
+const verifyGithubPayload = require("./verifyGithubPayload");
 
 const PORT = process.env.PORT || 5000
 
@@ -189,29 +191,15 @@ app.post("/api/insert_quote",
             })
     })
 
-app.post("/api/repository-update", (req, res) => {
-    console.log("headers: ", req.headers)
 
-    const signature = process.env.GITHUB_SIGNATURE;
-    const isAllowed = req.headers['x-github-delivery'] === signature;
-    const isPush = req.headers['x-github-event'] === "push";
-    const isMaster = req.body.ref === "refs/heads/master";
 
-    console.log("req.headers['x-github-delivery']", req.headers['x-github-delivery'])
-    console.log("signature", signature)
-    console.log("isAllowed:", isAllowed)
+app.post("/api/repository-update",
+    verifyGithubPayload,
+    (req, res) => {
 
-    console.log("body.ref", req.body.ref)
-    console.log("isMaster", isMaster)
-
-    console.log("req.headers['x-github-event']", req.headers['x-github-event'] )
-    console.log("isPush:", isPush)
-
-    console.log("body:", req.body)
-
-    if (isAllowed && isMaster) {
-      // Test num: 4
-    }
+        console.log(req.eventType)
+        console.log(req.action)
+        console.log(req.payload)
 
 })
 
