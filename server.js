@@ -40,10 +40,11 @@ const corsOptions = {
 app.use(cors(corsOptions))
 
 // Allows us to acces the req.body object when getting requests.
-app.use(bodyParser.json());
+app.use(bodyParser.json());  // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 // Initializes authentication for requests from the client
-require("./passport.js")(passport)
+require("./passport.js")(passport) 
 app.use(passport.initialize());
 
 // Initializes debug.js 
@@ -199,6 +200,9 @@ app.post("/api/repository-update", (req, res) => {
     console.log("signature:", signature)
     console.log("isAllowed:", isAllowed)
     console.log("isMaster", isMaster)
+
+    console.log(req.body)
+
 
     if (isAllowed && isMaster) {
       // This is another test
