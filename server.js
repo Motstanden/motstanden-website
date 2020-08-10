@@ -190,22 +190,27 @@ app.post("/api/insert_quote",
     })
 
 app.post("/api/repository-update", (req, res) => {
-    console.log(req)
+    console.log("headers: ", req.headers)
 
     const signature = process.env.GITHUB_SIGNATURE;
     const isAllowed = req.headers['x-github-delivery'] === signature;
-    const isPush = req.headers['x-github-event'] === 'push';
-    const isMaster = req.body == null ? false :  req.body.ref === 'refs/heads/master';
+    const isPush = req.headers['x-github-event'] === "push";
+    const isMaster = req.body.ref === "refs/heads/master";
 
-    console.log("signature:", signature)
+    console.log("req.headers['x-github-delivery']", req.headers['x-github-delivery'])
+    console.log("signature", signature)
     console.log("isAllowed:", isAllowed)
+
+    console.log("body.ref", req.body.ref)
     console.log("isMaster", isMaster)
 
-    console.log(req.body)
+    console.log("req.headers['x-github-event']", req.headers['x-github-event'] )
+    console.log("isPush:", isPush)
 
+    console.log("body:", req.body)
 
     if (isAllowed && isMaster) {
-      // This is another test
+      // Test num: 4
     }
 
 })
