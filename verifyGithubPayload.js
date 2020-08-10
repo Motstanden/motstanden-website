@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 
 const createComparisonSignature = (body) => {
-    const hmac = crypto.createHmac('sha1', process.env.GITHUB_SIGNATURE).digest('hex');
+    const hmac = crypto.createHmac('sha1', process.env.GITHUB_SIGNATURE);
     // const self_signature = hmac.update(JSON.stringify(body)).digest('hex');
     return `sha1=${hmac}`; // shape in GitHub header
 }
