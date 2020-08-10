@@ -3,6 +3,9 @@
 const crypto = require('crypto');
 
 const verifyGithubPayload = (req, res, next) => {
+
+    const secret = process.env.GITHUB_SIGNATURE;
+
     const payload = JSON.stringify(req.body)
     if (!payload) {
         return next('Request body empty')
