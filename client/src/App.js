@@ -12,6 +12,7 @@ import BecomeAMember from "./components/pages/BecomeAMember.js"
 import MusicArcivePage from "./components/pages/MusicArcivePage.js"
 import LyricListPage from "./components/pages/LyricListPage"
 import QuotesPage from "./components/pages/QuotesPage.js"
+import DocumentsPage from "./components/pages/DocumentsPage.js"
 import LogInPage from "./components/pages/LogInPage.js"
 import Debug from "./debug/Debug.js"
 import NotFound from "./components/pages/NotFound.js"
@@ -45,6 +46,9 @@ class App extends React.Component{
                         </Route>
                         <Route path="/logg-inn">
                             <LogInPage/>
+                        </Route>
+                        <Route path="/dokumenter">
+                            <DocumentsPage/>
                         </Route>
                         <Route path="/debug">
                             <Debug/>
