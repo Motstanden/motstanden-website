@@ -65,7 +65,7 @@ class QuotesPage extends React.Component{
         else{
             return(
                 <main className={styles.main}>
-                    <p className={styles.red}>Du må være logget inn for å sitater</p>
+                    <p className={styles.red}>Du må være logget inn for å se sitater</p>
                 </main>
             )
         }
