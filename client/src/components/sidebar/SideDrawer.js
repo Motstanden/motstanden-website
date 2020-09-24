@@ -34,6 +34,9 @@ class SideDrawer extends React.Component {
                         <Link to="/sitater">
                             <li className={style.navItem}>Sitater</li>
                         </Link>
+                        <Link to="/dokumenter">
+                            <li className={style.navItem}>Dokumenter</li>
+                        </Link>
                         <Link to="/logg-inn">
                             <li className={style.navItem}>Logg inn</li>
                         </Link>
