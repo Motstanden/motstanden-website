@@ -168,7 +168,6 @@ app.get("/api/quotes",
             } )
 })
 
-
 app.post("/api/insert_quote",    
     passport.authenticate("jwt", {session: false}),
     (req, res) => {
@@ -191,14 +190,29 @@ app.post("/api/insert_quote",
             })
     })
 
+app.get("/api/documents", 
+    passport.authenticate("jwt", {session: false}),
+    (req, res) => {
+        const documents = [{
+            title: "Motstandens statutter",
+            file: "files/documents/motstandens-statutter.pdf"
+        }]
+        res.send(documents)
+    }
+)
 
+app.get("/api/document_file", 
+    passport.authenticate("jwt", {session: false}),
+    (req, res) => {
+        const filePath = path.join(__dirname, req.query.file)
+        res.sendFile(filePath)
+    }
+)
 
 app.post("/api/repository-update",
     verifyGithubPayload,
     (req, res) => {
-        console.log("Update server here")
-
-        // test num: 5
+        //TODO
 })
 
 // Allows us to use files from the paths: './' and './client/.build'
