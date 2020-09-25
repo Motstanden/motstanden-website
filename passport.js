@@ -12,9 +12,6 @@ const dbConfig = require("./databaseConfig")
 module.exports = (passport) => {
 
     passport.use(new LocalStrategy( (username, password, done) => {
-
-        console.log(username, password)
-
         // Prevent injection attack py parameterizing input values
         const dbQuery = {
             text: "SELECT user_account_id, username, password  FROM user_account WHERE username = $1",
