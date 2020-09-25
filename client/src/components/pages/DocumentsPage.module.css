@@ -2,7 +2,6 @@
     padding: 1px 3%;
 }
 
-.main > * {
-    margin-left: 5%;
-    margin-right: 5%;
+.red {
+    color: red;
 }
