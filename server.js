@@ -194,6 +194,9 @@ app.get("/api/documents",
     passport.authenticate("jwt", {session: false}),
     (req, res) => {
         const documents = [{
+            title: "Bulleltin 2019-2020",
+            file: "files/documents/bulleltin-2019-2020.pdf"
+        },{
             title: "Motstandens statutter",
             file: "files/documents/motstandens-statutter.pdf"
         }]
