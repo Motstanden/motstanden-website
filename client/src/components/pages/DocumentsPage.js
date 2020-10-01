@@ -8,22 +8,26 @@ class Documents extends React.Component {
         super(props)
         this.state = {
             documentsArray: [],
-            isLoading: false
+            isLoadingArray: []
         }
         const accessToken = localStorage.getItem("accessToken")
         axios.get("/api/documents", {
             headers: {'Authorization': "Bearer " +  accessToken}
             })
             .then( (res) => {
+                var isLoading = res.data.map( () => false )
                 this.setState({
                     documentsArray: res.data,
+                    isLoadingArray: isLoading
                 })
             })
     }
 
-    onDocumentClick = (doc) => {
+    onDocumentClick = (doc, index) => {
+        var isLoading = this.state.isLoadingArray.slice();
+        isLoading[index] = true;
         this.setState({
-            isLoading: true
+            isLoadingArray: isLoading
         })
         const accessToken = localStorage.getItem("accessToken")
         axios.get("/api/document_file", {
@@ -42,9 +46,9 @@ class Documents extends React.Component {
                 link.setAttribute('download', doc.title + ".pdf")
                 document.body.appendChild(link)
                 link.click()
-
+                isLoading[index] = false;
                 this.setState({
-                    isLoading: false,
+                    isLoadingArray: isLoading,
                 })
             })
             .catch( err => console.log(err))
@@ -60,8 +64,8 @@ class Documents extends React.Component {
                             return (
                                 <LoadingButton 
                                 text={doc.title}
-                                isLoading={this.state.isLoading}
-                                onClick={ () => {this.onDocumentClick(doc)}} 
+                                isLoading={this.state.isLoadingArray[index]}
+                                onClick={ () => {this.onDocumentClick(doc, index)}} 
                                 />
                                 )
                             })}
