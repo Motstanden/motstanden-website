@@ -2,18 +2,20 @@
 require("dotenv").config()
 
 const express = require("express")
-const bodyParser = require('body-parser');
+const bodyParser = require('body-parser')
 const path = require("path")
 const cors = require("cors")
 const helmet = require("helmet")
 const { Client } = require("pg")
+const sqlite3 = require("sqlite3")
 const passport = require("passport")
-const dbConfig = require("./databaseConfig");
+const dbConfig = require("./databaseConfig")
 const { json } = require("express");
 const verifyGithubPayload = require("./verifyGithubPayload");
+const { Console } = require("console")
 
 const PORT = process.env.PORT || 5000
-
+const DBFILENAME = path.join(__dirname, "motstanden.db")
 const app = express()
 
 // This library automaticly implements security features for the server. The library should be "used" by the app as soon as possible. 
@@ -93,7 +95,7 @@ app.get("/api/song_lyric_data", (req, res) => {
         .then( dbRes => {
             // console.log({lyricsData: dbRes.rows[0].lyric_html_content})
             res.json({lyricsData: dbRes.rows[0].lyric_html_content})
-        })
+        })  
         .catch( err => console.log(err))
         .finally( () => {
             client.end()
@@ -150,44 +152,33 @@ app.get("/api/sheet_arcive_file",
     })
 
 app.get("/api/quotes", 
-    passport.authenticate("jwt", {session: false}),
+    // passport.authenticate("jwt", {session: false}),
         (req, res) => {
-        const dbQuery = {
-            text: "SELECT utterer, quote FROM quote ORDER BY quote_id DESC"
-        }
-        client = new Client(dbConfig)
-        client.connect()
-        client.query(dbQuery)
-            .then( dbRes => {
-                res.send(dbRes.rows) 
+        const dbQuery = "SELECT utterer, quote FROM quote ORDER BY quote_id DESC"
+        var db = new sqlite3.Database(DBFILENAME, sqlite3.OPEN_READONLY)
+
+        db.serialize( () => {
+            db.all(dbQuery, (err, rows) => {
+                if(err) { console.log(err) }
+                else {
+                    res.send(rows)
+                }
             })
-            .catch( err => console.log(err))
-            .finally( () => {
-                client.end()
-                res.end()
-            } )
+        });
+        db.close()
 })
 
 app.post("/api/insert_quote",    
-    passport.authenticate("jwt", {session: false}),
+    // passport.authenticate("jwt", {session: false}),
     (req, res) => {
-
         const dbQuery = {
-            text: "INSERT INTO quote(utterer, quote) VALUES ($1, $2)",
+            text: "INSERT INTO quote(utterer, quote) VALUES (?, ?)",
             values: [req.body.utterer, req.body.quote]
         }
-        console.log(dbQuery)
-        client = new Client(dbConfig)
-        client.connect()
-        client.query(dbQuery)
-            .then(  res => {
-                console.log("Quote inserted")
-            })
-            .catch( err => console.log("error: ", err))
-            .finally( () => {
-                client.end()
-                res.send()
-            })
+        var db = new sqlite3.Database(DBFILENAME, sqlite3.OPEN_READWRITE)
+        db.run(dbQuery.text, dbQuery.values, (err) => console.log(err || "Quote inserted"))
+        db.close()
+        res.end()
     })
 
 app.get("/api/documents", 
