@@ -174,7 +174,7 @@ app.get("/api/sheet_arcive_file",
     })
 
 app.get("/api/quotes", 
-    // passport.authenticate("jwt", {session: false}),
+    passport.authenticate("jwt", {session: false}),
     (req, res) => {
         const db = new Database(DBFILENAME, dbReadOnlyConfig)
         const stmt = db.prepare("SELECT utterer, quote FROM quote ORDER BY quote_id DESC")
@@ -184,7 +184,7 @@ app.get("/api/quotes",
 })
 
 app.post("/api/insert_quote",    
-    // passport.authenticate("jwt", {session: false}),
+    passport.authenticate("jwt", {session: false}),
     (req, res) => {
         const utterer = req.body.utterer
         const quote = req.body.quote

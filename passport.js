@@ -4,58 +4,64 @@ const JWTStrategy = require("passport-jwt").Strategy
 const ExtractJWT = require("passport-jwt").ExtractJwt
 const jwt = require("jsonwebtoken")
 
-const { Client } = require("pg")
+const Database = require('better-sqlite3')
 const bcrypt = require("bcrypt")
 
-const dbConfig = require("./databaseConfig")
+const path = require("path")
+const DBFILENAME = path.join(__dirname, "motstanden.db")
+
+// TODO: Move this to separate file
+const dbReadOnlyConfig = {
+    readonly: true,
+    fileMustExist: true
+}
+const dbReadWriteConfig = {
+    readonly: false,
+    fileMustExist: true
+}
+const GetRandomInt = (min, max) => {
+    return Math.floor(Math.random() * (max - min) ) + min;
+}
+const SleepAsync = async (ms) => {
+    return new Promise( resolve => setTimeout(resolve, ms))
+}
+
 
 module.exports = (passport) => {
 
-    passport.use(new LocalStrategy( (username, password, done) => {
-        // Prevent injection attack py parameterizing input values
-        const dbQuery = {
-            text: "SELECT user_account_id, username, password  FROM user_account WHERE username = $1",
-            values: [username]
-        } 
-        let credentialsWasCorrect = false
-
-        let user = {
-            id: null,
-            username: username,
-            accessToken: null
+    passport.use(new LocalStrategy( async (username, password, done) => {
+        
+        // Get the user from the database 
+        const db = new Database(DBFILENAME, dbReadOnlyConfig)
+        const stmt = db.prepare("SELECT user_account_id, username, password FROM user_account WHERE username = ?")
+        const dbUser = stmt.get(username)
+        db.close();
+ 
+        // Check if pasword matches
+        let passwordMatches = false;
+        if (dbUser) {
+            try {
+                passwordMatches = await bcrypt.compare(password, dbUser.password)
+            }
+            catch (err) { console.log(err) }
+        }
+        else {
+            // We want to wait if something goes wrong. This prevents brute force attacks.
+            await SleepAsync(GetRandomInt(1500, 2500))
         }
 
-        const client = new Client(dbConfig)
-        client.connect()
-        client.query(dbQuery)
-            .then( async (res) => {
-
-                // If there is not only one unique username that is found, something must be wrong. 
-                if (res.rowCount !== 1) return done(null, false); 
-
-                user.id = res.rows[0].user_account_id
-                const dbPassword = res.rows[0].password
-                try {
-                    // If an awaited function throws an error the program will break 
-                    // If the program breaks, we do not want to authenticate the user
-                    credentialsWasCorrect = await bcrypt.compare(password, dbPassword)
-                }
-                catch(err) { return done(err) }
-            })
-            .catch( err => console.log(err))
-            .finally( () => {
-
-                client.end()
-
-                if (credentialsWasCorrect){
-                    const accessToken = jwt.sign(username, process.env.ACCESS_TOKEN_SECRET)
-                    user.accessToken = accessToken
-                    return done(null, user)
-                }
-                else {
-                    return done(null, false)
-                }
-            })
+        // Create access token and continue if password matches. Otherwise, terminate the request.
+        if (passwordMatches) {
+            const user = {
+                    id: dbUser.user_account_id,
+                    username: username,
+                    accessToken: jwt.sign(username, process.env.ACCESS_TOKEN_SECRET)
+            }
+            return done(null, user)
+        }
+        else {
+            return done(null, false)
+        }
     }))
 
     passport.use(new JWTStrategy({
