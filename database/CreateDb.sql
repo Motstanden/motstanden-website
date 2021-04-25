@@ -21,3 +21,9 @@ CREATE TABLE quote (
     utterer TEXT NOT NULL,
     quote TEXT NOT NULL 
 );
+
+CREATE TABLE user_account (
+    user_account_id INTEGER PRIMARY KEY NOT NULL,
+    username TEXT NOT NULL,
+    password TEXT NOT NULL
+);
