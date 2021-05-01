@@ -63,10 +63,18 @@ module.exports = (passport) => {
             return done(null, false)
         }
     }))
+    
+    const ExtractJwtFromCookie = (req) => {
+        let token = null
+        if(req && req.cookies){
+            token = req.cookies["AccessToken"]
+        }
+        return token;
+    }
 
     passport.use(new JWTStrategy({
         secretOrKey: process.env.ACCESS_TOKEN_SECRET,
-        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken()
+        jwtFromRequest: ExtractJwtFromCookie
     }, (username, done) => {
         user = {
             username: username,
@@ -74,6 +82,7 @@ module.exports = (passport) => {
         }
         return done(null, user)
     }))
+
 
     passport.serializeUser((user, done) => done(null, user.username))
 }
