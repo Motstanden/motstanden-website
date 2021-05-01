@@ -3,6 +3,7 @@ require("dotenv").config()
 
 const express = require("express")
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 const path = require("path")
 const cors = require("cors")
 const helmet = require("helmet")
@@ -14,11 +15,15 @@ const { json } = require("express");
 const verifyGithubPayload = require("./verifyGithubPayload");
 
 const PORT = process.env.PORT || 5000
+const COOKIESECRET = process.env.COOKIESECRET
 const DBFILENAME = path.join(__dirname, "motstanden.db")
 const app = express()
 
 // This library automaticly implements security features for the server. The library should be "used" by the app as soon as possible. 
 app.use(helmet())
+
+// Need this to create and parse cookies
+app.use(cookieParser(COOKIESECRET))
 
 const dbReadOnlyConfig = {
     readonly: true,
@@ -79,9 +84,10 @@ require("./debug.js")(app, passport)
 app.post("/api/login", 
     passport.authenticate("local", {session: false}),
     (req, res) => {
-
+        res.cookie("AccessToken", 
+            req.user.accessToken, 
+            { secure: true, httpOnly: true })
         res.json({
-            accessToken: req.user.accessToken,
             message: "Du er logget inn som " + req.user.username
         })
 })
@@ -204,20 +210,12 @@ app.get("/api/documents",
     (req, res) => {
         const documents = [{
             title: "Bulleltin 2019-2020",
-            file: "files/documents/bulleltin-2019-2020.pdf"
+            file: "dokumenter/bulleltin-2019-2020.pdf"
         },{
             title: "Motstandens statutter",
-            file: "files/documents/motstandens-statutter.pdf"
+            file: "dokumenter/motstandens-statutter.pdf"
         }]
         res.send(documents)
-    }
-)
-
-app.get("/api/document_file", 
-    passport.authenticate("jwt", {session: false}),
-    (req, res) => {
-        const filePath = path.join(__dirname, req.query.file)
-        res.sendFile(filePath)
     }
 )
 
@@ -227,11 +225,13 @@ app.post("/api/repository-update",
         //TODO
 })
 
-// Allows us to use files from the paths: './' and './client/.build'
-// app.use(express.static(__dirname))
+// Allows us to use files from './client/build'
 app.use(express.static(path.join(__dirname, "client", "build")))
 
-app.get("/*", (req, res) => {
+app.use( passport.authenticate("jwt", { session: false }),
+    express.static(path.join(__dirname, "files")))
+
+app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "client", "build", "index.html"))
 })
 
