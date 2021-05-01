@@ -5,13 +5,15 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "dev": "concurrently \"nodemon server.js\" \"cd client && npm start\"",
-    "serverdeploy": "npm install && cd client && npm install && npm run build"
+    "serverdeploy": "npm install && cd client && npm install && npm run build",
+    "server-dev": "nodemon server.js",
+    "client-dev": "cd client && npm start",
+    "client-builder": "cd client && nodemon --exec \"npm run build\" --ignore build",
+    "dev": "concurrently \"npm run client-builder\" \"npm run server-dev\" \"npm run client-dev\""
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MotstandenWeb/MotstandenWeb.git"
+    "url": "git+https:3/github.com/MotstandenWeb/MotstandenWeb.git"
   },
   "author": "Studentorchesteret den Ohmske Motstanden",
   "license": "ISC",
@@ -23,6 +25,7 @@
     "bcrypt": "^5.0.0",
     "better-sqlite3": "^7.1.5",
     "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
