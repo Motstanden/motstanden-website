@@ -208,13 +208,9 @@ app.post("/api/insert_quote",
 app.get("/api/documents", 
     passport.authenticate("jwt", {session: false}),
     (req, res) => {
-        const documents = [{
-            title: "Bulleltin 2019-2020",
-            file: "dokumenter/bulleltin-2019-2020.pdf"
-        },{
-            title: "Motstandens statutter",
-            file: "dokumenter/motstandens-statutter.pdf"
-        }]
+        const db = new Database(DBFILENAME, dbReadOnlyConfig)
+        const stmt = db.prepare("SELECT title, filename AS file FROM document ORDER BY document_id DESC")
+        const documents = stmt.all();
         res.send(documents)
     }
 )

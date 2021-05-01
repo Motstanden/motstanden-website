@@ -27,3 +27,10 @@ CREATE TABLE user_account (
     username TEXT NOT NULL,
     password TEXT NOT NULL
 );
+
+CREATE TABLE document (
+    document_id INTEGER PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL,
+    root_path TEXT,
+    filename TEXT NOT NULL
+);
