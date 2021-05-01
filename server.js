@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 5000
 const COOKIESECRET = process.env.COOKIESECRET
 const DBFILENAME = path.join(__dirname, "motstanden.db")
 const app = express()
-
+const ACCESSTOKEN = "AccessToken"
 // This library automaticly implements security features for the server. The library should be "used" by the app as soon as possible. 
 app.use(helmet())
 
@@ -84,12 +84,17 @@ require("./debug.js")(app, passport)
 app.post("/api/login", 
     passport.authenticate("local", {session: false}),
     (req, res) => {
-        res.cookie("AccessToken", 
+        res.cookie(ACCESSTOKEN, 
             req.user.accessToken, 
-            { secure: true, httpOnly: true })
+            { httpOnly: true, secure: true, sameSite: true })
         res.json({
             message: "Du er logget inn som " + req.user.username
         })
+})
+
+app.post("/api/logout", (req, res) => {
+    res.clearCookie(ACCESSTOKEN)
+    res.end()
 })
 
 app.get("/api/song_lyric_title", (req, res) => {

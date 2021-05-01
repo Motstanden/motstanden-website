@@ -48,15 +48,11 @@ class LogIn extends React.Component {
             password: this.state.password  
         })
         .then( res => {
-
-            localStorage.setItem("accessToken", res.data.accessToken)
             let response = res.data.message
             this.setState( {
                 response: response,
                 loginWasSuccess: true,
-                logoutWasSuccess: false
             })
-            // alert(response)
         })
         .catch( (err) => {
             let errorMessage = "Fikk ikke kontakt med serveren. prøv igjen senere"
@@ -82,13 +78,22 @@ class LogIn extends React.Component {
     }
 
     onLogOutClick = () => {
-        localStorage.removeItem("accessToken")
-        let response = "Du er logget ut"
-        this.setState({
-            response: response,
-            logoutWasSuccess: true
-        })
-        alert(response)
+        axios.post("/api/logout")
+            .then( res => {
+                window.location.href = "/"
+                alert("Du er logget ut av motstanden.no")
+            })
+            .catch( err => {
+                console.log(err)
+                let errorMsg = "Noe gikk galt ved uloggingen. Prøv igjen senere."
+                if(err?.response?.status){
+                    errorMsg += `Feilkode: ${err.response.state}` 
+                }
+                this.setState({
+                    response: errorMsg,
+                    loginWasSuccess: false
+                })
+            })
     }
 
     render(){
@@ -104,11 +109,6 @@ class LogIn extends React.Component {
         {
             loginAttemptStyle = this.state.loginWasSuccess ? styles.loginSuccessStyle : styles.loginFailedStyle
             responseTextStyle = this.state.loginWasSuccess ? styles.green : styles.red
-        }
-
-        if(this.state.logoutWasSuccess){
-            loginAttemptStyle = null
-            responseTextStyle = styles.green
         }
 
         return(
