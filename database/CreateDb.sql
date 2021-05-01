@@ -34,3 +34,11 @@ CREATE TABLE document (
     root_path TEXT,
     filename TEXT NOT NULL
 );
+
+-- TODO: Rewrite this
+CREATE TABLE sheet_archive (
+    sheet_archive_id INTEGER PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL,
+    root_path TEXT,
+    filename TEXT NOT NULL
+)
