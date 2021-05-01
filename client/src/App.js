@@ -25,41 +25,39 @@ class App extends React.Component{
         console.log("Velkommen til Motstanden sin hjemmeside!")
 
         return(
-            <div>
-                <Router>
-                    <Header/>
-                    <Switch>
-                        <Route exact path="/">
-                            <Home/>
-                        </Route>
-                        <Route path="/bli-medlem">
-                            <BecomeAMember/>
-                        </Route>
-                        <Route path="/notearkiv">
-                            <MusicArcivePage/>
-                        </Route>
-                        <Route path="/studenttraller">
-                            <LyricListPage/>
-                        </Route>
-                        <Route path="/sitater">
-                            <QuotesPage/>
-                        </Route>
-                        <Route path="/logg-inn">
-                            <LogInPage/>
-                        </Route>
-                        <Route path="/dokumenter">
-                            <DocumentsPage/>
-                        </Route>
-                        <Route path="/debug">
-                            <Debug/>
-                        </Route>
-                        <Route path="*">
-                            <NotFound/>
-                        </Route>
-                    </Switch>
-                    <Footer/>
-                </Router>
-            </div>
+            <Router>
+                <Header/>
+                <Switch>
+                    <Route exact path="/">
+                        <Home/>
+                    </Route>
+                    <Route path="/bli-medlem">
+                        <BecomeAMember/>
+                    </Route>
+                    <Route path="/notearkiv">
+                        <MusicArcivePage/>
+                    </Route>
+                    <Route path="/studenttraller">
+                        <LyricListPage/>
+                    </Route>
+                    <Route path="/sitater">
+                        <QuotesPage/>
+                    </Route>
+                    <Route path="/logg-inn">
+                        <LogInPage/>
+                    </Route>
+                    <Route exact path="/dokumenter">
+                        <DocumentsPage/>
+                    </Route>
+                    <Route path="/debug">
+                        <Debug/>
+                    </Route>
+                    <Route path="*">
+                        <NotFound/>
+                    </Route>
+                </Switch>
+                <Footer/>
+            </Router>
         )
     }
 }
