@@ -15,7 +15,6 @@ const { json } = require("express");
 const verifyGithubPayload = require("./verifyGithubPayload");
 
 const PORT = process.env.PORT || 5000
-const COOKIESECRET = process.env.COOKIESECRET
 const DBFILENAME = path.join(__dirname, "motstanden.db")
 const app = express()
 const ACCESSTOKEN = "AccessToken"
@@ -23,7 +22,7 @@ const ACCESSTOKEN = "AccessToken"
 app.use(helmet())
 
 // Need this to create and parse cookies
-app.use(cookieParser(COOKIESECRET))
+app.use(cookieParser())
 
 const dbReadOnlyConfig = {
     readonly: true,
@@ -85,8 +84,12 @@ app.post("/api/login",
     passport.authenticate("local", {session: false}),
     (req, res) => {
         res.cookie(ACCESSTOKEN, 
-            req.user.accessToken, 
-            { httpOnly: true, secure: true, sameSite: true })
+            req.user.accessToken, { 
+                httpOnly: true, 
+                secure: true, 
+                sameSite: true, 
+                maxAge: 1000 * 60 * 60 * 24 * 14 // 14 days 
+        })
         res.json({
             message: "Du er logget inn som " + req.user.username
         })
