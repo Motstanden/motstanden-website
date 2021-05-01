@@ -2,24 +2,14 @@ import React from "react"
 import styles from "./MusicArcivePage.module.css"
 import axios from "axios"
 
-import MusicArciveListItem from "./../MusicArciveListItem.js"
-
-import ClipLoader from "react-spinners/ClipLoader"
-
 class MusicArcivePage extends React.Component {
 
     constructor(props){
         super(props)
         this.state = {
             songArray: [],
-            loadingIconArray: []
         }
-
-        const accessToken = localStorage.getItem("accessToken")
-
-        axios.get("/api/sheet_arcive_song", {
-            headers: {'Authorization': "Bearer " +  accessToken}
-            })
+        axios.get("/api/sheet_arcive")
             .then( (res) => {
                 this.setState({
                     songArray: res.data,
@@ -49,10 +39,9 @@ class MusicArcivePage extends React.Component {
                 <ul className={styles.ul}>
                 {
                     this.state.songArray.map( (song) => (
-                        <MusicArciveListItem
-                            title = {song.title} 
-                            itemId={song.song_id}    
-                        />
+                        <li>
+                            <a href={window.location.origin + "/" + song.url} type="application/pdf">{song.title}</a>
+                        </li>
                     ))
                 }
                 </ul>
