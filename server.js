@@ -139,53 +139,15 @@ app.get("/api/song_lyric_data", (req, res) => {
         })
 })
 
-app.get("/api/sheet_arcive_song", 
-    passport.authenticate("jwt", {session: false}),
-        (req, res) => {
-        const dbQuery = {
-            text: "SELECT song_id, title FROM song ORDER BY title ASC"
-        }
-        client = new Client(dbConfig)
-        client.connect()
-        client.query(dbQuery)
-            .then( dbRes => {
-                // console.log(dbRes.rows)
-                res.send(dbRes.rows) 
-            })
-            .catch( err => console.log(err))
-            .finally( () => {
-                client.end()
-                res.end()
-            } )
-})
-
-
-app.get("/api/sheet_arcive_file", 
+app.get("/api/sheet_arcive", 
     passport.authenticate("jwt", {session: false}),
     (req, res) => {
-        const dbQuery = {
-            text: "SELECT sheet_file FROM sheet_arcive WHERE song_id = $1 LIMIT 1",
-            values: [req.query.song_id]
-        }
-
-        client = new Client(dbConfig)
-        client.connect()
-        client.query(dbQuery)
-            .then( dbRes => {
-                let file = dbRes.rows[0].sheet_file
-                res.writeHead(200, {
-                    'Content-Type': 'application/pdf',
-                    'Content-Disposition': 'attachment; filename=some_file.pdf',
-                    'Content-Length': file.length
-                });
-                res.end(file)
-            })
-            .catch(err => console.log(err))
-            .finally( () => {
-                client.end()
-                res.end()
-            })
-    })
+        const db = new Database(DBFILENAME, dbReadOnlyConfig)
+        const stmt = db.prepare("SELECT title, filename AS url FROM sheet_archive ORDER BY title DESC")
+        const sheets = stmt.all()
+        res.send(sheets);
+        db.close()
+})
 
 app.get("/api/quotes", 
     passport.authenticate("jwt", {session: false}),
@@ -220,6 +182,7 @@ app.get("/api/documents",
         const stmt = db.prepare("SELECT title, filename AS file FROM document ORDER BY document_id DESC")
         const documents = stmt.all();
         res.send(documents)
+        db.close()
     }
 )
 
