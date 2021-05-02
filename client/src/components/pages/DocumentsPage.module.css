@@ -2,6 +2,33 @@
     padding: 1px 3%;
 }
 
-.red {
+.ul {
+    list-style-type: none;
+}
+
+.ul li {
+    margin: 20px 0px;
+}
+
+.errorMessage {
     color: red;
+}
+
+.anchorStyle {
+    font-size: x-large;
+    text-decoration: none;
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.anchorStyle:visited {
+    text-decoration:  none;
+    color: rgba(0, 100, 23, 1);
+}
+.anchorStyle:hover {
+    text-decoration: underline;
+    color: rgba(27, 165, 50, 1);
+}
+.anchorStyle:active {
+    text-decoration: underline;
+    color: blue;
 }
