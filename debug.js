@@ -1,13 +1,17 @@
-const { Client } = require("pg")
-const dbConfig = require("./databaseConfig")
+const path = require("path")
+const Database = require("better-sqlite3")
 
+const DBFILENAME = path.join(__dirname, "motstanden.db")
+const dbReadOnlyConfig = {
+    readonly: true,
+    fileMustExist: true
+}
 
 module.exports = (app, passport) => {
     
     app.get("/api/protected",
         passport.authenticate("jwt", {session: false}),
         (req, res) => {
-            // console.log(req.user)
             res.json({
                 username: req.user.username,
                 message: "You are logged in as: " + req.user.username
@@ -15,24 +19,16 @@ module.exports = (app, passport) => {
         }
         )
 
-    // On ping requests from the client. The purpose of this is to check if the client can communicate with server.js, and in turn that server.js is able to communicate with the database
-    app.get("/api/ping", (req, frontEndresponse) => {
+    app.get("/api/ping", (req, res) => {
         console.log("ping")
-        const client = new Client(dbConfig)
-        client.connect()
-        let dbResponse = ""
-        client
-            .query("select * from ping")
-            .then(res => dbResponse = res.rows[0].ping)
-            .catch(error => {dbResponse = error.name + ": " + error.message})
-            .finally( () => {
-                data = {
-                    apiResponse: "Pong from the api",
-                    dbResponse: dbResponse
-                }
-                client.end()
-                frontEndresponse.send(data)
-            })
+        const db = new Database(DBFILENAME, dbReadOnlyConfig)
+        const stmt = db.prepare("SELECT * FROM ping")
+        const data = {
+            apiResponse: "Pong from the api",
+            dbResponse: stmt.get()?.ping ?? "No response from database"
+        }
+        res.send(data)
+        db.close()
     })
 }
 
