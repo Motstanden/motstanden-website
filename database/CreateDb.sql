@@ -44,3 +44,14 @@ CREATE TABLE sheet_archive (
     filename TEXT NOT NULL,
     url TEXT GENERATED ALWAYS AS ('/api/' || filename) STORED
 );
+
+CREATE TABLE song_lyric (
+    song_lyric_id INTEGER PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL,
+    root_path TEXT NOT NULL,
+    filename TEXT NOT NULL,
+    url TEXT GENERATED ALWAYS AS ('/api/' || filename) STORED,
+    song_melody TEXT,
+    song_text_origin TEXT,
+    song_description TEXT
+);
