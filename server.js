@@ -13,6 +13,8 @@ const passport = require("passport")
 const dbConfig = require("./databaseConfig")
 const { json } = require("express");
 const verifyGithubPayload = require("./verifyGithubPayload");
+const serveIndex = require("serve-index")
+
 
 const PORT = process.env.PORT || 5000
 const DBFILENAME = path.join(__dirname, "motstanden.db")
@@ -195,8 +197,9 @@ app.post("/api/repository-update",
 // Allows us to use files from './client/build'
 app.use(express.static(path.join(__dirname, "client", "build")))
 
-app.use( passport.authenticate("jwt", { session: false }),
-    express.static(path.join(__dirname, "files")))
+app.use("/api", passport.authenticate("jwt", { session: false }),
+    express.static(path.join(__dirname, "files")),
+    serveIndex(path.join(__dirname, "files"), {icons: true}))
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "client", "build", "index.html"))
