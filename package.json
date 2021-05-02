@@ -34,7 +34,8 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "pg": "^7.18.1"
+    "pg": "^7.18.1",
+    "serve-index": "^1.9.1"
   },
   "devDependencies": {
     "concurrently": "^5.1.0",
