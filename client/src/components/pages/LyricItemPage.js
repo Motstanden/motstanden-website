@@ -1,5 +1,4 @@
 import React from "react"
-import {Route} from "react-router-dom"
 import axios from "axios"
 
 import styles from "./LyricItemPage.module.css"
@@ -21,10 +20,8 @@ class LyricItemPage extends React.Component {
                     title: this.props.title
                 }})
                 .then( res => {
-
-                    let lyricData = res.data.lyricsData
                     this.setState({
-                        lyric: lyricData
+                        lyric: res.data.lyricHtml
                     })
                 })
                 .catch(err => console.log)}
@@ -37,7 +34,6 @@ class LyricItemPage extends React.Component {
                 <h1> {this.props.title}</h1>
                 <div className={styles.lyricContainer} dangerouslySetInnerHTML={{
                     __html: this.state.lyric}}>
-                
                 </div> 
             </main>
         )

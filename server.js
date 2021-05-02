@@ -14,7 +14,7 @@ const dbConfig = require("./databaseConfig")
 const { json } = require("express");
 const verifyGithubPayload = require("./verifyGithubPayload");
 const serveIndex = require("serve-index")
-
+const fs = require("fs")
 
 const PORT = process.env.PORT || 5000
 const DBFILENAME = path.join(__dirname, "motstanden.db")
@@ -102,43 +102,38 @@ app.post("/api/logout", (req, res) => {
     res.end()
 })
 
-app.get("/api/song_lyric_title", (req, res) => {
-
-    dbQuery = "SELECT title FROM song_lyric ORDER BY title ASC"
-
-    client = new Client(dbConfig)
-    client.connect()
-    client.query(dbQuery)
-        .then( dbRes => {
-            res.json({lyricsArray: dbRes.rows})
-            // console.log(dbRes.rows)
-        })
-        .catch( err => console.log(err))
-        .finally( () => {
-            client.end()
-            res.end() 
-        })
+app.get("/api/song_lyric", (req, res) => {
+    const db = new Database(DBFILENAME, dbReadOnlyConfig)
+    const stmt = db.prepare("SELECT \
+                                title, \
+                                url, \
+                                song_melody AS melody, \
+                                song_text_origin AS textOrigin, \
+                                song_description AS description \
+                            FROM song_lyric ORDER BY title")
+    const lyrics = stmt.all()
+    res.send(lyrics)
+    db.close()
 })
 
 app.get("/api/song_lyric_data", (req, res) => {
 
-    const dbQuery = {
-        text: "SELECT lyric_html_content FROM song_lyric WHERE title = $1",
-        values: [req.query.title]
-    } 
+    // Get the name of the html file
+    const db = new Database(DBFILENAME, dbReadOnlyConfig)
+    const stmt = db.prepare("SELECT full_filename AS file FROM song_lyric WHERE title = ?")
+    const title = req.query.title;
+    const filename = stmt.get([title]).file
+    db.close()
 
-    client = new Client(dbConfig)
-    client.connect()
-    client.query(dbQuery)
-        .then( dbRes => {
-            // console.log({lyricsData: dbRes.rows[0].lyric_html_content})
-            res.json({lyricsData: dbRes.rows[0].lyric_html_content})
-        })  
-        .catch( err => console.log(err))
-        .finally( () => {
-            client.end()
-            res.end() 
-        })
+    // Send html file as string
+    fs.readFile(filename, (err, data) => {
+        if(err) {
+            throw err;
+        }
+        else{
+            res.json({lyricHtml: data.toString()})
+        }
+    });
 })
 
 app.get("/api/sheet_arcive", 

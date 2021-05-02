@@ -14,23 +14,21 @@ class LyricListPage extends React.Component {
     constructor(props){
         super(props)
         this.state = {
-            lyricsTitleArray: [],
-            lyricsHtml: null,
+            lyrics: [],
             path: "/studenttraller"
         }        
-        axios.get("/api/song_lyric_title")
+        axios.get("/api/song_lyric")
             .then( (res) => {
                 this.setState({
-                    lyricsTitleArray: res.data.lyricsArray
+                    lyrics: res.data
                 })
             })
-            .catch( err => console.log(err)) 
+            .catch( err => console.log(err))
     }
 
     componentDidMount(){}
 
     render(){
-        
         return(
             <Switch>            
                 <Route exact path="/studenttraller">
@@ -39,7 +37,7 @@ class LyricListPage extends React.Component {
 
                         <ul className={styles.ul}> 
 
-                            {this.state.lyricsTitleArray.map( (item) => (
+                            {this.state.lyrics.map( (item) => (
                                 <div key={item.title}>
                                     <li className={styles.li}>
                                         <Link to={this.state.path + "/" + item.title}>
@@ -52,9 +50,9 @@ class LyricListPage extends React.Component {
                         </ul>
                     </main>
                 </Route>
-                {this.state.lyricsTitleArray.map( (item) => (
+                {this.state.lyrics.map( (item) => (
                     <Route path={this.state.path + "/" + item.title}>
-                        <LyricItemPage title = {item.title}/>
+                        <LyricItemPage title = {item.title} url={item.url}/>
                     </Route>
                 ))}
             </Switch>
