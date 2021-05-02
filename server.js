@@ -145,7 +145,7 @@ app.get("/api/sheet_arcive",
     passport.authenticate("jwt", {session: false}),
     (req, res) => {
         const db = new Database(DBFILENAME, dbReadOnlyConfig)
-        const stmt = db.prepare("SELECT title, filename AS url FROM sheet_archive ORDER BY title DESC")
+        const stmt = db.prepare("SELECT title, url FROM sheet_archive ORDER BY title DESC")
         const sheets = stmt.all()
         res.send(sheets);
         db.close()
@@ -181,7 +181,7 @@ app.get("/api/documents",
     passport.authenticate("jwt", {session: false}),
     (req, res) => {
         const db = new Database(DBFILENAME, dbReadOnlyConfig)
-        const stmt = db.prepare("SELECT title, filename AS file FROM document ORDER BY document_id DESC")
+        const stmt = db.prepare("SELECT title, url FROM document ORDER BY document_id DESC")
         const documents = stmt.all();
         res.send(documents)
         db.close()

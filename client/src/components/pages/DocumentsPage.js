@@ -25,7 +25,7 @@ class Documents extends React.Component {
                         {this.state.documentsArray.map( (doc, index) =>{
                             return (
                                 <li>
-                                    <a href={window.location.origin + "/" + doc.file} 
+                                    <a href={window.location.origin + doc.url} 
                                         type="application/pdf"
                                         className={styles.anchorStyle}>
                                         {doc.title}</a>

@@ -32,7 +32,8 @@ CREATE TABLE document (
     document_id INTEGER PRIMARY KEY NOT NULL,
     title TEXT NOT NULL,
     root_path TEXT,
-    filename TEXT NOT NULL
+    filename TEXT NOT NULL,
+    url TEXT GENERATED ALWAYS AS ('/api/' || filename) STORED
 );
 
 -- TODO: Rewrite this
@@ -40,5 +41,6 @@ CREATE TABLE sheet_archive (
     sheet_archive_id INTEGER PRIMARY KEY NOT NULL,
     title TEXT NOT NULL,
     root_path TEXT,
-    filename TEXT NOT NULL
-)
+    filename TEXT NOT NULL,
+    url TEXT GENERATED ALWAYS AS ('/api/' || filename) STORED
+);
