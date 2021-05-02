@@ -33,7 +33,8 @@ CREATE TABLE document (
     title TEXT NOT NULL,
     root_path TEXT,
     filename TEXT NOT NULL,
-    url TEXT GENERATED ALWAYS AS ('/api/' || filename) STORED
+    is_public BOOLEAN NOT NULL DEFAULT 0,
+    url TEXT GENERATED ALWAYS AS (CASE is_public WHEN 1 THEN '/api/files/public/' || filename ELSE '/api/files/private/' || filename END) VIRTUAL
 );
 
 -- TODO: Rewrite this
@@ -41,8 +42,9 @@ CREATE TABLE sheet_archive (
     sheet_archive_id INTEGER PRIMARY KEY NOT NULL,
     title TEXT NOT NULL,
     root_path TEXT,
+    is_public BOOLEAN NOT NULL DEFAULT 0,
     filename TEXT NOT NULL,
-    url TEXT GENERATED ALWAYS AS ('/api/' || filename) STORED
+    url TEXT GENERATED ALWAYS AS (CASE is_public WHEN 1 THEN '/api/files/public/' || filename ELSE '/api/files/private/' || filename END) VIRTUAL
 );
 
 CREATE TABLE song_lyric (
@@ -50,7 +52,8 @@ CREATE TABLE song_lyric (
     title TEXT NOT NULL,
     root_path TEXT NOT NULL,
     filename TEXT NOT NULL,
-    url TEXT GENERATED ALWAYS AS ('/api/' || filename) STORED,
+    is_public BOOLEAN NOT NULL DEFAULT 0,
+    url TEXT GENERATED ALWAYS AS (CASE is_public WHEN 1 THEN '/api/files/public/' || filename ELSE '/api/files/private/' || filename END) VIRTUAL,
     song_melody TEXT,
     song_text_origin TEXT,
     song_description TEXT
