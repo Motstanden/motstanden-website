@@ -40,7 +40,11 @@ class MusicArcivePage extends React.Component {
                 {
                     this.state.songArray.map( (song) => (
                         <li>
-                            <a href={window.location.origin + "/" + song.url} type="application/pdf">{song.title}</a>
+                            <a href={window.location.origin + "/" + song.url} 
+                                type="application/pdf"
+                                className={styles.anchorStyle}>
+                                {song.title}
+                            </a>
                         </li>
                     ))
                 }

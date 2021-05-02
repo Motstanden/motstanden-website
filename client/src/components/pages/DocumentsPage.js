@@ -21,11 +21,14 @@ class Documents extends React.Component {
             return(
                <main className={styles.main}> 
                     <h1>Dokumenter</h1>
-                    <ul>
+                    <ul className={styles.ul}>
                         {this.state.documentsArray.map( (doc, index) =>{
                             return (
                                 <li>
-                                    <a href={window.location.origin + "/" + doc.file} type="application/pdf">{doc.title}</a>
+                                    <a href={window.location.origin + "/" + doc.file} 
+                                        type="application/pdf"
+                                        className={styles.anchorStyle}>
+                                        {doc.title}</a>
                                 </li>
                                 )
                             })}
