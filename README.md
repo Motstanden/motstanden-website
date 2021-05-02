@@ -89,6 +89,11 @@ Den skal automatisk redirecte til `https`. Dersom dette ikke lenger skjer, kjør
 ```
 certbot renew
 ```
+Dersom NGINX blir reinstallert (f.eks etter en systemoppgradering), og den ikke lenger peker fra domenet til ipen, kjør:
+```
+sudo certbot --nginx -d motstanden.no -d www.motstanden.no
+sudo systemctl restart nginx
+```
 Domeneserver
 ------------
 Peker ikke domeneshop.no? Prøv å skrive IP i webbrowser.
