@@ -197,7 +197,17 @@ app.post("/api/repository-update",
 // Allows us to use files from './client/build'
 app.use(express.static(path.join(__dirname, "client", "build")))
 
-app.use("/api", passport.authenticate("jwt", { session: false }),
+app.use("/api/files/private", 
+    passport.authenticate("jwt", { session: false }),
+    express.static(path.join(__dirname, "files", "private")),
+    serveIndex(path.join(__dirname, "files", "private"), {icons: true}))
+
+app.use("/api/files/public", 
+    express.static(path.join(__dirname, "files", "public")),
+    serveIndex(path.join(__dirname, "files", "public"), {icons: true}))
+
+app.use("/api/files", 
+    passport.authenticate("jwt", { session: false, failureRedirect: "/api/files/public"}),
     express.static(path.join(__dirname, "files")),
     serveIndex(path.join(__dirname, "files"), {icons: true}))
 
