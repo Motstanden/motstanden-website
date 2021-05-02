@@ -1,3 +1,4 @@
+#!/bin/bash
 rm -fv motstanden.db;
 echo "Creating new db"
 sqlite3 motstanden.db < database/CreateDb.sql;
