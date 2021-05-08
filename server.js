@@ -12,7 +12,8 @@ const passport = require("passport")
 const { json } = require("express");
 const verifyGithubPayload = require("./verifyGithubPayload");
 const serveIndex = require("serve-index")
-const fs = require("fs")
+
+const router = require("./router")
 
 const PORT = process.env.PORT || 5000
 const DBFILENAME = path.join(__dirname, "motstanden.db")
@@ -100,40 +101,6 @@ app.post("/api/logout", (req, res) => {
     res.end()
 })
 
-app.get("/api/song_lyric", (req, res) => {
-    const db = new Database(DBFILENAME, dbReadOnlyConfig)
-    const stmt = db.prepare("SELECT \
-                                title, \
-                                url, \
-                                song_melody AS melody, \
-                                song_text_origin AS textOrigin, \
-                                song_description AS description \
-                            FROM song_lyric ORDER BY title")
-    const lyrics = stmt.all()
-    res.send(lyrics)
-    db.close()
-})
-
-app.get("/api/song_lyric_data", (req, res) => {
-
-    // Get the name of the html file
-    const db = new Database(DBFILENAME, dbReadOnlyConfig)
-    const stmt = db.prepare("SELECT full_filename AS file FROM song_lyric WHERE title = ?")
-    const title = req.query.title;
-    const filename = stmt.get([title]).file
-    db.close()
-
-    // Send html file as string
-    fs.readFile(filename, (err, data) => {
-        if(err) {
-            throw err;
-        }
-        else{
-            res.json({lyricHtml: data.toString()})
-        }
-    });
-})
-
 app.get("/api/sheet_arcive", 
     passport.authenticate("jwt", {session: false}),
     (req, res) => {
@@ -203,6 +170,8 @@ app.use("/api/files",
     passport.authenticate("jwt", { session: false, failureRedirect: "/api/files/public"}),
     express.static(path.join(__dirname, "files")),
     serveIndex(path.join(__dirname, "files"), {icons: true}))
+
+app.use("/api", router)
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "client", "build", "index.html"))
