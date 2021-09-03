@@ -37,5 +37,4 @@ router.get("/song_lyric_data", (req, res) => {
     });
 })
 
-
 module.exports = router;

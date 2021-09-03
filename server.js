@@ -70,7 +70,7 @@ const corsOptions = {
 }
 app.use(cors(corsOptions))
 
-// Allows us to acces the req.body object when getting requests.
+// Allows us to access the req.body object when getting requests.
 app.use(bodyParser.json());  // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
@@ -136,17 +136,6 @@ app.post("/api/insert_quote",
         }
         res.end();
     })
-
-app.get("/api/documents", 
-    passport.authenticate("jwt", {session: false}),
-    (req, res) => {
-        const db = new Database(DBFILENAME, dbReadOnlyConfig)
-        const stmt = db.prepare("SELECT title, url FROM document ORDER BY document_id DESC")
-        const documents = stmt.all();
-        res.send(documents)
-        db.close()
-    }
-)
 
 app.post("/api/repository-update",
     verifyGithubPayload,
