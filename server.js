@@ -7,15 +7,12 @@ const cookieParser = require('cookie-parser')
 const path = require("path")
 const cors = require("cors")
 const helmet = require("helmet")
-const Database = require('better-sqlite3')
 const passport = require("passport")
-const { json } = require("express");
 const serveIndex = require("serve-index")
 
 const router = require("./router")
 
 const PORT = process.env.PORT || 5000
-const DBFILENAME = path.join(__dirname, "motstanden.db")
 const app = express()
 
 // This library automaticly implements security features for the server. The library should be "used" by the app as soon as possible. 
@@ -23,16 +20,6 @@ app.use(helmet())
 
 // Need this to create and parse cookies
 app.use(cookieParser())
-
-const dbReadOnlyConfig = {
-    readonly: true,
-    fileMustExist: true
-}
-
-const dbReadWriteConfig = {
-    readonly: false,
-    fileMustExist: true
-}
 
 // Alows us to make request from localhost:3000 and whatever domain the server is running on
 const whiteList = [ 
@@ -63,16 +50,6 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 // Initializes authentication for requests from the client
 require("./passport.js")(passport) 
 app.use(passport.initialize());
-
-app.get("/api/sheet_arcive", 
-    passport.authenticate("jwt", {session: false}),
-    (req, res) => {
-        const db = new Database(DBFILENAME, dbReadOnlyConfig)
-        const stmt = db.prepare("SELECT title, url FROM sheet_archive ORDER BY title DESC")
-        const sheets = stmt.all()
-        res.send(sheets);
-        db.close()
-})
 
 // Allows us to use files from './client/build'
 app.use(express.static(path.join(__dirname, "client", "build")))
