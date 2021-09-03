@@ -10,7 +10,6 @@ const helmet = require("helmet")
 const Database = require('better-sqlite3')
 const passport = require("passport")
 const { json } = require("express");
-const verifyGithubPayload = require("./verifyGithubPayload");
 const serveIndex = require("serve-index")
 
 const router = require("./router")
@@ -136,12 +135,6 @@ app.post("/api/insert_quote",
         }
         res.end();
     })
-
-app.post("/api/repository-update",
-    verifyGithubPayload,
-    (req, res) => {
-        //TODO
-})
 
 // Allows us to use files from './client/build'
 app.use(express.static(path.join(__dirname, "client", "build")))
