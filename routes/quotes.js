@@ -30,5 +30,4 @@ router.post("/insert_quote",
         res.end();
     })
 
-
-module.exports = router
+    module.exports = router

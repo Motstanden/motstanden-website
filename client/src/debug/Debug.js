@@ -13,7 +13,7 @@ class Debug extends React.Component {
             loginCheckResponse: ""
         }
 
-        axios.get("/api/ping")
+        axios.get("/api/debug/ping")
             .then( (res) => {
                 this.setState({
                     apiResponse: res.data.apiResponse,
@@ -32,7 +32,7 @@ class Debug extends React.Component {
             headers: {'Authorization': "Bearer " +  accessToken}
         }
        
-        axios.get("/api/protected", config)
+        axios.get("/api/debug/private_url", config)
             .then( res => {
                 console.log(res)
                 this.setState({

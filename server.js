@@ -64,9 +64,6 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 require("./passport.js")(passport) 
 app.use(passport.initialize());
 
-// Initializes debug.js 
-require("./debug.js")(app, passport)
-
 app.post("/api/login", 
     passport.authenticate("local", {session: false}),
     (req, res) => {
