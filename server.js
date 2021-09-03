@@ -34,19 +34,6 @@ const dbReadWriteConfig = {
     fileMustExist: true
 }
 
-// TODO: Move this to a another file.
-const StringIsNullOrWhiteSpace = (inputString) => {
-    result = true
-    if (inputString) {                              // Check if value is defined
-        if (typeof inputString === 'string') {      // Check if value is a string
-            if (inputString.trim()) {               // Check if value contains any non white space characters
-               result = false 
-            }
-        }
-    }
-    return result;
-}
-
 // Alows us to make request from localhost:3000 and whatever domain the server is running on
 const whiteList = [ 
     "http://localhost:3000", 
@@ -109,32 +96,6 @@ app.get("/api/sheet_arcive",
         res.send(sheets);
         db.close()
 })
-
-app.get("/api/quotes", 
-    passport.authenticate("jwt", {session: false}),
-    (req, res) => {
-        const db = new Database(DBFILENAME, dbReadOnlyConfig)
-        const stmt = db.prepare("SELECT utterer, quote FROM quote ORDER BY quote_id DESC")
-        const quotes = stmt.all();
-        res.send(quotes);
-        db.close();
-})
-
-app.post("/api/insert_quote",    
-    passport.authenticate("jwt", {session: false}),
-    (req, res) => {
-        const utterer = req.body.utterer
-        const quote = req.body.quote
-        if (StringIsNullOrWhiteSpace(utterer) || StringIsNullOrWhiteSpace(quote)) {
-            res.status(400).send("The server could not parse the payload.")
-        } else {
-            const db = new Database(DBFILENAME, dbReadWriteConfig)
-            const stmt = db.prepare("INSERT INTO quote(utterer, quote) VALUES (?, ?)")    
-            stmt.run(utterer, quote)
-            db.close();
-        }
-        res.end();
-    })
 
 // Allows us to use files from './client/build'
 app.use(express.static(path.join(__dirname, "client", "build")))
