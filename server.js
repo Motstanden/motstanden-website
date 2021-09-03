@@ -17,7 +17,7 @@ const router = require("./router")
 const PORT = process.env.PORT || 5000
 const DBFILENAME = path.join(__dirname, "motstanden.db")
 const app = express()
-const ACCESSTOKEN = "AccessToken"
+
 // This library automaticly implements security features for the server. The library should be "used" by the app as soon as possible. 
 app.use(helmet())
 
@@ -63,26 +63,6 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 // Initializes authentication for requests from the client
 require("./passport.js")(passport) 
 app.use(passport.initialize());
-
-app.post("/api/login", 
-    passport.authenticate("local", {session: false}),
-    (req, res) => {
-        res.cookie(ACCESSTOKEN, 
-            req.user.accessToken, { 
-                httpOnly: true, 
-                secure: true, 
-                sameSite: true, 
-                maxAge: 1000 * 60 * 60 * 24 * 14 // 14 days 
-        })
-        res.json({
-            message: "Du er logget inn som " + req.user.username
-        })
-})
-
-app.post("/api/logout", (req, res) => {
-    res.clearCookie(ACCESSTOKEN)
-    res.end()
-})
 
 app.get("/api/sheet_arcive", 
     passport.authenticate("jwt", {session: false}),
