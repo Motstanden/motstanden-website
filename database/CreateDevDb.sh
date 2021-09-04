@@ -5,7 +5,7 @@ sqlite3 motstanden_dev.db < ./dev/CreateDb.sql;
 echo "Inserting quotes";
 sqlite3 motstanden_dev.db < ./dev/InsertQuotes.sql;
 echo "Inserting users";
-sqlite3 motstanden_dev.db < ./dev/InsertUser.sql;
+sqlite3 motstanden_dev.db < ./dev/InsertUsers.sql;
 echo "Inserting documents";
 sqlite3 motstanden_dev.db < ./dev/InsertDocuments.sql;
 echo "Inserting sheet music";
