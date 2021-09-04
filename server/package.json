@@ -8,7 +8,7 @@
     "serverdeploy": "npm install && cd ../client && npm install && npm run build",
     "server-dev": "nodemon server.js",
     "client-dev": "cd ../client && npm start",
-    "client-builder": "cd ../client && nodemon --exec \"npm run build\" --ignore ./build", 
+    "client-builder": "cd ../client && nodemon --exec \"npm run build\" --ignore ./build",
     "dev": "concurrently \"npm run client-builder\" \"npm run server-dev\" \"npm run client-dev\"",
     "dev-lite": "concurrently \"npm run server-dev\" \"npm run client-dev\""
   },
@@ -25,7 +25,6 @@
   "dependencies": {
     "bcrypt": "^5.0.0",
     "better-sqlite3": "^7.1.5",
-    "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",

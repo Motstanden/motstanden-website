@@ -2,7 +2,6 @@
 require("dotenv").config()
 
 const express = require("express")
-const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const path = require("path")
 const cors = require("cors")
@@ -44,8 +43,9 @@ const corsOptions = {
 app.use(cors(corsOptions))
 
 // Allows us to access the req.body object when getting requests.
-app.use(bodyParser.json());  // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+
+app.use(express.urlencoded({ extended: true }));    // support encoded bodies
+app.use(express.json());                             // support json encoded bodies
 
 // Initializes authentication for requests from the client
 require("./config/passportConfig.js")(passport) 
