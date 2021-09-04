@@ -1,0 +1,4 @@
+# Temp Debug files:
+*.db
+MotstandenDBData.sql
+InsertUser.sql

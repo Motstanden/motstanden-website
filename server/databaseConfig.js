@@ -1,6 +1,6 @@
 const path = require("path")
 
-exports.dbFilename = path.join(__dirname, "motstanden.db")
+exports.dbFilename = path.join(__dirname, "..", "database", "motstanden.db")
 
 exports.dbReadOnlyConfig = {
     readonly: true,

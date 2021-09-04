@@ -52,7 +52,7 @@ require("./passport.js")(passport)
 app.use(passport.initialize());
 
 // Allows us to use files from './client/build'
-app.use(express.static(path.join(__dirname, "client", "build")))
+app.use(express.static(path.join(__dirname, "..", "client", "build")))
 
 app.use("/api/files/private", 
     passport.authenticate("jwt", { session: false }),
@@ -71,7 +71,7 @@ app.use("/api/files",
 app.use("/api", router)
 
 app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "client", "build", "index.html"))
+    res.sendFile(path.join(__dirname, "..", "client", "build", "index.html"))
 })
 
 app.listen(PORT, () => console.log("The server is listening on port " + PORT.toString()))

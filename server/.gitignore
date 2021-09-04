@@ -1,8 +1,3 @@
-# Temp Debug files:
-*.db
-MotstandenDBData.sql
-InsertUser.sql
-
 # server files
 dt-notearkiv
 
