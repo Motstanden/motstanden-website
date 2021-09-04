@@ -1,6 +1,10 @@
 const path = require("path")
 
-exports.dbFilename = path.join(__dirname, "..", "database", "motstanden.db")
+const dbShortName = process.env.IS_DEV_ENV === 'true' 
+                  ? 'motstanden_dev.db'
+                  : 'motstanden.db'
+
+exports.dbFilename = path.join(__dirname, "..", "database", dbShortName)
 
 exports.dbReadOnlyConfig = {
     readonly: true,
