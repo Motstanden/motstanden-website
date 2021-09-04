@@ -10,7 +10,7 @@ const helmet = require("helmet")
 const passport = require("passport")
 const serveIndex = require("serve-index")
 
-const router = require("./router")
+const router = require("./api/apiRouter")
 
 const PORT = process.env.PORT || 5000
 const app = express()
