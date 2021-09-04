@@ -1,6 +1,6 @@
 const router = require("express").Router()
 const Database = require('better-sqlite3')
-const {dbFilename, dbReadOnlyConfig, dbReadWriteConfig} = require("../databaseConfig")
+const {dbFilename, dbReadOnlyConfig, dbReadWriteConfig} = require("../config/databaseConfig")
 const passport = require("passport")
 
 
