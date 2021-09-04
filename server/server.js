@@ -48,7 +48,7 @@ app.use(bodyParser.json());  // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 // Initializes authentication for requests from the client
-require("./passport.js")(passport) 
+require("./config/passportConfig.js")(passport) 
 app.use(passport.initialize());
 
 // Allows us to use files from './client/build'
