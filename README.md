@@ -1,3 +1,7 @@
+# Code of conduct
+ - This project follows the [Gitflow Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) guidelines. 
+ - English should be used everywhere. Norwegian is not allowed.
+
 # Setup
  - Make sure node version 16 is installed: https://nodejs.org/
     - Test that node is installed by running these commands from the command line:
