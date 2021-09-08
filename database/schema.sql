@@ -41,3 +41,8 @@ CREATE TABLE song_lyric (
     song_text_origin TEXT,
     song_description TEXT
 );
+CREATE TABLE version (
+    version_id INTEGER PRIMARY KEY NOT NULL,
+    migration TEXT,
+    create_time TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
