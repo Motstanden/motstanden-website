@@ -51,7 +51,6 @@ const corsOptions = {
 app.use(cors(corsOptions))
 
 // Allows us to access the req.body object when getting requests.
-
 app.use(express.urlencoded({ extended: true }));    // support encoded bodies
 app.use(express.json());                             // support json encoded bodies
 
