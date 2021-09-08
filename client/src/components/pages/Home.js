@@ -1,19 +1,19 @@
 import React from "react"
 import styles from "./home.module.css"
-import FacebookComponent from "../FacebookComponent.js"
 import {
     Link,
     withRouter
 } from "react-router-dom"
 
 import silhouetteImg from "../../images/silhuett_liten.png"
+import may17Img from "../../images/17mai2021.jpg"
+import forohmingen from "../../images/forohmingen2.jpg"
 
 
 class Home extends React.Component {
     render() {
         return (
             <div>
-                {/* <img src={forohmingen} className={styles.frontImage}></img> */}
                 <main>
                     <div className={styles.frontImage}/>
                     <div className={styles.gridContainer}>
@@ -37,10 +37,10 @@ class Home extends React.Component {
                             </div>
                         </div>
                         <div className={styles.silhouetteContainer}>
-                            <img src={silhouetteImg} className={styles.silhouetteImg}></img>
+                            <img src={silhouetteImg} className={styles.img}></img>
 
                         </div>
-                        <div>
+                        <div className={styles.text2}>
                             <h1>I en sluttet krets!</h1>
                             <p>
                                 Studentorchesteret den Ohmske Motstanden er Trondheims nyeste bidrag til studentorchestermiljøet,
@@ -64,10 +64,8 @@ class Home extends React.Component {
                                 spillejobber! Kontakt oss på styret@motstanden.no
                             </p>
                         </div>
-                        
-                        <div className={styles.faceBox}>
-                            <FacebookComponent/>
-                        </div>
+                            <img src={may17Img} className={styles.img}/>
+                            <img src={forohmingen} className={styles.img}/>
                     </div>
                 </main>
             </div>
