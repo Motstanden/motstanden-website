@@ -42,26 +42,22 @@
     align-self: center;
 }
 
-.silhouetteImg {
+.img {
     width: 100%;
 }
 
-.faceBox {
-    align-self: center;
+.text2 {
+    grid-row: 2 / 4;
 }
-
 
 @media (max-width: 900px){
     .gridContainer {
         grid-template-columns: auto;
         grid-column: 1;
+        padding-bottom: 20px;
     }    
     
     .silhouetteContainer {
         display: none;
-    }
-
-    .faceBox {
-        text-align: center;
     }
 }
