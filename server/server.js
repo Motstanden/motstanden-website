@@ -15,7 +15,15 @@ const PORT = process.env.PORT || 5000
 const app = express()
 
 // This library automaticly implements security features for the server. The library should be "used" by the app as soon as possible. 
-app.use(helmet())
+app.use(helmet({
+    contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+            scriptSrc: ["'self'"],
+            frameSrc: [ "'self'", "https://docs.google.com"],
+        }
+    }
+}))
 
 // Need this to create and parse cookies
 app.use(cookieParser())

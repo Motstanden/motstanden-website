@@ -10,7 +10,7 @@ class BecomeAMember extends React.Component {
                 <div className={styles.embededForm}>
                     <iframe 
                         src="https://docs.google.com/forms/d/e/1FAIpQLScNCnQSOnjrQ8eroEnJdc5WCg8uIkPePjnQX1NehdmxyBT-kQ/viewform?embedded=true"
-                        allowFullScreen frameborder="0">
+                        allowFullScreen frameBorder="0">
                             Laster inn …
                     </iframe>
                 </div>
