@@ -65,13 +65,13 @@ CREATE TABLE instrument_category(
     category TEXT NOT NULL UNIQUE
 );
 
--- TODO: Spør Gunnar om denne
 INSERT INTO instrument_category(instrument_category_id, category) VALUES
-(1, 'Fløyte'),
-(2, 'Klarinett'),
-(3, 'Trompet'),
-(4, 'Saksofon'),
-(5, 'Baryton'),
+(1, 'Fløyter'),
+(10, 'Rørblås'),  --TODO: Update id column
+(2, 'Klarinetter'),
+(3, 'Trompeter'),
+(4, 'Saksofoner'),
+(5, 'Grovmessing'),
 (6, 'Tuba'),
 (7, 'Perkusjon'),
 (8, 'Storband'),
@@ -86,16 +86,17 @@ CREATE TABLE instrument(
     instrument_category_id INTEGER NOT NULL
 );
 
--- TODO:
---  * Spør Gunnar om a fylle 5-part og 7-part stemmer
 INSERT INTO 
     instrument(instrument, max_voices, five_part_voice, seven_part_voice, instrument_category_id) 
 VALUES
 -- Fløyte
  ('Pikkolofløyte',  2,      NULL,   NULL,   1), 
- ('TverrFløyte',    4,      NULL,   NULL,   1),
- ('Obo',            2,      NULL,   NULL,   1),
- ('Fagott',         2,      NULL,   NULL,   1),
+ ('Tverrfløyte',    4,      NULL,   NULL,   1),
+
+-- Rørblås
+ ('Obo',            2,      NULL,   NULL,   10),
+ ('Engelsk horn',   2,      NULL,   NULL,   10),
+ ('Fagott',         2,      NULL,   NULL,   10),
 
 -- Klarinett
  ('Altklarinett',   2,      NULL,   NULL,   2),
@@ -114,9 +115,10 @@ VALUES
  ('Barytonsaksofon',    2,  NULL,   NULL,   4),
 
 -- Baryton
- ('Horn',           6,      NULL,   NULL,   5),  -- Spør gunnar om denne
+ ('Horn',           6,      NULL,   NULL,   5),
  ('Baryton',        3,      NULL,   NULL,   5),
  ('Eufonium',       3,      NULL,   NULL,   5),
+ ('Alttrombone',    4,      NULL,   NULL,   5),
  ('Trombone',       4,      NULL,   NULL,   5),
  ('Basstrombone',   2,      NULL,   NULL,   5),
 
@@ -134,14 +136,16 @@ VALUES
 ('Perkusjon',       6,      NULL,   NULL,   7),
 
 -- Storband
- ('Akkorder',       1,      NULL,   NULL,   8),
- ('Klokkespill',    1,      NULL,   NULL,   8),
- ('Piano',          1,      NULL,   NULL,   8),
- ('Gitar',          1,      NULL,   NULL,   8),
- ('Bassgitar',      1,      NULL,   NULL,   8),
+('Klokkespill',    1,      NULL,   NULL,   8),
+('Piano',          1,      NULL,   NULL,   8),
+('Gitar',          1,      NULL,   NULL,   8),
+('Bassgitar',      1,      NULL,   NULL,   8),
 
-('Annet',           1,      NULL,   NULL,   9), -- Spør Gunnar om denne
-('Partitur',        1,      NULL,   NULL,   9);
+-- Annet
+('Akkorder',        1,      NULL,   NULL,   9),
+('Partitur',        1,      NULL,   NULL,   9),
+('Superpart',       1,      NULL,   NULL,   9), 
+('Annet',           1,      NULL,   NULL,   9);
 
 
 
