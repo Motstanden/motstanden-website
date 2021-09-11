@@ -66,87 +66,84 @@ CREATE TABLE instrument_category(
 );
 
 INSERT INTO instrument_category(instrument_category_id, category) VALUES
-(1, 'Fløyter'),
-(10, 'Rørblås'),  --TODO: Update id column
-(2, 'Klarinetter'),
-(3, 'Trompeter'),
-(4, 'Saksofoner'),
-(5, 'Grovmessing'),
-(6, 'Tuba'),
-(7, 'Perkusjon'),
-(8, 'Storband'),
-(9, 'Annet');
+(1,     'Fløyter'),
+(2,     'Rørblås'),  
+(3,     'Klarinetter'),
+(4,     'Trompeter'),
+(5,     'Saksofoner'),
+(6,     'Grovmessing'),
+(7,     'Tuba'),
+(8,     'Perkusjon'),
+(9,     'Storband'),
+(10,    'Annet');
 
 CREATE TABLE instrument(
     instrument_id INTEGER PRIMARY KEY NOT NULL, 
     instrument TEXT NOT NULL UNIQUE,
     max_voices TEXT NOT NULL,
-    five_part_voice TEXT,
-    seven_part_voice TEXT,
     instrument_category_id INTEGER NOT NULL
 );
 
 INSERT INTO 
-    instrument(instrument, max_voices, five_part_voice, seven_part_voice, instrument_category_id) 
+    instrument(instrument_id, instrument, max_voices, instrument_category_id) 
 VALUES
--- Fløyte
- ('Pikkolofløyte',  2,      NULL,   NULL,   1), 
- ('Tverrfløyte',    4,      NULL,   NULL,   1),
+    -- Fløyte
+    (1,     'Pikkolofløyte',    2,  1), 
+    (2,     'Tverrfløyte',      4,  1),
 
--- Rørblås
- ('Obo',            2,      NULL,   NULL,   10),
- ('Engelsk horn',   2,      NULL,   NULL,   10),
- ('Fagott',         2,      NULL,   NULL,   10),
+    -- Rørblås
+    (3,     'Obo',              2,  2),
+    (4,     'Engelsk horn',     2,  2),
+    (5,     'Fagott',           2,  2),
 
--- Klarinett
- ('Altklarinett',   2,      NULL,   NULL,   2),
- ('Klarinett',      4,      NULL,   NULL,   2),
- ('Bassklarinett',  2,      NULL,   NULL,   2),
+    -- Klarinett
+    (6,     'Altklarinett',     2,  3),
+    (7,     'Klarinett',        4,  3),
+    (8,     'Bassklarinett',    2,  3),
 
--- Trompet ???
- ('Trompet',        4,      NULL,   NULL,   3),
- ('Kornett',        4,      NULL,   NULL,   3),
- ('Flygelhorn',     4,      NULL,   NULL,   3),
+    -- Trompet ???
+    (9,	    'Trompet',          4,  4),
+    (10,	'Kornett',          4,  4),
+    (11,	'Flygelhorn',       4,  4),
 
--- Saksofon
- ('Sopransaksofon',     2,  NULL,   NULL,   4),
- ('Altsaksofon',        3,  NULL,   NULL,   4),
- ('Tenorsaksofon',      2,  NULL,   NULL,   4),
- ('Barytonsaksofon',    2,  NULL,   NULL,   4),
+    -- Saksofon
+    (12,	'Sopransaksofon',   2,  5),
+    (13,	'Altsaksofon',      3,  5),
+    (14,	'Tenorsaksofon',    2,  5),
+    (15,	'Barytonsaksofon',  2,  5),
 
--- Baryton
- ('Horn',           6,      NULL,   NULL,   5),
- ('Baryton',        3,      NULL,   NULL,   5),
- ('Eufonium',       3,      NULL,   NULL,   5),
- ('Alttrombone',    4,      NULL,   NULL,   5),
- ('Trombone',       4,      NULL,   NULL,   5),
- ('Basstrombone',   2,      NULL,   NULL,   5),
+    -- Grovmessing
+    (16,	'Horn',             6,  6),
+    (17,	'Baryton',          3,  6),
+    (18,	'Eufonium',         3,  6),
+    (19,	'Alttrombone',      4,  6),
+    (20,	'Trombone',         4,  6),
+    (21,	'Basstrombone',     2,  6),
 
--- Tuba
- ('Tuba',           3,      NULL,   NULL,   6),
+    -- Tuba
+    (22,	'Tuba',             3,  7),
 
--- Perkusjon
-('Slagverk',        1,      NULL,   NULL,   7),
-('Skarptromme',     1,      NULL,   NULL,   7),
-('Symbaler',        1,      NULL,   NULL,   7),
-('Basstromme',      1,      NULL,   NULL,   7),
-('Pauker',          1,      NULL,   NULL,   7),
-('Tamburin',        1,      NULL,   NULL,   7),
-('Kubjelle',        1,      NULL,   NULL,   7),
-('Perkusjon',       6,      NULL,   NULL,   7),
+    -- Perkusjon
+    (23,	'Slagverk',         1,  8),
+    (24,	'Skarptromme',      1,  8),
+    (25,	'Symbaler',         1,  8),
+    (26,	'Basstromme',       1,  8),
+    (27,	'Pauker',           1,  8),
+    (28,	'Tamburin',         1,  8),
+    (29,	'Kubjelle',         1,  8),
+    (30,	'Perkusjon',        6,  8),
 
--- Storband
-('Klokkespill',    1,      NULL,   NULL,   8),
-('Piano',          1,      NULL,   NULL,   8),
-('Gitar',          1,      NULL,   NULL,   8),
-('Bassgitar',      1,      NULL,   NULL,   8),
+    -- Storband
+    (31,	'Klokkespill',      1,  9),
+    (32,	'Piano',            1,  9),
+    (33,	'Gitar',            1,  9),
+    (34,	'Bassgitar',        1,  9),
 
--- Annet
-('Akkorder',        1,      NULL,   NULL,   9),
-('Partitur',        1,      NULL,   NULL,   9),
-('Superpart',       1,      NULL,   NULL,   9), 
-('Annet',           1,      NULL,   NULL,   9);
-
+    -- Annet
+    (35,	'Akkorder',         1,  10),
+    (36,	'Partitur',         1,  10),
+    (37,	'Superpart',        1,  10), 
+    (38,	'Annet',            1,  10);
 
 
 -- ****************** WIP *************************
