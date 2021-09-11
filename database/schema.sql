@@ -65,7 +65,5 @@ CREATE TABLE instrument(
     instrument_id INTEGER PRIMARY KEY NOT NULL, 
     instrument TEXT NOT NULL UNIQUE,
     max_voices TEXT NOT NULL,
-    five_part_voice TEXT,
-    seven_part_voice TEXT,
     instrument_category_id INTEGER NOT NULL
 );
