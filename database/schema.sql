@@ -46,3 +46,14 @@ CREATE TABLE version (
     migration TEXT,
     create_time TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE tone(
+    tone_id INTEGER PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL UNIQUE,
+    key_signature TEXT NOT NULL UNIQUE,
+    semitones_from_c INTEGER NOT NULL
+);
+CREATE TABLE clef(
+    clef_id INTEGER PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    unicode_symbol TEXT NOT NULL
+);
