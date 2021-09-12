@@ -8,7 +8,7 @@ router.get("/documents",
     passport.authenticate("jwt", {session: false}),
     (req, res) => {
         const db = new Database(dbFilename, dbReadOnlyConfig)
-        const stmt = db.prepare("SELECT title, url FROM document ORDER BY document_id DESC")
+        const stmt = db.prepare("SELECT title, filename AS url FROM document ORDER BY document_id DESC")
         const documents = stmt.all();
         res.send(documents)
         db.close()
