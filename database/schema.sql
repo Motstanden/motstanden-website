@@ -65,5 +65,27 @@ CREATE TABLE instrument(
     instrument_id INTEGER PRIMARY KEY NOT NULL, 
     instrument TEXT NOT NULL UNIQUE,
     max_voices TEXT NOT NULL,
-    instrument_category_id INTEGER NOT NULL
+    instrument_category_id INTEGER NOT NULL,
+    FOREIGN KEY (instrument_category_id) 
+        REFERENCES instrument_category(instrument_category_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
+CREATE TABLE five_part_system(
+    instrument_id INTEGER NOT NULL,
+    part_number INTEGER NOT NULL CHECK (part_number >= 1 AND part_number <= 5),
+    PRIMARY KEY (instrument_id, part_number),
+    FOREIGN KEY (instrument_id)
+        REFERENCES instrument(instrument_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+CREATE TABLE seven_part_system(
+    instrument_id INTEGER NOT NULL,
+    part_number INTEGER NOT NULL CHECK (part_number >= 1 AND part_number <= 7),
+    PRIMARY KEY (instrument_id, part_number),
+    FOREIGN KEY (instrument_id)
+        REFERENCES instrument(instrument_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
 );

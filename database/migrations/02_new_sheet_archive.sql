@@ -55,10 +55,10 @@ CREATE TABLE clef(
 
 -- Insert all possible clef values into the table
 INSERT INTO clef(name, unicode_symbol) VALUES
-('G-nøkkel',        '𝄞'),
-('F-nøkkel',        '𝄢'),
-('C-nøkkel',        '𝄡'),
-('Trommenøkkel',    '𝄦');
+    ('G-nøkkel',        '𝄞'),
+    ('F-nøkkel',        '𝄢'),
+    ('C-nøkkel',        '𝄡'),
+    ('Trommenøkkel',    '𝄦');
 
 CREATE TABLE instrument_category(
     instrument_category_id INTERGER PRIMARY KEY NOT NULL,    
@@ -66,28 +66,32 @@ CREATE TABLE instrument_category(
 );
 
 INSERT INTO instrument_category(instrument_category_id, category) VALUES
-(1,     'Fløyter'),
-(2,     'Rørblås'),  
-(3,     'Klarinetter'),
-(4,     'Trompeter'),
-(5,     'Saksofoner'),
-(6,     'Grovmessing'),
-(7,     'Tuba'),
-(8,     'Perkusjon'),
-(9,     'Storband'),
-(10,    'Annet');
+    (1,     'Fløyter'),
+    (2,     'Rørblås'),
+    (3,     'Klarinetter'),
+    (4,     'Trompeter'),
+    (5,     'Saksofoner'),
+    (6,     'Grovmessing'),
+    (7,     'Tuba'),
+    (8,     'Perkusjon'),
+    (9,     'Storband'),
+    (10,    'Annet');
 
 CREATE TABLE instrument(
     instrument_id INTEGER PRIMARY KEY NOT NULL, 
     instrument TEXT NOT NULL UNIQUE,
     max_voices TEXT NOT NULL,
-    instrument_category_id INTEGER NOT NULL
+    instrument_category_id INTEGER NOT NULL,
+    FOREIGN KEY (instrument_category_id) 
+        REFERENCES instrument_category(instrument_category_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
 );
 
 INSERT INTO 
     instrument(instrument_id, instrument, max_voices, instrument_category_id) 
 VALUES
-    -- Fløyte
+    -- Fløyter
     (1,     'Pikkolofløyte',    2,  1), 
     (2,     'Tverrfløyte',      4,  1),
 
@@ -96,17 +100,17 @@ VALUES
     (4,     'Engelsk horn',     2,  2),
     (5,     'Fagott',           2,  2),
 
-    -- Klarinett
+    -- Klarinettet
     (6,     'Altklarinett',     2,  3),
     (7,     'Klarinett',        4,  3),
     (8,     'Bassklarinett',    2,  3),
 
-    -- Trompet ???
+    -- Trompeter
     (9,	    'Trompet',          4,  4),
     (10,	'Kornett',          4,  4),
     (11,	'Flygelhorn',       4,  4),
 
-    -- Saksofon
+    -- Saksofoner
     (12,	'Sopransaksofon',   2,  5),
     (13,	'Altsaksofon',      3,  5),
     (14,	'Tenorsaksofon',    2,  5),
@@ -145,6 +149,54 @@ VALUES
     (37,	'Superpart',        1,  10), 
     (38,	'Annet',            1,  10);
 
+CREATE TABLE five_part_system(
+    instrument_id INTEGER NOT NULL,
+    part_number INTEGER NOT NULL CHECK (part_number >= 1 AND part_number <= 5),
+    PRIMARY KEY (instrument_id, part_number),
+    FOREIGN KEY (instrument_id)
+        REFERENCES instrument(instrument_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+
+-- Pikkolofløyte: Part 1-3
+INSERT INTO five_part_system SELECT instrument_id, 1 FROM instrument WHERE instrument = 'Pikkolofløyte';
+INSERT INTO five_part_system SELECT instrument_id, 2 FROM instrument WHERE instrument = 'Pikkolofløyte';
+INSERT INTO five_part_system SELECT instrument_id, 3 FROM instrument WHERE instrument = 'Pikkolofløyte';
+
+-- Tverrfløyte: Part 2-4
+INSERT INTO five_part_system SELECT instrument_id, 2 FROM instrument WHERE instrument = 'Tverrfløyte';
+INSERT INTO five_part_system SELECT instrument_id, 3 FROM instrument WHERE instrument = 'Tverrfløyte';
+INSERT INTO five_part_system SELECT instrument_id, 4 FROM instrument WHERE instrument = 'Tverrfløyte';
+
+-- Obo: Part 4-5
+INSERT INTO five_part_system SELECT instrument_id, 4 FROM instrument WHERE instrument = 'Obo';
+INSERT INTO five_part_system SELECT instrument_id, 5 FROM instrument WHERE instrument = 'Obo';
+
+
+CREATE TABLE seven_part_system(
+    instrument_id INTEGER NOT NULL,
+    part_number INTEGER NOT NULL CHECK (part_number >= 1 AND part_number <= 7),
+    PRIMARY KEY (instrument_id, part_number),
+    FOREIGN KEY (instrument_id)
+        REFERENCES instrument(instrument_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+
+-- Pikkolofløyte: Part 1-3
+INSERT INTO seven_part_system SELECT instrument_id, 1 FROM instrument WHERE instrument = 'Pikkolofløyte';
+INSERT INTO seven_part_system SELECT instrument_id, 2 FROM instrument WHERE instrument = 'Pikkolofløyte';
+INSERT INTO seven_part_system SELECT instrument_id, 3 FROM instrument WHERE instrument = 'Pikkolofløyte';
+
+-- Tverrfløyte: Part 3-5
+INSERT INTO seven_part_system SELECT instrument_id, 3 FROM instrument WHERE instrument = 'Tverrfløyte';
+INSERT INTO seven_part_system SELECT instrument_id, 4 FROM instrument WHERE instrument = 'Tverrfløyte';
+INSERT INTO seven_part_system SELECT instrument_id, 5 FROM instrument WHERE instrument = 'Tverrfløyte';
+
+-- Obo: Part 6-7
+INSERT INTO seven_part_system SELECT instrument_id, 6 FROM instrument WHERE instrument = 'Obo';
+INSERT INTO seven_part_system SELECT instrument_id, 7 FROM instrument WHERE instrument = 'Obo';
 
 -- ****************** WIP *************************
 
