@@ -61,16 +61,16 @@ app.use(passport.initialize());
 // Allows us to use files from './client/build'
 app.use(express.static(path.join(__dirname, "..", "client", "build")))
 
-app.use("/api/files/private", 
+app.use("/files/private", 
     passport.authenticate("jwt", { session: false }),
     express.static(path.join(__dirname, "files", "private")),
     serveIndex(path.join(__dirname, "files", "private"), {icons: true}))
 
-app.use("/api/files/public", 
+app.use("/files/public", 
     express.static(path.join(__dirname, "files", "public")),
     serveIndex(path.join(__dirname, "files", "public"), {icons: true}))
 
-app.use("/api/files", 
+app.use("/files", 
     passport.authenticate("jwt", { session: false, failureRedirect: "/api/files/public"}),
     express.static(path.join(__dirname, "files")),
     serveIndex(path.join(__dirname, "files"), {icons: true}))
