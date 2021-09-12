@@ -20,7 +20,6 @@ INSERT INTO version(migration) VALUES
 --  new document table
 -- ::::::::::::::::::::::::::
 
--- DROP TABLE document;
 CREATE TABLE document_new(
     document_id INTEGER PRIMARY KEY NOT NULL,
     title TEXT NOT NULL,
@@ -33,6 +32,29 @@ INSERT INTO document_new(title, filename)
 
 DROP TABLE document;
 ALTER TABLE document_new RENAME TO document;
+
+-- ::::::::::::::::::::::::::
+--  new song_lyric table
+-- ::::::::::::::::::::::::::
+
+CREATE TABLE song_lyric_new(
+    song_lyric_id INTEGER PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL,
+    filename TEXT NOT NULL CHECK(like('files/public/studenttraller/%_.html', filename)),
+    song_melody TEXT,
+    song_text_origin TEXT,
+    song_description TEXT
+);
+
+INSERT INTO 
+    song_lyric_new(title, filename, song_melody, song_text_origin, song_description)
+SELECT 
+    title, full_filename, song_melody, song_text_origin, song_description
+FROM 
+    song_lyric; 
+
+DROP TABLE song_lyric;
+ALTER TABLE song_lyric_new RENAME TO song_lyric;
 
 -- ::::::::::::::::::::::::::
 --      sheet archive

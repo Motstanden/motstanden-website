@@ -7,7 +7,7 @@ router.get("/song_lyric", (req, res) => {
     const db = new Database(dbFilename, dbReadOnlyConfig)
     const stmt = db.prepare("SELECT \
                                 title, \
-                                url, \
+                                filename as url, \
                                 song_melody AS melody, \
                                 song_text_origin AS textOrigin, \
                                 song_description AS description \
@@ -21,7 +21,7 @@ router.get("/song_lyric_data", (req, res) => {
 
     // Get the name of the html file
     const db = new Database(dbFilename, dbReadOnlyConfig)
-    const stmt = db.prepare("SELECT full_filename AS file FROM song_lyric WHERE title = ?")
+    const stmt = db.prepare("SELECT filename AS file FROM song_lyric WHERE title = ?")
     const title = req.query.title;
     const filename = stmt.get([title]).file
     db.close()
