@@ -240,6 +240,37 @@ INSERT INTO seven_part_system SELECT instrument_id, 7 FROM instrument WHERE inst
 
 -- ****************** WIP *************************
 
+CREATE TABLE song_category(
+    song_category_id INTEGER PRIMARY KEY NOT NULL,
+    category TEXT NOT NULL UNIQUE
+);
+
+INSERT INTO song_category(category) VALUES
+    ('Repertoar'),
+    ('Marsjnoter'),
+    ('17. mai'),
+    ('SMASH'),
+    ('Filmmusikk'),
+    ('Spillmusikk');
+
+CREATE TABLE song_title (
+    song_title_id INTEGER PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL
+);
+
+CREATE TABLE song_title_category(
+    song_title_id INTEGER NOT NULL,
+    song_category_id INTEGER NOT NULL,
+    PRIMARY KEY (song_title_id, song_category_id),
+    FOREIGN KEY (song_title_id)
+        REFERENCES song_title(song_title_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (song_category_id)
+        REFERENCES song_category(song_category_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
 -- CREATE TABLE sheet_archive_file (
 --     sheet_archive_file_id INTEGER PRIMARY KEY NOT NULL,
 --     sheet_archive_song_id INTEGER NOT NULL,
@@ -247,12 +278,4 @@ INSERT INTO seven_part_system SELECT instrument_id, 7 FROM instrument WHERE inst
 --         REFERENCES sheet_archive_song (sheet_archive_song_id)
 --         ON UPDATE CASCADE 
 --         ON DELETE RESTRICT
--- );
-
-
--- CREATE TABLE sheet_archive_song (
---     sheet_archive_song_id INTEGER PRIMARY KEY NOT NULL,
---     title TEXT NOT NULL,
---     is_in_repertoire BOOLEAN NOT NULL
---     -- TODO: GROUP column
 -- );
