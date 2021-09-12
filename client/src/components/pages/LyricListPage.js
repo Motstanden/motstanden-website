@@ -52,7 +52,7 @@ class LyricListPage extends React.Component {
                 </Route>
                 {this.state.lyrics.map( (item) => (
                     <Route path={this.state.path + "/" + item.title}>
-                        <LyricItemPage title = {item.title} url={item.url}/>
+                        <LyricItemPage title = {item.title}/>
                     </Route>
                 ))}
             </Switch>
