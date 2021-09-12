@@ -11,15 +11,6 @@ CREATE TABLE user_account (
     username TEXT NOT NULL,
     password TEXT NOT NULL
 );
-CREATE TABLE document (
-    document_id INTEGER PRIMARY KEY NOT NULL,
-    title TEXT NOT NULL,
-    root_path TEXT,
-    filename TEXT NOT NULL,
-    is_public BOOLEAN NOT NULL DEFAULT 0,
-    full_filename TEXT GENERATED ALWAYS AS (root_path || filename) VIRTUAL,
-    url TEXT GENERATED ALWAYS AS (CASE is_public WHEN 1 THEN '/api/files/public/' || filename ELSE '/api/files/private/' || filename END) VIRTUAL
-);
 CREATE TABLE sheet_archive (
     sheet_archive_id INTEGER PRIMARY KEY NOT NULL,
     title TEXT NOT NULL,
@@ -45,6 +36,12 @@ CREATE TABLE version (
     version_id INTEGER PRIMARY KEY NOT NULL,
     migration TEXT,
     create_time TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS "document"(
+    document_id INTEGER PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL,
+    filename TEXT NOT NULL CHECK(like('files/public/dokumenter/%_._%', filename) OR like('files/private/dokumenter/%_._%', filename)),
+    is_public BOOLEAN NOT NULL GENERATED ALWAYS AS (iif(like('files/public/%', filename), 1, 0)) STORED
 );
 CREATE TABLE tone(
     tone_id INTEGER PRIMARY KEY NOT NULL,

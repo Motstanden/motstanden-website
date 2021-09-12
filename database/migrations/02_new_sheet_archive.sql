@@ -17,6 +17,24 @@ INSERT INTO version(migration) VALUES
 ('02_new_sheet_archive.sql');
 
 -- ::::::::::::::::::::::::::
+--  new document table
+-- ::::::::::::::::::::::::::
+
+-- DROP TABLE document;
+CREATE TABLE document_new(
+    document_id INTEGER PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL,
+    filename TEXT NOT NULL CHECK(like('files/public/dokumenter/%_._%', filename) OR like('files/private/dokumenter/%_._%', filename)),
+    is_public BOOLEAN NOT NULL GENERATED ALWAYS AS (iif(like('files/public/%', filename), 1, 0)) STORED
+);
+
+INSERT INTO document_new(title, filename) 
+    SELECT title, full_filename FROM document;
+
+DROP TABLE document;
+ALTER TABLE document_new RENAME TO document;
+
+-- ::::::::::::::::::::::::::
 --      sheet archive
 -- ::::::::::::::::::::::::::
 
