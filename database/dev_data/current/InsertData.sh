@@ -1,0 +1,11 @@
+echo "Inserting current data into motstanden_dev.db:";
+echo "    Inserting quotes";
+sqlite3 ../../motstanden_dev.db < InsertQuotes.sql;
+echo "    Inserting users";
+sqlite3 ../../motstanden_dev.db < InsertUsers.sql;
+echo "    Inserting documents";
+sqlite3 ../../motstanden_dev.db < InsertDocuments.sql;
+echo "    Inserting sheet music";
+sqlite3 ../../motstanden_dev.db < InsertSheets.sql;
+echo "    Inserting song lyrics";
+sqlite3 ../../motstanden_dev.db < InsertLyrics.sql;
