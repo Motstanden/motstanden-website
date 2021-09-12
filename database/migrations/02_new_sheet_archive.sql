@@ -89,65 +89,65 @@ CREATE TABLE instrument(
 );
 
 INSERT INTO 
-    instrument(instrument_id, instrument, max_voices, instrument_category_id) 
+    instrument(instrument, max_voices, instrument_category_id) 
 VALUES
     -- Fløyter
-    (1,     'Pikkolofløyte',    2,  1), 
-    (2,     'Tverrfløyte',      4,  1),
+    ('Pikkolofløyte',    2,  1), 
+    ('Tverrfløyte',      4,  1),
 
     -- Rørblås
-    (3,     'Obo',              2,  2),
-    (4,     'Engelsk horn',     2,  2),
-    (5,     'Fagott',           2,  2),
+    ('Obo',              2,  2),
+    ('Engelsk horn',     2,  2),
+    ('Fagott',           2,  2),
 
     -- Klarinettet
-    (6,     'Altklarinett',     2,  3),
-    (7,     'Klarinett',        4,  3),
-    (8,     'Bassklarinett',    2,  3),
+    ('Altklarinett',     2,  3),
+    ('Klarinett',        4,  3),
+    ('Bassklarinett',    2,  3),
 
     -- Trompeter
-    (9,	    'Trompet',          4,  4),
-    (10,	'Kornett',          4,  4),
-    (11,	'Flygelhorn',       4,  4),
+    ('Trompet',          4,  4),
+    ('Kornett',          4,  4),
+    ('Flygelhorn',       4,  4),
 
     -- Saksofoner
-    (12,	'Sopransaksofon',   2,  5),
-    (13,	'Altsaksofon',      3,  5),
-    (14,	'Tenorsaksofon',    2,  5),
-    (15,	'Barytonsaksofon',  2,  5),
+    ('Sopransaksofon',   2,  5),
+    ('Altsaksofon',      3,  5),
+    ('Tenorsaksofon',    2,  5),
+    ('Barytonsaksofon',  2,  5),
 
     -- Grovmessing
-    (16,	'Horn',             6,  6),
-    (17,	'Baryton',          3,  6),
-    (18,	'Eufonium',         3,  6),
-    (19,	'Alttrombone',      4,  6),
-    (20,	'Trombone',         4,  6),
-    (21,	'Basstrombone',     2,  6),
+    ('Horn',             6,  6),
+    ('Baryton',          3,  6),
+    ('Eufonium',         3,  6),
+    ('Alttrombone',      4,  6),
+    ('Trombone',         4,  6),
+    ('Basstrombone',     2,  6),
 
     -- Tuba
-    (22,	'Tuba',             3,  7),
+    ('Tuba',             3,  7),
 
     -- Perkusjon
-    (23,	'Slagverk',         1,  8),
-    (24,	'Skarptromme',      1,  8),
-    (25,	'Symbaler',         1,  8),
-    (26,	'Basstromme',       1,  8),
-    (27,	'Pauker',           1,  8),
-    (28,	'Tamburin',         1,  8),
-    (29,	'Kubjelle',         1,  8),
-    (30,	'Perkusjon',        6,  8),
+    ('Slagverk',         1,  8),
+    ('Skarptromme',      1,  8),
+    ('Symbaler',         1,  8),
+    ('Basstromme',       1,  8),
+    ('Pauker',           1,  8),
+    ('Tamburin',         1,  8),
+    ('Kubjelle',         1,  8),
+    ('Perkusjon',        6,  8),
 
     -- Storband
-    (31,	'Klokkespill',      1,  9),
-    (32,	'Piano',            1,  9),
-    (33,	'Gitar',            1,  9),
-    (34,	'Bassgitar',        1,  9),
+    ('Klokkespill',      1,  9),
+    ('Piano',            1,  9),
+    ('Gitar',            1,  9),
+    ('Bassgitar',        1,  9),
 
     -- Annet
-    (35,	'Akkorder',         1,  10),
-    (36,	'Partitur',         1,  10),
-    (37,	'Superpart',        1,  10), 
-    (38,	'Annet',            1,  10);
+    ('Akkorder',         1,  10),
+    ('Partitur',         1,  10),
+    ('Superpart',        1,  10), 
+    ('Annet',            1,  10);
 
 CREATE TABLE five_part_system(
     instrument_id INTEGER NOT NULL,
