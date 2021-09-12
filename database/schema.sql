@@ -82,3 +82,24 @@ CREATE TABLE seven_part_system(
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
+CREATE TABLE song_category(
+    song_category_id INTEGER PRIMARY KEY NOT NULL,
+    category TEXT NOT NULL UNIQUE
+);
+CREATE TABLE song_title (
+    song_title_id INTEGER PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL
+);
+CREATE TABLE song_title_category(
+    song_title_id INTEGER NOT NULL,
+    song_category_id INTEGER NOT NULL,
+    PRIMARY KEY (song_title_id, song_category_id),
+    FOREIGN KEY (song_title_id)
+        REFERENCES song_title(song_title_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (song_category_id)
+        REFERENCES song_category(song_category_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
