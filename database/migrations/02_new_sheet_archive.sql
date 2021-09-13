@@ -271,11 +271,13 @@ CREATE TABLE song_title_category(
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
--- CREATE TABLE sheet_archive_file (
---     sheet_archive_file_id INTEGER PRIMARY KEY NOT NULL,
---     sheet_archive_song_id INTEGER NOT NULL,
---     FOREIGN KEY (sheet_archive_song_id)
---         REFERENCES sheet_archive_song (sheet_archive_song_id)
---         ON UPDATE CASCADE 
---         ON DELETE RESTRICT
--- );
+
+CREATE TABLE song_file (
+    song_file_id INTEGER PRIMARY KEY NOT NULL,
+    song_title_id INTEGER NOT NULL,
+    filename TEXT NOT NULL CHECK(like('files/private/notearkiv/%_._%', filename)),
+    FOREIGN KEY (song_title_id)
+        REFERENCES song_title (song_title_id)
+        ON UPDATE CASCADE 
+        ON DELETE RESTRICT
+);
