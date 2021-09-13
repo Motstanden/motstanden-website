@@ -33,6 +33,10 @@ INSERT INTO document_new(title, filename)
 DROP TABLE document;
 ALTER TABLE document_new RENAME TO document;
 
+UPDATE document 
+SET filename = 'files/public/dokumenter/motstandens-statutter.pdf'
+WHERE filename like '%motstandens-statutter.pdf';
+
 -- ::::::::::::::::::::::::::
 --  new song_lyric table
 -- ::::::::::::::::::::::::::
