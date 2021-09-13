@@ -62,7 +62,7 @@ app.use(passport.initialize());
 app.use(express.static(path.join(__dirname, "..", "client", "build")))
 
 app.use("/files/private", 
-    passport.authenticate("jwt", { session: false }),
+    passport.authenticate("jwt", { session: false, failureRedirect: "/files/public" }),
     express.static(path.join(__dirname, "files", "private")),
     serveIndex(path.join(__dirname, "files", "private"), {icons: true}))
 
@@ -71,7 +71,7 @@ app.use("/files/public",
     serveIndex(path.join(__dirname, "files", "public"), {icons: true}))
 
 app.use("/files", 
-    passport.authenticate("jwt", { session: false, failureRedirect: "/api/files/public"}),
+    passport.authenticate("jwt", { session: false, failureRedirect: "/files/public"}),
     express.static(path.join(__dirname, "files")),
     serveIndex(path.join(__dirname, "files"), {icons: true}))
 
