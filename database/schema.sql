@@ -107,8 +107,18 @@ CREATE TABLE song_file (
     song_file_id INTEGER PRIMARY KEY NOT NULL,
     song_title_id INTEGER NOT NULL,
     filename TEXT NOT NULL CHECK(like('files/private/notearkiv/%_._%', filename)),
+    clef_id INTEGER NOT NULL,
+    instrument_id INTERGER NOT NULL,
     FOREIGN KEY (song_title_id)
         REFERENCES song_title (song_title_id)
         ON UPDATE CASCADE 
-        ON DELETE RESTRICT
+        ON DELETE RESTRICT,
+    FOREIGN KEY (clef_id) 
+        REFERENCES clef (clef_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    FOREIGN KEY (instrument_id)
+        REFERENCES instrument (instrument_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT 
 );
