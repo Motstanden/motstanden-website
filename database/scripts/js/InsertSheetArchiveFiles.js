@@ -111,7 +111,7 @@ const RunScript = () => {
                  .map(dir => path.join(__dirname, RootDir, dir.name))
                  
     dirs.forEach( (dir, i) => {
-            let song = new Song(dir)
+        let song = new Song(dir)
     })
 }
 
