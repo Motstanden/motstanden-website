@@ -137,3 +137,17 @@ BEGIN
     WHERE 
         instrument_id = NEW.instrument_id;
 END;
+CREATE TRIGGER trig_song_file_before_update
+    BEFORE UPDATE ON song_file
+BEGIN
+    SELECT
+        max_voices,
+        CASE
+            WHEN NEW.instrument_voice > max_voices OR NEW.instrument_voice <= 0
+            THEN RAISE(ABORT, 'The instrument_voice number is out of range.')
+        END
+    FROM 
+        instrument 
+    WHERE 
+        instrument_id = NEW.instrument_id;
+END;
