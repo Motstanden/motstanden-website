@@ -109,6 +109,7 @@ CREATE TABLE song_file (
     filename TEXT NOT NULL CHECK(like('files/private/notearkiv/%_._%', filename)),
     clef_id INTEGER NOT NULL,
     instrument_id INTERGER NOT NULL,
+    instrument_voice INTEGER NOT NULL DEFAULT 1 CHECK(instrument_voice > 0),
     FOREIGN KEY (song_title_id)
         REFERENCES song_title (song_title_id)
         ON UPDATE CASCADE 
@@ -120,5 +121,19 @@ CREATE TABLE song_file (
     FOREIGN KEY (instrument_id)
         REFERENCES instrument (instrument_id)
         ON UPDATE CASCADE
-        ON DELETE RESTRICT 
+        ON DELETE RESTRICT
 );
+CREATE TRIGGER trig_song_file_before_insert
+    BEFORE INSERT ON song_file
+BEGIN
+    SELECT
+        max_voices,
+        CASE
+            WHEN NEW.instrument_voice > max_voices OR NEW.instrument_voice <= 0
+            THEN RAISE(ABORT, 'The instrument_voice number is out of range.')
+        END
+    FROM 
+        instrument 
+    WHERE 
+        instrument_id = NEW.instrument_id;
+END;
