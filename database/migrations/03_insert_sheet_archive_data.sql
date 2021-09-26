@@ -1,4 +1,13 @@
 -- ::::::::::::::::::::::::::::::::::::::::::::::::
+--      Insert current version into DB.
+-- ::::::::::::::::::::::::::::::::::::::::::::::::
+
+INSERT INTO version(migration) VALUES 
+('03_insert_sheet_archive_data.sql');
+
+
+
+-- ::::::::::::::::::::::::::::::::::::::::::::::::
 --              Five part system
 -- ::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -15,6 +24,7 @@ INSERT INTO five_part_system SELECT instrument_id, 4 FROM instrument WHERE instr
 -- Obo: Part 4-5
 INSERT INTO five_part_system SELECT instrument_id, 4 FROM instrument WHERE instrument = 'Obo';
 INSERT INTO five_part_system SELECT instrument_id, 5 FROM instrument WHERE instrument = 'Obo';
+
 
 
 -- ::::::::::::::::::::::::::::::::::::::::::::::::
