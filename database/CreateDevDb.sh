@@ -13,6 +13,9 @@ cd ../../;
 # Apply schema migration
 echo "Running: 02_new_sheet_archive.sql"
 sqlite3 motstanden_dev.db < ./migrations/02_new_sheet_archive.sql;
+echo "Running: 03_insert_sheet_archive_data.sql"
+sqlite3 motstanden_dev.db < ./migrations/03_insert_sheet_archive_data.sql;
+
 
 # Insert data after migration
 cd dev_data/migration;
