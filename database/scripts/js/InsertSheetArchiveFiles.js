@@ -84,7 +84,7 @@ class SongFile {
         
         [this.instrument, this.voiceNum] = SongFile.#ParseInstrumentStr(info[0]);
         this.key = info[1]
-        this.clef = info[2]
+        this.clef = SongFile.#ParseClefStr(info[2])
     }
 
     static #ParseInstrumentStr = (instrumentStr) => {
@@ -92,6 +92,22 @@ class SongFile {
         let instrument = instrumentStr
         let voiceNum = null
         return [instrument, voiceNum]
+    }
+
+    static #ParseClefStr = (clefStr) => {
+        if (!clefStr) 
+            return null;
+
+        switch(clefStr.trim().toLowerCase()[0]){
+            case 'g':
+                return "G-nøkkel"
+            case 'c':
+                return "C-nøkkel";
+            case 'f':
+                return "F-nøkkel";
+            default:
+                return null;
+        }
     }
 
     static #RightPadArray = (array, finalLength) => {
