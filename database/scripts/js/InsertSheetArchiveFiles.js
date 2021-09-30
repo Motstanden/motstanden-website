@@ -82,15 +82,14 @@ class SongFile {
         let info = songInfo.split("_", numInfoFields)
         info = SongFile.#RightPadArray(info, numInfoFields);
         
-        [this.instrument, this.voiceNum] = SongFile.#ParseInstrumentStr(info[0]);
+        [this.instrument, this.instrumentVoice] = SongFile.#ParseInstrumentStr(info[0]);
         this.key = info[1]
         this.clef = SongFile.#ParseClefStr(info[2])
     }
 
     static #ParseInstrumentStr = (instrumentStr) => {
-        // TODO
-        let instrument = instrumentStr
-        let voiceNum = null
+        let [instrument, voiceNum] = instrumentStr.trim().split("-", 2)
+        voiceNum = voiceNum ? parseInt(voiceNum) : 1;            
         return [instrument, voiceNum]
     }
 
