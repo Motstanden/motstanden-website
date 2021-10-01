@@ -300,6 +300,31 @@ BEGIN
         instrument_id = NEW.instrument_id;
 END;
 
+CREATE VIEW vw_song_file
+AS
+SELECT 
+    song_file_id, 
+    song_title.title as title,
+    filename,
+    clef.name as clef_name,
+    clef.unicode_symbol as clef_unicode_symbol,
+    instrument.instrument as instrument,
+    instrument_category.category as instrument_category 
+FROM 
+    song_file 
+LEFT JOIN song_title USING(song_title_id)
+LEFT JOIN clef using(clef_id)
+LEFT JOIN instrument using(instrument_id)
+LEFT JOIN instrument_category USING(instrument_category_id);
+
+-- Debug vw_song_file
+-- INSERT INTO song_title(title) VALUES ('Olsenbanden');
+-- INSERT INTO 
+-- 	song_file(song_title_id, filename, clef_id, instrument_id) 
+-- VALUES
+-- 	(1, 'files/private/notearkiv/olsenbanden_baryton.pdf', 1, 17);
+-- SELECT * FROM vw_song_file;
+
 -- Test that max_voices trigger works
 --INSERT INTO song_title(title) VALUES ('Olsenbanden');
 --INSERT INTO 
