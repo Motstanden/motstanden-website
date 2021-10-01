@@ -10,7 +10,7 @@ class Song {
         this.extraInfo = null
         this.prettyName = null
         this.files = Song.GetFiles(this.fullPath);
-        
+
         this.#ParseName();
     }
     
@@ -66,8 +66,6 @@ class SongFile {
         
         this.#ParseSongName(songName);
         this.#PareSongInfo(songInfo);
-
-        console.log(this)
     }
 
     #ParseSongName = (songName) => {
@@ -120,14 +118,22 @@ class SongFile {
 const DbName = process.argv[2];
 const RootDir = process.argv[3];
 
+const DB = require('better-sqlite3')(DbName, { fileMustExist: true, verbose: console.log, readonly: false})
+
+const DbInsertSongArray = (songArray) => {  
+    songArray.forEach(song => {
+        // #TODO
+    })
+}
+
 const RunScript = () => {
     let dirs = fs.readdirSync(RootDir, { withFileTypes: true })
                  .filter(fsItem => fsItem.isDirectory() )
                  .map(dir => path.join(__dirname, RootDir, dir.name))
-                 
-    dirs.forEach( (dir, i) => {
-        let song = new Song(dir)
-    })
+
+    let songArray = dirs.map( dir => new Song(dir));
+
+    DbInsertSongArray(songArray);
 }
 
 RunScript();
