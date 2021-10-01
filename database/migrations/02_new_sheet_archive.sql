@@ -132,6 +132,17 @@ CREATE TABLE instrument(
         ON UPDATE CASCADE
 );
 
+CREATE VIEW vw_instrument
+AS
+SELECT 
+    instrument_id,
+    instrument,
+    max_voices,
+    instrument_category.category AS cetegory
+FROM 
+     instrument
+LEFT JOIN instrument_category USING(instrument_category_id);
+
 INSERT INTO 
     instrument(instrument, max_voices, instrument_category_id) 
 VALUES
