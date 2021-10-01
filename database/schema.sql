@@ -64,6 +64,17 @@ CREATE TABLE instrument(
         ON DELETE RESTRICT
         ON UPDATE CASCADE
 );
+CREATE VIEW vw_instrument
+AS
+SELECT 
+    instrument_id,
+    instrument,
+    max_voices,
+    instrument_category.category AS cetegory
+FROM 
+     instrument
+LEFT JOIN instrument_category USING(instrument_category_id)
+/* vw_instrument(instrument_id,instrument,max_voices,cetegory) */;
 CREATE TABLE five_part_system(
     instrument_id INTEGER NOT NULL,
     part_number INTEGER NOT NULL CHECK (part_number >= 1 AND part_number <= 5),
