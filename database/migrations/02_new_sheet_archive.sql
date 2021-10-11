@@ -242,7 +242,7 @@ INSERT INTO song_category(category) VALUES
 
 CREATE TABLE song_title (
     song_title_id INTEGER PRIMARY KEY NOT NULL,
-    title TEXT NOT NULL
+    title TEXT UNIQUE NOT NULL
 );
 
 -- song_title and song_category has a many to many relationship
@@ -320,13 +320,34 @@ SELECT
     clef.name as clef_name,
     clef.unicode_symbol as clef_unicode_symbol,
     instrument.instrument as instrument,
+    instrument_voice,
     instrument_category.category as instrument_category 
 FROM 
     song_file 
 LEFT JOIN song_title USING(song_title_id)
-LEFT JOIN clef using(clef_id)
-LEFT JOIN instrument using(instrument_id)
+LEFT JOIN clef USING(clef_id)
+LEFT JOIN instrument USING(instrument_id)
 LEFT JOIN instrument_category USING(instrument_category_id);
+
+CREATE TRIGGER trig_vw_song_file_instead_of_insert
+    INSTEAD OF INSERT ON vw_song_file
+BEGIN
+    INSERT OR IGNORE INTO song_title(title) VALUES (NEW.title);
+
+    INSERT OR ROLLBACK INTO 
+        song_file(song_title_id, filename, clef_id, instrument_id, instrument_voice)
+    SELECT 
+        song_title_id,
+        NEW.filename,
+        clef.clef_id,
+        instrument.instrument_id,
+        NEW.instrument_voice
+    FROM 
+        song_title
+    INNER JOIN clef ON clef.name = NEW.clef_name
+    INNER JOIN instrument ON instrument.instrument = NEW.instrument
+    WHERE NEW.title = song_title.title;
+END;
 
 -- Debug vw_song_file
 -- INSERT INTO song_title(title) VALUES ('Olsenbanden');
@@ -335,6 +356,15 @@ LEFT JOIN instrument_category USING(instrument_category_id);
 -- VALUES
 -- 	(1, 'files/private/notearkiv/olsenbanden_baryton.pdf', 1, 17);
 -- SELECT * FROM vw_song_file;
+
+-- Debug vw_song_file
+INSERT INTO 
+    vw_song_file(title, filename, clef_name, instrument_voice, instrument) 
+VALUES 
+    ('Olsenbanden', 'files/private/notearkiv/olsenbanden_baryton.pdf', 'G-nøkkel', 1, 'Baryton');
+SELECT * FROM vw_song_file;
+
+
 
 -- Test that max_voices trigger works
 --INSERT INTO song_title(title) VALUES ('Olsenbanden');
