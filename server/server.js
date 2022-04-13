@@ -28,7 +28,7 @@ app.use(helmet({
 // Need this to create and parse cookies
 app.use(cookieParser())
 
-// Alows us to make request from localhost:3000 and whatever domain the server is running on
+// Allows us to make request from localhost:3000 and whatever domain the server is running on
 const whiteList = [ 
     "http://localhost:3000", 
     "https://localhost:3000",
