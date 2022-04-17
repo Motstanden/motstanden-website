@@ -3,7 +3,7 @@
 -- ::::::::::::::::::::::::::
 
 INSERT INTO version(migration) VALUES 
-('04_insert_sheet_archive_data.sql');
+('02_insert_sheet_archive_data.sql');
 
 -- ::::::::::::::::::::::::::::::::::::::::::::::::
 --              Five part system
