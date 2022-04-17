@@ -1,3 +1,11 @@
+-- ::::::::::::::::::::::::::::::::::::::::::::::::
+--      Insert current version into DB.
+-- ::::::::::::::::::::::::::::::::::::::::::::::::
+
+INSERT INTO version(migration) VALUES 
+('03_new_sheet_archive.sql');
+
+
 -- ::::::::::::::::::::::::::
 --      sheet archive
 -- ::::::::::::::::::::::::::
