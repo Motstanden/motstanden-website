@@ -1,11 +1,9 @@
--- ::::::::::::::::::::::::::::::::::::::::::::::::
---      Insert current version into DB.
--- ::::::::::::::::::::::::::::::::::::::::::::::::
+-- ::::::::::::::::::::::::::
+--      database version
+-- ::::::::::::::::::::::::::
 
 INSERT INTO version(migration) VALUES 
 ('04_insert_sheet_archive_data.sql');
-
-
 
 -- ::::::::::::::::::::::::::::::::::::::::::::::::
 --              Five part system

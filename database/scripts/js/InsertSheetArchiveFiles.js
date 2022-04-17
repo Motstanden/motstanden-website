@@ -1,4 +1,4 @@
-// Run script: node InsertSheetArchiveFiles.js ../../motstanden_dev.db ../../dev_data/files
+// Run script: node InsertSheetArchiveFiles.js ../../sheet_archive_dev.db ../../dev_data/files
 
 "use strict"
 const fs = require('fs')

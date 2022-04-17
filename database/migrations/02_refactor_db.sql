@@ -9,8 +9,7 @@ CREATE TABLE version (
 );
 
 -- Retroactively insert the initial version into the db.
-INSERT INTO version(migration, create_time) VALUE
-S 
+INSERT INTO version(migration, create_time) VALUES
 ('01_initial.sql', datetime('now', '-100 days'));
 
 -- Insert current version into the DB.

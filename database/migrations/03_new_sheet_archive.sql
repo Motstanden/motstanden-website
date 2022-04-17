@@ -1,10 +1,15 @@
--- ::::::::::::::::::::::::::::::::::::::::::::::::
---      Insert current version into DB.
--- ::::::::::::::::::::::::::::::::::::::::::::::::
+-- ::::::::::::::::::::::::::
+--      database version
+-- ::::::::::::::::::::::::::
+
+CREATE TABLE IF NOT EXISTS version (
+    version_id INTEGER PRIMARY KEY NOT NULL,
+    migration TEXT,
+    create_time TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
 INSERT INTO version(migration) VALUES 
 ('03_new_sheet_archive.sql');
-
 
 -- ::::::::::::::::::::::::::
 --      sheet archive
