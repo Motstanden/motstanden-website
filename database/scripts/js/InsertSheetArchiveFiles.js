@@ -1,4 +1,4 @@
-// Run script: node InsertSheetArchiveFiles.js ../../sheet_archive_dev.db ../../dev_data/files
+// Run script: node InsertSheetArchiveFiles.js ../../sheet_archive_dev.db  ../../../server/files/private/notearkiv/
 
 "use strict"
 const fs = require('fs')
@@ -52,12 +52,15 @@ class Song {
 class SongFile {
     constructor(fullPath){
         this.fullPath = fullPath
+        this.urlPath = null
         this.prettyName = null
         this.extraInfo = null
         this.instrument = null
         this.instrumentVoice = null
         this.key = null
         this.clef = null
+
+        this.#ParseUrl(fullPath)
 
         let filename = path.basename(this.fullPath)
                             .trim()
@@ -66,6 +69,12 @@ class SongFile {
         
         this.#ParseSongName(songName);
         this.#PareSongInfo(songInfo);
+    }
+
+    #ParseUrl = fullPath => {
+        let dirtyUrl = fullPath.match(/files.*/)[0];
+        let posixUrl = dirtyUrl.split(path.sep).join(path.posix.sep)
+        this.urlPath = posixUrl;
     }
 
     #ParseSongName = (songName) => {
@@ -122,10 +131,18 @@ const DB = require('better-sqlite3')(DbName, { fileMustExist: true, verbose: con
 
 const DbInsertSongArray = (songArray) => {  
     songArray.forEach(song => {
-        // #TODO
+        song.files.forEach( songFile => {
+            
+            const stmt = DB.prepare("INSERT INTO \
+                                        vw_song_file(title, filename, clef_name, instrument_voice, instrument) \
+                                    VALUES  (?, ?, ?, ?, ?);")
+            stmt.run(song.prettyName, songFile.urlPath, songFile.clef, songFile.instrumentVoice, songFile.instrument)
+
+        })
     })
 }
 
+// Entry point for script
 const RunScript = () => {
     let dirs = fs.readdirSync(RootDir, { withFileTypes: true })
                  .filter(fsItem => fsItem.isDirectory() )
@@ -136,4 +153,5 @@ const RunScript = () => {
     DbInsertSongArray(songArray);
 }
 
+// Entry point for script
 RunScript();
