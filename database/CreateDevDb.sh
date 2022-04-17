@@ -22,6 +22,11 @@ echo "Running: 04_insert_sheet_archive_data.sql"
 sqlite3 sheet_archive_dev.db < ./migrations/04_insert_sheet_archive_data.sql;
 
 
+# Insert sheet archive data:
+cp -r dev_data/files/* ../server/files/private/notearkiv/
+cd scripts/js
+node InsertSheetArchiveFiles.js ../../sheet_archive_dev.db ../../../server/files/private/notearkiv/
+cd ../..
 
 
 echo "Dumping schema -> motstanden_schema.sql"
