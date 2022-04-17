@@ -22,10 +22,6 @@ echo "Running: 04_insert_sheet_archive_data.sql"
 sqlite3 sheet_archive_dev.db < ./migrations/04_insert_sheet_archive_data.sql;
 
 
-# Insert data after migration
-cd dev_data/migration;
-sh InsertData.sh 
-cd ../../;
 
 
 echo "Dumping schema -> motstanden_schema.sql"
