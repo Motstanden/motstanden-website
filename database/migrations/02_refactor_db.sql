@@ -15,7 +15,7 @@ S
 
 -- Insert current version into the DB.
 INSERT INTO version(migration) VALUES 
-('02_new_sheet_archive.sql');
+('02_refactor_db.sql');
 
 -- ::::::::::::::::::::::::::
 --  new document table
