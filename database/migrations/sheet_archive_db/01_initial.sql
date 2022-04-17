@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS version (
 );
 
 INSERT INTO version(migration) VALUES 
-('03_new_sheet_archive.sql');
+('01_initial.sql');
 
 -- ::::::::::::::::::::::::::
 --      sheet archive
