@@ -301,25 +301,8 @@ BEGIN
 END;
 
 -- Debug vw_song_file
--- INSERT INTO song_title(title) VALUES ('Olsenbanden');
 -- INSERT INTO 
--- 	song_file(song_title_id, filename, clef_id, instrument_id) 
--- VALUES
--- 	(1, 'files/private/notearkiv/olsenbanden_baryton.pdf', 1, 17);
+--     vw_song_file(title, filename, clef_name, instrument_voice, instrument) 
+-- VALUES 
+--     ('Olsenbanden', 'files/private/notearkiv/olsenbanden_baryton.pdf', 'G-nøkkel', 1, 'Baryton');
 -- SELECT * FROM vw_song_file;
-
--- Debug vw_song_file
-INSERT INTO 
-    vw_song_file(title, filename, clef_name, instrument_voice, instrument) 
-VALUES 
-    ('Olsenbanden', 'files/private/notearkiv/olsenbanden_baryton.pdf', 'G-nøkkel', 1, 'Baryton');
-SELECT * FROM vw_song_file;
-
-
-
--- Test that max_voices trigger works
---INSERT INTO song_title(title) VALUES ('Olsenbanden');
---INSERT INTO 
---	song_file(song_title_id, filename, clef_id, instrument_id, instrument_voice)
---VALUES
---	(1, 'files/private/notearkiv/myfile.pdf', 1, 1, 3);
