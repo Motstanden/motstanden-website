@@ -97,7 +97,29 @@ class SongFile {
 
     static #ParseInstrumentStr = (instrumentStr) => {
         let [instrument, voiceNum] = instrumentStr.trim().split("-", 2)
-        voiceNum = voiceNum ? parseInt(voiceNum) : 1;            
+
+        switch(instrument.toLowerCase()){
+            case "altsax":
+                instrument = "Altsaksofon"
+                break;
+            case "barysax":
+                instrument = "Barytonsaksofon"
+                break;
+            case "fløyte":
+                instrument = "Tverrfløyte"
+                break;
+            case "keyboard":
+                instrument = "Tverrfløyte"
+                break;
+            case "sopransax":
+                instrument = "Sopransaksofon"
+                break;
+            case "tenorsax":
+                instrument = "Tenorsaksofon"
+                break;
+        }
+
+        voiceNum = voiceNum ? parseInt(voiceNum) : 1; 
         return [instrument, voiceNum]
     }
 
@@ -112,8 +134,6 @@ class SongFile {
                 return "C-nøkkel";
             case 'f':
                 return "F-nøkkel";
-            // default:
-            //     return null;
         }
     }
 
@@ -129,6 +149,8 @@ class SongFile {
 const RootDir = process.argv[3];
 
 // const DB = require('better-sqlite3')(DbName, { fileMustExist: true, verbose: console.log, readonly: false})
+let successCount = 0
+let failCount = 0
 
 const DbInsertSongArray = (songArray) => {  
     songArray.forEach(song => {
@@ -142,13 +164,18 @@ const DbInsertSongArray = (songArray) => {
 
             try {
                 insertSong(song.prettyName, songFile.urlPath, songFile.clef, songFile.instrumentVoice, songFile.instrument)
+                successCount += 1
             }
             catch (err) {
-                console.log(err)
+                console.log(songFile)
                 console.log();
+                failCount += 1
             }
         })
     })
+
+    console.log(`Success count: ${successCount}`)
+    console.log(`Failure count: ${failCount}`)
 }
 
 // Entry point for script
