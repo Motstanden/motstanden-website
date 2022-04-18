@@ -214,7 +214,8 @@ INSERT INTO song_category(category) VALUES
 
 CREATE TABLE song_title (
     song_title_id INTEGER PRIMARY KEY NOT NULL,
-    title TEXT UNIQUE NOT NULL
+    title TEXT UNIQUE NOT NULL,
+    extra_info TEXT NOT NULL DEFAULT ""
 );
 
 -- song_title and song_category has a many to many relationship

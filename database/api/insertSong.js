@@ -60,13 +60,7 @@ const getToneId = (db, tone_name) => {
     return dbResult.tone_id
 }
 
-const insertSong = (title, filename, clef_name, instrument_voice, instrument, transposition, instrument_category) => {
-
-    if(!title || !filename || !instrument ) {
-        console.log(`Did not add file: ${filename}`)
-        return false;
-    }
-
+const insertSongFile = (title, filename, clef_name, instrument_voice, instrument, transposition, instrument_category) => {
     const db = new Database(sheetsDb, dbReadWriteConfig)
 
     // Throws exceptions if not found
@@ -98,4 +92,16 @@ const insertSong = (title, filename, clef_name, instrument_voice, instrument, tr
     startTransaction();
 }
 
-exports.insertSong = insertSong;
+const insertSongTitle = (title, extra_info) => {
+    const db = new Database(sheetsDb, dbReadWriteConfig)
+    extra_info ??= "";
+    const startTransaction = db.transaction( () => {
+        const stmt = db.prepare("INSERT INTO song_title(title, extra_info) VALUES (?, ?)")
+        const info = stmt.run(title, extra_info)
+    })
+
+    startTransaction();
+}
+
+exports.insertSongFile = insertSongFile;
+exports.insertSongTitle = insertSongTitle
