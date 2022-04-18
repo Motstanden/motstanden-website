@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS "document"(
     document_id INTEGER PRIMARY KEY NOT NULL,
     title TEXT NOT NULL,
     filename TEXT NOT NULL CHECK(like('files/public/dokumenter/%_._%', filename) OR like('files/private/dokumenter/%_._%', filename)),
-    is_public BOOLEAN NOT NULL GENERATED ALWAYS AS (iif(like('files/public/%', filename), 1, 0)) STORED
+    is_public BOOLEAN NOT NULL GENERATED ALWAYS AS (like('files/public/%', filename)) STORED
 );
 CREATE TABLE IF NOT EXISTS "song_lyric"(
     song_lyric_id INTEGER PRIMARY KEY NOT NULL,
