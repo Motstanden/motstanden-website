@@ -234,6 +234,7 @@ CREATE TABLE song_title (
     extra_info TEXT NOT NULL DEFAULT "",
     directory TEXT NOT NULL UNIQUE CHECK(like('files/%/notearkiv/%', directory)),
     is_public BOOLEAN NOT NULL GENERATED ALWAYS AS (like('files/public/%', directory)) STORED,
+    url_title TEST NOT NULL GENERATED ALWAYS AS (REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(title, 'æ', 'ae'), 'Æ', 'Ae'), 'ø', 'oe' ),'Ø', 'Oe' ), 'å', 'aa'), 'Å', 'Aa'),' ', '_')) STORED,
     UNIQUE(title, directory),
     CHECK(NOT like('%/', directory))
 );
