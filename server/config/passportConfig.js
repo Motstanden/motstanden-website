@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken")
 const Database = require('better-sqlite3')
 const bcrypt = require("bcrypt")
 
-const {dbFilename, dbReadOnlyConfig, dbReadWriteConfig} = require("./databaseConfig")
+const {motstandenDB, dbReadOnlyConfig, dbReadWriteConfig} = require("./databaseConfig")
 
 const GetRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min) ) + min;
@@ -22,7 +22,7 @@ module.exports = (passport) => {
     passport.use(new LocalStrategy( async (username, password, done) => {
         
         // Get the user from the database 
-        const db = new Database(dbFilename, dbReadOnlyConfig)
+        const db = new Database(motstandenDB, dbReadOnlyConfig)
         const stmt = db.prepare("SELECT user_account_id, username, password FROM user_account WHERE username = ?")
         const dbUser = stmt.get(username)
         db.close();

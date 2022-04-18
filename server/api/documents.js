@@ -1,12 +1,12 @@
 const router = require("express").Router()
 const Database = require('better-sqlite3')
-const {dbFilename, dbReadOnlyConfig, dbReadWriteConfig} = require("../config/databaseConfig")
+const {motstandenDB, dbReadOnlyConfig, dbReadWriteConfig} = require("../config/databaseConfig")
 const passport = require("passport")
 
 router.get("/documents", 
     passport.authenticate("jwt", {session: false, failureRedirect: "documents_public"}),
     (req, res) => {
-        const db = new Database(dbFilename, dbReadOnlyConfig)
+        const db = new Database(motstandenDB, dbReadOnlyConfig)
         const stmt = db.prepare("SELECT title, filename AS url FROM document ORDER BY document_id DESC")
         const documents = stmt.all();
         res.send(documents)
@@ -15,7 +15,7 @@ router.get("/documents",
 )
 
 router.get("/documents_public", (req, res) => {
-    const db = new Database(dbFilename, dbReadOnlyConfig)
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare("SELECT \
                                 title, \
                                 filename AS url \

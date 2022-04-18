@@ -1,10 +1,10 @@
 const router = require("express").Router()
 const Database = require('better-sqlite3')
-const {dbFilename, dbReadOnlyConfig, dbReadWriteConfig} = require("../config/databaseConfig")
+const {motstandenDB, dbReadOnlyConfig, dbReadWriteConfig} = require("../config/databaseConfig")
 const fs = require("fs")
 
 router.get("/song_lyric", (req, res) => {
-    const db = new Database(dbFilename, dbReadOnlyConfig)
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare("SELECT \
                                 title, \
                                 filename as url, \
@@ -20,7 +20,7 @@ router.get("/song_lyric", (req, res) => {
 router.get("/song_lyric_data", (req, res) => {
 
     // Get the name of the html file
-    const db = new Database(dbFilename, dbReadOnlyConfig)
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare("SELECT filename AS file FROM song_lyric WHERE title = ?")
     const title = req.query.title;
     const filename = stmt.get([title]).file
