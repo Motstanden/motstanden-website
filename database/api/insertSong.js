@@ -11,18 +11,53 @@ const getSongTitleId = (db, title) => {
 
 const getClefId = (db, clef_name) => {
     let stmt = db.prepare("SELECT clef_id FROM clef where name = ?");
-    let value = stmt.get(clef_name)
-    return value?.clef_id
+    let dbResult = stmt.get(clef_name)
+    if(!dbResult) 
+        throw `Could not find id of clef: "${clef_name}"`;
+    return dbResult.clef_id
 }
 
-const getInstrumentId = (db, instrument) => {
-    let stmt = db.prepare("SELECT instrument_id FROM instrument where instrument = ?");
-    let value = stmt.get(instrument)
-    return value?.instrument_id
+const getCategoryId = (db, category) => {
+    let stmt = db.prepare("SELECT instrument_category_id FROM instrument_category WHERE category = ?")
+    let dbResult = stmt.get(category)
+    if(!dbResult)
+        throw `Could not find id of instrument category ${category}`
+    return dbResult.instrument_category_id
 }
 
-const insertSong = (title, filename, clef_name, instrument_voice, instrument) => {
+const getInstrumentId = (db, instrument, category) => {
+    
+    let dbResult = null;
+    let isPartSystem = instrument.toLowerCase().startsWith("part") 
+    let isSuperPart = instrument.toLowerCase().startsWith("superpart")
+    // if(!isPartSystem){
+    //     if(isSuperPart){
+    //         category = "Annet"
+    //         isPartSystem = true
+    //     }
+    // }
 
+    if (isPartSystem || isSuperPart) {
+        if (isSuperPart && !category)
+            category = "Annet"
+        else if(!category)
+            throw `AmbiguousException: You must provide a category when requesting "${instrument}"`
+        let categoryId = getCategoryId(db, category)
+        let stmt = db.prepare("SELECT instrument_id FROM instrument where instrument = ? AND instrument_category_id = ?")
+        dbResult = stmt.get(instrument, categoryId)
+    }
+    else{
+        let stmt = db.prepare("SELECT instrument_id FROM instrument where instrument = ?");
+        dbResult = stmt.get(instrument)
+    }
+
+    if(!dbResult)
+        throw `Could not find id of instrument "${instrument}" with category "${category}"`
+
+    return dbResult.instrument_id
+}
+
+const insertSong = (title, filename, clef_name, instrument_voice, instrument, instrument_category) => {
 
     if(!title || !filename || !instrument ) {
         console.log(`Did not add file: ${filename}`)
@@ -31,13 +66,9 @@ const insertSong = (title, filename, clef_name, instrument_voice, instrument) =>
 
     const db = new Database(sheetsDb, dbReadWriteConfig)
 
+    // Throws exceptions if not found
     const clefId = getClefId(db, clef_name)
-    if(!clefId) 
-        throw `Could not find clef_id. \nclef: "${clef_name}" \nFile: "${filename}"`;
-
-    const instrumentId = getInstrumentId(db, instrument)
-    if(!instrumentId)
-        throw `Could not find instrument. \nInstrument: "${instrument}" \nFile: "${filename}"`
+    const instrumentId = getInstrumentId(db, instrument, instrument_category) 
 
     // Define transaction
     const startTransaction = db.transaction( () => {

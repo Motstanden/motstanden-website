@@ -10,9 +10,11 @@ class Song {
         this.fullPath = songDir
         this.extraInfo = null
         this.prettyName = null
+        this.partSystem = null
         this.files = Song.GetFiles(this.fullPath);
 
         this.#ParseName();
+        this.#CheckPartSystem();
     }
     
     static ParseNameStr = (nameStr) => {
@@ -36,6 +38,20 @@ class Song {
         this.prettyName = parsedStr.prettyName;
         this.extraInfo = parsedStr.extraInfo;
     }
+
+    #CheckPartSystem = () => {
+        let isSeven = this.files.some( file => file.partNumber === 6 || file.partNumber === 7)
+        let isFive = this.files.some( file =>  file.partNumber >= 1  || file.partNumber <= 5)
+        if(isSeven){
+            this.partSystem = "5 part system"
+        }
+        else if(isFive){
+            this.partSystem = "7 part system"
+        }
+        else {
+            this.partSystem = null
+        }
+    }  
     
     static GetFiles = (fullPath) => {
         let files = fs.readdirSync(fullPath, { withFileTypes: true })
@@ -60,6 +76,7 @@ class SongFile {
         this.instrumentVoice = null
         this.key = null
         this.clef = null
+        this.partNumber = null
 
         this.#ParseUrl(fullPath)
 
@@ -98,7 +115,9 @@ class SongFile {
     static #ParseInstrumentStr = (instrumentStr) => {
         let [instrument, voiceNum] = instrumentStr.trim().split("-", 2)
 
+        // Handle special cases where the instrument name is not compatible with the database
         switch(instrument.toLowerCase()){
+            // Instrument aliases
             case "altsax":
                 instrument = "Altsaksofon"
                 break;
@@ -116,6 +135,19 @@ class SongFile {
                 break;
             case "tenorsax":
                 instrument = "Tenorsaksofon"
+                break;
+            // Part system
+            case "part":
+                this.partNumber = voiceNum[0]
+                instrument = `${instrument} ${this.partNumber}`
+                switch(voiceNum[1]?.toLowerCase()){
+                    case "b":
+                        voiceNum = 2
+                        break;
+                    default:
+                        voiceNum = 1
+                        break;
+                }
                 break;
         }
 
@@ -155,20 +187,12 @@ let failCount = 0
 const DbInsertSongArray = (songArray) => {  
     songArray.forEach(song => {
         song.files.forEach( songFile => {
-            
-            // const stmt = DB.prepare("INSERT INTO \
-            //                             vw_song_file(title, filename, clef_name, instrument_voice, instrument) \
-            //                         VALUES  (?, ?, ?, ?, ?);")
-            // stmt.run(song.prettyName, songFile.urlPath, songFile.clef, songFile.instrumentVoice, songFile.instrument)
-
-
             try {
-                insertSong(song.prettyName, songFile.urlPath, songFile.clef, songFile.instrumentVoice, songFile.instrument)
+                insertSong(song.prettyName, songFile.urlPath, songFile.clef, songFile.instrumentVoice, songFile.instrument, song.partSystem)
                 successCount += 1
             }
             catch (err) {
-                console.log(songFile)
-                console.log();
+                console.log(err, "\n")
                 failCount += 1
             }
         })

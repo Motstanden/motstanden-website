@@ -20,13 +20,14 @@ CREATE TABLE instrument_category(
 );
 CREATE TABLE instrument(
     instrument_id INTEGER PRIMARY KEY NOT NULL, 
-    instrument TEXT NOT NULL UNIQUE,
+    instrument TEXT NOT NULL,
     max_voices TEXT NOT NULL,
     instrument_category_id INTEGER NOT NULL,
     FOREIGN KEY (instrument_category_id) 
         REFERENCES instrument_category(instrument_category_id)
         ON DELETE RESTRICT
         ON UPDATE CASCADE
+    UNIQUE(instrument, instrument_category_id)
 );
 CREATE VIEW vw_instrument
 AS
