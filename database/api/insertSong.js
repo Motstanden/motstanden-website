@@ -28,14 +28,9 @@ const getCategoryId = (db, category) => {
 const getInstrumentId = (db, instrument, category) => {
     
     let dbResult = null;
+    
     let isPartSystem = instrument.toLowerCase().startsWith("part") 
     let isSuperPart = instrument.toLowerCase().startsWith("superpart")
-    // if(!isPartSystem){
-    //     if(isSuperPart){
-    //         category = "Annet"
-    //         isPartSystem = true
-    //     }
-    // }
 
     if (isPartSystem || isSuperPart) {
         if (isSuperPart && !category)
