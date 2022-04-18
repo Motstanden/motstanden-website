@@ -27,28 +27,7 @@ app.use(helmet({
 
 // Need this to create and parse cookies
 app.use(cookieParser())
-
-// Allows us to make request from localhost:3000 and whatever domain the server is running on
-const whiteList = [ 
-    "http://localhost:3000", 
-    "https://localhost:3000",
-    "http://localhost:5000", 
-    "https://localhost:5000",
-    "http://motstanden.no", 
-    "https://motstanden.no",
-    "http://www.motstanden.no",
-    "https://www.motstanden.no"
-]
-const corsOptions = {
-    origin: (origin, callback) => {
-        if(whiteList.indexOf(origin) !== -1 || !origin){
-            callback(null, true)
-        } else {
-        callback(new Error('Not allowed by CORS'))
-        }
-    },
-}
-app.use(cors(corsOptions))
+app.use(cors())
 
 // Allows us to access the req.body object when getting requests.
 app.use(express.urlencoded({ extended: true }));    // support encoded bodies
