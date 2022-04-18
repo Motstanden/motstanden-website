@@ -59,3 +59,9 @@ FROM
 
 DROP TABLE song_lyric;
 ALTER TABLE song_lyric_new RENAME TO song_lyric;
+
+-- ::::::::::::::::::::::::::::::::::
+--    Drop sheet_archive. 
+-- (use sheet_archive.db instead)
+-- ::::::::::::::::::::::::::::::::::
+DROP TABLE sheet_archive;
