@@ -325,30 +325,3 @@ LEFT JOIN clef USING(clef_id)
 LEFT JOIN instrument USING(instrument_id)
 LEFT JOIN instrument_category USING(instrument_category_id)
 LEFT JOIN tone ON song_file.transposition = tone.tone_id;
-
-CREATE TRIGGER trig_vw_song_file_instead_of_insert
-    INSTEAD OF INSERT ON vw_song_file
-BEGIN
-    INSERT OR IGNORE INTO song_title(title) VALUES (NEW.title);
-
-    INSERT OR ROLLBACK INTO 
-        song_file(song_title_id, filename, clef_id, instrument_id, instrument_voice)
-    SELECT 
-        song_title_id,
-        NEW.filename,
-        clef.clef_id,
-        instrument.instrument_id,
-        NEW.instrument_voice
-    FROM 
-        song_title
-    INNER JOIN clef ON clef.name = NEW.clef_name
-    INNER JOIN instrument ON instrument.instrument = NEW.instrument
-    WHERE NEW.title = song_title.title;
-END;
-
--- Debug vw_song_file
--- INSERT INTO 
---     vw_song_file(title, filename, clef_name, instrument_voice, instrument) 
--- VALUES 
---     ('Olsenbanden', 'files/private/notearkiv/olsenbanden_baryton.pdf', 'G-nøkkel', 1, 'Baryton');
--- SELECT * FROM vw_song_file;
