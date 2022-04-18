@@ -3,6 +3,7 @@
 "use strict"
 const fs = require('fs')
 const path = require('path')
+const { insertSong } = require("../../api/storedProcedures.js") 
 
 class Song {
     constructor(songDir){
@@ -102,7 +103,7 @@ class SongFile {
 
     static #ParseClefStr = (clefStr) => {
         if (!clefStr) 
-            return null;
+            return "G-nøkkel";
 
         switch(clefStr.trim().toLowerCase()[0]){
             case 'g':
@@ -111,8 +112,8 @@ class SongFile {
                 return "C-nøkkel";
             case 'f':
                 return "F-nøkkel";
-            default:
-                return null;
+            // default:
+            //     return null;
         }
     }
 
@@ -124,20 +125,28 @@ class SongFile {
     }
 }
 
-const DbName = process.argv[2];
+// const DbName = process.argv[2];
 const RootDir = process.argv[3];
 
-const DB = require('better-sqlite3')(DbName, { fileMustExist: true, verbose: console.log, readonly: false})
+// const DB = require('better-sqlite3')(DbName, { fileMustExist: true, verbose: console.log, readonly: false})
 
 const DbInsertSongArray = (songArray) => {  
     songArray.forEach(song => {
         song.files.forEach( songFile => {
             
-            const stmt = DB.prepare("INSERT INTO \
-                                        vw_song_file(title, filename, clef_name, instrument_voice, instrument) \
-                                    VALUES  (?, ?, ?, ?, ?);")
-            stmt.run(song.prettyName, songFile.urlPath, songFile.clef, songFile.instrumentVoice, songFile.instrument)
+            // const stmt = DB.prepare("INSERT INTO \
+            //                             vw_song_file(title, filename, clef_name, instrument_voice, instrument) \
+            //                         VALUES  (?, ?, ?, ?, ?);")
+            // stmt.run(song.prettyName, songFile.urlPath, songFile.clef, songFile.instrumentVoice, songFile.instrument)
 
+
+            try {
+                insertSong(song.prettyName, songFile.urlPath, songFile.clef, songFile.instrumentVoice, songFile.instrument)
+            }
+            catch (err) {
+                console.log(err)
+                console.log();
+            }
         })
     })
 }
