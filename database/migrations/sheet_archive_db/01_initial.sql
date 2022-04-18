@@ -233,7 +233,8 @@ CREATE TABLE song_title (
     title TEXT NOT NULL,
     extra_info TEXT NOT NULL DEFAULT "",
     directory TEXT NOT NULL UNIQUE CHECK(like('files/%/notearkiv/%', directory)),
-    UNIQUE(title, extra_info),
+    is_public BOOLEAN NOT NULL GENERATED ALWAYS AS (like('files/public/%', directory)) STORED,
+    UNIQUE(title, directory),
     CHECK(NOT like('%/', directory))
 );
 
@@ -260,6 +261,7 @@ CREATE TABLE song_file (
     instrument_id INTERGER NOT NULL,
     instrument_voice INTEGER NOT NULL DEFAULT 1 CHECK(instrument_voice > 0),
     transposition INTEGER NOT NULL,
+    is_public BOOLEAN NOT NULL GENERATED ALWAYS AS (like('files/public/%', filename)) STORED,
     FOREIGN KEY (song_title_id)
         REFERENCES song_title (song_title_id)
         ON UPDATE CASCADE 
