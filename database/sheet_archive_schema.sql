@@ -154,22 +154,3 @@ LEFT JOIN instrument USING(instrument_id)
 LEFT JOIN instrument_category USING(instrument_category_id)
 LEFT JOIN tone ON song_file.transposition = tone.tone_id
 /* vw_song_file(song_file_id,title,filename,clef_name,clef_unicode_symbol,instrument,instrument_voice,instrument_category,transposition) */;
-CREATE TRIGGER trig_vw_song_file_instead_of_insert
-    INSTEAD OF INSERT ON vw_song_file
-BEGIN
-    INSERT OR IGNORE INTO song_title(title) VALUES (NEW.title);
-
-    INSERT OR ROLLBACK INTO 
-        song_file(song_title_id, filename, clef_id, instrument_id, instrument_voice)
-    SELECT 
-        song_title_id,
-        NEW.filename,
-        clef.clef_id,
-        instrument.instrument_id,
-        NEW.instrument_voice
-    FROM 
-        song_title
-    INNER JOIN clef ON clef.name = NEW.clef_name
-    INNER JOIN instrument ON instrument.instrument = NEW.instrument
-    WHERE NEW.title = song_title.title;
-END;
