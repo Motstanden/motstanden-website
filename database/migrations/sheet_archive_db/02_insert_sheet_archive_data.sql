@@ -36,6 +36,10 @@ INSERT INTO five_part_system SELECT instrument_id, 3 FROM instrument WHERE instr
 INSERT INTO five_part_system SELECT instrument_id, 4 FROM instrument WHERE instrument = 'Bassklarinett';
 INSERT INTO five_part_system SELECT instrument_id, 5 FROM instrument WHERE instrument = 'Bassklarinett';
 
+-- Kontrabassklarinett: Part 4-5
+INSERT INTO five_part_system SELECT instrument_id, 4 FROM instrument WHERE instrument = 'Kontrabassklarinett';
+INSERT INTO five_part_system SELECT instrument_id, 5 FROM instrument WHERE instrument = 'Kontrabassklarinett';
+
 -- Trompet: Part 1-3
 INSERT INTO five_part_system SELECT instrument_id, 1 FROM instrument WHERE instrument = 'Trompet';
 INSERT INTO five_part_system SELECT instrument_id, 2 FROM instrument WHERE instrument = 'Trompet';
@@ -72,6 +76,19 @@ INSERT INTO five_part_system SELECT instrument_id, 2 FROM instrument WHERE instr
 INSERT INTO five_part_system SELECT instrument_id, 3 FROM instrument WHERE instrument = 'Horn';
 INSERT INTO five_part_system SELECT instrument_id, 4 FROM instrument WHERE instrument = 'Horn';
 
+-- Althorn: Part 2-4
+INSERT INTO five_part_system SELECT instrument_id, 2 FROM instrument WHERE instrument = 'Althorn';
+INSERT INTO five_part_system SELECT instrument_id, 3 FROM instrument WHERE instrument = 'Althorn';
+INSERT INTO five_part_system SELECT instrument_id, 4 FROM instrument WHERE instrument = 'Althorn';
+
+-- Tenorhorn: Part 3-4
+INSERT INTO five_part_system SELECT instrument_id, 3 FROM instrument WHERE instrument = 'Tenorhorn';
+INSERT INTO five_part_system SELECT instrument_id, 4 FROM instrument WHERE instrument = 'Tenorhorn';
+
+-- Saxhorn: Part 3-4
+INSERT INTO five_part_system SELECT instrument_id, 3 FROM instrument WHERE instrument = 'Saxhorn';
+INSERT INTO five_part_system SELECT instrument_id, 4 FROM instrument WHERE instrument = 'Saxhorn';
+
 -- Baryton: Part 3-4
 INSERT INTO five_part_system SELECT instrument_id, 3 FROM instrument WHERE instrument = 'Baryton';
 INSERT INTO five_part_system SELECT instrument_id, 4 FROM instrument WHERE instrument = 'Baryton';
@@ -95,6 +112,12 @@ INSERT INTO five_part_system SELECT instrument_id, 5 FROM instrument WHERE instr
 
 -- Tuba: Part 5
 INSERT INTO five_part_system SELECT instrument_id, 5 FROM instrument WHERE instrument = 'Tuba';
+
+-- Tuba: Part 5
+INSERT INTO five_part_system SELECT instrument_id, 5 FROM instrument WHERE instrument = 'Sousafon';
+
+-- Bassaksofon: Part 5
+INSERT INTO five_part_system SELECT instrument_id, 5 FROM instrument WHERE instrument = 'Bassaksofon';
 
 -- Bassgitar: Part 5
 INSERT INTO five_part_system SELECT instrument_id, 5 FROM instrument WHERE instrument = 'Bassgitar';
@@ -135,6 +158,10 @@ INSERT INTO seven_part_system SELECT instrument_id, 3 FROM instrument WHERE inst
 INSERT INTO seven_part_system SELECT instrument_id, 6 FROM instrument WHERE instrument = 'Bassklarinett';
 INSERT INTO seven_part_system SELECT instrument_id, 7 FROM instrument WHERE instrument = 'Bassklarinett';
 
+-- Kontrabassklarinett: Part 6-7
+INSERT INTO seven_part_system SELECT instrument_id, 6 FROM instrument WHERE instrument = 'Kontrabassklarinett';
+INSERT INTO seven_part_system SELECT instrument_id, 7 FROM instrument WHERE instrument = 'Kontrabassklarinett';
+
 -- Trompet: Part 1-4
 INSERT INTO seven_part_system SELECT instrument_id, 1 FROM instrument WHERE instrument = 'Trompet';
 INSERT INTO seven_part_system SELECT instrument_id, 2 FROM instrument WHERE instrument = 'Trompet';
@@ -174,6 +201,19 @@ INSERT INTO seven_part_system SELECT instrument_id, 4 FROM instrument WHERE inst
 INSERT INTO seven_part_system SELECT instrument_id, 5 FROM instrument WHERE instrument = 'Horn';
 INSERT INTO seven_part_system SELECT instrument_id, 6 FROM instrument WHERE instrument = 'Horn';
 
+-- Althorn: Part 4-6
+INSERT INTO seven_part_system SELECT instrument_id, 4 FROM instrument WHERE instrument = 'Althorn';
+INSERT INTO seven_part_system SELECT instrument_id, 5 FROM instrument WHERE instrument = 'Althorn';
+INSERT INTO seven_part_system SELECT instrument_id, 6 FROM instrument WHERE instrument = 'Althorn';
+
+-- Tenorhorn: Part 5-6
+INSERT INTO seven_part_system SELECT instrument_id, 5 FROM instrument WHERE instrument = 'Tenorhorn';
+INSERT INTO seven_part_system SELECT instrument_id, 6 FROM instrument WHERE instrument = 'Tenorhorn';
+
+-- Saxhorn: Part 5-6
+INSERT INTO seven_part_system SELECT instrument_id, 5 FROM instrument WHERE instrument = 'Saxhorn';
+INSERT INTO seven_part_system SELECT instrument_id, 6 FROM instrument WHERE instrument = 'Saxhorn';
+
 -- Baryton: Part 5-6
 INSERT INTO seven_part_system SELECT instrument_id, 5 FROM instrument WHERE instrument = 'Baryton';
 INSERT INTO seven_part_system SELECT instrument_id, 6 FROM instrument WHERE instrument = 'Baryton';
@@ -196,6 +236,12 @@ INSERT INTO seven_part_system SELECT instrument_id, 7 FROM instrument WHERE inst
 
 -- Tuba: Part 7
 INSERT INTO seven_part_system SELECT instrument_id, 7 FROM instrument WHERE instrument = 'Tuba';
+
+-- Sousafon: Part 7
+INSERT INTO seven_part_system SELECT instrument_id, 7 FROM instrument WHERE instrument = 'Sousafon';
+
+-- Bassaksofon: Part 7
+INSERT INTO seven_part_system SELECT instrument_id, 7 FROM instrument WHERE instrument = 'Bassaksofon';
 
 -- Bassgitar: Part 7
 INSERT INTO seven_part_system SELECT instrument_id, 7 FROM instrument WHERE instrument = 'Bassgitar';

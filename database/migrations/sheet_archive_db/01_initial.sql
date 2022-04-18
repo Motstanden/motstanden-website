@@ -113,6 +113,7 @@ VALUES
     ('Altklarinett',     2,  3),
     ('Klarinett',        4,  3),
     ('Bassklarinett',    2,  3),
+    ('Kontrabassklarinett', 1, 3),
 
     -- Trompeter
     ('Trompet',          4,  4),
@@ -124,33 +125,48 @@ VALUES
     ('Altsaksofon',      3,  5),
     ('Tenorsaksofon',    2,  5),
     ('Barytonsaksofon',  2,  5),
+    ('Bassaksofon',      1,  5),
 
     -- Grovmessing
     ('Horn',             6,  6),
+    ('Althorn',          3,  6),
+    ('Tenorhorn',        3,  6),
+    ('Saxhorn',          3,  6),
     ('Baryton',          3,  6),
     ('Eufonium',         3,  6),
     ('Alttrombone',      4,  6),
     ('Trombone',         4,  6),
+    ('Runkebinders',     1,  6),
     ('Basstrombone',     2,  6),
 
     -- Tuba
     ('Tuba',             3,  7),
+    ('Sousafon',         3,  7),
 
     -- Perkusjon
-    ('Slagverk',         1,  8),
+    ('Slagverk',         4,  8),
     ('Skarptromme',      1,  8),
     ('Symbaler',         1,  8),
     ('Basstromme',       1,  8),
     ('Pauker',           1,  8),
     ('Tamburin',         1,  8),
     ('Kubjelle',         1,  8),
+    ('Bjeller',          1,  8),
+    ('Tammer',           1,  8),
+    ('Tamtam',           1,  8),
+    ('Congas',           1,  8),
+    ('Rytmepinner',      1,  8),
+    ('Grytelokk',        1,  8),
     ('Perkusjon',        6,  8),
 
     -- Storband
-    ('Klokkespill',      1,  9),
+    ('Klokkespill',      2,  9),
     ('Piano',            1,  9),
     ('Gitar',            1,  9),
+    ('Mandolin',         1,  9),
+    ('Bass',             1,  9),
     ('Bassgitar',        1,  9),
+    ('Kontrabass',       1,  9),
 
     -- 5 part system
     ('Part 1',          2,  10),
@@ -214,8 +230,9 @@ INSERT INTO song_category(category) VALUES
 
 CREATE TABLE song_title (
     song_title_id INTEGER PRIMARY KEY NOT NULL,
-    title TEXT UNIQUE NOT NULL,
-    extra_info TEXT NOT NULL DEFAULT ""
+    title TEXT NOT NULL,
+    extra_info TEXT NOT NULL DEFAULT "",
+    UNIQUE(title, extra_info)
 );
 
 -- song_title and song_category has a many to many relationship

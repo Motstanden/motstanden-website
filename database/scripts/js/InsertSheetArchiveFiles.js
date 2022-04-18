@@ -11,9 +11,10 @@ class Song {
         this.extraInfo = null
         this.prettyName = null
         this.partSystem = null
-        this.files = Song.GetFiles(this.fullPath);
+        this.files = []
 
         this.#ParseName();
+        this.#GetFiles()
         this.#CheckPartSystem();
     }
     
@@ -38,32 +39,34 @@ class Song {
         this.prettyName = parsedStr.prettyName;
         this.extraInfo = parsedStr.extraInfo;
     }
-
+    
+    #GetFiles = () => {
+        let files = fs.readdirSync(this.fullPath, { withFileTypes: true })
+        .filter(item => item.isFile())
+                      .map(file => path.join(this.fullPath, file.name))
+                      
+        let songFiles = []
+        files.forEach(file => {
+            if(path.extname(file).toLowerCase() === ".pdf"){
+                songFiles.push(new SongFile(file))
+            }
+        });
+        this.files = songFiles;
+    }
+    
     #CheckPartSystem = () => {
         let isSeven = this.files.some( file => file.partNumber === 6 || file.partNumber === 7)
-        let isFive = this.files.some( file =>  file.partNumber >= 1  || file.partNumber <= 5)
+        let isFive = this.files.some( file =>  file.partNumber >= 1  && file.partNumber <= 5)
         if(isSeven){
-            this.partSystem = "5 part system"
+            this.partSystem = "7 part system"
         }
         else if(isFive){
-            this.partSystem = "7 part system"
+            this.partSystem = "5 part system"
         }
         else {
             this.partSystem = null
         }
     }  
-    
-    static GetFiles = (fullPath) => {
-        let files = fs.readdirSync(fullPath, { withFileTypes: true })
-                      .filter(item => item.isFile())
-                      .map(file => path.join(fullPath, file.name))
-
-        let songFiles = []
-        files.forEach(file => {
-            songFiles.push(new SongFile(file))
-        });
-        return songFiles;
-    }
 }
 
 class SongFile {
@@ -104,16 +107,17 @@ class SongFile {
     #PareSongInfo = (songInfo) => {
         const numInfoFields = 3;
 
-        let info = songInfo.split("_", numInfoFields)
+        let info = songInfo?.split("_", numInfoFields)
         info = SongFile.#RightPadArray(info, numInfoFields);
         
-        [this.instrument, this.instrumentVoice] = SongFile.#ParseInstrumentStr(info[0]);
+        [this.instrument, this.instrumentVoice, this.partNumber] = SongFile.#ParseInstrumentStr(info[0]);
         this.transposition = info[1] ?? "C"
         this.clef = SongFile.#ParseClefStr(info[2])
     }
 
     static #ParseInstrumentStr = (instrumentStr) => {
         let [instrument, voiceNum] = instrumentStr.trim().split("-", 2)
+        let partNumber = null
 
         // Handle special cases where the instrument name is not compatible with the database
         switch(instrument.toLowerCase()){
@@ -121,25 +125,46 @@ class SongFile {
             case "altsax":
                 instrument = "Altsaksofon"
                 break;
+            case "altsaxofon":
+                instrument = "Altsaksofon"
+                break;
             case "barysax":
                 instrument = "Barytonsaksofon"
                 break;
+            case "bassaxofon":
+                instrument = "Bassaksofon"
+                break;
+            case "elgitar":
+                instrument = "Gitar"
+                break;
+            case "euphonium":
+                instrument = "Eufonium"
+                break
             case "fløyte":
                 instrument = "Tverrfløyte"
                 break;
             case "keyboard":
-                instrument = "Tverrfløyte"
+                instrument = "Piano"
+                break;
+            case "pikkolo":
+                instrument = "Pikkolofløyte"
                 break;
             case "sopransax":
                 instrument = "Sopransaksofon"
                 break;
+            case "symbal":
+                instrument = "Symbaler"
+                break;
             case "tenorsax":
                 instrument = "Tenorsaksofon"
                 break;
+            case "barytone":
+                instrument = "Baryton"
+                break;
             // Part system
             case "part":
-                this.partNumber = voiceNum[0]
-                instrument = `${instrument} ${this.partNumber}`
+                partNumber = parseInt(voiceNum)
+                instrument = `${instrument} ${partNumber}`
                 switch(voiceNum[1]?.toLowerCase()){
                     case "b":
                         voiceNum = 2
@@ -149,10 +174,12 @@ class SongFile {
                         break;
                 }
                 break;
+            default:
+                break
         }
 
-        voiceNum = voiceNum ? parseInt(voiceNum) : 1; 
-        return [instrument, voiceNum]
+        voiceNum = !isNaN(parseInt(voiceNum)) ? parseInt(voiceNum) : 1;
+        return [instrument, voiceNum, partNumber]
     }
 
     static #ParseClefStr = (clefStr) => {
@@ -185,13 +212,12 @@ let successCount = 0
 let failCount = 0
 
 const DbInsertSongArray = (songArray) => {  
-    songArray.forEach(song => {
-
+    songArray.forEach( song => {
         try{
             insertSongTitle(song.prettyName, song.extraInfo)
         }
         catch(err) {
-            console.log(err)
+            console.log(err, "\t", song.prettyName, "\n")
             failCount += 1
             return              // Continue to the next item in the foreach loop
         }
@@ -202,7 +228,7 @@ const DbInsertSongArray = (songArray) => {
                 successCount += 1
             }
             catch (err) {
-                console.log(err, "\n")
+                console.log(err, song.prettyName, "\n")
                 failCount += 1
             }
         })
