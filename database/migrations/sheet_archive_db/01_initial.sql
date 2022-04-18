@@ -70,17 +70,20 @@ INSERT INTO instrument_category(instrument_category_id, category) VALUES
     (7,     'Tuba'),
     (8,     'Perkusjon'),
     (9,     'Storband'),
-    (10,    'Annet');
+    (10,    '5 part system'),
+    (11,    '7 part system'),
+    (12,    'Annet');
 
 CREATE TABLE instrument(
     instrument_id INTEGER PRIMARY KEY NOT NULL, 
-    instrument TEXT NOT NULL UNIQUE,
+    instrument TEXT NOT NULL,
     max_voices TEXT NOT NULL,
     instrument_category_id INTEGER NOT NULL,
     FOREIGN KEY (instrument_category_id) 
         REFERENCES instrument_category(instrument_category_id)
         ON DELETE RESTRICT
         ON UPDATE CASCADE
+    UNIQUE(instrument, instrument_category_id)
 );
 
 CREATE VIEW vw_instrument
@@ -149,11 +152,29 @@ VALUES
     ('Gitar',            1,  9),
     ('Bassgitar',        1,  9),
 
+    -- 5 part system
+    ('Part 1',          2,  10),
+    ('Part 2',          2,  10),
+    ('Part 3',          2,  10),
+    ('Part 4',          2,  10),
+    ('Part 5',          2,  10),
+    ('Superpart',       2,  10),
+
+    -- 7 part system
+    ('Part 1',          2,  11),
+    ('Part 2',          2,  11),
+    ('Part 3',          2,  11),
+    ('Part 4',          2,  11),
+    ('Part 5',          2,  11),
+    ('Part 6',          2,  11),
+    ('Part 7',          2,  11),
+    ('Superpart',       2,  11),
+
     -- Annet
-    ('Akkorder',         1,  10),
-    ('Partitur',         1,  10),
-    ('Superpart',        1,  10), 
-    ('Annet',            1,  10);
+    ('Superpart',        2,  12),
+    ('Akkorder',         1,  12),
+    ('Partitur',         1,  12),
+    ('Annet',            1,  12);
 
 CREATE TABLE five_part_system(
     instrument_id INTEGER NOT NULL,
