@@ -3,7 +3,7 @@
 "use strict"
 const fs = require('fs')
 const path = require('path')
-const { insertSong } = require("../../api/storedProcedures.js") 
+const { insertSongFile, insertSongTitle } = require("../../api/storedProcedures.js") 
 
 class Song {
     constructor(songDir){
@@ -186,9 +186,19 @@ let failCount = 0
 
 const DbInsertSongArray = (songArray) => {  
     songArray.forEach(song => {
+
+        try{
+            insertSongTitle(song.prettyName, song.extraInfo)
+        }
+        catch(err) {
+            console.log(err)
+            failCount += 1
+            return              // Continue to the next item in the foreach loop
+        }
+        
         song.files.forEach( songFile => {
             try {
-                insertSong(song.prettyName, songFile.urlPath, songFile.clef, songFile.instrumentVoice, songFile.instrument, songFile.transposition, song.partSystem)
+                insertSongFile(song.prettyName, songFile.urlPath, songFile.clef, songFile.instrumentVoice, songFile.instrument, songFile.transposition, song.partSystem)
                 successCount += 1
             }
             catch (err) {

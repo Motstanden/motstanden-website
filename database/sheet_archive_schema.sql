@@ -64,7 +64,8 @@ CREATE TABLE song_category(
 );
 CREATE TABLE song_title (
     song_title_id INTEGER PRIMARY KEY NOT NULL,
-    title TEXT UNIQUE NOT NULL
+    title TEXT UNIQUE NOT NULL,
+    extra_info TEXT NOT NULL DEFAULT ""
 );
 CREATE TABLE song_title_category(
     song_title_id INTEGER NOT NULL,
