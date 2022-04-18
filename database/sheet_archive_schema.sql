@@ -66,7 +66,9 @@ CREATE TABLE song_title (
     song_title_id INTEGER PRIMARY KEY NOT NULL,
     title TEXT NOT NULL,
     extra_info TEXT NOT NULL DEFAULT "",
-    UNIQUE(title, extra_info)
+    directory TEXT NOT NULL UNIQUE CHECK(like('files/%/notearkiv/%', directory)),
+    UNIQUE(title, extra_info),
+    CHECK(NOT like('%/', directory))
 );
 CREATE TABLE song_title_category(
     song_title_id INTEGER NOT NULL,
@@ -84,7 +86,7 @@ CREATE TABLE song_title_category(
 CREATE TABLE song_file (
     song_file_id INTEGER PRIMARY KEY NOT NULL,
     song_title_id INTEGER NOT NULL,
-    filename TEXT NOT NULL CHECK(like('files/private/notearkiv/%_._%', filename)),
+    filename TEXT NOT NULL CHECK(like('files/%/notearkiv/%_._%', filename)),
     clef_id INTEGER NOT NULL,
     instrument_id INTERGER NOT NULL,
     instrument_voice INTEGER NOT NULL DEFAULT 1 CHECK(instrument_voice > 0),

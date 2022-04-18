@@ -8,13 +8,15 @@ const { insertSongFile, insertSongTitle } = require("../../api/storedProcedures.
 class Song {
     constructor(songDir){
         this.fullPath = songDir
+        this.urlPath = null
         this.extraInfo = null
         this.prettyName = null
         this.partSystem = null
         this.files = []
 
+        this.#ParseUrl();
         this.#ParseName();
-        this.#GetFiles()
+        this.#GetFiles();
         this.#CheckPartSystem();
     }
     
@@ -33,6 +35,12 @@ class Song {
         }
     }
     
+    #ParseUrl = () => {
+        let dirtyUrl = this.fullPath.match(/files.*/)[0];
+        let posixUrl = dirtyUrl.split(path.sep).join(path.posix.sep)
+        this.urlPath = posixUrl;
+    }
+
     #ParseName = () => {
         let nameStr = path.basename(this.fullPath).trim()
         let parsedStr = Song.ParseNameStr(nameStr);
@@ -214,7 +222,7 @@ let failCount = 0
 const DbInsertSongArray = (songArray) => {  
     songArray.forEach( song => {
         try{
-            insertSongTitle(song.prettyName, song.extraInfo)
+            insertSongTitle(song.prettyName, song.extraInfo, song.urlPath)
         }
         catch(err) {
             console.log(err, "\t", song.prettyName, "\n")

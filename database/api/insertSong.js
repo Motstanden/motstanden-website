@@ -5,8 +5,10 @@ const sheetsDb = path.join(__dirname, "..", "sheet_archive_dev.db")
 
 const getSongTitleId = (db, title) => {
     let stmt = db.prepare("SELECT song_title_id FROM song_title where title = ?");
-    let value = stmt.get(title)
-    return value?.song_title_id
+    let dbResult = stmt.get(title)
+    if(!dbResult)
+        throw `Could not find id of song title: ${title}`
+    return dbResult.song_title_id
 }
 
 const getClefId = (db, clef_name) => {
@@ -67,18 +69,10 @@ const insertSongFile = (title, filename, clef_name, instrument_voice, instrument
     const clefId = getClefId(db, clef_name)
     const instrumentId = getInstrumentId(db, instrument, instrument_category) 
     const transpositionId = getToneId(db, transposition)
+    const titleId = getSongTitleId(db, title);
 
     // Define transaction
     const startTransaction = db.transaction( () => {
-
-        let titleId = getSongTitleId(db, title);
-        if(!titleId){
-            
-            titleId = db.prepare("INSERT INTO song_title(title) VALUES (?);")
-                        .run(title)
-                        .lastInsertRowid
-        }
-
         const stmt = db.prepare(`
             INSERT INTO 
                 song_file(song_title_id, filename, clef_id, instrument_id, instrument_voice, transposition)
@@ -92,12 +86,12 @@ const insertSongFile = (title, filename, clef_name, instrument_voice, instrument
     startTransaction();
 }
 
-const insertSongTitle = (title, extra_info) => {
+const insertSongTitle = (title, extra_info, directory) => {
     const db = new Database(sheetsDb, dbReadWriteConfig)
     extra_info ??= "";
     const startTransaction = db.transaction( () => {
-        const stmt = db.prepare("INSERT INTO song_title(title, extra_info) VALUES (?, ?)")
-        const info = stmt.run(title, extra_info)
+        const stmt = db.prepare("INSERT INTO song_title(title, extra_info, directory) VALUES (?, ?, ?)")
+        const info = stmt.run(title, extra_info, directory)
     })
 
     startTransaction();
