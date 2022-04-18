@@ -86,6 +86,7 @@ CREATE TABLE song_file (
     clef_id INTEGER NOT NULL,
     instrument_id INTERGER NOT NULL,
     instrument_voice INTEGER NOT NULL DEFAULT 1 CHECK(instrument_voice > 0),
+    transposition INTEGER NOT NULL,
     FOREIGN KEY (song_title_id)
         REFERENCES song_title (song_title_id)
         ON UPDATE CASCADE 
@@ -96,6 +97,10 @@ CREATE TABLE song_file (
         ON DELETE RESTRICT,
     FOREIGN KEY (instrument_id)
         REFERENCES instrument (instrument_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    FOREIGN KEY (transposition)
+        REFERENCES tone (tone_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
@@ -137,14 +142,16 @@ SELECT
     clef.unicode_symbol as clef_unicode_symbol,
     instrument.instrument as instrument,
     instrument_voice,
-    instrument_category.category as instrument_category 
+    instrument_category.category as instrument_category, 
+    tone.name as transposition
 FROM 
     song_file 
 LEFT JOIN song_title USING(song_title_id)
 LEFT JOIN clef USING(clef_id)
 LEFT JOIN instrument USING(instrument_id)
 LEFT JOIN instrument_category USING(instrument_category_id)
-/* vw_song_file(song_file_id,title,filename,clef_name,clef_unicode_symbol,instrument,instrument_voice,instrument_category) */;
+LEFT JOIN tone ON song_file.transposition = tone.tone_id
+/* vw_song_file(song_file_id,title,filename,clef_name,clef_unicode_symbol,instrument,instrument_voice,instrument_category,transposition) */;
 CREATE TRIGGER trig_vw_song_file_instead_of_insert
     INSTEAD OF INSERT ON vw_song_file
 BEGIN

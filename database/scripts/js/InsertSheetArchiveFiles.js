@@ -74,7 +74,7 @@ class SongFile {
         this.extraInfo = null
         this.instrument = null
         this.instrumentVoice = null
-        this.key = null
+        this.transposition = null
         this.clef = null
         this.partNumber = null
 
@@ -108,7 +108,7 @@ class SongFile {
         info = SongFile.#RightPadArray(info, numInfoFields);
         
         [this.instrument, this.instrumentVoice] = SongFile.#ParseInstrumentStr(info[0]);
-        this.key = info[1]
+        this.transposition = info[1] ?? "C"
         this.clef = SongFile.#ParseClefStr(info[2])
     }
 
@@ -188,7 +188,7 @@ const DbInsertSongArray = (songArray) => {
     songArray.forEach(song => {
         song.files.forEach( songFile => {
             try {
-                insertSong(song.prettyName, songFile.urlPath, songFile.clef, songFile.instrumentVoice, songFile.instrument, song.partSystem)
+                insertSong(song.prettyName, songFile.urlPath, songFile.clef, songFile.instrumentVoice, songFile.instrument, songFile.transposition, song.partSystem)
                 successCount += 1
             }
             catch (err) {

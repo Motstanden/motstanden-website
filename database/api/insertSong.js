@@ -28,7 +28,7 @@ const getCategoryId = (db, category) => {
 const getInstrumentId = (db, instrument, category) => {
     
     let dbResult = null;
-    
+
     let isPartSystem = instrument.toLowerCase().startsWith("part") 
     let isSuperPart = instrument.toLowerCase().startsWith("superpart")
 
@@ -52,7 +52,15 @@ const getInstrumentId = (db, instrument, category) => {
     return dbResult.instrument_id
 }
 
-const insertSong = (title, filename, clef_name, instrument_voice, instrument, instrument_category) => {
+const getToneId = (db, tone_name) => {
+    let stmt = db.prepare("SELECT tone_id FROM tone where name = ?");
+    let dbResult = stmt.get(tone_name)
+    if(!dbResult) 
+        throw `Could not find id of tone: "${tone_name}"`;
+    return dbResult.tone_id
+}
+
+const insertSong = (title, filename, clef_name, instrument_voice, instrument, transposition, instrument_category) => {
 
     if(!title || !filename || !instrument ) {
         console.log(`Did not add file: ${filename}`)
@@ -64,6 +72,7 @@ const insertSong = (title, filename, clef_name, instrument_voice, instrument, in
     // Throws exceptions if not found
     const clefId = getClefId(db, clef_name)
     const instrumentId = getInstrumentId(db, instrument, instrument_category) 
+    const transpositionId = getToneId(db, transposition)
 
     // Define transaction
     const startTransaction = db.transaction( () => {
@@ -78,11 +87,11 @@ const insertSong = (title, filename, clef_name, instrument_voice, instrument, in
 
         const stmt = db.prepare(`
             INSERT INTO 
-                song_file(song_title_id, filename, clef_id, instrument_id, instrument_voice)
+                song_file(song_title_id, filename, clef_id, instrument_id, instrument_voice, transposition)
             VALUES 
-                (?, ?, ?, ?, ?)
+                (?, ?, ?, ?, ?, ?)
         `)
-        const info = stmt.run(titleId, filename, clefId, instrumentId, instrument_voice)
+        const info = stmt.run(titleId, filename, clefId, instrumentId, instrument_voice, transpositionId)
     })
 
     // Run transaction
