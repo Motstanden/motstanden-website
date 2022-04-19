@@ -1,5 +1,6 @@
 .main {
     padding: 1px 3%;
+    padding-bottom: 100px;
 }
 
 .ul {
@@ -35,7 +36,6 @@
     border-collapse:collapse; 
     border-spacing: 100px;
     font-size: large;
-    margin-bottom: 100px;
 }
 
 .tableStyle th, td {
