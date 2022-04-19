@@ -3,15 +3,43 @@ const Database = require('better-sqlite3')
 const {sheetArchiveDB, dbReadOnlyConfig, dbReadWriteConfig} = require("../config/databaseConfig")
 const passport = require("passport")
 
-router.get("/sheet_archive", 
+router.get("/sheet_archive/song_title", 
     passport.authenticate("jwt", {session: false}),
     (req, res) => {
 
-        throw "NotImplementedException: TODO, fix this"
+        const db = new Database(sheetArchiveDB, dbReadOnlyConfig)
+        const stmt = db.prepare(`
+            SELECT 
+                song_title_id as titleId,
+                title, 
+                extra_info as extraInfo,
+                url_title as url
+            FROM 
+                song_title 
+            ORDER BY title ASC`)
+        const sheets = stmt.all()
+        res.send(sheets);
+        db.close()
+})
+
+router.get("/sheet_archive/song_file", 
+    passport.authenticate("jwt", {session: false}),
+    (req, res) => {
 
         const db = new Database(sheetArchiveDB, dbReadOnlyConfig)
-        const stmt = db.prepare("SELECT title, url FROM sheet_archive ORDER BY title DESC")
-        const sheets = stmt.all()
+        const stmt = db.prepare(`
+            SELECT 
+                filename as url, 
+                clef_name as clef,
+                instrument as instrument,
+                instrument_voice as instrumentVoice,
+                transposition
+            FROM 
+                vw_song_file 
+            WHERE title = ?
+            ORDER BY instrument ASC`)
+        const title = req.query.title;
+        const sheets = stmt.all(title)
         res.send(sheets);
         db.close()
 })

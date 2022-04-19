@@ -9,7 +9,8 @@ import "./app.css"
 import Header from "./components/Header.js"
 import Home from "./components/pages/Home.js"
 import BecomeAMember from "./components/pages/BecomeAMember.js"
-import MusicArcivePage from "./components/pages/MusicArcivePage.js"
+// import MusicArcivePage from "./components/pages/MusicArcivePage.js"
+import NewMusicArchivePage from "./components/pages/NewMusicArchivePage.js"
 import LyricListPage from "./components/pages/LyricListPage"
 import QuotesPage from "./components/pages/QuotesPage.js"
 import DocumentsPage from "./components/pages/DocumentsPage.js"
@@ -35,7 +36,7 @@ class App extends React.Component{
                         <BecomeAMember/>
                     </Route>
                     <Route path="/notearkiv">
-                        <MusicArcivePage/>
+                        <NewMusicArchivePage/>
                     </Route>
                     <Route path="/studenttraller">
                         <LyricListPage/>
