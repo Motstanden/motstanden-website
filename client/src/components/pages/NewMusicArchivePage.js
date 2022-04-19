@@ -11,13 +11,11 @@ export default function NewMusicArchivePage() {
     const [songs, setSongs] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(async () => {
-        const result = await axios("/api/sheet_archive/song_title")
-        console.log(result)
-        if(result.statusText === "OK"){
-            setSongs(result.data)
-        }
-        setIsLoading(false)
+    useEffect(() => {
+        axios.get("/api/sheet_archive/song_title")
+             .then( result => setSongs(result.data))
+             .catch( err => console.log(err))
+             .finally( () => setIsLoading(false)) 
     }, [])
 
     let failScreen = null;
@@ -79,7 +77,6 @@ const SongPage = props => {
                 title: props.title
             }})
 
-        console.log(result)
         if(result.statusText === "OK"){
             setSongFiles(result.data)
         }
@@ -95,23 +92,36 @@ const SongPage = props => {
         <table className={styles.tableStyle}>
             <tr>
                 <th>Instrument</th>
+                <th>Natura</th>
                 <th>Nøkkel</th>
-                <th>Transponering</th>
             </tr>
-            {songFiles?.map( file => (
-                <tr key={file.id}>
-                    <td>
-                        <a href={window.location.origin + "/" + file.url}
-                           type="application/pdf"
-                           style={{fontSize:'large'}}
-                           className={styles.anchorStyle}>
-                               {file.instrument + " " + file.instrumentVoice}
-                        </a>
-                    </td>
-                    <td>{file.clef}</td>
-                    <td>{file.transposition}</td>
-                </tr>
-            ))}
+            {songFiles?.map( file => {
+                // let voiceNum = file.instrument.toLowerCase().startsWith("part") ? "" : " " + file.instrumentVoice
+                
+                let voiceNum = " " + file.instrumentVoice;
+                if(file.instrument.toLowerCase().startsWith("part")){
+                    voiceNum = ""
+                }
+                if (file.instrumentVoice == 1){
+                    voiceNum = ""
+                }
+                
+                let fileText = file.instrument + voiceNum
+                return (
+                    <tr key={file.id}>
+                        <td>
+                            <a href={window.location.origin + "/" + file.url}
+                            type="application/pdf"
+                            style={{fontSize:'large'}}
+                            className={styles.anchorStyle}>
+                                {fileText}
+                            </a>
+                        </td>
+                        <td>{file.transposition}</td>
+                        <td>{file.clef}</td>
+                    </tr>)
+                }
+            )}
         </table>
     )
 
