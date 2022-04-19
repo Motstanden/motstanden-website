@@ -72,6 +72,7 @@ const SongPage = props => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(async () => {
+        window.scrollTo(0, 0)
         const result = await axios.get("/api/sheet_archive/song_file", {
             params: {
                 title: props.title
