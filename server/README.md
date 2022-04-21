@@ -102,7 +102,7 @@ Wiki
 ====
 Oppsett/installasjon
 --------------------
-MotstandensWiki kjører Mediawiki, som er det samme rammeverket som bl.a. Wikipedia bruker. Vi installerte mediawiki ved å laste ned å pakke ut en *tarball*.
+MotstandensWiki kjører Mediawiki, som er det samme rammeverket som bl.a. Wikipedia bruker. Vi installerte mediawiki ved å laste ned og pakke ut en *tarball*.
 
 ```
 cd /MOTSTANDEN/wiki/
@@ -166,6 +166,8 @@ Konfigurasjonsfila `/MOTSTANDEN/wiki/mediawiki/LocalSettings.php` er global for 
 > liburi-perl mecab-ipadic mecab-ipadic-utf8 mecab-utils mediawiki-classes mysql-client-8.0 mysql-client-core-8.0
 > mysql-common mysql-server-8.0 mysql-server-core-8.0 php php-curl php-intl php-mbstring php-mysql php-wikidiff2
 > php-xml php7.4
+
+Om noen kjører **apt clean**, **autoclean** eller **autoremove** i framtida vil en del pakker som er nødvendige for wikien bli avinstallert, men det er bare å installere de igjen (php-pakkene i lista over, untatt de som har noe med *mysql* å gjøre).
 
 
 Linux shell for dummies
