@@ -98,6 +98,76 @@ Domeneserver
 ------------
 Peker ikke domeneshop.no? Prøv å skrive IP i webbrowser.
 
+Wiki
+====
+Oppsett/installasjon
+--------------------
+MotstandensWiki kjører Mediawiki, som er det samme rammeverket som bl.a. Wikipedia bruker. Vi installerte mediawiki ved å laste ned å pakke ut en *tarball*.
+
+```
+cd /MOTSTANDEN/wiki/
+wget https://releases.wikimedia.org/mediawiki/1.37/mediawiki-1.37.2.tar.gz
+tar -xvzf mediawiki-1.37.2.tar.gz 
+mv mediawiki-1.37.2.tar.gz/ mediawiki
+chown -R www-data:www-data mediawiki
+```
+
+Det er flere grunner til at vi endte med å gjøre dette:
+* Mediawiki-versjonen som lå i Ubuntus pakkelager var en fire år gammel LTS-release
+* Den dro ned masse unødvendige dependencies som *apache2* og *mysql*
+* Den spredte filene rundt på systemet
+
+Nginx som webserver
+-------------------
+Det ligger en konfigurasjonsfil for wikien i `/etc/nginx/sites-available/wiki`
+Denne fila er aktivert ved at det er laga en symbolsk link i sites-enabled med `ln -s`
+```
+ln -s /etc/nginx/sites-available/wiki /etc/nginx/sites-enabled/
+```
+
+Certbot for ssl-sertifikat
+--------------------------
+Så lenge nginx-konfigurasjonen stemmer skal det fungere å kjøre
+```
+certbot --nginx -d wiki.motstanden.no
+```
+
+Php 7.4
+-------
+Php kjører som linuxbrukeren www-data
+```
+systemctl enable php7.4-fpm
+```
+Vi installerte en del anbefalte pakker.
+```
+sudo apt install imagemagick php7.4-fpm php7.4-intl php7.4-xml php7.4-curl php7.4-gd php7.4-mbstring php7.4-mysql php-apcu
+```
+Sqlite3 som database
+--------------------
+Php7.4-sqlite3 gir php sqlite-støtte, som vi har valgt for mediawiki.
+Databasefila ligger lagra i `/MOTSTANDEN/wiki/data`
+
+Mobilbrukergrensesnitt
+----------------------
+Vi bruker samme metode som Wikipedia bruker, og lar *Extension:MobileFrontend* peke
+mobilbrukere til *Skin:Minerva Neue*.
+Se [https://www.mediawiki.org/wiki/Extension:MobileFrontend](https://www.mediawiki.org/wiki/Extension:MobileFrontend).
+
+Extensions, skins og endringer i LocalSettings.php
+--------------------------------------------------
+Konfigurasjonsfila `/MOTSTANDEN/wiki/mediawiki/LocalSettings.php` er global for wikien, og ble originalt generert av *MediaWiki*s installasjons-*wizard*. Endringer i denne trer umiddelbart i kraft, så prøv å kommentere ut endringene dine dersom wikien kræsjer/kun viser en hvit side.
+
+**Og så en ting som nok blir et problem i framtida:** Siden wikien er installert som en tarball (uten å bruke en pakkenedlaster som **apt**) er ikke dependencies registrert. For øyeblikket (april 2022) er disse pakkene registrert som ikke påkrevd (*orphans*):
+
+>Følgende pakker ble automatisk installert og er ikke lenger påkrevet:
+> daemon default-mysql-server libcgi-fast-perl libcgi-pm-perl libencode-locale-perl libevent-core-2.1-7
+> libevent-pthreads-2.1-7 libfcgi-perl libhtml-parser-perl libhtml-tagset-perl libhtml-template-perl
+> libhttp-date-perl libhttp-message-perl libio-html-perl liblwp-mediatypes-perl libmecab2 libtimedate-perl
+> liburi-perl mecab-ipadic mecab-ipadic-utf8 mecab-utils mediawiki-classes mysql-client-8.0 mysql-client-core-8.0
+> mysql-common mysql-server-8.0 mysql-server-core-8.0 php php-curl php-intl php-mbstring php-mysql php-wikidiff2
+> php-xml php7.4
+
+
 Linux shell for dummies
 =======================
 ### Om du har lite erfaring med Linux kan dette være til hjelp.
