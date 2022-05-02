@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 
 interface AuthContextType{
@@ -55,4 +55,8 @@ export function RequireAuth({ children }: {children: JSX.Element}){
       }
     
     return children
+}
+
+export function RequireAuthRouter(){
+    return <RequireAuth><Outlet/></RequireAuth>
 }
