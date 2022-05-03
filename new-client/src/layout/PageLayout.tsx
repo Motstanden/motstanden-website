@@ -1,6 +1,6 @@
 import React from "react"
 import { Link, Outlet, useNavigate } from "react-router-dom"
-import { useAuth } from "../Authentication"
+import { useAuth } from "../routes/login/Authentication"
 
 export default function PageLayout(){
     return(
