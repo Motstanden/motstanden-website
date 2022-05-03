@@ -5,17 +5,25 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from "./Authentication"
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
 );
+
+const queryClient = new QueryClient()
+
 root.render(
 	<React.StrictMode>
-		<BrowserRouter>
-			<AuthProvider>
-				<App />
-			</AuthProvider>
-		</BrowserRouter>
+		<QueryClientProvider client={queryClient}>
+			<BrowserRouter>
+				<AuthProvider>
+					<App />
+				</AuthProvider>
+			</BrowserRouter>
+			<ReactQueryDevtools/>
+		</QueryClientProvider>
 	</React.StrictMode>
 );
 		

@@ -37,9 +37,6 @@ app.use(express.json());                             // support json encoded bod
 require("./config/passportConfig.js")(passport) 
 app.use(passport.initialize());
 
-// Allows us to use files from './client/build'
-app.use(express.static(path.join(__dirname, "..", "client", "build")))
-
 app.use("/files/private", 
     passport.authenticate("jwt", { session: false, failureRedirect: "/files/public" }),
     express.static(path.join(__dirname, "files", "private")),
@@ -56,8 +53,11 @@ app.use("/files",
 
 app.use("/api", router)
 
+// Allows us to use files from './client/build'
+app.use(express.static(path.join(__dirname, "..", "new-client", "build")))
+
 app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "client", "build", "index.html"))
+    res.sendFile(path.join(__dirname, "..", "new-client", "build", "index.html"))
 })
 
 app.listen(PORT, () => console.log("The server is listening on port " + PORT.toString()))
