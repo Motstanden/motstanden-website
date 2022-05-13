@@ -21,13 +21,15 @@ module.exports = (passport) => {
 
     passport.use(new LocalStrategy( async (username, password, done) => {
         
+        username = username.trim().toLowerCase();
+
         // Get the user from the database 
         const db = new Database(motstandenDB, dbReadOnlyConfig)
         const stmt = db.prepare("SELECT user_account_id, username, password FROM user_account WHERE username = ?")
         const dbUser = stmt.get(username)
         db.close();
  
-        // Check if pasword matches
+        // Check if password matches
         let passwordMatches = false;
         if (dbUser) {
             try {
