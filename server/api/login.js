@@ -22,4 +22,10 @@ router.post("/logout", (req, res) => {
     res.end()
 })
 
+router.get("/userMetaData",
+    passport.authenticate("jwt", { session: false, failWithError: true }),
+    (req, res) => res.send(req.user),                                               // Login success callback
+    (err, req, res, next) => res.status(204).send("Brukeren er ikke logget inn.")   // Login failure callback
+)
+
 module.exports = router

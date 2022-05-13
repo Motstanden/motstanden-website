@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "./Authentication";
 
@@ -12,16 +12,18 @@ export default function Login() {
 	let navigate = useNavigate();
 	let location = useLocation() as unknown as LocationProps;
 	let auth = useAuth();
-  
+
 	let from = location.state?.from?.pathname || "/hjem";
   
 	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 	  event.preventDefault();
-  
+		
+
 	  let formData = new FormData(event.currentTarget);
 	  let username = formData.get("username") as string;
+	  let password = formData.get("password") as string;
   
-	  auth.signIn(username, () => {
+	  auth.signIn(username, password, () => {
 		// Send them back to the page they tried to visit when they were
 		// redirected to the login page. Use { replace: true } so we don't create
 		// another entry in the history stack for the login page.  This means that
@@ -32,14 +34,36 @@ export default function Login() {
 	  });
 	}
   
+	if(auth.user){
+		navigate(from, { replace: true });
+	}
+
 	return (
 	  <div>
 		<h1>Logg inn</h1>
 		<form onSubmit={handleSubmit}>
-		  <label>
-			Username: <input name="username" type="text" />
-		  </label>{" "}
-		  <button type="submit">Login</button>
+		  	<label htmlFor="username"><b>Brukernavn:</b></label>
+			<br/> 
+			<input 
+				name="username" 
+				type="text"
+				placeholder="Brukernavn..."
+				required
+				autoFocus
+				autoComplete="off" />
+		  	<br/>
+		  	<br/>
+		  	<label htmlFor="password"><b>Passord:</b></label>
+			<br/>
+			<input 
+				type="password"
+				name="password"
+				placeholder="passord"
+				required
+				/>
+			<br/>
+			<br/>
+		  	<button type="submit">Logg inn</button>
 		</form>
 	  </div>
 	);
