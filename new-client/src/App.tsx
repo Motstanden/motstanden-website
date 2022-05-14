@@ -14,7 +14,7 @@ import Root from './routes/root/Root';
 import SheetArchive from './routes/sheetArchive/SheetArchive';
 
 // Layout
-import PageLayout from './layout/PageLayout';
+import PageLayout from './layout/PageLayout2';
 import BecomeMember from './routes/becomeMember/BecomeMember';
 
 function App() {
