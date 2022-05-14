@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -12,12 +13,12 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import { SxProps } from '@mui/material';
 import Link from '@mui/material/Link';
+import { SxProps } from '@mui/material';
+
 import { useAuth } from '../routes/login/Authentication';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { Link } from "react-router-dom"
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -111,30 +112,28 @@ function LoggedOutNavBar(){
 
 
 function MobileToolBar() {
-
     return ( 
-        <Container maxWidth="xl">
-            <Toolbar disableGutters >
-                <Box sx={{ flexGrow: 1}}>
+        <Container sx={{width: "100%"}}>
+            <Toolbar disableGutters>
+                <Box sx={{ flexGrow: 0, justifyContent: "flext-start"}}>
                     <IconButton
-                        size="large"
-                        aria-label="account of current user"
-                        aria-controls="menu-appbar"
-                        aria-haspopup="true"
+                        size="small"
                         color="inherit"
-                    >
+                        >
                         <MenuIcon />
                     </IconButton>
                 </Box>
                 <Title 
-                    variant='h5' 
+                    variant='h6' 
                     sx={{
                         display: "flex", 
-                        my: 1, 
+                        mt: 1,
+                        mb: 1,
+                        flexGrow: 1,
+                        justifyContent: 'center' 
                         }}
                 />
-                <Box sx={{ flexGrow: 1, display: "flex"}}/>     
-                <LoginStatus/>  
+                <LoginStatus sx={{justifyContent: "flex-end"}}/>  
             </Toolbar>
         </Container>   
     )
@@ -173,10 +172,10 @@ function Title(props: TitleProps) {
 	)
 }
 
-function LoginStatus(){
+function LoginStatus(sx: SxProps | undefined){
     let auth = useAuth()
     return  (
-        <Box sx={{ flexGrow: 0 }}>
+        <Box sx={{ flexGrow: 0, ...sx }}>
             {auth.user ? <UserAvatar/> : <LoginButton/> }
         </Box>
     )
@@ -228,11 +227,11 @@ function UserAvatar() {
 
 function LoginButton(){
     return (
-        <Link variant='h6'
+        <Link variant='body1'
             href="/logg-inn" 
             sx={{
                 color: "inherit",
-                fontWeight: 700,
+                fontWeight: 300,
             }}
         >
             Logg inn
