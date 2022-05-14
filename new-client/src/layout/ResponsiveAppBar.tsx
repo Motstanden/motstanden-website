@@ -154,51 +154,56 @@ function SideDrawer() {
                 disableSwipeToOpen={true}
                 swipeAreaWidth={400}
                 >
-                    <SideDrawerContent/>
+                    <SideDrawerContent onClick={() => setIsOpen(false)}/>
             </SwipeableDrawer>
         </>
     )
 }
 
-function SideDrawerContent() {
-    let auth = useAuth()
-    return auth.user ? <LoggedInDrawerContent/> : <LoggedOutDrawerContent/>
+interface SideDrawerProps {
+    onClick: VoidFunction
 }
 
-function LoggedInDrawerContent() {
+
+function SideDrawerContent(props: SideDrawerProps) {
+    let auth = useAuth()
+    return auth.user ? <LoggedInDrawerContent onClick={props.onClick}/> : <LoggedOutDrawerContent onClick={props.onClick}/>
+}
+
+function LoggedInDrawerContent(props: SideDrawerProps) {
     return (
         <List>
-            <ListItem button component={RouterLink} to="/hjem" >
+            <ListItem button component={RouterLink} to="/hjem" onClick={props.onClick}>
                 <ListItemText>Hjem</ListItemText>
             </ListItem>
 
-            <ListItem button component={RouterLink} to="/studenttraller">
+            <ListItem button component={RouterLink} to="/studenttraller" onClick={props.onClick}>
                 <ListItemText>Studenttraller</ListItemText>
             </ListItem>
             
-            <ListItem button component={RouterLink} to="/dokumenter">
+            <ListItem button component={RouterLink} to="/dokumenter" onClick={props.onClick}>
                 <ListItemText>Dokumenter</ListItemText>
             </ListItem>
 
-            <ListItem button component={RouterLink} to="/notearkiv">
+            <ListItem button component={RouterLink} to="/notearkiv" onClick={props.onClick}>
                 <ListItemText>Notearkiv</ListItemText>
             </ListItem>
         </List>
     )
 }
 
-function LoggedOutDrawerContent() {
+function LoggedOutDrawerContent(props: SideDrawerProps) {
     return (
         <List>
-            <ListItem button component={RouterLink} to="/bli-medlem">
+            <ListItem button component={RouterLink} to="/bli-medlem" onClick={props.onClick}>
                 <ListItemText>Bli Medlem</ListItemText>
             </ListItem>
 
-            <ListItem button component={RouterLink} to="/studenttraller">
+            <ListItem button component={RouterLink} to="/studenttraller" onClick={props.onClick}>
                 <ListItemText>Studenttraller</ListItemText>
             </ListItem>
             
-            <ListItem button component={RouterLink} to="/dokumenter">
+            <ListItem button component={RouterLink} to="/dokumenter" onClick={props.onClick}>
                 <ListItemText>Dokumenter</ListItemText>
             </ListItem>
         </List>
