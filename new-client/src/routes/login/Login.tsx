@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "./Authentication";
 
@@ -14,10 +14,16 @@ export default function Login() {
 	let auth = useAuth();
 
 	let from = location.state?.from?.pathname || "/hjem";
-  
+	
+	useEffect( () => {
+		if(auth.user){
+			navigate(from, { replace: true });
+		}
+
+	}, [auth])
+	
 	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 	  event.preventDefault();
-		
 
 	  let formData = new FormData(event.currentTarget);
 	  let username = formData.get("username") as string;
@@ -34,9 +40,6 @@ export default function Login() {
 	  });
 	}
   
-	if(auth.user){
-		navigate(from, { replace: true });
-	}
 
 	return (
 	  <div>
