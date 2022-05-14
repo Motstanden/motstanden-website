@@ -14,11 +14,21 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import Link from '@mui/material/Link';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import ListSubheader from '@mui/material/ListSubheader';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+
+
+
 import { SxProps } from '@mui/material';
 
 import { useAuth } from '../routes/login/Authentication';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -72,16 +82,16 @@ function LoggedInNavBar(){
 
     return (
         <nav>
-            <Link href="/hjem" sx={linkStyle}>
+            <Link component={RouterLink} to="/hjem" sx={linkStyle}>
                 Hjem
             </Link>
-            <Link href="/notearkiv" sx={linkStyle}>
+            <Link component={RouterLink} to="/notearkiv" sx={linkStyle}>
                 Notearkiv
             </Link>
-            <Link href="/studenttraller" sx={linkStyle}>
+            <Link component={RouterLink} to="/studenttraller" sx={linkStyle}>
                 Studenttraller
             </Link>
-            <Link href="/dokumenter" sx={linkStyle}>
+            <Link component={RouterLink} to="/dokumenter" sx={linkStyle}>
                 Dokumenter
             </Link>
         </nav>
@@ -97,13 +107,13 @@ function LoggedOutNavBar(){
 
     return (
         <nav>
-            <Link href="/bli-medlem" sx={linkStyle}>
+            <Link component={RouterLink} to="/bli-medlem" sx={linkStyle}>
                 Bli Medlem
             </Link>
-            <Link href="/studenttraller" sx={linkStyle}>
+            <Link component={RouterLink} to="/studenttraller" sx={linkStyle}>
                 Studenttraller
             </Link>
-            <Link href="/dokumenter" sx={linkStyle}>
+            <Link component={RouterLink} to="/dokumenter" sx={linkStyle}>
                 Dokumenter
             </Link>
         </nav>
@@ -113,31 +123,90 @@ function LoggedOutNavBar(){
 
 function MobileToolBar() {
     return ( 
-        <Container sx={{width: "100%"}}>
-            <Toolbar disableGutters>
-                <Box sx={{ flexGrow: 0, justifyContent: "flext-start"}}>
-                    <IconButton
-                        size="small"
-                        color="inherit"
-                        >
-                        <MenuIcon />
-                    </IconButton>
-                </Box>
-                <Title 
-                    variant='h6' 
-                    sx={{
-                        display: "flex", 
-                        mt: 1,
-                        mb: 1,
-                        flexGrow: 1,
-                        justifyContent: 'center' 
-                        }}
-                />
-                <LoginStatus sx={{justifyContent: "flex-end"}}/>  
+        <Container>
+            <Toolbar  disableGutters sx={{display: "flex", justifyContent: "space-between"}}>
+                <SideDrawer/>
+                <Title variant='h6'/>
+                <LoginStatus/>  
             </Toolbar>
         </Container>   
     )
 }
+
+function SideDrawer() {
+    const [isOpen, setIsOpen] = useState(false)
+
+    return (
+        <>
+            <IconButton
+                size="small"
+                color="inherit"
+                onClick={() => setIsOpen(true)}
+                >
+                <MenuIcon />
+            </IconButton>
+
+            <SwipeableDrawer 
+                anchor="left"
+                open={isOpen}
+                onClose={() => setIsOpen(false)}
+                onOpen={() => setIsOpen(true)}
+                disableSwipeToOpen={true}
+                swipeAreaWidth={400}
+                >
+                    <SideDrawerContent/>
+            </SwipeableDrawer>
+        </>
+    )
+}
+
+function SideDrawerContent() {
+    let auth = useAuth()
+    return auth.user ? <LoggedInDrawerContent/> : <LoggedOutDrawerContent/>
+}
+
+function LoggedInDrawerContent() {
+    return (
+        <List>
+            <ListItem button component={RouterLink} to="/hjem" >
+                <ListItemText>Hjem</ListItemText>
+            </ListItem>
+
+            <ListItem button component={RouterLink} to="/studenttraller">
+                <ListItemText>Studenttraller</ListItemText>
+            </ListItem>
+            
+            <ListItem button component={RouterLink} to="/dokumenter">
+                <ListItemText>Dokumenter</ListItemText>
+            </ListItem>
+
+            <ListItem button component={RouterLink} to="/notearkiv">
+                <ListItemText>Notearkiv</ListItemText>
+            </ListItem>
+        </List>
+    )
+}
+
+function LoggedOutDrawerContent() {
+    return (
+        <List>
+            <ListItem button component={RouterLink} to="/bli-medlem">
+                <ListItemText>Bli Medlem</ListItemText>
+            </ListItem>
+
+            <ListItem button component={RouterLink} to="/studenttraller">
+                <ListItemText>Studenttraller</ListItemText>
+            </ListItem>
+            
+            <ListItem button component={RouterLink} to="/dokumenter">
+                <ListItemText>Dokumenter</ListItemText>
+            </ListItem>
+        </List>
+    )
+
+}
+
+
 
 type VariantType = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "subtitle1" | "subtitle2" | "body1" | "body2" | "caption" | "button" | "overline" | "inherit" | undefined
 
@@ -149,36 +218,29 @@ interface TitleProps {
 function Title(props: TitleProps) {
 
 	return (
-		<>
-            <Typography
-                noWrap
-                component="a"
-                href="/"
-                variant={props.variant}
-                sx={{
-                    flexGrow: 0,
-                    fontFamily: 'monospace',
-                    fontWeight: 700,
-                    letterSpacing: '.1rem',
-                    color: 'inherit',
-                    textDecoration: 'none',
-                    ...props.sx
-                }}
+        <Typography
+            component={RouterLink}
+            to="/"
+            noWrap
+            variant={props.variant}
+            sx={{
+                fontFamily: 'monospace',
+                py: 1,
+                fontWeight: 700,
+                letterSpacing: '.1rem',
+                color: 'inherit',
+                textDecoration: 'none',
+                ...props.sx
+            }}
             >
-                <AdbIcon sx={{mt: 0.5}}/>
-                MOTSTANDEN
-            </Typography>
-		</>
+            MOTSTANDEN
+        </Typography>
 	)
 }
 
 function LoginStatus(sx: SxProps | undefined){
     let auth = useAuth()
-    return  (
-        <Box sx={{ flexGrow: 0, ...sx }}>
-            {auth.user ? <UserAvatar/> : <LoginButton/> }
-        </Box>
-    )
+    return  auth.user ? <UserAvatar/> : <LoginButton/>
 }
 
 function UserAvatar() {
@@ -191,22 +253,22 @@ function UserAvatar() {
     const open = Boolean(anchorEl);
     
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-      setAnchorEl(event.currentTarget);
+        setAnchorEl(event.currentTarget);
     };
 
     const handleClose = () => {
-      setAnchorEl(null);
+        setAnchorEl(null);
     };
 
     const onSignOut = () => {
         auth.signOut( () => navigate("/") )
     }
+
     return (
         <>
         <Tooltip title={username} >
-            <IconButton onClick={handleClick}
-                >
-                <Avatar alt={username}/>
+            <IconButton onClick={handleClick}>
+                <Avatar alt={username} sx={{ height: "50px", width: "50px"}}/>
             </IconButton>
         </Tooltip>
         <Menu 
@@ -214,8 +276,8 @@ function UserAvatar() {
             open={open}
             onClose={handleClose}
             onClick={handleClose}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            transformOrigin={{ horizontal: 'left', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
         >
             <MenuItem onClick={onSignOut}>
                 Logg ut
@@ -228,7 +290,7 @@ function UserAvatar() {
 function LoginButton(){
     return (
         <Link variant='body1'
-            href="/logg-inn" 
+            component={RouterLink} to="/logg-inn" 
             sx={{
                 color: "inherit",
                 fontWeight: 300,
