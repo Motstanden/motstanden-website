@@ -15,6 +15,8 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { SxProps } from '@mui/material';
 import Link from '@mui/material/Link';
 import { useAuth } from '../routes/login/Authentication';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 // import { Link } from "react-router-dom"
 
 const pages = ['Products', 'Pricing', 'Blog'];
@@ -49,6 +51,7 @@ function DesktopToolbar(){
                 <Box sx={{ flexGrow: 3, display: "flex"}}>
                     <NavBar/>
                 </Box>
+                <LoginStatus/>  
             </Toolbar>
         </Container>
     )
@@ -113,7 +116,8 @@ function MobileToolBar() {
                         my: 1, 
                         }}
                 />
-                <Box sx={{ flexGrow: 1, display: "flex"}}/>       
+                <Box sx={{ flexGrow: 1, display: "flex"}}/>     
+                <LoginStatus/>  
             </Toolbar>
         </Container>   
     )
@@ -150,6 +154,73 @@ function Title(props: TitleProps) {
             </Typography>
 		</>
 	)
+}
+
+function LoginStatus(){
+    let auth = useAuth()
+    return  (
+        <Box sx={{ flexGrow: 0 }}>
+            {auth.user ? <UserAvatar/> : <LoginButton/> }
+        </Box>
+    )
+}
+
+function UserAvatar() {
+    let auth = useAuth()
+    let username = auth?.user ?? ""
+    
+    let navigate = useNavigate()
+
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    const onSignOut = () => {
+        auth.signOut( () => navigate("/") )
+    }
+    return (
+        <>
+        <Tooltip title={username} >
+            <IconButton onClick={handleClick}
+                >
+                <Avatar alt={username}/>
+            </IconButton>
+        </Tooltip>
+        <Menu 
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            onClick={handleClose}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        >
+            <MenuItem onClick={onSignOut}>
+                Logg ut
+            </MenuItem>
+        </Menu>
+        </>
+    )
+}
+
+function LoginButton(){
+    return (
+        <Link variant='h6'
+            href="/logg-inn" 
+            sx={{
+                color: "inherit",
+                fontWeight: 700,
+            }}
+        >
+            Logg inn
+        </Link>
+    )
 }
 
 // function ProfileIcon(){
