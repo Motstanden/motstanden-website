@@ -63,9 +63,26 @@ function NavBar(){
 }
 
 function LoggedInNavBar(){
+
+    const linkStyle: SxProps = {                    
+        color: 'inherit',
+        mr: 5,
+    }
+
     return (
         <nav>
-            Logget inn
+            <Link href="/hjem" sx={linkStyle}>
+                Hjem
+            </Link>
+            <Link href="/notearkiv" sx={linkStyle}>
+                Notearkiv
+            </Link>
+            <Link href="/studenttraller" sx={linkStyle}>
+                Studenttraller
+            </Link>
+            <Link href="/dokumenter" sx={linkStyle}>
+                Dokumenter
+            </Link>
         </nav>
     )
 }
@@ -222,38 +239,3 @@ function LoginButton(){
         </Link>
     )
 }
-
-// function ProfileIcon(){
-//     return (
-
-//         <Box sx={{ flexGrow: 0 }}>
-//         <Tooltip title="Open settings">
-//                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-//                     <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-//                 </IconButton>
-//             </Tooltip>
-//             <Menu
-//                 sx={{ mt: '45px' }}
-//                 id="menu-appbar"
-//                 anchorEl={anchorElUser}
-//                 anchorOrigin={{
-//                     vertical: 'top',
-//                     horizontal: 'right',
-//                 }}
-//                 keepMounted
-//                 transformOrigin={{
-//                     vertical: 'top',
-//                     horizontal: 'right',
-//                 }}
-//                 open={Boolean(anchorElUser)}
-//                 onClose={handleCloseUserMenu}
-//             >
-//                 {settings.map((setting) => (
-//                     <MenuItem key={setting} onClick={handleCloseUserMenu}>
-//                         <Typography textAlign="center">{setting}</Typography>
-//                     </MenuItem>
-//                 ))}
-//             </Menu>
-//         </Box> 
-//     )   
-// }
