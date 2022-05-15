@@ -14,6 +14,8 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 
 import { useAuth } from '../../contextProviders/Authentication';
 import ListItemLink from './ListItemLink';
+import ThemeSwitcher from './ThemeSwitcher';
+
 
 export default function SideDrawer() {
     const [isOpen, setIsOpen] = useState(false)
@@ -65,6 +67,7 @@ function PublicContent(props: SideDrawerContentProps) {
             </ListItemExpander>
             <ListItemLink text="Studenttraller" to="/studenttraller" onLinkClick={onRequestedExit}/>
             <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit}/>
+            <ListItemThemeSwitcher/>
         </List>
     )
 }
@@ -84,7 +87,7 @@ function PrivateContent(props: SideDrawerContentProps) {
                 <ListItemLink text="FAQ" to="/faq" disabled />
                 <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/"/>
             </ListItemExpander>
-            <ThemeSwitcher/>
+            <ListItemThemeSwitcher/>
         </List>
     )
 }
@@ -118,16 +121,13 @@ function ListItemExpander({ text, startsOpen, children }: { text: string, starts
 }
 
 // TODO
-function ThemeSwitcher() {
+function ListItemThemeSwitcher() {
     return (
         <>
             <Divider light={false}/>
-                Todo: switch to dark mode
-            {/* <ListItem>
-                <ListItemText>
-                    <ToggleThemeButton labelPlacement='end'/>
-                </ListItemText>
-            </ListItem> */}
+            <ListItem>
+                <ThemeSwitcher/>
+            </ListItem>
             <Divider light={false}/>
         </>
     )

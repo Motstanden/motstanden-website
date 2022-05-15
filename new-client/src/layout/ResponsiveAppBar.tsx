@@ -6,25 +6,23 @@ import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
-import Switch from '@mui/material/Switch';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { SxProps } from '@mui/system';
 
-import { LabelPlacementType, VariantType } from '../tsTypes/MaterialUiTypes';
+import { VariantType } from '../tsTypes/MaterialUiTypes';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { ThemeNameType, useAppTheme } from '../contextProviders/Themes';
 import { useAuth } from '../contextProviders/Authentication';
 
 import NavBar from "./appBar/NavBar"
 import SideDrawer from './appBar/SideDrawer';
+import ThemeSwitcher from './appBar/ThemeSwitcher';
 
 export default function ResponsiveAppBar(){
     return (
@@ -62,7 +60,7 @@ function DesktopToolbar(){
                         direction="row" 
                         alignItems="center" 
                         sx={{justifySelf: "flex-end"}} >
-                        <ToggleThemeButton/>
+                        <ThemeSwitcher/>
                         <Divider 
                             light={false} 
                             orientation="vertical" 
@@ -183,30 +181,5 @@ function LoginButton(){
         >
             Logg inn
         </Link>
-    )
-}
-
-interface ToggleThemeButtonProps {
-    labelPlacement?: LabelPlacementType
-    sx?: SxProps
-}
-
-function ToggleThemeButton(props: ToggleThemeButtonProps){
-
-    let theme = useAppTheme()
-
-    const onSwitchClick = () => {
-        let newTheme: ThemeNameType = theme.name === "dark" ? "light" : "dark" 
-        theme.changeTheme(newTheme)
-    }
-
-    return (
-        <FormControlLabel 
-            label="Skyggemodus"
-            labelPlacement={props?.labelPlacement ?? "end"}
-            control={<Switch checked={theme.name === "dark"}/>}
-            sx={{mr: 0}}
-            onClick={onSwitchClick}
-            />
     )
 }
