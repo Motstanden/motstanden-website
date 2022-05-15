@@ -1,10 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 
 // Material UI
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Collapse from '@mui/material/Collapse';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
@@ -36,7 +35,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { ThemeNameType, useAppTheme } from './Themes';
 import { useAuth } from '../routes/login/Authentication';
 
-
+import NavBar from "./appBar/NavBar"
 
 
 export default function ResponsiveAppBar(){
@@ -92,110 +91,6 @@ function DesktopToolbar(){
                 </Stack>
             </Toolbar>
         </Container>
-    )
-}
-
-function NavBar(){
-    let auth = useAuth()
-    return auth.user ? <LoggedInNavBar/> : <LoggedOutNavBar/>
-}
-
-function LoggedInNavBar(){
-
-    const linkStyle: SxProps = {                    
-        color: 'inherit',
-        mr: 2,
-    }
-
-    return (
-        <nav>
-            <Box sx={{display: "flex", alignItems: "center"}}>
-
-                <Link component={RouterLink} to="/hjem" sx={linkStyle}>
-                    Hjem
-                </Link>
-                <Link component={RouterLink} to="/notearkiv" sx={linkStyle}>
-                    Notearkiv
-                </Link>
-                <Link component={RouterLink} to="/studenttraller" sx={linkStyle}>
-                    Studenttraller
-                </Link>
-                <Link component={RouterLink} to="/dokumenter" sx={linkStyle}>
-                    Dokumenter
-                </Link>
-                <AboutUsDropdown sx={{ ...linkStyle, mr: 0, ml: 0}}/>
-            </Box>
-        </nav>
-    )
-}
-
-function LoggedOutNavBar(){
-
-    const linkStyle: SxProps = {                    
-        color: 'inherit',
-        mr: 4,
-    }
-
-
-    return (
-        <nav>
-            <Box sx={{display: "flex", alignItems: "center"}}>
-                <AboutUsDropdown sx={{ ...linkStyle, mr: 2}}/>
-                <Link component={RouterLink} to="/studenttraller" sx={linkStyle}>
-                    Studenttraller
-                </Link>
-                <Link component={RouterLink} to="/dokumenter" sx={linkStyle}>
-                    Dokumenter
-                </Link>
-            </Box>
-        </nav>
-    )
-}
-
-
-function AboutUsDropdown( { sx }: { sx?: SxProps}){
-    
-    const [isAboutOpen, setIsAboutOpen] = useState(false);
-    const aboutEl = useRef(null)
-
-    return (
-        <>
-            <Button 
-                ref={aboutEl}
-                onClick={() => setIsAboutOpen(!isAboutOpen)}
-                sx={{
-                    ...sx, 
-                    textTransform: "none", 
-                }} 
-                >
-                <Typography variant="subtitle1">
-                    Om oss
-                </Typography>
-                {isAboutOpen ? <ExpandLess/> : <ExpandMore/>}
-            </Button>
-            <Menu 
-                anchorEl={aboutEl.current}
-                open={isAboutOpen}
-                anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
-                transformOrigin={{ horizontal: 'center', vertical: 'top' }}
-                onClose={() => setIsAboutOpen(false)}
-                >
-                <List component="div" disablePadding sx={{minWidth: 200}}>
-                    <ListItem button component={RouterLink} to="/" onClick={() => setIsAboutOpen(false)}>
-                        <ListItemText primary="Framside" />
-                    </ListItem>
-                    <ListItem button component={RouterLink} to="/bli-medlem" onClick={() => setIsAboutOpen(false)}>
-                        <ListItemText primary="Bli Medlem" />
-                    </ListItem>
-                    <ListItem button component={RouterLink} to="/faq" onClick={() => setIsAboutOpen(false)}>
-                        <ListItemText primary="FAQ" />
-                    </ListItem>
-                    <ListItem button component="a" href="https://wiki.motstanden.no/" onClick={() => setIsAboutOpen(false)}>
-                        <ListItemText primary="Wiki" />
-                    </ListItem>
-                </List>
-            </Menu>
-        </>
     )
 }
 
