@@ -41,7 +41,7 @@ function PrivateNavBar(){
                 <List component="nav" disablePadding sx={{minWidth: 200}}>
                     <ListItemLink text="Framside" to="/"/>
                     <ListItemLink text="Bli Medlem" to="/bli-medlem" />
-                    <ListItemLink text="FAQ" to="/faq" />
+                    <ListItemLink text="FAQ" to="/faq" disabled />
                     <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/"/>
                 </List>
             </NavDropDown>
@@ -61,7 +61,7 @@ function PublicNavBar(){
                 <List component="nav" disablePadding sx={{minWidth: 200}}>
                     <ListItemLink text="Framside" to="/"/>
                     <ListItemLink text="Bli Medlem" to="/bli-medlem" />
-                    <ListItemLink text="FAQ" to="/faq" />
+                    <ListItemLink text="FAQ" to="/faq" disabled />
                     <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/"/>
                 </List>
             </NavDropDown>
@@ -86,13 +86,14 @@ function NavLink( { to, text, sx }: { to: string, text: string, sx?: SxProps}) {
     )
 }
 
-function ListItemLink({ to, text, externalRoute }: {to: string, text: string, externalRoute?: boolean }){
+function ListItemLink({ to, text, externalRoute, disabled }: {to: string, text: string, externalRoute?: boolean, disabled?: boolean }){
     let urlAttribute = externalRoute ? { href: to } : { to: to}
     return (
         <ListItem 
             button 
             component={externalRoute ? "a" : RouterLink}
             {...urlAttribute}
+            disabled={disabled}
             >
             <ListItemText primary={text}/>
         </ListItem>
