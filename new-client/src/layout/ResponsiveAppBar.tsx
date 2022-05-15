@@ -259,11 +259,11 @@ interface TitleProps {
 }
 
 function Title(props: TitleProps) {
-
+    let auth = useAuth()
 	return (
         <Typography
             component={RouterLink}
-            to="/"
+            to={auth.user ? "/hjem" : "/"}
             noWrap
             variant={props.variant}
             sx={{
