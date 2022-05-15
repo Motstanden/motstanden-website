@@ -14,7 +14,7 @@ import { useAuth } from "../../contextProviders/Authentication"
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import ListItemLink from "./ListItemLink"
 
-export default function NavBar(){
+export function NavBar(){
     let auth = useAuth()
     return auth.user 
         ? <PrivateNavBar/> 
@@ -69,7 +69,7 @@ function PublicNavBar(){
     )
 }
 
-function NavLink( { to, text, sx }: { to: string, text: string, sx?: SxProps}) {
+export function NavLink( { to, text, sx }: { to: string, text: string, sx?: SxProps}) {
     return (
         <Link 
             component={RouterLink}

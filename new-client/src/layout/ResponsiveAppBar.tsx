@@ -20,7 +20,7 @@ import { VariantType } from '../tsTypes/MaterialUiTypes';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contextProviders/Authentication';
 
-import NavBar from "./appBar/NavBar"
+import { NavBar, NavLink } from "./appBar/NavBar"
 import SideDrawer from './appBar/SideDrawer';
 import ThemeSwitcher from './appBar/ThemeSwitcher';
 
@@ -122,7 +122,9 @@ function Title(props: TitleProps) {
 
 function LoginStatus(){
     let auth = useAuth()
-    return  auth.user ? <UserAvatar/> : <LoginButton/>
+    return  auth.user 
+        ? <UserAvatar/> 
+        : <NavLink text="Logg Inn" to="/logg-inn" sx={{fontWeight: 600}}/>
 }
 
 function UserAvatar() {
@@ -166,20 +168,5 @@ function UserAvatar() {
             </MenuItem>
         </Menu>
         </>
-    )
-}
-
-function LoginButton(){
-    return (
-        <Link variant='body1'
-            component={RouterLink} to="/logg-inn" 
-            sx={{
-                color: "inherit",
-                fontWeight: 300,
-                ml: 1
-            }}
-        >
-            Logg inn
-        </Link>
     )
 }
