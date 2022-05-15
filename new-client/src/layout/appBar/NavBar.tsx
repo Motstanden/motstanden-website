@@ -14,7 +14,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 
 import { useAuth } from "../../routes/login/Authentication"
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-
+import ListItemLink from "./ListItemLink"
 
 export default function NavBar(){
     let auth = useAuth()
@@ -83,20 +83,6 @@ function NavLink( { to, text, sx }: { to: string, text: string, sx?: SxProps}) {
         >
             {text}
         </Link>
-    )
-}
-
-function ListItemLink({ to, text, externalRoute, disabled }: {to: string, text: string, externalRoute?: boolean, disabled?: boolean }){
-    let urlAttribute = externalRoute ? { href: to } : { to: to}
-    return (
-        <ListItem 
-            button 
-            component={externalRoute ? "a" : RouterLink}
-            {...urlAttribute}
-            disabled={disabled}
-            >
-            <ListItemText primary={text}/>
-        </ListItem>
     )
 }
 
