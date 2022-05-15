@@ -20,7 +20,7 @@ import { SxProps } from '@mui/system';
 
 import { LabelPlacementType, VariantType } from '../tsTypes/MaterialUiTypes';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { ThemeNameType, useAppTheme } from './Themes';
+import { ThemeNameType, useAppTheme } from '../contextProviders/Themes';
 import { useAuth } from '../contextProviders/Authentication';
 
 import NavBar from "./appBar/NavBar"

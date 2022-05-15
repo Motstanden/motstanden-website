@@ -9,7 +9,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
 
 import CssBaseline from '@mui/material/CssBaseline';
-import { AppThemeProvider } from './layout/Themes';
+import { AppThemeProvider } from './contextProviders/Themes';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
