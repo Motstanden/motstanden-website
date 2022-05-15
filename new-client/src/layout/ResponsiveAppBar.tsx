@@ -32,6 +32,8 @@ import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { ThemeNameType, useAppTheme } from './Themes';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
+import {VariantType, LabelPlacementType } from "../tsTypes/MaterialUiTypes"
+
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
@@ -354,10 +356,6 @@ function LoggedOutDrawerContent(props: SideDrawerProps) {
 
 }
 
-
-
-type VariantType = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "subtitle1" | "subtitle2" | "body1" | "body2" | "caption" | "button" | "overline" | "inherit" | undefined
-
 interface TitleProps {
     variant: VariantType,
     sx?: SxProps | undefined
@@ -451,7 +449,7 @@ function LoginButton(){
 }
 
 interface ToggleThemeButtonProps {
-    labelPlacement?: "top" | "bottom" | "start" | "end" 
+    labelPlacement?: LabelPlacementType
     sx?: SxProps
 }
 
