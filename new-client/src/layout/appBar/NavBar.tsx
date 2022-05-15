@@ -3,8 +3,6 @@ import React, { useRef, useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
 import { SxProps } from '@mui/system';
 import Menu from '@mui/material/Menu';
 import Stack from '@mui/material/Stack';
@@ -18,16 +16,15 @@ import ListItemLink from "./ListItemLink"
 
 export default function NavBar(){
     let auth = useAuth()
-    return (
-        <nav>
-            {auth.user ? <PrivateNavBar/> : <PublicNavBar/>}
-        </nav>
-    )
+    return auth.user 
+        ? <PrivateNavBar/> 
+        : <PublicNavBar/>
 }
 
 function PrivateNavBar(){
     return (
         <Stack 
+            component="nav"
             direction="row"
             alignItems="center"
             justifyContent="space-between"
@@ -36,7 +33,7 @@ function PrivateNavBar(){
             <NavLink text="Hjem" to="/hjem"/>
             <NavLink text="Notearkiv" to="/notearkiv"/>
             <NavLink text="Studenttraller" to="/studenttraller"/>
-            <NavLink text="Dokumenter" to="/dokumenter"/>
+            <NavLink text="Dokumenter" to="/dokumenter" />
             <NavDropDown text="Om oss">
                 <List component="nav" disablePadding sx={{minWidth: 200}}>
                     <ListItemLink text="Framside" to="/"/>
@@ -52,12 +49,13 @@ function PrivateNavBar(){
 function PublicNavBar(){
     return (
         <Stack 
+            component="nav"
             direction="row"
             alignItems="center"
             justifyContent="space-between"
             spacing={4}
             >
-            <NavDropDown text="Om oss">
+            <NavDropDown text="Om oss" sx={{mr: -2}}>
                 <List component="nav" disablePadding sx={{minWidth: 200}}>
                     <ListItemLink text="Framside" to="/"/>
                     <ListItemLink text="Bli Medlem" to="/bli-medlem" />
