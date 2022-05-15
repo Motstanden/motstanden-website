@@ -1,5 +1,5 @@
 import React from "react"
-import { useAuth } from "../login/Authentication"
+import { useAuth } from "../../contextProviders/Authentication"
 
 
 export default function Home(){

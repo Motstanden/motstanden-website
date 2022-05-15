@@ -12,7 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 
-import { useAuth } from '../../routes/login/Authentication';
+import { useAuth } from '../../contextProviders/Authentication';
 import ListItemLink from './ListItemLink';
 
 export default function SideDrawer() {

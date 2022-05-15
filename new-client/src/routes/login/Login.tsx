@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "./Authentication";
+import { useAuth } from "../../contextProviders/Authentication";
 
 type LocationProps = {
 	state: {

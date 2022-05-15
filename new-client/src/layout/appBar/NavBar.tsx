@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 
-import { useAuth } from "../../routes/login/Authentication"
+import { useAuth } from "../../contextProviders/Authentication"
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import ListItemLink from "./ListItemLink"
 

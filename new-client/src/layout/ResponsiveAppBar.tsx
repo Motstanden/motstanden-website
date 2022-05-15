@@ -21,7 +21,7 @@ import { SxProps } from '@mui/system';
 import { LabelPlacementType, VariantType } from '../tsTypes/MaterialUiTypes';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { ThemeNameType, useAppTheme } from './Themes';
-import { useAuth } from '../routes/login/Authentication';
+import { useAuth } from '../contextProviders/Authentication';
 
 import NavBar from "./appBar/NavBar"
 import SideDrawer from './appBar/SideDrawer';
