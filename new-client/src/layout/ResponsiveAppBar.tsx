@@ -24,11 +24,12 @@ import ListItemText from '@mui/material/ListItemText';
 
 
 
-import { SxProps } from '@mui/material';
+import { Divider, FormControlLabel, FormGroup, Switch, SxProps } from '@mui/material';
 
 import { useAuth } from '../routes/login/Authentication';
 import { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { ThemeNameType, useAppTheme } from './Themes';
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -56,12 +57,24 @@ function DesktopToolbar(){
                     sx={{
                         display: "flex", 
                         my: 2, 
-                        mr: 4
+                        mr: 6
                         }}
                 />
                 <Box sx={{ flexGrow: 3, display: "flex"}}>
                     <NavBar/>
                 </Box>
+                <ToggleThemeButton/>
+                <Divider 
+                    light={false} 
+                    orientation="vertical" 
+                    flexItem={true}
+                    textAlign="left"
+                    sx={{
+                        my: 3,
+                        mr: 2,
+                        ml: 3,
+                    }}
+                    />
                 <LoginStatus/>  
             </Toolbar>
         </Container>
@@ -77,7 +90,7 @@ function LoggedInNavBar(){
 
     const linkStyle: SxProps = {                    
         color: 'inherit',
-        mr: 5,
+        mr: 4,
     }
 
     return (
@@ -102,7 +115,7 @@ function LoggedOutNavBar(){
 
     const linkStyle: SxProps = {                    
         color: 'inherit',
-        mr: 5,
+        mr: 4,
     }
 
     return (
@@ -164,7 +177,6 @@ interface SideDrawerProps {
     onClick: VoidFunction
 }
 
-
 function SideDrawerContent(props: SideDrawerProps) {
     let auth = useAuth()
     return auth.user ? <LoggedInDrawerContent onClick={props.onClick}/> : <LoggedOutDrawerContent onClick={props.onClick}/>
@@ -172,7 +184,12 @@ function SideDrawerContent(props: SideDrawerProps) {
 
 function LoggedInDrawerContent(props: SideDrawerProps) {
     return (
-        <List>
+        <List sx={{minWidth: 230}}>
+            <ListItem>
+                <ListItemText>Motstanden</ListItemText>
+            </ListItem>
+            <Divider light={false}/>
+
             <ListItem button component={RouterLink} to="/hjem" onClick={props.onClick}>
                 <ListItemText>Hjem</ListItemText>
             </ListItem>
@@ -188,13 +205,26 @@ function LoggedInDrawerContent(props: SideDrawerProps) {
             <ListItem button component={RouterLink} to="/notearkiv" onClick={props.onClick}>
                 <ListItemText>Notearkiv</ListItemText>
             </ListItem>
+
+            <Divider light={false}/>
+            <ListItem>
+                <ListItemText>
+                    <ToggleThemeButton/>
+                </ListItemText>
+            </ListItem>
+            <Divider light={false}/>
         </List>
     )
 }
 
 function LoggedOutDrawerContent(props: SideDrawerProps) {
     return (
-        <List>
+        <List sx={{minWidth: 230}}>
+            <ListItem>
+                <ListItemText>Motstanden</ListItemText>
+            </ListItem>
+            <Divider light={false}/>
+ 
             <ListItem button component={RouterLink} to="/bli-medlem" onClick={props.onClick}>
                 <ListItemText>Bli Medlem</ListItemText>
             </ListItem>
@@ -206,6 +236,14 @@ function LoggedOutDrawerContent(props: SideDrawerProps) {
             <ListItem button component={RouterLink} to="/dokumenter" onClick={props.onClick}>
                 <ListItemText>Dokumenter</ListItemText>
             </ListItem>
+
+            <Divider light={false}/>
+            <ListItem>
+                <ListItemText>
+                    <ToggleThemeButton labelPlacement='end'/>
+                </ListItemText>
+            </ListItem>
+            <Divider light={false}/>
         </List>
     )
 
@@ -271,7 +309,7 @@ function UserAvatar() {
 
     return (
         <>
-        <Tooltip title={username} >
+        <Tooltip title={username}>
             <IconButton onClick={handleClick}>
                 <Avatar alt={username} sx={{ height: "50px", width: "50px"}}/>
             </IconButton>
@@ -281,8 +319,8 @@ function UserAvatar() {
             open={open}
             onClose={handleClose}
             onClick={handleClose}
-            transformOrigin={{ horizontal: 'left', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         >
             <MenuItem onClick={onSignOut}>
                 Logg ut
@@ -299,9 +337,35 @@ function LoginButton(){
             sx={{
                 color: "inherit",
                 fontWeight: 300,
+                ml: 1
             }}
         >
             Logg inn
         </Link>
+    )
+}
+
+interface ToggleThemeButtonProps {
+    labelPlacement?: "top" | "bottom" | "start" | "end" 
+    sx?: SxProps
+}
+
+function ToggleThemeButton(props: ToggleThemeButtonProps){
+
+    let theme = useAppTheme()
+
+    const onSwitchClick = () => {
+        let newTheme: ThemeNameType = theme.name === "dark" ? "light" : "dark" 
+        theme.changeTheme(newTheme)
+    }
+
+    return (
+        <FormControlLabel 
+            label="Skyggemodus"
+            labelPlacement={props?.labelPlacement ?? "end"}
+            control={<Switch checked={theme.name === "dark"}/>}
+            sx={{mr: 0}}
+            onClick={onSwitchClick}
+            />
     )
 }

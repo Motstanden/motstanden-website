@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
 
 import CssBaseline from '@mui/material/CssBaseline';
+import { AppThemeProvider } from './layout/Themes';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
@@ -21,11 +22,12 @@ root.render(
 		<QueryClientProvider client={queryClient}>
 			<BrowserRouter>
 				<AuthProvider>
+					<AppThemeProvider>
+						{/* Provides reasonable default css values from the material-ui framework */}
+						<CssBaseline/>
 
-					{/* Provides reasonable default css values from the material-ui framework */}
-					<CssBaseline/>
-
-					<App />
+						<App />
+					</AppThemeProvider>
 				</AuthProvider>
 			</BrowserRouter>
 			<ReactQueryDevtools/>
