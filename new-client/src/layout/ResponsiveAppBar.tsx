@@ -24,12 +24,13 @@ import ListItemText from '@mui/material/ListItemText';
 
 
 
-import { Divider, FormControlLabel, FormGroup, Switch, SxProps } from '@mui/material';
+import { Collapse, Divider, FormControlLabel, FormGroup, Stack, Switch, SxProps } from '@mui/material';
 
 import { useAuth } from '../routes/login/Authentication';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { ThemeNameType, useAppTheme } from './Themes';
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -50,32 +51,41 @@ export default function ResponsiveAppBar(){
 function DesktopToolbar(){
 
     return ( 
-        <Container maxWidth="xl">
-            <Toolbar disableGutters >
-                <Title 
-                    variant='h5' 
-                    sx={{
-                        display: "flex", 
-                        my: 2, 
-                        mr: 6
-                        }}
-                />
-                <Box sx={{ flexGrow: 3, display: "flex"}}>
-                    <NavBar/>
-                </Box>
-                <ToggleThemeButton/>
-                <Divider 
-                    light={false} 
-                    orientation="vertical" 
-                    flexItem={true}
-                    textAlign="left"
-                    sx={{
-                        my: 3,
-                        mr: 2,
-                        ml: 3,
-                    }}
-                    />
-                <LoginStatus/>  
+        <Container>
+
+            <Toolbar disableGutters>
+                <Stack 
+                    direction="row" 
+                    alignItems="center" 
+                    justifyContent="space-between" 
+                    sx={{width: "100%"}}
+                    >
+                    <Stack 
+                        direction="row"
+                        alignItems="center"
+                        spacing={6}>
+                        <Title variant='h5'/>
+                        <NavBar/>
+                    </Stack>
+                    <Stack 
+                        direction="row" 
+                        alignItems="center" 
+                        sx={{justifySelf: "flex-end"}} >
+                        <ToggleThemeButton/>
+                        <Divider 
+                            light={false} 
+                            orientation="vertical" 
+                            flexItem
+                            variant="middle"
+                            sx={{
+                                mr: 1,
+                                ml: 2,
+                                my: 1
+                            }}
+                            />
+                        <LoginStatus/>  
+                    </Stack>
+                </Stack>
             </Toolbar>
         </Container>
     )
@@ -90,23 +100,27 @@ function LoggedInNavBar(){
 
     const linkStyle: SxProps = {                    
         color: 'inherit',
-        mr: 4,
+        mr: 2,
     }
 
     return (
         <nav>
-            <Link component={RouterLink} to="/hjem" sx={linkStyle}>
-                Hjem
-            </Link>
-            <Link component={RouterLink} to="/notearkiv" sx={linkStyle}>
-                Notearkiv
-            </Link>
-            <Link component={RouterLink} to="/studenttraller" sx={linkStyle}>
-                Studenttraller
-            </Link>
-            <Link component={RouterLink} to="/dokumenter" sx={linkStyle}>
-                Dokumenter
-            </Link>
+            <Box sx={{display: "flex", alignItems: "center"}}>
+
+                <Link component={RouterLink} to="/hjem" sx={linkStyle}>
+                    Hjem
+                </Link>
+                <Link component={RouterLink} to="/notearkiv" sx={linkStyle}>
+                    Notearkiv
+                </Link>
+                <Link component={RouterLink} to="/studenttraller" sx={linkStyle}>
+                    Studenttraller
+                </Link>
+                <Link component={RouterLink} to="/dokumenter" sx={linkStyle}>
+                    Dokumenter
+                </Link>
+                <AboutUsDropdown sx={{ ...linkStyle, mr: 0, ml: 0}}/>
+            </Box>
         </nav>
     )
 }
@@ -118,21 +132,68 @@ function LoggedOutNavBar(){
         mr: 4,
     }
 
+
     return (
         <nav>
-            <Link component={RouterLink} to="/bli-medlem" sx={linkStyle}>
-                Bli Medlem
-            </Link>
-            <Link component={RouterLink} to="/studenttraller" sx={linkStyle}>
-                Studenttraller
-            </Link>
-            <Link component={RouterLink} to="/dokumenter" sx={linkStyle}>
-                Dokumenter
-            </Link>
+            <Box sx={{display: "flex", alignItems: "center"}}>
+                <AboutUsDropdown sx={{ ...linkStyle, mr: 2}}/>
+                <Link component={RouterLink} to="/studenttraller" sx={linkStyle}>
+                    Studenttraller
+                </Link>
+                <Link component={RouterLink} to="/dokumenter" sx={linkStyle}>
+                    Dokumenter
+                </Link>
+            </Box>
         </nav>
     )
 }
 
+
+function AboutUsDropdown( { sx }: { sx?: SxProps}){
+    
+    const [isAboutOpen, setIsAboutOpen] = useState(false);
+    const aboutEl = useRef(null)
+
+    return (
+        <>
+            <Button 
+                ref={aboutEl}
+                onClick={() => setIsAboutOpen(!isAboutOpen)}
+                sx={{
+                    ...sx, 
+                    textTransform: "none", 
+                }} 
+                >
+                <Typography variant="subtitle1">
+                    Om oss
+                </Typography>
+                {isAboutOpen ? <ExpandLess/> : <ExpandMore/>}
+            </Button>
+            <Menu 
+                anchorEl={aboutEl.current}
+                open={isAboutOpen}
+                anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+                transformOrigin={{ horizontal: 'center', vertical: 'top' }}
+                onClose={() => setIsAboutOpen(false)}
+                >
+                <List component="div" disablePadding sx={{minWidth: 200}}>
+                    <ListItem button component={RouterLink} to="/" onClick={() => setIsAboutOpen(false)}>
+                        <ListItemText primary="Framside" />
+                    </ListItem>
+                    <ListItem button component={RouterLink} to="/bli-medlem" onClick={() => setIsAboutOpen(false)}>
+                        <ListItemText primary="Bli Medlem" />
+                    </ListItem>
+                    <ListItem button component={RouterLink} to="/faq" onClick={() => setIsAboutOpen(false)}>
+                        <ListItemText primary="FAQ" />
+                    </ListItem>
+                    <ListItem button component="a" href="https://wiki.motstanden.no/" onClick={() => setIsAboutOpen(false)}>
+                        <ListItemText primary="Wiki" />
+                    </ListItem>
+                </List>
+            </Menu>
+        </>
+    )
+}
 
 function MobileToolBar() {
     return ( 
@@ -183,8 +244,10 @@ function SideDrawerContent(props: SideDrawerProps) {
 }
 
 function LoggedInDrawerContent(props: SideDrawerProps) {
+    const [isAboutOpen, setIsAboutOpen] = useState(false)
+
     return (
-        <List sx={{minWidth: 230}}>
+        <List sx={{minWidth: 250}}>
             <ListItem>
                 <ListItemText>Motstanden</ListItemText>
             </ListItem>
@@ -198,13 +261,35 @@ function LoggedInDrawerContent(props: SideDrawerProps) {
                 <ListItemText>Studenttraller</ListItemText>
             </ListItem>
             
+            <ListItem button component={RouterLink} to="/notearkiv" onClick={props.onClick}>
+                <ListItemText>Notearkiv</ListItemText>
+            </ListItem>
+
             <ListItem button component={RouterLink} to="/dokumenter" onClick={props.onClick}>
                 <ListItemText>Dokumenter</ListItemText>
             </ListItem>
 
-            <ListItem button component={RouterLink} to="/notearkiv" onClick={props.onClick}>
-                <ListItemText>Notearkiv</ListItemText>
+            <ListItem button component="a" href="https://wiki.motstanden.no/"  onClick={props.onClick}>
+                <ListItemText primary="Wiki" />
             </ListItem>
+
+            <ListItemButton onClick={() => setIsAboutOpen(!isAboutOpen)}>
+                <ListItemText primary="Om oss"/>
+                {isAboutOpen ? <ExpandLess/> : <ExpandMore/>}
+            </ListItemButton>
+            <Collapse in={isAboutOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                    <ListItem button sx={{ pl: 4 }} component={RouterLink} to="/"  onClick={props.onClick} >
+                        <ListItemText primary="Framside" />
+                    </ListItem>
+                    <ListItem button sx={{ pl: 4 }} component={RouterLink} to="/faq"  onClick={props.onClick} >
+                        <ListItemText primary="FAQ" />
+                    </ListItem>
+                    <ListItem button sx={{ pl: 4 }} component={RouterLink} to="/bli-medlem"  onClick={props.onClick} >
+                        <ListItemText primary="Bli Medlem" />
+                    </ListItem>
+                </List>
+            </Collapse>
 
             <Divider light={false}/>
             <ListItem>
@@ -218,6 +303,8 @@ function LoggedInDrawerContent(props: SideDrawerProps) {
 }
 
 function LoggedOutDrawerContent(props: SideDrawerProps) {
+
+    const [isAboutOpen, setIsAboutOpen] = useState(true)
     return (
         <List sx={{minWidth: 230}}>
             <ListItem>
@@ -225,10 +312,28 @@ function LoggedOutDrawerContent(props: SideDrawerProps) {
             </ListItem>
             <Divider light={false}/>
  
-            <ListItem button component={RouterLink} to="/bli-medlem" onClick={props.onClick}>
-                <ListItemText>Bli Medlem</ListItemText>
-            </ListItem>
 
+            <ListItemButton onClick={() => setIsAboutOpen(!isAboutOpen)}>
+                <ListItemText primary="Om oss"/>
+                {isAboutOpen ? <ExpandLess/> : <ExpandMore/>}
+            </ListItemButton>
+            <Collapse in={isAboutOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                    <ListItem button sx={{ pl: 4 }} component={RouterLink} to="/"  onClick={props.onClick} >
+                        <ListItemText primary="Framside" />
+                    </ListItem>
+                    <ListItem button sx={{ pl: 4 }} component={RouterLink} to="/bli-medlem"  onClick={props.onClick} >
+                        <ListItemText primary="Bli Medlem" />
+                    </ListItem>
+                    <ListItem button sx={{ pl: 4 }} component={RouterLink} to="/faq"  onClick={props.onClick} >
+                        <ListItemText primary="FAQ" />
+                    </ListItem>
+                    <ListItem button sx={{ pl: 4 }} component="a" href="https://wiki.motstanden.no/"  onClick={props.onClick}>
+                        <ListItemText primary="Wiki" />
+                    </ListItem>
+                </List>
+            </Collapse>
+            
             <ListItem button component={RouterLink} to="/studenttraller" onClick={props.onClick}>
                 <ListItemText>Studenttraller</ListItemText>
             </ListItem>
@@ -281,7 +386,7 @@ function Title(props: TitleProps) {
 	)
 }
 
-function LoginStatus(sx: SxProps | undefined){
+function LoginStatus(){
     let auth = useAuth()
     return  auth.user ? <UserAvatar/> : <LoginButton/>
 }
@@ -311,7 +416,7 @@ function UserAvatar() {
         <>
         <Tooltip title={username}>
             <IconButton onClick={handleClick}>
-                <Avatar alt={username} sx={{ height: "50px", width: "50px"}}/>
+                <Avatar alt={username}/>
             </IconButton>
         </Tooltip>
         <Menu 
