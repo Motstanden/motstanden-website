@@ -4,30 +4,18 @@ import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Collapse from '@mui/material/Collapse';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
-import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Switch from '@mui/material/Switch';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-// import { ExpandLess, ExpandMore } from '@mui/icons-material';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
 import { SxProps } from '@mui/system';
 
 import { LabelPlacementType, VariantType } from '../tsTypes/MaterialUiTypes';
@@ -36,7 +24,7 @@ import { ThemeNameType, useAppTheme } from './Themes';
 import { useAuth } from '../routes/login/Authentication';
 
 import NavBar from "./appBar/NavBar"
-
+import SideDrawer from './appBar/SideDrawer';
 
 export default function ResponsiveAppBar(){
     return (
@@ -104,153 +92,6 @@ function MobileToolBar() {
             </Toolbar>
         </Container>   
     )
-}
-
-function SideDrawer() {
-    const [isOpen, setIsOpen] = useState(false)
-
-    return (
-        <>
-            <IconButton
-                size="small"
-                color="inherit"
-                onClick={() => setIsOpen(true)}
-                >
-                <MenuIcon />
-            </IconButton>
-
-            <SwipeableDrawer 
-                anchor="left"
-                open={isOpen}
-                onClose={() => setIsOpen(false)}
-                onOpen={() => setIsOpen(true)}
-                disableSwipeToOpen={true}
-                swipeAreaWidth={400}
-                >
-                    <SideDrawerContent onClick={() => setIsOpen(false)}/>
-            </SwipeableDrawer>
-        </>
-    )
-}
-
-interface SideDrawerProps {
-    onClick: VoidFunction
-}
-
-function SideDrawerContent(props: SideDrawerProps) {
-    let auth = useAuth()
-    return auth.user ? <LoggedInDrawerContent onClick={props.onClick}/> : <LoggedOutDrawerContent onClick={props.onClick}/>
-}
-
-function LoggedInDrawerContent(props: SideDrawerProps) {
-    const [isAboutOpen, setIsAboutOpen] = useState(false)
-
-    return (
-        <List sx={{minWidth: 250}}>
-            <ListItem>
-                <ListItemText>Motstanden</ListItemText>
-            </ListItem>
-            <Divider light={false}/>
-
-            <ListItem button component={RouterLink} to="/hjem" onClick={props.onClick}>
-                <ListItemText>Hjem</ListItemText>
-            </ListItem>
-
-            <ListItem button component={RouterLink} to="/studenttraller" onClick={props.onClick}>
-                <ListItemText>Studenttraller</ListItemText>
-            </ListItem>
-            
-            <ListItem button component={RouterLink} to="/notearkiv" onClick={props.onClick}>
-                <ListItemText>Notearkiv</ListItemText>
-            </ListItem>
-
-            <ListItem button component={RouterLink} to="/dokumenter" onClick={props.onClick}>
-                <ListItemText>Dokumenter</ListItemText>
-            </ListItem>
-
-            <ListItem button component="a" href="https://wiki.motstanden.no/"  onClick={props.onClick}>
-                <ListItemText primary="Wiki" />
-            </ListItem>
-
-            <ListItemButton onClick={() => setIsAboutOpen(!isAboutOpen)}>
-                <ListItemText primary="Om oss"/>
-                {isAboutOpen ? <ExpandLess/> : <ExpandMore/>}
-            </ListItemButton>
-            <Collapse in={isAboutOpen} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                    <ListItem button sx={{ pl: 4 }} component={RouterLink} to="/"  onClick={props.onClick} >
-                        <ListItemText primary="Framside" />
-                    </ListItem>
-                    <ListItem button sx={{ pl: 4 }} component={RouterLink} to="/faq"  onClick={props.onClick} >
-                        <ListItemText primary="FAQ" />
-                    </ListItem>
-                    <ListItem button sx={{ pl: 4 }} component={RouterLink} to="/bli-medlem"  onClick={props.onClick} >
-                        <ListItemText primary="Bli Medlem" />
-                    </ListItem>
-                </List>
-            </Collapse>
-
-            <Divider light={false}/>
-            <ListItem>
-                <ListItemText>
-                    <ToggleThemeButton/>
-                </ListItemText>
-            </ListItem>
-            <Divider light={false}/>
-        </List>
-    )
-}
-
-function LoggedOutDrawerContent(props: SideDrawerProps) {
-
-    const [isAboutOpen, setIsAboutOpen] = useState(true)
-    return (
-        <List sx={{minWidth: 230}}>
-            <ListItem>
-                <ListItemText>Motstanden</ListItemText>
-            </ListItem>
-            <Divider light={false}/>
- 
-
-            <ListItemButton onClick={() => setIsAboutOpen(!isAboutOpen)}>
-                <ListItemText primary="Om oss"/>
-                {isAboutOpen ? <ExpandLess/> : <ExpandMore/>}
-            </ListItemButton>
-            <Collapse in={isAboutOpen} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                    <ListItem button sx={{ pl: 4 }} component={RouterLink} to="/"  onClick={props.onClick} >
-                        <ListItemText primary="Framside" />
-                    </ListItem>
-                    <ListItem button sx={{ pl: 4 }} component={RouterLink} to="/bli-medlem"  onClick={props.onClick} >
-                        <ListItemText primary="Bli Medlem" />
-                    </ListItem>
-                    <ListItem button sx={{ pl: 4 }} component={RouterLink} to="/faq"  onClick={props.onClick} >
-                        <ListItemText primary="FAQ" />
-                    </ListItem>
-                    <ListItem button sx={{ pl: 4 }} component="a" href="https://wiki.motstanden.no/"  onClick={props.onClick}>
-                        <ListItemText primary="Wiki" />
-                    </ListItem>
-                </List>
-            </Collapse>
-            
-            <ListItem button component={RouterLink} to="/studenttraller" onClick={props.onClick}>
-                <ListItemText>Studenttraller</ListItemText>
-            </ListItem>
-            
-            <ListItem button component={RouterLink} to="/dokumenter" onClick={props.onClick}>
-                <ListItemText>Dokumenter</ListItemText>
-            </ListItem>
-
-            <Divider light={false}/>
-            <ListItem>
-                <ListItemText>
-                    <ToggleThemeButton labelPlacement='end'/>
-                </ListItemText>
-            </ListItem>
-            <Divider light={false}/>
-        </List>
-    )
-
 }
 
 interface TitleProps {
