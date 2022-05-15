@@ -1,41 +1,43 @@
-import * as React from 'react';
+import React, { useRef, useState } from 'react';
 
+// Material UI
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
+import Collapse from '@mui/material/Collapse';
+import Container from '@mui/material/Container';
+import Divider from '@mui/material/Divider';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
-import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-import ListSubheader from '@mui/material/ListSubheader';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import Switch from '@mui/material/Switch';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+// import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import { SxProps } from '@mui/system';
 
-
-
-import { Collapse, Divider, FormControlLabel, FormGroup, Stack, Switch, SxProps } from '@mui/material';
-
-import { useAuth } from '../routes/login/Authentication';
-import { useRef, useState } from 'react';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { LabelPlacementType, VariantType } from '../tsTypes/MaterialUiTypes';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { ThemeNameType, useAppTheme } from './Themes';
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import { useAuth } from '../routes/login/Authentication';
 
-import {VariantType, LabelPlacementType } from "../tsTypes/MaterialUiTypes"
 
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+
 
 export default function ResponsiveAppBar(){
     return (
