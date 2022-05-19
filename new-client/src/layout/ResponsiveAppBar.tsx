@@ -22,92 +22,84 @@ import UserAvatar from "./appBar/UserAvatar"
 export default function ResponsiveAppBar(){
     return (
         <AppBar position="static" >
-            <Box display={{ xs: 'none', md: 'flex' }} >
-                <DesktopToolbar/>
-            </Box>
-            <Box display={{ xs: 'flex', md: 'none' }} >
-                <MobileToolBar/>
-            </Box>
+            <Toolbar>
+                <DesktopToolbar display={{ xs: "none", md:"flex" }}  />
+                <MobileToolBar display={{ xs: "flex", md:"none" }} />
+            </Toolbar>
         </AppBar>
     );
 };
 
-function DesktopToolbar(){
-
+function DesktopToolbar({ display }: {display: any }){
     return ( 
-        <Container>
-
-            <Toolbar disableGutters>
-                <Stack 
-                    direction="row" 
-                    alignItems="center" 
-                    justifyContent="space-between" 
-                    sx={{width: "100%"}}
-                    >
-                    <Stack 
-                        direction="row"
-                        alignItems="center"
-                        spacing={6}>
-                        <Title variant='h5'/>
-                        <NavBar/>
-                    </Stack>
-                    <Stack 
-                        direction="row" 
-                        alignItems="center" 
-                        sx={{justifySelf: "flex-end"}} >
-                        <ThemeSwitcher/>
-                        <Divider 
-                            light={false} 
-                            orientation="vertical" 
-                            flexItem
-                            variant="middle"
-                            sx={{
-                                mr: 1,
-                                ml: 2,
-                                my: 1
-                            }}
-                            />
-                        <LoginStatus/>  
-                    </Stack>
-                </Stack>
-            </Toolbar>
-        </Container>
+        <Stack 
+            display={display}
+            direction="row" 
+            alignItems="center" 
+            justifyContent="space-between" 
+            sx={{width: "100%"}}
+            >
+            <Stack 
+                direction="row"
+                alignItems="center"
+                spacing={6}>
+                <HeaderTitle variant='h5'/>
+                <NavBar/>
+            </Stack>
+            <Stack 
+                direction="row" 
+                alignItems="center" 
+                sx={{justifySelf: "flex-end"}} >
+                <ThemeSwitcher/>
+                <Divider 
+                    light={false} 
+                    orientation="vertical" 
+                    flexItem
+                    variant="middle"
+                    sx={{
+                        mr: 1,
+                        ml: 2,
+                        my: 1
+                    }}
+                    />
+                <UserInfo/>  
+            </Stack>
+        </Stack>
     )
 }
 
-function MobileToolBar() {
+function MobileToolBar({ display }: {display: any } ) {
     return ( 
-        <Container>
-            <Toolbar  disableGutters sx={{display: "flex", justifyContent: "space-between"}}>
-                <SideDrawer/>
-                <Title variant='h6'/>
-                <LoginStatus/>  
-            </Toolbar>
-        </Container>   
+        <Stack 
+            display={display}
+            direction="row" 
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{width: "100%"}}          
+            >
+            <SideDrawer />
+            <HeaderTitle variant='h6' sx={{pl: 2}}/>
+            <UserInfo/>  
+        </Stack>
     )
 }
 
-interface TitleProps {
-    variant: VariantType,
-    sx?: SxProps | undefined
-}
-
-function Title(props: TitleProps) {
+function HeaderTitle( {variant, sx }: {variant?: VariantType, sx?: SxProps }) {
     let auth = useAuth()
 	return (
         <Typography
             component={RouterLink}
             to={auth.user ? "/hjem" : "/"}
             noWrap
-            variant={props.variant}
+            variant={variant}
             sx={{
                 fontFamily: 'monospace',
-                py: 1,
                 fontWeight: 700,
                 letterSpacing: '.1rem',
                 color: 'inherit',
                 textDecoration: 'none',
-                ...props.sx
+                py: 1,
+                ...sx
             }}
             >
             MOTSTANDEN
@@ -115,7 +107,7 @@ function Title(props: TitleProps) {
 	)
 }
 
-function LoginStatus(){
+function UserInfo(){
     let auth = useAuth()
     return  auth.user 
         ? <UserAvatar/> 

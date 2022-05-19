@@ -74,6 +74,7 @@ export function NavLink( { to, text, sx }: { to: string, text: string, sx?: SxPr
         <Link 
             component={RouterLink}
             to={to}
+            underline="hover"
             sx={{
                 color: "inherit",
                 ...sx
