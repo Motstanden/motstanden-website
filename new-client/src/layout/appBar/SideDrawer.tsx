@@ -60,9 +60,9 @@ function PublicContent(props: SideDrawerContentProps) {
         <List sx={{minWidth: 230}} >
             <ListItemHeader/>
             <ListItemExpander text="Om oss" startsOpen>
-                <ListItemLink text="Framside" to="/"/>
-                <ListItemLink text="Bli Medlem" to="/bli-medlem" />
-                <ListItemLink text="FAQ" to="/faq" disabled />
+                <ListItemLink text="Framside" to="/" onLinkClick={onRequestedExit}/>
+                <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onRequestedExit}/>
+                <ListItemLink text="FAQ" to="/faq" disabled onLinkClick={onRequestedExit}/>
                 <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/"/>
             </ListItemExpander>
             <ListItemLink text="Studenttraller" to="/studenttraller" onLinkClick={onRequestedExit}/>
@@ -82,10 +82,10 @@ function PrivateContent(props: SideDrawerContentProps) {
             <ListItemLink text="Studenttraller" to="/studenttraller" onLinkClick={onRequestedExit}/>
             <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit}/>
             <ListItemExpander text="Om oss">
-                <ListItemLink text="Framside" to="/"/>
-                <ListItemLink text="Bli Medlem" to="/bli-medlem" />
-                <ListItemLink text="FAQ" to="/faq" disabled />
-                <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/"/>
+                <ListItemLink text="Framside" to="/" onLinkClick={onRequestedExit}/>
+                <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onRequestedExit}/>
+                <ListItemLink text="FAQ" to="/faq" disabled onLinkClick={onRequestedExit}/>
+                <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" onLinkClick={onRequestedExit}/>
             </ListItemExpander>
             <ListItemThemeSwitcher/>
         </List>
