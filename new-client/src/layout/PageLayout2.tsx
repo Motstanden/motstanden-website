@@ -2,7 +2,7 @@ import React from "react"
 import { Link, Outlet, useNavigate } from "react-router-dom"
 import { useAuth } from "../contextProviders/Authentication"
 
-import ResponsiveAppBar from "./ResponsiveAppBar"
+import ResponsiveAppBar from "./appBar/ResponsiveAppBar"
 
 export default function PageLayout(){
     return(

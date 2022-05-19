@@ -10,14 +10,14 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { SxProps } from '@mui/system';
 
-import { VariantType } from '../tsTypes/MaterialUiTypes';
+import { VariantType } from '../../tsTypes/MaterialUiTypes';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contextProviders/Authentication';
+import { useAuth } from '../../contextProviders/Authentication';
 
-import { NavBar, NavLink } from "./appBar/NavBar"
-import SideDrawer from './appBar/SideDrawer';
-import ThemeSwitcher from './appBar/ThemeSwitcher';
-import UserAvatar from "./appBar/UserAvatar"
+import { NavBar, NavLink } from "./NavBar"
+import SideDrawer from './SideDrawer';
+import ThemeSwitcher from './ThemeSwitcher';
+import UserAvatar from "./UserAvatar"
 
 export default function ResponsiveAppBar(){
     return (
