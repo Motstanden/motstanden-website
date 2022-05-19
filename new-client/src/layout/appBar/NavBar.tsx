@@ -28,10 +28,11 @@ function PrivateNavBar(){
             direction="row"
             alignItems="center"
             justifyContent="space-between"
-            spacing={2}
+            spacing={{sm: 1, md: 2, lg: 4}}
             >
             <NavLink text="Hjem" to="/hjem"/>
             <NavLink text="Notearkiv" to="/notearkiv"/>
+            <NavLink text="Sitater" to="/sitater"/>
             <NavLink text="Studenttraller" to="/studenttraller"/>
             <NavLink text="Dokumenter" to="/dokumenter" />
             <NavDropDown text="Om oss">

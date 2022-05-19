@@ -42,7 +42,7 @@ function DesktopToolbar({ display }: {display: any }){
             <Stack 
                 direction="row"
                 alignItems="center"
-                spacing={6}>
+                spacing={{sm: 0, md: 2, lg: 6}}>
                 <HeaderTitle variant='h5'/>
                 <NavBar/>
             </Stack>
@@ -98,7 +98,6 @@ function HeaderTitle( {variant, sx }: {variant?: VariantType, sx?: SxProps }) {
                 letterSpacing: '.1rem',
                 color: 'inherit',
                 textDecoration: 'none',
-                py: 1,
                 ...sx
             }}
             >
