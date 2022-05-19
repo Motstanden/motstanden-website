@@ -4,6 +4,7 @@ import { getSongLyricTitles } from "./songLyricDebug"
 import { RequireAuthRouter }  from "./contextProviders/Authentication"
 
 // URL routes
+import BecomeMember from './routes/becomeMember/BecomeMember';
 import Documents from './routes/documents/Documents';
 import Home from './routes/home/Home';
 import Login from './routes/login/Login';
@@ -15,7 +16,6 @@ import SheetArchive from './routes/sheetArchive/SheetArchive';
 
 // Layout
 import PageLayout from './layout/PageLayout';
-import BecomeMember from './routes/becomeMember/BecomeMember';
 
 function App() {
 

@@ -1,18 +1,21 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useAuth } from '../../contextProviders/Authentication';
 
+// Material UI 
 import Button from '@mui/material/Button';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import Link from '@mui/material/Link';
 import List from '@mui/material/List';
-import { SxProps } from '@mui/system';
+import ListItemLink from './ListItemLink';
 import Menu from '@mui/material/Menu';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-
-import { useAuth } from "../../contextProviders/Authentication"
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-import ListItemLink from "./ListItemLink"
+import { SxProps } from '@mui/system';
+
+
+
 
 export function NavBar(){
     let auth = useAuth()

@@ -1,13 +1,16 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 
-import Tooltip from '@mui/material/Tooltip';
+// Material UI
+import Avatar from '@mui/material/Avatar';
+import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import IconButton from '@mui/material/IconButton';
-import Avatar from '@mui/material/Avatar';
+import Tooltip from '@mui/material/Tooltip';
 
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contextProviders/Authentication';
+
+
 
 export default function UserAvatar() {
     let auth = useAuth()

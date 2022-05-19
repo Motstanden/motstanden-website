@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 
-import { SxProps } from '@mui/system';
+// Material UI
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import { SxProps } from '@mui/system';
 
 import { LabelPlacementType } from '../../tsTypes/MaterialUiTypes';
-import { useAppTheme, ThemeName } from '../../contextProviders/Themes';
+import { ThemeName, useAppTheme } from '../../contextProviders/Themes';
+
+
+
 
 interface ThemeSwitcherProps {
     labelPlacement?: LabelPlacementType
