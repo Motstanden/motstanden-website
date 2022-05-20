@@ -25,7 +25,13 @@ const lightTheme: AppThemeType = {
     name: ThemeName.Light,
     theme: createTheme({
         palette: {
-            mode: 'light'
+            mode: 'light',
+            primary: {
+                main: '#388e3c',
+              },
+              secondary: {
+                main: '#1a237e',
+              },
         }
     })
 }

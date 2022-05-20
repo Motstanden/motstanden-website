@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 
 // Material UI
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
@@ -30,7 +28,7 @@ export default function ResponsiveAppBar(){
     );
 };
 
-function DesktopToolbar({ display }: {display: any }){
+function DesktopToolbar({ display }: {display: any }){ // TODO: Find the correct type for display
     return ( 
         <Stack 
             display={display}
