@@ -70,15 +70,15 @@ function SponsorInfo(){
         <Grid
             container 
             direction="row"
-            textAlign="center"
-            rowSpacing={4}
+            textAlign="center" 
+            columnSpacing={{sm: 4}}
             justifyContent="center"
             >
-            <Grid item xs={12} sm={6} >
+            <Grid item xs={12} sm={6} marginBottom={{xs: 4, sm: 0}}>
                 <Typography>Linjeforeningen Elektra</Typography>
                 <ElektraLogo/>
             </Grid>
-            <Grid item xs={12} sm={6} >
+            <Grid item xs={12} sm={6}>
                 <Typography>Studentsamskipnaden i Trondheim</Typography>
                 <SitLogo/>
             </Grid>
