@@ -11,7 +11,7 @@ import Login from './routes/login/Login';
 import Lyric from './routes/lyric/Lyric';
 import NotFound from './routes/notFound/NotFound';
 import Quotes from './routes/quotes/Quotes';
-import Root from './routes/root/Root';
+import FrontPage from './routes/frontPage/FrontPage';
 import SheetArchive from './routes/sheetArchive/SheetArchive';
 
 // Layout
@@ -26,7 +26,7 @@ function App() {
 				<Route element={<PageLayout/>}> 
 
 					{/* Routes that are publicly available */}
-					<Route path="/" element={<Root/>}/>
+					<Route path="/" element={<FrontPage/>}/>
 					<Route path="/logg-inn" element={<Login/>}/>		
 					<Route path="/studenttraller" element={<Lyric/>}/>
 					<Route path="/dokumenter" element={<Documents/>}/>

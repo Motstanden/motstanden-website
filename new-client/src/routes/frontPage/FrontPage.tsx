@@ -1,9 +1,9 @@
 import React from "react"
 
-export default function Root(){
+export default function FrontPage(){
     return (
         <>
-            <h1>Startside</h1>
+            <h1>Framside</h1>
         </>
     )
 }
