@@ -48,7 +48,7 @@ export function AuthProvider({ children }: {children: React.ReactNode} ){
     // Fetch user data on initial load
     const { status } = useQuery(["GetUserMetaData"], 
         async () =>{
-            let response = await fetch("api/userMetaData") 
+            let response = await fetch("/api/userMetaData") 
             if (!response.ok) {
                 throw new Error(response.statusText)
             }
