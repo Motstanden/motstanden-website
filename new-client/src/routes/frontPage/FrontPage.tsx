@@ -1,6 +1,7 @@
 import React from "react"
-import { Box, Paper, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Paper, Stack, Typography } from '@mui/material';
 import May17Img from "../../assets/pictures/17mai2021.jpg"
+import { PageContainer } from "../PageContainer";
 
 export default function FrontPage(){
     return (
@@ -34,20 +35,3 @@ export default function FrontPage(){
     )
 }
 
-function PageContainer({children, props,  disableGutters}: {children: React.ReactNode, props?: React.CSSProperties, disableGutters?: boolean}) {
-    const theme = useTheme()
-    const paddingX = disableGutters ? {paddingInline: "0px"} : {paddingInline: "3%"}
-    return (
-        <div style={{
-            minHeight: "100vh", 
-            maxWidth: "1200px", 
-            marginInline:"auto", 
-            backgroundColor: theme.palette.background.paper, 
-            paddingBottom: "150px",
-            ...paddingX,
-            ...props
-        }}>
-            {children}
-        </div>
-    )
-}
