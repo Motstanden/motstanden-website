@@ -21,7 +21,7 @@ function App() {
 
 
 	return (
-		<div className='App'>
+		<div className='App' style={{minHeight: "100vh", height: "100%"}}>
 			<Routes>
 				<Route element={<PageLayout/>}> 
 

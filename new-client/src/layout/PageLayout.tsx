@@ -7,14 +7,14 @@ import { FooterContent } from "./Footer"
 
 export default function PageLayout(){
     return(
-        <Stack minHeight="100vh">
+        <Stack direction="column" minHeight="100vh">
             <header>
                 <ResponsiveAppBar/>
             </header>
-            <main style={{minHeight: "75vh"}}>
+            <main style={{minHeight: "100vh"}}>
                 <Outlet/>
             </main>
-            <footer style={{marginTop: "Auto"}}>
+            <footer>
                 <FooterContent/>
             </footer>
         </Stack>
