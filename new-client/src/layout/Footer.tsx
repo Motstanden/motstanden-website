@@ -1,32 +1,37 @@
 import React from "react"
 import { Divider, Grid, Paper, Stack, Typography } from "@mui/material"
+import { Container as Box } from "@mui/system"
 
 export function FooterContent(){
     return  (
         <Paper elevation={4}>
-            <Stack 
-                bgcolor="secondary.main"
-                color="secondary.contrastText"
-                direction="column"
-                justifyContent="center"
-                alignItems="center"
-                spacing={4}
-                paddingY={5}
-                paddingX={5}
-                >
-                <MotstandenInfo/>
-                <Divider 
-                    textAlign="center"
-                    flexItem 
-                    sx={{
-                        "&::before, &::after": {
-                            borderColor: "secondary.contrastText",
-                        },
-                    }}
+            <Stack bgcolor="secondary.main">
+                <Stack 
+                    color="secondary.contrastText"
+                    direction="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    spacing={4}
+                    paddingY={5}
+                    paddingX={5}
+                    marginX="auto"
+                    width="100%"
+                    maxWidth={1600}
                     >
-                        SPONSORER
-                </Divider>
-                <SponsorInfo/>
+                    <MotstandenInfo/>
+                    <Divider 
+                        textAlign="center"
+                        flexItem 
+                        sx={{
+                            "&::before, &::after": {
+                                borderColor: "secondary.contrastText",
+                            },
+                        }}
+                        >
+                            SPONSORER
+                    </Divider>
+                    <SponsorInfo/>
+                </Stack>
             </Stack>
         </Paper>
     )

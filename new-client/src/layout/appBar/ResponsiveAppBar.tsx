@@ -35,7 +35,7 @@ function DesktopToolbar({ display }: {display: any }){ // TODO: Find the correct
             direction="row" 
             alignItems="center" 
             justifyContent="space-between" 
-            sx={{width: "100%"}}
+            sx={{width: "100%", maxWidth: "1200px", marginX: "auto"}}
             >
             <Stack 
                 direction="row"
