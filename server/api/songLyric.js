@@ -23,13 +23,18 @@ router.get("/song_lyric_data", (req, res) => {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare("SELECT filename AS file FROM song_lyric WHERE title = ?")
     const title = req.query.title;
-    const filename = stmt.get([title]).file
+    const rows = stmt.get([title])
+    if(!rows){
+        res.status(400)
+        res.end()
+    }
+    const filename = rows.file
     db.close()
 
     // Send html file as string
     fs.readFile(filename, (err, data) => {
         if(err) {
-            throw err;
+            res.status(400)
         }
         else{
             res.json({lyricHtml: data.toString()})
