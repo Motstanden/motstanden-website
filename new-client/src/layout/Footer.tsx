@@ -41,7 +41,6 @@ function MotstandenInfo(){
     return (
         <Grid 
             container   
-            zeroMinWidth
             direction="row"
             columnSpacing={10}
             rowSpacing={2}

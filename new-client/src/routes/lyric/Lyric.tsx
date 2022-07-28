@@ -25,7 +25,6 @@ function LyricList(){
     }
 
     const lyricData = data as ILyricData[]
-    console.log(data)
     return (
         <ul>
             {lyricData.map(lyric => (
