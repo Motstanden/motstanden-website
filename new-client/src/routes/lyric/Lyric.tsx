@@ -2,7 +2,7 @@ import React from "react"
 import { PageContainer } from "../PageContainer" 
 import { useQuery } from '@tanstack/react-query'
 import { Link, Navigate, Outlet, useNavigate, useOutletContext, useParams } from "react-router-dom"
-
+import { UrlList, UrlListItem} from "../../components/UrlList"
 
 export function LyricPageContainer(){
     const {isLoading, isError, data, error} = useQuery(["AllLyricData"], fetchLyricTitles)
@@ -48,13 +48,9 @@ export function LyricListPage(){
     return (
         <>
             <h1>Studenttraller</h1>
-                <ul>
-                    {lyricData.map(lyric => (
-                    <li key={lyric.url}>
-                        <Link to={`/studenttraller/${lyric.title}`}>{lyric.title}</Link>
-                    </li>
-                ))}
-            </ul>
+            <UrlList>
+                { lyricData.map( lyric => <UrlListItem key={lyric.title} to={`/studenttraller/${lyric.title}`} text={lyric.title}/> )}
+            </UrlList>
         </>
     )
 }
