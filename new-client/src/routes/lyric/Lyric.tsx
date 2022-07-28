@@ -5,10 +5,10 @@ import { Link, Navigate, Outlet, useNavigate, useOutletContext, useParams } from
 
 
 export function LyricPageContainer(){
-    const {isLoading, isError, data, error} = useQuery(["lyrics"], fetchLyricData)
+    const {isLoading, isError, data, error} = useQuery(["AllLyricData"], fetchLyricTitles)
     
     if (isLoading) {
-        return <PageContainer><span>Loading...</span></PageContainer>
+        return <PageContainer><></></PageContainer>
       }
     
     if (isError) {
@@ -23,13 +23,23 @@ export function LyricPageContainer(){
     )
 }
 
-async function fetchLyricData(): Promise<ILyricData[]> {
+async function fetchLyricTitles(): Promise<ILyricData[]> {
     const res = await fetch("/api/song_lyric")
     if(!res.ok) {
         throw new Error(`${res.status} ${res.statusText}`)
     }
     else {
         return await res.json() as ILyricData[];
+    }
+}
+
+async function fetchLyricHtml(title: string): Promise<ILyricHtml> {
+    const res = await fetch(`/api/song_lyric_data?title=${title}`)
+    if(!res.ok) {
+        throw new Error(`${res.status} ${res.statusText}`)
+    }
+    else {
+        return await res.json();
     }
 }
 
@@ -50,18 +60,32 @@ export function LyricListPage(){
 }
 
 export function LyricItemPage(){
-    let params = useParams();
-    const lyricData = useOutletContext<ILyricData[]>()
-    const lyricItem = lyricData.find(item => item.title === params.lyricTitle)
+    const params = useParams();
+    const title = params.lyricTitle;
 
-    if(!lyricItem){
+    const {isLoading, isError, data, error} = useQuery(["LyricItem", title], () => {
+        if(title) {
+            return fetchLyricHtml(title)
+        }
+        else{
+            throw new Error("Title is null")
+        }}, {
+            retry: false
+        })
+    
+    if (isLoading) {
+        return <></>
+    }
+
+    if(isError){
         return <Navigate to="/studenttraller" replace={true} />
     }
 
+    const html = data as ILyricHtml
 	return (
         <>
-            <h2>{lyricItem.title}</h2>
-            {lyricItem.url}
+            <h2>{title}</h2>
+            <div dangerouslySetInnerHTML={{__html: html.lyricHtml}}/>
         </>
 	)   
 }
@@ -72,4 +96,8 @@ interface ILyricData {
     melody?: string,
     textOrigin?: string,
     description?: string
+}
+
+interface ILyricHtml {
+    lyricHtml: string
 }
