@@ -2,8 +2,10 @@ import React from "react"
 import { PageContainer } from "../PageContainer" 
 import { useQuery } from '@tanstack/react-query'
 import { responseInterceptor } from "http-proxy-middleware"
+import { Link, useParams } from "react-router-dom"
 
-export default function Lyric(){
+
+export function LyricListPage(){
     return (
         <PageContainer>
             <h1>Studenttraller</h1>
@@ -11,7 +13,6 @@ export default function Lyric(){
         </PageContainer>
     )
 }
-
 
 function LyricList(){
     const {isLoading, isError, data, error} = useQuery(["lyrics"], fetchLyricData)
@@ -23,21 +24,29 @@ function LyricList(){
     if (isError) {
         return <span>{`${error}`}</span>
     }
-
     const lyricData = data as ILyricData[]
     return (
         <ul>
             {lyricData.map(lyric => (
                 <li key={lyric.url}>
-                    {lyric.title}
+                    <Link to={`/studenttraller/${lyric.title}`}>{lyric.title}</Link>
                 </li>
             ))}
         </ul>
     )
 }
 
+export function LyricItemPage(){
+    let params = useParams();
+	return (
+		<PageContainer>
+			<h2>{params.lyricTitle}</h2>
+		</PageContainer>
+	)   
+}
+
 async function fetchLyricData(): Promise<ILyricData[]> {
-    const res = await fetch("api/song_lyric")
+    const res = await fetch("/api/song_lyric")
     if(!res.ok) {
         throw new Error(`${res.status} ${res.statusText}`)
     }

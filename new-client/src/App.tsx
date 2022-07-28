@@ -8,7 +8,7 @@ import BecomeMember from './routes/becomeMember/BecomeMember';
 import Documents from './routes/documents/Documents';
 import Home from './routes/home/Home';
 import Login from './routes/login/Login';
-import Lyric from './routes/lyric/Lyric';
+import { LyricListPage, LyricItemPage } from './routes/lyric/Lyric';
 import NotFound from './routes/notFound/NotFound';
 import Quotes from './routes/quotes/Quotes';
 import FrontPage from './routes/frontPage/FrontPage';
@@ -27,8 +27,11 @@ function App() {
 
 					{/* Routes that are publicly available */}
 					<Route path="/" element={<FrontPage/>}/>
-					<Route path="/logg-inn" element={<Login/>}/>		
-					<Route path="/studenttraller" element={<Lyric/>}/>
+					<Route path="/logg-inn" element={<Login/>}/>
+					<Route path="/studenttraller">
+						<Route index element={<LyricListPage/>}/>
+            			<Route path=":lyricTitle" element={<LyricItemPage/>}/>
+        			</Route>
 					<Route path="/dokumenter" element={<Documents/>}/>
 					<Route path="/bli-medlem" element={<BecomeMember/>}/>
 
