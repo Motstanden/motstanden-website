@@ -10,7 +10,7 @@ export function LyricPageContainer(){
     
     if (isLoading) {
         return <PageContainer><div/></PageContainer>
-      }
+    }
     
     if (isError) {
         return <PageContainer><span>{`${error}`}</span></PageContainer>
@@ -46,7 +46,7 @@ export function LyricItemPage(){
             throw new Error("Title is null")
         }}, {
             retry: false
-        })
+    })
     
     if (isLoading) {
         return <></>
