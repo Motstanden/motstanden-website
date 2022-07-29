@@ -3,44 +3,23 @@ import { PageContainer } from "../../layout/PageContainer"
 import { useQuery } from '@tanstack/react-query'
 import { Link, Navigate, Outlet, useNavigate, useOutletContext, useParams } from "react-router-dom"
 import { UrlList, UrlListItem} from "../../components/UrlList"
+import { fetchAsync } from "../../utils/fetchAsync"
 
 export function LyricPageContainer(){
-    const {isLoading, isError, data, error} = useQuery(["AllLyricData"], fetchLyricTitles)
+    const {isLoading, isError, data, error} = useQuery<ILyricData[]>(["AllLyricData"], () => fetchAsync<ILyricData[]>("/api/song_lyric"))
     
     if (isLoading) {
-        return <PageContainer><></></PageContainer>
+        return <PageContainer><div/></PageContainer>
       }
     
     if (isError) {
         return <PageContainer><span>{`${error}`}</span></PageContainer>
     }
-    const lyricData = data as ILyricData[]
-
     return (
         <PageContainer>
-            <Outlet context={lyricData}/>
+            <Outlet context={data}/>
         </PageContainer>
     )
-}
-
-async function fetchLyricTitles(): Promise<ILyricData[]> {
-    const res = await fetch("/api/song_lyric")
-    if(!res.ok) {
-        throw new Error(`${res.status} ${res.statusText}`)
-    }
-    else {
-        return await res.json() as ILyricData[];
-    }
-}
-
-async function fetchLyricHtml(title: string): Promise<ILyricHtml> {
-    const res = await fetch(`/api/song_lyric_data?title=${title}`)
-    if(!res.ok) {
-        throw new Error(`${res.status} ${res.statusText}`)
-    }
-    else {
-        return await res.json();
-    }
 }
 
 export function LyricListPage(){
@@ -59,9 +38,9 @@ export function LyricItemPage(){
     const params = useParams();
     const title = params.lyricTitle;
 
-    const {isLoading, isError, data, error} = useQuery(["LyricItem", title], () => {
+    const {isLoading, isError, data, error} = useQuery<ILyricHtml>(["LyricItem", title], () => {
         if(title) {
-            return fetchLyricHtml(title)
+            return fetchAsync<ILyricHtml>(`/api/song_lyric_data?title=${title}`)
         }
         else{
             throw new Error("Title is null")
@@ -77,11 +56,10 @@ export function LyricItemPage(){
         return <Navigate to="/studenttraller" replace={true} />
     }
 
-    const html = data as ILyricHtml
 	return (
         <>
             <h2>{title}</h2>
-            <div dangerouslySetInnerHTML={{__html: html.lyricHtml}}/>
+            <div dangerouslySetInnerHTML={{__html: data.lyricHtml}}/>
         </>
 	)   
 }
