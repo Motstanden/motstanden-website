@@ -1,7 +1,7 @@
 import React from "react"
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import May17Img from "../../assets/pictures/17mai2021.jpg"
-import { PageContainer } from "../PageContainer";
+import { PageContainer } from "../../layout/PageContainer";
 
 export default function FrontPage(){
     return (

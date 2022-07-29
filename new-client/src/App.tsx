@@ -15,7 +15,7 @@ import FrontPage from './routes/frontPage/FrontPage';
 import SheetArchive from './routes/sheetArchive/SheetArchive';
 
 // Layout
-import PageLayout from './layout/PageLayout';
+import { AppLayout }from './layout/AppLayout';
 
 function App() {
 
@@ -23,7 +23,7 @@ function App() {
 	return (
 		<div className='App' style={{minHeight: "100vh", height: "100%"}}>
 			<Routes>
-				<Route element={<PageLayout/>}> 
+				<Route element={<AppLayout/>}> 
 
 					{/* Routes that are publicly available */}
 					<Route path="/" element={<FrontPage/>}/>

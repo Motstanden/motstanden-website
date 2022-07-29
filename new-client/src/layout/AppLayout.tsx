@@ -5,7 +5,7 @@ import { Stack } from "@mui/material"
 import ResponsiveAppBar from "./appBar/ResponsiveAppBar"
 import { FooterContent } from "./Footer"
 
-export default function PageLayout(){
+export function AppLayout(){
     return(
         <Stack direction="column" minHeight="100vh">
             <header>
