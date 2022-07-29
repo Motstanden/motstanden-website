@@ -1,54 +1,38 @@
 import React from "react"
 import { useQuery } from '@tanstack/react-query'
+import { PageContainer } from "../../layout/PageContainer"
+import { fetchAsync } from "../../utils/fetchAsync"
+import { UrlList, UrlListItem } from "../../components/UrlList"
 
 export default function Documents(){
-    
-    
-    
     return (
-        <>
+        <PageContainer>
             <h1>Dokumenter</h1>
             <DocumentList/>
-        </>
+        </PageContainer>
     )
 }
 
-interface DocItem {
-    title: string,
-    url: string
-}
-
 function DocumentList(){
-
-    // Fetch documents from server
-    const {status, error, data} = useQuery(["FetchDocuments"], async () => {
-        const response = await fetch("/api/documents")
-        if(!response.ok){
-            throw new Error(`${response.status}: ${response.statusText}`)
-        }
-        return response.json()
-    })
-
-    if (status === 'loading') {
-        return <div>Loading...</div>
+    
+    const {isLoading, isError, data, error} = useQuery<Document[]>(["FetchDocuments"], () => fetchAsync<Document[]>("/api/documents") )
+    
+    if (isLoading) {
+        return <PageContainer><div/></PageContainer>
     }
     
-    if (status === 'error') {
-        let msg: string = error instanceof Error ? error.message : `${error}`
-        return <div>Error: {msg}</div>
+    if (isError) {
+        return <PageContainer><span>{`${error}`}</span></PageContainer>
     }
 
     return (
-        <ul>
-            { data.map( (doc: DocItem): JSX.Element => (
-                <li key={doc.title}>
-                    <a href={window.location.origin + '/' + doc.url} 
-                       type="application/pdf">
-                        {doc.title}
-                    </a>
-                </li>  
-            ))
-            }
-        </ul>
+        <UrlList>
+            { data.map( doc => <UrlListItem key={doc.title} to={`/${doc.url}`} text={doc.title} type="application/pdf" reloadDocument/> )}
+        </UrlList>
     ) 
+}
+
+interface Document {
+    title: string,
+    url: string
 }

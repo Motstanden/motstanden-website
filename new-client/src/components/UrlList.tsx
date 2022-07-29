@@ -11,10 +11,10 @@ export function UrlList( { children }: {children: React.ReactNode}) {
     )
 }
 
-export function UrlListItem( {to, text}: {to: string, text: string}){
+export function UrlListItem( {to, text, type, reloadDocument}: {to: string, text: string, type?: string | undefined, reloadDocument?: boolean | undefined}){
     return (
         <li>
-            <Link to={to}>{text}</Link>
+            <Link to={to} type={type} reloadDocument={reloadDocument} >{text}</Link>
         </li>
     )
 }
