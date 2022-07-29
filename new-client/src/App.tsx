@@ -29,7 +29,7 @@ function App() {
 					<Route path="/logg-inn" element={<Login/>}/>
 					<Route path="/studenttraller" element={<LyricPageContainer/>}>
 						<Route index element={<LyricListPage/>}/>
-            			<Route path=":lyricTitle" element={<LyricItemPage/>}/>
+            			<Route path=":title" element={<LyricItemPage/>}/>
         			</Route>
 					<Route path="/dokumenter" element={<Documents/>}/>
 					<Route path="/bli-medlem" element={<BecomeMember/>}/>

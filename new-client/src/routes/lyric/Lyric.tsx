@@ -36,7 +36,7 @@ export function LyricListPage(){
 
 export function LyricItemPage(){
     const params = useParams();
-    const title = params.lyricTitle;
+    const title = params.title;
 
     const {isLoading, isError, data, error} = useQuery<ILyricHtml>(["LyricItem", title], () => {
         if(title) {
