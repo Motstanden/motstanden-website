@@ -11,7 +11,7 @@ import { LyricListPage, LyricItemPage, LyricPageContainer } from './routes/lyric
 import NotFound from './routes/notFound/NotFound';
 import Quotes from './routes/quotes/Quotes';
 import FrontPage from './routes/frontPage/FrontPage';
-import SheetArchive from './routes/sheetArchive/SheetArchive';
+import { InstrumentListPage, SheetArchivePageContainer, SongListPage } from './routes/sheetArchive/SheetArchive';
 
 // Layout
 import { AppLayout }from './layout/AppLayout';
@@ -37,7 +37,10 @@ function App() {
 					{/* Routes that requires the user to be logged in */}
 					<Route element={<RequireAuthRouter/>}> 
 						<Route path="/hjem" element={<Home/>}/>
-						<Route path="/notearkiv" element={<SheetArchive/>}/>
+						<Route path="/notearkiv" element={<SheetArchivePageContainer/>}>
+							<Route index element={<SongListPage/>}/>
+							<Route path=":title" element={<InstrumentListPage/>}/>
+						</Route>
 						<Route path="/sitater" element={<Quotes/>}/>
 					</Route>
 
