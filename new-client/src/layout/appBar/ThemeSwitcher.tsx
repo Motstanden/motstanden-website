@@ -6,7 +6,7 @@ import Switch from '@mui/material/Switch';
 import { SxProps } from '@mui/system';
 
 import { LabelPlacementType } from '../../tsTypes/MaterialUiTypes';
-import { ThemeName, useAppTheme } from '../../contextProviders/Themes';
+import { ThemeName, useAppTheme } from '../../context/Themes';
 
 
 

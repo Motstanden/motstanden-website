@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useAuth } from '../../contextProviders/Authentication';
+import { useAuth } from '../../context/Authentication';
 
 // Material UI 
 import Button from '@mui/material/Button';

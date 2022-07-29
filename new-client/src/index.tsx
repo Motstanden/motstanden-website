@@ -4,12 +4,12 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { AuthProvider } from "./contextProviders/Authentication"
+import { AuthProvider } from "./context/Authentication"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import CssBaseline from '@mui/material/CssBaseline';
-import { AppThemeProvider } from './contextProviders/Themes';
+import { AppThemeProvider } from './context/Themes';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement

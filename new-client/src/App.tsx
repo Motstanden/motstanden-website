@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Routes, Route, Link, Outlet, useParams, useLocation, useNavigate } from "react-router-dom";
 import { getSongLyricTitles } from "./songLyricDebug"
-import { RequireAuthRouter }  from "./contextProviders/Authentication"
+import { RequireAuthRouter }  from "./context/Authentication"
 
 // URL routes
 import BecomeMember from './routes/becomeMember/BecomeMember';

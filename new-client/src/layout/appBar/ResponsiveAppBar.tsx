@@ -10,7 +10,7 @@ import { SxProps } from '@mui/system';
 
 import { VariantType } from '../../tsTypes/MaterialUiTypes';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contextProviders/Authentication';
+import { useAuth } from '../../context/Authentication';
 
 import { NavBar, NavLink } from "./NavBar"
 import SideDrawer from './SideDrawer';

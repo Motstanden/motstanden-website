@@ -8,7 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contextProviders/Authentication';
+import { useAuth } from '../../context/Authentication';
 
 
 

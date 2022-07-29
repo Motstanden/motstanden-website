@@ -15,7 +15,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 
 import ThemeSwitcher from './ThemeSwitcher';
-import { useAuth } from '../../contextProviders/Authentication';
+import { useAuth } from '../../context/Authentication';
 
 
 
