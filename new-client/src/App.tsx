@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react';
 import { Routes, Route, Link, Outlet, useParams, useLocation, useNavigate } from "react-router-dom";
-import { getSongLyricTitles } from "./songLyricDebug"
 import { RequireAuthRouter }  from "./context/Authentication"
 
 // URL routes
@@ -48,35 +47,6 @@ function App() {
 			</Routes>
 		</div>	
 	);
-}
-
-
-function SongLyrics2(){
-	const [songLyrics, setSongLyrics] = useState(getSongLyricTitles())
-	console.log(songLyrics)
-	return (
-		<>
-			<h2>Studenttraller</h2>
-			<ul>
-				{ songLyrics.map( song => (
-					<li key={song.id}>
-						<Link to={`/studenttraller/${song.relativeUrl}`}>{song.title}</Link>
-					</li>
-				))}
-			</ul>
-			<Outlet/>
-		</>
-	)
-}
-
-function SongLyricItem2(){
-	let params = useParams();
-
-	return (
-		<>
-			<h2>Note {params.songTitle}</h2>
-		</>
-	)
 }
 
 export default App
