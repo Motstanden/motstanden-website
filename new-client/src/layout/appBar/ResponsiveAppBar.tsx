@@ -8,7 +8,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { SxProps } from '@mui/system';
 
-import { VariantType } from '../../tsTypes/MaterialUiTypes';
+import { VariantType } from '../../utils/tsTypes/MaterialUiTypes';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/Authentication';
 
