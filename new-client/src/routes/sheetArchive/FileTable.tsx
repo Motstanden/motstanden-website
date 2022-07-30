@@ -8,13 +8,45 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Link } from "react-router-dom";
+
+import { Link as RouterLink } from "react-router-dom";
+import Link  from "@mui/material/Link";
+
+const headerStyle = {
+    backgroundColor: "secondary.main",
+    "& th": {
+        fontSize: 14, 
+        fontWeight: "bold", 
+        textTransform: "uppercase", 
+        color: "secondary.contrastText"}
+}
+
+const rowStyle = {
+    // Alternating background color
+    '&:nth-of-type(odd)': {
+        backgroundColor: "action.hover",
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+        border: 0,
+    },
+}
+
+const linkStyle = {
+    color: "primary.light",
+    "&:visited": {
+        color: "primary.dark"
+    },
+    "&:hover": {
+        color: "primary.main"
+    },
+}
 
 export function FileTable({ files }: { files: ISongFile[]; }) {
     return (
         <TableContainer component={Paper}>
             <Table>
-                <TableHead>
+                <TableHead sx={headerStyle}>
                     <TableRow>
                         <TableCell>Instrument</TableCell>
                         <TableCell>Natura</TableCell>
@@ -23,12 +55,15 @@ export function FileTable({ files }: { files: ISongFile[]; }) {
                 </TableHead>
                 <TableBody>
                     { files.map( (file) => (
-                        <TableRow key={file.url}>
+                        <TableRow key={file.url} sx={rowStyle}>
                             <TableCell>
                                 <Link 
+                                    component={RouterLink}
                                     to={`/${file.url}`} 
                                     type="application/pdf" 
-                                    reloadDocument>
+                                    reloadDocument
+                                    underline="hover"
+                                    sx={linkStyle}>
                                     {formatFileName(file.instrument, file.instrumentVoice)}
                                 </Link>
                             </TableCell>       

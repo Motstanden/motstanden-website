@@ -50,7 +50,7 @@ export function SongListPage(){
                     const extraInfo = song.extraInfo ? `(${song.extraInfo})` : "" 
                     return (
                         <UrlListItem 
-                        key={song.titleId} 
+                            key={song.titleId} 
                             to={`/notearkiv/${song.url}`} 
                             text={song.title}
                             reloadDocument/> 
@@ -87,7 +87,10 @@ export function InstrumentListPage(){
     return (
         <>
             <h3>{song!.title}</h3>
-            <FileTable files={data}/>
+            <div style={{marginBottom: "150px", marginTop: "30px"}}>
+                <FileTable files={data} />
+            </div>
+
         </>
     )
 }
