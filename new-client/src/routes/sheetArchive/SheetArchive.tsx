@@ -3,8 +3,9 @@ import { useQuery } from '@tanstack/react-query'
 import { UrlList, UrlListItem } from "../../components/UrlList"
 import { PageContainer } from "../../layout/PageContainer"
 import { fetchAsync } from "../../utils/fetchAsync"
-import { Outlet, useOutletContext, useParams } from "react-router-dom"
+import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
 import { strToPrettyUrl } from "../../utils/strToPrettyUrl"
+import { FileTable } from "./FileTable"
 
 export function SheetArchivePageContainer() {
     const {isLoading, isError, data, error} = useQuery<ISongInfo[]>(["FetchDocuments"], () => fetchAsync<ISongInfo[]>("/api/sheet_archive/song_title") )
@@ -62,19 +63,46 @@ export function SongListPage(){
 
 export function InstrumentListPage(){
     const params = useParams();
-    const data = useOutletContext<ISongInfo[]>()
-    const song = data.find(item => item.url === params.title)
+    const songData = useOutletContext<ISongInfo[]>()
+    const song = songData.find(item => item.url === params.title)
+
+    const {isLoading, isError, data, error} = useQuery<ISongFile[]>(["songFile", song], () => {
+        if(song) {
+            return fetchAsync<ISongFile[]>(`/api/sheet_archive/song_files?titleId=${song.titleId}`)
+        }
+        else{
+            throw new Error("Title is null")
+        }}, {
+            retry: false
+    })
+    
+    if (isLoading) {
+        return <>Loading...</>
+    }
+
+    if(isError){
+        return <Navigate to="/notearkiv" replace={true} />
+    }
+
     return (
         <>
-            <h3>{song?.title}</h3>
-            test
+            <h3>{song!.title}</h3>
+            <FileTable files={data}/>
         </>
     )
 }
 
-interface ISongInfo{
+interface ISongInfo {
     url: string,
     title: string,
     extraInfo: string,
     titleId: number
+}
+
+export interface ISongFile {
+    url: string,
+    clef: string,
+    instrument: string,
+    instrumentVoice: string,
+    transposition: string
 }
