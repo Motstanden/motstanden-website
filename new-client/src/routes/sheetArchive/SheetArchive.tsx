@@ -103,6 +103,6 @@ export interface ISongFile {
     url: string,
     clef: string,
     instrument: string,
-    instrumentVoice: string,
+    instrumentVoice: number,
     transposition: string
 }
