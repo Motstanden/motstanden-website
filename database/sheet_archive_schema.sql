@@ -143,6 +143,7 @@ CREATE VIEW vw_song_file
 AS
 SELECT 
     song_file_id, 
+    song_title.song_title_id as title_id,
     song_title.title as title,
     filename,
     clef.name as clef_name,
@@ -158,4 +159,4 @@ LEFT JOIN clef USING(clef_id)
 LEFT JOIN instrument USING(instrument_id)
 LEFT JOIN instrument_category USING(instrument_category_id)
 LEFT JOIN tone ON song_file.transposition = tone.tone_id
-/* vw_song_file(song_file_id,title,filename,clef_name,clef_unicode_symbol,instrument,instrument_voice,instrument_category,transposition) */;
+/* vw_song_file(song_file_id,title_id,title,filename,clef_name,clef_unicode_symbol,instrument,instrument_voice,instrument_category,transposition) */;

@@ -315,6 +315,7 @@ CREATE VIEW vw_song_file
 AS
 SELECT 
     song_file_id, 
+    song_title.song_title_id as title_id,
     song_title.title as title,
     filename,
     clef.name as clef_name,
