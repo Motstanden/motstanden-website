@@ -22,7 +22,7 @@ router.get("/sheet_archive/song_title",
         db.close()
 })
 
-router.get("/sheet_archive/song_file", 
+router.get("/sheet_archive/song_files", 
     passport.authenticate("jwt", {session: false}),
     (req, res) => {
 
@@ -36,10 +36,10 @@ router.get("/sheet_archive/song_file",
                 transposition
             FROM 
                 vw_song_file 
-            WHERE title = ?
+            WHERE title_id = ?
             ORDER BY instrument ASC`)
-        const title = req.query.title;
-        const sheets = stmt.all(title)
+        const titleId = req.query.titleId;
+        const sheets = stmt.all(titleId)
         res.send(sheets);
         db.close()
 })
