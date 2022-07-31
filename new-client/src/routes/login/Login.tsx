@@ -1,4 +1,4 @@
-import { Button, TextField } from "@mui/material";
+import { Button, FormHelperText, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/Authentication";
@@ -26,6 +26,7 @@ export function LoginPage() {
 
 function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 	let [isSubmitting, setIsSubmitting] = useState(false)
+	let [isError, setIsError] = useState(false)
 	let navigate = useNavigate();
 	let auth = useAuth();
 
@@ -34,6 +35,11 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 			navigate(loginRedirect, { replace: true });
 		}
 	}, [auth])
+
+	const onFormChanged = () => {
+		if(isError)
+			setIsError(false)
+	}
 
 	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -52,7 +58,11 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 			// user experience.
 			navigate(loginRedirect, { replace: true });
 		}
+		else {
+			setIsError(true)
+		}
 		setIsSubmitting(false)
+
 	}
 
 	return (
@@ -64,6 +74,8 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 					name="username" 
 					type="text"
 					color="secondary"
+					error={isError}
+					onChange={onFormChanged}
 					required
 					fullWidth
 					style={{maxWidth: "350px"}}
@@ -75,6 +87,8 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 					label="Passord"
 					type="password"
 					color="secondary"
+					error={isError}
+					onChange={onFormChanged}
 					required
 					fullWidth
 					style={{maxWidth: "350px"}}
@@ -82,6 +96,9 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 					/>
 				<br/>
 				<br/>
+				{
+					isError && (<><FormHelperText error={true} style={{textAlign: "center"}}>Brukernavn eller passord var feil.</FormHelperText><br/></>) 
+				}
 				<Button 
 					variant="contained"
 					color="secondary"
