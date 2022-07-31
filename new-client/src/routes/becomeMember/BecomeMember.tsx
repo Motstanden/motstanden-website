@@ -34,17 +34,22 @@ function GoogleForm(){
     return (
         <div style={{
             overflow: "hidden",
-            paddingInline: "10px",
+            paddingLeft: "10px",
+            marginRight: "50px",
             width: "100%",
             height: "1100px",
+            position: "relative"
         }}>
             <iframe 
                 src="https://docs.google.com/forms/d/e/1FAIpQLScNCnQSOnjrQ8eroEnJdc5WCg8uIkPePjnQX1NehdmxyBT-kQ/viewform?embedded=true"
                 allowFullScreen 
                 frameBorder="0"
+                scrolling="no"
                 style={{
                     height: "100%",
                     width: "100%",
+                    maxWidth: "700px",
+                    overflow: "hidden",
                     ...invertProps
                 }}>
                     Laster inn …
