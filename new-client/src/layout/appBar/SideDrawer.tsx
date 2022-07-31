@@ -10,9 +10,12 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemLink from './ListItemLink';
+import ListItemIcon  from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MenuIcon from '@mui/icons-material/Menu';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+
+import MotstandenImg from "../../assets/logos/motstanden.png"
 
 import ThemeSwitcher from './ThemeSwitcher';
 import { useAuth } from '../../context/Authentication';
@@ -100,7 +103,10 @@ function ListItemHeader(){
     return (
         <>
             <ListItem>
-                <ListItemText>Motstanden</ListItemText>
+                <ListItemIcon >
+                    <img src={MotstandenImg} style={{width: "40px"}} loading="lazy"/>
+                </ListItemIcon>
+                <ListItemText >Motstanden</ListItemText>
             </ListItem>
             <Divider light={false}/>
         </>
