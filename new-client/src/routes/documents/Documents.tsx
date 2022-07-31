@@ -27,7 +27,7 @@ function DocumentList(){
 
     return (
         <UrlList>
-            { data.map( doc => <UrlListItem key={doc.title} to={`/${doc.url}`} text={doc.title} type="application/pdf" reloadDocument/> )}
+            { data.map( doc => <UrlListItem key={doc.url} to={`/${doc.url}`} text={doc.title} type="application/pdf" reloadDocument/> )}
         </UrlList>
     ) 
 }

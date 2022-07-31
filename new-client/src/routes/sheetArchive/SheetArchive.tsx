@@ -8,7 +8,7 @@ import { strToPrettyUrl } from "../../utils/strToPrettyUrl"
 import { FileTable } from "./FileTable"
 
 export function SheetArchivePageContainer() {
-    const {isLoading, isError, data, error} = useQuery<ISongInfo[]>(["FetchDocuments"], () => fetchAsync<ISongInfo[]>("/api/sheet_archive/song_title") )
+    const {isLoading, isError, data, error} = useQuery<ISongInfo[]>(["FetchSheetArchiveTitles"], () => fetchAsync<ISongInfo[]>("/api/sheet_archive/song_title") )
     
     if (isLoading) {
         return <PageContainer><div/></PageContainer>
@@ -46,15 +46,13 @@ export function SongListPage(){
         <>
             <h1>Notearkiv</h1>
             <UrlList>
-                { data.map( song => {
-                    const extraInfo = song.extraInfo ? `(${song.extraInfo})` : "" 
-                    return (
+                { data.map( song => (
                         <UrlListItem 
-                            key={song.titleId} 
+                            key={song.url} 
                             to={`/notearkiv/${song.url}`} 
                             text={song.title}
                             reloadDocument/> 
-                    )})
+                    ))
                 }
             </UrlList>
         </>
@@ -66,7 +64,7 @@ export function InstrumentListPage(){
     const songData = useOutletContext<ISongInfo[]>()
     const song = songData.find(item => item.url === params.title)
 
-    const {isLoading, isError, data, error} = useQuery<ISongFile[]>(["songFile", song], () => {
+    const {isLoading, isError, data, error} = useQuery<ISongFile[]>(["FetchSheetArchiveFile", song!.url], () => {
         if(song) {
             return fetchAsync<ISongFile[]>(`/api/sheet_archive/song_files?titleId=${song.titleId}`)
         }

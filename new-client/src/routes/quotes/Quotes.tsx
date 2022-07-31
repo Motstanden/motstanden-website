@@ -19,7 +19,7 @@ export default function Quotes(){
 
 function QuoteList(){
 
-    const {isLoading, isError, data, error} = useQuery<IQuote[]>(["FetchDocuments"], () => fetchAsync<IQuote[]>("/api/quotes") )
+    const {isLoading, isError, data, error} = useQuery<IQuote[]>(["FetchQuotes"], () => fetchAsync<IQuote[]>("/api/quotes") )
     
     if (isLoading) {
         return <PageContainer><div/></PageContainer>
