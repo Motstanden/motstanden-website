@@ -27,14 +27,15 @@ export default function Login() {
 
 	}, [auth])
 	
-	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 		setIsSubmitting(true)
 		let formData = new FormData(event.currentTarget);
 		let username = formData.get("username") as string;
 		let password = formData.get("password") as string;
 	
-		auth.signIn(username, password, () => {
+		let success = await auth.signIn(username, password)
+		if(success) {
 			// Send them back to the page they tried to visit when they were
 			// redirected to the login page. Use { replace: true } so we don't create
 			// another entry in the history stack for the login page.  This means that
@@ -42,7 +43,7 @@ export default function Login() {
 			// won't end up back on the login page, which is also really nice for the
 			// user experience.
 			navigate(from, { replace: true });
-		});
+		}
 		setIsSubmitting(false)
 	}
 	

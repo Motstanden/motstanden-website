@@ -5,8 +5,8 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 interface AuthContextType{
 	user: string | null
-    signIn: (user: string, password: string, callback: VoidFunction) => void
-    signOut: (callback: VoidFunction) => void;
+    signIn: (user: string, password: string) => Promise<boolean>
+    signOut: () => Promise<boolean>;
 }
 
 export const AuthContext = React.createContext<AuthContextType>(null!);
@@ -20,29 +20,43 @@ export function AuthProvider({ children }: {children: React.ReactNode} ){
     let [user, setUser] = useState<string | null>(null)     // TODO: Persist log in between refreshes
     
     // Define login logic
-    let signIn = async (newUser: string, _password: string, callback: VoidFunction) => {
+    let signIn = async (newUser: string, _password: string): Promise<boolean> => {
         
-        let response = await fetch("/api/login", {
-            method: "POST",
-            body: JSON.stringify({username: newUser, password: _password}),
-            headers: { 'Content-Type': 'application/json' }
-        })
-        
-        if (response.ok){
-            setUser(newUser)
-            callback()        
+        let response;
+        try {
+            response = await fetch("/api/login", {
+                method: "POST",
+                body: JSON.stringify({username: newUser, password: _password}),
+                headers: { 'Content-Type': 'application/json' }
+            })
         }
+        catch {
+            return false
+        }
+        if(!response.ok){
+            return false;
+        }
+
+        setUser(newUser)
+        return true
     }
     
     // Define logout logic
-    let signOut = async (callback: VoidFunction) => {
-        let response = await fetch("/api/logout", {
-            method: "POST"
-        })
-        if (response.ok){
-            setUser(null)
-            callback()
+    let signOut = async (): Promise<boolean> => {
+        let response;
+        try {
+            response = await fetch("/api/logout", {
+                method: "POST"
+            })
         }
+        catch {
+            return false
+        }
+        if (!response.ok){
+            return false
+        }
+        setUser(null)
+        return true;
     }
 
     // Fetch user data on initial load

@@ -17,8 +17,11 @@ export default function UserAvatar() {
     let username = auth?.user ?? ""
     
     let navigate = useNavigate()
-    const onSignOutClick = () => {
-        auth.signOut( () => navigate("/") )
+    const onSignOutClick = async () => {
+        let success = await auth.signOut();
+        if(success) {
+            navigate("/") 
+        }
     }
 
     const [isOpen, setIsOpen] = useState(false)
