@@ -1,6 +1,9 @@
 import React from "react"
 import { Divider, Grid, Paper, Stack, Typography } from "@mui/material"
 import { Container as Box } from "@mui/system"
+import MotstandenImg from "../assets/logos/motstanden.png"
+import SitImg from "../assets/logos/sit.svg";
+import ElektraImg from "../assets/logos/elektra.svg";
 
 export function FooterContent(){
     return  (
@@ -42,20 +45,19 @@ function MotstandenInfo(){
         <Grid 
             container   
             direction="row"
-            columnSpacing={10}
             rowSpacing={2}
             justifyContent="center"
             alignItems="center"
             textAlign="center">
             <Grid item xs={12} sm={4} md={3}>
-                <MotstandenLogo />
-            </Grid>
-            <Grid item xs={12} sm={4} md={3}>
-                <Typography variant="h6" >
+                <Typography>
                     Studentorchesteret <wbr/>
                     <NoBr>den Ohmske</NoBr> <wbr/>
                     Motstanden
                 </Typography>
+            </Grid>
+            <Grid item xs={12} sm={4} md={3}>
+                <MotstandenLogo />
             </Grid>
             <Grid item xs={12} sm={4} md={3} sx={{whiteSpace: "nowrap"}}>
                 <Typography>styret@motstanden.no</Typography>
@@ -79,35 +81,43 @@ function SponsorInfo(){
             justifyContent="center"
             >
             <Grid item xs={12} sm={6} marginBottom={{xs: 4, sm: 0}}>
-                <Typography>Linjeforeningen Elektra</Typography>
+                <Typography pb={2}>Linjeforeningen Elektra</Typography>
                 <ElektraLogo/>
             </Grid>
-            <Grid item xs={12} sm={6}>
-                <Typography>Studentsamskipnaden i Trondheim</Typography>
+            <Grid item xs={12} sm={6} >
+                <Typography pb={4} >Studentsamskipnaden<wbr/> i Trondheim</Typography>
                 <SitLogo/>
             </Grid>
         </Grid>
     )
 }
 
-// TODO: Find logo
 function MotstandenLogo(){
     return (
-        <img alt="Motstanden sin logo"/>
+        <img src={MotstandenImg} 
+            alt="Motstanden sin logo"
+            loading="lazy" 
+            style={{maxHeight: "130px"}} 
+            />
     )
 }
 
-// TODO: Find logo
 function ElektraLogo(){
     return (
-        <img alt="Elektra sin logo"/>
+        <img src={ElektraImg} 
+            alt="Elektra sin logo"
+            loading="lazy"
+            style={{maxHeight: "100px"}}
+            />
     )
 }
 
-// TODO: Find logo
 function SitLogo(){
     return (
-        <img alt="Sit sin logo"/>
+        <img src={SitImg} 
+            loading="lazy"
+            alt="Sit sin logo"
+            style={{maxWidth: "160px"}}/>
     )
 }
 
