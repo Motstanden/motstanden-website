@@ -42,7 +42,7 @@ function PrivateNavBar(){
                 <List component="nav" disablePadding sx={{minWidth: 200}}>
                     <ListItemLink text="Framside" to="/"/>
                     <ListItemLink text="Bli Medlem" to="/bli-medlem" />
-                    <ListItemLink text="FAQ" to="/faq" disabled />
+                    {/* <ListItemLink text="FAQ" to="/faq" disabled /> */}
                     <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/"/>
                 </List>
             </NavDropDown>
@@ -63,7 +63,7 @@ function PublicNavBar(){
                 <List component="nav" disablePadding sx={{minWidth: 200}}>
                     <ListItemLink text="Framside" to="/"/>
                     <ListItemLink text="Bli Medlem" to="/bli-medlem" />
-                    <ListItemLink text="FAQ" to="/faq" disabled />
+                    {/* <ListItemLink text="FAQ" to="/faq" disabled /> */}
                     <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/"/>
                 </List>
             </NavDropDown>
