@@ -18,7 +18,7 @@
 			"sizes": "512x512"
 		}
 	],
-	"start_url": "motstanden.no",
+	"start_url": "https://motstanden.no/hjem",
 	"display": "standalone",
 	"theme_color": "#196E45",
 	"background_color": "#ffffff"
