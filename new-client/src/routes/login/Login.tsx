@@ -66,7 +66,6 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 					color="secondary"
 					required
 					fullWidth
-					autoFocus
 					style={{maxWidth: "350px"}}
 					autoComplete="off" />
 				<br/>
