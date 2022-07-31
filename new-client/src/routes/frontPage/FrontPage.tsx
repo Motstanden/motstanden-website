@@ -10,7 +10,7 @@ export default function FrontPage(){
                 alt="Motstanden feirer 17. Mai 2021" 
                 loading="lazy" 
                 style={{width: "100%", maxHeight: "30vh", objectFit: "cover"}}/>
-            <div style={{paddingInline: "3%"}}>
+            <div style={{paddingInline: "35px"}}>
                 <h2>Om oss</h2>
                     <p>
                         #TODO...?

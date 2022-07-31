@@ -4,7 +4,7 @@ import { useTheme } from "@mui/material";
 
 export function PageContainer({ children, props, disableGutters }: { children: React.ReactNode; props?: React.CSSProperties; disableGutters?: boolean; }) {
     const theme = useTheme();
-    const paddingX = disableGutters ? { padding: "0px 0px" } : { padding: "15Px 5%" };
+    const paddingX = disableGutters ? { padding: "0px 0px" } : { padding: "15Px 35px 150px 35px" };
     return (
         <div style={{
             minHeight: "100vh",
