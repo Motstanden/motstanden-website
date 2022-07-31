@@ -27,9 +27,10 @@ export function NewQuoteForm(){
     return (
         <form onSubmit={onSubmit}>
             <TextField 
-                label="Sitatyttrer" 
+                label="Sitatytrer" 
                 name="utterer"
                 type="text"
+				color="secondary"
                 required 
                 fullWidth 
                 autoComplete="off"
@@ -42,6 +43,7 @@ export function NewQuoteForm(){
                 label="Sitat"
                 name="quote"
                 type="text"
+				color="secondary"
                 required 
                 fullWidth
                 autoComplete="off"
