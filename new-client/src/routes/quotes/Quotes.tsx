@@ -2,11 +2,16 @@ import React from "react"
 import { useQuery } from "@tanstack/react-query"
 import { PageContainer } from "../../layout/PageContainer"
 import { fetchAsync } from "../../utils/fetchAsync"
+import { NewQuoteForm } from "./NewQuoteForm"
+import { Divider } from "@mui/material"
 
 export default function Quotes(){
     return (
         <PageContainer>
-            <h1>Sitater</h1>
+            <h1>Nytt sitat</h1>
+            <NewQuoteForm/>
+            <Divider sx={{my: "40px"}}/>
+            <h1 style={{marginTop: "0px"}}>Sitater</h1>
             <QuoteList/>
         </PageContainer>
     )
@@ -50,7 +55,6 @@ function QuoteList(){
 
 function NewlineText({ text }: {text: string}) {
     const newText = text.split('\n').map(str => <p style={{margin: 0}}>{str}</p>);
-    console.log(newText, text)
     return <span>{newText}</span>
 }
 
