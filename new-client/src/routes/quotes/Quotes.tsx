@@ -32,7 +32,7 @@ function QuoteList(){
     return (
         <ul style={{paddingLeft: "5px"}}>
             {data.map( item => (
-                <li key={item.quote} 
+                <li key={item.id} 
                     style={{
                         listStyleType: "none", 
                         marginBottom: "25px",
@@ -54,11 +54,12 @@ function QuoteList(){
 }
 
 function NewlineText({ text }: {text: string}) {
-    const newText = text.split('\n').map(str => <p style={{margin: 0}}>{str}</p>);
+    const newText = text.split('\n').map( (str, i) => <p key={i} style={{margin: 0}}>{str}</p>);
     return <span>{newText}</span>
 }
 
 interface IQuote {
+    id: string,
     utterer: string,
     quote: string,
 }

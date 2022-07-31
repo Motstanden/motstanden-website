@@ -8,7 +8,14 @@ router.get("/quotes",
     passport.authenticate("jwt", {session: false}),
     (req, res) => {
         const db = new Database(motstandenDB, dbReadOnlyConfig)
-        const stmt = db.prepare("SELECT utterer, quote FROM quote ORDER BY quote_id DESC")
+        const stmt = db.prepare(`
+        SELECT 
+            quote_id as id, 
+            utterer, 
+            quote 
+        FROM 
+            quote 
+        ORDER BY quote_id DESC`)
         const quotes = stmt.all();
         res.send(quotes);
         db.close();
