@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/Authentication";
 import { PageContainer } from "../../layout/PageContainer";
 import LoginIcon from '@mui/icons-material/Login';
+import { AnimationAvatar } from "./AnimationAvatar";
 
 interface ILocationProps {
 	state: {
@@ -11,24 +12,17 @@ interface ILocationProps {
 	}
 }
 
-
 export function LoginPage() {
 	let location = useLocation() as ILocationProps;
 	return ( 
 		<PageContainer>
 			<div style={{textAlign: "center"}}>
-				<h1>Logg inn</h1>
+				<h1 style={{marginBottom: "50px"}}>Logg inn</h1>
 				<LoginForm loginRedirect={location.state?.from?.pathname || "/hjem"}/>
 			</div>
 		</PageContainer>
 	)
 } 
-
-function AnimationAvatar( { isAnimating }: {isAnimating: boolean}) {
-	return (
-		<></>
-	)
-}
 
 function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 	let [isSubmitting, setIsSubmitting] = useState(false)
@@ -63,8 +57,8 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 
 	return (
 		<>
-			<AnimationAvatar isAnimating={isSubmitting}/>
-			<form onSubmit={handleSubmit}>
+			<AnimationAvatar isAnimating={isSubmitting} />
+			<form onSubmit={handleSubmit} style={{marginTop: "50px"}}>
 				<TextField
 					label="Brukernavn" 
 					name="username" 
