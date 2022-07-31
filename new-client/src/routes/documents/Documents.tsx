@@ -3,8 +3,10 @@ import { useQuery } from '@tanstack/react-query'
 import { PageContainer } from "../../layout/PageContainer"
 import { fetchAsync } from "../../utils/fetchAsync"
 import { UrlList, UrlListItem } from "../../components/UrlList"
+import { useTitle } from "../../hooks/useTitle"
 
 export default function Documents(){
+    useTitle("Dokumenter")
     return (
         <PageContainer>
             <h1>Dokumenter</h1>

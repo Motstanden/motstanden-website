@@ -5,6 +5,7 @@ import { useAuth } from "../../context/Authentication";
 import { PageContainer } from "../../layout/PageContainer";
 import LoginIcon from '@mui/icons-material/Login';
 import { AnimationAvatar } from "./AnimationAvatar";
+import { useTitle } from "../../hooks/useTitle";
 
 interface ILocationProps {
 	state: {
@@ -13,6 +14,7 @@ interface ILocationProps {
 }
 
 export function LoginPage() {
+	useTitle("Logg inn")
 	let location = useLocation() as ILocationProps;
 	return ( 
 		<PageContainer>

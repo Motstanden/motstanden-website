@@ -4,8 +4,10 @@ import { PageContainer } from "../../layout/PageContainer"
 import { fetchAsync } from "../../utils/fetchAsync"
 import { NewQuoteForm } from "./NewQuoteForm"
 import { Divider } from "@mui/material"
+import { useTitle } from "../../hooks/useTitle"
 
 export default function Quotes(){
+    useTitle("Sitater")
     return (
         <PageContainer>
             <h1>Nytt sitat</h1>

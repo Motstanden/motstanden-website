@@ -2,8 +2,10 @@ import React from "react"
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import May17Img from "../../assets/pictures/17mai2021.jpg"
 import { PageContainer } from "../../layout/PageContainer";
+import { useTitle } from "../../hooks/useTitle";
 
 export default function FrontPage(){
+    useTitle("Framside")
     return (
         <PageContainer disableGutters>
             <img src={May17Img}

@@ -1,8 +1,10 @@
 import React from "react"
 import { PageContainer } from "../../layout/PageContainer"
 import LondonSpyImg from "../../assets/pictures/spyInLondon.png"
+import { useTitle } from "../../hooks/useTitle"
 
 export default function NotFound(){
+    useTitle("404")
     return (
         <PageContainer>
             <div style={{ 

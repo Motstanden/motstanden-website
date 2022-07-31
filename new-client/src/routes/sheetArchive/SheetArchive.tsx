@@ -6,8 +6,11 @@ import { fetchAsync } from "../../utils/fetchAsync"
 import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
 import { strToPrettyUrl } from "../../utils/strToPrettyUrl"
 import { FileTable } from "./FileTable"
+import { useTitle } from "../../hooks/useTitle"
 
 export function SheetArchivePageContainer() {
+    useTitle("Notearkiv")
+
     const {isLoading, isError, data, error} = useQuery<ISongInfo[]>(["FetchSheetArchiveTitles"], () => fetchAsync<ISongInfo[]>("/api/sheet_archive/song_title") )
     
     if (isLoading) {
@@ -63,6 +66,8 @@ export function InstrumentListPage(){
     const params = useParams();
     const songData = useOutletContext<ISongInfo[]>()
     const song = songData.find(item => item.url === params.title)
+
+    useTitle(song?.title)
 
     const {isLoading, isError, data, error} = useQuery<ISongFile[]>(["FetchSheetArchiveFile", song!.url], () => {
         if(song) {

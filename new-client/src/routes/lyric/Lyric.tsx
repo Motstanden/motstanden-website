@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, Navigate, Outlet, useNavigate, useOutletContext, useParams } from "react-router-dom"
 import { UrlList, UrlListItem} from "../../components/UrlList"
 import { fetchAsync } from "../../utils/fetchAsync"
+import { useTitle } from "../../hooks/useTitle"
 
 export function LyricPageContainer(){
     const {isLoading, isError, data, error} = useQuery<ILyricData[]>(["AllLyricData"], () => fetchAsync<ILyricData[]>("/api/song_lyric"))
@@ -23,6 +24,7 @@ export function LyricPageContainer(){
 }
 
 export function LyricListPage(){
+    useTitle("Studenttraller")
     const lyricData = useOutletContext<ILyricData[]>()
     return (
         <>
@@ -37,6 +39,8 @@ export function LyricListPage(){
 export function LyricItemPage(){
     const params = useParams();
     const title = params.title;
+    
+    useTitle(title)
 
     const {isLoading, isError, data, error} = useQuery<ILyricHtml>(["LyricItem", title], () => {
         if(title) {
@@ -55,7 +59,7 @@ export function LyricItemPage(){
     if(isError){
         return <Navigate to="/studenttraller" replace={true} />
     }
-
+    
 	return (
         <>
             <h2>{title}</h2>
