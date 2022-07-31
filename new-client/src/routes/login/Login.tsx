@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/Authentication";
 import { PageContainer } from "../../layout/PageContainer";
+import LoginIcon from '@mui/icons-material/Login';
 
 interface ILocationProps {
 	state: {
@@ -15,8 +16,10 @@ export function LoginPage() {
 	let location = useLocation() as ILocationProps;
 	return ( 
 		<PageContainer>
-			<h1>Logg inn</h1>
-			<LoginForm loginRedirect={location.state?.from?.pathname || "/hjem"}/>
+			<div style={{textAlign: "center"}}>
+				<h1>Logg inn</h1>
+				<LoginForm loginRedirect={location.state?.from?.pathname || "/hjem"}/>
+			</div>
 		</PageContainer>
 	)
 } 
@@ -68,7 +71,9 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 					type="text"
 					color="secondary"
 					required
+					fullWidth
 					autoFocus
+					style={{maxWidth: "350px"}}
 					autoComplete="off" />
 				<br/>
 				<br/>
@@ -78,6 +83,8 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 					type="password"
 					color="secondary"
 					required
+					fullWidth
+					style={{maxWidth: "350px"}}
 					autoComplete="current-password"
 					/>
 				<br/>
@@ -88,6 +95,7 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 					size="large"
 					type="submit"
 					disabled={isSubmitting}
+					endIcon={<LoginIcon/>}
 					>Logg inn</Button>
 			</form>
 		</>
