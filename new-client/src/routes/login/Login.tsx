@@ -1,11 +1,15 @@
-import { Button, FormHelperText, TextField } from "@mui/material";
-import React, { useEffect, useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/Authentication";
-import { PageContainer } from "../../layout/PageContainer";
+import React, { useEffect, useState } from 'react';
+
+import Button from '@mui/material/Button';
+import FormHelperText from '@mui/material/FormHelperText';
 import LoginIcon from '@mui/icons-material/Login';
-import { AnimationAvatar } from "./AnimationAvatar";
-import { useTitle } from "../../hooks/useTitle";
+import TextField from '@mui/material/TextField';
+
+import { AnimationAvatar } from './AnimationAvatar';
+import { PageContainer } from '../../layout/PageContainer';
+import { useAuth } from '../../context/Authentication';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useTitle } from '../../hooks/useTitle';
 
 interface ILocationProps {
 	state: {

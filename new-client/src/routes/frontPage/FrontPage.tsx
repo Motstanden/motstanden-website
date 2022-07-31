@@ -1,5 +1,5 @@
 import React from "react"
-import { Box, Link, Paper, Stack, Typography } from '@mui/material';
+import Link from '@mui/material/Link';
 import May17Img from "../../assets/pictures/17mai2021.jpg"
 import { PageContainer } from "../../layout/PageContainer";
 import { useTitle } from "../../hooks/useTitle";

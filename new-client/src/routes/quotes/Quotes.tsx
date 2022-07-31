@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 import { PageContainer } from "../../layout/PageContainer"
 import { fetchAsync } from "../../utils/fetchAsync"
 import { NewQuoteForm } from "./NewQuoteForm"
-import { Divider } from "@mui/material"
+import Divider from "@mui/material/Divider"
 import { useTitle } from "../../hooks/useTitle"
 
 export default function Quotes(){

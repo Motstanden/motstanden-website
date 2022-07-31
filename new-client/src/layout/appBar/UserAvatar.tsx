@@ -31,7 +31,7 @@ export default function UserAvatar() {
         <>
         <Tooltip title={username}>
             <IconButton ref={anchorEl} onClick={() => setIsOpen(!isOpen)}>
-                <Avatar alt={username}/>
+                <Avatar alt={username} />
             </IconButton>
         </Tooltip>
         <Menu 

@@ -1,5 +1,3 @@
-import { SearchSharp } from "@mui/icons-material";
-import { maxWidth, width } from "@mui/system";
 import React, { useEffect, useState } from "react";
 
 import boy1 from "../../assets/pictures/loginAvatar/boy1.png"

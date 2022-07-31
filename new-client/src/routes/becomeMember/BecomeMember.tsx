@@ -1,5 +1,3 @@
-import { InvertColors } from "@mui/icons-material";
-import { height } from "@mui/system"
 import React, { useRef } from "react"
 import { ThemeName, useAppTheme } from "../../context/Themes"
 import { useTitle } from "../../hooks/useTitle";

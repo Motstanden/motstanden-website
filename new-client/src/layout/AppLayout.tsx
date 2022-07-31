@@ -1,6 +1,6 @@
 import React from "react"
 import { Outlet } from "react-router-dom"
-import { Stack } from "@mui/material"
+import Stack from "@mui/material/Stack"
 
 import ResponsiveAppBar from "./appBar/ResponsiveAppBar"
 import { FooterContent } from "./Footer"

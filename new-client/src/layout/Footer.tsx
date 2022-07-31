@@ -1,9 +1,16 @@
-import React from "react"
-import { Divider, Grid, Paper, Stack, Typography } from "@mui/material"
-import { Container as Box } from "@mui/system"
-import MotstandenImg from "../assets/logos/motstanden.png"
-import SitImg from "../assets/logos/sit.svg";
-import ElektraImg from "../assets/logos/elektra.svg";
+import React from 'react';
+
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import SitImg from '../assets/logos/sit.svg';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+
+import ElektraImg from '../assets/logos/elektra.svg';
+import MotstandenImg from '../assets/logos/motstanden.png';
+
+
 
 export function FooterContent(){
     return  (
