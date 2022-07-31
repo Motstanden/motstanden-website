@@ -6,7 +6,7 @@ import { RequireAuthRouter }  from "./context/Authentication"
 import BecomeMember from './routes/becomeMember/BecomeMember';
 import Documents from './routes/documents/Documents';
 import Home from './routes/home/Home';
-import Login from './routes/login/Login';
+import { LoginPage } from './routes/login/Login';
 import { LyricListPage, LyricItemPage, LyricPageContainer } from './routes/lyric/Lyric';
 import NotFound from './routes/notFound/NotFound';
 import Quotes from './routes/quotes/Quotes';
@@ -26,7 +26,7 @@ function App() {
 
 					{/* Routes that are publicly available */}
 					<Route path="/" element={<FrontPage/>}/>
-					<Route path="/logg-inn" element={<Login/>}/>
+					<Route path="/logg-inn" element={<LoginPage/>}/>
 					<Route path="/studenttraller" element={<LyricPageContainer/>}>
 						<Route index element={<LyricListPage/>}/>
             			<Route path=":title" element={<LyricItemPage/>}/>
