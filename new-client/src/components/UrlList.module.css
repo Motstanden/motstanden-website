@@ -1,0 +1,18 @@
+.UrlList {
+    list-style-type: none;
+    padding: 0px;
+    font-size: larger;
+}
+
+.UrlList li {
+    margin-bottom: 20px;
+}
+
+.UrlList a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.UrlList a:hover {
+    text-decoration: underline;
+}

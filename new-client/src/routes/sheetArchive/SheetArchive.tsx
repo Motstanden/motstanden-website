@@ -44,7 +44,7 @@ export function SongListPage(){
     const data = useOutletContext<ISongInfo[]>()
     return (
         <>
-            <h3>Notearkiv</h3>
+            <h1>Notearkiv</h1>
             <UrlList>
                 { data.map( song => {
                     const extraInfo = song.extraInfo ? `(${song.extraInfo})` : "" 
