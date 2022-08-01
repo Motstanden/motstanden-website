@@ -1,4 +1,9 @@
-const path = require("path")
+import dotenv from "dotenv";
+dotenv.config();
+
+import path from "path";
+import { getCurrentDir } from '../utils/pathHelper.js';
+const __dirname = getCurrentDir(import.meta.url);
 
 const motstandenDBName = process.env.IS_DEV_ENV === 'true' 
                         ? 'motstanden_dev.db'
@@ -7,15 +12,15 @@ const sheetArchiveDBName = process.env.IS_DEV_ENV === 'true'
                         ? 'sheet_archive_dev.db'
                         : 'sheet_archive.db'
 
-exports.motstandenDB   = path.join(__dirname, "..", "..",  "database", motstandenDBName)
-exports.sheetArchiveDB = path.join(__dirname, "..", "..",  "database", sheetArchiveDBName)
+export const motstandenDB   = path.join(__dirname, "..", "..",  "database", motstandenDBName)
+export const sheetArchiveDB = path.join(__dirname, "..", "..",  "database", sheetArchiveDBName)
 
-exports.dbReadOnlyConfig = {
+export const dbReadOnlyConfig = {
     readonly: true,
     fileMustExist: true
 }
 
-exports.dbReadWriteConfig = {
+export const dbReadWriteConfig = {
     readonly: false,
     fileMustExist: true
 }

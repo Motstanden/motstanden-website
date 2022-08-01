@@ -1,8 +1,10 @@
-const router = require("express").Router()
-const Database = require('better-sqlite3')
-const {motstandenDB, dbReadOnlyConfig, dbReadWriteConfig} = require("../config/databaseConfig")
-const passport = require("passport")
-const { stringIsNullOrWhiteSpace } = require("../utils/stringUtils")
+import express from "express";
+import Database from "better-sqlite3";
+import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "../config/databaseConfig.js";
+import passport from "passport";
+import { stringIsNullOrWhiteSpace } from "../utils/stringUtils.js";
+
+let router = express.Router()
 
 router.get("/quotes", 
     passport.authenticate("jwt", {session: false}),
@@ -37,4 +39,4 @@ router.post("/insert_quote",
         res.end();
     })
 
-    module.exports = router
+    export default router

@@ -1,6 +1,8 @@
-const router = require("express").Router()
-const passport = require("passport")
+import express from "express";
+import passport from "passport";
 const ACCESSTOKEN = "AccessToken"
+
+let router = express.Router()
 
 router.post("/login", 
     passport.authenticate("local", {session: false}),
@@ -28,4 +30,4 @@ router.get("/userMetaData",
     (err, req, res, next) => res.status(204).send("Brukeren er ikke logget inn.")   // Login failure callback
 )
 
-module.exports = router
+export default router

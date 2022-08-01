@@ -1,7 +1,9 @@
-const router = require("express").Router()
-const Database = require('better-sqlite3')
-const {motstandenDB, dbReadOnlyConfig, dbReadWriteConfig} = require("../config/databaseConfig")
-const fs = require("fs")
+import express from "express";
+import Database from "better-sqlite3";
+import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "../config/databaseConfig.js";
+import fs from "fs";
+
+let router = express.Router()
 
 router.get("/song_lyric", (req, res) => {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
@@ -42,4 +44,4 @@ router.get("/song_lyric_data", (req, res) => {
     });
 })
 
-module.exports = router;
+export default router;

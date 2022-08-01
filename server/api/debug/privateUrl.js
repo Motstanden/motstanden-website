@@ -1,5 +1,7 @@
-const router = require("express").Router()
-const passport = require("passport")
+import express from "express";
+import passport from "passport";
+
+let router = express.Router()
 
 router.get("/private_url",
     passport.authenticate("jwt", {session: false}),
@@ -10,4 +12,4 @@ router.get("/private_url",
         })
 })
 
-module.exports = router
+export default router

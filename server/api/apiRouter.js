@@ -1,10 +1,12 @@
-const router = require("express").Router()
-const login = require("./login")
-const songLyric = require("./songLyric")
-const documents = require("./documents")
-const quotes = require("./quotes")
-const sheetArchive = require("./sheetArchive")
-const debugRouter = require("./debug/debugRouter")
+import express from "express";
+import login from "./login.js";
+import songLyric from "./songLyric.js";
+import documents from "./documents.js";
+import quotes from "./quotes.js";
+import sheetArchive from "./sheetArchive.js";
+import debugRouter from "./debug/debugRouter.js";
+
+let router = express.Router()
 
 router.use(login)
 router.use(songLyric)
@@ -13,4 +15,4 @@ router.use(quotes)
 router.use(sheetArchive)
 router.use("/debug", debugRouter)
 
-module.exports = router;
+export default router;

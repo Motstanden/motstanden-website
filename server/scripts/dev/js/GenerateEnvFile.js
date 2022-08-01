@@ -9,9 +9,12 @@
 //
 // ******************************************************************
 
-const fs = require('fs')
-const path = require("path")
-const { randomBytes } = require('crypto');
+import fs from "fs";
+import path from "path";
+import { randomBytes } from "crypto";
+import { getCurrentDir } from './utils/pathHelper.js';
+
+const __dirname = getCurrentDir(import.meta.url);
 
 let envObjects = []
 

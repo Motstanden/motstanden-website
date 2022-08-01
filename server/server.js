@@ -1,16 +1,20 @@
 // Loads secret keys from the local .env file. The .env file should always be a hidden secret, and should not be commited to github.
-require("dotenv").config()
+import dotenv from "dotenv";
+dotenv.config();
 
-const express = require("express")
-const cookieParser = require('cookie-parser')
-const path = require("path")
-const cors = require("cors")
-const helmet = require("helmet")
-const passport = require("passport")
-const passportConfig = require("./config/passportConfig.js")
-const serveIndex = require("serve-index")
+import express from "express"
+import cookieParser from 'cookie-parser'
+import path from "path"
+import cors from "cors"
+import helmet from "helmet"
+import passport from "passport"
+import * as passportConfig from "./config/passportConfig.js"
+import serveIndex from "serve-index"
 
-const router = require("./api/apiRouter")
+import router from "./api/apiRouter.js"
+
+import { getCurrentDir } from './utils/pathHelper.js';
+const __dirname = getCurrentDir(import.meta.url);
 
 const PORT = process.env.PORT || 5000
 const app = express()
@@ -30,13 +34,15 @@ app.use(helmet({
 app.use(cookieParser())
 app.use(cors())
 
-// Allows us to access the req.body object when getting requests.
+// Allows us to access the req.body object when getting requests.cd 
 app.use(express.urlencoded({ extended: true }));    // support encoded bodies
-app.use(express.json());                             // support json encoded bodies
+app.use(express.json());                            // support json encoded bodies
 
 // Initializes authentication for requests from the client
 passportConfig.UseLocalStrategy(passport)
 passportConfig.UseJwtStrategy(passport)
+passportConfig.serializeUser(passport)
+
 app.use(passport.initialize());
 
 app.use("/files/private", 

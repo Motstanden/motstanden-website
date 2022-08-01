@@ -1,7 +1,9 @@
-const router = require("express").Router()
-const Database = require('better-sqlite3')
-const {motstandenDB, dbReadOnlyConfig, dbReadWriteConfig} = require("../config/databaseConfig")
-const passport = require("passport")
+import express from "express";
+import Database from 'better-sqlite3'
+import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "../config/databaseConfig.js";
+import passport from "passport";
+
+let router = express.Router()
 
 router.get("/documents", 
     passport.authenticate("jwt", {session: false, failureRedirect: "documents_public"}),
@@ -30,4 +32,4 @@ router.get("/documents_public", (req, res) => {
     db.close()
 })
 
-module.exports = router;
+export default router;

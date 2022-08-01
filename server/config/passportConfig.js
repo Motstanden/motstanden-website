@@ -1,13 +1,14 @@
+import dotenv from "dotenv";
+dotenv.config();
 
-const LocalStrategy = require("passport-local").Strategy
-const JWTStrategy = require("passport-jwt").Strategy
-const jwt = require("jsonwebtoken")
+import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as JWTStrategy } from "passport-jwt";
+import jwt from "jsonwebtoken";
 
-const Database = require('better-sqlite3')
-const bcrypt = require("bcrypt")
+import Database from "better-sqlite3";
+import bcrypt from "bcrypt";
 
-const {motstandenDB, dbReadOnlyConfig, dbReadWriteConfig} = require("./databaseConfig")
-const passport = require("passport")
+import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "./databaseConfig.js";
 
 const GetRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min) ) + min;
@@ -24,7 +25,7 @@ const ExtractJwtFromCookie = (req) => {
     return token;
 }
 
-const UseLocalStrategy = (passport) => {
+export const UseLocalStrategy = (passport) => {
     passport.use(new LocalStrategy( async (username, password, done) => {
         
         username = username.trim().toLowerCase();
@@ -64,12 +65,12 @@ const UseLocalStrategy = (passport) => {
 
 }
 
-const UseJwtStrategy = (passport) => {
+export const UseJwtStrategy = (passport) => {
     passport.use(new JWTStrategy({
         secretOrKey: process.env.ACCESS_TOKEN_SECRET,
         jwtFromRequest: ExtractJwtFromCookie
     }, (username, done) => {
-        user = {
+        const user = {
             username: username,
             id: null
         }
@@ -77,7 +78,4 @@ const UseJwtStrategy = (passport) => {
     }))
 }
 
-module.exports = { UseLocalStrategy, UseJwtStrategy }
-
-
-
+export const serializeUser = (passport) => passport.serializeUser((user, done) => done(null, user.username))

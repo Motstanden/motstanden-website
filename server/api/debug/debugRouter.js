@@ -1,8 +1,10 @@
-const router = require("express").Router()
-const ping = require("./ping")
-const privateUrl = require("./privateUrl")
+import express from "express";
+import ping from "./ping.js";
+import privateUrl from "./privateUrl.js";
+
+let router = express.Router()
 
 router.use(ping)
 router.use(privateUrl)
 
-module.exports = router
+export default router

@@ -1,6 +1,8 @@
-const router = require("express").Router()
-const Database = require('better-sqlite3')
-const {motstandenDB, dbReadOnlyConfig, dbReadWriteConfig} = require("../../config/databaseConfig")
+import express from "express";
+import Database from "better-sqlite3";
+import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "../../config/databaseConfig.js";
+
+let router = express.Router()
 
 router.get("/ping", (req, res) => {
     console.log("ping")
@@ -14,4 +16,4 @@ router.get("/ping", (req, res) => {
     db.close()
 })
 
-module.exports = router
+export default router
