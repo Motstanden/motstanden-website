@@ -49,6 +49,7 @@ CREATE TABLE user (
     first_name TEXT NOT NULL,
     middle_name TEXT DEFAULT "",
     lastname TEXT NOT NULL,
+    profile_picture TEXT NOT NULL CHECK(like('files/private/profilbilder/%_._%', profile_picture)) DEFAULT "",
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_group_id)
          REFERENCES user_group (user_group_id)
@@ -72,6 +73,7 @@ SELECT
     first_name,
     middle_name,
     lastname,
+    profile_picture,
     created_at
 FROM
     user
