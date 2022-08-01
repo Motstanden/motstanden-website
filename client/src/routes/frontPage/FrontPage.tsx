@@ -53,13 +53,13 @@ export default function FrontPage(){
                 <h2>Kontakt oss</h2>
                     <p>
                         Er det noe du lurer på? Kontakt oss gjerne på:
-                        <ul>
-                            <li><Link sx={linkStyle} underline="hover" href="mailto:styret@motstanden.no">styret@motstanden.no</Link></li>    
-                            <li><Link sx={linkStyle} underline="hover" href="https://www.facebook.com/Motstanden">Facebook</Link></li>
-                            <li><Link sx={linkStyle} underline="hover" href="https://instagram.com/denohmskemotstanden">Instagram</Link></li>
-                            <li><Link sx={linkStyle} underline="hover" href="https://vm.tiktok.com/ZMNVv1Tk3/">TikTok</Link></li>
-                        </ul> 
                     </p>
+                    <ul>
+                        <li><Link sx={linkStyle} underline="hover" href="mailto:styret@motstanden.no">styret@motstanden.no</Link></li>    
+                        <li><Link sx={linkStyle} underline="hover" href="https://www.facebook.com/Motstanden">Facebook</Link></li>
+                        <li><Link sx={linkStyle} underline="hover" href="https://instagram.com/denohmskemotstanden">Instagram</Link></li>
+                        <li><Link sx={linkStyle} underline="hover" href="https://vm.tiktok.com/ZMNVv1Tk3/">TikTok</Link></li>
+                    </ul> 
             </div>
         </PageContainer>
     )
