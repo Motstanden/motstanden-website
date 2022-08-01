@@ -40,8 +40,8 @@ CREATE TABLE user (
     email TEXT UNIQUE NOT NULL,
     first_name TEXT NOT NULL,
     middle_name TEXT DEFAULT "",
-    lastname TEXT NOT NULL,
-    profile_picture TEXT NOT NULL CHECK(like('files/private/profilbilder/%_._%', profile_picture)) DEFAULT "",
+    last_name TEXT NOT NULL,
+    profile_picture TEXT NOT NULL CHECK(like('files/private/profilbilder/%_._%', profile_picture)) DEFAULT "files/private/profilbilder/boy.png",
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_group_id)
          REFERENCES user_group (user_group_id)
@@ -63,11 +63,11 @@ SELECT
     email,
     first_name,
     middle_name,
-    lastname,
+    last_name,
     profile_picture,
     created_at
 FROM
     user
 LEFT JOIN user_group USING (user_group_id)
 LEFT JOIN user_rank USING (user_rank_id)
-/* vw_user(user_id,user_group_id,user_group,user_rank_id,user_rank,email,first_name,middle_name,lastname,profile_picture,created_at) */;
+/* vw_user(user_id,user_group_id,user_group,user_rank_id,user_rank,email,first_name,middle_name,last_name,profile_picture,created_at) */;
