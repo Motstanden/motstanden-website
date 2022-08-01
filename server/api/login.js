@@ -30,4 +30,9 @@ router.get("/userMetaData",
     (err, req, res, next) => res.status(204).send("Brukeren er ikke logget inn.")   // Login failure callback
 )
 
+router.post("/auth/magic_login", 
+    (req, res)=> {
+    console.log(req.body)
+    res.send({code: 1234})
+})
 export default router
