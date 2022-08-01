@@ -60,3 +60,20 @@ CREATE TABLE user (
         ON DELETE RESTRICT
 );
 
+CREATE VIEW vw_user 
+AS
+SELECT
+    user_id,
+    user_group_id,
+    user_group.name as user_group,
+    user_rank_id,
+    user_rank.name as user_rank,
+    email,
+    first_name,
+    middle_name,
+    lastname,
+    created_at
+FROM
+    user
+LEFT JOIN user_group USING (user_group_id)
+LEFT JOIN user_rank USING (user_rank_id);
