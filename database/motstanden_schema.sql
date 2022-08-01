@@ -6,11 +6,6 @@ CREATE TABLE quote (
     utterer TEXT NOT NULL,
     quote TEXT NOT NULL 
 );
-CREATE TABLE user_account (
-    user_account_id INTEGER PRIMARY KEY NOT NULL,
-    username TEXT NOT NULL,
-    password TEXT NOT NULL
-);
 CREATE TABLE version (
     version_id INTEGER PRIMARY KEY NOT NULL,
     migration TEXT,
@@ -29,4 +24,30 @@ CREATE TABLE IF NOT EXISTS "song_lyric"(
     song_melody TEXT,
     song_text_origin TEXT,
     song_description TEXT
+);
+CREATE TABLE user_group (
+    user_group_id INTEGER PRIMARY KEY NOT NULL,
+    name TEXT UNIQUE NOT NULL
+);
+CREATE TABLE user_rank (
+    user_rank_id INTEGER PRIMARY KEY NOT NULL,
+    name TEXT UNIQUE NOT NULL
+);
+CREATE TABLE user (
+    user_id INTEGER PRIMARY KEY NOT NULL,
+    user_group_id INTEGER NOT NULL DEFAULT 1,
+    user_rank_id INTEGER NOT NULL DEFAULT 1,
+    email TEXT UNIQUE NOT NULL,
+    first_name TEXT NOT NULL,
+    middle_name TEXT DEFAULT "",
+    lastname TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_group_id)
+         REFERENCES user_group (user_group_id)
+         ON UPDATE CASCADE
+         ON DELETE RESTRICT,
+    FOREIGN KEY (user_rank_id)
+        REFERENCES user_rank (user_rank_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
 );
