@@ -7,6 +7,7 @@ const path = require("path")
 const cors = require("cors")
 const helmet = require("helmet")
 const passport = require("passport")
+const passportConfig = require("./config/passportConfig.js")
 const serveIndex = require("serve-index")
 
 const router = require("./api/apiRouter")
@@ -34,7 +35,8 @@ app.use(express.urlencoded({ extended: true }));    // support encoded bodies
 app.use(express.json());                             // support json encoded bodies
 
 // Initializes authentication for requests from the client
-require("./config/passportConfig.js")(passport) 
+passportConfig.UseLocalStrategy(passport)
+passportConfig.UseJwtStrategy(passport)
 app.use(passport.initialize());
 
 app.use("/files/private", 

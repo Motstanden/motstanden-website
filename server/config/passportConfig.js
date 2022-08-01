@@ -1,13 +1,13 @@
 
 const LocalStrategy = require("passport-local").Strategy
 const JWTStrategy = require("passport-jwt").Strategy
-const ExtractJWT = require("passport-jwt").ExtractJwt
 const jwt = require("jsonwebtoken")
 
 const Database = require('better-sqlite3')
 const bcrypt = require("bcrypt")
 
 const {motstandenDB, dbReadOnlyConfig, dbReadWriteConfig} = require("./databaseConfig")
+const passport = require("passport")
 
 const GetRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min) ) + min;
@@ -16,19 +16,25 @@ const SleepAsync = async (ms) => {
     return new Promise( resolve => setTimeout(resolve, ms))
 }
 
+const ExtractJwtFromCookie = (req) => {
+    let token = null
+    if(req && req.cookies){
+        token = req.cookies["AccessToken"]
+    }
+    return token;
+}
 
-module.exports = (passport) => {
-
+const UseLocalStrategy = (passport) => {
     passport.use(new LocalStrategy( async (username, password, done) => {
         
         username = username.trim().toLowerCase();
-
+    
         // Get the user from the database 
         const db = new Database(motstandenDB, dbReadOnlyConfig)
         const stmt = db.prepare("SELECT user_account_id, username, password FROM user_account WHERE username = ?")
         const dbUser = stmt.get(username)
         db.close();
- 
+    
         // Check if password matches
         let passwordMatches = false;
         if (dbUser) {
@@ -41,7 +47,7 @@ module.exports = (passport) => {
             // We want to wait if something goes wrong. This prevents brute force attacks.
             await SleepAsync(GetRandomInt(1500, 2500))
         }
-
+    
         // Create access token and continue if password matches. Otherwise, terminate the request.
         if (passwordMatches) {
             const user = {
@@ -55,15 +61,10 @@ module.exports = (passport) => {
             return done(null, false)
         }
     }))
-    
-    const ExtractJwtFromCookie = (req) => {
-        let token = null
-        if(req && req.cookies){
-            token = req.cookies["AccessToken"]
-        }
-        return token;
-    }
 
+}
+
+const UseJwtStrategy = (passport) => {
     passport.use(new JWTStrategy({
         secretOrKey: process.env.ACCESS_TOKEN_SECRET,
         jwtFromRequest: ExtractJwtFromCookie
@@ -74,7 +75,9 @@ module.exports = (passport) => {
         }
         return done(null, user)
     }))
-
-
-    passport.serializeUser((user, done) => done(null, user.username))
 }
+
+module.exports = { UseLocalStrategy, UseJwtStrategy }
+
+
+
