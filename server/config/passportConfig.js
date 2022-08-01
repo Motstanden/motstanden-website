@@ -3,7 +3,10 @@ dotenv.config();
 
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as JWTStrategy } from "passport-jwt";
+import MagicLoginStrategy from "passport-magic-login";
 import jwt from "jsonwebtoken";
+
+import * as Mail from "./mailConfig.js"
 
 import Database from "better-sqlite3";
 import bcrypt from "bcrypt";
@@ -79,3 +82,85 @@ export const UseJwtStrategy = (passport) => {
 }
 
 export const serializeUser = (passport) => passport.serializeUser((user, done) => done(null, user.username))
+
+export const UseMagicLinkStrategy = (passport, app) => {
+
+    const baseUrl = process.env.IS_DEV_ENV === 'true' 
+                  ? 'http://localhost:3000'
+                  : 'https://motstanden.no'
+                  
+    const callbackUrl = "api/auth/magic_login/callback"         
+
+    // IMPORTANT: ALL OPTIONS ARE REQUIRED!
+    const magicLogin = new MagicLoginStrategy.default({
+        // Used to encrypt the authentication token. Needs to be long, unique and (duh) secret.
+        secret: process.env.ACCESS_TOKEN_SECRET,
+    
+        // The authentication callback URL
+        callbackUrl: callbackUrl,
+    
+        // Called with th e generated magic link so you can send it to the user
+        // "destination" is what you POST-ed from the client
+        // "href" is your confirmUrl with the confirmation token,
+        // for example "/auth/magiclogin/confirm?token=<longtoken>"
+        sendMagicLink: async (destination, href) => {
+            console.log(`Sending email to ${destination}     ${baseUrl}${href}`)
+            await Mail.transporter.sendMail({
+                from: Mail.InfoMail,
+                to: destination,
+                subject: "Logg inn på Motstanden",
+                text: `Klikk på denne linken for å logge deg inn på Motstanden.no på denne enheten: ${baseUrl}/${href}`
+            })
+            console.log("Mail sent")
+        },
+    
+        // Once the user clicks on the magic link and verifies their login attempt,
+        // you have to match their email to a user record in the database.
+        // If it doesn't exist yet they are trying to sign up so you have to create a new one.
+        // "payload" contains { "destination": "email" }
+        // In standard passport fashion, call callback with the error as the first argument (if there was one)
+        // and the user data as the second argument!
+        verify: (payload, callback) => {
+        // Get or create a user with the provided email from the database
+        // getOrCreateUserWithEmail(payload.destination)
+        //     .then(user => {
+        //     callback(null, user)
+        //     })
+        //     .catch(err => {
+        //     callback(err)
+        //     })
+            console.log(`Verifying user,   payload: ${payload}`)
+            callback(null, "MyUser")
+        }
+    })
+
+    passport.serializeUser(function(user, done) {
+        done(null, user);
+      });
+      
+      passport.deserializeUser(function(user, done) {
+        done(null, user);
+      });
+
+    // Add the passport-magic-login strategy to Passport
+    passport.use(magicLogin)
+
+    // This is where we POST to from the frontend
+    app.post("/api/auth/magic_login", magicLogin.send);
+
+    app.use(passport.initialize());
+
+    // The standard passport callback setup
+    app.get("/api/auth/magic_login/callback", passport.authenticate("magiclogin"), (req, res) => {
+
+        const token = jwt.sign("MyUser", process.env.ACCESS_TOKEN_SECRET)
+        res.cookie("AccessToken", 
+            token, { 
+                httpOnly: true, 
+                secure: true, 
+                sameSite: true, 
+                maxAge: 1000 * 60 * 60 * 24 * 31 // 31 days 
+        })
+        res.redirect("/hjem")
+    });
+}

@@ -20,14 +20,14 @@ export function EmailLogin() {
         }
 
         // POST a request with the users email or phone number to the server
-        const res = await fetch("api/auth/magic_login", {
+        const res = await fetch("/api/auth/magic_login", {
             method: `POST`,
             body: JSON.stringify({
                 destination: emailTrimmed,
             }),
                 headers: { 'Content-Type': 'application/json' }
             })
-        
+        console.log(res)
         const data = await res.json()   // TODO: Display data
         console.log(data)
     }

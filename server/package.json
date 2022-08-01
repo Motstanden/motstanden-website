@@ -34,6 +34,7 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
+    "passport-magic-login": "^1.0.9",
     "serve-index": "^1.9.1"
   },
   "devDependencies": {

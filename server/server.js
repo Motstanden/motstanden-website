@@ -42,8 +42,8 @@ app.use(express.json());                            // support json encoded bodi
 passportConfig.UseLocalStrategy(passport)
 passportConfig.UseJwtStrategy(passport)
 passportConfig.serializeUser(passport)
+passportConfig.UseMagicLinkStrategy(passport, app)
 
-app.use(passport.initialize());
 
 app.use("/files/private", 
     passport.authenticate("jwt", { session: false, failureRedirect: "/files/public" }),

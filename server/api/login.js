@@ -1,14 +1,12 @@
 import express from "express";
 import passport from "passport";
 
-const ACCESSTOKEN = "AccessToken"
-
 let router = express.Router()
 
 router.post("/login", 
     passport.authenticate("local", {session: false}),
     (req, res) => {
-        res.cookie(ACCESSTOKEN, 
+        res.cookie("AccessToken", 
             req.user.accessToken, { 
                 httpOnly: true, 
                 secure: true, 
@@ -21,7 +19,7 @@ router.post("/login",
 })
 
 router.post("/logout", (req, res) => {
-    res.clearCookie(ACCESSTOKEN)
+    res.clearCookie("AccessToken")
     res.end()
 })
 
