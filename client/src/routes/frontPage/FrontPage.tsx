@@ -20,7 +20,6 @@ export default function FrontPage(){
         <PageContainer disableGutters>
             <img src={May17Img}
                 alt="Motstanden feirer 17. Mai 2021" 
-                loading="lazy" 
                 style={{width: "100%", maxHeight: "33vh", objectFit: "cover"}}/>
             <div style={{paddingInline: "35px", paddingBottom: "100px", maxWidth: "700px"}}>
                 <h2>Om oss</h2>
