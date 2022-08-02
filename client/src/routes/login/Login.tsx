@@ -21,9 +21,9 @@ export function LoginPage() {
 	useTitle("Logg inn")
 	let location = useLocation() as ILocationProps;
 	return ( 
-		<PageContainer>
-			<div style={{textAlign: "center"}}>
-				<h1 style={{marginBottom: "50px"}}>Logg inn</h1>
+		<PageContainer disableGutters >
+			<div style={{textAlign: "center", paddingBottom: "100px"}}>
+				<h1 style={{margin: "0px", paddingBlock: "20px" }}>Logg inn</h1>
 				<LoginForm loginRedirect={location.state?.from?.pathname || "/hjem"}/>
 			</div>
 		</PageContainer>
@@ -74,7 +74,7 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 	return (
 		<>
 			<AnimationAvatar isAnimating={isSubmitting} />
-			<form onSubmit={handleSubmit} style={{marginTop: "50px"}}>
+			<form onSubmit={handleSubmit} style={{marginTop: "20px"}}>
 				<TextField
 					label="Brukernavn" 
 					name="username" 
@@ -83,7 +83,7 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 					onChange={onFormChanged}
 					required
 					fullWidth
-					style={{maxWidth: "350px"}}
+					style={{maxWidth: "min(85vw,400px)"}}
 					autoComplete="off" />
 				<br/>
 				<br/>
@@ -95,7 +95,7 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 					onChange={onFormChanged}
 					required
 					fullWidth
-					style={{maxWidth: "350px"}}
+					style={{maxWidth: "min(85vw,400px)"}}
 					autoComplete="current-password"
 					/>
 				<br/>

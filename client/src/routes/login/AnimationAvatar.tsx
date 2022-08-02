@@ -59,8 +59,7 @@ function Image( { src }: {src: string}){
 			alt="Person kledd i Motstanden-uniform"
 			style={{
 				borderRadius: "100%",
-				width: "100%",
-				maxWidth: "400px"
+				maxWidth: "min(80vw,400px)"
 			}} /> 
 	)
 }
