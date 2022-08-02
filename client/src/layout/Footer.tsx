@@ -15,9 +15,9 @@ import MotstandenImg from '../assets/logos/motstanden.png';
 export function FooterContent(){
     return  (
         <Paper elevation={4}>
-            <Stack bgcolor="secondary.main">
+            <Stack bgcolor="primary.main">
                 <Stack 
-                    color="secondary.contrastText"
+                    color="primary.contrastText"
                     direction="column"
                     justifyContent="center"
                     alignItems="center"
@@ -34,7 +34,7 @@ export function FooterContent(){
                         flexItem 
                         sx={{
                             "&::before, &::after": {
-                                borderColor: "secondary.contrastText",
+                                borderColor: "primary.contrastText",
                             },
                         }}
                         >

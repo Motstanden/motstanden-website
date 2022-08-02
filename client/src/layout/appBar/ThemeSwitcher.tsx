@@ -28,7 +28,7 @@ export default function ThemeSwitcher(props: ThemeSwitcherProps) {
         <FormControlLabel 
             label="Skyggemodus"
             labelPlacement={props?.labelPlacement ?? "end"}
-            control={<Switch checked={theme.name === ThemeName.Dark}/>}
+            control={<Switch checked={theme.name === ThemeName.Dark} color="secondary"/>}
             sx={{mr: 0}}
             onClick={onSwitchClick}
             />

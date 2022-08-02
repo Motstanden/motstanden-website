@@ -15,12 +15,12 @@ import Link from '@mui/material/Link';
 
 
 const headerStyle = {
-    backgroundColor: "secondary.main",
+    backgroundColor: "primary.main",
     "& th": {
         fontSize: 14, 
         fontWeight: "bold", 
         textTransform: "uppercase", 
-        color: "secondary.contrastText"}
+        color: "primary.contrastText"}
 }
 
 const rowStyle = {
@@ -35,12 +35,12 @@ const rowStyle = {
 }
 
 const linkStyle = {
-    color: "primary.light",
+    color: "secondary.light",
     "&:visited": {
-        color: "primary.dark"
+        color: "secondary.dark"
     },
     "&:hover": {
-        color: "primary.main"
+        color: "secondary.main"
     },
 }
 

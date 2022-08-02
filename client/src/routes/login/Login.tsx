@@ -79,7 +79,6 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 					label="Brukernavn" 
 					name="username" 
 					type="text"
-					color="secondary"
 					error={isError}
 					onChange={onFormChanged}
 					required
@@ -92,7 +91,6 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 					name="password"
 					label="Passord"
 					type="password"
-					color="secondary"
 					error={isError}
 					onChange={onFormChanged}
 					required
@@ -103,11 +101,10 @@ function LoginForm( { loginRedirect }: {loginRedirect: string}) {
 				<br/>
 				<br/>
 				{
-					isError && (<><FormHelperText error={true} style={{textAlign: "center"}}>Brukernavn eller passord var feil.</FormHelperText><br/></>) 
+					isError && (<><FormHelperText error={true} style={{textAlign: "center"}}>Brukernavn eller passord er feil.</FormHelperText><br/></>) 
 				}
 				<Button 
 					variant="contained"
-					color="secondary"
 					size="large"
 					type="submit"
 					disabled={isSubmitting}

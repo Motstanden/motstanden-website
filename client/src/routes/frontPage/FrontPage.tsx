@@ -5,12 +5,12 @@ import { PageContainer } from "../../layout/PageContainer";
 import { useTitle } from "../../hooks/useTitle";
 
 const linkStyle = {
-    color: "primary.light",
+    color: "secondary.light",
     "&:visited": {
-        color: "primary.dark"
+        color: "secondary.dark"
     },
     "&:hover": {
-        color: "primary.main"
+        color: "secondary.main"
     },
 }
 

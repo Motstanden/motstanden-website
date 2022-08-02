@@ -32,7 +32,6 @@ export function NewQuoteForm(){
                 label="Sitatytrer" 
                 name="utterer"
                 type="text"
-				color="secondary"
                 required 
                 fullWidth 
                 autoComplete="off"
@@ -45,7 +44,6 @@ export function NewQuoteForm(){
                 label="Sitat"
                 name="quote"
                 type="text"
-				color="secondary"
                 required 
                 fullWidth
                 autoComplete="off"
@@ -58,7 +56,6 @@ export function NewQuoteForm(){
             <br/>
             <Button 
                 variant="contained" 
-                color="secondary"
                 size="large"
                 type="submit"
                 disabled={isSubmitting || isNullOrWhitespace(utterer) || isNullOrWhitespace(quote)}

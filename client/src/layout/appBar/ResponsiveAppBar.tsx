@@ -19,8 +19,8 @@ import UserAvatar from "./UserAvatar"
 
 export default function ResponsiveAppBar(){
     return (
-        <AppBar position="static" sx={{bgcolor: "secondary.main"}}>
-            <Toolbar>
+        <AppBar position="static">
+            <Toolbar sx={{bgcolor: "primary.main"}} >
                 <DesktopToolbar display={{ xs: "none", md:"flex" }}  />
                 <MobileToolBar display={{ xs: "flex", md:"none" }} />
             </Toolbar>
