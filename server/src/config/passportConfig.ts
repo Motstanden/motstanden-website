@@ -10,17 +10,20 @@ import * as Mail from "./mailConfig.js"
 
 import Database from "better-sqlite3";
 import bcrypt from "bcrypt";
+import {Request} from 'express';
 
 import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "./databaseConfig.js";
+import { PassportStatic } from "passport";
+import { Express } from "express-serve-static-core";
 
-const GetRandomInt = (min, max) => {
+const GetRandomInt = (min: number, max: number): number => {
     return Math.floor(Math.random() * (max - min) ) + min;
 }
-const SleepAsync = async (ms) => {
+const SleepAsync = async (ms: number) => {
     return new Promise( resolve => setTimeout(resolve, ms))
 }
 
-const ExtractJwtFromCookie = (req) => {
+const ExtractJwtFromCookie = (req: Request) => {
     let token = null
     if(req && req.cookies){
         token = req.cookies["AccessToken"]
@@ -28,7 +31,7 @@ const ExtractJwtFromCookie = (req) => {
     return token;
 }
 
-export const UseLocalStrategy = (passport) => {
+export const UseLocalStrategy = (passport: PassportStatic) => {
     passport.use(new LocalStrategy( async (username, password, done) => {
         
         username = username.trim().toLowerCase();
@@ -68,7 +71,7 @@ export const UseLocalStrategy = (passport) => {
 
 }
 
-export const UseJwtStrategy = (passport) => {
+export const UseJwtStrategy = (passport: PassportStatic) => {
     passport.use(new JWTStrategy({
         secretOrKey: process.env.ACCESS_TOKEN_SECRET,
         jwtFromRequest: ExtractJwtFromCookie
@@ -81,9 +84,9 @@ export const UseJwtStrategy = (passport) => {
     }))
 }
 
-export const serializeUser = (passport) => passport.serializeUser((user, done) => done(null, user.username))
+export const serializeUser = (passport: PassportStatic) => passport.serializeUser((user, done) => done(null, user.username))
 
-export const UseMagicLinkStrategy = (passport, app) => {
+export const UseMagicLinkStrategy = (passport: PassportStatic, app: Express) => {
 
     const baseUrl = process.env.IS_DEV_ENV === 'true' 
                   ? 'http://localhost:3000'
@@ -130,7 +133,7 @@ export const UseMagicLinkStrategy = (passport, app) => {
         //     callback(err)
         //     })
             console.log(`Verifying user,   payload: ${payload}`)
-            callback(null, "MyUser")
+            callback(undefined, "MyUser")
         }
     })
 
@@ -164,3 +167,4 @@ export const UseMagicLinkStrategy = (passport, app) => {
         res.redirect("/hjem")
     });
 }
+
