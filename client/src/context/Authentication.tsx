@@ -66,7 +66,13 @@ export function AuthProvider({ children }: {children: React.ReactNode} ){
             if (!response.ok) {
                 throw new Error(response.statusText)
             }
-            const data = response.status === 200 ? await response.json() : null;    
+
+            if(response.status === 204) {   // Request was successful but user is not logged in. 
+                setUser(null)
+                return
+            }
+
+            const data = await response.json();    
             setUser(data?.username)   
     }, {
        enabled: !user,

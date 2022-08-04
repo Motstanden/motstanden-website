@@ -24,10 +24,18 @@ router.post("/logout", (req, res) => {
 })
 
 router.get("/userMetaData",
-    passport.authenticate("jwt", { session: false, failWithError: true }),
-    (req, res) => res.send(req.user),                                               // Login success callback
-    (req, res) => res.status(204).send("Brukeren er ikke logget inn.")   // Login failure callback
+    passport.authenticate("jwt", { session: false, failureRedirect: "/api/userMetaDataFailure" }),
+    (req, res) => res.send(req.user)
 )
+
+router.get("/userMetaDataFailure", 
+    (req, res) => {
+        console.log("test")
+        res.json({user: null, message: "Brukeren er ikke logget inn." })
+}) 
+
+
+
 
 
 export default router
