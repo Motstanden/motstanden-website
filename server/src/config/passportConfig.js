@@ -92,7 +92,7 @@ export const UseMagicLinkStrategy = (passport, app) => {
     const callbackUrl = "api/auth/magic_login/callback"         
 
     // IMPORTANT: ALL OPTIONS ARE REQUIRED!
-    const magicLogin = new MagicLoginStrategy.default({
+    const magicLogin = new MagicLoginStrategy({
         // Used to encrypt the authentication token. Needs to be long, unique and (duh) secret.
         secret: process.env.ACCESS_TOKEN_SECRET,
     

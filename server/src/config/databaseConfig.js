@@ -2,8 +2,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import path from "path";
-import { getCurrentDir } from '../utils/pathHelper.js';
-const __dirname = getCurrentDir(import.meta.url);
 
 const motstandenDBName = process.env.IS_DEV_ENV === 'true' 
                         ? 'motstanden_dev.db'

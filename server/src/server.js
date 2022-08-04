@@ -13,9 +13,6 @@ import serveIndex from "serve-index"
 
 import router from "./api/apiRouter.js"
 
-import { getCurrentDir } from './utils/pathHelper.js';
-const __dirname = getCurrentDir(import.meta.url);
-
 const PORT = process.env.PORT || 5000
 const app = express()
 
