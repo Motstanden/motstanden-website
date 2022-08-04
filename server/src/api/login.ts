@@ -26,7 +26,7 @@ router.post("/logout", (req, res) => {
 router.get("/userMetaData",
     passport.authenticate("jwt", { session: false, failWithError: true }),
     (req, res) => res.send(req.user),                                               // Login success callback
-    (err, req, res, next) => res.status(204).send("Brukeren er ikke logget inn.")   // Login failure callback
+    (req, res) => res.status(204).send("Brukeren er ikke logget inn.")   // Login failure callback
 )
 
 
