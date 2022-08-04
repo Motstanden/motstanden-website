@@ -151,7 +151,7 @@ export const UseMagicLinkStrategy = (passport, app) => {
     app.use(passport.initialize());
 
     // The standard passport callback setup
-    app.get("/api/auth/magic_login/callback", passport.authenticate("magiclogin"), (req, res) => {
+    app.get("/api/auth/magic_login/callback", passport.authenticate("magiclogin", {session: false}), (req, res) => {
 
         const token = jwt.sign("MyUser", process.env.ACCESS_TOKEN_SECRET)
         res.cookie("AccessToken", 
