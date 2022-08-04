@@ -1,3 +1,6 @@
+# Typescript output directory
+build
+
 # server files
 dt-notearkiv
 info-mail-key.json
