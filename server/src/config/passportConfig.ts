@@ -15,13 +15,8 @@ import {Request} from 'express';
 import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "./databaseConfig.js";
 import { PassportStatic } from "passport";
 import { Express } from "express-serve-static-core";
-
-const GetRandomInt = (min: number, max: number): number => {
-    return Math.floor(Math.random() * (max - min) ) + min;
-}
-const SleepAsync = async (ms: number) => {
-    return new Promise( resolve => setTimeout(resolve, ms))
-}
+import { getRandomInt } from "../utils/getRandomInt";
+import { sleepAsync } from "../utils/sleepAsync";
 
 const ExtractJwtFromCookie = (req: Request) => {
     let token = null
@@ -52,7 +47,7 @@ export const UseLocalStrategy = (passport: PassportStatic) => {
         }
         else {
             // We want to wait if something goes wrong. This prevents brute force attacks.
-            await SleepAsync(GetRandomInt(1500, 2500))
+            await sleepAsync(getRandomInt(1500, 2500))
         }
     
         // Create access token and continue if password matches. Otherwise, terminate the request.
