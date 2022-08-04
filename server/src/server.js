@@ -36,10 +36,10 @@ app.use(express.urlencoded({ extended: true }));    // support encoded bodies
 app.use(express.json());                            // support json encoded bodies
 
 // Initializes authentication for requests from the client
-passportConfig.UseLocalStrategy(passport)
-passportConfig.UseJwtStrategy(passport)
+passportConfig.useLocalStrategy(passport)
+passportConfig.useJwtStrategy(passport)
 passportConfig.serializeUser(passport)
-passportConfig.UseMagicLinkStrategy(passport, app)
+passportConfig.useMagicLinkStrategy(passport, app)
 
 
 app.use("/files/private", 

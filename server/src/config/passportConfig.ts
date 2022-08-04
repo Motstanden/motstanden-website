@@ -18,15 +18,15 @@ import { Express } from "express-serve-static-core";
 import { getRandomInt } from "../utils/getRandomInt";
 import { sleepAsync } from "../utils/sleepAsync";
 
-const ExtractJwtFromCookie = (req: Request) => {
+function extractJwtFromCookie(req: Request): any | null {
     let token = null
     if(req && req.cookies){
-        token = req.cookies["AccessToken"]
+        token = req.cookies["AccessToken"]      // TODO: figure out what type this is
     }
     return token;
 }
 
-export const UseLocalStrategy = (passport: PassportStatic) => {
+export function useLocalStrategy(passport: PassportStatic) {
     passport.use(new LocalStrategy( async (username, password, done) => {
         
         username = username.trim().toLowerCase();
@@ -66,10 +66,10 @@ export const UseLocalStrategy = (passport: PassportStatic) => {
 
 }
 
-export const UseJwtStrategy = (passport: PassportStatic) => {
+export function useJwtStrategy(passport: PassportStatic) {
     passport.use(new JWTStrategy({
         secretOrKey: process.env.ACCESS_TOKEN_SECRET,
-        jwtFromRequest: ExtractJwtFromCookie
+        jwtFromRequest: extractJwtFromCookie
     }, (username, done) => {
         const user = {
             username: username,
@@ -79,9 +79,11 @@ export const UseJwtStrategy = (passport: PassportStatic) => {
     }))
 }
 
-export const serializeUser = (passport: PassportStatic) => passport.serializeUser((user, done) => done(null, user.username))
+export function serializeUser (passport: PassportStatic) {
+     passport.serializeUser((user, done) => done(null, user.username))
+}
 
-export const UseMagicLinkStrategy = (passport: PassportStatic, app: Express) => {
+export function useMagicLinkStrategy (passport: PassportStatic, app: Express) {
 
     const baseUrl = process.env.IS_DEV_ENV === 'true' 
                   ? 'http://localhost:3000'
