@@ -7,7 +7,6 @@ import cookieParser from 'cookie-parser'
 import path from "path"
 import cors from "cors"
 import helmet from "helmet"
-import passport from "passport"
 import * as passportConfig from "./config/passportConfig.js"
 import serveIndex from "serve-index"
 
@@ -36,11 +35,8 @@ app.use(express.urlencoded({ extended: true }));    // support encoded bodies
 app.use(express.json());                            // support json encoded bodies
 
 // Initializes authentication for requests from the client
-passportConfig.useLocalStrategy(passport)
-passportConfig.useJwtStrategy(passport)
-passportConfig.serializeUser(passport)
-passportConfig.useMagicLinkStrategy(passport, app)
-
+const passport = passportConfig.createPassport()
+app.use(passport.initialize());
 
 app.use("/files/private", 
     passport.authenticate("jwt", { session: false, failureRedirect: "/files/public" }),
