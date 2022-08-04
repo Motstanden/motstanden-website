@@ -37,6 +37,17 @@
     "serve-index": "^1.9.1"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/cookie-parser": "^1.4.3",
+    "@types/cors": "^2.8.12",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/node": "^18.6.3",
+    "@types/nodemailer": "^6.4.4",
+    "@types/passport": "^1.0.9",
+    "@types/passport-jwt": "^3.0.6",
+    "@types/passport-local": "^1.0.34",
+    "@types/serve-index": "^1.9.1",
     "concurrently": "^7.3.0",
     "nodemon": "^2.0.19",
     "ts-node": "^10.9.1",
