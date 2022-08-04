@@ -12,7 +12,7 @@
 import fs from "fs";
 import path from "path";
 import { randomBytes } from "crypto";
-import { getCurrentDir } from './utils/pathHelper.js';
+import { getCurrentDir } from './utils/pathHelper.js.js.js.js.js.js';
 
 const __dirname = getCurrentDir(import.meta.url);
 
