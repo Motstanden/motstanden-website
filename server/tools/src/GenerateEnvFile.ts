@@ -5,7 +5,7 @@
 //
 //  Usage:
 //      1.  Run from terminal: node GenerateEnvFile
-//      2.  Copy .env file to server folder 
+//      2.  Copy .env file /server 
 //
 // ******************************************************************
 
