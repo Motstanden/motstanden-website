@@ -1,6 +1,3 @@
-CREATE TABLE ping(
-    ping TEXT
-);
 CREATE TABLE quote (
     quote_id INTEGER PRIMARY KEY NOT NULL,
     utterer TEXT NOT NULL,

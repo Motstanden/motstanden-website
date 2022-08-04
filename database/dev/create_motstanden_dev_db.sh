@@ -17,8 +17,12 @@ echo "Running: 02_refactor_db.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/02_refactor_db.sql;
 
 # Add user accounts
-echo "Running: 03_.user_accounts.sql"
-sqlite3 motstanden_dev.db < migrations/motstanden_db/03_.user_accounts.sql;
+echo "Running: 03_user_accounts.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/03_user_accounts.sql;
+
+# Remove obsolete tables
+echo "Running: 04_remove_obsolete.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/04_remove_obsolete.sql;
 
 echo "Dumping schema -> motstanden_schema.sql"
 sqlite3 motstanden_dev.db .schema > motstanden_schema.sql 
