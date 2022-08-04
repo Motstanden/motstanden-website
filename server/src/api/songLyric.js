@@ -1,6 +1,6 @@
 import express from "express";
 import Database from "better-sqlite3";
-import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "../../config/databaseConfig.js";
+import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "../config/databaseConfig.js";
 import fs from "fs";
 
 let router = express.Router()

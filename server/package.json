@@ -2,12 +2,12 @@
   "name": "motstanden-web",
   "version": "1.0.0",
   "description": "Motstanden web page",
-  "main": "server.js",
+  "main": "src/server.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "serverdeploy": "npm install && cd ../client && npm install && npm run build",
-    "server-dev": "npm install && nodemon server.js",
+    "server-dev": "npm install &&  nodemon src/server.js",
     "client-dev": "cd ../client && npm install && npm start",
     "dev": "concurrently \"npm run server-dev\" \"npm run client-dev\""
   },

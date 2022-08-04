@@ -12,8 +12,8 @@ const sheetArchiveDBName = process.env.IS_DEV_ENV === 'true'
                         ? 'sheet_archive_dev.db'
                         : 'sheet_archive.db'
 
-export const motstandenDB   = path.join(__dirname, "..", "..",  "database", motstandenDBName)
-export const sheetArchiveDB = path.join(__dirname, "..", "..",  "database", sheetArchiveDBName)
+export const motstandenDB   = path.join(__dirname, "..", "..", "..",  "database", motstandenDBName)
+export const sheetArchiveDB = path.join(__dirname, "..", "..", "..",  "database", sheetArchiveDBName)
 
 export const dbReadOnlyConfig = {
     readonly: true,

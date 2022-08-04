@@ -1,6 +1,6 @@
-// Loads secret keys from the local .env file. The .env file should always be a hidden secret, and should not be commited to github.
+// Loads secret keys from the local .env file. The .env file should always be a hidden secret, and should not be committed to github.
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ path: "../.env"});
 
 import express from "express"
 import cookieParser from 'cookie-parser'
@@ -19,7 +19,7 @@ const __dirname = getCurrentDir(import.meta.url);
 const PORT = process.env.PORT || 5000
 const app = express()
 
-// This library automaticly implements security features for the server. The library should be "used" by the app as soon as possible. 
+// This library automatically implements security features for the server. The library should be "used" by the app as soon as possible. 
 app.use(helmet({
     contentSecurityPolicy: {
         useDefaults: true,
@@ -47,25 +47,25 @@ passportConfig.UseMagicLinkStrategy(passport, app)
 
 app.use("/files/private", 
     passport.authenticate("jwt", { session: false, failureRedirect: "/files/public" }),
-    express.static(path.join(__dirname, "files", "private")),
-    serveIndex(path.join(__dirname, "files", "private"), {icons: true}))
+    express.static(path.join(__dirname, "..", "files", "private")),
+    serveIndex(path.join(__dirname, "..", "files", "private"), {icons: true}))
 
 app.use("/files/public", 
-    express.static(path.join(__dirname, "files", "public")),
-    serveIndex(path.join(__dirname, "files", "public"), {icons: true}))
+    express.static(path.join(__dirname, "..", "files", "public")),
+    serveIndex(path.join(__dirname, "..", "files", "public"), {icons: true}))
 
 app.use("/files", 
     passport.authenticate("jwt", { session: false, failureRedirect: "/files/public"}),
-    express.static(path.join(__dirname, "files")),
-    serveIndex(path.join(__dirname, "files"), {icons: true}))
+    express.static(path.join(__dirname, "..", "files")),
+    serveIndex(path.join(__dirname, "..", "files"), {icons: true}))
 
 app.use("/api", router)
 
 // Allows us to use files from './client/build'
-app.use(express.static(path.join(__dirname, "..", "client", "build")))
+app.use(express.static(path.join(__dirname, "..", "..", "client", "build")))
 
 app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "client", "build", "index.html"))
+    res.sendFile(path.join(__dirname, "..", "..", "client", "build", "index.html"))
 })
 
 app.listen(PORT, () => console.log("The server is listening on port " + PORT.toString()))
