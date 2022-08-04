@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer"
-import key from "../../info-mail-key.json" assert {type: "json" };
+import key from "../../info-mail-key.json";
 
 export const InfoMail = "info@motstanden.no" 
 
