@@ -22,13 +22,7 @@ function extractJwtFromCookie(req: Request): any | null {
 const jwtLogin = new JWTStrategy({
     secretOrKey: process.env.ACCESS_TOKEN_SECRET,
     jwtFromRequest: extractJwtFromCookie
-}, (username, done) => {
-    const user = {
-        username: username,
-        id: null
-    }
-    return done(null, user)
-}) 
+}, (user, done) => done(null, user)) 
 
 
 // --------------------------------------------
@@ -48,17 +42,33 @@ async function onSendMagicLinkRequest(email: string, href: string): Promise<void
     console.log("Mail sent")
 }
 
+function onVerifyLinkClick(
+    payload: IPayLoad, 
+    callback: (err?: Error | undefined, user?: Object | undefined, info?: any) => void
+): void {
+    // TODO:
+    //      - Ensure that the link is only allowed to be clicked exactly once
+    //      - Retrieve user information and send it further
+    callback( /*Error*/ undefined, {email: payload.destination})
+}
+
 export const magicLogin = new MagicLoginStrategy({
     secret: process.env.ACCESS_TOKEN_SECRET,
     callbackUrl: `api/${MagicLinkCallbackPath}`,
     sendMagicLink: onSendMagicLinkRequest,
-
-    // This is called right after the user clicks the link in the mail.
-    // Passport requires this to be defined.
-    // We don't need to do anything here, so lets just forward the user to the callback url.
-    verify: (payload, callback) => callback(undefined, payload),     
+    verify: onVerifyLinkClick,     
 })
 
+interface IPayLoad {
+    destination: string,
+    code: string,
+    iat: number,        // iat = Issued at. Is NumericDate value, which is defined as defined as the number of seconds (not milliseconds) since Epoch:
+    exp: number         // exp = Expiration Time. ----||---- 
+}
+
+export interface IUser {
+    email: string
+}
 
 // --------------------------------------------
 //      Create passport

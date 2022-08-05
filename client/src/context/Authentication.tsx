@@ -73,7 +73,7 @@ export function AuthProvider({ children }: {children: React.ReactNode} ){
             }
 
             const data = await response.json();    
-            setUser(data?.username)   
+            setUser(data?.email)   
     }, {
        enabled: !user,
        retryOnMount: false,

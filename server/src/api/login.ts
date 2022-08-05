@@ -28,7 +28,8 @@ router.post("/auth/magic_login", (req, res) => {
 router.get(
     passportConfig.MagicLinkCallbackPath, 
     passport.authenticate("magiclogin", {session: false}), (req, res) => {
-        const token = jwt.sign("MyUser", process.env.ACCESS_TOKEN_SECRET)
+        const user = req.user as passportConfig.IUser
+        const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
         res.cookie("AccessToken", 
             token, { 
                 httpOnly: true, 
@@ -49,9 +50,6 @@ router.get("/userMetaData",
     (req, res) => res.send(req.user)
 )
 
-router.get("/userMetaDataFailure", 
-    (req, res) => {
-        res.json({user: null, message: "Brukeren er ikke logget inn." })
-}) 
+router.get("/userMetaDataFailure", (req, res) => res.status(204).end()) 
 
 export default router
