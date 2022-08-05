@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import * as passportConfig from "../config/passportConfig" 
 import Database from "better-sqlite3";
 import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig";
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 
 let router = express.Router()
 
@@ -28,7 +29,7 @@ router.post("/auth/magic_login", (req, res) => {
 router.get(
     passportConfig.MagicLinkCallbackPath, 
     passport.authenticate("magiclogin", {session: false}), (req, res) => {
-        const user = req.user as passportConfig.IUser
+        const user = req.user as AccessTokenData
         const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
         res.cookie("AccessToken", 
             token, { 

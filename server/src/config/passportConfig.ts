@@ -4,6 +4,7 @@ import MagicLoginStrategy from 'passport-magic-login';
 import passport, { PassportStatic } from 'passport';
 import { Request } from 'express';
 import { Strategy as JWTStrategy } from 'passport-jwt';
+import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload";
 
 // Ensure .env is loaded
 dotenv.config()
@@ -43,7 +44,7 @@ async function onSendMagicLinkRequest(email: string, href: string): Promise<void
 }
 
 function onVerifyLinkClick(
-    payload: IPayLoad, 
+    payload: MagicLinkPayload, 
     callback: (err?: Error | undefined, user?: Object | undefined, info?: any) => void
 ): void {
     // TODO:
@@ -58,17 +59,6 @@ export const magicLogin = new MagicLoginStrategy({
     sendMagicLink: onSendMagicLinkRequest,
     verify: onVerifyLinkClick,     
 })
-
-interface IPayLoad {
-    destination: string,
-    code: string,
-    iat: number,        // iat = Issued at. Is NumericDate value, which is defined as defined as the number of seconds (not milliseconds) since Epoch:
-    exp: number         // exp = Expiration Time. ----||---- 
-}
-
-export interface IUser {
-    email: string
-}
 
 // --------------------------------------------
 //      Create passport
