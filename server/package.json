@@ -32,7 +32,6 @@
     "nodemailer": "^6.7.7",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0",
     "passport-magic-login": "^1.0.9",
     "serve-index": "^1.9.1"
   },

@@ -1,64 +1,12 @@
+import dotenv from "dotenv";
 import * as Mail from './mailConfig.js';
-import bcrypt from 'bcrypt';
-import Database from 'better-sqlite3';
-import jwt from 'jsonwebtoken';
 import MagicLoginStrategy from 'passport-magic-login';
-import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from './databaseConfig.js';
-import { getRandomInt } from '../utils/getRandomInt';
 import passport, { PassportStatic } from 'passport';
 import { Request } from 'express';
-import { sleepAsync } from '../utils/sleepAsync';
-import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as JWTStrategy } from 'passport-jwt';
 
-
-
-export function useLocalStrategy(passport: PassportStatic) {
-    passport.use(new LocalStrategy( async (username, password, done) => {
-        
-        username = username.trim().toLowerCase();
-        
-        // Get the user from the database 
-        const db = new Database(motstandenDB, dbReadOnlyConfig)
-        const stmt = db.prepare("SELECT user_account_id, username, password FROM user_account WHERE username = ?")
-        const dbUser = stmt.get(username)
-        db.close();
-        
-        // Check if password matches
-        let passwordMatches = false;
-        if (dbUser) {
-            try {
-                passwordMatches = await bcrypt.compare(password, dbUser.password)
-            }
-            catch (err) { console.log(err) }
-        }
-        else {
-            // We want to wait if something goes wrong. This prevents brute force attacks.
-            await sleepAsync(getRandomInt(1500, 2500))
-        }
-        
-        // Create access token and continue if password matches. Otherwise, terminate the request.
-        if (passwordMatches) {
-            const user = {
-                    id: dbUser.user_account_id,
-                    username: username,
-                    accessToken: jwt.sign(username, process.env.ACCESS_TOKEN_SECRET)
-                }
-                return done(null, user)
-            }
-        else {
-            return done(null, false)
-        }
-    }))
-    
-}
-export function serializeUser(passport: PassportStatic) {
-    passport.serializeUser((user, done) => done(null, user.username))
-}
-
-export function deserializeUser(passport: PassportStatic){
-    passport.deserializeUser((user, done) => done(null, user))
-}
+// Ensure .env is loaded
+dotenv.config()
 
 // --------------------------------------------
 //      jwt login strategy
