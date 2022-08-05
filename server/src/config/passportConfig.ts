@@ -5,6 +5,7 @@ import passport, { PassportStatic } from 'passport';
 import { Request } from 'express';
 import { Strategy as JWTStrategy } from 'passport-jwt';
 import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload";
+import * as user from "../services/user.js";
 
 // Ensure .env is loaded
 dotenv.config()
@@ -50,7 +51,8 @@ function onVerifyLinkClick(
     // TODO:
     //      - Ensure that the link is only allowed to be clicked exactly once
     //      - Retrieve user information and send it further
-    callback( /*Error*/ undefined, {email: payload.destination})
+    const accessTokenData = user.getTokenData(payload.destination)
+    callback( /*Error*/ undefined, accessTokenData)
 }
 
 export const magicLogin = new MagicLoginStrategy({
