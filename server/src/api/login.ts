@@ -5,19 +5,12 @@ import * as passportConfig from "../config/passportConfig"
 import Database from "better-sqlite3";
 import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
+import * as user from "../services/user";
 
 let router = express.Router()
 
 router.post("/auth/magic_login", (req, res) => {
-    const email = req.body.destination.trim().toLowerCase();
-
-    // Check if email exists in the database
-    const db = new Database(motstandenDB, dbReadOnlyConfig)
-    const stmt = db.prepare("SELECT user_id as userId FROM user WHERE email = ?")
-    const dbUser = stmt.get(email)
-    db.close();
-
-    if(dbUser)
+    if(user.userExists(req.body.destination))
     {
         passportConfig.magicLogin.send(req, res)
     }
