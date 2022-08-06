@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig";
-import { UserGroup } from "../ts/enums/UserGroup";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
+import { User } from "../ts/interfaces/User";
 
 function validateEmail(email: string): boolean {
     return true;    // #TODO
@@ -31,7 +31,7 @@ export function getTokenData(unsafeEmail: string): AccessTokenData {
     const email = unsafeEmail?.trim().toLowerCase();
     
     if(!email || !validateEmail(email))
-        throw `The email is invalid: "${email}"`
+        throw `The email is invalid.`
     
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
@@ -49,7 +49,31 @@ export function getTokenData(unsafeEmail: string): AccessTokenData {
     
     const accessToken = user as AccessTokenData;
     if(!accessToken.userId || !accessToken.email || !accessToken.groupId || !accessToken.groupName)
-        throw `Querying database for "${email}" yielded invalid result.`
+        throw `Database yielded invalid result.`
 
     return accessToken 
 }
+
+export function getUserData(userToken: AccessTokenData) {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(
+        `SELECT 
+            user_id as userId,
+            email,
+            user_group_id as groupId,
+            user_group as groupName,
+            user_rank as rank,
+            first_name as firstName,
+            middle_name as middleName,
+            last_name as lastName,
+            profile_picture as profilePicture
+        FROM 
+            vw_user 
+        WHERE user_id = ?`)
+    const user = stmt.get(userToken.userId) as User
+
+    if(!user || user.email !== userToken.email)
+        throw `Database yielded invalid result.`
+    
+    return user
+}   

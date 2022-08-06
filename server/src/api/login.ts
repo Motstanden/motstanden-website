@@ -2,8 +2,6 @@ import express from "express";
 import passport from "passport";
 import jwt from 'jsonwebtoken';
 import * as passportConfig from "../config/passportConfig" 
-import Database from "better-sqlite3";
-import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 import * as user from "../services/user";
 
@@ -41,7 +39,7 @@ router.post("/logout", (req, res) => {
 
 router.get("/userMetaData",
     passport.authenticate("jwt", { session: false, failureRedirect: "/api/userMetaDataFailure" }),
-    (req, res) => res.send(req.user)
+    (req, res) => res.send(user.getUserData(req.user as AccessTokenData))
 )
 
 router.get("/userMetaDataFailure", (req, res) => res.status(204).end()) 
