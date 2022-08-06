@@ -10,16 +10,12 @@ import Tooltip from '@mui/material/Tooltip';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/Authentication';
 
-import BoyAvatarImg from "../../assets/pictures/loginAvatar/boy1.png"
-import GirlAvatarImg from "../../assets/pictures/loginAvatar/girl1.png"
+import { getFullName } from '../../utils/UserHelper';
 
 
 export default function UserAvatar() {
     let auth = useAuth()
-    let username = auth?.user ?? ""
-
-    let [avatarSrc, setAvatarSrc] = useState<string>(Math.random() >= 0.5 ? BoyAvatarImg : GirlAvatarImg)
-
+    
     let navigate = useNavigate()
     const onSignOutClick = async () => {
         let success = await auth.signOut();
@@ -31,11 +27,13 @@ export default function UserAvatar() {
     const [isOpen, setIsOpen] = useState(false)
     const anchorEl = useRef(null)
 
+    const user = auth.user!
+    const fullName = getFullName(user)
     return (
         <>
-        <Tooltip title={username}>
+        <Tooltip title={fullName}>
             <IconButton ref={anchorEl} onClick={() => setIsOpen(!isOpen)}>
-                <Avatar alt={username} src={avatarSrc}/>
+                <Avatar alt={`Profile picture for ${fullName}`} src={user.profilePicture}/>
             </IconButton>
         </Tooltip>
         <Menu 

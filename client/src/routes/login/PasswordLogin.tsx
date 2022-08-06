@@ -45,7 +45,8 @@ function PasswordLoginForm({ loginRedirect }: { loginRedirect: string; }) {
 		let username = formData.get("username") as string;
 		let password = formData.get("password") as string;
 
-		let success = await auth.signIn(username, password);
+		// let success = await auth.signIn(username, password);
+		const success = false
 		if (success) {
 			// Send them back to the page they tried to visit when they were
 			// redirected to the login page. Use { replace: true } so we don't create

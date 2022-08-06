@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useQuery } from '@tanstack/react-query';
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-
+import { User } from "@backend/interfaces/User"
 
 interface AuthContextType{
-	user: string | null
-    signIn: (user: string, password: string) => Promise<boolean>
+	user: User | null
     signOut: () => Promise<boolean>;
 }
 
@@ -17,29 +16,7 @@ export function useAuth(){
 
 export function AuthProvider({ children }: {children: React.ReactNode} ){
     
-    let [user, setUser] = useState<string | null>(null)     // TODO: Persist log in between refreshes
-    
-    // Define login logic
-    let signIn = async (newUser: string, _password: string): Promise<boolean> => {
-        
-        let response;
-        try {
-            response = await fetch("/api/login", {
-                method: "POST",
-                body: JSON.stringify({username: newUser, password: _password}),
-                headers: { 'Content-Type': 'application/json' }
-            })
-        }
-        catch {
-            return false
-        }
-        if(!response.ok){
-            return false;
-        }
-
-        setUser(newUser)
-        return true
-    }
+    let [user, setUser] = useState<User | null>(null)     // TODO: Persist log in between refreshes
     
     // Define logout logic
     let signOut = async (): Promise<boolean> => {
@@ -72,8 +49,8 @@ export function AuthProvider({ children }: {children: React.ReactNode} ){
                 return
             }
 
-            const data = await response.json();    
-            setUser(data?.email)   
+            const userData = await response.json() as User;    
+            setUser(userData)   
     }, {
        enabled: !user,
        retryOnMount: false,
@@ -87,7 +64,7 @@ export function AuthProvider({ children }: {children: React.ReactNode} ){
         return <></>
     }
 
-    let contextValue = {user, signIn, signOut}
+    let contextValue = {user, signOut}
     return (  
         <AuthContext.Provider value={contextValue}>
             {children}
