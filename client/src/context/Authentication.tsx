@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { useQuery } from '@tanstack/react-query';
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { User } from "common/interfaces"
+import { UserGroup } from "common/enums";
+import { hasGroupAccess } from "common/utils";
 
 interface AuthContextType{
 	user: User | null
@@ -72,7 +74,7 @@ export function AuthProvider({ children }: {children: React.ReactNode} ){
     )
 }
 
-export function RequireAuth({ children }: {children: JSX.Element}){
+export function RequireAuth({requiredGroup, children }: {requiredGroup: UserGroup, children: JSX.Element}){
     let auth = useAuth();
     let location = useLocation()
 
@@ -82,11 +84,15 @@ export function RequireAuth({ children }: {children: JSX.Element}){
         // along to that page after they login, which is a nicer user experience
         // than dropping them off on the home page.
         return <Navigate to="/logg-inn" state={{ from: location }} replace />;
-      }
-    
+    }
+
+    if(!hasGroupAccess(auth.user, requiredGroup)) {
+        return <Navigate to="/hjem" state={{ from: location }} replace />;
+    }
+
     return children
 }
 
-export function RequireAuthRouter(){
-    return <RequireAuth><Outlet/></RequireAuth>
+export function RequireAuthRouter({ requiredGroup }: { requiredGroup: UserGroup }){
+    return <RequireAuth requiredGroup={requiredGroup}><Outlet/></RequireAuth>
 }

@@ -15,6 +15,9 @@ import { InstrumentListPage, SheetArchivePageContainer, SongListPage } from './r
 
 // Layout
 import { AppLayout }from './layout/AppLayout';
+import { UserGroup } from 'common/enums';
+import { AdminPage } from './routes/admin/Admin';
+import { SuperAdminPage } from './routes/superAdmin/SuperAdmin';
 
 function App() {
 
@@ -35,7 +38,7 @@ function App() {
 					<Route path="/bli-medlem" element={<BecomeMember/>}/>
 
 					{/* Routes that requires the user to be logged in */}
-					<Route element={<RequireAuthRouter/>}> 
+					<Route element={<RequireAuthRouter requiredGroup={UserGroup.Contributor}/>}> 
 						<Route path="/hjem" element={<Home/>}/>
 						<Route path="/notearkiv" element={<SheetArchivePageContainer/>}>
 							<Route index element={<SongListPage/>}/>
@@ -44,6 +47,14 @@ function App() {
 						<Route path="/sitater" element={<Quotes/>}/>
 					</Route>
 
+					<Route element={<RequireAuthRouter requiredGroup={UserGroup.Administrator}/>}>
+						<Route path="/admin" element={<AdminPage/>}/>
+					</Route>
+
+					<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator}/>}>
+						<Route path="/super-admin" element={<SuperAdminPage/>}/>
+					</Route>
+					
 					{/* 404: no matching routes */}
 					<Route path="/*" element={<NotFound/>}/>
 				</Route>
