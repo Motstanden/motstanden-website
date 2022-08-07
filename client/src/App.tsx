@@ -18,7 +18,9 @@ import { AppLayout }from './layout/AppLayout';
 import { UserGroup } from 'common/enums';
 import { AdminPage } from './routes/admin/Admin';
 import { SuperAdminPage } from './routes/admin/SuperAdmin';
-import { UserListPage } from './routes/admin/UserList';
+import { UserListPage } from './routes/member/UserList';
+import { NewUserPage } from './routes/member/NewUser';
+import { EditUserPage } from './routes/member/EditUser';
 
 function App() {
 
@@ -50,7 +52,12 @@ function App() {
 
 					<Route element={<RequireAuthRouter requiredGroup={UserGroup.Administrator}/>}>
 						<Route path="/admin" element={<AdminPage/>}/>
-						<Route path="/medlemsliste" element={<UserListPage/>}/>
+						<Route path="/medlem">
+							<Route path="" element={<NotFound/>}/>
+							<Route path="liste" element={<UserListPage/>}/>
+							<Route path="ny" element={<NewUserPage/>}/>
+							<Route path="rediger" element={<EditUserPage/>}/>
+						</Route>
 					</Route>
 
 					<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator}/>}>

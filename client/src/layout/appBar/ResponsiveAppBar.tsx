@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 // Material UI
 import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
@@ -16,6 +17,8 @@ import { NavBar, NavLink } from "./NavBar"
 import SideDrawer from './SideDrawer';
 import ThemeSwitcher from './ThemeSwitcher';
 import UserAvatar from "./UserAvatar"
+import { hasGroupAccess } from 'common/utils';
+import { UserGroup } from 'common/enums';
 
 export default function ResponsiveAppBar(){
     return (
@@ -29,6 +32,10 @@ export default function ResponsiveAppBar(){
 };
 
 function DesktopToolbar({ display }: {display: any }){ // TODO: Find the correct type for display
+    const auth = useAuth();
+    const isTightFit = (auth?.user && hasGroupAccess(auth.user, UserGroup.Administrator)) as boolean
+    const stackSpacing = isTightFit ? {sm: 0, md: 0, lg: 6} : {sm: 0, md: 2, lg: 6}
+    const headerVisibility = isTightFit ? {md: "none", lg: "inline"} : {xs: "inline"}
     return ( 
         <Stack 
             display={display}
@@ -40,9 +47,11 @@ function DesktopToolbar({ display }: {display: any }){ // TODO: Find the correct
             <Stack 
                 direction="row"
                 alignItems="center"
-                spacing={{sm: 0, md: 2, lg: 6}}>
-                <HeaderTitle variant='h5'/>
-                <NavBar/>
+                spacing={stackSpacing}>
+                <Box display={headerVisibility} >
+                    <HeaderTitle variant='h5' />
+                </Box>
+                <NavBar useMinimalSpacing={isTightFit}/>
             </Stack>
             <Stack 
                 direction="row" 
@@ -83,7 +92,7 @@ function MobileToolBar({ display }: {display: any } ) {
 }
 
 function HeaderTitle( {variant, sx }: {variant?: VariantType, sx?: SxProps }) {
-    let auth = useAuth()
+    const auth = useAuth()
 	return (
         <Typography
             component={RouterLink}

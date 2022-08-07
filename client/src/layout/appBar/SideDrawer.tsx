@@ -19,6 +19,8 @@ import MotstandenImg from "../../assets/logos/motstanden.png"
 
 import ThemeSwitcher from './ThemeSwitcher';
 import { useAuth } from '../../context/Authentication';
+import { hasGroupAccess } from 'common/utils';
+import { UserGroup } from 'common/enums';
 
 
 
@@ -54,7 +56,7 @@ interface SideDrawerContentProps {
 }
 
 function ContentPicker(props: SideDrawerContentProps) {
-    let auth = useAuth()
+    const auth = useAuth()
     return auth.user 
         ? <PrivateContent onRequestedExit={props.onRequestedExit}/> 
         : <PublicContent onRequestedExit={props.onRequestedExit}/>
@@ -88,6 +90,7 @@ function PrivateContent(props: SideDrawerContentProps) {
             <ListItemLink text="Sitater" to="/sitater" onLinkClick={onRequestedExit}/>
             <ListItemLink text="Studenttraller" to="/studenttraller" onLinkClick={onRequestedExit}/>
             <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit}/>
+            <AdminList/>
             <ListItemExpander text="Om oss">
                 <ListItemLink text="Framside" to="/" onLinkClick={onRequestedExit}/>
                 <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onRequestedExit}/>
@@ -97,6 +100,33 @@ function PrivateContent(props: SideDrawerContentProps) {
             <ListItemThemeSwitcher/>
         </List>
     )
+}
+
+function AdminList() {
+    const user = useAuth().user!
+
+    if(hasGroupAccess(user, UserGroup.SuperAdministrator)) {
+        return (
+            <ListItemExpander text="Admin">
+                <ListItemExpander text="Medlem">
+                    <ListItemLink text="Ny" to="/medlem/ny"/>
+                    <ListItemLink text="Rediger" to="/medlem/rediger"/>
+                    <ListItemLink text="Liste" to="/medlem/liste"/>
+                </ListItemExpander>
+            </ListItemExpander>
+        )
+    }
+
+    if(hasGroupAccess(user, UserGroup.Administrator)) {
+        return (
+            <ListItemExpander text="Admin">
+                <ListItemLink text="Rediger" to="/medlem/rediger"/>
+                <ListItemLink text="Medlemsliste" to="/medlem/liste"/>
+            </ListItemExpander>
+        )
+    }
+
+    return <></>
 }
 
 function ListItemHeader(){
