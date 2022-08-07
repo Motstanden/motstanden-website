@@ -2,6 +2,7 @@ import passport from "passport";
 import { UserGroup } from "../ts/enums/UserGroup";
 import { Request, Response, NextFunction } from 'express';
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
+import { userGroupToNum } from "common/utils"
 
 export function needsGroup(requiredGroup: UserGroup){
     return [
@@ -18,18 +19,8 @@ export function needsGroup(requiredGroup: UserGroup){
                 next()
             }
             else{
-                res.send(401, 'Unauthorized')
+                res.status(401).send("Unauthorized").end()
             }
         }
     ]
-}
-
-
-function userGroupToNum(group: UserGroup): number {
-    switch(group) {
-        case UserGroup.Contributor: return 1
-        case UserGroup.Administrator: return 2
-        case UserGroup.SuperAdministrator: return 3
-        default: throw "Invalid case"
-    }
 }

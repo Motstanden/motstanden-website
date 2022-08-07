@@ -10,7 +10,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/Authentication';
 
-import { getFullName } from '../../utils/UserHelper';
+import { getFullName } from 'common/utils';
 
 
 export default function UserAvatar() {
