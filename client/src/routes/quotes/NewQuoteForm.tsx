@@ -3,6 +3,7 @@ import React, { useState } from "react"
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import SendIcon from '@mui/icons-material/Send';
+import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
 
 export function NewQuoteForm(){
     const [utterer, setUtterer] = useState("");
@@ -65,10 +66,3 @@ export function NewQuoteForm(){
         </form>
     )
 }
-
-function isNullOrWhitespace(str: string | undefined): boolean {
-    if(!str){
-        return true
-    }
-    return /^\s*$/.test(str);
-  }
