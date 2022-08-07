@@ -1,5 +1,5 @@
 import { User } from "../interfaces/index";
-import { UserGroup } from "../enums/index";
+import { UserGroup, UserRank } from "../enums/index";
 
 export function userGroupToNum(group: UserGroup): number {
     switch(group) {
@@ -23,4 +23,25 @@ export function getFullName(user: User): string {
         fullName += " " + user.lastName
 
     return fullName
+}
+
+export function userRankToPrettyStr(rank: UserRank): string {
+    switch(rank){
+        case UserRank.ShortCircuit: return "0Ω"
+        case UserRank.Ohm: return "Ω"
+        case UserRank.KiloOhm: return "kΩ"
+        case UserRank.MegaOhm: return "MΩ"
+        case UserRank.GigaOhm: return "GΩ"
+        case UserRank.HighImpedance: return "Høyimpedant"
+        default: return "Ukjent"
+    }
+}
+
+export function userGroupToPrettyStr(group: UserGroup): string {
+    switch(group) {
+        case UserGroup.Contributor: return "-"
+        case UserGroup.Administrator: return "Admin"
+        case UserGroup.SuperAdministrator: return "Super admin"
+        default: return "Ukjent"
+    }
 }

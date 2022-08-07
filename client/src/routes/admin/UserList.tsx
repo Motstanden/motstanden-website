@@ -9,7 +9,7 @@ import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
 
 import { useQuery } from "@tanstack/react-query";
 import { User } from "common/interfaces";
-import { getFullName } from "common/utils";
+import { getFullName, userRankToPrettyStr, userGroupToPrettyStr } from "common/utils";
 import { PageContainer } from "src/layout/PageContainer";
 import { fetchAsync } from "src/utils/fetchAsync";
 
@@ -51,13 +51,13 @@ function UserList (){
                                 {getFullName(user)}
                             </TableCell>
                             <TableCell>
-                                {user.rank}
+                                {userRankToPrettyStr(user.rank)}
                             </TableCell>
                             <TableCell>
                                 {user.email}
                             </TableCell>
                             <TableCell>
-                                {user.groupName}
+                                {userGroupToPrettyStr(user.groupName)}
                             </TableCell>
                         </TableRow>
                     ))}    
