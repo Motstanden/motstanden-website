@@ -17,7 +17,8 @@ import { InstrumentListPage, SheetArchivePageContainer, SongListPage } from './r
 import { AppLayout }from './layout/AppLayout';
 import { UserGroup } from 'common/enums';
 import { AdminPage } from './routes/admin/Admin';
-import { SuperAdminPage } from './routes/superAdmin/SuperAdmin';
+import { SuperAdminPage } from './routes/admin/SuperAdmin';
+import { UserListPage } from './routes/admin/UserList';
 
 function App() {
 
@@ -49,6 +50,7 @@ function App() {
 
 					<Route element={<RequireAuthRouter requiredGroup={UserGroup.Administrator}/>}>
 						<Route path="/admin" element={<AdminPage/>}/>
+						<Route path="/medlemsliste" element={<UserListPage/>}/>
 					</Route>
 
 					<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator}/>}>
