@@ -7,42 +7,13 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
+
 import { ISongFile } from './SheetArchive';
 
 import { Link as RouterLink } from 'react-router-dom';
 import Link from '@mui/material/Link';
 
-
-
-const headerStyle = {
-    backgroundColor: "primary.main",
-    "& th": {
-        fontSize: 14, 
-        fontWeight: "bold", 
-        textTransform: "uppercase", 
-        color: "primary.contrastText"}
-}
-
-const rowStyle = {
-    // Alternating background color
-    '&:nth-of-type(odd)': {
-        backgroundColor: "action.hover",
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-        border: 0,
-    },
-}
-
-const linkStyle = {
-    color: "secondary.light",
-    "&:visited": {
-        color: "secondary.dark"
-    },
-    "&:hover": {
-        color: "secondary.main"
-    },
-}
 
 export function FileTable({ files }: { files: ISongFile[]; }) {
     return (
