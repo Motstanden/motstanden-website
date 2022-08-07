@@ -21,6 +21,8 @@ export function userExists(unsafeEmail: string | undefined): boolean {
             user 
         WHERE email = ?`)
     const user = stmt.get(email)
+    db.close()
+    
     if(!user)
         return false;
 
@@ -44,6 +46,8 @@ export function getTokenData(unsafeEmail: string): AccessTokenData {
             vw_user 
         WHERE email = ?`)
     const user = stmt.get(unsafeEmail)
+    db.close()
+
     if(!user)
         throw `The user does not exist in the database`
     
@@ -71,6 +75,7 @@ export function getUserData(userToken: AccessTokenData): User {
             vw_user 
         WHERE user_id = ?`)
     const user = stmt.get(userToken.userId) as User
+    db.close()
 
     if(!user || user.email !== userToken.email)
         throw `Database yielded invalid result.`
@@ -97,6 +102,7 @@ export function getAllUsers(): User[] {
         ORDER BY 
             first_name ASC`)
     const user = stmt.all() as User[]
+    db.close()
 
     return user
 } 
