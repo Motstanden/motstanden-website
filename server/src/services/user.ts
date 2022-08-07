@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
-import { User } from "../ts/interfaces/User";
+import { User } from "common/interfaces";
 
 function validateEmail(email: string): boolean {
     return true;    // #TODO

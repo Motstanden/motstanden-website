@@ -1,5 +1,5 @@
 import passport from "passport";
-import { UserGroup } from "../ts/enums/UserGroup";
+import { UserGroup } from "common/enums";
 import { Request, Response, NextFunction } from 'express';
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 import { userGroupToNum } from "common/utils"
