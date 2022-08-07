@@ -54,7 +54,7 @@ export function getTokenData(unsafeEmail: string): AccessTokenData {
     return accessToken 
 }
 
-export function getUserData(userToken: AccessTokenData) {
+export function getUserData(userToken: AccessTokenData): User {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
         `SELECT 
@@ -77,3 +77,26 @@ export function getUserData(userToken: AccessTokenData) {
     
     return user
 }   
+
+export function getAllUsers(): User[] {
+
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(
+        `SELECT 
+            user_id as userId,
+            email,
+            user_group_id as groupId,
+            user_group as groupName,
+            user_rank as rank,
+            first_name as firstName,
+            middle_name as middleName,
+            last_name as lastName,
+            profile_picture as profilePicture
+        FROM 
+            vw_user 
+        ORDER BY 
+            first_name ASC`)
+    const user = stmt.all() as User[]
+
+    return user
+} 

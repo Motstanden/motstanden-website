@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 import { userGroupToNum } from "common/utils"
 
-export function needsGroup(requiredGroup: UserGroup){
+export function needsGroup(requiredGroup: UserGroup) {
     return [
         passport.authenticate("jwt", { session: false }),
         (req: Request, res: Response, next: NextFunction) => {

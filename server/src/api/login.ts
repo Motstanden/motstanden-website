@@ -5,7 +5,7 @@ import * as passportConfig from "../config/passportConfig"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 import * as user from "../services/user";
 
-let router = express.Router()
+const router = express.Router()
 
 router.post("/auth/magic_login", (req, res) => {
     if(user.userExists(req.body.destination))
