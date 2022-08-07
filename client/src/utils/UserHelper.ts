@@ -1,4 +1,4 @@
-import { User } from "@backend/interfaces/User";
+import { User } from "common/interfaces";
 
 export function getFullName(user: User): string {
     let fullName = user.firstName

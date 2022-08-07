@@ -6,7 +6,7 @@
 			"dom.iterable",
 			"esnext"
 		],
-		"paths": { "@backend/*": [ "../server/src/ts/*" ]},
+		"baseUrl": ".",
 		"allowJs": true,
 		"skipLibCheck": true,
 		"esModuleInterop": true,
@@ -23,5 +23,5 @@
 	},
 	"include": [
 		"src"
-	]
+	],
 }

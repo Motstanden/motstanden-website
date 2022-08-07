@@ -23,6 +23,7 @@
   "dependencies": {
     "bcrypt": "^5.0.1",
     "better-sqlite3": "^7.6.2",
+    "common": "file:../common",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",

@@ -1,0 +1,28 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "description": "Code that is shared between client, server and database",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "exports": {
+    "./enums":  "./build/enums/index.js",
+    "./interfaces":  "./build/interfaces/index.js",
+    "./types":  "./build/types/index.js",
+    "./utils":  "./build/utils/index.js"
+  },
+  "typesVersions": {
+    "*": {
+      "enums": ["./build/enums/index.d.ts"],
+      "interfaces": ["./build/interfaces/index.d.ts"],
+      "types": ["./build/interfaces/types.d.ts"],
+      "utils": ["./build/utils/index.d.ts"]
+    }
+  },
+  "files": [
+    "build/**/*"
+  ],
+  "author": "Studentorchesteret den Ohmske Motstanden",
+  "license": "ISC"
+}

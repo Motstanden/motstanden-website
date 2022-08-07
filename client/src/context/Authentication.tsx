@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useQuery } from '@tanstack/react-query';
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { User } from "@backend/interfaces/User"
+import { User } from "common/interfaces"
 
 interface AuthContextType{
 	user: User | null
