@@ -33,7 +33,7 @@ export default function UserAvatar() {
         <>
         <Tooltip title={fullName}>
             <IconButton ref={anchorEl} onClick={() => setIsOpen(!isOpen)}>
-                <Avatar alt={`Profilbilde for ${fullName}`} src={user.profilePicture}>{fullName}</Avatar>
+                <Avatar alt={`Profilbilde for ${fullName}`} src={user.profilePicture}>{user.firstName[0]}</Avatar>
             </IconButton>
         </Tooltip>
         <Menu 
