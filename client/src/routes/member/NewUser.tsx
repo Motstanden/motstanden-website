@@ -76,7 +76,7 @@ function NewUserForm() {
 
         setIsSubmitting(false)
         if(response.ok) {
-            // window.location.reload() // TODO: Do something more than just refreshing the page
+            window.location.reload() // TODO: Do something more than just refreshing the page
         }
     }
     return (
