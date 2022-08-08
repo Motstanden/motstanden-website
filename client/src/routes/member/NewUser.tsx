@@ -18,8 +18,17 @@ import Checkbox from '@mui/material/Checkbox';
 export function NewUserPage () {
     return (
         <PageContainer>
-            <h1>Ny bruker</h1>
-            <NewUserForm/>
+            <Paper elevation={6} 
+                sx={{
+                    px: 3, 
+                    py: 1, 
+                    maxWidth: "600px", 
+                    marginInline: "auto",
+                    marginTop: "20px"
+                }}>
+                <h1>Ny bruker</h1>
+                <NewUserForm/>
+            </Paper>
         </PageContainer>
     )
 }
@@ -44,103 +53,101 @@ function NewUserForm() {
         window.location.reload()
     }
     return (
-        <Paper elevation={6} sx={{p: 3, maxWidth: "600px"}}>
-            <FormControl fullWidth>
-                <TextField
-                    label="Fornavn"
-                    name="firstName"
-                    value={firstName}
-                    onChange={ e => setFirstName(e.target.value)}
-                    required
-                    autoComplete="off"
-                />
+        <FormControl fullWidth>
+            <TextField
+                label="Fornavn"
+                name="firstName"
+                value={firstName}
+                onChange={ e => setFirstName(e.target.value)}
+                required
+                autoComplete="off"
+            />
+            <br/>
+            <TextField 
+                label="Mellomnavn"
+                name="middleName"
+                value={middleName}
+                onChange={ e => setMiddleName(e.target.value)}
+                autoComplete="off"
+            />
+            <br/>
+            <TextField
+                label="Etternavn"
+                name="lastName"
+                value={lastName}
+                onChange={ e => setLastName(e.target.value)}
+                required
+                autoComplete="off"
+            />
+            <br/>
+            <TextField
+                label="E-post"
+                name="email"
+                value={email}
+                onChange={ e => setEmail(e.target.value)}
+                required
+                autoComplete="off"
+            />
+            <br/>
+            <TextField
+                select
+                label="Rang"
+                name="userRank"
+                value={userRank}
+                onChange={ (e) => setUserRank(e.target.value as UserRank)} 
+            >
+                { userRankValues.map( item => (<MenuItem value={item.value}>{item.name}</MenuItem>))}
+            </TextField>
+            <br/>
+            <TextField
+                select
+                label="Rolle"
+                name="userGroup"
+                value={userGroup}
+                onChange={ e => setUserGroup(e.target.value as UserGroup)} 
+            >
+                { userGroupValues.map( item => (<MenuItem value={item.value}>{item.name}</MenuItem>))}
+            </TextField>
+            <br/>
+            <TextField 
+                select
+                label="Profilbilde"
+                name="profilePicture"
+                value={profilePicture}
+                onChange={ e => setProfilePicture(e.target.value)}
+            >
+                { profilePictures.map( item => (<MenuItem value={item.url}>{item.name}</MenuItem>))}
+            </TextField>
+            <br/>
+            <br/>
+            <Box sx={{textAlign: "center"}}>
+                <img 
+                    src={`${window.location.origin}/${profilePicture}`} 
+                    alt={`Profilbilde for ny bruker: ${firstName}`}
+                    style={{
+                        maxWidth: "300px",
+                        borderRadius: "50%",
+                        textAlign: "center",
+                    }}/>
                 <br/>
-                <TextField 
-                    label="Mellomnavn"
-                    name="middleName"
-                    value={middleName}
-                    onChange={ e => setMiddleName(e.target.value)}
-                    autoComplete="off"
-                />
                 <br/>
-                <TextField
-                    label="Etternavn"
-                    name="lastName"
-                    value={lastName}
-                    onChange={ e => setLastName(e.target.value)}
-                    required
-                    autoComplete="off"
-                />
-                <br/>
-                <TextField
-                    label="E-post"
-                    name="email"
-                    value={email}
-                    onChange={ e => setEmail(e.target.value)}
-                    required
-                    autoComplete="off"
-                />
-                <br/>
-                <TextField
-                    select
-                    label="Rang"
-                    name="userRank"
-                    value={userRank}
-                    onChange={ (e) => setUserRank(e.target.value as UserRank)} 
-                >
-                    { userRankValues.map( item => (<MenuItem value={item.value}>{item.name}</MenuItem>))}
-                </TextField>
-                <br/>
-                <TextField
-                    select
-                    label="Rolle"
-                    name="userGroup"
-                    value={userGroup}
-                    onChange={ e => setUserGroup(e.target.value as UserGroup)} 
-                >
-                    { userGroupValues.map( item => (<MenuItem value={item.value}>{item.name}</MenuItem>))}
-                </TextField>
-                <br/>
-                <TextField 
-                    select
-                    label="Profilbilde"
-                    name="profilePicture"
-                    value={profilePicture}
-                    onChange={ e => setProfilePicture(e.target.value)}
-                >
-                    { profilePictures.map( item => (<MenuItem value={item.url}>{item.name}</MenuItem>))}
-                </TextField>
+                <FormControlLabel 
+                    control={<Checkbox checked={isInfoOk} onClick={ e => setIsInfoOk(!isInfoOk)} />} 
+                    label={<div style={{marginLeft: "5px" }}>All informasjon er riktig<br/>(Ingen vei tilbake)</div>}
+                    />
                 <br/>
                 <br/>
-                <Box sx={{textAlign: "center"}}>
-                    <img 
-                        src={`${window.location.origin}/${profilePicture}`} 
-                        alt={`Profilbilde for ny bruker: ${firstName}`}
-                        style={{
-                            maxWidth: "300px",
-                            borderRadius: "50%",
-                            textAlign: "center",
-                        }}/>
-                    <br/>
-                    <br/>
-                    <FormControlLabel 
-                        control={<Checkbox checked={isInfoOk} onClick={ e => setIsInfoOk(!isInfoOk)} />} 
-                        label={<div style={{marginLeft: "5px" }}>All informasjon er riktig<br/>(Ingen vei tilbake)</div>}
-                        />
-                    <br/>
-                    <br/>
-                    <Button
-                        variant="contained"
-                        size="large"
-                        type="submit"
-                        disabled={isSubmitting || !isInfoOk}
-                        sx={{maxWidth: "300px"}}
-                        endIcon={<PersonAddIcon />}
-                        >Legg til bruker</Button>
-                </Box>
-                <br/>
-            </FormControl>
-        </Paper>
+                <Button
+                    variant="contained"
+                    size="large"
+                    type="submit"
+                    disabled={isSubmitting || !isInfoOk}
+                    sx={{maxWidth: "300px"}}
+                    endIcon={<PersonAddIcon />}
+                    >Legg til bruker</Button>
+            </Box>
+            <br/>
+        </FormControl>
     )
 }
 
