@@ -2,8 +2,9 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 import FormHelperText from '@mui/material/FormHelperText';
-import { useState } from "react"
+import React, { useState } from "react"
 import { json } from 'stream/consumers';
+import DevLogin from './DevLogin';
 
 export function EmailLogin() {
     const [email, setEmail] = useState("")
@@ -12,7 +13,7 @@ export function EmailLogin() {
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
-        const emailTrimmed = email.trim()
+        const emailTrimmed = email.toLowerCase().trim()
         if(!validateEmail(emailTrimmed)) {
             console.log("Email invalid")
             setIsValidEmail(false)
@@ -55,13 +56,13 @@ export function EmailLogin() {
 				{!isValidEmail && (<><FormHelperText error={true} style={{ textAlign: "center" }}>Ugyldig E-post adresse</FormHelperText><br /></>)}
             <Button 
                 variant="contained"
-                color="secondary"
                 size="large"
                 type="submit"
                 disabled={!isValidEmail}
                 endIcon={<ForwardToInboxIcon/>}>
                 Send E-post
             </Button>
+            <DevLogin email={email}/>
         </form>
     )
 }

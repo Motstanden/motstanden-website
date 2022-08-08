@@ -1,14 +1,26 @@
-import express from "express";
+import express, { Response } from "express";
 import passport from "passport";
 import jwt from 'jsonwebtoken';
 import * as passportConfig from "../config/passportConfig" 
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
-import * as user from "../services/user";
+import * as userService from "../services/user";
+import { requiresDevEnv } from "../middleware/requiresDevEnv";
 
 const router = express.Router()
 
+function createAccessTokenCookie(user: AccessTokenData,  res: Response ): void {
+    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+    res.cookie("AccessToken", 
+        token, { 
+            httpOnly: true, 
+            secure: true, 
+            sameSite: true, 
+            maxAge: 1000 * 60 * 60 * 24 * 31 // 31 days 
+    })
+}
+
 router.post("/auth/magic_login", (req, res) => {
-    if(user.userExists(req.body.destination))
+    if(userService.userExists(req.body.destination))
     {
         passportConfig.magicLogin.send(req, res)
     }
@@ -21,16 +33,23 @@ router.get(
     passportConfig.MagicLinkCallbackPath, 
     passport.authenticate("magiclogin", {session: false}), (req, res) => {
         const user = req.user as AccessTokenData
-        const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
-        res.cookie("AccessToken", 
-            token, { 
-                httpOnly: true, 
-                secure: true, 
-                sameSite: true, 
-                maxAge: 1000 * 60 * 60 * 24 * 31 // 31 days 
-        })
+        createAccessTokenCookie(user, res)
         res.redirect("/hjem")
 });
+
+if(process.env.IS_DEV_ENV) {
+    router.post("/dev/login", requiresDevEnv, (req, res) => {
+
+        const unsafeEmail = req.body.destination as string;
+        if(!userService.userExists(unsafeEmail)) {
+            res.end()
+        }
+
+        const token = userService.getTokenData(req.body.destination)
+        createAccessTokenCookie(token, res)
+        res.redirect("/hjem")
+    })
+}
 
 router.post("/logout", (req, res) => {
     res.clearCookie("AccessToken")
@@ -39,7 +58,7 @@ router.post("/logout", (req, res) => {
 
 router.get("/userMetaData",
     passport.authenticate("jwt", { session: false, failureRedirect: "/api/userMetaDataFailure" }),
-    (req, res) => res.send(user.getUserData(req.user as AccessTokenData))
+    (req, res) => res.send(userService.getUserData(req.user as AccessTokenData))
 )
 
 router.get("/userMetaDataFailure", (req, res) => res.status(204).end()) 
