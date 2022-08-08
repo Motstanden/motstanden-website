@@ -1,7 +1,9 @@
-import Database from "better-sqlite3";
-import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig";
+import Database, {Database as DatabaseType} from "better-sqlite3";
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
-import { User } from "common/interfaces";
+import { NewUser, User } from "common/interfaces";
+import { UserGroup, UserRank } from "common/enums";
+import { createBrotliCompress } from "zlib";
 
 function validateEmail(email: string): boolean {
     return true;    // #TODO
@@ -106,3 +108,59 @@ export function getAllUsers(): User[] {
 
     return user
 } 
+
+export function createUser(user: NewUser) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+
+    // Throws exceptions if not found
+    const groupId = getGroupId(user.groupName, db)
+    const rankId = getRankId(user.rank, db)
+
+    // Define transaction
+    const startTransaction = db.transaction( () => {
+        const stmt = db.prepare(`
+            INSERT INTO 
+                user(user_group_id, user_rank_id, email, first_name, middle_name, last_name, profile_picture)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?)
+        `)
+        const info = stmt.run(groupId, rankId, user.email, user.firstName, user.middleName, user.lastName, user.profilePicture)
+    })
+
+    // Run transaction
+    startTransaction()
+    db.close()
+    console.log(`Inserted user\n${user}`)
+} 
+
+function getGroupId(group: UserGroup, db: DatabaseType | undefined): number {
+    db = db ?? new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(`
+        SELECT 
+            user_group_id as id
+        FROM 
+            user_group
+        WHERE 
+            name = ? 
+    `)
+    const dbResult = stmt.get(group.valueOf())
+    if(!dbResult)
+        throw `Could not retrieve user_rank_id of ${group.valueOf()}`
+    return dbResult.id
+}
+
+function getRankId(rank: UserRank, db: DatabaseType | undefined): number {
+    db = db ?? new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(`
+        SELECT 
+            user_rank_id as id
+        FROM 
+            user_rank
+        WHERE 
+            name = ? 
+    `)
+    const dbResult = stmt.get(rank.valueOf())
+    if(!dbResult)
+        throw `Could not retrieve user_rank_id of ${rank.valueOf()}`
+    return dbResult.id
+}

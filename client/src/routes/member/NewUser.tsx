@@ -44,110 +44,140 @@ function NewUserForm() {
     const [profilePicture, setProfilePicture] = useState("files/private/profilbilder/boy.png")
     const [isInfoOk, setIsInfoOk] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
+
+    const buildUser = (): NewUser => {
+        return {
+            email: email,
+            groupName: userGroup,
+            rank: userRank,
+            firstName: firstName,
+            middleName: middleName,
+            lastName: lastName,
+            profilePicture: profilePicture,
+        }
+    }
+
     const onSubmit = async (event: React.FormEvent) => {
+        console.log("Submitting")
+        event.preventDefault()
         setIsSubmitting(true)
 
-        //#TODO
+        const user = buildUser()
+
+        //# TODO validate user
+        console.log(user)
+        let response = await fetch("/api/create-user", {
+            method: "POST", 
+            body: JSON.stringify(user),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })  
 
         setIsSubmitting(false)
-        window.location.reload()
+        if(response.ok) {
+            // window.location.reload() // TODO: Do something more than just refreshing the page
+        }
     }
     return (
-        <FormControl fullWidth>
-            <TextField
-                label="Fornavn"
-                name="firstName"
-                value={firstName}
-                onChange={ e => setFirstName(e.target.value)}
-                required
-                autoComplete="off"
-            />
-            <br/>
-            <TextField 
-                label="Mellomnavn"
-                name="middleName"
-                value={middleName}
-                onChange={ e => setMiddleName(e.target.value)}
-                autoComplete="off"
-            />
-            <br/>
-            <TextField
-                label="Etternavn"
-                name="lastName"
-                value={lastName}
-                onChange={ e => setLastName(e.target.value)}
-                required
-                autoComplete="off"
-            />
-            <br/>
-            <TextField
-                label="E-post"
-                name="email"
-                value={email}
-                onChange={ e => setEmail(e.target.value)}
-                required
-                autoComplete="off"
-            />
-            <br/>
-            <TextField
-                select
-                label="Rang"
-                name="userRank"
-                value={userRank}
-                onChange={ (e) => setUserRank(e.target.value as UserRank)} 
-            >
-                { userRankValues.map( item => (<MenuItem value={item.value}>{item.name}</MenuItem>))}
-            </TextField>
-            <br/>
-            <TextField
-                select
-                label="Rolle"
-                name="userGroup"
-                value={userGroup}
-                onChange={ e => setUserGroup(e.target.value as UserGroup)} 
-            >
-                { userGroupValues.map( item => (<MenuItem value={item.value}>{item.name}</MenuItem>))}
-            </TextField>
-            <br/>
-            <TextField 
-                select
-                label="Profilbilde"
-                name="profilePicture"
-                value={profilePicture}
-                onChange={ e => setProfilePicture(e.target.value)}
-            >
-                { profilePictures.map( item => (<MenuItem value={item.url}>{item.name}</MenuItem>))}
-            </TextField>
-            <br/>
-            <br/>
-            <Box sx={{textAlign: "center"}}>
-                <img 
-                    src={`${window.location.origin}/${profilePicture}`} 
-                    alt={`Profilbilde for ny bruker: ${firstName}`}
-                    style={{
-                        maxWidth: "300px",
-                        borderRadius: "50%",
-                        textAlign: "center",
-                    }}/>
+        <form onSubmit={onSubmit}>
+            <FormControl fullWidth>
+                <TextField
+                    label="Fornavn"
+                    name="firstName"
+                    value={firstName}
+                    onChange={ e => setFirstName(e.target.value)}
+                    required
+                    autoComplete="off"
+                />
+                <br/>
+                <TextField 
+                    label="Mellomnavn"
+                    name="middleName"
+                    value={middleName}
+                    onChange={ e => setMiddleName(e.target.value)}
+                    autoComplete="off"
+                />
+                <br/>
+                <TextField
+                    label="Etternavn"
+                    name="lastName"
+                    value={lastName}
+                    onChange={ e => setLastName(e.target.value)}
+                    required
+                    autoComplete="off"
+                />
+                <br/>
+                <TextField
+                    label="E-post"
+                    name="email"
+                    type="email"
+                    value={email}
+                    onChange={ e => setEmail(e.target.value)}
+                    required
+                    autoComplete="off"
+                />
+                <br/>
+                <TextField
+                    select
+                    label="Rang"
+                    name="userRank"
+                    value={userRank}
+                    onChange={ (e) => setUserRank(e.target.value as UserRank)} 
+                    >
+                    { userRankValues.map( item => (<MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>))}
+                </TextField>
+                <br/>
+                <TextField
+                    select
+                    label="Rolle"
+                    name="userGroup"
+                    value={userGroup}
+                    onChange={ e => setUserGroup(e.target.value as UserGroup)} 
+                    >
+                    { userGroupValues.map( item => (<MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>))}
+                </TextField>
+                <br/>
+                <TextField 
+                    select
+                    label="Profilbilde"
+                    name="profilePicture"
+                    value={profilePicture}
+                    onChange={ e => setProfilePicture(e.target.value)}
+                >
+                    { profilePictures.map( item => (<MenuItem key={item.url} value={item.url}>{item.name}</MenuItem>))}
+                </TextField>
                 <br/>
                 <br/>
-                <FormControlLabel 
-                    control={<Checkbox checked={isInfoOk} onClick={ e => setIsInfoOk(!isInfoOk)} />} 
-                    label={<div style={{marginLeft: "5px" }}>All informasjon er riktig<br/>(Ingen vei tilbake)</div>}
-                    />
+                <Box sx={{textAlign: "center"}}>
+                    <img 
+                        src={`${window.location.origin}/${profilePicture}`} 
+                        alt={`Profilbilde for ny bruker: ${firstName}`}
+                        style={{
+                            maxWidth: "300px",
+                            borderRadius: "50%",
+                            textAlign: "center",
+                        }}/>
+                    <br/>
+                    <br/>
+                    <FormControlLabel 
+                        control={<Checkbox checked={isInfoOk} onClick={ e => setIsInfoOk(!isInfoOk)} />} 
+                        label={<div style={{marginLeft: "5px" }}>All informasjon er riktig<br/>(Ingen vei tilbake)</div>}
+                        />
+                    <br/>
+                    <br/>
+                    <Button
+                        variant="contained"
+                        size="large"
+                        type="submit"
+                        disabled={isSubmitting || !isInfoOk}
+                        sx={{maxWidth: "300px"}}
+                        endIcon={<PersonAddIcon />}
+                        >Legg til bruker</Button>
+                </Box>
                 <br/>
-                <br/>
-                <Button
-                    variant="contained"
-                    size="large"
-                    type="submit"
-                    disabled={isSubmitting || !isInfoOk}
-                    sx={{maxWidth: "300px"}}
-                    endIcon={<PersonAddIcon />}
-                    >Legg til bruker</Button>
-            </Box>
-            <br/>
-        </FormControl>
+            </FormControl>
+        </form>         
     )
 }
 
