@@ -28,7 +28,7 @@ export function getFullName(user: User): string {
 export function userRankToPrettyStr(rank: UserRank): string {
     switch(rank){
         case UserRank.ShortCircuit: return "0Ω"
-        case UserRank.Ohm: return "Ω"
+        case UserRank.Ohm: return "1Ω"
         case UserRank.KiloOhm: return "kΩ"
         case UserRank.MegaOhm: return "MΩ"
         case UserRank.GigaOhm: return "GΩ"
