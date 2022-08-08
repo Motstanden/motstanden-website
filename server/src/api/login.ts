@@ -5,6 +5,9 @@ import * as passportConfig from "../config/passportConfig"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 import * as userService from "../services/user";
 import { requiresDevEnv } from "../middleware/requiresDevEnv";
+import { MagicLinkResponse } from "common/interfaces";
+import { getRandomInt } from "../utils/getRandomInt";
+import { sleepAsync } from "../utils/sleepAsync";
 
 const router = express.Router()
 
@@ -20,12 +23,19 @@ function createAccessTokenCookie(user: AccessTokenData,  res: Response ): void {
 }
 
 router.post("/auth/magic_login", (req, res) => {
+
     if(userService.userExists(req.body.destination))
     {
         passportConfig.magicLogin.send(req, res)
     }
     else {
-        res.end()   // TODO: Send back spoof response so that random users cannot get information about which emails are in the database.
+        // Send back spoof response so that random users cannot get information about which emails are in the database.
+        const spoofData: MagicLinkResponse = {
+            code: getRandomInt(10000, 99999).toString(),
+            success: true
+        }
+        sleepAsync(getRandomInt(1000, 2500))        // Simulate the time it takes to send the email
+            .finally(() => res.json(spoofData))
     }
 });
 

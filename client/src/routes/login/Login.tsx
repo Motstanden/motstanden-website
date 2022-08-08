@@ -5,6 +5,7 @@ import { useTitle } from '../../hooks/useTitle';
 import { EmailInfo, EmailLogin } from './EmailLogin';
 import { useAuth } from 'src/context/Authentication';
 import { Navigate, useLocation } from 'react-router-dom';
+import { AnimationAvatar } from './AnimationAvatar';
 
 export function LoginPage() {
 	const [mailInfo, setMailInfo] = useState<EmailInfo | undefined>(undefined)
@@ -28,6 +29,9 @@ export function LoginPage() {
 					paddingBlock: "20px" }}>
 						Logg inn
 				</h1>
+				<AnimationAvatar isAnimating={!!mailInfo} />
+				<br/>
+				<br/>
 				{
 					!mailInfo && <EmailLogin onEmailSent={ e => setMailInfo(e)}/> 
 				}
@@ -42,8 +46,16 @@ export function LoginPage() {
 function EmailSent( {emailInfo}: {emailInfo: EmailInfo} ) {
 
 	return (
-		<>
-		E-post er sendt.
-		</>
+		<div>
+			<p>
+				E-post sendes til: <b>{emailInfo.email}</b>
+			</p>
+			<p>
+				Verifiseringskode: <b>{emailInfo.code}</b>
+			</p>
+			<p>
+				Sjekk spamfilter
+			</p>
+		</div>
 	)
 }

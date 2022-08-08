@@ -37,7 +37,7 @@ export function AnimationAvatar({ isAnimating }: { isAnimating: boolean; }) {
 	const [index, setIndex] = useState(0)
 
 	if(isAnimating){
-		setTimeout( () => setIndex(index % 2 + 1), 200)
+		setTimeout( () => setIndex(index % 2 + 1), 600)
 	}
 
 	if(!isAnimating && index !== 0){
