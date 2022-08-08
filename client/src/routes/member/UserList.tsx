@@ -12,17 +12,9 @@ import { User } from "common/interfaces";
 import { getFullName, userRankToPrettyStr, userGroupToPrettyStr } from "common/utils";
 import { PageContainer } from "src/layout/PageContainer";
 import { fetchAsync } from "src/utils/fetchAsync";
+import Divider from '@mui/material/Divider';
 
-export function UserListPage () {
-    return (
-        <PageContainer>
-            <h1>Medlemsliste</h1>
-            <UserList/>
-        </PageContainer>
-    )
-}
-
-function UserList (){
+export function UserListPage() {
     const {isLoading, isError, data, error} = useQuery<User[]>(["FetchAllUsers"], () => fetchAsync<User[]>("/api/member-list") )
     
     if (isLoading) {
@@ -31,8 +23,25 @@ function UserList (){
     
     if (isError) {
         return <PageContainer><span>{`${error}`}</span></PageContainer>
-    }
+    }    
+    
+    const actualUsers = data.filter( user => !isMotstandenMail(user.email))
+    const boardUsers = data.filter( user => isMotstandenMail(user.email))
 
+    return (
+        <PageContainer>
+            <h1>Medlemsliste</h1>
+            <UserTable users={actualUsers}/>
+            <Divider sx={{mt: "60px", mb: "40px"}}>
+            </Divider>
+            <h1>Styrebrukere</h1>
+            <UserTable users={boardUsers}/>
+        </PageContainer>
+    )
+}
+
+
+function UserTable({users}: {users: User[]}){
     return (
         <TableContainer component={Paper}>
             <Table>
@@ -45,7 +54,7 @@ function UserList (){
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    { data.map( (user) => (
+                    { users.map( (user) => (
                         <TableRow sx={rowStyle} key={user.email}>
                             <TableCell>
                                 {getFullName(user)}
@@ -65,4 +74,8 @@ function UserList (){
             </Table>
         </TableContainer>
     )
+}
+
+function isMotstandenMail(email: string): boolean {
+    return email.trim().toLowerCase().endsWith("@motstanden.no")
 }
