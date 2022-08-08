@@ -55,8 +55,10 @@ function App() {
 						<Route path="/medlem">
 							<Route path="" element={<NotFound/>}/>
 							<Route path="liste" element={<UserListPage/>}/>
-							<Route path="ny" element={<NewUserPage/>}/>
 							<Route path="rediger" element={<EditUserPage/>}/>
+							<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator}/>}>
+								<Route path="ny" element={<NewUserPage/>}/>
+							</Route>
 						</Route>
 					</Route>
 
