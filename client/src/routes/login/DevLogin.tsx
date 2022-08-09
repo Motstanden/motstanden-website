@@ -15,6 +15,9 @@ function DevLoginBtn({ props }: {props: DevLoginProps}) {
             }),
                 headers: { 'Content-Type': 'application/json' }
             })
+        if(res.ok){
+            window.location.reload()
+        }
     }
 
     return (
