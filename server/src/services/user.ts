@@ -4,6 +4,8 @@ import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 import { NewUser, User } from "common/interfaces";
 import { UserGroup, UserRank } from "common/enums";
 import { createBrotliCompress } from "zlib";
+import { JwtTokenData } from "../middleware/jwtAuthenticate";
+import jwt from 'jsonwebtoken';
 
 function validateEmail(email: string): boolean {
     return true;    // #TODO
@@ -60,16 +62,46 @@ export function getTokenData(unsafeEmail: string): AccessTokenData {
     return accessToken 
 }
 
-export function insertLoginToken(){
-    
+export function insertLoginToken(refreshToken: string){
+    const jwtPayload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET) as JwtTokenData
+
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(
+        `INSERT INTO 
+            login_token(user_id, token, issued_at, expire_at)
+        VALUES 
+            (?, ?, ?, ?)   
+        `
+    )
+    const info = stmt.run(jwtPayload.userId, refreshToken, jwtPayload.iat, jwtPayload.exp)
+    db.close()
 }
 
-export function verifyLoginToken(refreshToken: string, userToken: AccessTokenData): boolean {
+export function verifyLoginToken(loginToken: string, userToken: AccessTokenData): boolean {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(
+        `SELECT
+            token
+        FROM 
+            login_token
+        WHERE user_id = ?
+        `
+    )
+    const tokens = stmt.all(userToken.userId)
+    db.close()
+    const tokenMatch = tokens.find( item => item.token === loginToken)
+    return !!tokenMatch
+}
 
-    // #TODO
-
-    console.log("Verifying refresh token")
-    return true;
+export function removeLoginToken(loginToken: string){
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(
+        `DELETE FROM
+            login_token
+        WHERE token = ?`
+    )
+    const info = stmt.run(loginToken)
+    db.close()
 }
 
 export function getUserData(userToken: AccessTokenData): User {

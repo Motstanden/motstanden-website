@@ -8,31 +8,9 @@ import { requiresDevEnv } from "../middleware/requiresDevEnv";
 import { MagicLinkResponse } from "common/interfaces";
 import { getRandomInt } from "../utils/getRandomInt";
 import { sleepAsync } from "../utils/sleepAsync";
-import { AuthenticateUser } from "../middleware/jwtAuthenticate";
+import { AuthenticateUser, loginUser, logOut } from "../middleware/jwtAuthenticate";
 
 const router = express.Router()
-
-function createAccessTokenCookie(user: AccessTokenData,  res: Response ): void {
-    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "30s"})
-    res.cookie("AccessToken", 
-        token, { 
-            httpOnly: true, 
-            secure: true, 
-            sameSite: true, 
-            maxAge: 1000 * 10  // 10m days 
-    })
-}
-
-function createRefreshToken(user: AccessTokenData, res: Response): void {
-    const token = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "365d" })
-    res.cookie("RefreshToken", 
-        token, { 
-            httpOnly: true, 
-            secure: true, 
-            sameSite: true, 
-            maxAge: 1000 * 60 * 60 * 24 * 365  // 365 days 
-    })
-}
 
 router.post("/auth/magic_login", (req, res) => {
 
@@ -53,12 +31,8 @@ router.post("/auth/magic_login", (req, res) => {
 
 router.get(
     passportConfig.MagicLinkCallbackPath, 
-    passport.authenticate("magiclogin", {session: false}), (req, res) => {
-        const tokenData = req.user as AccessTokenData
-        createAccessTokenCookie(tokenData, res)
-        createRefreshToken(tokenData, res)
-        res.redirect("/hjem")
-});
+    passport.authenticate("magiclogin", {session: false}), 
+    loginUser);
 
 if(process.env.IS_DEV_ENV) {
     router.post("/dev/login", requiresDevEnv, (req, res) => {
@@ -67,19 +41,13 @@ if(process.env.IS_DEV_ENV) {
         if(!userService.userExists(unsafeEmail)) {
             res.end()
         }
-
         const token = userService.getTokenData(req.body.destination)
-        createAccessTokenCookie(token, res)
-        createRefreshToken(token, res)
-        res.redirect("/hjem")
+        req.user = token
+        loginUser(req, res)
     })
 }
 
-router.post("/logout", (req, res) => {
-    res.clearCookie("AccessToken")
-    res.clearCookie("RefreshToken")
-    res.end()
-})
+router.post("/logout", logOut)
 
 router.get("/userMetaData",
     AuthenticateUser({failureRedirect: "/api/userMetaDataFailure"}),
