@@ -24,6 +24,7 @@ export function UserListPage() {
     const [showRank, setShowRank] = useState(true)
     const [showMail, setShowMail] = useState(false)
     const [showRole, setShowRole] = useState(false)
+    const [showBoard, setShowBoard] = useState(false)
 
     const {isLoading, isError, data, error} = useQuery<User[]>(["FetchAllUsers"], () => fetchAsync<User[]>("/api/member-list") )
     
@@ -51,8 +52,9 @@ export function UserListPage() {
                 <Grid container spacing={0} justifyContent="start">
                     <FilterBox label="Navn"   checked={showName} onClick={() => setShowName(!showName)}/>
                     <FilterBox label="Rang"   checked={showRank} onClick={() => setShowRank(!showRank)}/>
-                    <FilterBox label="E-Post" checked={showMail} onClick={() => setShowMail(!showMail)}/>
+                    <FilterBox label="E-post" checked={showMail} onClick={() => setShowMail(!showMail)}/>
                     <FilterBox label="Rolle"  checked={showRole} onClick={() => setShowRole(!showRole)}/>
+                    <FilterBox label="Styret" checked={showBoard} onClick={() => setShowBoard(!showBoard)}/>
                 </Grid>
             </Paper>
             <UserTable 
@@ -62,15 +64,19 @@ export function UserListPage() {
                 showMail={showMail}
                 showRole={showRole}
             />
-            <Divider sx={{mt: "60px", mb: "40px"}}/>
-            <h1>Styrebrukere</h1>
-            <UserTable 
-                users={boardUsers}
-                showName={showName}
-                showRank={showRank}
-                showMail={showMail}
-                showRole={showRole}
-            />
+            { showBoard && (
+                <>
+                    <Divider sx={{mt: "60px", mb: "40px"}}/>
+                    <h1>Styrebrukere</h1>
+                    <UserTable 
+                        users={boardUsers}
+                        showName={showName}
+                        showRank={showRank}
+                        showMail={showMail}
+                        showRole={showRole}
+                    />
+                </>
+            )}
         </PageContainer>
     )
 }
