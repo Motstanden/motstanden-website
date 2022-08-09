@@ -68,3 +68,14 @@ FROM
 LEFT JOIN user_group USING (user_group_id)
 LEFT JOIN user_rank USING (user_rank_id)
 /* vw_user(user_id,user_group_id,user_group,user_rank_id,user_rank,email,first_name,middle_name,last_name,profile_picture,created_at) */;
+CREATE TABLE login_token (
+    token_id INTEGER PRIMARY KEY NOT NULL,
+    user_id INTEGER NOT NULL,
+    token TEXT UNIQUE NOT NULL,
+    issued_at INTEGER NOT NULL,
+    expire_at INTEGER NOT NULL,
+    FOREIGN KEY (user_id)
+        REFERENCES user (user_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
