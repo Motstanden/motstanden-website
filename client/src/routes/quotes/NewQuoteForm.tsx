@@ -30,18 +30,6 @@ export function NewQuoteForm(){
     return (
         <form onSubmit={onSubmit}>
             <TextField 
-                label="Sitatytrer" 
-                name="utterer"
-                type="text"
-                required 
-                fullWidth 
-                autoComplete="off"
-                value={utterer}
-                onChange={(event) => setUtterer(event.target.value)}
-                sx={{maxWidth: "600px"}}/>
-            <br/>
-            <br/>
-            <TextField 
                 label="Sitat"
                 name="quote"
                 type="text"
@@ -53,6 +41,18 @@ export function NewQuoteForm(){
                 multiline
                 minRows={4}
                 />
+            <br/>
+            <br/>
+            <TextField 
+                label="Sitatytrer" 
+                name="utterer"
+                type="text"
+                required 
+                fullWidth 
+                autoComplete="off"
+                value={utterer}
+                onChange={(event) => setUtterer(event.target.value)}
+                sx={{maxWidth: "600px"}}/>
             <br/>
             <br/>
             <Button 

@@ -14,14 +14,13 @@ export default function Quotes(){
             <NewQuoteForm/>
             <Divider sx={{my: "40px"}}/>
             <h1 style={{marginTop: "0px"}}>Sitater</h1>
-            <QuoteList/>
+            <QuotesContainer/>
         </PageContainer>
     )
 }
 
-function QuoteList(){
-
-    const {isLoading, isError, data, error} = useQuery<IQuote[]>(["FetchQuotes"], () => fetchAsync<IQuote[]>("/api/quotes") )
+function QuotesContainer() {
+    const {isLoading, isError, data, error} = useQuery<QuoteData[]>(["FetchQuotes"], () => fetchAsync<QuoteData[]>("/api/quotes") )
     
     if (isLoading) {
         return <PageContainer><div/></PageContainer>
@@ -32,35 +31,46 @@ function QuoteList(){
     }
 
     return (
-        <ul style={{paddingLeft: "5px"}}>
-            {data.map( item => (
-                <li key={item.id} 
-                    style={{
-                        listStyleType: "none", 
-                        marginBottom: "25px",
-                    }}>
-                     <NewlineText text={item.quote}/>
-                     <span style={{
-                            marginLeft: "20px", 
-                            marginTop: 0, 
-                            opacity: 0.6, 
-                            fontSize: "small", 
-                            fontWeight: "bold"
-                        }}>
-                        – {item.utterer}
-                     </span>
-                </li>
-            ))}
+        <QuoteList quotes={data}/>
+    )
+}
+
+
+export function QuoteList( {quotes}: {quotes: QuoteData[] } ){
+    return (
+        <ul style={{ 
+                paddingLeft: "5px", 
+                listStyleType: "none" 
+        }}>
+            { quotes.map( item => <QuoteItem key={item.id} quoteData={item}/>)}
         </ul>
     )
 }
+
+function QuoteItem( {quoteData}: {quoteData: QuoteData}){
+    return ( 
+        <li 
+            style={{ marginBottom: "25px" }}>
+                <NewlineText text={quoteData.quote}/>
+                <span style={{
+                    marginLeft: "20px", 
+                    marginTop: 0, 
+                    opacity: 0.6, 
+                    fontSize: "small", 
+                    fontWeight: "bold"
+                }}>
+                – {quoteData.utterer}
+                </span>
+        </li>
+    )
+}   
 
 function NewlineText({ text }: {text: string}) {
     const newText = text.split('\n').map( (str, i) => <p key={i} style={{margin: 0}}>{str}</p>);
     return <span>{newText}</span>
 }
 
-interface IQuote {
+interface QuoteData {
     id: string,
     utterer: string,
     quote: string,
