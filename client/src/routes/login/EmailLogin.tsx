@@ -6,6 +6,7 @@ import React, { useState } from "react"
 import { json } from 'stream/consumers';
 import DevLogin from './DevLogin';
 import { MagicLinkResponse } from 'common/interfaces';
+import { validateEmail } from 'src/utils/validateEmail';
 
 export function EmailLogin( { onEmailSent }: {onEmailSent: (e: EmailInfo) => void }) {
     
@@ -73,15 +74,6 @@ export function EmailLogin( { onEmailSent }: {onEmailSent: (e: EmailInfo) => voi
             <DevLogin email={email}/>
         </form>
     )
-}
-
-const emailRegEx = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
-
-function validateEmail(email: string | undefined) : boolean {
-    if(!email)
-        return false;
-    
-    return emailRegEx.test(email)
 }
 
 export interface EmailInfo {
