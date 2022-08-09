@@ -47,7 +47,7 @@ function NewUserForm() {
 
     const buildUser = (): NewUser => {
         return {
-            email: email,
+            email: email.trim().toLowerCase(),
             groupName: userGroup,
             rank: userRank,
             firstName: firstName,
@@ -79,6 +79,8 @@ function NewUserForm() {
             window.location.reload() // TODO: Do something more than just refreshing the page
         }
     }
+
+    const isNtnuMail = email.trim().toLowerCase().endsWith("ntnu.no")
     return (
         <form onSubmit={onSubmit}>
             <FormControl fullWidth>
@@ -114,9 +116,11 @@ function NewUserForm() {
                     type="email"
                     value={email}
                     onChange={ e => setEmail(e.target.value)}
+                    error={isNtnuMail}
                     required
                     autoComplete="off"
                 />
+                {isNtnuMail && <Box color="error.main">Ntnu mail ikke tillat<br/></Box>}
                 <br/>
                 <TextField
                     select
