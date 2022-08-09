@@ -24,6 +24,7 @@ function onAuthenticateRequest(req: Request, res: Response, next: NextFunction, 
 function updateAccessToken(req: Request, res: Response, next: NextFunction, options: AuthenticateOptions) {
 
     const onFailure = () => {
+        clearAllAuthCookies(res)
         if(options.failureRedirect) {
             return res.redirect(options.failureRedirect)
         }
@@ -78,7 +79,7 @@ export function createToken(tokenType: TokenType, user: AccessTokenData): string
 }
 
 function createAccessToken(user: AccessTokenData): string {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "10m"})
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m"})
 }
 
 function createRefreshToken(user: AccessTokenData): string {
@@ -105,7 +106,7 @@ export function loginUser(req: Request, res: Response) {
 
 function saveTokenInCookie(res: Response, tokenType: TokenType, tokenStr: string | RefreshTokenData){
     const maxAge = tokenType === TokenType.AccessToken
-        ? 1000 * 60 * 10                 // 10 min
+        ? 1000 * 60 * 15                 // 15 min
         : 1000 * 60 * 60 * 24 * 365      // 365 days
     res.cookie( 
         tokenType.toString(),
@@ -123,19 +124,20 @@ export function logOut(req: Request, res: Response) {
     if(refreshToken){
         userService.removeLoginToken(refreshToken)
     }
-
-    res.clearCookie(TokenType.AccessToken.toString())
-    res.clearCookie(TokenType.RefreshToken.toString())
+    clearAllAuthCookies(res)
     res.end()
 }
 
 export function logOutAllUnits(req: Request, res: Response) {
     const userData = req.user as AccessTokenData
     userService.removeAllLoginTokens(userData)
-    console.log("Log out all units")
+    clearAllAuthCookies(res)
+    res.end()
+}
+
+function clearAllAuthCookies(res: Response){
     res.clearCookie(TokenType.AccessToken.toString())
     res.clearCookie(TokenType.RefreshToken.toString())
-    res.end()
 }
 
 enum TokenType {
