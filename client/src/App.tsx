@@ -18,9 +18,9 @@ import { AppLayout }from './layout/AppLayout';
 import { UserGroup } from 'common/enums';
 import { AdminPage } from './routes/admin/Admin';
 import { SuperAdminPage } from './routes/admin/SuperAdmin';
-import { UserListPage } from './routes/member/UserList';
-import { NewUserPage } from './routes/member/NewUser';
-import { EditUserPage } from './routes/member/EditUser';
+import { UserListPage } from './routes/user/UserList';
+import { NewUserPage } from './routes/user/NewUser';
+import { EditUserPage } from './routes/user/EditUser';
 
 function App() {
 
