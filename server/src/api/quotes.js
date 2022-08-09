@@ -3,11 +3,12 @@ import Database from "better-sqlite3";
 import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "../config/databaseConfig.js";
 import passport from "passport";
 import { stringIsNullOrWhiteSpace } from "../utils/stringUtils.js";
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 
 let router = express.Router()
 
 router.get("/quotes", 
-    passport.authenticate("jwt", {session: false}),
+    AuthenticateUser(),
     (req, res) => {
         const db = new Database(motstandenDB, dbReadOnlyConfig)
         const stmt = db.prepare(`
@@ -24,7 +25,7 @@ router.get("/quotes",
 })
 
 router.post("/insert_quote",    
-    passport.authenticate("jwt", {session: false}),
+    AuthenticateUser(),
     (req, res) => {
         const utterer = req.body.utterer
         const quote = req.body.quote

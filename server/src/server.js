@@ -11,6 +11,7 @@ import * as passportConfig from "./config/passportConfig.js"
 import serveIndex from "serve-index"
 
 import router from "./api/apiRouter.js"
+import { AuthenticateUser } from "./middleware/jwtAuthenticate.js";
 
 const PORT = process.env.PORT || 5000
 const app = express()
@@ -39,7 +40,7 @@ const passport = passportConfig.createPassport()
 app.use(passport.initialize());
 
 app.use("/files/private", 
-    passport.authenticate("jwt", { session: false, failureRedirect: "/files/public" }),
+    AuthenticateUser({failureRedirect: "/files/public"}),
     express.static(path.join(__dirname, "..", "files", "private")),
     serveIndex(path.join(__dirname, "..", "files", "private"), {icons: true}))
 
@@ -48,7 +49,7 @@ app.use("/files/public",
     serveIndex(path.join(__dirname, "..", "files", "public"), {icons: true}))
 
 app.use("/files", 
-    passport.authenticate("jwt", { session: false, failureRedirect: "/files/public"}),
+    AuthenticateUser({failureRedirect: "/files/public"}),
     express.static(path.join(__dirname, "..", "files")),
     serveIndex(path.join(__dirname, "..", "files"), {icons: true}))
 

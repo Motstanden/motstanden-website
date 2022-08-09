@@ -2,11 +2,12 @@ import express from "express";
 import Database from 'better-sqlite3'
 import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "../config/databaseConfig.js";
 import passport from "passport";
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 
 let router = express.Router()
 
 router.get("/documents", 
-    passport.authenticate("jwt", {session: false, failureRedirect: "documents_public"}),
+    AuthenticateUser({failureRedirect: "documents_public"}),
     (req, res) => {
         const db = new Database(motstandenDB, dbReadOnlyConfig)
         const stmt = db.prepare("SELECT title, filename AS url FROM document ORDER BY document_id DESC")

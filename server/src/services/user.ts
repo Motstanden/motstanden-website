@@ -60,6 +60,18 @@ export function getTokenData(unsafeEmail: string): AccessTokenData {
     return accessToken 
 }
 
+export function insertLoginToken(){
+    
+}
+
+export function verifyLoginToken(refreshToken: string, userToken: AccessTokenData): boolean {
+
+    // #TODO
+
+    console.log("Verifying refresh token")
+    return true;
+}
+
 export function getUserData(userToken: AccessTokenData): User {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(

@@ -2,11 +2,12 @@ import express from "express";
 import Database from "better-sqlite3";
 import { sheetArchiveDB, dbReadOnlyConfig, dbReadWriteConfig } from "../config/databaseConfig.js";
 import passport from "passport";
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 
 let router = express.Router()
 
 router.get("/sheet_archive/song_title", 
-    passport.authenticate("jwt", {session: false}),
+    AuthenticateUser(),
     (req, res) => {
 
         const db = new Database(sheetArchiveDB, dbReadOnlyConfig)
@@ -25,7 +26,7 @@ router.get("/sheet_archive/song_title",
 })
 
 router.get("/sheet_archive/song_files", 
-    passport.authenticate("jwt", {session: false}),
+    AuthenticateUser(),
     (req, res) => {
 
         const db = new Database(sheetArchiveDB, dbReadOnlyConfig)
