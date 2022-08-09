@@ -129,6 +129,15 @@ export function logOut(req: Request, res: Response) {
     res.end()
 }
 
+export function logOutAllUnits(req: Request, res: Response) {
+    const userData = req.user as AccessTokenData
+    userService.removeAllLoginTokens(userData)
+    console.log("Log out all units")
+    res.clearCookie(TokenType.AccessToken.toString())
+    res.clearCookie(TokenType.RefreshToken.toString())
+    res.end()
+}
+
 enum TokenType {
     AccessToken = "AccessToken",
     RefreshToken = "RefreshToken"

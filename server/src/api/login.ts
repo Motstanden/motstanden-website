@@ -8,7 +8,7 @@ import { requiresDevEnv } from "../middleware/requiresDevEnv";
 import { MagicLinkResponse } from "common/interfaces";
 import { getRandomInt } from "../utils/getRandomInt";
 import { sleepAsync } from "../utils/sleepAsync";
-import { AuthenticateUser, loginUser, logOut } from "../middleware/jwtAuthenticate";
+import { AuthenticateUser, loginUser, logOut, logOutAllUnits } from "../middleware/jwtAuthenticate";
 
 const router = express.Router()
 
@@ -47,7 +47,9 @@ if(process.env.IS_DEV_ENV) {
     })
 }
 
-router.post("/logout", logOut)
+router.post("/logout", AuthenticateUser(), logOut)
+
+router.post("/logout-all-units", AuthenticateUser(), logOutAllUnits )
 
 router.get("/userMetaData",
     AuthenticateUser({failureRedirect: "/api/userMetaDataFailure"}),

@@ -8,6 +8,7 @@ import { hasGroupAccess } from "common/utils";
 interface AuthContextType{
 	user: User | null
     signOut: () => Promise<boolean>;
+    signOutAllUnits: () => Promise<boolean>;
 }
 
 export const AuthContext = React.createContext<AuthContextType>(null!);
@@ -20,23 +21,19 @@ export function AuthProvider({ children }: {children: React.ReactNode} ){
     
     let [user, setUser] = useState<User | null>(null)     // TODO: Persist log in between refreshes
     
-    // Define logout logic
-    let signOut = async (): Promise<boolean> => {
-        let response;
-        try {
-            response = await fetch("/api/logout", {
-                method: "POST"
-            })
-        }
-        catch {
-            return false
-        }
+    const signOutRequest = async (url: string): Promise<boolean> => {
+        const response = await fetch(url, { method: "POST" })
+        console.log(response)
         if (!response.ok){
             return false
         }
         setUser(null)
         return true;
     }
+
+    // Define logout logic
+    const signOut = async (): Promise<boolean> => await signOutRequest("/api/logout")
+    const signOutAllUnits = async (): Promise<boolean> => await signOutRequest("/api/logout-all-units")
 
     // Fetch user data on initial load
     const { status } = useQuery(["GetUserMetaData"], 
@@ -66,7 +63,7 @@ export function AuthProvider({ children }: {children: React.ReactNode} ){
         return <></>
     }
 
-    let contextValue = {user, signOut}
+    let contextValue = {user, signOut, signOutAllUnits}
     return (  
         <AuthContext.Provider value={contextValue}>
             {children}

@@ -11,6 +11,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/Authentication';
 
 import { getFullName } from 'common/utils';
+import { Divider } from '@mui/material';
 
 
 export default function UserAvatar() {
@@ -21,6 +22,15 @@ export default function UserAvatar() {
         let success = await auth.signOut();
         if(success) {
             navigate("/") 
+        }
+    }
+
+    const onSignOutAllClick = async () => {
+        if(window.confirm("Du vil bli logget ut av alle enheter innen 15 minutter")){ 
+            const success = await auth.signOutAllUnits()
+            if(success) {
+                navigate("/") 
+            }
         }
     }
 
@@ -45,6 +55,10 @@ export default function UserAvatar() {
         >
             <MenuItem onClick={onSignOutClick}>
                 Logg ut
+            </MenuItem>
+            <Divider/>
+            <MenuItem onClick={onSignOutAllClick} >
+                Logg ut alle enheter
             </MenuItem>
         </Menu>
         </>

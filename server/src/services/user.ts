@@ -104,6 +104,17 @@ export function removeLoginToken(loginToken: string){
     db.close()
 }
 
+export function removeAllLoginTokens(user: AccessTokenData){
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(
+        `DELETE FROM
+            login_token
+        WHERE user_id = ?`
+    )
+    const info = stmt.run(user.userId)
+    db.close()    
+}
+
 export function getUserData(userToken: AccessTokenData): User {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
