@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motstanden</title>
+    <style>
+        #root {
+            margin: min(4vw, 30px);
+            border: 1.5px solid #196E45;
+            max-width: 700px;
+            padding-top: min(2em, 30px);
+            padding-bottom: min(2em, 30px);
+            padding-left: min(4vw, 30px);
+            padding-right: min(4vw, 30px);
+            text-align: center;
+            font-family:arial,helvetica,sans-serif;
+            background-color: white;
+        }
+
+        #verification-code-label {
+            font-size: 9pt;
+        }
+
+        #verification-code {
+            font-size: 14pt;
+            margin-bottom: 1em;
+        }
+
+        #main-text {
+            font-size: 14pt;
+            color: black;
+        }
+
+        #main-text b {
+            color: #196E45;
+        }
+
+        #button-link-container {
+            margin-top: 2.75em;
+            margin-bottom: 2.75em;
+        }
+
+        #button-link {
+            background-color: #196E45;
+            text-decoration: none;
+            color: white;
+            font-size: 14pt;
+            padding: 0.5em;
+            padding-inline: 1.25em;
+            border-radius: 0.25em;
+        }
+
+        #final-quote {
+            margin-bottom: 1.5em;
+            color: black;
+        }
+
+        #time-stamp {
+            font-size: 9pt;
+        }
+    </style>
+</head>
+<div id="root">
+    <div id="verification-code-label"><i>Verifiseringskode</i></div>
+    <div id="verification-code" >${verificationcode}</div>
+    <div id="main-text">Klikk på knappen for å logge inn <b>på denne enheten</b></div>
+
+    <div id="button-link-container">
+        <a id="button-link" href="${magiclink}">
+            LOGG INN
+        </a>
+    </div>
+    <div id="final-quote"><i>I en sluttet krets..!</i></div>
+    <div id="time-stamp"><i> Sendt ut: ${timestamp}</i></div>
+</div>
+</html>

@@ -6,6 +6,8 @@ import { Request } from 'express';
 import { Strategy as JWTStrategy } from 'passport-jwt';
 import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload";
 import * as user from "../services/user.js";
+import path from "path";
+import fs from "fs/promises";
 
 // Ensure .env is loaded
 dotenv.config()
@@ -34,14 +36,29 @@ const DomainUrl = process.env.IS_DEV_ENV === 'true' ? 'http://localhost:3000' : 
 
 export const MagicLinkCallbackPath = "/auth/magic_login/callback"
 
-async function onSendMagicLinkRequest(email: string, href: string): Promise<void> {
+async function onSendMagicLinkRequest(email: string, href: string, code: string): Promise<void> {
+    const htmlStr = await createMagicLinkHtml(email, href, code)
     await Mail.transporter.sendMail({
-        from: Mail.InfoMail,
+        from: {
+            name: "Motstanden",
+            address: Mail.InfoMail
+        },
         to: email,
         subject: "Logg inn på Motstanden",
-        text: `Klikk på denne linken for å logge deg inn på Motstanden.no på denne enheten: ${DomainUrl}/${href}`
+        html: htmlStr
     })
-    console.log("Mail sent")
+}
+
+async function createMagicLinkHtml(email: string, href: string, code: string) {
+    
+    const filePath = path.join(__dirname, "..", "..", "assets", "mail-templates", "MagicLink.html")
+    const html = await fs.readFile(filePath, "utf-8")
+    
+    const date = new Date().toLocaleString("no-no", { timeZone: "cet"})
+
+    return html.replace("${magiclink}", `${DomainUrl}/${href}`)
+               .replace("${verificationcode}", code)
+               .replace("${timestamp}", `${date}` )
 }
 
 function onVerifyLinkClick(
@@ -57,7 +74,7 @@ function onVerifyLinkClick(
 
 export const magicLogin = new MagicLoginStrategy({
     secret: process.env.ACCESS_TOKEN_SECRET,
-    callbackUrl: `api/${MagicLinkCallbackPath}`,
+    callbackUrl: `api${MagicLinkCallbackPath}`,
     sendMagicLink: onSendMagicLinkRequest,
     verify: onVerifyLinkClick,     
 })
