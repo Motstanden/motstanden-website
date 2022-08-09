@@ -5,6 +5,7 @@ import { fetchAsync } from "../../utils/fetchAsync"
 import { NewQuoteForm } from "./NewQuoteForm"
 import Divider from "@mui/material/Divider"
 import { useTitle } from "../../hooks/useTitle"
+import { Quote as QuoteData } from "common/interfaces"
 
 export default function Quotes(){
     useTitle("Sitater")
@@ -68,10 +69,4 @@ function QuoteItem( {quoteData}: {quoteData: QuoteData}){
 function NewlineText({ text }: {text: string}) {
     const newText = text.split('\n').map( (str, i) => <p key={i} style={{margin: 0}}>{str}</p>);
     return <span>{newText}</span>
-}
-
-interface QuoteData {
-    id: string,
-    utterer: string,
-    quote: string,
 }
