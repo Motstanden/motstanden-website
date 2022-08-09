@@ -4,25 +4,34 @@ import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "../config/dat
 import passport from "passport";
 import { stringIsNullOrWhiteSpace } from "../utils/stringUtils.js";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
+import * as quoteService from "../services/quotes"
 
 let router = express.Router()
 
 router.get("/quotes", 
     AuthenticateUser(),
+    (req, res) => res.send(quoteService.getQuotes())
+)
+
+router.get("/quotes-of-the-day",
+    AuthenticateUser(),
     (req, res) => {
-        const db = new Database(motstandenDB, dbReadOnlyConfig)
-        const stmt = db.prepare(`
-        SELECT 
-            quote_id as id, 
-            utterer, 
-            quote 
-        FROM 
-            quote 
-        ORDER BY quote_id DESC`)
-        const quotes = stmt.all();
-        res.send(quotes);
-        db.close();
-})
+        const limit = 100 
+        const quotes = quoteService.getQuotes(limit)
+        const i = dailyRandomInt(limit)
+        const mod = Math.min(limit, quotes.length)
+        res.send([
+            quotes[i % mod],
+            quotes[(i + 1) % mod],
+            quotes[(i + 2) % mod]
+        ])
+    })
+
+function dailyRandomInt(max: number){
+    const date = new Date()
+    const unlikelyPrimes = 293391909323 // = 71 * 73 * 79 * 83 * 89 * 97 
+    return date.getFullYear() * date.getMonth() * date.getDate() * unlikelyPrimes % max
+}
 
 router.post("/insert_quote",    
     AuthenticateUser(),

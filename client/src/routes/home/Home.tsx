@@ -35,7 +35,7 @@ function QuoteOfTheDay(){
 }
 
 function QuoteLoader(){
-    const {isLoading, isError, data, error} = useQuery<Quote[]>(["FetchQuoteOfTheDay"], () => fetchAsync<Quote[]>("/quotes-of-the-day") )
+    const {isLoading, isError, data, error} = useQuery<Quote[]>(["FetchQuoteOfTheDay"], () => fetchAsync<Quote[]>("/api/quotes-of-the-day") )
     
     if (isLoading) {
         return <div style={{minHeight: "100px"}}/>
