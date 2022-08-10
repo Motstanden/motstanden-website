@@ -11,7 +11,8 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/Authentication';
 
 import { getFullName } from 'common/utils';
-import { Divider } from '@mui/material';
+import { Divider, Link } from '@mui/material';
+import ListItemLink from './ListItemLink';
 
 
 export default function UserAvatar() {
@@ -53,6 +54,14 @@ export default function UserAvatar() {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         >
+            <MenuItem 
+                component={RouterLink} 
+                to={`/medlem/${user.userId}`} 
+                onClick={() => setIsOpen(false)}
+            >
+                Profil
+            </MenuItem>
+            <Divider/>
             <MenuItem onClick={onSignOutClick}>
                 Logg ut
             </MenuItem>

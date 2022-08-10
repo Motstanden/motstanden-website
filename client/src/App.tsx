@@ -22,6 +22,7 @@ import { UserListPage } from './routes/user/UserList';
 import { NewUserPage } from './routes/user/NewUser';
 import { EditUserPage } from './routes/user/EditUser';
 import { UserContext } from './routes/user/UserContext';
+import { UserPage } from './routes/user/UserPage';
 
 function App() {
 
@@ -52,6 +53,7 @@ function App() {
 						<Route path="/medlem" element={<UserContext/>}>
 							<Route path="" element={<Navigate to="liste"/>}/>
 							<Route path="liste" element={<UserListPage/>}/>
+							<Route path=":userId" element={<UserPage/>}/>
 							<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator}/>}>
 								<Route path="ny" element={<NewUserPage/>}/>
 							</Route>

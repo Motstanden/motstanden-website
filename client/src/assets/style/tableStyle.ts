@@ -18,12 +18,20 @@ export const rowStyle = {
     },
 }
 
+export const noVisitedLinkStyle = {
+    color: "secondary.main",
+    "&:hover": {
+        color: "secondary.light"
+    },    
+}
+
 export const linkStyle = {
+    // ...noVisitedLinkStyle,
     color: "secondary.light",
-    "&:visited": {
-        color: "secondary.dark"
-    },
     "&:hover": {
         color: "secondary.main"
+    },  
+    "&:visited": {
+        color: "secondary.dark"
     },
 }

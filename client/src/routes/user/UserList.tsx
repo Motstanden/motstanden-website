@@ -5,7 +5,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
+import { headerStyle, noVisitedLinkStyle, rowStyle } from 'src/assets/style/tableStyle';
 
 import { User } from "common/interfaces";
 import { getFullName, userRankToPrettyStr, userGroupToPrettyStr } from "common/utils";
@@ -16,6 +16,8 @@ import Grid from '@mui/material/Grid';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { useOutletContext } from 'react-router-dom';
+import Link from '@mui/material/Link';
+import { Link as RouterLink } from "react-router-dom"
 
 export function UserListPage() {
 
@@ -117,7 +119,14 @@ function UserTable({
                     { users.map( (user) => (
                         <TableRow sx={rowStyle} key={user.email}>
                             <TableCell sx={nameSx}>
-                                {getFullName(user)}
+                                <Link 
+                                    component={RouterLink}
+                                    to={`/medlem/${user.userId}`}
+                                    underline="hover"
+                                    sx={noVisitedLinkStyle}
+                                    >
+                                    {getFullName(user)}
+                                </Link>
                             </TableCell>
                             <TableCell sx={rankSx}>
                                 {userRankToPrettyStr(user.rank)}
