@@ -53,6 +53,19 @@ VALUES
     (1, "Høst"),
     (2, "Vår");
 
+CREATE TABLE user_status(
+    user_status_id INTEGER PRIMARY KEY NOT NULL,
+    status TEXT UNIQUE NOT NULL
+);
+
+INSERT INTO
+    user_status(user_status_id, status)
+VALUES
+    (1, "Aktiv"),
+    (3, "Veteran"),
+    (2, "Pensjonist"),
+    (4, "Inaktiv");
+
 CREATE TABLE user (
     user_id INTEGER PRIMARY KEY NOT NULL,
     user_group_id INTEGER NOT NULL DEFAULT 1,
@@ -63,6 +76,7 @@ CREATE TABLE user (
     last_name TEXT NOT NULL,
     cape_name TEXT NOT NULL DEFAULT "",
     phone_number INTEGER CHECK(phone_number >= 10000000 AND phone_number <= 99999999), -- Ensure number has 8 digits
+    user_status_id INTEGER NOT NULL DEFAULT 1,
     start_semester_name_id INTEGER NOT NULL,
     start_year INTEGER NOT NULL CHECK(start_year >= 2018),
     end_semester_name_id INTEGER 
@@ -76,6 +90,10 @@ CREATE TABLE user (
          ON DELETE RESTRICT,
     FOREIGN KEY (user_rank_id)
         REFERENCES user_rank (user_rank_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    FOREIGN KEY (user_status_id)
+        REFERENCES user_status (user_status_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT,
     FOREIGN KEY (start_semester_name_id)
@@ -103,6 +121,7 @@ SELECT
     cape_name,
     profile_picture,
     phone_number,
+    user_status.status as user_status,
     start_semester.name as start_semester,
     start_year,
 	end_semester.name as end_semester,
@@ -112,6 +131,7 @@ FROM
     user
 LEFT JOIN user_group USING (user_group_id)
 LEFT JOIN user_rank USING (user_rank_id)
+LEFT JOIN user_status USING (user_status_id)
 LEFT JOIN semester_name start_semester ON 
     start_semester.semester_name_id = user.start_semester_name_id
 LEFT JOIN semester_name end_semester ON 
