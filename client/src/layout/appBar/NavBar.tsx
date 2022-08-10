@@ -3,6 +3,7 @@ import { useAuth } from '../../context/Authentication';
 
 // Material UI 
 import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Link from '@mui/material/Link';
@@ -18,22 +19,21 @@ import { hasGroupAccess } from 'common/utils';
 import { UserGroup } from 'common/enums';
 
 
-export function NavBar( { useMinimalSpacing }: {useMinimalSpacing?: boolean} ){
+export function NavBar(){
     let auth = useAuth()
     return auth.user 
-        ? <PrivateNavBar useMinimalSpacing={useMinimalSpacing}/> 
+        ? <PrivateNavBar/> 
         : <PublicNavBar/>
 }
 
-function PrivateNavBar({ useMinimalSpacing }: {useMinimalSpacing?: boolean} ){
-    const stackSpacing = useMinimalSpacing ? {sm: 1, md: 2, lg: 4} : {sm: 1, md: 3, lg: 4}
+function PrivateNavBar(){
     return (
         <Stack 
             component="nav"
             direction="row"
             alignItems="center"
             justifyContent="space-between"
-            spacing={stackSpacing}
+            spacing={{sm: 1, md: 2, lg: 4}}
             >
             <NavLink text="Hjem" to="/hjem"/>
             <NavLink text="Notearkiv" to="/notearkiv"/>
@@ -44,8 +44,10 @@ function PrivateNavBar({ useMinimalSpacing }: {useMinimalSpacing?: boolean} ){
             <NavDropDown text="Om oss">
                 <List component="nav" disablePadding sx={{minWidth: 200}}>
                     <ListItemLink text="Framside" to="/"/>
+                    <Divider/>
                     <ListItemLink text="Bli Medlem" to="/bli-medlem" />
                     {/* <ListItemLink text="FAQ" to="/faq" disabled /> */}
+                    <Divider/>
                     <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/"/>
                 </List>
             </NavDropDown>
@@ -65,8 +67,10 @@ function PublicNavBar(){
             <NavDropDown text="Om oss" sx={{mr: -2}}>
                 <List component="nav" disablePadding sx={{minWidth: 200}}>
                     <ListItemLink text="Framside" to="/"/>
+                    <Divider/>
                     <ListItemLink text="Bli Medlem" to="/bli-medlem" />
                     {/* <ListItemLink text="FAQ" to="/faq" disabled /> */}
+                    <Divider/>
                     <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/"/>
                 </List>
             </NavDropDown>
@@ -83,25 +87,17 @@ function AdminDropDown() {
             <NavDropDown text="Medlem" sx={{pr: 0}}>
                 <List component="nav" disablePadding sx={{minWidth: 200}}>
                     <ListItemLink text="Ny" to="/medlem/ny"/>
-                    <ListItemLink text="Rediger" to="/medlem/rediger"/>
+                    <Divider/>
                     <ListItemLink text="Liste" to="/medlem/liste"/>
                 </List>
             </NavDropDown>
         )
     }
 
-    if(hasGroupAccess(user, UserGroup.Administrator)) {
-        return (
-            <NavDropDown text="Medlem">
-                <List component="nav" disablePadding sx={{minWidth: 200}}>
-                    <ListItemLink text="Rediger" to="/medlem/rediger"/>
-                    <ListItemLink text="Liste" to="/medlem/liste"/>
-                </List>
-            </NavDropDown>
-        )
-    }
+    return ( 
+        <NavLink text="Medlemmer" to="/medlem/liste"/>
+    )
 
-    return <></>
 }
 
 export function NavLink( { to, text, sx }: { to: string, text: string, sx?: SxProps}) {

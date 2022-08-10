@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Routes, Route, Link, Outlet, useParams, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, Link, Outlet, useParams, useLocation, useNavigate, Navigate } from "react-router-dom";
 import { RequireAuthRouter }  from "./context/Authentication"
 
 // URL routes
@@ -48,18 +48,17 @@ function App() {
 							<Route path=":title" element={<InstrumentListPage/>}/>
 						</Route>
 						<Route path="/sitater" element={<Quotes/>}/>
-					</Route>
-
-					<Route element={<RequireAuthRouter requiredGroup={UserGroup.Administrator}/>}>
-						<Route path="/admin" element={<AdminPage/>}/>
 						<Route path="/medlem">
-							<Route path="" element={<NotFound/>}/>
+							<Route path="" element={<Navigate to="liste"/>}/>
 							<Route path="liste" element={<UserListPage/>}/>
-							<Route path="rediger" element={<EditUserPage/>}/>
 							<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator}/>}>
 								<Route path="ny" element={<NewUserPage/>}/>
 							</Route>
 						</Route>
+					</Route>
+
+					<Route element={<RequireAuthRouter requiredGroup={UserGroup.Administrator}/>}>
+						<Route path="/admin" element={<AdminPage/>}/>
 					</Route>
 
 					<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator}/>}>

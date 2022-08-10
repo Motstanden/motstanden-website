@@ -32,10 +32,6 @@ export default function ResponsiveAppBar(){
 };
 
 function DesktopToolbar({ display }: {display: any }){ // TODO: Find the correct type for display
-    const auth = useAuth();
-    const isTightFit = (auth?.user && hasGroupAccess(auth.user, UserGroup.Administrator)) as boolean
-    const stackSpacing = isTightFit ? {sm: 0, md: 0, lg: 6} : {sm: 0, md: 2, lg: 6}
-    const headerVisibility = isTightFit ? {md: "none", lg: "inline"} : {xs: "inline"}
     return ( 
         <Stack 
             display={display}
@@ -47,11 +43,11 @@ function DesktopToolbar({ display }: {display: any }){ // TODO: Find the correct
             <Stack 
                 direction="row"
                 alignItems="center"
-                spacing={stackSpacing}>
-                <Box display={headerVisibility} >
+                spacing={{sm: 0, md: 0, lg: 6}}>
+                <Box display={{md: "none", lg: "inline"}} >
                     <HeaderTitle variant='h5' />
                 </Box>
-                <NavBar useMinimalSpacing={isTightFit}/>
+                <NavBar/>
             </Stack>
             <Stack 
                 direction="row" 

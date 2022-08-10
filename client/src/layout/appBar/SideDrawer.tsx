@@ -90,7 +90,7 @@ function PrivateContent(props: SideDrawerContentProps) {
             <ListItemLink text="Sitater" to="/sitater" onLinkClick={onRequestedExit}/>
             <ListItemLink text="Studenttraller" to="/studenttraller" onLinkClick={onRequestedExit}/>
             <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit}/>
-            <MemberList/>
+            <MemberList onLinkClick={onRequestedExit} />
             <ListItemExpander text="Om oss">
                 <ListItemLink text="Framside" to="/" onLinkClick={onRequestedExit}/>
                 <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onRequestedExit}/>
@@ -102,29 +102,21 @@ function PrivateContent(props: SideDrawerContentProps) {
     )
 }
 
-function MemberList() {
+function MemberList( {onLinkClick} : {onLinkClick?: VoidFunction}) {
     const user = useAuth().user!
 
     if(hasGroupAccess(user, UserGroup.SuperAdministrator)) {
         return (
             <ListItemExpander text="Medlem">
-                <ListItemLink text="Ny" to="/medlem/ny"/>
-                <ListItemLink text="Rediger" to="/medlem/rediger"/>
-                <ListItemLink text="Liste" to="/medlem/liste"/>
+                <ListItemLink text="Ny" to="/medlem/ny" onLinkClick={onLinkClick}/>
+                <ListItemLink text="Liste" to="/medlem/liste" onLinkClick={onLinkClick}/>
             </ListItemExpander>
         )
     }
 
-    if(hasGroupAccess(user, UserGroup.Administrator)) {
-        return (
-            <ListItemExpander text="Medlem">
-                <ListItemLink text="Rediger" to="/medlem/rediger"/>
-                <ListItemLink text="Liste" to="/medlem/liste"/>
-            </ListItemExpander>
-        )
-    }
-
-    return <></>
+    return (
+        <ListItemLink text="Medlemmer" to="/medlem/liste" onLinkClick={onLinkClick}/>
+    )
 }
 
 function ListItemHeader(){

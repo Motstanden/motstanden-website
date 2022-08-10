@@ -7,7 +7,7 @@ import * as userService from "../services/user"
 
 const router = express.Router()
 
-router.get("/member-list", requiresGroup(UserGroup.Administrator), (req: Request, res: Response) => {
+router.get("/member-list", (req: Request, res: Response) => {
     const users = userService.getAllUsers()
     res.send(users)
 })

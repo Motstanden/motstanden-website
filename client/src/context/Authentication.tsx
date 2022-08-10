@@ -23,7 +23,6 @@ export function AuthProvider({ children }: {children: React.ReactNode} ){
     
     const signOutRequest = async (url: string): Promise<boolean> => {
         const response = await fetch(url, { method: "POST" })
-        console.log(response)
         if (!response.ok){
             return false
         }
