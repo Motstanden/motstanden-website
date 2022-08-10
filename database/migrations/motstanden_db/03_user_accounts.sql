@@ -76,6 +76,7 @@ CREATE TABLE user (
     last_name TEXT NOT NULL,
     cape_name TEXT NOT NULL DEFAULT "",
     phone_number INTEGER CHECK(phone_number >= 10000000 AND phone_number <= 99999999), -- Ensure number has 8 digits
+    birth_date TEXT NULL CHECK(birth_date IS date(birth_date, '+0 days')),              -- Check that format is 'YYYY-MM-DD'
     user_status_id INTEGER NOT NULL DEFAULT 1,
     start_semester_name_id INTEGER NOT NULL,
     start_year INTEGER NOT NULL CHECK(start_year >= 2018),
@@ -106,6 +107,8 @@ CREATE TABLE user (
         ON DELETE RESTRICT
 );
 
+-- TODO: Create user 
+
 CREATE VIEW vw_user 
 AS
 SELECT
@@ -121,6 +124,7 @@ SELECT
     cape_name,
     profile_picture,
     phone_number,
+    birth_date,
     user_status.status as user_status,
     start_semester.name as start_semester,
     start_year,
@@ -148,7 +152,6 @@ CREATE TABLE login_token (
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
-
 
 INSERT INTO 
     user(user_id, user_group_id, user_rank_id, email, first_name, middle_name, last_name, start_semester_name_id, start_year)
