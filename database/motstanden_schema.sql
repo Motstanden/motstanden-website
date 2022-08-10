@@ -47,8 +47,8 @@ CREATE TABLE user (
     middle_name TEXT NOT NULL DEFAULT "",
     last_name TEXT NOT NULL,
     cape_name TEXT NOT NULL DEFAULT "",
-    phone_number INTEGER CHECK(phone_number >= 10000000 AND phone_number <= 99999999), -- Ensure number has 8 digits
-    birth_date TEXT NULL CHECK(birth_date IS date(birth_date, '+0 days')),              -- Check that format is 'YYYY-MM-DD'
+    phone_number INTEGER DEFAULT NULL CHECK(phone_number >= 10000000 AND phone_number <= 99999999), -- Ensure number has 8 digits
+    birth_date TEXT DEFAULT NULL CHECK(birth_date IS date(birth_date, '+0 days')),              -- Check that format is 'YYYY-MM-DD'
     user_status_id INTEGER NOT NULL DEFAULT 1,
     start_semester_name_id INTEGER NOT NULL,
     start_year INTEGER NOT NULL CHECK(start_year >= 2018),
@@ -57,6 +57,7 @@ CREATE TABLE user (
     end_year INTEGER CHECK( end_year >= 2018 AND end_year >= start_year),
     profile_picture TEXT NOT NULL CHECK(like('files/private/profilbilder/%_._%', profile_picture)) DEFAULT "files/private/profilbilder/boy.png",
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_group_id)
          REFERENCES user_group (user_group_id)
          ON UPDATE CASCADE
@@ -78,6 +79,12 @@ CREATE TABLE user (
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
+CREATE TRIGGER trig_user_updated_at
+    AFTER UPDATE ON user FOR EACH ROW
+BEGIN
+    UPDATE user SET updated_at = current_timestamp
+        WHERE user_id = old.user_id;
+END;
 CREATE VIEW vw_user 
 AS
 SELECT
@@ -99,7 +106,8 @@ SELECT
     start_year,
 	end_semester.name as end_semester,
     end_year,
-    created_at
+    created_at,
+    updated_at
 FROM
     user
 LEFT JOIN user_group USING (user_group_id)
@@ -109,7 +117,7 @@ LEFT JOIN semester_name start_semester ON
     start_semester.semester_name_id = user.start_semester_name_id
 LEFT JOIN semester_name end_semester ON 
     end_semester.semester_name_id = user.end_semester_name_id
-/* vw_user(user_id,user_group_id,user_group,user_rank_id,user_rank,email,first_name,middle_name,last_name,cape_name,profile_picture,phone_number,birth_date,user_status,start_semester,start_year,end_semester,end_year,created_at) */;
+/* vw_user(user_id,user_group_id,user_group,user_rank_id,user_rank,email,first_name,middle_name,last_name,cape_name,profile_picture,phone_number,birth_date,user_status,start_semester,start_year,end_semester,end_year,created_at,updated_at) */;
 CREATE TABLE login_token (
     token_id INTEGER PRIMARY KEY NOT NULL,
     user_id INTEGER NOT NULL,
