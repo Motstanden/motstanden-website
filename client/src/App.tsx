@@ -21,6 +21,7 @@ import { SuperAdminPage } from './routes/admin/SuperAdmin';
 import { UserListPage } from './routes/user/UserList';
 import { NewUserPage } from './routes/user/NewUser';
 import { EditUserPage } from './routes/user/EditUser';
+import { UserContext } from './routes/user/UserContext';
 
 function App() {
 
@@ -48,7 +49,7 @@ function App() {
 							<Route path=":title" element={<InstrumentListPage/>}/>
 						</Route>
 						<Route path="/sitater" element={<Quotes/>}/>
-						<Route path="/medlem">
+						<Route path="/medlem" element={<UserContext/>}>
 							<Route path="" element={<Navigate to="liste"/>}/>
 							<Route path="liste" element={<UserListPage/>}/>
 							<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator}/>}>

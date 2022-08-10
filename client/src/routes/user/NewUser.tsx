@@ -17,19 +17,17 @@ import Checkbox from '@mui/material/Checkbox';
 
 export function NewUserPage () {
     return (
-        <PageContainer>
-            <Paper elevation={6} 
-                sx={{
-                    px: 3, 
-                    py: 1, 
-                    maxWidth: "600px", 
-                    marginInline: "auto",
-                    marginTop: "20px"
-                }}>
-                <h1>Ny bruker</h1>
-                <NewUserForm/>
-            </Paper>
-        </PageContainer>
+        <Paper elevation={6} 
+            sx={{
+                px: 3, 
+                py: 1, 
+                maxWidth: "600px", 
+                marginInline: "auto",
+                marginTop: "20px"
+            }}>
+            <h1>Ny bruker</h1>
+            <NewUserForm/>
+        </Paper>
     )
 }
 

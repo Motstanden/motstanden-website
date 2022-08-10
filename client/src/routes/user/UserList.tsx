@@ -7,16 +7,15 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
 
-import { useQuery } from "@tanstack/react-query";
 import { User } from "common/interfaces";
 import { getFullName, userRankToPrettyStr, userGroupToPrettyStr } from "common/utils";
 import { PageContainer } from "src/layout/PageContainer";
-import { fetchAsync } from "src/utils/fetchAsync";
 import Divider from '@mui/material/Divider';
 import { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import { useOutletContext } from 'react-router-dom';
 
 export function UserListPage() {
 
@@ -26,21 +25,13 @@ export function UserListPage() {
     const [showRole, setShowRole] = useState(false)
     const [showBoard, setShowBoard] = useState(false)
 
-    const {isLoading, isError, data, error} = useQuery<User[]>(["FetchAllUsers"], () => fetchAsync<User[]>("/api/member-list") )
-    
-    if (isLoading) {
-        return <PageContainer><div/></PageContainer>
-    }
-    
-    if (isError) {
-        return <PageContainer><span>{`${error}`}</span></PageContainer>
-    }    
+    const data = useOutletContext<User[]>()
     
     const actualUsers = data.filter( user => !isMotstandenMail(user.email))
     const boardUsers = data.filter( user => isMotstandenMail(user.email))
 
     return (
-        <PageContainer>
+        <>
             <h1>Medlemsliste</h1>
             <Paper sx={{
                 mb: 4, 
@@ -77,7 +68,7 @@ export function UserListPage() {
                     />
                 </>
             )}
-        </PageContainer>
+        </>
     )
 }
 
