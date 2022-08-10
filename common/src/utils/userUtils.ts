@@ -4,8 +4,9 @@ import { UserGroup, UserRank } from "../enums/index";
 export function userGroupToNum(group: UserGroup): number {
     switch(group) {
         case UserGroup.Contributor: return 1
-        case UserGroup.Administrator: return 2
-        case UserGroup.SuperAdministrator: return 3
+        case UserGroup.Editor: return 2
+        case UserGroup.Administrator: return 3
+        case UserGroup.SuperAdministrator: return 4
         default: throw "Invalid case"
     }
 }
@@ -40,6 +41,7 @@ export function userRankToPrettyStr(rank: UserRank): string {
 export function userGroupToPrettyStr(group: UserGroup): string {
     switch(group) {
         case UserGroup.Contributor: return "-"
+        case UserGroup.Editor: return "Redaktør"
         case UserGroup.Administrator: return "Admin"
         case UserGroup.SuperAdministrator: return "Super admin"
         default: return "Ukjent"

@@ -21,8 +21,9 @@ INSERT INTO
     user_group(user_group_id, name)
 VALUES
     (1, "contributor"),
-    (2, "administrator"),
-    (3, "super administrator");
+    (2, "editor"),
+    (3, "administrator"),
+    (4, "super administrator");
 
 
 CREATE TABLE user_rank (
@@ -96,8 +97,8 @@ CREATE TABLE login_token (
 INSERT INTO 
     user(user_id, user_group_id, user_rank_id, email, first_name, middle_name, last_name)
 VALUES
-    (1, 3, 4, 'web@motstanden.no',      "Web",      "", ""),
-    (2, 2, 5, 'leder@motstanden.no',   "Leder",     "", ""),
-    (3, 2, 4, 'okonomi@motstanden.no',  "Okonomi",  "", ""),
-    (4, 2, 4, 'dirigent@motstanden.no', "Dirigent", "", ""),
-    (5, 2, 4, 'pr@motstanden.no',       "PR",       "", "");
+    (1, 4, 4, 'web@motstanden.no',      "Web",      "", ""),
+    (2, 3, 5, 'leder@motstanden.no',   "Leder",     "", ""),
+    (3, 3, 4, 'okonomi@motstanden.no',  "Okonomi",  "", ""),
+    (4, 3, 4, 'dirigent@motstanden.no', "Dirigent", "", ""),
+    (5, 3, 4, 'pr@motstanden.no',       "PR",       "", "");
