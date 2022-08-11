@@ -14,6 +14,7 @@ import FormControl from '@mui/material/FormControl';
 import { userGroupToPrettyStr, userRankToPrettyStr } from 'common/utils';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
+import Divider from '@mui/material/Divider';
 
 export function NewUserPage () {
     return (
@@ -39,7 +40,7 @@ function NewUserForm() {
     const [email, setEmail] = useState("")
     const [userRank, setUserRank] = useState<UserRank>(UserRank.ShortCircuit)
     const [userGroup, setUserGroup] = useState<UserGroup>(UserGroup.Contributor)
-    const [profilePicture, setProfilePicture] = useState("files/private/profilbilder/boy.png")
+    const [profilePicture, setProfilePicture] = useState(profilePictureTVPair[0].value)
     const [isInfoOk, setIsInfoOk] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -85,7 +86,7 @@ function NewUserForm() {
     }
 
     const isNtnuMail = email.trim().toLowerCase().endsWith("ntnu.no")
-    return (
+    return (    
         <form onSubmit={onSubmit}>
             <FormControl fullWidth>
                 <TextField
@@ -130,30 +131,33 @@ function NewUserForm() {
                     select
                     label="Rang"
                     name="userRank"
+                    required
                     value={userRank}
                     onChange={ (e) => setUserRank(e.target.value as UserRank)} 
                     >
-                    { userRankValues.map( item => (<MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>))}
+                    { rankTVPair.map( item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
                 </TextField>
                 <br/>
                 <TextField
                     select
                     label="Rolle"
                     name="userGroup"
+                    required
                     value={userGroup}
                     onChange={ e => setUserGroup(e.target.value as UserGroup)} 
                     >
-                    { userGroupValues.map( item => (<MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>))}
+                    { groupTVPair.map( item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
                 </TextField>
                 <br/>
                 <TextField 
                     select
                     label="Profilbilde"
+                    required
                     name="profilePicture"
                     value={profilePicture}
                     onChange={ e => setProfilePicture(e.target.value)}
                 >
-                    { profilePictures.map( item => (<MenuItem key={item.url} value={item.url}>{item.name}</MenuItem>))}
+                    { profilePictureTVPair.map( item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
                 </TextField>
                 <br/>
                 <br/>
@@ -189,23 +193,35 @@ function NewUserForm() {
     )
 }
 
-const userRankValues = Object.keys(UserRank).map( (rankStr: string) => { 
-    const rank = UserRank[rankStr as keyof typeof UserRank]
-    return {value: rank, name: userRankToPrettyStr(rank) }
-})
 
-const userGroupValues = Object.keys(UserGroup).map( (groupStr: string) => { 
-    const group = UserGroup[groupStr as keyof typeof UserGroup]
-    return {value: group, name: userGroupToPrettyStr(group) }
-})
 
-const profilePictures = [
+
+const rankTVPair            = enumToTextValuePair<UserRank> (UserRank,  rank => userRankToPrettyStr(rank))
+const groupTVPair           = enumToTextValuePair<UserGroup>(UserGroup, group => userGroupToPrettyStr(group))
+const profilePictureTVPair:  TextValuePair<string>[] = [ 
     {
-        name: "Gutt",
-        url: "files/private/profilbilder/boy.png" 
-    },
-    {
-        name: "Jente",
-        url: "files/private/profilbilder/girl.png" 
-    }
-]
+        text: "Gutt",
+        value: "files/private/profilbilder/boy.png" 
+    }, {
+        text: "Jente",
+        value: "files/private/profilbilder/girl.png" 
+    } 
+] 
+
+function enumToTextValuePair<T>(
+    enumObj: {}, 
+    toStrCallback: (enumItem: T) => string) : TextValuePair<T>[] 
+{   
+    return Object.keys(enumObj).map( (itemStr) => {
+        const item = enumObj[itemStr as keyof typeof enumObj] as T
+        return {
+            value: item, 
+            text: toStrCallback(item)} as TextValuePair<T>
+        }
+    )
+}
+
+type TextValuePair<T> = {
+    text: string,
+    value: T
+}
