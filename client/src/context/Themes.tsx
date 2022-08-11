@@ -1,6 +1,10 @@
 import React, { useState, createContext, useContext } from 'react';
 import { ThemeProvider, createTheme, Theme } from '@mui/material/styles';
 
+// This must be imported here to provide styling for date pickers. 
+// See documentation: https://mui.com/x/react-date-pickers/getting-started/
+import type {} from '@mui/x-date-pickers/themeAugmentation';
+
 
 export enum ThemeName {
     Dark = "dark",

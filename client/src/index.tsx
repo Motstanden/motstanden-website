@@ -11,6 +11,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import CssBaseline from '@mui/material/CssBaseline';
 import { AppThemeProvider } from './context/Themes';
+import { LocaleProvider } from './context/Locale';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
@@ -22,14 +23,16 @@ root.render(
 	<React.StrictMode>
 		<QueryClientProvider client={queryClient}>
 			<BrowserRouter>
-				<AuthProvider>
-					<AppThemeProvider>
-						{/* Provides reasonable default css values from the material-ui framework */}
-						<CssBaseline/>
+				<LocaleProvider>
+					<AuthProvider>
+						<AppThemeProvider>
+							{/* Provides reasonable default css values from the material-ui framework */}
+							<CssBaseline/>
 
-						<App />
-					</AppThemeProvider>
-				</AuthProvider>
+							<App />
+						</AppThemeProvider>
+					</AuthProvider>
+				</LocaleProvider>
 			</BrowserRouter>
 			<ReactQueryDevtools/>
 		</QueryClientProvider>

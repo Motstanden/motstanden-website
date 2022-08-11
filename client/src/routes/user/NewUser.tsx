@@ -15,6 +15,8 @@ import { userGroupToPrettyStr, userRankToPrettyStr } from 'common/utils';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs, { Dayjs } from 'dayjs';
 
 export function NewUserPage () {
     return (
@@ -43,6 +45,9 @@ function NewUserForm() {
     const [profilePicture, setProfilePicture] = useState(profilePictureTVPair[0].value)
     const [isInfoOk, setIsInfoOk] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
+
+    const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
+    const [endDate, setEndDate] = useState<Dayjs | null>(null)
 
     const buildUser = (): NewUser => {
         return {
@@ -148,6 +153,26 @@ function NewUserForm() {
                     >
                     { groupTVPair.map( item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
                 </TextField>
+                <br/>
+                <DatePicker
+                    views={["year", "month"]}
+                    label="Startet"
+                    minDate={dayjs().year(2018).month(7)}
+                    maxDate={dayjs()}
+                    value={startDate}
+                    onChange={ newVal => setStartDate(newVal)}
+                    renderInput={(params) => <TextField {...params} required/>}
+                />
+                <br/>
+                <DatePicker
+                    views={["year", "month"]}
+                    label="Sluttet"
+                    minDate={dayjs().year(2018).month(7)}
+                    maxDate={dayjs().add(6, "year")}
+                    value={endDate}
+                    onChange={ newVal => setEndDate(newVal)}
+                    renderInput={(params) => <TextField {...params} />}
+                />
                 <br/>
                 <TextField 
                     select
