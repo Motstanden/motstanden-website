@@ -6,7 +6,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Paper from '@mui/material/Paper';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import { UserRank, UserGroup } from 'common/enums';
+import { UserRank, UserGroup, UserStatus, SemesterName } from 'common/enums';
 import { NewUser } from 'common/interfaces';
 import React, { useState } from 'react';
 import { PageContainer } from "src/layout/PageContainer";
@@ -52,6 +52,12 @@ function NewUserForm() {
             middleName: middleName,
             lastName: lastName,
             profilePicture: profilePicture,
+            
+            // #TODO: Put this in form
+            status: UserStatus.Active,
+            startSemester: SemesterName.Autumn,
+            startYear: 2018,
+
         }
     }
 

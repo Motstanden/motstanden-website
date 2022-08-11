@@ -2,7 +2,7 @@ import Database, {Database as DatabaseType} from "better-sqlite3";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 import { NewUser, User } from "common/interfaces";
-import { UserGroup, UserRank } from "common/enums";
+import { SemesterName, UserGroup, UserRank, UserStatus } from "common/enums";
 import { createBrotliCompress } from "zlib";
 import { JwtTokenData } from "../middleware/jwtAuthenticate";
 import jwt from 'jsonwebtoken';
@@ -127,7 +127,16 @@ export function getUserData(userToken: AccessTokenData): User {
             first_name as firstName,
             middle_name as middleName,
             last_name as lastName,
-            profile_picture as profilePicture
+            user_status as userStatus,
+            cape_name as capeName,
+            phone_number as phoneNumber,
+            birth_date as birthDate,
+            profile_picture as profilePicture,
+            start_semester as startSemester,
+            start_year as startYear,
+            end_semester as endSemester,
+            created_at as createdAt,
+            updated_at as updatedAt
         FROM 
             vw_user 
         WHERE user_id = ?`)
@@ -153,7 +162,16 @@ export function getAllUsers(): User[] {
             first_name as firstName,
             middle_name as middleName,
             last_name as lastName,
-            profile_picture as profilePicture
+            user_status as userStatus,
+            cape_name as capeName,
+            phone_number as phoneNumber,
+            birth_date as birthDate,
+            profile_picture as profilePicture,
+            start_semester as startSemester,
+            start_year as startYear,
+            end_semester as endSemester,
+            created_at as createdAt,
+            updated_at as updatedAt
         FROM 
             vw_user 
         ORDER BY 
@@ -165,57 +183,143 @@ export function getAllUsers(): User[] {
 } 
 
 export function createUser(user: NewUser) {
-    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const dbRd = new Database(motstandenDB, dbReadOnlyConfig)   // Read only instance of db
 
     // Throws exceptions if not found
-    const groupId = getGroupId(user.groupName, db)
-    const rankId = getRankId(user.rank, db)
+    const groupId = getGroupId(user.groupName, dbRd)
+    const rankId = getRankId(user.rank, dbRd)
+    const statusId = getUserStatusId(user.status, dbRd)
+    const semesterStartId = getSemesterNameId(user.startSemester, dbRd)
+    const semesterEndId = !user.endSemester ? null : getSemesterNameId(user.endSemester, dbRd)
+    dbRd.close()
+
+    const dbWr = new Database(motstandenDB, dbReadWriteConfig)  // Read/Write instance of db
 
     // Define transaction
-    const startTransaction = db.transaction( () => {
-        const stmt = db.prepare(`
-            INSERT INTO 
-                user(user_group_id, user_rank_id, email, first_name, middle_name, last_name, profile_picture)
+    const startTransaction = dbWr.transaction( () => {
+        const stmt = dbWr.prepare(`
+            INSERT INTO user(
+                user_group_id, 
+                user_rank_id, 
+                email, 
+                first_name, 
+                middle_name, 
+                last_name, 
+                profile_picture,
+                cape_name,
+                phone_number,
+                birth_date,
+                user_status_id,
+                start_semester_name_id,
+                start_year,
+                end_semester_name_id,
+                end_year
+            )
             VALUES
-                (?, ?, ?, ?, ?, ?, ?)
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `)
-        const info = stmt.run(groupId, rankId, user.email, user.firstName, user.middleName, user.lastName, user.profilePicture)
+        const info = stmt.run(
+            groupId, 
+            rankId, 
+            user.email, 
+            user.firstName, 
+            user.middleName, 
+            user.lastName, 
+            user.profilePicture,
+            user.capeName ?? "",
+            user.phoneNumber ?? null,
+            user.birthDate ?? null,
+            statusId,
+            semesterStartId,
+            user.startYear,
+            semesterEndId,
+            user.endYear ?? null
+        )   
     })
 
     // Run transaction
     startTransaction()
-    db.close()
-    console.log(`Inserted user\n${user}`)
+    dbWr.close()
 } 
 
-function getGroupId(group: UserGroup, db: DatabaseType | undefined): number {
+function getGroupId(group: UserGroup, db?: DatabaseType): number {
+    return dangerouslyGetStringEnumId(
+        group, 
+        {
+            __dangerousTableName: "user_group",
+            __dangerousColumnName: "name"
+        }, 
+        db
+    )
+}
+
+function getRankId(rank: UserRank, db?: DatabaseType): number {
+    return dangerouslyGetStringEnumId(
+        rank, 
+        {
+            __dangerousTableName: "user_rank",
+            __dangerousColumnName: "name"
+        }, 
+        db
+    )
+}
+
+function getUserStatusId(status: UserStatus, db?: DatabaseType): number {
+    return dangerouslyGetStringEnumId(
+        status, 
+        {
+            __dangerousTableName: "user_status",
+            __dangerousColumnName: "status"
+        }, 
+        db
+    )
+}
+
+function getSemesterNameId(status: SemesterName, db?: DatabaseType): number {
+    return dangerouslyGetStringEnumId(
+        status, 
+        {
+            __dangerousTableName: "semester_name",
+            __dangerousColumnName: "name"
+        }, 
+        db
+    )
+}
+
+
+// ---------------------------------------------------------
+//                      WARNING
+// ---------------------------------------------------------
+// This method is super dangerous to use because it is vulnerable to sql injections attacks.
+// USE WITH GREAT CAUTION!
+function dangerouslyGetStringEnumId(
+    strEnum: StrEnum, 
+    dangerousInput: DangerousInput, 
+    db?: DatabaseType) : number 
+{
     db = db ?? new Database(motstandenDB, dbReadOnlyConfig)
+
+    const tableName = dangerousInput.__dangerousTableName
+    const columnName = dangerousInput.__dangerousColumnName
     const stmt = db.prepare(`
         SELECT 
-            user_group_id as id
-        FROM 
-            user_group
-        WHERE 
-            name = ? 
-    `)
-    const dbResult = stmt.get(group.valueOf())
+            ${tableName}_id as id`      // DANGER!!!!
+    +`  FROM 
+            ${tableName}`               // DANGER!!!!
+    +`  WHERE 
+            ${columnName} = ?`         // DANGER!!!!
+        )
+    const dbResult = stmt.get(strEnum.valueOf())
     if(!dbResult)
-        throw `Could not retrieve user_rank_id of ${group.valueOf()}`
+        throw `Failed to retrieve value from database`
     return dbResult.id
 }
 
-function getRankId(rank: UserRank, db: DatabaseType | undefined): number {
-    db = db ?? new Database(motstandenDB, dbReadOnlyConfig)
-    const stmt = db.prepare(`
-        SELECT 
-            user_rank_id as id
-        FROM 
-            user_rank
-        WHERE 
-            name = ? 
-    `)
-    const dbResult = stmt.get(rank.valueOf())
-    if(!dbResult)
-        throw `Could not retrieve user_rank_id of ${rank.valueOf()}`
-    return dbResult.id
+interface StrEnum {
+    valueOf (): string 
+}
+
+interface DangerousInput {
+    __dangerousTableName: string,
+    __dangerousColumnName: string
 }
