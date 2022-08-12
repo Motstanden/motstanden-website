@@ -11,7 +11,7 @@ import { NewUser } from 'common/interfaces';
 import React, { useState } from 'react';
 import { PageContainer } from "src/layout/PageContainer";
 import FormControl from '@mui/material/FormControl';
-import { userGroupToPrettyStr, userRankToPrettyStr } from 'common/utils';
+import { userGroupToPrettyStr, userRankToPrettyStr, userStatusToPrettyStr } from 'common/utils';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
@@ -36,19 +36,20 @@ export function NewUserPage () {
 
 function NewUserForm() {
 
-    const [firstName, setFirstName] = useState("")
-    const [middleName, setMiddleName] = useState("")
-    const [lastName, setLastName] = useState("")
-    const [email, setEmail] = useState("")
-    const [userRank, setUserRank] = useState<UserRank>(UserRank.ShortCircuit)
-    const [userGroup, setUserGroup] = useState<UserGroup>(UserGroup.Contributor)
+    const [firstName, setFirstName]     = useState("")
+    const [middleName, setMiddleName]   = useState("")
+    const [lastName, setLastName]       = useState("")
+    const [email, setEmail]             = useState("")
+    const [userRank, setUserRank]       = useState<UserRank>(UserRank.ShortCircuit)
+    const [userGroup, setUserGroup]     = useState<UserGroup>(UserGroup.Contributor)
+    const [userStatus, setUserStatus]   = useState<UserStatus>(UserStatus.Active)
+    const [startDate, setStartDate]     = useState<Dayjs>(dayjs());
+    const [endDate, setEndDate]         = useState<Dayjs | null>(null)
     const [profilePicture, setProfilePicture] = useState(profilePictureTVPair[0].value)
+    
     const [isInfoOk, setIsInfoOk] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
-
-    const [startDate, setStartDate] = useState<Dayjs>(dayjs());
-    const [endDate, setEndDate] = useState<Dayjs | null>(null)
-
+    
     const buildUser = (): NewUser => {
         return {
             email: email.trim().toLowerCase(),
@@ -58,9 +59,7 @@ function NewUserForm() {
             middleName: middleName,
             lastName: lastName,
             profilePicture: profilePicture,
-            
-            // #TODO: Put this in form
-            status: UserStatus.Active,
+            status: userStatus,
             startDate: startDate.format("YYYY-MM-DD"),
             endDate: endDate?.format("YYYY-MM-DD") ?? undefined,
         }
@@ -153,6 +152,18 @@ function NewUserForm() {
                     { groupTVPair.map( item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
                 </TextField>
                 <br/>
+                <TextField
+                    select
+                    label="Status"
+                    name="userStatus"
+                    required
+                    value={userStatus}
+                    error={userStatus === UserStatus.Inactive}
+                    onChange={ e => setUserStatus(e.target.value as UserStatus)} 
+                    >
+                    { statusTVPair.map( item => item.value !== UserStatus.Inactive && (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
+                </TextField>
+                <br/>
                 <DatePicker
                     views={["year", "month"]}
                     label="Startet"
@@ -222,6 +233,7 @@ function NewUserForm() {
 
 const rankTVPair            = enumToTextValuePair<UserRank> (UserRank,  rank => userRankToPrettyStr(rank))
 const groupTVPair           = enumToTextValuePair<UserGroup>(UserGroup, group => userGroupToPrettyStr(group))
+const statusTVPair          = enumToTextValuePair<UserStatus>(UserStatus, status => userStatusToPrettyStr(status))
 const profilePictureTVPair:  TextValuePair<string>[] = [ 
     {
         text: "Gutt",
