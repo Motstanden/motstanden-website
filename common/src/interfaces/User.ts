@@ -10,6 +10,7 @@ export interface NewUser {
     middleName: string;
     lastName: string;
     profilePicture: string;
+    
     status: UserStatus;
     startDate: string,          // Format: 'YYYY-MM-DD'
     

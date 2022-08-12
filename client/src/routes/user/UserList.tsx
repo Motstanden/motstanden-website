@@ -18,15 +18,23 @@ import Checkbox from '@mui/material/Checkbox';
 import { useOutletContext } from 'react-router-dom';
 import Link from '@mui/material/Link';
 import { Link as RouterLink } from "react-router-dom"
+import dayjs from 'dayjs';
 
 export function UserListPage() {
 
-    const [showName, setShowName] = useState(true)
-    const [showRank, setShowRank] = useState(true)
-    const [showMail, setShowMail] = useState(false)
-    const [showRole, setShowRole] = useState(false)
-    const [showBoard, setShowBoard] = useState(false)
+    const [showName, setShowName]     = useState(true)
+    const [showRank, setShowRank]     = useState(true)
+    const [showCape, setShowCape]     = useState(true)
+    const [showStatus, setShowStatus] = useState(true)
+    const [showMail, setShowMail]     = useState(false)
+    const [showPhone, setShowPhone]   = useState(false)
+    const [showBirth, setShowBirth]   = useState(false)
+    const [showStart, setShowStart]   = useState(false)
+    const [showEnd, setShowEnd]       = useState(false)
+    const [showRole, setShowRole]     = useState(false)
 
+    const [showBoard, setShowBoard] = useState(false)
+    
     const data = useOutletContext<User[]>()
     
     const actualUsers = data.filter( user => !isMotstandenMail(user.email))
@@ -41,13 +49,19 @@ export function UserListPage() {
                 pb: 1, 
                 px: 2 
             }}>
-                <h4 style={{margin: "0px"}}>Filter</h4>
+                <h4 style={{margin: "0px"}}>Visning</h4>
                 <Grid container spacing={0} justifyContent="start">
-                    <FilterBox label="Navn"   checked={showName} onClick={() => setShowName(!showName)}/>
-                    <FilterBox label="Rang"   checked={showRank} onClick={() => setShowRank(!showRank)}/>
-                    <FilterBox label="E-post" checked={showMail} onClick={() => setShowMail(!showMail)}/>
-                    <FilterBox label="Rolle"  checked={showRole} onClick={() => setShowRole(!showRole)}/>
-                    <FilterBox label="Styret" checked={showBoard} onClick={() => setShowBoard(!showBoard)}/>
+                    <FilterBox label="Navn"   checked={showName}    onClick={() => setShowName(!showName)}/>
+                    <FilterBox label="Rang"   checked={showRank}    onClick={() => setShowRank(!showRank)}/>
+                    <FilterBox label="Kappe"  checked={showCape}    onClick={() => setShowCape(!showCape)}/>
+                    <FilterBox label="Status" checked={showStatus}  onClick={() => setShowStatus(!showStatus)}/>
+                    <FilterBox label="E-post" checked={showMail}    onClick={() => setShowMail(!showMail)}/>
+                    <FilterBox label="Tlf"     checked={showPhone}  onClick={() => setShowPhone(!showPhone)}/>
+                    <FilterBox label="Bursdag" checked={showBirth}  onClick={() => setShowBirth(!showBirth)}/>
+                    <FilterBox label="Start"   checked={showStart}  onClick={() => setShowStart(!showStart)}/>
+                    <FilterBox label="Slutt"   checked={showEnd}    onClick={() => setShowEnd(!showEnd)}/>
+                    <FilterBox label="Rolle"  checked={showRole}    onClick={() => setShowRole(!showRole)}/>
+                    <FilterBox label="Styret" checked={showBoard}   onClick={() => setShowBoard(!showBoard)}/>
                 </Grid>
             </Paper>
             <UserTable 
@@ -56,17 +70,32 @@ export function UserListPage() {
                 showRank={showRank}
                 showMail={showMail}
                 showRole={showRole}
+
+                showStatus  = {showStatus}
+                showCape    = {showCape}
+                showStart   = {showStart}
+                showEnd     = {showEnd}
+                showPhone   = {showPhone}
+                showBirth   = {showBirth}
             />
             { showBoard && (
                 <>
                     <Divider sx={{mt: "60px", mb: "40px"}}/>
                     <h1>Styrebrukere</h1>
                     <UserTable 
-                        users={boardUsers}
-                        showName={showName}
-                        showRank={showRank}
-                        showMail={showMail}
-                        showRole={showRole}
+                        users       = {boardUsers}
+                        showName    = {showName}
+                        showRank    = {showRank}
+                        showMail    = {showMail}
+                        showRole    = {showRole}
+
+                        showStatus  = {showStatus}
+                        showCape    = {showCape}
+                        showStart   = {showStart}
+                        showEnd     = {showEnd}
+                        showPhone   = {showPhone}
+                        showBirth   = {showBirth}
+
                     />
                 </>
             )}
@@ -89,34 +118,58 @@ function UserTable({
     users, 
     showName, 
     showRank, 
+    showCape,
+    showStatus,
     showMail, 
-    showRole
+    showPhone, 
+    showBirth,
+    showStart, 
+    showEnd,
+    showRole,
 }: {
-    users: User[], 
-    showName: boolean, 
-    showRank: boolean, 
-    showMail: boolean, 
-    showRole: boolean}){
+    users       : User[], 
+    showName    : boolean, 
+    showRank    : boolean, 
+    showCape    : boolean, 
+    showStatus  : boolean, 
+    showMail    : boolean, 
+    showPhone   : boolean, 
+    showBirth   : boolean, 
+    showStart   : boolean, 
+    showEnd     : boolean 
+    showRole    : boolean }){
 
     const hideSx = {display: "none"}
-    const nameSx = showName ? {} : hideSx
-    const rankSx = showRank ? {} : hideSx
+    const nameSx = showName     ? {} : hideSx
+    const rankSx = showRank     ? {} : hideSx
+    const capeSx    = showCape      ? {} : hideSx
+    const statusSx  = showStatus    ? {} : hideSx
     const mailSx = showMail ? {} : hideSx
+    const phoneSx   = showPhone     ? {} : hideSx
+    const birthSx   = showBirth     ? {} : hideSx
+    const startSx   = showStart     ? {} : hideSx
+    const endSx     = showEnd       ? {} : hideSx
     const roleSx = showRole ? {} : hideSx
-
+    
     return (
         <TableContainer component={Paper}>
             <Table>
                 <TableHead sx={headerStyle}>
                     <TableRow>
-                        <TableCell sx={nameSx} >Navn</TableCell>
-                        <TableCell sx={rankSx} >Rang</TableCell>
-                        <TableCell sx={mailSx} >E-post</TableCell>
-                        <TableCell sx={roleSx} >Rolle</TableCell>
+                        <TableCell sx={nameSx}      >Navn</TableCell>
+                        <TableCell sx={rankSx}      >Rang</TableCell>
+                        <TableCell sx={capeSx}      >Kappe</TableCell>
+                        <TableCell sx={statusSx}    >Status</TableCell>
+                        <TableCell sx={mailSx}      >E-post</TableCell>
+                        <TableCell sx={phoneSx}     >Tlf.</TableCell>
+                        <TableCell sx={birthSx}     >Bursdag</TableCell>
+                        <TableCell sx={startSx}     >Start</TableCell>
+                        <TableCell sx={endSx}       >Slutt</TableCell>
+                        <TableCell sx={roleSx}      >Rolle</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    { users.map( (user) => (
+                    { users.map( (user: User) => (
                         <TableRow sx={rowStyle} key={user.email}>
                             <TableCell sx={nameSx}>
                                 <Link 
@@ -131,8 +184,26 @@ function UserTable({
                             <TableCell sx={rankSx}>
                                 {userRankToPrettyStr(user.rank)}
                             </TableCell>
+                            <TableCell sx={capeSx}>
+                                { user.capeName ? <><i>Den Grønne</i> {user.capeName}</> : <>-</> }
+                            </TableCell>
+                            <TableCell sx={statusSx}>
+                                {user.status}
+                            </TableCell>
                             <TableCell sx={mailSx}>
                                 {user.email}
+                            </TableCell>
+                            <TableCell sx={phoneSx}>
+                                {user.phoneNumber ? user.phoneNumber : "-" }
+                            </TableCell>
+                            <TableCell sx={birthSx}>
+                                {formatDate(user.birthDate)}
+                            </TableCell>
+                            <TableCell sx={startSx}>
+                                {formatDate(user.startDate)}
+                            </TableCell>
+                            <TableCell sx={endSx}>
+                                {formatDate(user.endDate)}
                             </TableCell>
                             <TableCell sx={roleSx}>
                                 {userGroupToPrettyStr(user.groupName)}
@@ -147,4 +218,8 @@ function UserTable({
 
 function isMotstandenMail(email: string): boolean {
     return email.trim().toLowerCase().endsWith("@motstanden.no")
+}
+
+function formatDate(dateStr: string | undefined) {
+    return dateStr ? dayjs(dateStr).format("MMM YYYY") : "-"
 }
