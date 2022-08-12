@@ -6,7 +6,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Paper from '@mui/material/Paper';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import { UserRank, UserGroup, UserStatus, SemesterName } from 'common/enums';
+import { UserRank, UserGroup, UserStatus } from 'common/enums';
 import { NewUser } from 'common/interfaces';
 import React, { useState } from 'react';
 import { PageContainer } from "src/layout/PageContainer";
@@ -46,7 +46,7 @@ function NewUserForm() {
     const [isInfoOk, setIsInfoOk] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
-    const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
+    const [startDate, setStartDate] = useState<Dayjs>(dayjs());
     const [endDate, setEndDate] = useState<Dayjs | null>(null)
 
     const buildUser = (): NewUser => {
@@ -61,9 +61,8 @@ function NewUserForm() {
             
             // #TODO: Put this in form
             status: UserStatus.Active,
-            startSemester: SemesterName.Autumn,
-            startYear: 2018,
-
+            startDate: startDate.format("YYYY-MM-DD"),
+            endDate: endDate?.format("YYYY-MM-DD") ?? undefined,
         }
     }
 
@@ -160,7 +159,7 @@ function NewUserForm() {
                     minDate={dayjs().year(2018).month(7)}
                     maxDate={dayjs()}
                     value={startDate}
-                    onChange={ newVal => setStartDate(newVal)}
+                    onChange={ newVal => setStartDate(newVal ?? dayjs())}
                     renderInput={(params) => <TextField {...params} required/>}
                 />
                 <br/>

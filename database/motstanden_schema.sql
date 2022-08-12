@@ -47,14 +47,11 @@ CREATE TABLE user (
     middle_name TEXT NOT NULL DEFAULT "",
     last_name TEXT NOT NULL,
     cape_name TEXT NOT NULL DEFAULT "",
-    phone_number INTEGER DEFAULT NULL CHECK(phone_number >= 10000000 AND phone_number <= 99999999), -- Ensure number has 8 digits
-    birth_date TEXT DEFAULT NULL CHECK(birth_date IS date(birth_date, '+0 days')),              -- Check that format is 'YYYY-MM-DD'
+    phone_number INTEGER DEFAULT NULL CHECK(phone_number >= 10000000 AND phone_number <= 99999999),     -- Ensure number has 8 digits
+    birth_date TEXT DEFAULT NULL CHECK(birth_date IS date(birth_date, '+0 days')),                      -- Check that format is 'YYYY-MM-DD'
     user_status_id INTEGER NOT NULL DEFAULT 1,
-    start_semester_name_id INTEGER NOT NULL,
-    start_year INTEGER NOT NULL CHECK(start_year >= 2018),
-    end_semester_name_id INTEGER 
-        CHECK( (end_semester_name_id IS NULL  AND  end_year IS NULL)    OR    (end_semester_name_id IS NOT NULL  AND  end_year IS NOT NULL)), -- semester_name and year should *both* exist or not exist.  
-    end_year INTEGER CHECK( end_year >= 2018 AND end_year >= start_year),
+    start_date TEXT NOT NULL DEFAULT CURRENT_DATE CHECK(start_date IS date(start_date, '+0 days')),     -- Check that format is 'YYYY-MM-DD'
+    end_date TEXT DEFAULT NULL CHECK(end_date IS date(end_date, '+0 days')),                            -- Check that format is 'YYYY-MM-DD'
     profile_picture TEXT NOT NULL CHECK(like('files/private/profilbilder/%_._%', profile_picture)) DEFAULT "files/private/profilbilder/boy.png",
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -68,14 +65,6 @@ CREATE TABLE user (
         ON DELETE RESTRICT,
     FOREIGN KEY (user_status_id)
         REFERENCES user_status (user_status_id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-    FOREIGN KEY (start_semester_name_id)
-        REFERENCES semester_name (semester_name_id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-    FOREIGN KEY (end_semester_name_id)
-        REFERENCES semester_name (semester_name_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
@@ -102,10 +91,8 @@ SELECT
     phone_number,
     birth_date,
     user_status.status as user_status,
-    start_semester.name as start_semester,
-    start_year,
-	end_semester.name as end_semester,
-    end_year,
+    start_date,
+    end_date,
     created_at,
     updated_at
 FROM
@@ -113,11 +100,7 @@ FROM
 LEFT JOIN user_group USING (user_group_id)
 LEFT JOIN user_rank USING (user_rank_id)
 LEFT JOIN user_status USING (user_status_id)
-LEFT JOIN semester_name start_semester ON 
-    start_semester.semester_name_id = user.start_semester_name_id
-LEFT JOIN semester_name end_semester ON 
-    end_semester.semester_name_id = user.end_semester_name_id
-/* vw_user(user_id,user_group_id,user_group,user_rank_id,user_rank,email,first_name,middle_name,last_name,cape_name,profile_picture,phone_number,birth_date,user_status,start_semester,start_year,end_semester,end_year,created_at,updated_at) */;
+/* vw_user(user_id,user_group_id,user_group,user_rank_id,user_rank,email,first_name,middle_name,last_name,cape_name,profile_picture,phone_number,birth_date,user_status,start_date,end_date,created_at,updated_at) */;
 CREATE TABLE login_token (
     token_id INTEGER PRIMARY KEY NOT NULL,
     user_id INTEGER NOT NULL,

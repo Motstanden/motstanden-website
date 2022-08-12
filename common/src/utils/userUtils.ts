@@ -1,5 +1,5 @@
 import { User } from "../interfaces/index";
-import { SemesterName, UserGroup, UserRank, UserStatus } from "../enums/index";
+import { UserGroup, UserRank, UserStatus } from "../enums/index";
 
 export function userGroupToNum(group: UserGroup): number {
     switch(group) {
@@ -50,8 +50,4 @@ export function userGroupToPrettyStr(group: UserGroup): string {
 
 export function userStatusToPrettyStr(status: UserStatus) {
     return status.toString()
-}
-
-export function semesterToPrettyStr(semester: SemesterName) {
-    return semester.toString()
 }

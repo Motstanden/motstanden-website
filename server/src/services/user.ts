@@ -2,7 +2,7 @@ import Database, {Database as DatabaseType} from "better-sqlite3";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 import { NewUser, User } from "common/interfaces";
-import { SemesterName, UserGroup, UserRank, UserStatus } from "common/enums";
+import { UserGroup, UserRank, UserStatus } from "common/enums";
 import { createBrotliCompress } from "zlib";
 import { JwtTokenData } from "../middleware/jwtAuthenticate";
 import jwt from 'jsonwebtoken';
@@ -132,9 +132,8 @@ export function getUserData(userToken: AccessTokenData): User {
             phone_number as phoneNumber,
             birth_date as birthDate,
             profile_picture as profilePicture,
-            start_semester as startSemester,
-            start_year as startYear,
-            end_semester as endSemester,
+            start_date as startDate,
+            end_date as endDate,
             created_at as createdAt,
             updated_at as updatedAt
         FROM 
@@ -167,9 +166,8 @@ export function getAllUsers(): User[] {
             phone_number as phoneNumber,
             birth_date as birthDate,
             profile_picture as profilePicture,
-            start_semester as startSemester,
-            start_year as startYear,
-            end_semester as endSemester,
+            start_date as startDate,
+            end_date as endDate,
             created_at as createdAt,
             updated_at as updatedAt
         FROM 
@@ -189,8 +187,6 @@ export function createUser(user: NewUser) {
     const groupId = getGroupId(user.groupName, dbRd)
     const rankId = getRankId(user.rank, dbRd)
     const statusId = getUserStatusId(user.status, dbRd)
-    const semesterStartId = getSemesterNameId(user.startSemester, dbRd)
-    const semesterEndId = !user.endSemester ? null : getSemesterNameId(user.endSemester, dbRd)
     dbRd.close()
 
     const dbWr = new Database(motstandenDB, dbReadWriteConfig)  // Read/Write instance of db
@@ -210,13 +206,11 @@ export function createUser(user: NewUser) {
                 phone_number,
                 birth_date,
                 user_status_id,
-                start_semester_name_id,
-                start_year,
-                end_semester_name_id,
-                end_year
+                start_date,
+                end_date
             )
             VALUES
-                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `)
         const info = stmt.run(
             groupId, 
@@ -230,10 +224,8 @@ export function createUser(user: NewUser) {
             user.phoneNumber ?? null,
             user.birthDate ?? null,
             statusId,
-            semesterStartId,
-            user.startYear,
-            semesterEndId,
-            user.endYear ?? null
+            user.startDate,
+            user.endDate ?? null
         )   
     })
 
@@ -274,18 +266,6 @@ function getUserStatusId(status: UserStatus, db?: DatabaseType): number {
         db
     )
 }
-
-function getSemesterNameId(status: SemesterName, db?: DatabaseType): number {
-    return dangerouslyGetStringEnumId(
-        status, 
-        {
-            __dangerousTableName: "semester_name",
-            __dangerousColumnName: "name"
-        }, 
-        db
-    )
-}
-
 
 // ---------------------------------------------------------
 //                      WARNING

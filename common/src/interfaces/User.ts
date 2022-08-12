@@ -1,4 +1,4 @@
-import { SemesterName, UserStatus } from "../enums";
+import { UserStatus } from "../enums";
 import { UserGroup } from "../enums/UserGroup";
 import { UserRank } from "../enums/UserRank";
 
@@ -11,14 +11,12 @@ export interface NewUser {
     lastName: string;
     profilePicture: string;
     status: UserStatus;
-    startSemester: SemesterName;
-    startYear: number;
+    startDate: string,          // Format: 'YYYY-MM-DD'
     
+    endDate?: string,           // Format: 'YYYY-MM-DD'
     capeName?: string;
     phoneNumber?: number;
     birthDate?: string;          // Format: 'YYYY-MM-DD'
-    endSemester?: SemesterName;
-    endYear?: number; 
 }
 
 export interface User extends NewUser {
