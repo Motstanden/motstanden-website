@@ -75,7 +75,6 @@ function EditButton( { user }: { user: User } ){
     const isSelf = loggedInUser.userId === user.userId    
     const groupPermission = hasGroupAccess(loggedInUser, UserGroup.Administrator)
     const canEdit = isSelf || groupPermission
-    console.log(canEdit)
     if(!canEdit) {
         return <></>
     }
