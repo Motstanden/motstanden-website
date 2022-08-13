@@ -1,9 +1,12 @@
 import React, { useState, createContext, useContext } from 'react';
 import { ThemeProvider, createTheme, Theme } from '@mui/material/styles';
 
-// This must be imported here to provide styling for date pickers. 
-// See documentation: https://mui.com/x/react-date-pickers/getting-started/
+// This must be imported here to provide default styling for date pickers and components in mui lab. 
+// See documentation: 
+//  - https://mui.com/x/react-date-pickers/getting-started/
+//  - https://mui.com/material-ui/about-the-lab/
 import type {} from '@mui/x-date-pickers/themeAugmentation';
+import type {} from '@mui/lab/themeAugmentation';
 
 
 export enum ThemeName {
