@@ -1,12 +1,19 @@
-import { Divider } from "@mui/material";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import EditIcon from '@mui/icons-material/Edit';
 import { User } from "common/interfaces";
-import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";
+import { getFullName, hasGroupAccess, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";
 import dayjs from "dayjs";
-import { Navigate, useOutletContext, useParams } from "react-router-dom";
+import { Navigate, Outlet, useOutletContext, useParams, Link as RouterLink, useLocation } from "react-router-dom";
+import { Tooltip } from "@mui/material";
+import { useAuth } from "src/context/Authentication";
+import { UserGroup } from "common/enums";
 
-export function UserPage() {
+
+export function UserProfileContext() {
     const users = useOutletContext<User[]>()
 
     const params = useParams();
@@ -24,14 +31,24 @@ export function UserPage() {
     return(
         <>
             <ProfileBanner user={user}/>
+            <EditButton user={user}/>
             <Divider sx={{mt: 2, mb: 2}}/>
+            <Outlet context={user}/>
+        </>
+    )
+}
+
+export function UserPage(){
+    const user = useOutletContext<User>()
+
+    return (
+        <>
             <ProfileInfo user={user}/>
         </>
     )
 }
 
 function ProfileBanner( {user}: {user: User}) {
-
     const fullName = getFullName(user)
     return (
         <Paper 
@@ -52,11 +69,41 @@ function ProfileBanner( {user}: {user: User}) {
     )
 }
 
+function EditButton( { user }: { user: User } ){
+    const loggedInUser = useAuth().user!
+    
+    const isSelf = loggedInUser.userId === user.userId    
+    const groupPermission = hasGroupAccess(loggedInUser, UserGroup.Administrator)
+    const canEdit = isSelf || groupPermission
+    console.log(canEdit)
+    if(!canEdit) {
+        return <></>
+    }
+
+    return( 
+        <div style={{position: "relative"}}>
+            <Tooltip title="Rediger Profile" >
+                <IconButton 
+                    component={RouterLink} 
+                    to={`/medlem/${user.userId}/rediger`} 
+                    style={{
+                        position: "absolute", 
+                        right: "0px", 
+                        bottom: "0px"
+                    }}>
+                    <EditIcon/>
+                </IconButton>
+            </Tooltip>
+        </div>
+
+    )
+}
+
 function ProfileInfo( {user}: {user: User}){
     const fullName = getFullName(user)
     return (
         <Grid container alignItems="top" spacing={4}>
-            <Grid item xs={12} sm={6} >
+                <Grid item xs={12} sm={6} >
                 <InfoCard title="Personalia">
                     <CardItem label="Navn" text={getFullName(user)}/>
                     <CardItem label="Bursdag" text={formatDateStr(user.birthDate)}/>
@@ -83,7 +130,7 @@ function ProfileInfo( {user}: {user: User}){
     )
 }
 
-function InfoCard( {title, children}: {title: string, children: React.ReactNode}) {
+export function InfoCard( {title, children}: {title: string, children: React.ReactNode}) {
     return (
         <Paper sx={{p: 2, height: "100%"}} elevation={6}>
             <h3 style={{margin: 0}}>{title}</h3>
@@ -95,7 +142,7 @@ function InfoCard( {title, children}: {title: string, children: React.ReactNode}
     )
 }
 
-function CardItem( { label, text }: {label: string, text: string}) {
+export function CardItem( { label, text }: {label: string, text: string}) {
     return (
         <>
             <Grid item xs={3} sm={12} md={3} >
