@@ -11,7 +11,7 @@ import { Navigate, Outlet, useOutletContext, useParams, Link as RouterLink, useL
 import { Tooltip } from "@mui/material";
 import { useAuth } from "src/context/Authentication";
 import { UserGroup } from "common/enums";
-
+import { strToNumber } from "common/utils"
 
 export function UserProfileContext() {
     const users = useOutletContext<User[]>()
@@ -168,18 +168,4 @@ function formatDateInterval( startDate: string, endDate: string | undefined): st
     let result = dayjs(startDate).format("MMMM YYYY") + " - "
     result += endDate ? dayjs(endDate).format("MMMM YYYY") : "dags dato"
     return result
-}
-
-function strToNumber(str: string | undefined): number | undefined {
-    if(!str)
-        return undefined
-
-    if(!onlyNumbers(str))
-        return undefined
-
-    return parseInt(str)
-}
-
-function onlyNumbers(str: string): boolean {
-    return /^[0-9]+$/.test(str);
 }
