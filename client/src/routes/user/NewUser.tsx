@@ -17,6 +17,7 @@ import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
+import { groupTVPair, profilePictureTVPair, rankTVPair, statusTVPair } from './Components';
 
 export function NewUserPage () {
     return (
@@ -231,38 +232,4 @@ function NewUserForm() {
             </FormControl>
         </form>         
     )
-}
-
-
-
-
-const rankTVPair            = enumToTextValuePair<UserRank> (UserRank,  rank => userRankToPrettyStr(rank))
-const groupTVPair           = enumToTextValuePair<UserGroup>(UserGroup, group => userGroupToPrettyStr(group))
-const statusTVPair          = enumToTextValuePair<UserStatus>(UserStatus, status => userStatusToPrettyStr(status))
-const profilePictureTVPair:  TextValuePair<string>[] = [ 
-    {
-        text: "Gutt",
-        value: "files/private/profilbilder/boy.png" 
-    }, {
-        text: "Jente",
-        value: "files/private/profilbilder/girl.png" 
-    } 
-] 
-
-function enumToTextValuePair<T>(
-    enumObj: {}, 
-    toStrCallback: (enumItem: T) => string) : TextValuePair<T>[] 
-{   
-    return Object.keys(enumObj).map( (itemStr) => {
-        const item = enumObj[itemStr as keyof typeof enumObj] as T
-        return {
-            value: item, 
-            text: toStrCallback(item)} as TextValuePair<T>
-        }
-    )
-}
-
-type TextValuePair<T> = {
-    text: string,
-    value: T
 }

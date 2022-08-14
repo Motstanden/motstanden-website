@@ -111,7 +111,7 @@ export function PersonCard( {user}: {user: User} ) {
     )
 }
 
-function MemberCard({user}: {user: User} ) {
+export function MemberCard({user}: {user: User} ) {
     return (
         <Card title="Medlemskap">
             <CardTextItem label="Kappe" text={user.capeName ? `Den grønne ${user.capeName}` : "-"}/>
@@ -133,7 +133,7 @@ export function AccountDetailsCard({user}: {user: User} ) {
 
 }
 
-function formatExactDate( dateStr: string): string{
+export function formatExactDate( dateStr: string): string{
     return dayjs(dateStr).format("DD MMM YYYY HH:mm:ss")
 }
 
