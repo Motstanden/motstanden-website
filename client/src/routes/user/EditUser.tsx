@@ -1,8 +1,8 @@
-import { Button, Divider, Grid, Paper, TextField } from "@mui/material";
+import { Box, Button, Divider, Grid, Paper, TextField } from "@mui/material";
 import { UserGroup } from "common/enums";
 import { User } from "common/interfaces";
 import { hasGroupAccess } from "common/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { useAuth } from "src/context/Authentication";
 import { PageContainer } from "src/layout/PageContainer";
@@ -15,6 +15,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { strToNumber } from "common/utils"
 import { Card } from "./Components";
 import { AccountDetailsCard } from "./UserPage";
+import { validateEmail } from 'src/utils/validateEmail';
+import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
 
 export function EditUserPage () {
     
@@ -36,7 +38,17 @@ export function EditUserPage () {
     return <Navigate to={`/medlem/${viewedUser.userId}`}/>
 }
 
-function EditForm( {user, newUser, children}: { user: User, newUser: User, children: React.ReactNode }) {
+function EditForm( {
+    user, 
+    newUser, 
+    children,
+    disabled
+}: { 
+    user: User, 
+    newUser: User, 
+    children: React.ReactNode 
+    disabled?: boolean
+}) {
     const navigate = useNavigate()
 
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -62,7 +74,7 @@ function EditForm( {user, newUser, children}: { user: User, newUser: User, child
                 <br/>
                 <br/>
                 <br/>
-                <SubmitFormButtons loading={isSubmitting} onAbort={onAbort} canSubmit={!isUserEqual(user, newUser)}/>
+                <SubmitFormButtons loading={isSubmitting} onAbort={onAbort} disabled={isUserEqual(user, newUser) || disabled}/>
             </form>
             <Divider sx={{my: 3}}/>
         </>
@@ -77,10 +89,11 @@ function SelfEditPage({user}: {user: User}){
     //  - Set themselves as Inactive
     // If admin, they can edit admin stuff too
     const [newUser, setNewUser] = useState<User>(user)
+    const [disableSubmit, setDisableSubmit] = useState(false)
 
     return (
-        <EditForm user={user} newUser={newUser}>    
-            <PersonForm value={newUser} onChange={e => setNewUser(e)}/>
+        <EditForm user={user} newUser={newUser} disabled={disableSubmit}>    
+            <PersonForm value={newUser} onChange={e => setNewUser(e)} onIsValidChange={ isValid => setDisableSubmit(!isValid)}/>
             <MemberForm value={newUser} onChange={e => setNewUser(e)}/>
             <AccountDetailsCard user={user}/>
         </EditForm>
@@ -117,8 +130,20 @@ function SuperAdminEdit({user}: {user: User}) {
 }
 
 
+function PersonForm({value, onChange, onIsValidChange}: {value: User, onChange: (value: User) => void, onIsValidChange: (isValid: boolean) => void }) {
+    const [isValid, setIsValid] = useState(true)
+    useEffect( () => onIsValidChange(isValid), [isValid])
 
-function PersonForm({value, onChange}: {value: User, onChange: (value: User) => void }) {
+    const isNtnuMail = value.email.trim().toLowerCase().endsWith("ntnu.no")
+    const isValidEmail = validateEmail(value.email)
+    const isValidPhone = value.phoneNumber === null || ( value.phoneNumber >= 10000000 && value.phoneNumber <= 99999999)  
+
+    const userIsValid = !isNtnuMail && isValidEmail && isValidPhone && !isNullOrWhitespace(value.firstName) && !isNullOrWhitespace(value.lastName)
+    const validChanged = ( userIsValid && !isValid ) || ( !userIsValid && isValid )  
+    if(validChanged) {
+        setIsValid( prev => !prev)
+    }    
+    
     return (
         <Card title="Personalia" spacing={4}>
             <TextField
@@ -127,7 +152,6 @@ function PersonForm({value, onChange}: {value: User, onChange: (value: User) => 
                 value={value.firstName}
                 onChange={ e => onChange({...value, firstName: e.target.value}) }
                 required
-                fullWidth
                 sx={{mt: 2}}
             />
             <TextField 
@@ -135,7 +159,6 @@ function PersonForm({value, onChange}: {value: User, onChange: (value: User) => 
                 name="middleName"
                 value={value.middleName}
                 onChange={ e => onChange({...value, middleName: e.target.value})}
-                fullWidth
             />
             <TextField
                 label="Etternavn"
@@ -143,7 +166,6 @@ function PersonForm({value, onChange}: {value: User, onChange: (value: User) => 
                 value={value.lastName}
                 onChange={ e => onChange({...value, lastName: e.target.value})}
                 required
-                fullWidth
             />
             <DatePicker
                 views={["year", "month", "day"]}
@@ -154,20 +176,38 @@ function PersonForm({value, onChange}: {value: User, onChange: (value: User) => 
                 onChange={ (newVal: Dayjs | null) => onChange({...value, birthDate: newVal?.format("YYYY-MM-DD") ?? null})}
                 renderInput={ params => <TextField {...params} />}
             />
-            <TextField 
-                type="tel"
-                label="Tlf."
-                name="phoneNumber"
-                value={value.phoneNumber ?? ""}
-                onChange={e => {
-                    const newVal = strToNumber(e.target.value) ?? null
-                    const inRange = newVal && newVal < 99999999
-                    const isEmpty = e.target.value.length === 0 
-                    if( inRange || isEmpty ) {
-                        onChange({...value, phoneNumber: newVal })
-                    }
-                }}
-                />
+            <div>
+                <TextField 
+                    label="E-post"
+                    name="email"
+                    type="email"
+                    value={value.email}
+                    onChange={ e => onChange({...value, email: e.target.value})}
+                    error={isNtnuMail || !isValidEmail}
+                    fullWidth
+                    required
+                    />
+                {isNtnuMail && <Box color="error.main">Ntnu mail ikke tillat</Box>}
+                {!isValidEmail && <Box color="error.main">Ugylding E-post</Box>}
+            </div>
+            <div>
+                <TextField 
+                    type="tel"
+                    label="Tlf."
+                    name="phoneNumber"
+                    value={value.phoneNumber ?? ""}
+                    fullWidth
+                    onChange={e => {
+                        const newVal = strToNumber(e.target.value) ?? null
+                        const inRange = newVal && newVal < 99999999
+                        const isEmpty = e.target.value.length === 0 
+                        if( inRange || isEmpty ) {
+                            onChange({...value, phoneNumber: newVal })
+                        }
+                    }}
+                    />
+                    {!isValidPhone && "Ugyldig nummer"}
+            </div>
         </Card>  
     )
 }
@@ -183,11 +223,11 @@ function MemberForm({value, onChange}: {value: User, onChange: (value: User) => 
 function SubmitFormButtons( { 
     loading, 
     onAbort, 
-    canSubmit
+    disabled
 }: { 
     loading?: boolean, 
-    canSubmit?: boolean,
     onAbort: React.MouseEventHandler<HTMLButtonElement> | undefined
+    disabled?: boolean,
 }) {
     return (
         <Stack direction="row" justifyContent="space-between">
@@ -209,7 +249,7 @@ function SubmitFormButtons( {
                 endIcon={<SaveIcon/>}
                 variant="contained"
                 loadingPosition="end"
-                disabled={!canSubmit}
+                disabled={disabled}
                 style={{
                     minWidth: "120px"
                 }}

@@ -1,5 +1,5 @@
 
-export function validateEmail(email: string | undefined) : boolean {
+export function validateEmail(email: string | undefined | null) : boolean {
     if(!email)
     return false;
     
