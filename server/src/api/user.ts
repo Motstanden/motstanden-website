@@ -2,7 +2,7 @@ import { UserEditMode, UserGroup } from "common/enums"
 import { NewUser, User } from "common/interfaces"
 import express, { NextFunction } from "express"
 import { Request, Response } from "express"
-import { AuthenticateUser } from "../middleware/jwtAuthenticate"
+import { AuthenticateUser, updateAccessToken } from "../middleware/jwtAuthenticate"
 import { requiresGroup } from "../middleware/requiresGroup"
 import * as userService from "../services/user"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData"
@@ -24,16 +24,27 @@ router.post("/self/update-user", AuthenticateUser(), RequireSelf, handleUserUpda
 
 function handleUserUpdate(updateMode: UserEditMode){
     return (req: Request, res: Response, next: NextFunction) => {
-        console.log("Request on", updateMode)
+        
         const payload = req.body as User
         if(!payload){
             res.status(400).send("Bad data")  
         }
+
+        let changeSuccess = false
         try {
             userService.updateUser(payload, updateMode)
+            changeSuccess = true
         } catch {
             res.status(400).send("Failed to update user")
         }
+        
+        if(changeSuccess) {
+            const currentUser = req.user as AccessTokenData
+            if(payload.userId === currentUser.userId) { 
+                updateAccessToken(req, res, () => {}, {})
+            }
+        }
+
         res.end()
     }
 }

@@ -251,12 +251,125 @@ export function createUser(user: NewUser) {
     dbWr.close()
 } 
 
+function isValidDate(dateStr: string): boolean {
+    return /^\d{4}-\d{2}-\d{2}$/.test(dateStr)
+}
+
+function makeValidUser( user: User ): User | undefined {
+
+    if( 
+        !validateEmail(user.email)                   ||
+        isNtnuMail(user.email)                       ||
+        !user.groupName                              ||
+        !user.rank                                   ||
+        stringIsNullOrWhiteSpace(user.firstName)     ||
+        stringIsNullOrWhiteSpace(user.lastName)      ||
+        !user.status                                 ||
+        stringIsNullOrWhiteSpace(user.startDate)     ||
+        !isValidDate(user.startDate)                 ||
+        (user.endDate && !isValidDate(user.endDate)) ||
+        (user.phoneNumber && !(user.phoneNumber >= 10000000 || user.phoneNumber <= 99999999)) ||
+        (user.birthDate && !isValidDate(user.birthDate))
+    ) {
+        return undefined
+    }
+
+    return {
+        ...user,
+        email:      user.email.trim(),
+        firstName:  user.firstName.trim(),
+        middleName: user.middleName.trim(),
+        lastName:   user.lastName.trim(),
+        capeName:   user.capeName.trim(),
+        startDate:  user.startDate.trim(),
+        endDate:    user.endDate?.trim() ?? null,
+        birthDate:  user.birthDate?.trim() ?? null        
+    }
+}
+
 
 export function updateUser(newUser: User, updateMode: UserEditMode) {
-    // TODO: 
-    //  - Validate user
-    //  - Insert new values in db depending on update mode
+
+    const validUser = makeValidUser(newUser)
+
+    if(!validUser)
+    throw "Invalid data"
+
+    if(validUser.status === UserStatus.Inactive && updateMode === UserEditMode.Self )
+        throw "Invalid data"
+    
+    if(validUser.groupName === UserGroup.SuperAdministrator && updateMode !== UserEditMode.SuperAdmin)
+        throw "Invalid data"
+        
+    if(validUser.groupName !== UserGroup.Contributor && updateMode === UserEditMode.Self)
+        throw "Invalid data"
+        
+    const sql = getUpdateUserSql(validUser, updateMode)
+        
+        
+    const db = new Database(motstandenDB, dbReadWriteConfig)  // Read/Write instance of db
+    const startTransaction = db.transaction( () => {
+        const stmt = db.prepare(sql.stmt)
+        const info = stmt.run(sql.params)   
+    })
+    startTransaction()
+    db.close()
+
 }
+
+function getUpdateUserSql(user: User, updateMode: UserEditMode): SqlHelper {
+
+    const db = new Database(motstandenDB, dbReadOnlyConfig)   // Read only instance of db
+    const groupId = getGroupId(user.groupName, db)
+    const rankId = getRankId(user.rank, db)
+    const statusId = getUserStatusId(user.status, db)
+    db.close()
+
+    switch(updateMode){
+        case UserEditMode.Self:         
+            return {
+                stmt: `
+                UPDATE 
+                    user
+                SET
+                    first_name = ?,
+                    middle_name = ?,
+                    last_name = ?,
+                    birth_date = ?,
+                    email = ?,
+                    phone_number = ?,
+                    cape_name = ?,
+                    user_status_id = ?,
+                    start_date = ?,
+                    end_date = ?
+                WHERE user_id = ?
+                `, 
+                params: [
+                    user.firstName,
+                    user.middleName,
+                    user.lastName,
+                    user.birthDate,
+                    user.email,
+                    user.phoneNumber,
+                    user.capeName,
+                    statusId,
+                    user.startDate,
+                    user.endDate,
+                    user.userId,
+                ]
+            }
+        case UserEditMode.Admin:        return {stmt: "", params: []}
+        case UserEditMode.SelfAndAdmin: return {stmt: "", params: []}
+        case UserEditMode.SuperAdmin:   return {stmt: "", params: []}
+    }
+}
+
+interface SqlHelper {
+    stmt: string,
+    params: any[]
+}
+
+
 
 function getGroupId(group: UserGroup, db?: DatabaseType): number {
     return dangerouslyGetStringEnumId(

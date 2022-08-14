@@ -21,7 +21,7 @@ function onAuthenticateRequest(req: Request, res: Response, next: NextFunction, 
     }
 }
 
-function updateAccessToken(req: Request, res: Response, next: NextFunction, options: AuthenticateOptions) {
+export function updateAccessToken(req: Request, res: Response, next: NextFunction, options: AuthenticateOptions) {
 
     const onFailure = () => {
         clearAllAuthCookies(res)

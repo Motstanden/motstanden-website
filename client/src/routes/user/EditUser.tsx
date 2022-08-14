@@ -79,8 +79,6 @@ function EditForm( {
     postUrl: string
 }) {
     const navigate = useNavigate()
-    const navigateHome = () => navigate(`/medlem/${user.userId}`)
-
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const onSubmit = async (e: React.FormEvent) => {
@@ -97,14 +95,14 @@ function EditForm( {
             }
         })  
         if(response.ok){
-            navigateHome()
+            window.location.href = `${window.location.origin}/medlem/${user.userId}`    // Will trigger a reload of the page
         }
         setIsSubmitting(false)
     } 
 
     const onAbort = () => {
         if(canExitPage(user, newUser)){
-            navigateHome()
+            navigate(`/medlem/${user.userId}`)
         }
     }
 
