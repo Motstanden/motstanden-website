@@ -13,6 +13,8 @@ import { Stack } from "@mui/system";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { strToNumber } from "common/utils"
+import { Card } from "./Components";
+import { AccountDetailsCard } from "./UserPage";
 
 export function EditUserPage () {
     
@@ -58,6 +60,8 @@ function EditForm( {user, newUser, children}: { user: User, newUser: User, child
                     {children}
                 </Grid>
                 <br/>
+                <br/>
+                <br/>
                 <SubmitFormButtons loading={isSubmitting} onAbort={onAbort} canSubmit={!isUserEqual(user, newUser)}/>
             </form>
             <Divider sx={{my: 3}}/>
@@ -78,7 +82,7 @@ function SelfEditPage({user}: {user: User}){
         <EditForm user={user} newUser={newUser}>    
             <PersonForm value={newUser} onChange={e => setNewUser(e)}/>
             <MemberForm value={newUser} onChange={e => setNewUser(e)}/>
-            <AccountForm value={newUser} onChange={e => setNewUser(e)}/>
+            <AccountDetailsCard user={user}/>
         </EditForm>
     )
 }
@@ -116,7 +120,7 @@ function SuperAdminEdit({user}: {user: User}) {
 
 function PersonForm({value, onChange}: {value: User, onChange: (value: User) => void }) {
     return (
-        <FormSection title="Personalia">
+        <Card title="Personalia" spacing={4}>
             <TextField
                 label="Fornavn"
                 name="firstName"
@@ -124,6 +128,7 @@ function PersonForm({value, onChange}: {value: User, onChange: (value: User) => 
                 onChange={ e => onChange({...value, firstName: e.target.value}) }
                 required
                 fullWidth
+                sx={{mt: 2}}
             />
             <TextField 
                 label="Mellomnavn"
@@ -163,38 +168,16 @@ function PersonForm({value, onChange}: {value: User, onChange: (value: User) => 
                     }
                 }}
                 />
-        </FormSection>  
+        </Card>  
     )
 }
 
 function MemberForm({value, onChange}: {value: User, onChange: (value: User) => void }){
     return (
-        <FormSection title="Medlemskap">
+        <Card title="Medlemskap" spacing={4}>
 
-        </FormSection>
+        </Card>
     )
-}
-
-function AccountForm({value, onChange}: {value: User, onChange?: (value: User) => void }) {
-    return (
-        <FormSection title="Brukerkonto">
-
-        </FormSection>
-    )
-}
-
-function FormSection({title, children}: {title: string, children: React.ReactNode}){
-    return (
-        <Grid item xs={12} sm={6}>
-            <Paper sx={{p: 2, height: "100%"}} elevation={6}>
-                <h3 style={{margin: 0}}>{title}</h3>
-                <Divider sx={{mt: 2, mb:4}}/>
-                <Stack spacing={4}>
-                    {children}
-                </Stack>
-            </Paper>
-        </Grid>
-    )    
 }
 
 function SubmitFormButtons( { 

@@ -12,6 +12,7 @@ import { Tooltip } from "@mui/material";
 import { useAuth } from "src/context/Authentication";
 import { UserGroup } from "common/enums";
 import { strToNumber } from "common/utils"
+import { Card, CardTextItem } from "./Components";
 
 export function UserProfileContext() {
     const users = useOutletContext<User[]>()
@@ -40,11 +41,12 @@ export function UserProfileContext() {
 
 export function UserPage(){
     const user = useOutletContext<User>()
-
     return (
-        <>
-            <ProfileInfo user={user}/>
-        </>
+        <Grid container alignItems="top" spacing={4}>
+            <PersonCard user={user}/>
+            <MemberCard user={user}/>
+            <AccountDetailsCard user={user}/>
+        </Grid>
     )
 }
 
@@ -98,60 +100,37 @@ function EditButton( { user }: { user: User } ){
     )
 }
 
-function ProfileInfo( {user}: {user: User}){
-    const fullName = getFullName(user)
+export function PersonCard( {user}: {user: User} ) {
     return (
-        <Grid container alignItems="top" spacing={4}>
-                <Grid item xs={12} sm={6} >
-                <InfoCard title="Personalia">
-                    <CardItem label="Navn" text={getFullName(user)}/>
-                    <CardItem label="Bursdag" text={formatDateStr(user.birthDate)}/>
-                    <CardItem label="E-post" text={user.email}/>
-                    <CardItem label="Tlf" text={ user.phoneNumber?.toString() ?? "-"}/>
-                </InfoCard>
-            </Grid>
-            <Grid item xs={12} sm={6} >
-                <InfoCard title="Medlemskap">
-                    <CardItem label="Kappe" text={user.capeName ? `Den grønne ${user.capeName}` : "-"}/>
-                    <CardItem label="Rang" text={userRankToPrettyStr(user.rank)}/>
-                    <CardItem label="Status" text={user.status}/>
-                    <CardItem label="Aktiv periode" text={formatDateInterval(user.startDate, user.endDate)}/>
-                </InfoCard>
-            </Grid>
-            <Grid item xs={12} sm={6} >
-                <InfoCard title="Brukerkonto">
-                    <CardItem label="Rolle" text={userGroupToPrettyStr(user.groupName)}/>
-                    <CardItem label="Laget" text={formatExactDate(user.createdAt)}/>
-                    <CardItem label="Oppdatert" text={formatExactDate(user.updatedAt)}/>
-                </InfoCard>
-            </Grid>
-        </Grid>
+        <Card title="Personalia">
+            <CardTextItem label="Navn" text={getFullName(user)}/>
+            <CardTextItem label="Bursdag" text={formatDateStr(user.birthDate)}/>
+            <CardTextItem label="E-post" text={user.email}/>
+            <CardTextItem label="Tlf" text={ user.phoneNumber?.toString() ?? "-"}/>
+        </Card>
     )
 }
 
-export function InfoCard( {title, children}: {title: string, children: React.ReactNode}) {
+function MemberCard({user}: {user: User} ) {
     return (
-        <Paper sx={{p: 2, height: "100%"}} elevation={6}>
-            <h3 style={{margin: 0}}>{title}</h3>
-            <Divider sx={{mt: 2, mb: 3}}/>
-            <Grid container>
-                {children}
-            </Grid>
-        </Paper>
+        <Card title="Medlemskap">
+            <CardTextItem label="Kappe" text={user.capeName ? `Den grønne ${user.capeName}` : "-"}/>
+            <CardTextItem label="Rang" text={userRankToPrettyStr(user.rank)}/>
+            <CardTextItem label="Status" text={user.status}/>
+            <CardTextItem label="Aktiv periode" text={formatDateInterval(user.startDate, user.endDate)}/>
+        </Card>
     )
 }
 
-export function CardItem( { label, text }: {label: string, text: string}) {
+export function AccountDetailsCard({user}: {user: User} ) {
     return (
-        <>
-            <Grid item xs={3} sm={12} md={3} >
-                <b>{label}</b>
-            </Grid>
-            <Grid item xs={9} sm={12} md={9} marginBottom={2}>
-                {text}
-            </Grid>
-        </> 
+        <Card title="Brukerkonto">
+            <CardTextItem label="Rolle" text={userGroupToPrettyStr(user.groupName)}/>
+            <CardTextItem label="Laget" text={formatExactDate(user.createdAt)}/>
+            <CardTextItem label="Oppdatert" text={formatExactDate(user.updatedAt)}/>
+        </Card>
     )
+
 }
 
 function formatExactDate( dateStr: string): string{
