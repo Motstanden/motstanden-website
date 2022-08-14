@@ -57,7 +57,7 @@ function EditPage( { editMode, user }: { editMode: UserEditMode, user: User}) {
     const onIsValidChange = (isValid: boolean) => setDisableSubmit(!isValid)
 
     return (
-        <EditForm user={user} newUser={newUser} disabled={disableSubmit}>    
+        <EditForm user={user} newUser={newUser} disabled={disableSubmit} postUrl={getPostUrl(editMode)}>    
             <PersonForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode}/>
             <MemberForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode}/>
             <AccountDetailsForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode}/> 
@@ -69,25 +69,42 @@ function EditForm( {
     user, 
     newUser, 
     children,
-    disabled
+    disabled,
+    postUrl,
 }: { 
     user: User, 
     newUser: User, 
     children: React.ReactNode 
     disabled?: boolean
+    postUrl: string
 }) {
     const navigate = useNavigate()
+    const navigateHome = () => navigate(`/medlem/${user.userId}`)
 
     const [isSubmitting, setIsSubmitting] = useState(false)
 
-    const onSubmit = (e: React.FormEvent) => {
-        e.preventDefault()        
+    const onSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()  
         setIsSubmitting(true)        
+        
+        // TODO: Validate new user here
+
+        let response = await fetch(postUrl, {
+            method: "POST", 
+            body: JSON.stringify(newUser),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })  
+        if(response.ok){
+            navigateHome()
+        }
+        setIsSubmitting(false)
     } 
 
     const onAbort = () => {
         if(canExitPage(user, newUser)){
-            navigate(`/medlem/${user.userId}`)
+            navigateHome()
         }
     }
 
@@ -374,6 +391,15 @@ function isUserEqual(oldUser: User, newUser: User): boolean{
         oldUser.startDate       === newUser.startDate       &&
         oldUser.status          === newUser.status
     )     
+}
+
+function getPostUrl(mode: UserEditMode): string {
+    switch(mode){
+        case UserEditMode.Self: return "/api/self/update-user"
+        case UserEditMode.Admin: return "/api/admin/update-user"
+        case UserEditMode.SelfAndAdmin: return "/api/self-and-admin/update-user"
+        case UserEditMode.SuperAdmin: return "/api/super-admin/update-user"
+    }
 }
 
 function getStatusExplanation(status: UserStatus): string {

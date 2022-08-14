@@ -2,7 +2,7 @@ import Database, {Database as DatabaseType} from "better-sqlite3";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 import { NewUser, User } from "common/interfaces";
-import { UserGroup, UserRank, UserStatus } from "common/enums";
+import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
 import { JwtTokenData } from "../middleware/jwtAuthenticate";
 import jwt from 'jsonwebtoken';
 
@@ -232,6 +232,13 @@ export function createUser(user: NewUser) {
     startTransaction()
     dbWr.close()
 } 
+
+
+export function updateUser(newUser: User, updateMode: UserEditMode) {
+    // TODO: 
+    //  - Validate user
+    //  - Insert new values in db depending on update mode
+}
 
 function getGroupId(group: UserGroup, db?: DatabaseType): number {
     return dangerouslyGetStringEnumId(
