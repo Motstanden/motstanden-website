@@ -6,6 +6,7 @@ import { NewQuoteForm } from "./NewQuoteForm"
 import Divider from "@mui/material/Divider"
 import { useTitle } from "../../hooks/useTitle"
 import { Quote as QuoteData } from "common/interfaces"
+import dayjs from "dayjs"
 
 export default function Quotes(){
     useTitle("Sitater")
@@ -60,7 +61,7 @@ function QuoteItem( {quoteData}: {quoteData: QuoteData}){
                     fontSize: "small", 
                     fontWeight: "bold"
                 }}>
-                – {quoteData.utterer}
+                – {`${quoteData.utterer}, ${dayjs(quoteData.createdAt).utc(true).local().format("D MMMM YYYY")}`}
                 </span>
         </li>
     )

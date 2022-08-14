@@ -3,7 +3,6 @@ import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/dat
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 import { NewUser, User } from "common/interfaces";
 import { UserGroup, UserRank, UserStatus } from "common/enums";
-import { createBrotliCompress } from "zlib";
 import { JwtTokenData } from "../middleware/jwtAuthenticate";
 import jwt from 'jsonwebtoken';
 

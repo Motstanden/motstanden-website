@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import SendIcon from '@mui/icons-material/Send';
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
+import { NewQuote } from "common/interfaces";
 
 export function NewQuoteForm(){
     const [utterer, setUtterer] = useState("");
@@ -13,7 +14,7 @@ export function NewQuoteForm(){
     const onSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
         setIsSubmitting(true)
-        const data = {
+        const data: NewQuote = {
             utterer: utterer.trim(),
             quote: quote.trim()
         }

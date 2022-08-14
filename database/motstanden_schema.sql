@@ -1,8 +1,3 @@
-CREATE TABLE quote (
-    quote_id INTEGER PRIMARY KEY NOT NULL,
-    utterer TEXT NOT NULL,
-    quote TEXT NOT NULL 
-);
 CREATE TABLE version (
     version_id INTEGER PRIMARY KEY NOT NULL,
     migration TEXT,
@@ -112,3 +107,21 @@ CREATE TABLE login_token (
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
+CREATE TABLE IF NOT EXISTS "quote" (
+    quote_id INTEGER PRIMARY KEY NOT NULL,
+    utterer TEXT NOT NULL,
+    quote TEXT NOT NULL,
+    user_id INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id)
+        REFERENCES user (user_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+CREATE TRIGGER trig_quote_updated_at
+    AFTER UPDATE ON quote FOR EACH ROW
+BEGIN
+    UPDATE quote SET updated_at = current_timestamp
+        WHERE user_id = old.user_id;
+END;

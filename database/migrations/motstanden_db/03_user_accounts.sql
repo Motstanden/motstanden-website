@@ -99,7 +99,7 @@ BEGIN
 END;
 
 -- TODO: Create a user_instrument table. 
---  * The tables will have many to many relationship between user table and instrument table.
+--  * The tables will have a many to many relationship between user table and instrument table.
 --  * The table needs to reference the sheet archive db.
 
 CREATE VIEW vw_user 
@@ -141,6 +141,34 @@ CREATE TABLE login_token (
         ON DELETE CASCADE
 );
 
+
+CREATE TABLE quote_new (
+    quote_id INTEGER PRIMARY KEY NOT NULL,
+    utterer TEXT NOT NULL,
+    quote TEXT NOT NULL,
+    user_id INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id)
+        REFERENCES user (user_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+
+INSERT INTO quote_new(quote_id, utterer, quote, user_id)
+    SELECT quote_id, utterer, quote, 1 FROM quote; 
+
+DROP TABLE quote;
+ALTER TABLE quote_new RENAME TO quote;
+
+CREATE TRIGGER trig_quote_updated_at
+    AFTER UPDATE ON quote FOR EACH ROW
+BEGIN
+    UPDATE quote SET updated_at = current_timestamp
+        WHERE user_id = old.user_id;
+END;
+
+
 INSERT INTO 
     user(user_id, user_group_id, user_rank_id, email, first_name, middle_name, last_name, start_date)
 VALUES
@@ -149,5 +177,3 @@ VALUES
     (3, 3, 4, 'okonomi@motstanden.no',  "Okonomi",  "", "", "2018-09-11"),
     (4, 3, 4, 'dirigent@motstanden.no', "Dirigent", "", "", "2018-09-11"),
     (5, 3, 4, 'pr@motstanden.no',       "PR",       "", "", "2018-09-11");
-
-SELECT * from vw_user;

@@ -5,6 +5,8 @@ import passport from "passport";
 import { stringIsNullOrWhiteSpace } from "../utils/stringUtils.js";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import * as quoteService from "../services/quotes"
+import { NewQuote } from "common/interfaces";
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 
 let router = express.Router()
 
@@ -56,15 +58,12 @@ function hashCode(str: string): number {
 router.post("/insert_quote",    
     AuthenticateUser(),
     (req, res) => {
-        const utterer = req.body.utterer
-        const quote = req.body.quote
-        if (stringIsNullOrWhiteSpace(utterer) || stringIsNullOrWhiteSpace(quote)) {
-            res.status(400).send("The server could not parse the payload.")
-        } else {
-            const db = new Database(motstandenDB, dbReadWriteConfig)
-            const stmt = db.prepare("INSERT INTO quote(utterer, quote) VALUES (?, ?)")    
-            stmt.run(utterer, quote)
-            db.close();
+        const user = req.user as AccessTokenData
+        try {
+            quoteService.insertQuote(req.body as NewQuote, user.userId)
+        }
+        catch {
+            res.status(400).send("Bad data")  
         }
         res.end();
     })
