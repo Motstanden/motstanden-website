@@ -139,17 +139,17 @@ function UserTable({
     showEnd     : boolean 
     showRole    : boolean }){
 
-    const hideSx = {display: "none"}
-    const nameSx = showName     ? {} : hideSx
-    const rankSx = showRank     ? {} : hideSx
+    const hideSx    = {display: "none"}
+    const nameSx    = showName      ? {} : hideSx
+    const rankSx    = showRank      ? {} : hideSx
     const capeSx    = showCape      ? {} : hideSx
     const statusSx  = showStatus    ? {} : hideSx
-    const mailSx = showMail ? {} : hideSx
+    const mailSx    = showMail      ? {} : hideSx
     const phoneSx   = showPhone     ? {} : hideSx
     const birthSx   = showBirth     ? {} : hideSx
     const startSx   = showStart     ? {} : hideSx
     const endSx     = showEnd       ? {} : hideSx
-    const roleSx = showRole ? {} : hideSx
+    const roleSx    = showRole      ? {} : hideSx
     
     return (
         <TableContainer component={Paper}>
@@ -220,6 +220,6 @@ function isMotstandenMail(email: string): boolean {
     return email.trim().toLowerCase().endsWith("@motstanden.no")
 }
 
-function formatDate(dateStr: string | undefined) {
+function formatDate(dateStr: string | null) {
     return dateStr ? dayjs(dateStr).format("MMM YYYY") : "-"
 }

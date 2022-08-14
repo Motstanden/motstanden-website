@@ -158,13 +158,13 @@ function formatExactDate( dateStr: string): string{
     return dayjs(dateStr).format("DD MMM YYYY HH:mm:ss")
 }
 
-function formatDateStr( dateStr: string | undefined): string{
+function formatDateStr( dateStr: string | null): string{
     if(!dateStr)
         return "-"
     return dayjs(dateStr).format("DD MMMM YYYY")
 }
 
-function formatDateInterval( startDate: string, endDate: string | undefined): string {
+function formatDateInterval( startDate: string, endDate: string | null): string {
     let result = dayjs(startDate).format("MMMM YYYY") + " - "
     result += endDate ? dayjs(endDate).format("MMMM YYYY") : "dags dato"
     return result

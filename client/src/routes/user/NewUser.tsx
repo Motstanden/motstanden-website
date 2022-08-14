@@ -61,7 +61,12 @@ function NewUserForm() {
             profilePicture: profilePicture,
             status: userStatus,
             startDate: startDate.format("YYYY-MM-DD"),
-            endDate: endDate?.format("YYYY-MM-DD") ?? undefined,
+            endDate: endDate?.format("YYYY-MM-DD") ?? null,
+
+            // TODO ?
+            capeName: "",
+            phoneNumber: null,
+            birthDate: null
         }
     }
 

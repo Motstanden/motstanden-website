@@ -10,14 +10,14 @@ export interface NewUser {
     middleName: string;
     lastName: string;
     profilePicture: string;
+    capeName: string;
     
     status: UserStatus;
-    startDate: string,          // Format: 'YYYY-MM-DD'
+    startDate: string;              // Format: 'YYYY-MM-DD'
     
-    endDate?: string,           // Format: 'YYYY-MM-DD'
-    capeName?: string;
-    phoneNumber?: number;
-    birthDate?: string;          // Format: 'YYYY-MM-DD'
+    endDate: string | null;         // Format: 'YYYY-MM-DD'
+    phoneNumber: number | null;
+    birthDate: string | null;       // Format: 'YYYY-MM-DD'
 }
 
 export interface User extends NewUser {

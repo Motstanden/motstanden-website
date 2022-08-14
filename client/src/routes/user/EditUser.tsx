@@ -146,7 +146,7 @@ function PersonForm({value, onChange}: {value: User, onChange: (value: User) => 
                 minDate={dayjs().subtract(100, "year")}
                 maxDate={dayjs().subtract(18, "year")}
                 value={value.birthDate ? dayjs(value.birthDate) : null}
-                onChange={ (newVal: Dayjs | null) => onChange({...value, birthDate: newVal?.format("YYYY-MM-DD") ?? undefined})}
+                onChange={ (newVal: Dayjs | null) => onChange({...value, birthDate: newVal?.format("YYYY-MM-DD") ?? null})}
                 renderInput={ params => <TextField {...params} />}
             />
             <TextField 
@@ -155,7 +155,7 @@ function PersonForm({value, onChange}: {value: User, onChange: (value: User) => 
                 name="phoneNumber"
                 value={value.phoneNumber ?? ""}
                 onChange={e => {
-                    const newVal = strToNumber(e.target.value)
+                    const newVal = strToNumber(e.target.value) ?? null
                     const inRange = newVal && newVal < 99999999
                     const isEmpty = e.target.value.length === 0 
                     if( inRange || isEmpty ) {
