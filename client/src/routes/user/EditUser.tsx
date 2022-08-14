@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, MenuItem, Paper, TextField, Tooltip } from "@mui/material";
+import { Button, Divider, Grid, MenuItem, Paper, TextField, Tooltip } from "@mui/material";
 import { UserGroup, UserRank, UserStatus } from "common/enums";
 import { User } from "common/interfaces";
 import { hasGroupAccess, userRankToPrettyStr } from "common/utils";
@@ -23,20 +23,46 @@ export function EditUserPage () {
     
     const currentUser = useAuth().user!
     const viewedUser = useOutletContext<User>()
-    
-    if(hasGroupAccess(currentUser, UserGroup.SuperAdministrator)) {
-        return <SuperAdminEdit user={viewedUser}/>
+
+    const isSelfEditing = currentUser.userId === viewedUser.userId
+    const isSuperAdmin = hasGroupAccess(currentUser, UserGroup.SuperAdministrator)
+    const isAdmin = hasGroupAccess(currentUser, UserGroup.Administrator)
+
+    let editMode: ProfileEditMode | undefined
+    if(isSuperAdmin){
+        editMode = ProfileEditMode.SuperAdmin
+    }
+    else if (isSelfEditing && isAdmin) {
+        editMode = ProfileEditMode.SelfAndAdmin
+    }
+    else if (isSelfEditing){
+        editMode = ProfileEditMode.Self
+    }
+    else if (isAdmin) {
+        editMode = ProfileEditMode.Admin
     }
 
-    if(currentUser.userId === viewedUser.userId) {
-        return <SelfEditPage user={viewedUser}/>
-    }
-
-    if(hasGroupAccess(currentUser, UserGroup.Administrator)) {
-        return <AdminEdit user={viewedUser}/>
+    if(editMode){
+        return <EditPage editMode={editMode} user={viewedUser}/>
     }
 
     return <Navigate to={`/medlem/${viewedUser.userId}`}/>
+}
+
+function EditPage( { editMode, user }: { editMode: ProfileEditMode, user: User}) {
+    const [newUser, setNewUser] = useState<User>(user)
+    const [disableSubmit, setDisableSubmit] = useState(false)
+
+    const onChange = (user: User) => setNewUser(user);
+    const onIsValidChange = (isValid: boolean) => setDisableSubmit(!isValid)
+
+    return (
+        <EditForm user={user} newUser={newUser} disabled={disableSubmit}>    
+            <PersonForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode}/>
+            <MemberForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode}/>
+            <AccountDetailsForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode}/> 
+        </EditForm>
+    )
 }
 
 function EditForm( {
@@ -65,16 +91,12 @@ function EditForm( {
         }
     }
 
-
     return (
         <>
             <form onSubmit={onSubmit}>
-                <Grid container alignItems="top" spacing={4}>
+                <Grid container alignItems="top" spacing={4} sx={{mb: 8}}>
                     {children}
                 </Grid>
-                <br/>
-                <br/>
-                <br/>
                 <SubmitFormButtons loading={isSubmitting} onAbort={onAbort} disabled={isUserEqual(user, newUser) || disabled}/>
             </form>
             <Divider sx={{my: 3}}/>
@@ -82,65 +104,16 @@ function EditForm( {
     )
 }
 
-function SelfEditPage({user}: {user: User}){
 
-    // Can edit all BUT:
-    //  - Role
-    //  - Rank
-    //  - Set themselves as Inactive
-    // If admin, they can edit admin stuff too
-    const [newUser, setNewUser] = useState<User>(user)
-    const [disableSubmit, setDisableSubmit] = useState(false)
-
-    const onChange = (user: User) => setNewUser(user);
-    const onIsValidChange = (isValid: boolean) => setDisableSubmit(!isValid)
-
-    return (
-        <EditForm user={user} newUser={newUser} disabled={disableSubmit}>    
-            <PersonForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange}/>
-            <MemberForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange}/>
-            <AccountDetailsForm value={newUser} onChange={() => {}} onIsValidChange={() => {}}/>
-        </EditForm>
-    )
-}
-
-function AdminEdit({user}: {user: User}) {
-    const [newUser, setNewUser] = useState<User>(user)
-    const [disableSubmit, setDisableSubmit] = useState(false)
-
-    const onChange = (user: User) => setNewUser(user);
-    const onIsValidChange = (isValid: boolean) => setDisableSubmit(!isValid)
-
-    return (
-        <EditForm user={user} newUser={newUser} disabled={disableSubmit}>   
-            <PersonCard user={user}/>         
-            <MemberForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange}/>
-            <AccountDetailsForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange}/> 
-        </EditForm>
-    )
-} 
-
-function SuperAdminEdit({user}: {user: User}) {
-    
-    const [newUser, setNewUser] = useState<User>(user)
-    const [disableSubmit, setDisableSubmit] = useState(false)
-
-    const onChange = (user: User) => setNewUser(user);
-    const onIsValidChange = (isValid: boolean) => setDisableSubmit(!isValid)
-
-    return (
-        <EditForm user={user} newUser={newUser} disabled={disableSubmit}>    
-            <PersonForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange}/>
-            <MemberForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange}/>
-            <AccountDetailsForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange}/> 
-        </EditForm>
-    )
-}
-
-
-function PersonForm({value, onChange, onIsValidChange}: FormParams) {
+function PersonForm({value, onChange, onIsValidChange, editMode}: FormParams) {
     const [isValid, setIsValid] = useState(true)
     useEffect( () => onIsValidChange(isValid), [isValid])
+
+    const isSelf = editMode === ProfileEditMode.Self || editMode === ProfileEditMode.SelfAndAdmin
+    const isSuperAdmin = editMode === ProfileEditMode.SuperAdmin
+    if(!isSelf && !isSuperAdmin) {
+        return <PersonCard user={value}/>
+    }
 
     const isNtnuMail = value.email.trim().toLowerCase().endsWith("ntnu.no")
     const isValidEmail = validateEmail(value.email)
@@ -195,8 +168,8 @@ function PersonForm({value, onChange, onIsValidChange}: FormParams) {
                     fullWidth
                     required
                     />
-                {isNtnuMail && <Box color="error.main">Ntnu mail ikke tillat</Box>}
-                {!isValidEmail && <Box color="error.main">Ugylding E-post</Box>}
+                {isNtnuMail && <div color="error.main">Ntnu mail ikke tillat</div>}
+                {!isValidEmail && <div color="error.main">Ugyldig E-post</div>}
             </div>
             <div>
                 <TextField 
@@ -220,33 +193,13 @@ function PersonForm({value, onChange, onIsValidChange}: FormParams) {
     )
 }
 
-function MemberForm({value, onChange, onIsValidChange}: FormParams ){
-    const loggedInUser = useAuth().user!
-    const isAdmin = hasGroupAccess(loggedInUser, UserGroup.Administrator)
+function MemberForm({value, onChange, editMode}: FormParams ){
+    const isAdmin = hasAdminAccess(editMode)
 
-
-    const statusSource = isAdmin 
-                       ? statusTVPair 
-                       : statusTVPair.filter( item => item.value !== UserStatus.Inactive)
+    const userStatusSrc = isAdmin 
+                        ? statusTVPair 
+                        : statusTVPair.filter( item => item.value !== UserStatus.Inactive)
    
-    let rankItem = isAdmin 
-                ? (
-                    <TextField
-                        select
-                        label="Rang"
-                        name="userRank"
-                        required
-                        value={value.rank}
-                        onChange={ (e) => onChange({...value, rank: e.target.value as UserRank})} 
-                    >
-                        { rankTVPair.map( item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
-                    </TextField>
-                ) : (
-                    <div style={{paddingTop: "0.3em", paddingBottom: "0.1em", paddingLeft: "10px"}}>
-                        <CardTextItem label="Rang" text={userRankToPrettyStr(value.rank)}/>
-                    </div>
-                )
-
     return (    
         <Card title="Medlemskap" spacing={4}>
             <TextField 
@@ -256,7 +209,29 @@ function MemberForm({value, onChange, onIsValidChange}: FormParams ){
                 onChange={ e => onChange({...value, capeName: e.target.value})}
                 sx={{mt: 2}}
             />
-            {rankItem}
+            { isAdmin && (
+                <TextField
+                    select
+                    label="Rang"
+                    name="userRank"
+                    required
+                    value={value.rank}
+                    onChange={ (e) => onChange({...value, rank: e.target.value as UserRank})} 
+                >
+                    { rankTVPair.map( item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
+                </TextField>
+            )}
+            { !isAdmin && (
+                <div style={{
+                    minHeight: "56px", 
+                    paddingLeft: "10px", 
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center"
+                    }}>
+                    <CardTextItem label="Rang" text={userRankToPrettyStr(value.rank)}/>
+                </div>
+            )}
             <Stack direction="row" alignItems="center">
                 <TextField
                     select
@@ -267,7 +242,7 @@ function MemberForm({value, onChange, onIsValidChange}: FormParams ){
                     value={value.status}
                     onChange={ e => onChange({...value, status: e.target.value as UserStatus})}
                     >
-                    { statusSource.map( item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
+                    { userStatusSrc.map( item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
                 </TextField>
                 <Tooltip title={getStatusExplanation(value.status)}>
                     <HelpOutlineIcon sx={{ml: 2}} fontSize="large" color="secondary" />
@@ -295,16 +270,14 @@ function MemberForm({value, onChange, onIsValidChange}: FormParams ){
     )
 }
 
-function AccountDetailsForm( {value, onChange, onIsValidChange}: FormParams ) {
-    const loggedInUser = useAuth().user!
-    const isAdmin = hasGroupAccess(loggedInUser, UserGroup.Administrator)
-    if(!isAdmin){
+function AccountDetailsForm( {value, onChange, onIsValidChange, editMode}: FormParams ) {
+
+    if(!hasAdminAccess(editMode)){
         return <AccountDetailsCard user={value}/>
     }
 
-    const isSuperUser = hasGroupAccess(loggedInUser, UserGroup.SuperAdministrator)
-
-    const groupSource = isSuperUser 
+    const isSuperAdmin = editMode === ProfileEditMode.SuperAdmin
+    const groupSource = isSuperAdmin 
                        ? groupTVPair 
                        : groupTVPair.filter( item => item.value !== UserGroup.SuperAdministrator)
 
@@ -321,14 +294,19 @@ function AccountDetailsForm( {value, onChange, onIsValidChange}: FormParams ) {
             >
                 { groupSource.map( item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
             </TextField>
-            <CardTextItem label="Laget" text={formatExactDate(value.createdAt)}/>
-            <CardTextItem label="Oppdatert" text={formatExactDate(value.updatedAt)}/>
+            <div style={{paddingLeft: "10px"}}>
+                <CardTextItem label="Laget" text={formatExactDate(value.createdAt)}/>
+            </div>
+            <div style={{paddingLeft: "10px"}}>
+                <CardTextItem label="Oppdatert" text={formatExactDate(value.updatedAt)}/>
+            </div>
         </Card>
     )
 }
 
 type FormParams = {
     value: User,
+    editMode: ProfileEditMode,
     onChange: (value: User) => void,
     onIsValidChange: (isValid: boolean) => void
 }
@@ -405,4 +383,17 @@ function getStatusExplanation(status: UserStatus): string {
         case UserStatus.Retired: return "Medlem som hverken er aktiv eller deltar på ting. Medlemmet deltar kanskje på større jubileum."
         case UserStatus.Inactive: return "Medlem som sluttet kort tid etter at vedkommende ble medlem"
     }
+}
+
+function hasAdminAccess( mode: ProfileEditMode ): boolean {
+    return  mode === ProfileEditMode.Admin || 
+            mode === ProfileEditMode.SelfAndAdmin || 
+            mode === ProfileEditMode.SuperAdmin
+}
+
+enum ProfileEditMode {
+    Self = 1,
+    Admin = 2,
+    SelfAndAdmin = 3,
+    SuperAdmin = 4,
 }

@@ -134,7 +134,7 @@ export function AccountDetailsCard({user}: {user: User} ) {
 }
 
 export function formatExactDate( dateStr: string): string{
-    return dayjs(dateStr).format("DD MMM YYYY HH:mm:ss")
+    return dayjs(dateStr).utc(true).local().format("DD MMM YYYY HH:mm:ss")
 }
 
 function formatDateStr( dateStr: string | null): string{
