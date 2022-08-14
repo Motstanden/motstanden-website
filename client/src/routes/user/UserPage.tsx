@@ -83,7 +83,7 @@ function EditButton( { user }: { user: User } ){
 
     return( 
         <div style={{position: "relative"}}>
-            <Tooltip title="Rediger Profile" >
+            <Tooltip title="Rediger Profil" >
                 <IconButton 
                     component={RouterLink} 
                     to={`/medlem/${user.userId}/rediger`} 

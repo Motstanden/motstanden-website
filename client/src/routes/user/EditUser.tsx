@@ -1,5 +1,5 @@
 import { Button, Divider, Grid, MenuItem, Paper, TextField, Tooltip } from "@mui/material";
-import { UserGroup, UserRank, UserStatus } from "common/enums";
+import { UserGroup, UserRank, UserStatus, UserEditMode } from "common/enums";
 import { User } from "common/interfaces";
 import { hasGroupAccess, userRankToPrettyStr } from "common/utils";
 import { useEffect, useState } from "react";
@@ -28,18 +28,18 @@ export function EditUserPage () {
     const isSuperAdmin = hasGroupAccess(currentUser, UserGroup.SuperAdministrator)
     const isAdmin = hasGroupAccess(currentUser, UserGroup.Administrator)
 
-    let editMode: ProfileEditMode | undefined
+    let editMode: UserEditMode | undefined
     if(isSuperAdmin){
-        editMode = ProfileEditMode.SuperAdmin
+        editMode = UserEditMode.SuperAdmin
     }
     else if (isSelfEditing && isAdmin) {
-        editMode = ProfileEditMode.SelfAndAdmin
+        editMode = UserEditMode.SelfAndAdmin
     }
     else if (isSelfEditing){
-        editMode = ProfileEditMode.Self
+        editMode = UserEditMode.Self
     }
     else if (isAdmin) {
-        editMode = ProfileEditMode.Admin
+        editMode = UserEditMode.Admin
     }
 
     if(editMode){
@@ -49,7 +49,7 @@ export function EditUserPage () {
     return <Navigate to={`/medlem/${viewedUser.userId}`}/>
 }
 
-function EditPage( { editMode, user }: { editMode: ProfileEditMode, user: User}) {
+function EditPage( { editMode, user }: { editMode: UserEditMode, user: User}) {
     const [newUser, setNewUser] = useState<User>(user)
     const [disableSubmit, setDisableSubmit] = useState(false)
 
@@ -109,8 +109,8 @@ function PersonForm({value, onChange, onIsValidChange, editMode}: FormParams) {
     const [isValid, setIsValid] = useState(true)
     useEffect( () => onIsValidChange(isValid), [isValid])
 
-    const isSelf = editMode === ProfileEditMode.Self || editMode === ProfileEditMode.SelfAndAdmin
-    const isSuperAdmin = editMode === ProfileEditMode.SuperAdmin
+    const isSelf = editMode === UserEditMode.Self || editMode === UserEditMode.SelfAndAdmin
+    const isSuperAdmin = editMode === UserEditMode.SuperAdmin
     if(!isSelf && !isSuperAdmin) {
         return <PersonCard user={value}/>
     }
@@ -276,7 +276,7 @@ function AccountDetailsForm( {value, onChange, onIsValidChange, editMode}: FormP
         return <AccountDetailsCard user={value}/>
     }
 
-    const isSuperAdmin = editMode === ProfileEditMode.SuperAdmin
+    const isSuperAdmin = editMode === UserEditMode.SuperAdmin
     const groupSource = isSuperAdmin 
                        ? groupTVPair 
                        : groupTVPair.filter( item => item.value !== UserGroup.SuperAdministrator)
@@ -306,7 +306,7 @@ function AccountDetailsForm( {value, onChange, onIsValidChange, editMode}: FormP
 
 type FormParams = {
     value: User,
-    editMode: ProfileEditMode,
+    editMode: UserEditMode,
     onChange: (value: User) => void,
     onIsValidChange: (isValid: boolean) => void
 }
@@ -385,15 +385,8 @@ function getStatusExplanation(status: UserStatus): string {
     }
 }
 
-function hasAdminAccess( mode: ProfileEditMode ): boolean {
-    return  mode === ProfileEditMode.Admin || 
-            mode === ProfileEditMode.SelfAndAdmin || 
-            mode === ProfileEditMode.SuperAdmin
-}
-
-enum ProfileEditMode {
-    Self = 1,
-    Admin = 2,
-    SelfAndAdmin = 3,
-    SuperAdmin = 4,
+function hasAdminAccess( mode: UserEditMode ): boolean {
+    return  mode === UserEditMode.Admin || 
+            mode === UserEditMode.SelfAndAdmin || 
+            mode === UserEditMode.SuperAdmin
 }
