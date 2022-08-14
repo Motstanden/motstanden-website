@@ -68,7 +68,7 @@ function onVerifyLinkClick(
     // TODO:
     //      - Ensure that the link is only allowed to be clicked exactly once
     //      - Retrieve user information and send it further
-    const accessTokenData = user.getTokenData(payload.destination)
+    const accessTokenData = user.getAccessTokenData(payload.destination)
     callback( /*Error*/ undefined, accessTokenData)
 }
 

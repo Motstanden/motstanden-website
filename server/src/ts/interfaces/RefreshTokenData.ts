@@ -1,5 +1,4 @@
-import { AccessTokenData } from "./AccessTokenData";
-
-export interface RefreshTokenData extends AccessTokenData {
+export interface RefreshTokenData {
+    userId: number,
     salt: string
 }

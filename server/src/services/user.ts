@@ -30,7 +30,7 @@ export function userExists(unsafeEmail: string | undefined): boolean {
     return true;
 }
 
-export function getTokenData(unsafeEmail: string): AccessTokenData {
+export function getAccessTokenData(unsafeEmail: string): AccessTokenData {
     const email = unsafeEmail?.trim().toLowerCase();
     
     if(!email || !validateEmail(email))
@@ -59,6 +59,26 @@ export function getTokenData(unsafeEmail: string): AccessTokenData {
     return accessToken 
 }
 
+export function getTokenDataFromId(userId: number): AccessTokenData {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(
+        `SELECT 
+            user_id as userId,
+            email,
+            user_group_id as groupId,
+            user_group as groupName
+        FROM 
+            vw_user 
+        WHERE user_id = ?`)
+    const user = stmt.get(userId) as AccessTokenData
+    db.close()
+
+    if(!user.userId || !user.email || !user.groupId || !user.groupName)
+        throw `Database yielded invalid result.`
+
+    return user    
+}
+
 export function insertLoginToken(refreshToken: string){
     const jwtPayload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET) as JwtTokenData
 
@@ -74,7 +94,7 @@ export function insertLoginToken(refreshToken: string){
     db.close()
 }
 
-export function verifyLoginToken(loginToken: string, userToken: AccessTokenData): boolean {
+export function verifyLoginToken(loginToken: string, userId: number): boolean {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
         `SELECT
@@ -84,7 +104,7 @@ export function verifyLoginToken(loginToken: string, userToken: AccessTokenData)
         WHERE user_id = ?
         `
     )
-    const tokens = stmt.all(userToken.userId)
+    const tokens = stmt.all(userId)
     db.close()
     const tokenMatch = tokens.find( item => item.token === loginToken)
     return !!tokenMatch

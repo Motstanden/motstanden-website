@@ -41,7 +41,7 @@ if(process.env.IS_DEV_ENV) {
         if(!userService.userExists(unsafeEmail)) {
             res.end()
         }
-        const token = userService.getTokenData(req.body.destination)
+        const token = userService.getAccessTokenData(req.body.destination)
         req.user = token
         loginUser(req, res)
     })

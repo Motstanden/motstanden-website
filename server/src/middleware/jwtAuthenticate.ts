@@ -44,18 +44,12 @@ function updateAccessToken(req: Request, res: Response, next: NextFunction, opti
         return onFailure()
     }
 
-    const user: AccessTokenData = { 
-        userId: payload.userId,
-        email: payload.email,
-        groupId: payload.groupId,
-        groupName: payload.groupName  
-    }
-
-    const validToken = userService.verifyLoginToken(refreshToken, user)
+    const validToken = userService.verifyLoginToken(refreshToken, payload.userId)
     if(!validToken){
         return onFailure()
     }
     
+    const user = userService.getTokenDataFromId(payload.userId)
     const accessToken = createToken(TokenType.AccessToken, user)
     saveTokenInCookie(res, TokenType.AccessToken, accessToken)
 
@@ -84,7 +78,7 @@ function createAccessToken(user: AccessTokenData): string {
 
 function createRefreshToken(user: AccessTokenData): string {
     const data = {
-        ...user,
+        userId: user.userId,
         salt: crypto.randomBytes(16).toString("hex")
     } as RefreshTokenData
     return jwt.sign(data,  process.env.REFRESH_TOKEN_SECRET, { expiresIn: "365d"})
