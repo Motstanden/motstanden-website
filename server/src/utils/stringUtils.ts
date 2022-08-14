@@ -1,6 +1,6 @@
 
 // Returns true if the input is a string and contains any non whitespace characters
-export const stringIsNullOrWhiteSpace = (inputString: string) => {
+export const stringIsNullOrWhiteSpace = (inputString: string | undefined | null) => {
     let result = true
     if (inputString) {                              // Check if value is defined
         if (typeof inputString === 'string') {      // Check if value is a string

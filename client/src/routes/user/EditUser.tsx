@@ -15,7 +15,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { strToNumber } from "common/utils"
 import { Card, CardTextItem, groupTVPair, rankTVPair, statusTVPair } from "./Components";
 import { AccountDetailsCard, formatExactDate, MemberCard, PersonCard } from "./UserPage";
-import { validateEmail } from 'src/utils/validateEmail';
+import { validateEmail, isNtnuMail as checkIsNtnuMail } from 'common/utils';
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
@@ -132,7 +132,7 @@ function PersonForm({value, onChange, onIsValidChange, editMode}: FormParams) {
         return <PersonCard user={value}/>
     }
 
-    const isNtnuMail = value.email.trim().toLowerCase().endsWith("ntnu.no")
+    const isNtnuMail =  checkIsNtnuMail(value.email)
     const isValidEmail = validateEmail(value.email)
     const isValidPhone = value.phoneNumber === null || ( value.phoneNumber >= 10000000 && value.phoneNumber <= 99999999)  
 

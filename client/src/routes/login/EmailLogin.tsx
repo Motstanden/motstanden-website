@@ -6,7 +6,7 @@ import React, { useState } from "react"
 import { json } from 'stream/consumers';
 import DevLogin from './DevLogin';
 import { MagicLinkResponse } from 'common/interfaces';
-import { validateEmail } from 'src/utils/validateEmail';
+import { validateEmail } from 'common/utils';
 
 export function EmailLogin( { onEmailSent }: {onEmailSent: (e: EmailInfo) => void }) {
     

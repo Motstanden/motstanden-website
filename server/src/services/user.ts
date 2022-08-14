@@ -3,12 +3,10 @@ import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/dat
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 import { NewUser, User } from "common/interfaces";
 import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
+import { isNtnuMail, validateEmail } from "common/utils"
 import { JwtTokenData } from "../middleware/jwtAuthenticate";
 import jwt from 'jsonwebtoken';
-
-function validateEmail(email: string): boolean {
-    return true;    // #TODO
-}
+import { stringIsNullOrWhiteSpace } from "../utils/stringUtils";
 
 export function userExists(unsafeEmail: string | undefined): boolean {
     const email = unsafeEmail?.trim().toLowerCase();
