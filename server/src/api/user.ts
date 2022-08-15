@@ -24,7 +24,7 @@ router.post("/self/update-user", AuthenticateUser(), RequireSelf, handleUserUpda
 
 function handleUserUpdate(updateMode: UserEditMode){
     return (req: Request, res: Response, next: NextFunction) => {
-        
+
         const payload = req.body as User
         if(!payload){
             res.status(400).send("Bad data")  
@@ -34,7 +34,9 @@ function handleUserUpdate(updateMode: UserEditMode){
         try {
             userService.updateUser(payload, updateMode)
             changeSuccess = true
-        } catch {
+            console.log("user updated")
+        } catch (err) {
+            console.log(err)
             res.status(400).send("Failed to update user")
         }
         

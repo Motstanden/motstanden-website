@@ -293,7 +293,7 @@ export function updateUser(newUser: User, updateMode: UserEditMode) {
     const validUser = makeValidUser(newUser)
 
     if(!validUser)
-    throw "Invalid data"
+        throw "Invalid data"
 
     if(validUser.status === UserStatus.Inactive && updateMode === UserEditMode.Self )
         throw "Invalid data"
@@ -304,10 +304,9 @@ export function updateUser(newUser: User, updateMode: UserEditMode) {
     if(validUser.groupName !== UserGroup.Contributor && updateMode === UserEditMode.Self)
         throw "Invalid data"
         
-    const sql = getUpdateUserSql(validUser, updateMode)
-        
         
     const db = new Database(motstandenDB, dbReadWriteConfig)  // Read/Write instance of db
+    const sql = getUpdateUserSql(validUser, updateMode)
     const startTransaction = db.transaction( () => {
         const stmt = db.prepare(sql.stmt)
         const info = stmt.run(sql.params)   
@@ -317,6 +316,7 @@ export function updateUser(newUser: User, updateMode: UserEditMode) {
 
 }
 
+// This assumes that values are validated for the given user group.
 function getUpdateUserSql(user: User, updateMode: UserEditMode): SqlHelper {
 
     const db = new Database(motstandenDB, dbReadOnlyConfig)   // Read only instance of db
@@ -325,6 +325,50 @@ function getUpdateUserSql(user: User, updateMode: UserEditMode): SqlHelper {
     const statusId = getUserStatusId(user.status, db)
     db.close()
 
+    const selfDefault: SqlHelper = {
+        stmt: `
+            first_name = ?,
+            middle_name = ?,
+            last_name = ?,
+            birth_date = ?,
+            email = ?,
+            phone_number = ?,
+            cape_name = ?,
+            user_status_id = ?,
+            start_date = ?,
+            end_date = ?
+        `,
+        params: [
+            user.firstName,
+            user.middleName,
+            user.lastName,
+            user.birthDate,
+            user.email,
+            user.phoneNumber,
+            user.capeName,
+            statusId,
+            user.startDate,
+            user.endDate
+        ]
+    }
+
+    const superAdminOrSelfAdmin = {
+        stmt: `
+            UPDATE 
+                user
+            SET
+                ${selfDefault.stmt},
+                user_rank_id = ?,
+                user_group_id = ?
+            WHERE user_id = ?
+        `, 
+        params: [
+            ...selfDefault.params,
+            rankId,
+            groupId,
+            user.userId
+    ]}
+
     switch(updateMode){
         case UserEditMode.Self:         
             return {
@@ -332,35 +376,41 @@ function getUpdateUserSql(user: User, updateMode: UserEditMode): SqlHelper {
                 UPDATE 
                     user
                 SET
-                    first_name = ?,
-                    middle_name = ?,
-                    last_name = ?,
-                    birth_date = ?,
-                    email = ?,
-                    phone_number = ?,
-                    cape_name = ?,
-                    user_status_id = ?,
-                    start_date = ?,
-                    end_date = ?
+                    ${selfDefault.stmt}
                 WHERE user_id = ?
                 `, 
                 params: [
-                    user.firstName,
-                    user.middleName,
-                    user.lastName,
-                    user.birthDate,
-                    user.email,
-                    user.phoneNumber,
-                    user.capeName,
-                    statusId,
-                    user.startDate,
-                    user.endDate,
+                    ...selfDefault.params,
                     user.userId,
                 ]
             }
-        case UserEditMode.Admin:        return {stmt: "", params: []}
-        case UserEditMode.SelfAndAdmin: return {stmt: "", params: []}
-        case UserEditMode.SuperAdmin:   return {stmt: "", params: []}
+        case UserEditMode.Admin: 
+            return {
+                stmt: `
+                UPDATE 
+                    user
+                SET
+                    cape_name = ?,
+                    user_rank_id = ?,
+                    user_status_id = ?,
+                    start_date = ?,
+                    end_date = ?,
+                    user_group_id = ?
+                WHERE user_id = ?
+                `, 
+                params: [
+
+                    user.capeName,
+                    rankId,
+                    statusId,
+                    user.startDate,
+                    user.endDate,
+                    groupId,
+                    user.userId
+                ]
+            }
+        case UserEditMode.SelfAndAdmin: return superAdminOrSelfAdmin
+        case UserEditMode.SuperAdmin: return superAdminOrSelfAdmin
     }
 }
 

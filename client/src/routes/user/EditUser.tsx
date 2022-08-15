@@ -97,6 +97,10 @@ function EditForm( {
         if(response.ok){
             window.location.href = `${window.location.origin}/medlem/${user.userId}`    // Will trigger a reload of the page
         }
+        else {
+            console.log(response)
+            window.alert("Noe gikk galt\nSi ifra til webansvarlig")
+        }
         setIsSubmitting(false)
     } 
 
@@ -176,7 +180,6 @@ function PersonForm({value, onChange, onIsValidChange, editMode}: FormParams) {
                 <TextField 
                     label="E-post"
                     name="email"
-                    type="email"
                     value={value.email}
                     onChange={ e => onChange({...value, email: e.target.value})}
                     error={isNtnuMail || !isValidEmail}

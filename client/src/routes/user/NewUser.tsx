@@ -127,7 +127,6 @@ function NewUserForm() {
                 <TextField
                     label="E-post"
                     name="email"
-                    type="email"
                     value={email}
                     onChange={ e => setEmail(e.target.value)}
                     error={isNtnuMail}
