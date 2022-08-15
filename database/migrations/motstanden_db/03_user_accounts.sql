@@ -172,8 +172,8 @@ END;
 INSERT INTO 
     user(user_id, user_group_id, user_rank_id, email, first_name, middle_name, last_name, start_date)
 VALUES
-    (1, 4, 4, 'web@motstanden.no',      "Web",      "", "", "2018-09-11"),
-    (2, 3, 5, 'leder@motstanden.no',   "Leder",     "", "", "2018-09-11"),
-    (3, 3, 4, 'okonomi@motstanden.no',  "Okonomi",  "", "", "2018-09-11"),
-    (4, 3, 4, 'dirigent@motstanden.no', "Dirigent", "", "", "2018-09-11"),
-    (5, 3, 4, 'pr@motstanden.no',       "PR",       "", "", "2018-09-11");
+    (1, 4, 4, 'web@motstanden.no',      "Web",      "", "Ω", "2018-09-11"),
+    (2, 3, 5, 'leder@motstanden.no',    "Leder",    "", "Ω", "2018-09-11"),
+    (3, 3, 4, 'okonomi@motstanden.no',  "Okonomi",  "", "Ω", "2018-09-11"),
+    (4, 3, 4, 'dirigent@motstanden.no', "Dirigent", "", "Ω", "2018-09-11"),
+    (5, 3, 4, 'pr@motstanden.no',       "PR",       "", "Ω", "2018-09-11");
