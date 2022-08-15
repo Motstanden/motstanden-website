@@ -1,3 +1,6 @@
+# WARNING
+   The documentation is somewhat outdated right now.
+
 # Code of conduct
  - This project follows the [Gitflow Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) guidelines. 
  - English should be used everywhere. Norwegian is not allowed.
