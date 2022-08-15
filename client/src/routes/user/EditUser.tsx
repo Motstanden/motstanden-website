@@ -1,4 +1,4 @@
-import { Button, Divider, Grid, MenuItem, Paper, TextField, Tooltip } from "@mui/material";
+import { Box, Button, Divider, Grid, MenuItem, Paper, TextField, Tooltip } from "@mui/material";
 import { UserGroup, UserRank, UserStatus, UserEditMode } from "common/enums";
 import { User } from "common/interfaces";
 import { hasGroupAccess, userRankToPrettyStr } from "common/utils";
@@ -18,6 +18,7 @@ import { AccountDetailsCard, formatExactDate, MemberCard, PersonCard } from "./U
 import { validateEmail, isNtnuMail as checkIsNtnuMail } from 'common/utils';
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { HelpButton } from "src/components/HelpButton";
 
 export function EditUserPage () {
     
@@ -274,9 +275,9 @@ function MemberForm({value, onChange, editMode}: FormParams ){
                     >
                     { userStatusSrc.map( item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
                 </TextField>
-                <Tooltip title={getStatusExplanation(value.status)}>
-                    <HelpOutlineIcon sx={{ml: 2}} fontSize="large" color="secondary" />
-                </Tooltip>
+                <Box sx={{ml: 2}}>
+                    <HelpButton text={getStatusExplanation(value.status)}/>
+                </Box>
             </Stack>
             <DatePicker 
                 views={["year", "month"]}
@@ -417,10 +418,10 @@ function getPostUrl(mode: UserEditMode): string {
 
 function getStatusExplanation(status: UserStatus): string {
     switch (status){
-        case UserStatus.Active:  return "Aktivt medlem av motstanden"
-        case UserStatus.Veteran: return "Medlem som generelt ikke er aktiv, men som likevel deltar på ting av og til (f.eks SMASH og Forohming)"
-        case UserStatus.Retired: return "Medlem som hverken er aktiv eller deltar på ting. Medlemmet deltar kanskje på større jubileum."
-        case UserStatus.Inactive: return "Medlem som sluttet kort tid etter at vedkommende ble medlem"
+        case UserStatus.Active:  return "Aktiv: Aktivt medlem av motstanden"
+        case UserStatus.Veteran: return "Veteran: Medlem som generelt ikke er aktiv, men som likevel deltar på ting av og til (f.eks SMASH og Forohming)"
+        case UserStatus.Retired: return "Pensjonist: Medlem som hverken er aktiv eller deltar på ting. Medlemmet deltar kanskje på større jubileum."
+        case UserStatus.Inactive: return "Inaktiv: Medlem som sluttet kort tid etter at vedkommende ble medlem"
     }
 }
 
