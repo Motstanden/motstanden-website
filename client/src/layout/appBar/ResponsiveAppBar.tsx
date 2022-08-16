@@ -32,6 +32,7 @@ export default function ResponsiveAppBar(){
 };
 
 function DesktopToolbar({ display }: {display: any }){ // TODO: Find the correct type for display
+    const isTightFit = useAuth().user ? true : false // It is a tight fit on the navbar if the user is logged in
     return ( 
         <Stack 
             display={display}
@@ -43,8 +44,8 @@ function DesktopToolbar({ display }: {display: any }){ // TODO: Find the correct
             <Stack 
                 direction="row"
                 alignItems="center"
-                spacing={{sm: 0, md: 0, lg: 6}}>
-                <Box display={{md: "none", lg: "inline"}} >
+                spacing={isTightFit ? {md: 0, lg: 6} : {md: 6}}>
+                <Box display={isTightFit ? {md: "none", lg: "inline"} : {xs: "none", sm: "inline"} } >
                     <HeaderTitle variant='h5' />
                 </Box>
                 <NavBar/>
