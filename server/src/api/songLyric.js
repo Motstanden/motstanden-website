@@ -2,6 +2,7 @@ import express from "express";
 import Database from "better-sqlite3";
 import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "../config/databaseConfig.js";
 import fs from "fs";
+import path from "path";
 
 let router = express.Router()
 
@@ -30,7 +31,7 @@ router.get("/song_lyric_data", (req, res) => {
         res.status(400)
         res.end()
     }
-    const filename = rows.file
+    const filename = path.join(__dirname, "..", "..", rows.file)
     db.close()
 
     // Send html file as string
