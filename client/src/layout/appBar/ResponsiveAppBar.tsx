@@ -20,6 +20,8 @@ import UserAvatar from "./UserAvatar"
 import { hasGroupAccess } from 'common/utils';
 import { UserGroup } from 'common/enums';
 
+import MotstandenImg from "../../assets/logos/motstanden.png"
+
 export default function ResponsiveAppBar(){
     return (
         <AppBar position="static">
@@ -38,23 +40,26 @@ function DesktopToolbar({ display }: {display: any }){ // TODO: Find the correct
             display={display}
             direction="row" 
             alignItems="center" 
-            justifyContent="space-between" 
-            sx={{width: "100%", maxWidth: "1200px", marginX: "auto"}}
+            justifyContent="center" 
+            px={{lg: 0, xl: 2}}
+            sx={{width: "100%"}}
             >
-            <Stack 
-                direction="row"
-                alignItems="center"
-                spacing={isTightFit ? {md: 0, lg: 6} : {md: 6}}>
-                <Box display={isTightFit ? {md: "none", lg: "inline"} : {xs: "none", sm: "inline"} } >
-                    <HeaderTitle variant='h5' />
-                </Box>
-                <NavBar/>
-            </Stack>
+            <div style={{marginRight: "auto", flex: 1}}>
+                <HeaderTitle variant='h5'/>
+            </div>
+            <NavBar/>
             <Stack 
                 direction="row" 
                 alignItems="center" 
-                sx={{justifySelf: "flex-end"}} >
-                <ThemeSwitcher/>
+                justifyContent="flex-end"
+                sx={{
+                    width: "max(135px)",
+                    marginLeft: "auto",
+                    flex: 1
+                                
+                }} 
+                >
+                    <ThemeSwitcher/>
                 <Divider 
                     light={false} 
                     orientation="vertical" 
@@ -88,25 +93,50 @@ function MobileToolBar({ display }: {display: any } ) {
     )
 }
 
+
 function HeaderTitle( {variant, sx }: {variant?: VariantType, sx?: SxProps }) {
     const auth = useAuth()
+    const isLoggedIn = auth.user ? true : false // It is a tight fit on the navbar if the user is logged in
 	return (
-        <Typography
-            component={RouterLink}
-            to={auth.user ? "/hjem" : "/"}
-            noWrap
-            variant={variant}
-            sx={{
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                letterSpacing: '.1rem',
-                color: 'inherit',
-                textDecoration: 'none',
-                ...sx
-            }}
-            >
-            MOTSTANDEN
-        </Typography>
+        <Stack 
+            direction="row" 
+            alignItems="center" 
+            spacing={2} 
+            sx={{pr: 4}} 
+            display={ isLoggedIn 
+                ? { xs: "flex", md: "none", lg: "flex"}
+                : {xs: "flex"}
+            }>
+            <Box 
+                display={ isLoggedIn 
+                    ? {xs: "none", lg: "inline"} 
+                    : {xs: "none", md: "inline"}}
+                >
+                <RouterLink to={isLoggedIn ? "/hjem" : "/"} >
+                    <img src={MotstandenImg} style={{height: "45px", marginTop: "3px"}} loading="lazy"/>
+                </RouterLink>
+            </Box>
+
+            <Box display={isLoggedIn ? {md: "none", lg: "none", xl: "inline"} : {}}>
+                <Typography
+                    component={RouterLink}
+                    to={isLoggedIn ? "/hjem" : "/"}
+                    noWrap
+                    variant={variant}
+                    sx={{
+                        fontFamily: 'monospace',
+                        fontWeight: 700,
+                        letterSpacing: '.1rem',
+                        color: 'inherit',
+                        textDecoration: 'none',
+                        ...sx
+                    }}
+                    >
+
+                    MOTSTANDEN
+                </Typography>
+            </Box>
+        </Stack>
 	)
 }
 

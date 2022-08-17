@@ -32,8 +32,9 @@ function PrivateNavBar(){
             component="nav"
             direction="row"
             alignItems="center"
-            justifyContent="space-between"
-            spacing={{sm: 1, md: 2, lg: 4}}
+            justifyContent={{lg: "flex-start", xl: "center"}}
+            sx={{width: "100%", maxWidth: "1200px"}}
+            spacing={{sm: 1, md: 2, lg: 4, xl: 6}}
             >
             <NavLink text="Hjem" to="/hjem"/>
             <NavLink text="Notearkiv" to="/notearkiv"/>
@@ -61,8 +62,8 @@ function PublicNavBar(){
             component="nav"
             direction="row"
             alignItems="center"
-            justifyContent="space-between"
-            spacing={4}
+            justifyContent="center"
+            spacing={{md: 6, lg: 12, xl: 16 }}
             >
             <NavDropDown text="Om oss" sx={{mr: -2}}>
                 <List component="nav" disablePadding sx={{minWidth: 200}}>
@@ -108,6 +109,7 @@ export function NavLink( { to, text, sx }: { to: string, text: string, sx?: SxPr
             underline="hover"
             sx={{
                 color: "inherit",
+                pl: 1,
                 ...sx
             }}
         >
