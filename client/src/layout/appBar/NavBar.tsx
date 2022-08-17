@@ -34,12 +34,13 @@ function PrivateNavBar(){
             alignItems="center"
             justifyContent={{lg: "flex-start", xl: "center"}}
             sx={{width: "100%", maxWidth: "1200px"}}
-            spacing={{sm: 1, md: 2, lg: 4, xl: 6}}
+            spacing={{sm: 1, md: 1, lg: 4, xl: 6}}
             >
             <NavLink text="Hjem" to="/hjem"/>
             <NavLink text="Notearkiv" to="/notearkiv"/>
             <NavLink text="Sitater" to="/sitater"/>
             <NavLink text="Studenttraller" to="/studenttraller"/>
+            <NavLink text="Arrangement" to="/arrangement" />
             <NavLink text="Dokumenter" to="/dokumenter" />
             <AdminDropDown/>
             <NavDropDown text="Om oss">

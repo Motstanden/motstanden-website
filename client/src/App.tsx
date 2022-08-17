@@ -23,6 +23,9 @@ import { NewUserPage } from './routes/user/NewUser';
 import { EditUserPage } from './routes/user/EditUser';
 import { UserContext } from './routes/user/UserContext';
 import { UserPage, UserProfileContext } from './routes/user/UserPage';
+import { EventListPage } from './routes/event/EventList';
+import { NewEventPage } from './routes/event/NewEvent';
+import { EventContext } from './routes/event/EventContext';
 
 function App() {
 
@@ -60,6 +63,10 @@ function App() {
 							<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator}/>}>
 								<Route path="ny" element={<NewUserPage/>}/>
 							</Route>
+						</Route>
+						<Route path="/arrangement" element={<EventContext/>}>
+							<Route path=""  element={<EventListPage/>}/>
+							<Route path="ny" element={<NewEventPage/>}/>
 						</Route>
 					</Route>
 

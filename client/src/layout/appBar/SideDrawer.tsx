@@ -89,6 +89,7 @@ function PrivateContent(props: SideDrawerContentProps) {
             <ListItemLink text="Notearkiv" to="/notearkiv" onLinkClick={onRequestedExit}/>
             <ListItemLink text="Sitater" to="/sitater" onLinkClick={onRequestedExit}/>
             <ListItemLink text="Studenttraller" to="/studenttraller" onLinkClick={onRequestedExit}/>
+            <ListItemLink text="Arrangement" to="/Arrangement" onLinkClick={onRequestedExit}/>
             <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit}/>
             <MemberList onLinkClick={onRequestedExit} />
             <ListItemExpander text="Om oss">
