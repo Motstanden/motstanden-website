@@ -7,9 +7,8 @@ import { SxProps } from '@mui/system';
 
 import { LabelPlacementType } from '../../utils/tsTypes/MaterialUiTypes';
 import { ThemeName, useAppTheme } from '../../context/Themes';
-
-
-
+import LightModeIcon from '@mui/icons-material/LightMode';
+import ModeNightSharpIcon from '@mui/icons-material/ModeNightSharp';
 
 interface ThemeSwitcherProps {
     labelPlacement?: LabelPlacementType
@@ -25,11 +24,12 @@ export default function ThemeSwitcher(props: ThemeSwitcherProps) {
     }
 
     return (
-        <FormControlLabel 
-            label="Skyggemodus"
-            labelPlacement={props?.labelPlacement ?? "end"}
-            control={<Switch checked={theme.name === ThemeName.Dark} color="secondary"/>}
-            sx={{mr: 0}}
+        <Switch 
+            checked={theme.name === ThemeName.Dark} 
+            style={{ height: "38px", width: "38px"}}
+            color="secondary"
+            icon={<LightModeIcon fontSize="large" sx={{ color: "#f9c800"}} />}
+            checkedIcon={<ModeNightSharpIcon fontSize='large'/>}
             onClick={onSwitchClick}
             />
     )
