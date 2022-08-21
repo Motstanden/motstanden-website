@@ -24,6 +24,10 @@ sqlite3 motstanden_dev.db < migrations/motstanden_db/03_user_accounts.sql;
 echo "Running: 04_remove_obsolete.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/04_remove_obsolete.sql;
 
+# Remove obsolete tables
+echo "Running: 05_fix_quote_trigger.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/05_fix_quote_trigger.sql;
+
 echo "Dumping schema -> motstanden_schema.sql"
 sqlite3 motstanden_dev.db .schema > motstanden_schema.sql 
 

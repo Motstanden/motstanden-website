@@ -123,5 +123,5 @@ CREATE TRIGGER trig_quote_updated_at
     AFTER UPDATE ON quote FOR EACH ROW
 BEGIN
     UPDATE quote SET updated_at = current_timestamp
-        WHERE user_id = old.user_id;
+        WHERE quote_id = old.quote_id;
 END;
