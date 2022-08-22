@@ -11,10 +11,17 @@ import {
     Editable,
     RenderLeafProps,
     Slate,
+    useSlate,
     withReact
     } from 'slate-react';
 import { ReactEditor, RenderElementProps } from 'slate-react';
 import { HistoryEditor, withHistory } from 'slate-history'
+
+import FormatBoldIcon from '@mui/icons-material/FormatBold';
+import FormatItalicIcon from '@mui/icons-material/FormatItalic';
+import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 enum TextFormat {
     Bold = "bold",
@@ -64,16 +71,21 @@ declare module 'slate' {
     }
 }
 
-function EditorContainer() {
+function EditorContainer( {children}: {children: React.ReactNode}) {
     return (
+        <>
+        <div>
+            <Toolbar/>
+        </div>
         <div style={{
             padding: "10px",
             border: "1px solid gray",
-            borderRadius: "10px",
-            minHeight: "50px"
+            minHeight: "50px",
+            marginTop: "10px"
         }}>
-            <TextEditor/>
+            {children}
         </div>
+        </>
     )
 }
 
@@ -85,8 +97,8 @@ const initialValue: Descendant[] = [{
 }]
 
 function TextEditor() {
-    const editor = useMemo(() => withHistory(withReact(createEditor())), [])     // Production
-    // const [editor] = useState(withHistory(withReact(createEditor())))         // Development
+    // const editor = useMemo(() => withHistory(withReact(createEditor())), [])        // Production
+    const [editor] = useState(withHistory(withReact(createEditor())))            // Development
     const renderElement = useCallback( (props: RenderElementProps) => <Element {...props} />, [])
     const renderLeaf = useCallback( (props: RenderLeafProps) => <Leaf {...props}/>, [])
 
@@ -100,17 +112,55 @@ function TextEditor() {
 
     return (
         <Slate editor={editor}  value={initialValue}>
-            <Editable 
-                renderElement={renderElement}
-                renderLeaf={renderLeaf}
-                spellCheck
-                onKeyDown={event => {
-                    handleHotkey(event, TextFormat.Bold)
-                    handleHotkey(event, TextFormat.Italic)
-                    handleHotkey(event, TextFormat.Underline)
-                }}
-            />
+            <EditorContainer>
+                <Editable 
+                    renderElement={renderElement}
+                    renderLeaf={renderLeaf}
+                    spellCheck
+                    onKeyDown={event => {
+                        handleHotkey(event, TextFormat.Bold)
+                        handleHotkey(event, TextFormat.Italic)
+                        handleHotkey(event, TextFormat.Underline)
+                    }}
+                />
+            </EditorContainer>
         </Slate>
+    )
+}
+
+function Toolbar() {
+    const editor = useSlate()
+
+    const onChange = ( event: React.MouseEvent<HTMLElement>, newFormats: TextFormat[]) => {
+        newFormats.forEach( format => {
+            ToggleMark(editor, format)
+        })
+    }
+
+    const buildValue = (value: TextFormat[], format: TextFormat): TextFormat[] => {
+        if(IsMarkActive(editor, format)) {
+            return [...value, format]
+        }
+        return value
+    }
+
+    let values: TextFormat[] = []
+    values = buildValue(values, TextFormat.Bold)
+    values = buildValue(values, TextFormat.Italic)
+    values = buildValue(values, TextFormat.Underline)
+
+    return (
+        <ToggleButtonGroup value={values} onChange={onChange}>
+            <ToggleButton value={TextFormat.Bold} >
+                <FormatBoldIcon/>
+            </ToggleButton>
+            <ToggleButton value={TextFormat.Italic}>
+                <FormatItalicIcon/>
+            </ToggleButton>
+            <ToggleButton value={TextFormat.Underline}>
+                <FormatUnderlinedIcon/>
+            </ToggleButton>
+        </ToggleButtonGroup>
     )
 }
 
@@ -175,4 +225,4 @@ function IsMarkActive(editor: CustomEditor, format: TextFormat): boolean {
     }
 }
 
-export {EditorContainer as RichTextEditor}
+export {TextEditor as RichTextEditor}
