@@ -22,6 +22,7 @@ import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Stack from '@mui/material/Stack';
 
 enum TextFormat {
     Bold = "bold",
@@ -42,8 +43,14 @@ enum ElementType {
     Paragraph = "paragraph"
 }
 
+enum HeadingLevel {
+    H1 = 1,
+    H2 = 2
+}
+
 type HeadingElement = {
     type: ElementType.Heading,
+    level: HeadingLevel
     children: CustomText[]
 }
 
@@ -89,12 +96,14 @@ function EditorContainer( {children}: {children: React.ReactNode}) {
     )
 }
 
-const initialValue: Descendant[] = [{
-    type: ElementType.Paragraph,
-    children: [
-        { text: ""}
-    ]
-}]
+const initialValue: Descendant[] = [
+    {
+        type: ElementType.Paragraph,
+        children: [
+            { text: ""}
+        ]
+    }
+]
 
 function TextEditor() {
     // const editor = useMemo(() => withHistory(withReact(createEditor())), [])        // Production
@@ -117,6 +126,7 @@ function TextEditor() {
                     renderElement={renderElement}
                     renderLeaf={renderLeaf}
                     spellCheck
+                    placeholder='Beskrivelse av arrangement'
                     onKeyDown={event => {
                         handleHotkey(event, TextFormat.Bold)
                         handleHotkey(event, TextFormat.Italic)
@@ -128,7 +138,7 @@ function TextEditor() {
     )
 }
 
-function Toolbar() {
+function TextFormatButtons() {
     const editor = useSlate()
 
     const onChange = ( event: React.MouseEvent<HTMLElement>, newFormats: TextFormat[]) => {
@@ -164,14 +174,83 @@ function Toolbar() {
     )
 }
 
+function BlockElementButtons() {
+    const editor = useSlate()
+
+    const isMatch = (level: HeadingLevel) => {
+        const [match]: any = Editor.nodes(editor, {
+            match: (n: any) => n.type === ElementType.Heading && n.level === level
+        })
+        return !!match
+    }
+
+    const onChange = ( event: React.MouseEvent<HTMLElement>, newLevel: HeadingLevel) => {
+        const newNode = newLevel 
+                      ? { type: ElementType.Heading, level: newLevel }
+                      : { type: ElementType.Paragraph }
+
+        Transforms.setNodes(
+            editor,
+            newNode,
+            { match: n => Editor.isBlock(editor, n)}
+        )
+
+    }
+
+    let value = undefined;
+    value = isMatch(HeadingLevel.H2) ? HeadingLevel.H2 : value;
+    value = isMatch(HeadingLevel.H1) ? HeadingLevel.H1 : value;
+
+    return (
+        <ToggleButtonGroup 
+            exclusive
+            value={value}
+            onChange={onChange}
+            >
+            <ToggleButton value={HeadingLevel.H1} >
+                <strong>
+                    H1
+                </strong>
+            </ToggleButton>
+            <ToggleButton value={HeadingLevel.H2}>
+                <strong>
+                    H2
+                </strong>
+            </ToggleButton>
+        </ToggleButtonGroup>
+    )
+} 
+
+function Toolbar(){
+
+    return (
+        <Stack spacing={2} direction="row" alignItems="center">
+            <TextFormatButtons/>
+            <BlockElementButtons/>
+        </Stack>
+    )
+
+}
+
 function Element( { attributes, children, element }: RenderElementProps ) {
     switch (element.type) {
-        case ElementType.Heading:
-            return (
-                <h1 {...attributes}>
-                    {children}
-                </h1>
-            )
+        case ElementType.Heading: {
+
+            if(element.level == HeadingLevel.H1) {
+                return (
+                    <h2 {...attributes}>
+                        {children}
+                    </h2>
+                )
+            }
+            else {
+                return (
+                    <h3 {...attributes}>
+                        {children}
+                    </h3>
+                )
+            }
+        }
         case ElementType.Paragraph: 
             return (
                 <div {...attributes}>
@@ -203,7 +282,7 @@ function Leaf( {attributes, children, leaf}: RenderLeafProps) {
       return <span {...attributes}>{children}</span>
 }
 
-function ToggleMark(editor: CustomEditor, format: TextFormat){
+function ToggleMark(editor: CustomEditor, format: TextFormat) {
     const isActive = IsMarkActive(editor, format)
 
     if(isActive) {
