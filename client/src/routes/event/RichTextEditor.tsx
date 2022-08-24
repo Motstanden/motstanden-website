@@ -20,6 +20,8 @@ import { HistoryEditor, withHistory } from 'slate-history'
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Stack from '@mui/material/Stack';
@@ -39,24 +41,43 @@ function GetTextHotkey( format: TextFormat): string {
 }
 
 enum ElementType {
-    Heading = "heading",
-    Paragraph = "paragraph"
+    H1 = "h1",
+    H2 = "h2",
+    Paragraph = "paragraph",
+    NumberedList = "numbered-list",
+    BulletedList = "bulleted-list",
+    ListItem = "list-item"
 }
 
-enum HeadingLevel {
-    H1 = 1,
-    H2 = 2
+type HeadingOneElement = {
+    type: ElementType.H1,
+    children: CustomText[]
 }
 
-type HeadingElement = {
-    type: ElementType.Heading,
-    level: HeadingLevel
+type HeadingTwoElement = {
+    type: ElementType.H2,
     children: CustomText[]
 }
 
 type ParagraphElement = {
     type: ElementType.Paragraph,
     children: CustomText[]
+}
+
+type ListItemElement = {
+    type: ElementType.ListItem,
+    children: CustomText[]
+}
+
+
+type NumberedListElement = {
+    type: ElementType.NumberedList,
+    children: ListItemElement[]
+}
+
+type BulletedListElement = {
+    type: ElementType.BulletedList,
+    children: ListItemElement[]
 }
 
 type FormattedText = { 
@@ -67,8 +88,14 @@ type FormattedText = {
 }
 
 type CustomEditor = BaseEditor & ReactEditor & HistoryEditor
-type CustomElement = HeadingElement | ParagraphElement
+type CustomElement = HeadingOneElement | HeadingTwoElement | ParagraphElement | NumberedListElement | BulletedListElement | ListItemElement
 type CustomText = FormattedText
+
+interface IElement {
+    type: CustomElement,
+    children: CustomText[]    
+}
+
 
 declare module 'slate' {
     interface CustomTypes {
@@ -101,6 +128,22 @@ const initialValue: Descendant[] = [
         type: ElementType.Paragraph,
         children: [
             { text: ""}
+        ]
+    }, {
+        type: ElementType.NumberedList,
+        children: [
+            {
+                type: ElementType.ListItem,
+                children: [ { text: "Hei" }]
+            }
+        ]
+    }, {
+        type: ElementType.BulletedList,
+        children: [
+            {
+                type: ElementType.ListItem,
+                children: [ { text: "Hei" }]
+            }
         ]
     }
 ]
@@ -174,48 +217,63 @@ function TextFormatButtons() {
     )
 }
 
+
 function BlockElementButtons() {
     const editor = useSlate()
 
-    const isMatch = (level: HeadingLevel) => {
+    const isMatch = ( type: ElementType ): boolean => {
         const [match]: any = Editor.nodes(editor, {
-            match: (n: any) => n.type === ElementType.Heading && n.level === level
+            match: (n: any) => n.type === type
         })
         return !!match
     }
 
-    const onChange = ( event: React.MouseEvent<HTMLElement>, newLevel: HeadingLevel) => {
-        const newNode = newLevel 
-                      ? { type: ElementType.Heading, level: newLevel }
-                      : { type: ElementType.Paragraph }
+    const onChange = ( event: React.MouseEvent<HTMLElement>, newType: ElementType) => {
 
+        Transforms.unwrapNodes(editor, {
+            match: (n: any) => n.type === ElementType.BulletedList || n.type === ElementType.NumberedList,
+            split: true
+        })
+
+        const isList = newType === ElementType.BulletedList || newType === ElementType.NumberedList
         Transforms.setNodes(
             editor,
-            newNode,
+            {type: isList ? ElementType.ListItem : newType },
             { match: n => Editor.isBlock(editor, n)}
         )
-
+        if(isList) {
+            Transforms.wrapNodes(editor, { type: newType, children: [] })
+        }
     }
 
     let value = undefined;
-    value = isMatch(HeadingLevel.H2) ? HeadingLevel.H2 : value;
-    value = isMatch(HeadingLevel.H1) ? HeadingLevel.H1 : value;
+    value = isMatch(ElementType.H1) ? ElementType.H1 : value
+    value = isMatch(ElementType.H2) ? ElementType.H2 : value
+    value = isMatch(ElementType.BulletedList) ? ElementType.BulletedList : value
+    value = isMatch(ElementType.NumberedList) ? ElementType.NumberedList : value
 
+    console.log(value)
     return (
         <ToggleButtonGroup 
             exclusive
             value={value}
             onChange={onChange}
             >
-            <ToggleButton value={HeadingLevel.H1} >
+            <ToggleButton value={ElementType.H1} >
                 <strong>
                     H1
                 </strong>
             </ToggleButton>
-            <ToggleButton value={HeadingLevel.H2}>
+            <ToggleButton value={ElementType.H2}>
                 <strong>
                     H2
                 </strong>
+            </ToggleButton>
+            <ToggleButton value={ElementType.BulletedList}>
+                <FormatListBulletedIcon/>
+            </ToggleButton>
+            <ToggleButton value={ElementType.NumberedList}>
+                <FormatListNumberedIcon/>
             </ToggleButton>
         </ToggleButtonGroup>
     )
@@ -234,28 +292,41 @@ function Toolbar(){
 
 function Element( { attributes, children, element }: RenderElementProps ) {
     switch (element.type) {
-        case ElementType.Heading: {
-
-            if(element.level == HeadingLevel.H1) {
-                return (
-                    <h2 {...attributes}>
-                        {children}
-                    </h2>
-                )
-            }
-            else {
-                return (
-                    <h3 {...attributes}>
-                        {children}
-                    </h3>
-                )
-            }
-        }
+        case ElementType.H1:
+            return (
+                <h2 {...attributes}>
+                    {children}
+                </h2>
+            )
+        case ElementType.H2:
+            return (
+                <h3 {...attributes}>
+                    {children}
+                </h3>
+            )
         case ElementType.Paragraph: 
             return (
                 <div {...attributes}>
                     {children}
                 </div>
+            )
+        case ElementType.NumberedList: 
+            return (
+                <ol {...attributes}>
+                    {children}
+                </ol>
+            )
+        case ElementType.BulletedList: 
+            return (
+                <ul {...attributes}>
+                    {children}
+                </ul>
+            )
+        case ElementType.ListItem: 
+            return (
+                <li {...attributes}>
+                    {children}
+                </li>
             )
         default:
             return (
