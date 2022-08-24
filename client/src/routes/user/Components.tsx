@@ -1,26 +1,22 @@
 import { Divider, Grid, Paper, Stack } from "@mui/material"
 import { UserGroup, UserRank, UserStatus } from "common/enums"
 import { userGroupToPrettyStr, userRankToPrettyStr, userStatusToPrettyStr } from "common/utils"
+import { ResponsiveTitleCard, TitleCardProps } from "src/components/TitleCard"
 
 export function Card({
     title, 
     children, 
     spacing
-}: {
-    title: string, 
-    children: React.ReactNode,
-    spacing?: number
-}){
+}: 
+    TitleCardProps & { 
+    spacing?: number 
+}) {
     return (
-        <Grid item xs={12} sm={6}>
-            <Paper sx={{p: 2, height: "100%"}} elevation={6}>
-                <h3 style={{margin: 0}}>{title}</h3>
-                <Divider sx={{mt: 2, mb:2}}/>
-                <Stack spacing={spacing ?? 2}>
-                    {children}
-                </Stack>
-            </Paper>
-        </Grid>
+        <ResponsiveTitleCard title={title} sx={{height: "100%"}}>
+            <Stack spacing={spacing ?? 2}>
+                {children}
+            </Stack>
+        </ResponsiveTitleCard>
     )    
 }
 
