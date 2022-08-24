@@ -1,4 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
+import * as ReactDOMServer from 'react-dom/server';
+import * as DOMPurify from 'dompurify';
 import { BaseEditor, Text, Transforms } from 'slate';
 import isHotkey from 'is-hotkey'
 import {
@@ -90,12 +92,6 @@ type FormattedText = {
 type CustomEditor = BaseEditor & ReactEditor & HistoryEditor
 type CustomElement = HeadingOneElement | HeadingTwoElement | ParagraphElement | NumberedListElement | BulletedListElement | ListItemElement
 type CustomText = FormattedText
-
-interface IElement {
-    type: CustomElement,
-    children: CustomText[]    
-}
-
 
 declare module 'slate' {
     interface CustomTypes {
@@ -278,7 +274,22 @@ function Toolbar(){
 
 }
 
-function Element( { attributes, children, element }: RenderElementProps ) {
+// These interfaces are a hack that tells React that 'attributes' is an optional property
+// This is unsafe because attributes is required by slate.
+//
+// Why do we need this hack?
+//      - Because attributes are managed by the slate editor and we want to build the html content without using the editor.
+//      - This makes serialization easier 
+interface UnsafeRenderElementProps extends Partial<RenderElementProps> {
+    children: any
+    element: CustomElement,
+}
+interface UnsafeRenderLeafProps extends Partial<RenderLeafProps> {
+    children: any
+    leaf: FormattedText,
+}
+
+function Element( { attributes, children, element }: UnsafeRenderElementProps ) {
     switch (element.type) {
         case ElementType.H1:
             return (
@@ -325,7 +336,7 @@ function Element( { attributes, children, element }: RenderElementProps ) {
     }
 }
 
-function Leaf( {attributes, children, leaf}: RenderLeafProps) {
+function Leaf( {attributes, children, leaf}: UnsafeRenderLeafProps) {
     if (leaf.bold) {
         children = <strong>{children}</strong>
       }
@@ -364,6 +375,33 @@ function IsMarkActive(editor: CustomEditor, format: TextFormat): boolean {
         case TextFormat.Underline:
             return marks?.underline === true
     }
+}
+
+function serialize(editor: CustomEditor): string {
+    const content = ReactDOMServer.renderToStaticMarkup(EditorContentBuilder({editor: editor})) 
+
+    // It is not necessary to sanitize the content (because React has already done it).
+    // But, it can only hurt performance, so lets do it anyway just to be safe.
+    const cleanContent = DOMPurify.sanitize(content, { USE_PROFILES: { html: true } })
+    
+    return cleanContent
+}
+
+// The functions walks down the entire editor content tree, and returns the tree as jsx 
+function EditorContentBuilder( {editor}: {editor: CustomEditor} ) {
+    const tree = editor.children.map( (element, index) => <SectionBuilder key={index} element={element} />)
+    return <>{tree}</>
+}
+
+// Recursive functions that walks down all branches from a start element
+// Returns the tree as jsx elements
+function SectionBuilder( { element }: { element: any} ) {
+    if(Text.isText(element)) {
+        return <Leaf children={element.text} leaf={element} />
+    }
+
+    const children = element.children.map( (child: any, index: number) => <SectionBuilder key={index} element={child}/>)
+    return <Element children={children} element={element}/>
 }
 
 export {TextEditor as RichTextEditor}
