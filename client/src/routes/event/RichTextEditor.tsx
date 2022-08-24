@@ -129,22 +129,6 @@ const initialValue: Descendant[] = [
         children: [
             { text: ""}
         ]
-    }, {
-        type: ElementType.NumberedList,
-        children: [
-            {
-                type: ElementType.ListItem,
-                children: [ { text: "Hei" }]
-            }
-        ]
-    }, {
-        type: ElementType.BulletedList,
-        children: [
-            {
-                type: ElementType.ListItem,
-                children: [ { text: "Hei" }]
-            }
-        ]
     }
 ]
 
@@ -185,9 +169,14 @@ function TextFormatButtons() {
     const editor = useSlate()
 
     const onChange = ( event: React.MouseEvent<HTMLElement>, newFormats: TextFormat[]) => {
-        newFormats.forEach( format => {
-            ToggleMark(editor, format)
-        })
+        // Apply all new formats
+        newFormats.forEach( format => SetMark(editor, format, true))
+
+        // Remove formats that does not exists in 'newFormats'
+        Object.values(TextFormat)
+              .filter( format => !newFormats.includes(format))
+              .forEach( format => SetMark(editor, format, false))
+
     }
 
     const buildValue = (value: TextFormat[], format: TextFormat): TextFormat[] => {
@@ -252,7 +241,6 @@ function BlockElementButtons() {
     value = isMatch(ElementType.BulletedList) ? ElementType.BulletedList : value
     value = isMatch(ElementType.NumberedList) ? ElementType.NumberedList : value
 
-    console.log(value)
     return (
         <ToggleButtonGroup 
             exclusive
@@ -355,11 +343,14 @@ function Leaf( {attributes, children, leaf}: RenderLeafProps) {
 
 function ToggleMark(editor: CustomEditor, format: TextFormat) {
     const isActive = IsMarkActive(editor, format)
+    SetMark(editor, format, !isActive)
+}
 
-    if(isActive) {
-        Editor.removeMark(editor, format.toString())
-    } else {
+function SetMark(editor: CustomEditor, format: TextFormat, value: boolean) {
+    if(value) {
         Editor.addMark(editor, format.toString(), true)
+    } else {
+        Editor.removeMark(editor, format.toString())
     }
 }
 
