@@ -6,9 +6,6 @@ import { useEffect, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { useAuth } from "src/context/Authentication";
 import { PageContainer } from "src/layout/PageContainer";
-import SaveIcon from '@mui/icons-material/Save';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import LoadingButton from '@mui/lab/LoadingButton';
 import { Stack } from "@mui/system";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -17,8 +14,8 @@ import { Card, CardTextItem, groupTVPair, rankTVPair, statusTVPair } from "./Com
 import { AccountDetailsCard, formatExactDate, MemberCard, PersonCard } from "./UserPage";
 import { validateEmail, isNtnuMail as checkIsNtnuMail } from 'common/utils';
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { HelpButton } from "src/components/HelpButton";
+import SubmitFormButtons from "src/components/SubmitFormButtons";
 
 export function EditUserPage () {
     
@@ -342,45 +339,6 @@ type FormParams = {
     onIsValidChange: (isValid: boolean) => void
 }
 
-function SubmitFormButtons( { 
-    loading, 
-    onAbort, 
-    disabled
-}: { 
-    loading?: boolean, 
-    onAbort: React.MouseEventHandler<HTMLButtonElement> | undefined
-    disabled?: boolean,
-}) {
-    return (
-        <Stack direction="row" justifyContent="space-between">
-            <Button
-                startIcon={<ArrowBackIcon/>} 
-                color="error" 
-                variant="outlined"
-                disabled={loading}
-                onClick={onAbort} 
-                style={{
-                    minWidth: "120px"
-                }}
-                >
-                Avbryt
-            </Button>
-            <LoadingButton 
-                type="submit"
-                loading={loading}
-                endIcon={<SaveIcon/>}
-                variant="contained"
-                loadingPosition="end"
-                disabled={disabled}
-                style={{
-                    minWidth: "120px"
-                }}
-                >
-                Lagre
-            </LoadingButton>
-        </Stack>
-    )
-}
 
 function canExitPage(oldUser: User, newUser: User): boolean {
     if(!isUserEqual(oldUser, newUser)){
