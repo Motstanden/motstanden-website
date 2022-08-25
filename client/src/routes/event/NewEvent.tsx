@@ -1,4 +1,4 @@
-import { Button, IconButton, Stack, TextField, Tooltip } from "@mui/material"
+import { Button, Grid, IconButton, Stack, TextField, Tooltip } from "@mui/material"
 import Divider from "@mui/material/Divider"
 import Paper from "@mui/material/Paper"
 import { Box } from "@mui/system"
@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom"
 import SubmitFormButtons from "src/components/SubmitFormButtons"
 import { TitleCard } from "src/components/TitleCard"
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { RichTextEditor } from "./RichTextEditor"
 
 export function NewEventPage(){
@@ -16,6 +17,7 @@ export function NewEventPage(){
     const [isSubmitting, setIsSubmitting] = useState(false)
     
     const [eventData, setEventData] = useState<EventData>({title: "", startDateTime: "", endDateTime: ""})
+    const [extraInfo, setExtraInfo] = useState<KeyValuePair[]>([])
 
     const today = dayjs()
     const startDate = dateTimeStrToDayjs(eventData.startDateTime)
@@ -66,7 +68,7 @@ export function NewEventPage(){
                             {endDate && !isValidEndDate && <Box color="error.main">Slutt-tidspunkt kan ikke komme før start-tidspunkt</Box>}
                         </div>
                         <div>
-                            <MoreInfoForm/>
+                            <MoreInfoForm value={extraInfo} onChange={ (newValue) => setExtraInfo(newValue)}/>
                         </div>
                     </Stack>
                     <Divider sx={{my: 4}}/>
@@ -86,16 +88,55 @@ export function NewEventPage(){
     )
 }
 
-function MoreInfoForm() {
-    const [items, setItems] = useState<string[]>([])
-    
+function MoreInfoForm( { value, onChange}: {value: KeyValuePair[], onChange: (newValues: KeyValuePair[]) => void} ) {
+
     const onAddClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        setItems([...items, "#TODO"])
+        const newItems = [...value, {key: "", value: ""}]
+        onChange(newItems)
+    }
+
+    const onItemChange = (index: number, newVal: KeyValuePair) => {
+        let newItems = [...value]
+        newItems[index] = newVal
+        onChange(newItems)
+    }
+
+    const onDeleteClick = (index: number) => {
+        let newItems = [...value]
+        newItems.splice(index, 1)
+        onChange(newItems)
     }
 
     return (
         <Stack>
-            {items.map( (item, index) => <div key={index}>{item}</div> )}
+            {value.map( (item, index) => (
+                <Grid container key={`${index}`}  rowSpacing={4} columnSpacing={4} mb={4}>
+                    <Grid item xs={10} sm={5.5}>
+                        <TextField 
+                                label="Tittel"
+                                value={item.key}
+                                fullWidth
+                                required
+                                onChange={ e => onItemChange(index, {key: e.target.value, value: item.value})}
+                                />  
+                    </Grid> 
+                    <Grid item xs={1} display={{xs: "flex", sm: "none"}}>
+                        <DeleteButton onClick={e => onDeleteClick(index)}/>
+                    </Grid>
+                    <Grid item xs={12} sm={5.5}>
+                        <TextField
+                                label={item.key ?? "Info"}
+                                fullWidth
+                                value={item.value}
+                                required
+                                onChange={ e => onItemChange(index, {key: item.key, value: e.target.value})}
+                                />
+                    </Grid>
+                    <Grid item xs={1} display={{xs: "none", sm: "flex"}}>
+                        <DeleteButton onClick={e => onDeleteClick(index)}/>
+                    </Grid>
+                </Grid>
+            ))}
             <div>
                 <Tooltip title="Legg til mer info">
                     <IconButton color="primary" onClick={onAddClick}>
@@ -107,6 +148,17 @@ function MoreInfoForm() {
     )
 }
 
+function DeleteButton( {onClick}: {onClick?: React.MouseEventHandler<HTMLButtonElement>} ){
+    return (
+        <Tooltip title="Slett">
+            <IconButton onClick={onClick}>
+                <DeleteForeverIcon/>
+            </IconButton>
+        </Tooltip>
+    )
+}
+
+
 function dateTimeStrToDayjs(str: string) {
     return str ? dayjs(str, "YYYY-MM-DD HH-mm-ss") : null 
 }
@@ -115,8 +167,14 @@ function dayjsToDateTimeStr(dayjs: Dayjs | null) {
     return dayjs?.format("YYYY-MM-DD HH-mm-00") ?? ""
 }
 
+interface KeyValuePair {
+    key: string,
+    value: string
+}
+
 interface EventData {
     title: string 
     startDateTime: string
     endDateTime: string
+    extraInfo?: KeyValuePair[]
 }
