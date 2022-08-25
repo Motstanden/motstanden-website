@@ -16,8 +16,9 @@ import {
     useSlate,
     withReact
     } from 'slate-react';
-import { ReactEditor, RenderElementProps } from 'slate-react';
-import { HistoryEditor, withHistory } from 'slate-history'
+import { RenderElementProps } from 'slate-react';
+import { withHistory } from 'slate-history'
+import * as RichText from "src/components/TextEditor/FormattedText"
 
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
@@ -27,79 +28,11 @@ import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Stack from '@mui/material/Stack';
+import { ElementType, FormattedText, TextFormat } from 'src/components/TextEditor/Types';
+import { Leaf, UnsafeLeaf } from 'src/components/TextEditor/Leaf';
+import { Element, UnsafeElement } from 'src/components/TextEditor/Element';
+import { handleHotkey } from 'src/components/TextEditor/Hotkey';
 
-enum TextFormat {
-    Bold = "bold",
-    Italic = "italic",
-    Underline = "underline"
-}
-
-function GetTextHotkey( format: TextFormat): string {
-    switch(format) {
-        case TextFormat.Bold: return "mod+b"
-        case TextFormat.Italic: return "mod+i"
-        case TextFormat.Underline: return "mod+u"
-    }
-}
-
-enum ElementType {
-    H1 = "h1",
-    H2 = "h2",
-    Paragraph = "paragraph",
-    NumberedList = "numbered-list",
-    BulletedList = "bulleted-list",
-    ListItem = "list-item"
-}
-
-type HeadingOneElement = {
-    type: ElementType.H1,
-    children: CustomText[]
-}
-
-type HeadingTwoElement = {
-    type: ElementType.H2,
-    children: CustomText[]
-}
-
-type ParagraphElement = {
-    type: ElementType.Paragraph,
-    children: CustomText[]
-}
-
-type ListItemElement = {
-    type: ElementType.ListItem,
-    children: CustomText[]
-}
-
-
-type NumberedListElement = {
-    type: ElementType.NumberedList,
-    children: ListItemElement[]
-}
-
-type BulletedListElement = {
-    type: ElementType.BulletedList,
-    children: ListItemElement[]
-}
-
-type FormattedText = { 
-    text: string, 
-    bold?: true,
-    italic?: true,
-    underline?: true
-}
-
-type CustomEditor = BaseEditor & ReactEditor & HistoryEditor
-type CustomElement = HeadingOneElement | HeadingTwoElement | ParagraphElement | NumberedListElement | BulletedListElement | ListItemElement
-type CustomText = FormattedText
-
-declare module 'slate' {
-    interface CustomTypes {
-        Editor: CustomEditor
-        Element: CustomElement
-        Text: CustomText
-    }
-}
 
 function EditorContainer( {children}: {children: React.ReactNode}) {
     return (
@@ -134,14 +67,6 @@ function TextEditor() {
     const renderElement = useCallback( (props: RenderElementProps) => <Element {...props} />, [])
     const renderLeaf = useCallback( (props: RenderLeafProps) => <Leaf {...props}/>, [])
 
-    const handleHotkey = (event: React.KeyboardEvent<HTMLDivElement>, format: TextFormat) => {
-        const hotkey = GetTextHotkey(format)
-        if(isHotkey(hotkey, event)) {
-            event.preventDefault()
-            ToggleMark(editor, format)
-        }
-    }
-
     return (
         <Slate editor={editor}  value={initialValue}>
             <EditorContainer>
@@ -149,11 +74,12 @@ function TextEditor() {
                     renderElement={renderElement}
                     renderLeaf={renderLeaf}
                     spellCheck
+                    
                     placeholder='Beskrivelse av arrangement'
                     onKeyDown={event => {
-                        handleHotkey(event, TextFormat.Bold)
-                        handleHotkey(event, TextFormat.Italic)
-                        handleHotkey(event, TextFormat.Underline)
+                        handleHotkey(editor, event, TextFormat.Bold)
+                        handleHotkey(editor, event, TextFormat.Italic)
+                        handleHotkey(editor, event, TextFormat.Underline)
                     }}
                 />
             </EditorContainer>
@@ -166,17 +92,17 @@ function TextFormatButtons() {
 
     const onChange = ( event: React.MouseEvent<HTMLElement>, newFormats: TextFormat[]) => {
         // Apply all new formats
-        newFormats.forEach( format => SetMark(editor, format, true))
+        newFormats.forEach( format => RichText.setMark(editor, format, true))
 
         // Remove formats that does not exists in 'newFormats'
         Object.values(TextFormat)
               .filter( format => !newFormats.includes(format))
-              .forEach( format => SetMark(editor, format, false))
+              .forEach( format => RichText.setMark(editor, format, false))
 
     }
 
     const buildValue = (value: TextFormat[], format: TextFormat): TextFormat[] => {
-        if(IsMarkActive(editor, format)) {
+        if(RichText.isMarkActive(editor, format)) {
             return [...value, format]
         }
         return value
@@ -272,136 +198,6 @@ function Toolbar(){
         </Stack>
     )
 
-}
-
-// These interfaces are a hack that tells React that 'attributes' is an optional property
-// This is unsafe because attributes is required by slate.
-//
-// Why do we need this hack?
-//      - Because attributes are managed by the slate editor and we want to build the html content without using the editor.
-//      - This makes serialization easier 
-interface UnsafeRenderElementProps extends Partial<RenderElementProps> {
-    children: any
-    element: CustomElement,
-}
-interface UnsafeRenderLeafProps extends Partial<RenderLeafProps> {
-    children: any
-    leaf: FormattedText,
-}
-
-function Element( { attributes, children, element }: UnsafeRenderElementProps ) {
-    switch (element.type) {
-        case ElementType.H1:
-            return (
-                <h2 {...attributes}>
-                    {children}
-                </h2>
-            )
-        case ElementType.H2:
-            return (
-                <h3 {...attributes}>
-                    {children}
-                </h3>
-            )
-        case ElementType.Paragraph: 
-            return (
-                <div {...attributes}>
-                    {children}
-                </div>
-            )
-        case ElementType.NumberedList: 
-            return (
-                <ol {...attributes}>
-                    {children}
-                </ol>
-            )
-        case ElementType.BulletedList: 
-            return (
-                <ul {...attributes}>
-                    {children}
-                </ul>
-            )
-        case ElementType.ListItem: 
-            return (
-                <li {...attributes}>
-                    {children}
-                </li>
-            )
-        default:
-            return (
-                <div {...attributes}>
-                    {children}
-                </div>
-            )
-    }
-}
-
-function Leaf( {attributes, children, leaf}: UnsafeRenderLeafProps) {
-    if (leaf.bold) {
-        children = <strong>{children}</strong>
-      }
-    
-      if (leaf.italic) {
-        children = <em>{children}</em>
-      }
-    
-      if (leaf.underline) {
-        children = <u>{children}</u>
-      }
-    
-      return <span {...attributes}>{children}</span>
-}
-
-function ToggleMark(editor: CustomEditor, format: TextFormat) {
-    const isActive = IsMarkActive(editor, format)
-    SetMark(editor, format, !isActive)
-}
-
-function SetMark(editor: CustomEditor, format: TextFormat, value: boolean) {
-    if(value) {
-        Editor.addMark(editor, format.toString(), true)
-    } else {
-        Editor.removeMark(editor, format.toString())
-    }
-}
-
-function IsMarkActive(editor: CustomEditor, format: TextFormat): boolean {
-    const marks = Editor.marks(editor)
-    switch(format){
-        case TextFormat.Bold:   
-            return marks?.bold === true
-        case TextFormat.Italic: 
-            return marks?.italic === true
-        case TextFormat.Underline:
-            return marks?.underline === true
-    }
-}
-
-function serialize(editor: CustomEditor): string {
-    const content = ReactDOMServer.renderToStaticMarkup(EditorContentBuilder({editor: editor})) 
-
-    // It is not necessary to sanitize the content (because React has already done it).
-    // But, it can only hurt performance, so lets do it anyway just to be safe.
-    const cleanContent = DOMPurify.sanitize(content, { USE_PROFILES: { html: true } })
-    
-    return cleanContent
-}
-
-// The functions walks down the entire editor content tree, and returns the tree as jsx 
-function EditorContentBuilder( {editor}: {editor: CustomEditor} ) {
-    const tree = editor.children.map( (element, index) => <SectionBuilder key={index} element={element} />)
-    return <>{tree}</>
-}
-
-// Recursive functions that walks down all branches from a start element
-// Returns the tree as jsx elements
-function SectionBuilder( { element }: { element: any} ) {
-    if(Text.isText(element)) {
-        return <Leaf children={element.text} leaf={element} />
-    }
-
-    const children = element.children.map( (child: any, index: number) => <SectionBuilder key={index} element={child}/>)
-    return <Element children={children} element={element}/>
 }
 
 export {TextEditor as RichTextEditor}
