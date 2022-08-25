@@ -67,9 +67,7 @@ export function NewEventPage(){
                                 />
                             {endDate && !isValidEndDate && <Box color="error.main">Slutt-tidspunkt kan ikke komme før start-tidspunkt</Box>}
                         </div>
-                        <div>
-                            <MoreInfoForm value={extraInfo} onChange={ (newValue) => setExtraInfo(newValue)}/>
-                        </div>
+                    <MoreInfoForm value={extraInfo} onChange={ (newValue) => setExtraInfo(newValue)}/>
                     </Stack>
                     <Divider sx={{my: 4}}/>
                     <h3>Beskrivelse</h3>
@@ -110,32 +108,40 @@ function MoreInfoForm( { value, onChange}: {value: KeyValuePair[], onChange: (ne
     return (
         <Stack>
             {value.map( (item, index) => (
-                <Grid container key={`${index}`}  rowSpacing={4} columnSpacing={4} mb={4}>
-                    <Grid item xs={10} sm={5.5}>
-                        <TextField 
-                                label="Tittel"
-                                value={item.key}
-                                fullWidth
-                                required
-                                onChange={ e => onItemChange(index, {key: e.target.value, value: item.value})}
-                                />  
-                    </Grid> 
-                    <Grid item xs={1} display={{xs: "flex", sm: "none"}}>
-                        <DeleteButton onClick={e => onDeleteClick(index)}/>
+                <div key={`${index}`}>
+                    <Divider />
+                    <Grid container 
+                        py={4} 
+                        justifyContent="space-between"
+                        alignItems="center"
+                        rowSpacing={4}
+                        >
+                        <Grid item xs={11} sm={5.5}>
+                            <TextField 
+                                    label="Tittel"
+                                    value={item.key}
+                                    fullWidth
+                                    required
+                                    onChange={ e => onItemChange(index, {key: e.target.value, value: item.value})}
+                                    />  
+                        </Grid> 
+                        <Grid item xs={1} display={{xs: "inline", sm: "none"}}>
+                            <DeleteButton onClick={e => onDeleteClick(index)}/>
+                        </Grid>
+                        <Grid item xs={12} sm={5.5} pl={{sm: 2}}>
+                            <TextField
+                                    label={item.key ?? "Info"}
+                                    fullWidth
+                                    value={item.value}
+                                    required
+                                    onChange={ e => onItemChange(index, {key: item.key, value: e.target.value})}
+                                    />
+                        </Grid>
+                        <Grid item xs={1} display={{xs: "none", sm: "inline"}}>
+                            <DeleteButton onClick={e => onDeleteClick(index)}/>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} sm={5.5}>
-                        <TextField
-                                label={item.key ?? "Info"}
-                                fullWidth
-                                value={item.value}
-                                required
-                                onChange={ e => onItemChange(index, {key: item.key, value: e.target.value})}
-                                />
-                    </Grid>
-                    <Grid item xs={1} display={{xs: "none", sm: "flex"}}>
-                        <DeleteButton onClick={e => onDeleteClick(index)}/>
-                    </Grid>
-                </Grid>
+                </div>
             ))}
             <div>
                 <Tooltip title="Legg til mer info">
