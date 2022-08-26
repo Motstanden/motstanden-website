@@ -23,15 +23,34 @@ interface UnsafeRenderLeafProps extends Partial<RenderLeafProps> {
 export function UnsafeLeaf( {attributes, children, leaf}: UnsafeRenderLeafProps) {
     if (leaf.bold) {
         children = <strong>{children}</strong>
-      }
+    }
     
-      if (leaf.italic) {
+    if (leaf.italic) {
         children = <em>{children}</em>
-      }
+    }
     
-      if (leaf.underline) {
+    if (leaf.underline) {
         children = <u>{children}</u>
-      }
+    }
     
-      return <span {...attributes}>{children}</span>
+    const usePlaceholder = !leaf.text && !!leaf.placeholder
+    if(usePlaceholder){
+        return ( 
+            <div {...attributes} style={{position: "relative"}}>
+                <span contentEditable={false}  style={{
+                    opacity: 0.3,
+                    position: "absolute",
+                    userSelect: "none",
+                    top: 0,
+                }}>
+                    {leaf.placeholder}
+                </span>
+                <div style={{position: "relative", top: 0}}>
+                    {children} 
+                </div>
+            </div>
+        )
+    }
+
+    return <span {...attributes}>{children}</span>
 }

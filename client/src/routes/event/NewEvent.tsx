@@ -1,186 +1,142 @@
-import { Button, Grid, IconButton, Stack, TextField, Tooltip } from "@mui/material"
-import Divider from "@mui/material/Divider"
+import { useCallback, useMemo, useState } from "react"
+import { Leaf } from "src/components/TextEditor/Leaf"
+import { Element } from "src/components/TextEditor/Element"
+import { Editable, RenderElementProps, RenderLeafProps, Slate, withReact } from "slate-react"
+import { withHistory } from "slate-history"
+import { createEditor, Descendant, Editor } from "slate"
+import { handleAllFormatHotkeys } from "src/components/TextEditor/Hotkey"
+import { CustomEditor, ElementType } from "src/components/TextEditor/Types"
 import Paper from "@mui/material/Paper"
-import { Box } from "@mui/system"
-import { DateTimePicker } from "@mui/x-date-pickers"
 import dayjs, { Dayjs } from "dayjs"
-import React, { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { DateTimePicker } from "@mui/x-date-pickers"
+import { Divider, TextField } from "@mui/material"
+import Stack from "@mui/system/Stack"
 import SubmitFormButtons from "src/components/SubmitFormButtons"
-import { TitleCard } from "src/components/TitleCard"
-import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { RichTextEditor } from "./RichTextEditor"
+import { useNavigate } from "react-router-dom"
+import { Toolbar } from "./RichTextEditor"
 
-export function NewEventPage(){
+export function NewEventPage() {
     const navigate = useNavigate()
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    
-    const [eventData, setEventData] = useState<EventData>({title: "", startDateTime: "", endDateTime: ""})
-    const [extraInfo, setExtraInfo] = useState<KeyValuePair[]>([])
 
-    const today = dayjs()
-    const startDate = dateTimeStrToDayjs(eventData.startDateTime)
-    const endDate = dateTimeStrToDayjs(eventData.endDateTime)
-    const isValidStartDate = !!startDate && startDate.isAfter(today)
-    const isValidEndDate = !!endDate && endDate.isAfter(startDate) 
-    const isValidData = !!eventData.title && isValidStartDate && isValidEndDate 
-
-    const onSubmit = async (e: React.FormEvent) => { 
-        e.preventDefault();
-        setIsSubmitting(true)
-    }
     return (
         <>
-            <h1>Nytt arrangement</h1>
-            <form onSubmit={onSubmit}>
-                {/* <TitleCard title="Nøkkelinfo"> */}
-                <Paper elevation={6} sx={{p: 2, mt: 4}}>
-                    <h3>Nøkkelinfo</h3>
-                    <Stack spacing={4}>
-                        <TextField
-                            label="Tittel"
-                            name="title"
-                            value={eventData.title}
-                            onChange={e => setEventData({...eventData, title: e.target.value})}
-                            required
-                            sx={{mt: 2}}
-                            />
-                        <div>
-                            <DateTimePicker
-                                label="Starter"
-                                minDateTime={today}
-                                value={startDate}
-                                onChange={(newVal: Dayjs | null) => setEventData({...eventData, startDateTime: dayjsToDateTimeStr(newVal)})}
-                                renderInput={ params => <TextField {...params} required fullWidth/>}
-                                />
-                            {startDate && !isValidStartDate && <Box color="error.main"><>Start-tidspunkt kan ikke være tidligere enn kl {today.format("HH:mm:ss, DD MM YYYY")}</></Box>}
-                        </div>
-                        <div>
-                            <DateTimePicker
-                                label="Slutter"
-                                disabled={!eventData.startDateTime}
-                                minDateTime={startDate ?? today}
-                                value={endDate}
-                                onChange={(newVal: Dayjs | null) => setEventData({...eventData, endDateTime: dayjsToDateTimeStr(newVal)})}
-                                renderInput={ params => <TextField {...params} required fullWidth/>}
-                                />
-                            {endDate && !isValidEndDate && <Box color="error.main">Slutt-tidspunkt kan ikke komme før start-tidspunkt</Box>}
-                        </div>
-                    <MoreInfoForm value={extraInfo} onChange={ (newValue) => setExtraInfo(newValue)}/>
-                    </Stack>
-                    <Divider sx={{my: 4}}/>
-                    <h3>Beskrivelse</h3>
-                    <div>
-                        <RichTextEditor/>
-                    </div>
-                </Paper>
-                <Box sx={{mt: 4}}>
-                    <SubmitFormButtons 
-                        onAbort={ e => navigate("/arrangement")} 
-                        loading={isSubmitting}
-                        disabled={!isValidData}/>
-                </Box>
+            <h1>Nytt arrangement</h1> 
+            <form>
+                <Paper elevation={6} sx={{px: 2, pb: 2, pt: 1}}>
+                    <EventEditor/>
+                </Paper>  
+                <div style={{marginTop: "50px"}}>
+                    <SubmitFormButtons onAbort={e => navigate("/arrangement")}/>
+                </div>
             </form>
         </>
+    )   
+}
+
+const initialValue: Descendant[] = [
+    {
+        type: ElementType.H1,
+        children: [{text: "", placeholder: "Tittel på arrangement..."}]
+    }, {
+        type: ElementType.EditableVoid,
+        children: [{text: ""}]
+
+    }, {
+        type: ElementType.Paragraph,
+        children: [{text: "", placeholder: "Beskrivelse av arrangement..."}]
+    }
+]
+
+
+function EventEditor(){
+    // const editor = useMemo(() => withHistory(withTitle(withEditableVoids(withReact(createEditor())))), [])        // Production
+    const [editor] = useState(withHistory(withTitle(withEditableVoids(withReact(createEditor())))))            // Development
+    const renderElement = useCallback( (props: RenderElementProps) => props.element.type === ElementType.EditableVoid ? <TimeForm/> : <Element {...props} />, [])
+    const renderLeaf = useCallback( (props: RenderLeafProps) => <Leaf {...props}/>, [])
+
+    return (
+        <Slate editor={editor}  value={initialValue}>
+            <Toolbar/>
+            <Divider sx={{mt: 1}}/>
+            <Editable 
+                renderElement={renderElement}
+                renderLeaf={renderLeaf}
+                spellCheck
+                placeholder={`\nDette skal ikke være mulig! 😲\n\nCtrl + z for å gå tilbake.\n`}
+                onKeyDown={event => handleAllFormatHotkeys(editor, event)}
+            />
+        </Slate>
     )
 }
 
-function MoreInfoForm( { value, onChange}: {value: KeyValuePair[], onChange: (newValues: KeyValuePair[]) => void} ) {
-
-    const onAddClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        const newItems = [...value, {key: "", value: ""}]
-        onChange(newItems)
-    }
-
-    const onItemChange = (index: number, newVal: KeyValuePair) => {
-        let newItems = [...value]
-        newItems[index] = newVal
-        onChange(newItems)
-    }
-
-    const onDeleteClick = (index: number) => {
-        let newItems = [...value]
-        newItems.splice(index, 1)
-        onChange(newItems)
-    }
-
+function TimeForm() {
+    const today = dayjs()
+    const [startDate, setStartDate] = useState<Dayjs | null>(null)
+    const [endDate, setEndDate] = useState<Dayjs | null>(null)
     return (
-        <Stack>
-            {value.map( (item, index) => (
-                <div key={`${index}`}>
-                    <Divider />
-                    <Grid container 
-                        py={4} 
-                        justifyContent="space-between"
-                        alignItems="center"
-                        rowSpacing={4}
-                        >
-                        <Grid item xs={11} sm={5.5}>
-                            <TextField 
-                                    label="Tittel"
-                                    value={item.key}
-                                    fullWidth
-                                    required
-                                    onChange={ e => onItemChange(index, {key: e.target.value, value: item.value})}
-                                    />  
-                        </Grid> 
-                        <Grid item xs={1} display={{xs: "inline", sm: "none"}}>
-                            <DeleteButton onClick={e => onDeleteClick(index)}/>
-                        </Grid>
-                        <Grid item xs={12} sm={5.5} pl={{sm: 2}}>
-                            <TextField
-                                    label={item.key ?? "Info"}
-                                    fullWidth
-                                    value={item.value}
-                                    required
-                                    onChange={ e => onItemChange(index, {key: item.key, value: e.target.value})}
-                                    />
-                        </Grid>
-                        <Grid item xs={1} display={{xs: "none", sm: "inline"}}>
-                            <DeleteButton onClick={e => onDeleteClick(index)}/>
-                        </Grid>
-                    </Grid>
-                </div>
-            ))}
-            <div>
-                <Tooltip title="Legg til mer info">
-                    <IconButton color="primary" onClick={onAddClick}>
-                        <PlaylistAddIcon/>
-                    </IconButton>
-                </Tooltip>
+        <Stack direction="row" alignItems="flex-end" sx={{mb: 5}} contentEditable={false}>
+            <DateTimePicker
+                label="Starter"
+                minDateTime={today}
+                value={startDate}
+                onChange={(newVal: Dayjs | null) => setStartDate(newVal)}
+                renderInput={ params => ( 
+                    <>
+                        <strong style={{minWidth: "110px", marginBottom: "5px"}}>Tidspunkt: </strong>
+                        <TextField {...params} variant="standard" style={{maxWidth: "160px"}}/> 
+                    </>)}
+                />
+            <div style={{marginInline: "20px", marginBottom: "5px"}}>
+                –
             </div>
+            <DateTimePicker
+                label="Slutter"
+                disabled={!startDate}
+                minDateTime={startDate ?? today}
+                value={endDate}
+                onChange={(newVal: Dayjs | null) => setEndDate(newVal)}
+                renderInput={ params => (
+                    <>
+                        <TextField {...params} required variant="standard" style={{maxWidth: "160px"}}/>
+                    </>
+                )}
+                />
         </Stack>
-    )
+    )   
 }
 
-function DeleteButton( {onClick}: {onClick?: React.MouseEventHandler<HTMLButtonElement>} ){
+
+function KeyInfoItem( {key, info}: {key: string, info: string}) {
     return (
-        <Tooltip title="Slett">
-            <IconButton onClick={onClick}>
-                <DeleteForeverIcon/>
-            </IconButton>
-        </Tooltip>
+        <div>
+            <strong style={{minWidth: "110px"}} >{key + ": "}</strong> {info}
+        </div>
+
     )
 }
 
+function withTitle(editor: CustomEditor): CustomEditor {
+    const { normalizeNode } = editor
 
-function dateTimeStrToDayjs(str: string) {
-    return str ? dayjs(str, "YYYY-MM-DD HH-mm-ss") : null 
+    editor.normalizeNode = (entry) => {
+        const [node, path] = entry    
+        
+        if(path.length === 0) { // is first child
+            if(editor.children.length === 1) {
+                console.log("no children")
+            }
+        }
+    }
+
+    return editor
 }
 
-function dayjsToDateTimeStr(dayjs: Dayjs | null) {
-    return dayjs?.format("YYYY-MM-DD HH-mm-00") ?? ""
-}
-
-interface KeyValuePair {
-    key: string,
-    value: string
-}
-
-interface EventData {
-    title: string 
-    startDateTime: string
-    endDateTime: string
-    extraInfo?: KeyValuePair[]
-}
+function withEditableVoids(editor: CustomEditor) {
+    const { isVoid } = editor
+  
+    editor.isVoid = element => {
+      return element.type === ElementType.EditableVoid ? true : isVoid(element)
+    }
+  
+    return editor
+  }

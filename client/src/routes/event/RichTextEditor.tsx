@@ -62,8 +62,8 @@ const initialValue: Descendant[] = [
 ]
 
 function TextEditor() {
-    // const editor = useMemo(() => withHistory(withReact(createEditor())), [])        // Production
-    const [editor] = useState(withHistory(withReact(createEditor())))            // Development
+    const editor = useMemo(() => withHistory(withReact(createEditor())), [])        // Production
+    // const [editor] = useState(withHistory(withReact(createEditor())))            // Development
     const renderElement = useCallback( (props: RenderElementProps) => <Element {...props} />, [])
     const renderLeaf = useCallback( (props: RenderLeafProps) => <Leaf {...props}/>, [])
 
@@ -135,6 +135,8 @@ function BlockElementButtons() {
     }
 
     const onChange = ( event: React.MouseEvent<HTMLElement>, newType: ElementType) => {
+        if(newType === ElementType.EditableVoid)
+            return;
 
         Transforms.unwrapNodes(editor, {
             match: (n: any) => n.type === ElementType.BulletedList || n.type === ElementType.NumberedList,
@@ -184,7 +186,7 @@ function BlockElementButtons() {
     )
 } 
 
-function Toolbar(){
+export function Toolbar(){
 
     return (
         <Stack spacing={2} direction="row" alignItems="center">

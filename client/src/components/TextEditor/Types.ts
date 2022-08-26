@@ -14,7 +14,8 @@ export enum ElementType {
     Paragraph = "paragraph",
     NumberedList = "numbered-list",
     BulletedList = "bulleted-list",
-    ListItem = "list-item"
+    ListItem = "list-item",
+    EditableVoid = "editable-void" 
 }
 
 export type HeadingOneElement = {
@@ -47,15 +48,21 @@ export type BulletedListElement = {
     children: ListItemElement[]
 }
 
+export type EditableVoid = {
+    type: ElementType.EditableVoid,
+    children: CustomText[],
+}
+
 export type FormattedText = { 
     text: string, 
     bold?: true,
     italic?: true,
     underline?: true
+    placeholder?: string
 }
 
 export type CustomEditor = BaseEditor & ReactEditor & HistoryEditor
-export type CustomElement = HeadingOneElement | HeadingTwoElement | ParagraphElement | NumberedListElement | BulletedListElement | ListItemElement
+export type CustomElement = HeadingOneElement | HeadingTwoElement | ParagraphElement | NumberedListElement | BulletedListElement | ListItemElement | EditableVoid
 export type CustomText = FormattedText
 
 declare module 'slate' {
