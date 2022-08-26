@@ -31,7 +31,7 @@ import Stack from '@mui/material/Stack';
 import { ElementType, FormattedText, TextFormat } from 'src/components/TextEditor/Types';
 import { Leaf, UnsafeLeaf } from 'src/components/TextEditor/Leaf';
 import { Element, UnsafeElement } from 'src/components/TextEditor/Element';
-import { handleHotkey } from 'src/components/TextEditor/Hotkey';
+import { handleAllFormatHotkeys, handleHotkey } from 'src/components/TextEditor/Hotkey';
 
 
 function EditorContainer( {children}: {children: React.ReactNode}) {
@@ -74,13 +74,8 @@ function TextEditor() {
                     renderElement={renderElement}
                     renderLeaf={renderLeaf}
                     spellCheck
-                    
                     placeholder='Beskrivelse av arrangement'
-                    onKeyDown={event => {
-                        handleHotkey(editor, event, TextFormat.Bold)
-                        handleHotkey(editor, event, TextFormat.Italic)
-                        handleHotkey(editor, event, TextFormat.Underline)
-                    }}
+                    onKeyDown={event => handleAllFormatHotkeys(editor, event)}
                 />
             </EditorContainer>
         </Slate>

@@ -17,3 +17,9 @@ export function handleHotkey( editor: CustomEditor, event: React.KeyboardEvent<H
         toggleMark(editor, format)
     }
 }
+
+export function handleAllFormatHotkeys(editor: CustomEditor, event: React.KeyboardEvent<HTMLDivElement>){
+    handleHotkey(editor, event, TextFormat.Bold)
+    handleHotkey(editor, event, TextFormat.Italic)
+    handleHotkey(editor, event, TextFormat.Underline)
+}
