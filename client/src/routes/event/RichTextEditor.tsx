@@ -135,9 +135,7 @@ function BlockElementButtons() {
     }
 
     const onChange = ( event: React.MouseEvent<HTMLElement>, newType: ElementType) => {
-        if(newType === ElementType.EditableVoid)
-            return;
-
+        
         Transforms.unwrapNodes(editor, {
             match: (n: any) => n.type === ElementType.BulletedList || n.type === ElementType.NumberedList,
             split: true

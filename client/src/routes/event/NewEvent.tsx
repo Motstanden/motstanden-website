@@ -35,37 +35,55 @@ export function NewEventPage() {
 
 const initialValue: Descendant[] = [
     {
-        type: ElementType.H1,
-        children: [{text: "", placeholder: "Tittel på arrangement..."}]
-    }, {
-        type: ElementType.EditableVoid,
-        children: [{text: ""}]
-
-    }, {
         type: ElementType.Paragraph,
-        children: [{text: "", placeholder: "Beskrivelse av arrangement..."}]
+        children: [{text: ""}]
     }
 ]
 
 
 function EventEditor(){
-    // const editor = useMemo(() => withHistory(withTitle(withEditableVoids(withReact(createEditor())))), [])        // Production
-    const [editor] = useState(withHistory(withTitle(withEditableVoids(withReact(createEditor())))))            // Development
-    const renderElement = useCallback( (props: RenderElementProps) => props.element.type === ElementType.EditableVoid ? <TimeForm/> : <Element {...props} />, [])
+    const editor = useMemo(() => withHistory(withHistory(withReact(createEditor()))), [])        // Production
+    // const [editor] = useState(withHistory(withReact(createEditor())))            // Development
+    const renderElement = useCallback( (props: RenderElementProps) => <Element {...props} />, [])
     const renderLeaf = useCallback( (props: RenderLeafProps) => <Leaf {...props}/>, [])
 
     return (
         <Slate editor={editor}  value={initialValue}>
             <Toolbar/>
-            <Divider sx={{mt: 1}}/>
+            <Divider sx={{mt: 1, mb: 4}}/>
+            <EventInfoForm/>
             <Editable 
                 renderElement={renderElement}
                 renderLeaf={renderLeaf}
                 spellCheck
-                placeholder={`\nDette skal ikke være mulig! 😲\n\nCtrl + z for å gå tilbake.\n`}
+                placeholder="Beskrivelse av arrangementet"
                 onKeyDown={event => handleAllFormatHotkeys(editor, event)}
             />
         </Slate>
+    )
+}
+
+function EventInfoForm(){
+    return (
+        <Stack spacing={4} sx={{mb: 6}}>
+            <TitleForm/>
+            <TimeForm/>
+        </Stack>
+    )
+}
+
+function TitleForm() {
+    const [title, setTitle] = useState("")
+    return (
+        <TextField
+            variant="standard"
+            placeholder="Tittel på arrangement"
+            autoComplete="off"
+            required
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            InputProps={{ style: {fontSize: "1.5em", fontWeight: "bolder"}}}
+        />
     )
 }
 
@@ -83,7 +101,7 @@ function TimeForm() {
                 renderInput={ params => ( 
                     <>
                         <strong style={{minWidth: "110px", marginBottom: "5px"}}>Tidspunkt: </strong>
-                        <TextField {...params} variant="standard" style={{maxWidth: "160px"}}/> 
+                        <TextField {...params} required variant="standard" style={{maxWidth: "160px"}}/> 
                     </>)}
                 />
             <div style={{marginInline: "20px", marginBottom: "5px"}}>
@@ -104,39 +122,3 @@ function TimeForm() {
         </Stack>
     )   
 }
-
-
-function KeyInfoItem( {key, info}: {key: string, info: string}) {
-    return (
-        <div>
-            <strong style={{minWidth: "110px"}} >{key + ": "}</strong> {info}
-        </div>
-
-    )
-}
-
-function withTitle(editor: CustomEditor): CustomEditor {
-    const { normalizeNode } = editor
-
-    editor.normalizeNode = (entry) => {
-        const [node, path] = entry    
-        
-        if(path.length === 0) { // is first child
-            if(editor.children.length === 1) {
-                console.log("no children")
-            }
-        }
-    }
-
-    return editor
-}
-
-function withEditableVoids(editor: CustomEditor) {
-    const { isVoid } = editor
-  
-    editor.isVoid = element => {
-      return element.type === ElementType.EditableVoid ? true : isVoid(element)
-    }
-  
-    return editor
-  }
