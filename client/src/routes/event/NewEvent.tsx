@@ -9,11 +9,13 @@ import { CustomEditor, ElementType } from "src/components/TextEditor/Types"
 import Paper from "@mui/material/Paper"
 import dayjs, { Dayjs } from "dayjs"
 import { DateTimePicker } from "@mui/x-date-pickers"
-import { Divider, TextField } from "@mui/material"
+import { Button, Divider, IconButton, SxProps, TextField } from "@mui/material"
 import Stack from "@mui/system/Stack"
 import SubmitFormButtons from "src/components/SubmitFormButtons"
 import { useNavigate } from "react-router-dom"
 import { Toolbar } from "./RichTextEditor"
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export function NewEventPage() {
     const navigate = useNavigate()
@@ -22,7 +24,7 @@ export function NewEventPage() {
         <>
             <h1>Nytt arrangement</h1> 
             <form>
-                <Paper elevation={6} sx={{px: 2, pb: 2, pt: 1}}>
+                <Paper elevation={6} sx={{px: 2, pb: 4, pt: 1}}>
                     <EventEditor/>
                 </Paper>  
                 <div style={{marginTop: "50px"}}>
@@ -42,8 +44,8 @@ const initialValue: Descendant[] = [
 
 
 function EventEditor(){
-    const editor = useMemo(() => withHistory(withHistory(withReact(createEditor()))), [])        // Production
-    // const [editor] = useState(withHistory(withReact(createEditor())))            // Development
+    // const editor = useMemo(() => withHistory(withHistory(withReact(createEditor()))), [])        // Production
+    const [editor] = useState(withHistory(withReact(createEditor())))            // Development
     const renderElement = useCallback( (props: RenderElementProps) => <Element {...props} />, [])
     const renderLeaf = useCallback( (props: RenderLeafProps) => <Leaf {...props}/>, [])
 
@@ -56,7 +58,7 @@ function EventEditor(){
                 renderElement={renderElement}
                 renderLeaf={renderLeaf}
                 spellCheck
-                placeholder="Beskrivelse av arrangementet"
+                placeholder="Beskrivelse av arrangementet*"
                 onKeyDown={event => handleAllFormatHotkeys(editor, event)}
             />
         </Slate>
@@ -65,34 +67,37 @@ function EventEditor(){
 
 function EventInfoForm(){
     return (
-        <Stack spacing={4} sx={{mb: 6}}>
-            <TitleForm/>
-            <TimeForm/>
+        <Stack sx={{mb: 6}}>
+            <TitleForm sx={{mb: 4}}/>
+            <TimeForm sx={{mb: 2}}/>
+            <ExtraInfoForm/>
         </Stack>
     )
 }
 
-function TitleForm() {
+function TitleForm( { sx }: {sx?: SxProps } ) {
     const [title, setTitle] = useState("")
     return (
         <TextField
             variant="standard"
-            placeholder="Tittel på arrangement"
+            placeholder="Tittel på arrangement*"
             autoComplete="off"
             required
+            fullWidth
             value={title}
             onChange={e => setTitle(e.target.value)}
             InputProps={{ style: {fontSize: "1.5em", fontWeight: "bolder"}}}
+            sx={sx}
         />
     )
 }
 
-function TimeForm() {
+function TimeForm({ sx }: {sx?: SxProps } ) {
     const today = dayjs()
     const [startDate, setStartDate] = useState<Dayjs | null>(null)
     const [endDate, setEndDate] = useState<Dayjs | null>(null)
     return (
-        <Stack direction="row" alignItems="flex-end" sx={{mb: 5}} contentEditable={false}>
+        <Stack direction="row" alignItems="flex-end" sx={sx}>
             <DateTimePicker
                 label="Starter"
                 minDateTime={today}
@@ -121,4 +126,66 @@ function TimeForm() {
                 />
         </Stack>
     )   
+}
+
+function ExtraInfoForm() {
+
+    const [items, setItems] = useState<ExtraInfo[]>([])
+
+    const onAddClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        setItems( prev => [...prev, {key: "", value: ""}])
+    }
+
+    const onDeleteClick = (i: number) => {
+        let newItems = [...items]
+        newItems.splice(i, 1)
+        setItems(newItems)
+    }
+
+
+    if(items.length === 0) {
+        return ( 
+            <div>
+                <AddInfoButton onClick={onAddClick}/>
+            </div>
+        )
+    }
+
+    return (
+        <Stack>
+            {items.map( (item, index) => <ExtraInfoItem key={index} value={item} onDeleteClick={() => onDeleteClick(index)} />)}
+            <div>
+                <AddInfoButton onClick={onAddClick}/>
+            </div>
+        </Stack>
+    )
+}
+
+function ExtraInfoItem( {value, onDeleteClick }: {value: ExtraInfo, onDeleteClick?: React.MouseEventHandler<HTMLButtonElement>}) {
+    return (
+        <div>
+            <TextField 
+                required 
+                sx={{mb: 4}}
+                style={{maxWidth: "100px", marginRight: "10px"}}
+                InputProps={{ style: {fontWeight: "bold"}}}
+                variant="standard"
+                placeholder="Tittel*"
+            />
+            <TextField required variant="standard" placeholder="info*" /> 
+            <IconButton style={{marginLeft: "20px"}} onClick={onDeleteClick}>
+                <DeleteIcon/>
+            </IconButton>
+        </div>
+    )
+}
+interface ExtraInfo{ 
+    key: string,
+    value: string,
+}
+
+function AddInfoButton({onClick}: {onClick?: React.MouseEventHandler<HTMLButtonElement>}) {
+    return (
+        <Button variant="outlined" endIcon={<AddIcon/>} size="small" onClick={onClick} >Info</Button>
+    )
 }
