@@ -15,7 +15,7 @@ import { AccountDetailsCard, formatExactDate, MemberCard, PersonCard } from "./U
 import { validateEmail, isNtnuMail as checkIsNtnuMail } from 'common/utils';
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
 import { HelpButton } from "src/components/HelpButton";
-import SubmitFormButtons from "src/components/SubmitFormButtons";
+import { Form } from "src/components/form/Form";
 
 export function EditUserPage () {
     
@@ -50,77 +50,32 @@ export function EditUserPage () {
 function EditPage( { editMode, user }: { editMode: UserEditMode, user: User}) {
     const [newUser, setNewUser] = useState<User>(user)
     const [disableSubmit, setDisableSubmit] = useState(false)
+    const navigate = useNavigate()
 
     const onChange = (user: User) => setNewUser(user);
     const onIsValidChange = (isValid: boolean) => setDisableSubmit(!isValid)
 
-    return (
-        <EditForm user={user} newUser={newUser} disabled={disableSubmit} postUrl={getPostUrl(editMode)}>    
-            <PersonForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode}/>
-            <MemberForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode}/>
-            <AccountDetailsForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode}/> 
-        </EditForm>
-    )
-}
-
-function EditForm( {
-    user, 
-    newUser, 
-    children,
-    disabled,
-    postUrl,
-}: { 
-    user: User, 
-    newUser: User, 
-    children: React.ReactNode 
-    disabled?: boolean
-    postUrl: string
-}) {
-    const navigate = useNavigate()
-    const [isSubmitting, setIsSubmitting] = useState(false)
-
-    const onSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()  
-        setIsSubmitting(true)        
-        
-        // TODO: Validate new user here
-
-        let response = await fetch(postUrl, {
-            method: "POST", 
-            body: JSON.stringify(newUser),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })  
-        if(response.ok){
-            window.location.href = `${window.location.origin}/medlem/${user.userId}`    // Will trigger a reload of the page
-        }
-        else {
-            console.log(response)
-            window.alert("Noe gikk galt\nSi ifra til webansvarlig")
-        }
-        setIsSubmitting(false)
-    } 
-
-    const onAbort = () => {
-        if(canExitPage(user, newUser)){
-            navigate(`/medlem/${user.userId}`)
-        }
-    }
+    const onAbort = () => canExitPage(user, newUser) && navigate(`/medlem/${user.userId}`)
+    const onPostSuccess = () => window.location.href = `${window.location.origin}/medlem/${user.userId}`    // Will trigger a reload of the page
+    const preventSubmit = () => false // TODO: Validate user here. Return true if user is invalid
 
     return (
-        <>
-            <form onSubmit={onSubmit}>
-                <Grid container alignItems="top" spacing={4} sx={{mb: 8}}>
-                    {children}
-                </Grid>
-                <SubmitFormButtons loading={isSubmitting} onAbort={onAbort} disabled={isUserEqual(user, newUser) || disabled}/>
-            </form>
-            <Divider sx={{my: 3}}/>
-        </>
+        <Form 
+            value={newUser} 
+            postUrl={getPostUrl(editMode)} 
+            disabled={isUserEqual(user, newUser) || disableSubmit}
+            preventSubmit={preventSubmit}
+            onAbortClick={onAbort}
+            onPostSuccess={onPostSuccess}
+            >
+            <Grid container alignItems="top" spacing={4}>
+                <PersonForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode}/>
+                <MemberForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode}/>
+                <AccountDetailsForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode}/> 
+            </Grid>
+        </Form>
     )
 }
-
 
 function PersonForm({value, onChange, onIsValidChange, editMode}: FormParams) {
     const [isValid, setIsValid] = useState(true)

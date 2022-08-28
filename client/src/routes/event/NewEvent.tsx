@@ -11,29 +11,38 @@ import dayjs, { Dayjs } from "dayjs"
 import { DateTimePicker } from "@mui/x-date-pickers"
 import { Button, Divider, IconButton, SxProps, TextField } from "@mui/material"
 import Stack from "@mui/system/Stack"
-import SubmitFormButtons from "src/components/SubmitFormButtons"
 import { useNavigate } from "react-router-dom"
 import { Toolbar } from "./RichTextEditor"
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Form } from "src/components/form/Form"
 
 export function NewEventPage() {
-    const navigate = useNavigate()
 
     return (
         <>
             <h1>Nytt arrangement</h1> 
-            <form>
-                <Paper elevation={6} sx={{px: 2, pb: 4, pt: 1}}>
-                    <EventEditor/>
-                </Paper>  
-                <div style={{marginTop: "50px"}}>
-                    <SubmitFormButtons onAbort={e => navigate("/arrangement")}/>
-                </div>
-            </form>
+            <EventForm backUrl="/arrangement" postUrl=""/>
         </>
     )   
 }
+
+export function EventForm( {backUrl, postUrl}: {backUrl: string, postUrl: string} ) {
+    const navigate = useNavigate()
+
+    return (
+        <Form 
+            value={{}}
+            postUrl={postUrl}
+            onAbortClick={ e => navigate(backUrl)}
+        >
+            <Paper elevation={6} sx={{px: 2, pb: 4, pt: 1}}>
+                <EventEditor/>
+            </Paper> 
+        </Form>
+    )
+}
+
 
 const initialValue: Descendant[] = [
     {
