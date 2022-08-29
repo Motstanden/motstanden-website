@@ -176,7 +176,6 @@ function ExtraInfoForm() {
     const onValueChange = (i: number, newVal: ExtraInfo) => {
         let newItems = [...event.extraInfo]
         newItems[i] = newVal
-        console.log(i)
         dispatch({extraInfo: newItems})
     }
 
@@ -236,7 +235,7 @@ function AddInfoButton({onClick}: {onClick?: React.MouseEventHandler<HTMLButtonE
         <Button variant="outlined" endIcon={<AddIcon/>} size="small" onClick={onClick} >Info</Button>
         )
     }
-    
+
 interface NewEvent {
     title: string
     startTime: Dayjs | null,

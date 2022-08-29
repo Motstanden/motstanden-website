@@ -201,5 +201,3 @@ INSERT INTO quote(utterer, quote) VALUES
 ('Niels Bohr (med 5 ekstra klesplagg på seg)',          'Jeg fryser så sjukt mye'),
 ('Linus Torvalds',                                      'Faen! Jeg har lisensiert [ntnu]nettsiden min på MÅKESODD!'),
 ('Alan Turing',                                         'Jeg drikker bare tre ting: vann, kaffe og øl!');
-
-INSERT INTO ping VALUES ('Pong from the database');

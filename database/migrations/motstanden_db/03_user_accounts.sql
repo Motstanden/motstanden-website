@@ -161,11 +161,14 @@ INSERT INTO quote_new(quote_id, utterer, quote, user_id)
 DROP TABLE quote;
 ALTER TABLE quote_new RENAME TO quote;
 
+
+-- DO NOT COPY THIS! It is broken!
+-- The trigger is fixed in '05_fix_quote_trigger.sql'
 CREATE TRIGGER trig_quote_updated_at
     AFTER UPDATE ON quote FOR EACH ROW
 BEGIN
     UPDATE quote SET updated_at = current_timestamp
-        WHERE user_id = old.user_id;
+        WHERE user_id = old.user_id;                    
 END;
 
 
