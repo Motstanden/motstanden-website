@@ -198,3 +198,21 @@ ON  created_by.user_id = event.created_by
 LEFT JOIN user updated_by
 ON  updated_by.user_id = event.updated_by
 /* vw_event(event_id,title,start_date_time,end_date_time,description,created_by,created_by_full_name,updated_by_user_id,updated_by_full_name) */;
+CREATE VIEW vw_event_participant
+AS 
+SELECT 
+	event_id,
+	JSON_GROUP_ARRAY(JSON_OBJECT(
+		'userId', 				user_id,
+		'firstName', 			user.first_name,
+		'middleName',			user.middle_name,
+		'lastName',				user.last_name,
+		'profilePicture',		user.profile_picture,
+		'participationStatus',	participation_status.status
+	)) AS participants
+FROM
+	event_participant
+LEFT JOIN user USING(user_id)
+LEFT JOIN participation_status USING(participation_status_id)
+GROUP BY event_id
+/* vw_event_participant(event_id,participants) */;
