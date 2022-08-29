@@ -5,6 +5,7 @@ import songLyric from "./songLyric";
 import documents from "./documents";
 import quotes from "./quotes";
 import sheetArchive from "./sheetArchive";
+import events from "./events"
 
 const router = express.Router()
 
@@ -13,6 +14,7 @@ router.use(user)
 router.use(songLyric)
 router.use(documents)
 router.use(quotes)
+router.use(events)
 router.use(sheetArchive)
 
 export default router;
