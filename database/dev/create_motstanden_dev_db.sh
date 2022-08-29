@@ -23,6 +23,9 @@ sqlite3 motstanden_dev.db < migrations/motstanden_db/04_remove_obsolete.sql;
 echo "Running: 05_fix_quote_trigger.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/05_fix_quote_trigger.sql;
 
+# Add event tables
+echo "Running: 06_events.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/06_events.sql;
 
 # Insert data that is representative for the current data in the database
 pushd dev/data/sql-table-inserts > /dev/null
