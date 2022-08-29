@@ -128,10 +128,10 @@ END;
 CREATE TABLE event (
     event_id INTEGER PRIMARY KEY NOT NULL,
     title TEXT NOT NULL,
-    start_date_time TEXT NOT NULL CHECK(start_date_time is datetime(start_date_time)),      -- yyyy-mm-dd hh:mm
-    end_date_time TEXT DEFAULT NULL CHECK(end_date_time = NULL OR end_date_time is datetime(end_date_time)),        -- yyyy-mm-dd hh:mm
-    key_info TEXT NOT NULL DEFAULT "[]",                                                    -- Json array    
-    description TEXT NOT NULL,                                                              -- Html
+    start_date_time TEXT NOT NULL CHECK(start_date_time is datetime(start_date_time)),                          -- yyyy-mm-dd hh:mm
+    end_date_time TEXT DEFAULT NULL CHECK(end_date_time = NULL OR end_date_time is datetime(end_date_time)),    -- yyyy-mm-dd hh:mm
+    key_info TEXT NOT NULL DEFAULT "[]",                                                                        -- Json array    
+    description TEXT NOT NULL,                                                                                  -- Html
     created_by INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_by INTEGER NOT NULL DEFAULT created_by,
@@ -190,14 +190,18 @@ SELECT
     updated_by.first_name 
         || IIF(length(trim(updated_by.middle_name)) = 0, '', updated_by.middle_name) 
         || updated_by.last_name 
-        as updated_by_full_name
+        as updated_by_full_name,
+    IIF( end_date_time is  NULL,
+        IIF(datetime(start_date_time) < datetime('now'), 0, 1),
+        IIF(datetime(end_date_time)   < datetime('now'), 0, 1)
+    ) is_upcoming
 FROM 
     event
 LEFT JOIN user created_by
 ON  created_by.user_id = event.created_by
 LEFT JOIN user updated_by
 ON  updated_by.user_id = event.updated_by
-/* vw_event(event_id,title,start_date_time,end_date_time,description,created_by,created_by_full_name,updated_by_user_id,updated_by_full_name) */;
+/* vw_event(event_id,title,start_date_time,end_date_time,description,created_by,created_by_full_name,updated_by_user_id,updated_by_full_name,is_upcoming) */;
 CREATE VIEW vw_event_participant
 AS 
 SELECT 
