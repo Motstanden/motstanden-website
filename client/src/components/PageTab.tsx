@@ -1,7 +1,7 @@
 import { Divider, Tab, Tabs, TabsProps, Theme, useMediaQuery } from "@mui/material";
 import { Link as RouterLink, matchPath, resolvePath, useLocation } from "react-router-dom";
 
-export function PageTab( {items, tabProps}: {items: {to: string, label: string}[], tabProps?: TabsProps }){
+export function PageTab( {items, tabProps}: {items: PageTabItem[], tabProps?: TabsProps }){
 
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
@@ -45,4 +45,9 @@ export function PageTab( {items, tabProps}: {items: {to: string, label: string}[
             <Divider/>
         </div>
     )
+}
+
+export interface PageTabItem {
+    to: string, 
+    label: string
 }

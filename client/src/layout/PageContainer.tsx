@@ -1,5 +1,6 @@
 import React from "react";
-import { useTheme } from "@mui/material";
+import { Theme, useMediaQuery, useTheme } from "@mui/material";
+import { PageTab, PageTabItem } from "src/components/PageTab";
 
 export const defaultPagePadding = "15Px 35px 150px 35px"
 
@@ -19,4 +20,16 @@ export function PageContainer({ children, props, disableGutters }: { children: R
             {children}
         </div>
     );
+}
+
+export function TabbedPageContainer( {children, tabItems }: {children: React.ReactNode, tabItems: PageTabItem[]} ) {
+    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+    return (
+        <PageContainer disableGutters={isSmallScreen}>
+            <PageTab items={tabItems}/>
+            <div style={{padding: isSmallScreen ? defaultPagePadding : 0}}>
+                {children}
+            </div>
+        </PageContainer>
+    )
 }
