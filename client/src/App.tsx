@@ -9,7 +9,7 @@ import Home from './routes/home/Home';
 import { LoginPage } from './routes/login/Login';
 import { LyricListPage, LyricItemPage, LyricPageContainer } from './routes/lyric/Lyric';
 import NotFound from './routes/notFound/NotFound';
-import QuotesPage from './routes/quotes/Quotes';
+import QuotesPage from './routes/quotes/QuotesPage';
 import FrontPage from './routes/frontPage/FrontPage';
 import { InstrumentListPage, SheetArchivePageContainer, SongListPage } from './routes/sheetArchive/SheetArchive';
 
@@ -27,7 +27,7 @@ import { EditEventPage, EventItemContext, EventItemPage, EventListPage } from '.
 import { NewEventPage } from './routes/event/NewEvent';
 import { EventContext } from './routes/event/EventContext';
 import { QuotesContext } from './routes/quotes/QuotesContext';
-import { NewQuotePage } from './routes/quotes/NewQuoteForm';
+import { NewQuotePage } from './routes/quotes/NewQuotePage';
 
 function App() {
 

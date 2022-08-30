@@ -9,7 +9,7 @@ import { fetchAsync } from "src/utils/fetchAsync"
 import { useAuth } from "../../context/Authentication"
 import { useTitle } from "../../hooks/useTitle"
 import { PageContainer } from "../../layout/PageContainer"
-import { QuoteList } from "../quotes/Quotes"
+import { QuoteList } from "../quotes/QuotesPage"
 
 
 export default function Home(){
