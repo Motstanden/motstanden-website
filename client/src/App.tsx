@@ -23,7 +23,7 @@ import { NewUserPage } from './routes/user/NewUser';
 import { EditUserPage } from './routes/user/EditUser';
 import { UserContext } from './routes/user/UserContext';
 import { UserPage, UserProfileContext } from './routes/user/UserPage';
-import { EventListPage } from './routes/event/EventList';
+import { EditEventPage, EventItemContext, EventItemPage, EventListPage } from './routes/event/EventList';
 import { NewEventPage } from './routes/event/NewEvent';
 import { EventContext } from './routes/event/EventContext';
 
@@ -65,7 +65,16 @@ function App() {
 							</Route>
 						</Route>
 						<Route path="/arrangement" element={<EventContext/>}>
-							<Route path=""  element={<EventListPage/>}/>
+							<Route path=""  		element={<Navigate to="kommende"/>}/>
+							<Route path="kommende"  element={<EventListPage mode='upcoming'/>}/>
+							<Route path="kommende/:eventId" element={<EventItemContext/>}>
+								<Route index element={<EventItemPage/>}/>
+								<Route path="rediger" element={<EditEventPage/>}/>
+							</Route>							
+							<Route path="tidligere" element={<EventListPage mode='previous'/>}/>
+							<Route path="tidligere/:eventId" element={<EventItemContext/>}>
+								<Route index element={<EventItemPage/>}/>
+							</Route>
 							<Route path="ny" element={<NewEventPage/>}/>
 						</Route>
 					</Route>
