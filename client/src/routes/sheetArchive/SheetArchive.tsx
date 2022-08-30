@@ -1,50 +1,17 @@
 import React from "react"
 import { useQuery } from '@tanstack/react-query'
 import { UrlList, UrlListItem } from "../../components/UrlList"
-import { PageContainer } from "../../layout/PageContainer"
 import { fetchAsync } from "../../utils/fetchAsync"
-import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
-import { strToPrettyUrl } from "../../utils/strToPrettyUrl"
+import { Navigate, useOutletContext, useParams } from "react-router-dom"
 import { FileTable } from "./FileTable"
 import { useTitle } from "../../hooks/useTitle"
 
-export function SheetArchivePageContainer() {
-    useTitle("Notearkiv")
+export function SongListPage( {mode}: {mode?: "repertoire"}){
 
-    const {isLoading, isError, data, error} = useQuery<ISongInfo[]>(["FetchSheetArchiveTitles"], () => fetchAsync<ISongInfo[]>("/api/sheet_archive/song_title") )
-    
-    if (isLoading) {
-        return <PageContainer><div/></PageContainer>
-      }
-    
-    if (isError) {
-        return <PageContainer><span>{`${error}`}</span></PageContainer>
-    }
+    let data = useOutletContext<ISongInfo[]>()
+    if(mode == "repertoire")
+        data = data.filter(item => !!item.isRepertoire)
 
-    const newData = data.map( item => {
-        let url = item.url
-        let title = item.title
-        if(item.extraInfo){
-            url = strToPrettyUrl(`${url} (${item.extraInfo})`)
-            title = `${title} (${item.extraInfo})`
-        }
-        return {
-            url: url,
-            title: title,
-            extraInfo: item.extraInfo,
-            titleId: item.titleId
-        }
-    })
-
-    return (
-        <PageContainer>
-            <Outlet context={newData}/>
-        </PageContainer>
-    )
-}
-
-export function SongListPage(){
-    const data = useOutletContext<ISongInfo[]>()
     return (
         <>
             <h1>Notearkiv</h1>
@@ -52,7 +19,7 @@ export function SongListPage(){
                 { data.map( song => (
                         <UrlListItem 
                             key={song.url} 
-                            to={`/notearkiv/${song.url}`} 
+                            to={`/notearkiv/${mode === "repertoire" ? "repertoar" : "alle"}/${song.url}`} 
                             text={song.title}
                             reloadDocument/> 
                     ))
@@ -98,7 +65,7 @@ export function InstrumentListPage(){
     )
 }
 
-interface ISongInfo {
+export interface ISongInfo {
     url: string,
     title: string,
     extraInfo: string,

@@ -11,7 +11,8 @@ import { LyricListPage, LyricItemPage, LyricPageContainer } from './routes/lyric
 import NotFound from './routes/notFound/NotFound';
 import QuotesPage from './routes/quotes/QuotesPage';
 import FrontPage from './routes/frontPage/FrontPage';
-import { InstrumentListPage, SheetArchivePageContainer, SongListPage } from './routes/sheetArchive/SheetArchive';
+import { InstrumentListPage, SongListPage } from './routes/sheetArchive/SheetArchive';
+import { SheetArchiveContext } from "./routes/sheetArchive/SheetArchiveContext";
 
 // Layout
 import { AppLayout }from './layout/AppLayout';
@@ -50,9 +51,12 @@ function App() {
 					{/* Routes that requires the user to be logged in */}
 					<Route element={<RequireAuthRouter requiredGroup={UserGroup.Contributor}/>}> 
 						<Route path="/hjem" element={<Home/>}/>
-						<Route path="/notearkiv" element={<SheetArchivePageContainer/>}>
-							<Route index element={<SongListPage/>}/>
-							<Route path=":title" element={<InstrumentListPage/>}/>
+						<Route path="/notearkiv" element={<SheetArchiveContext/>}>
+							<Route path="" element={<Navigate to="repertoar"/>}/>
+							<Route path="repertoar" element={<SongListPage mode='repertoire'/>}/>
+							<Route path="repertoar/:title" element={<InstrumentListPage/>}/>
+							<Route path="alle" element={<SongListPage/>}/>
+							<Route path="alle/:title" element={<InstrumentListPage/>}/>
 						</Route>
 						<Route path="/sitater" element={<QuotesContext/>}>
 							<Route index element={<QuotesPage/>}/>
