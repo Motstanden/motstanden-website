@@ -45,7 +45,7 @@ function PrivateNavBar(){
             <AdminDropDown/>
             <NavDropDown text="Om oss">
                 <List component="nav" disablePadding sx={{minWidth: 200}}>
-                    <ListItemLink text="Framside" to="/"/>
+                    <ListItemLink text="Framside" to="/framside"/>
                     <Divider/>
                     <ListItemLink text="Bli Medlem" to="/bli-medlem" />
                     {/* <ListItemLink text="FAQ" to="/faq" disabled /> */}

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Routes, Route, Link, Outlet, useParams, useLocation, useNavigate, Navigate } from "react-router-dom";
-import { RequireAuthRouter }  from "./context/Authentication"
+import { RequireAuthRouter, useAuth }  from "./context/Authentication"
 
 // URL routes
 import BecomeMember from './routes/becomeMember/BecomeMember';
@@ -31,15 +31,17 @@ import { QuotesContext } from './routes/quotes/QuotesContext';
 import { NewQuotePage } from './routes/quotes/NewQuotePage';
 
 function App() {
-
+	const auth = useAuth()
 
 	return (
 		<div className='App' style={{minHeight: "100vh", height: "100%"}}>
 			<Routes>
 				<Route element={<AppLayout/>}> 
 
+					<Route path="/" element={auth.user ? <Home/> : <FrontPage/>}/>
+
 					{/* Routes that are publicly available */}
-					<Route path="/" element={<FrontPage/>}/>
+					<Route path="/framside" element={<FrontPage/>}/>
 					<Route path="/logg-inn" element={<LoginPage/>}/>
 					<Route path="/studenttraller" element={<LyricPageContainer/>}>
 						<Route index element={<LyricListPage/>}/>

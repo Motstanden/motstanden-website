@@ -93,7 +93,7 @@ function PrivateContent(props: SideDrawerContentProps) {
             <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit}/>
             <MemberList onLinkClick={onRequestedExit} />
             <ListItemExpander text="Om oss">
-                <ListItemLink text="Framside" to="/" onLinkClick={onRequestedExit}/>
+                <ListItemLink text="Framside" to="/framside" onLinkClick={onRequestedExit}/>
                 <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onRequestedExit}/>
                 {/* <ListItemLink text="FAQ" to="/faq" disabled onLinkClick={onRequestedExit}/> */}
                 <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" onLinkClick={onRequestedExit}/>
