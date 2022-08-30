@@ -1,6 +1,6 @@
 const path = require("path")
 const Database = require('better-sqlite3')
-const {dbReadOnlyConfig, dbReadWriteConfig} = require("../../server/config/databaseConfig")
+const {dbReadOnlyConfig, dbReadWriteConfig} = require("../../server/build/config/databaseConfig")
 const sheetsDb = path.join(__dirname, "..", "sheet_archive_dev.db")
 
 const getSongTitleId = (db, title) => {
