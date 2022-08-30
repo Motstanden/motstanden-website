@@ -67,6 +67,7 @@ CREATE TABLE song_title (
     title TEXT NOT NULL,
     extra_info TEXT NOT NULL DEFAULT "",
     directory TEXT NOT NULL UNIQUE CHECK(like('files/%/notearkiv/%', directory)),
+    is_repertoire BOOLEAN NOT NULL DEFAULT 0,
     is_public BOOLEAN NOT NULL GENERATED ALWAYS AS (like('files/public/%', directory)) STORED,
     url_title TEST NOT NULL GENERATED ALWAYS AS (REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(title, 'æ', 'ae'), 'Æ', 'Ae'), 'ø', 'oe' ),'Ø', 'Oe' ), 'å', 'aa'), 'Å', 'Aa'),' ', '_')) STORED,
     UNIQUE(title, directory),
@@ -145,6 +146,7 @@ SELECT
     song_file_id, 
     song_title.song_title_id as title_id,
     song_title.title as title,
+    song_title.is_repertoire as is_repertoire,
     filename,
     clef.name as clef_name,
     clef.unicode_symbol as clef_unicode_symbol,
@@ -159,4 +161,4 @@ LEFT JOIN clef USING(clef_id)
 LEFT JOIN instrument USING(instrument_id)
 LEFT JOIN instrument_category USING(instrument_category_id)
 LEFT JOIN tone ON song_file.transposition = tone.tone_id
-/* vw_song_file(song_file_id,title_id,title,filename,clef_name,clef_unicode_symbol,instrument,instrument_voice,instrument_category,transposition) */;
+/* vw_song_file(song_file_id,title_id,title,is_repertoire,filename,clef_name,clef_unicode_symbol,instrument,instrument_voice,instrument_category,transposition) */;

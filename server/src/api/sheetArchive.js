@@ -16,7 +16,8 @@ router.get("/sheet_archive/song_title",
                 song_title_id as titleId,
                 title, 
                 extra_info as extraInfo,
-                url_title as url
+                url_title as url,
+                is_repertoire as isRepertoire
             FROM 
                 song_title 
             ORDER BY title ASC`)

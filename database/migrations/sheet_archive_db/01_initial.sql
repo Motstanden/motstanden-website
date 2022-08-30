@@ -221,7 +221,6 @@ CREATE TABLE song_category(
 
 -- TODO: Insert more categories ?
 INSERT INTO song_category(category) VALUES
-    ('Repertoar'),
     ('Marsjnoter'),
     ('17. mai'),
     ('SMASH'),
@@ -233,6 +232,7 @@ CREATE TABLE song_title (
     title TEXT NOT NULL,
     extra_info TEXT NOT NULL DEFAULT "",
     directory TEXT NOT NULL UNIQUE CHECK(like('files/%/notearkiv/%', directory)),
+    is_repertoire BOOLEAN NOT NULL DEFAULT 0,
     is_public BOOLEAN NOT NULL GENERATED ALWAYS AS (like('files/public/%', directory)) STORED,
     url_title TEST NOT NULL GENERATED ALWAYS AS (REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(title, 'æ', 'ae'), 'Æ', 'Ae'), 'ø', 'oe' ),'Ø', 'Oe' ), 'å', 'aa'), 'Å', 'Aa'),' ', '_')) STORED,
     UNIQUE(title, directory),
@@ -317,6 +317,7 @@ SELECT
     song_file_id, 
     song_title.song_title_id as title_id,
     song_title.title as title,
+    song_title.is_repertoire as is_repertoire,
     filename,
     clef.name as clef_name,
     clef.unicode_symbol as clef_unicode_symbol,

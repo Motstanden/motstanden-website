@@ -103,6 +103,7 @@ interface ISongInfo {
     title: string,
     extraInfo: string,
     titleId: number
+    isRepertoire: number    // 1 = true, 0 = false
 }
 
 export interface ISongFile {
