@@ -4,7 +4,6 @@ import {Link as RouterLink, Navigate, Outlet, useOutletContext, useParams } from
 import { Event as EventData } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { useTitle } from "src/hooks/useTitle"
-import ComingSoon from "./ComingSoon"
 
 export function EventListPage( { mode }: {mode?: "upcoming" | "previous" | "all"} ){
     useTitle("Arrangement")
@@ -19,8 +18,7 @@ export function EventListPage( { mode }: {mode?: "upcoming" | "previous" | "all"
     return (
         <>
             <h1>Arrangement</h1>
-            <ComingSoon/>
-            {/* <EventList events={events}/> */}
+            <EventList events={events}/>
         </>
     )
 }

@@ -17,15 +17,13 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Form } from "src/components/form/Form"
 import React from "react"
-import ComingSoon from "./ComingSoon"
 
 export function NewEventPage() {
 
     return (
         <>
             <h1>Nytt arrangement</h1> 
-            {/* <EventForm backUrl="/arrangement" postUrl="" initialValue={emptyEventObj}/> */}
-            <ComingSoon/>
+            <EventForm backUrl="/arrangement" postUrl="" initialValue={emptyEventObj}/>
         </>
     )   
 }
