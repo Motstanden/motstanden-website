@@ -8,15 +8,15 @@ import { Event as EventData } from "common/interfaces"
 
 export function EventContext(){
     
-    const {isLoading, isError, data, error} = useQuery<EventData[]>(["FetchAllEvents"], () => fetchAsync<EventData[]>("/api/events/all") )
+    // const {isLoading, isError, data, error} = useQuery<EventData[]>(["FetchAllEvents"], () => fetchAsync<EventData[]>("/api/events/all") )
     
-    if (isLoading) {
-        return <div style={{minHeight: "100px"}}/>
-    }
+    // if (isLoading) {
+    //     return <div style={{minHeight: "100px"}}/>
+    // }
     
-    if (isError) {
-        return <div style={{minHeight: "100px"}}>{`${error}`}</div>
-    }
+    // if (isError) {
+    //     return <div style={{minHeight: "100px"}}>{`${error}`}</div>
+    // }
 
     return (
         <TabbedPageContainer 
@@ -27,7 +27,10 @@ export function EventContext(){
             ]}
             matchChildPath={true}
         >
-            <Outlet context={data} />
+            <Outlet 
+                context={[]}
+                // context={data} 
+            />
         </TabbedPageContainer>
     )
 }
