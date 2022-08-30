@@ -1,4 +1,5 @@
-echo "Inserting current data into motstanden_dev.db:";
+#!/bin/bash
+echo "Inserting data into motstanden_dev.db:";
 
 echo "    Inserting users";
 sqlite3 ../../../motstanden_dev.db < InsertUsers.sql;

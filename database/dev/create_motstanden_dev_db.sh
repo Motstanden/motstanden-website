@@ -28,8 +28,8 @@ echo "Running: 06_events.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/06_events.sql;
 
 # Insert data that is representative for the current data in the database
-pushd dev/data/sql-table-inserts > /dev/null
-sh InsertData.sh 
+pushd dev/data/insert > /dev/null
+sh motstanden-db-data.sh 
 popd > /dev/null
 
 echo "Dumping schema -> motstanden_schema.sql"
