@@ -19,8 +19,10 @@ import { useOutletContext } from 'react-router-dom';
 import Link from '@mui/material/Link';
 import { Link as RouterLink } from "react-router-dom"
 import dayjs from 'dayjs';
+import { useTitle } from 'src/hooks/useTitle';
 
 export function UserListPage() {
+    useTitle("Medlemsliste")
 
     const [showName, setShowName]     = useState(true)
     const [showRank, setShowRank]     = useState(true)

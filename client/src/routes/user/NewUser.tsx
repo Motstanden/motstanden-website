@@ -18,8 +18,10 @@ import Divider from '@mui/material/Divider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { groupTVPair, profilePictureTVPair, rankTVPair, statusTVPair } from './Components';
+import { useTitle } from 'src/hooks/useTitle';
 
 export function NewUserPage () {
+    useTitle("Ny bruker")
     return (
         <Paper elevation={6} 
             sx={{

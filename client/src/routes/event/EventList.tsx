@@ -3,8 +3,11 @@ import { Button } from "@mui/material"
 import {Link as RouterLink, Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
 import { Event as EventData } from "common/interfaces"
 import { strToNumber } from "common/utils"
+import { useTitle } from "src/hooks/useTitle"
 
 export function EventListPage( { mode }: {mode?: "upcoming" | "previous" | "all"} ){
+    useTitle("Arrangement")
+
     let events = useOutletContext<EventData[]>()
     if(mode === "upcoming")
         events = events.filter( e => e.isUpcoming)

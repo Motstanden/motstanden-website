@@ -16,11 +16,13 @@ import { validateEmail, isNtnuMail as checkIsNtnuMail } from 'common/utils';
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
 import { HelpButton } from "src/components/HelpButton";
 import { Form } from "src/components/form/Form";
+import { useTitle } from "src/hooks/useTitle";
 
 export function EditUserPage () {
-    
     const currentUser = useAuth().user!
     const viewedUser = useOutletContext<User>()
+
+    useTitle(`Rediger: ${viewedUser.firstName}`)
 
     const isSelfEditing = currentUser.userId === viewedUser.userId
     const isSuperAdmin = hasGroupAccess(currentUser, UserGroup.SuperAdministrator)

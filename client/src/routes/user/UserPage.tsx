@@ -13,6 +13,7 @@ import { useAuth } from "src/context/Authentication";
 import { UserGroup } from "common/enums";
 import { strToNumber } from "common/utils"
 import { Card, CardTextItem } from "./Components";
+import { useTitle } from "src/hooks/useTitle";
 
 export function UserProfileContext() {
     const users = useOutletContext<User[]>()
@@ -41,6 +42,7 @@ export function UserProfileContext() {
 
 export function UserPage(){
     const user = useOutletContext<User>()
+    useTitle(user.firstName)
     return (
         <Grid container alignItems="top" spacing={4}>
             <PersonCard user={user}/>
