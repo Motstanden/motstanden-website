@@ -5,8 +5,19 @@ import TextField from '@mui/material/TextField';
 import SendIcon from '@mui/icons-material/Send';
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
 import { NewQuote } from "common/interfaces";
+import { useTitle } from "src/hooks/useTitle";
 
-export function NewQuoteForm(){
+export function NewQuotePage() {
+    useTitle("Nytt sitat")
+    return (
+        <>
+            <h1>Nytt sitat</h1>
+            <NewQuoteForm/>
+        </>
+    )
+}
+
+function NewQuoteForm(){
     const [utterer, setUtterer] = useState("");
     const [quote, setQuote] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false)

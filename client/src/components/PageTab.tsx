@@ -1,7 +1,7 @@
 import { Divider, Tab, Tabs, TabsProps, Theme, useMediaQuery } from "@mui/material";
 import { Link as RouterLink, matchPath, resolvePath, useLocation } from "react-router-dom";
 
-export function PageTab( {items, tabProps}: {items: PageTabItem[], tabProps?: TabsProps }){
+export function PageTab( {items, tabProps, matchChildPath}: {items: PageTabItem[], tabProps?: TabsProps, matchChildPath?: boolean }){
 
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
@@ -15,7 +15,7 @@ export function PageTab( {items, tabProps}: {items: PageTabItem[], tabProps?: Ta
         const toPathname = path.pathname.toLowerCase()
 
         const isExact = locationPathname === toPathname
-        const isChild = (locationPathname.startsWith(toPathname) && locationPathname.charAt(toPathname.length) === "/") 
+        const isChild = matchChildPath && (locationPathname.startsWith(toPathname) && locationPathname.charAt(toPathname.length) === "/") 
         
         return isExact || isChild
 

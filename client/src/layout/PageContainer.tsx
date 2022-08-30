@@ -22,11 +22,11 @@ export function PageContainer({ children, props, disableGutters }: { children: R
     );
 }
 
-export function TabbedPageContainer( {children, tabItems }: {children: React.ReactNode, tabItems: PageTabItem[]} ) {
+export function TabbedPageContainer( {children, tabItems, matchChildPath }: {children: React.ReactNode, tabItems: PageTabItem[], matchChildPath?: boolean} ) {
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     return (
         <PageContainer disableGutters={isSmallScreen}>
-            <PageTab items={tabItems}/>
+            <PageTab items={tabItems} matchChildPath={matchChildPath}/>
             <div style={{padding: isSmallScreen ? defaultPagePadding : 0}}>
                 {children}
             </div>

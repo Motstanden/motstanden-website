@@ -1,42 +1,19 @@
 import React from "react"
-import { useQuery } from "@tanstack/react-query"
-import { PageContainer } from "../../layout/PageContainer"
-import { fetchAsync } from "../../utils/fetchAsync"
-import { NewQuoteForm } from "./NewQuoteForm"
-import Divider from "@mui/material/Divider"
 import { useTitle } from "../../hooks/useTitle"
 import { Quote as QuoteData } from "common/interfaces"
 import dayjs from "dayjs"
+import { useOutletContext } from "react-router-dom"
 
-export default function Quotes(){
+export default function QuotesPage(){
     useTitle("Sitater")
+    const data = useOutletContext<QuoteData[]>()
     return (
-        <PageContainer>
-            <h1>Nytt sitat</h1>
-            <NewQuoteForm/>
-            <Divider sx={{my: "40px"}}/>
-            <h1 style={{marginTop: "0px"}}>Sitater</h1>
-            <QuotesContainer/>
-        </PageContainer>
+        <>
+            <h1>Sitater</h1>
+            <QuoteList quotes={data}/>
+        </>
     )
 }
-
-function QuotesContainer() {
-    const {isLoading, isError, data, error} = useQuery<QuoteData[]>(["FetchQuotes"], () => fetchAsync<QuoteData[]>("/api/quotes") )
-    
-    if (isLoading) {
-        return <PageContainer><div/></PageContainer>
-    }
-    
-    if (isError) {
-        return <PageContainer><span>{`${error}`}</span></PageContainer>
-    }
-
-    return (
-        <QuoteList quotes={data}/>
-    )
-}
-
 
 export function QuoteList( {quotes}: {quotes: QuoteData[] } ){
     return (

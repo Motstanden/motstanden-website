@@ -9,7 +9,7 @@ import Home from './routes/home/Home';
 import { LoginPage } from './routes/login/Login';
 import { LyricListPage, LyricItemPage, LyricPageContainer } from './routes/lyric/Lyric';
 import NotFound from './routes/notFound/NotFound';
-import Quotes from './routes/quotes/Quotes';
+import QuotesPage from './routes/quotes/Quotes';
 import FrontPage from './routes/frontPage/FrontPage';
 import { InstrumentListPage, SheetArchivePageContainer, SongListPage } from './routes/sheetArchive/SheetArchive';
 
@@ -26,6 +26,8 @@ import { UserPage, UserProfileContext } from './routes/user/UserPage';
 import { EditEventPage, EventItemContext, EventItemPage, EventListPage } from './routes/event/EventList';
 import { NewEventPage } from './routes/event/NewEvent';
 import { EventContext } from './routes/event/EventContext';
+import { QuotesContext } from './routes/quotes/QuotesContext';
+import { NewQuotePage } from './routes/quotes/NewQuoteForm';
 
 function App() {
 
@@ -52,7 +54,10 @@ function App() {
 							<Route index element={<SongListPage/>}/>
 							<Route path=":title" element={<InstrumentListPage/>}/>
 						</Route>
-						<Route path="/sitater" element={<Quotes/>}/>
+						<Route path="/sitater" element={<QuotesContext/>}>
+							<Route index element={<QuotesPage/>}/>
+							<Route path='ny' element={<NewQuotePage/>}/>
+						</Route>
 						<Route path="/medlem" element={<UserContext/>}>
 							<Route path="" element={<Navigate to="liste"/>}/>
 							<Route path="liste" element={<UserListPage/>}/>

@@ -25,6 +25,7 @@ export function EventContext(){
                 {to: "/arrangement/tidligere",   label: "Tidligere"},
                 {to: "/arrangement/ny",          label: "ny"}
             ]}
+            matchChildPath={true}
         >
             <Outlet context={data} />
         </TabbedPageContainer>
