@@ -9,6 +9,6 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
-    "better-sqlite3": "^7.4.3"
+    "better-sqlite3": "^7.6.2"
   }
 }

@@ -1,7 +1,7 @@
 const path = require("path")
 const Database = require('better-sqlite3')
-const {dbReadOnlyConfig, dbReadWriteConfig} = require("../../server/build/config/databaseConfig")
-const sheetsDb = path.join(__dirname, "..", "sheet_archive_dev.db")
+const {dbReadOnlyConfig, dbReadWriteConfig, sheetArchiveDB} = require("./databaseConfig")
+// const sheetsDb = path.join(__dirname, "..", "sheet_archive_dev.db")
 
 const getSongTitleId = (db, title) => {
     let stmt = db.prepare("SELECT song_title_id FROM song_title where title = ?");
@@ -63,7 +63,7 @@ const getToneId = (db, tone_name) => {
 }
 
 const insertSongFile = (title, filename, clef_name, instrument_voice, instrument, transposition, instrument_category) => {
-    const db = new Database(sheetsDb, dbReadWriteConfig)
+    const db = new Database(sheetArchiveDB, dbReadWriteConfig)
 
     // Throws exceptions if not found
     const clefId = getClefId(db, clef_name)
@@ -87,7 +87,7 @@ const insertSongFile = (title, filename, clef_name, instrument_voice, instrument
 }
 
 const insertSongTitle = (title, extra_info, directory) => {
-    const db = new Database(sheetsDb, dbReadWriteConfig)
+    const db = new Database(sheetArchiveDB, dbReadWriteConfig)
     extra_info ??= "";
     const startTransaction = db.transaction( () => {
         const stmt = db.prepare("INSERT INTO song_title(title, extra_info, directory) VALUES (?, ?, ?)")

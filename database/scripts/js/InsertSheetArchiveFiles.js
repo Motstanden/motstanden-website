@@ -3,7 +3,7 @@
 "use strict"
 const fs = require('fs')
 const path = require('path')
-const { insertSongFile, insertSongTitle } = require("../../api/storedProcedures.js") 
+const { insertSongFile, insertSongTitle } = require("./insertSong") 
 
 class Song {
     constructor(songDir){
