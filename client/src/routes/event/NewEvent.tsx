@@ -17,6 +17,8 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Form } from "src/components/form/Form"
 import React from "react"
+import { KeyValuePair, NewEvent } from "common/interfaces"
+import { serialize } from "src/components/TextEditor/HtmlSerialize"
 
 export function NewEventPage() {
 
@@ -28,20 +30,15 @@ export function NewEventPage() {
     )   
 }
 
-interface NewEvent {
+interface EventEditorState {
     title: string
     startTime: Dayjs | null,
     endTime: Dayjs | null,
-    extraInfo: ExtraInfo[]
+    extraInfo: KeyValuePair<string, string>[]
     content: Descendant[]
 }
 
-interface ExtraInfo{ 
-    key: string,
-    value: string,
-}
-
-const emptyEventObj: NewEvent = {
+const emptyEventObj: EventEditorState = {
     title: "",
     startTime: null,
     endTime: null,
@@ -54,30 +51,35 @@ const emptyEventObj: NewEvent = {
     ]
 }
 
-const EventStateContext = React.createContext<NewEvent>(null!) 
-const EventDispatchContext = React.createContext<React.Dispatch<Partial<NewEvent>>>(null!)
-function useEvent(): [NewEvent, React.Dispatch<Partial<NewEvent>>] {
+const EventStateContext = React.createContext<EventEditorState>(null!) 
+const EventDispatchContext = React.createContext<React.Dispatch<Partial<EventEditorState>>>(null!)
+function useEvent(): [EventEditorState, React.Dispatch<Partial<EventEditorState>>] {
     return [ useContext(EventStateContext), useContext(EventDispatchContext) ]
 }
 
-export function EventForm( {backUrl, postUrl, initialValue}: {backUrl: string, postUrl: string, initialValue: NewEvent} ) {
+export function EventForm( {backUrl, postUrl, initialValue}: {backUrl: string, postUrl: string, initialValue: EventEditorState} ) {
 
-    const reducer = (state: NewEvent, newVal: Partial<NewEvent>): NewEvent => {
+    const reducer = (state: EventEditorState, newVal: Partial<EventEditorState>): EventEditorState => {
         return {...state, ...newVal}
     }
 
     const navigate = useNavigate()
-    const [state, dispatch] = useReducer<Reducer<NewEvent, Partial<NewEvent>>>(reducer, initialValue)
+    const [state, dispatch] = useReducer<Reducer<EventEditorState, Partial<EventEditorState>>>(reducer, initialValue)
 
-    const serializeState = () => {
-        console.log("serializing")
-        // #TODO
-        return state;
+    const serializeState = (): NewEvent => {
+        const serializedEvent: NewEvent = {
+            title: state.title,
+            startDateTime: state.startTime!.format("YYYY-MM-DD HH:MM:00"),
+            endDateTime: state.endTime?.format("YYYY-MM-DD HH:MM:00") ?? null,
+            keyInfo: state.extraInfo,
+            description: serialize(state.content)
+        }
+        return serializedEvent;
     }
 
     return (
         <Form 
-            value={serializeState}       // #TODO: Serialize state
+            value={serializeState}
             postUrl={postUrl}
             onAbortClick={ e => navigate(backUrl)}
         >
@@ -192,7 +194,7 @@ function ExtraInfoForm() {
         dispatch({extraInfo: newItems})
     }
 
-    const onValueChange = (i: number, newVal: ExtraInfo) => {
+    const onValueChange = (i: number, newVal: KeyValuePair<string, string>) => {
         let newItems = [...event.extraInfo]
         newItems[i] = newVal
         dispatch({extraInfo: newItems})
@@ -221,7 +223,15 @@ function ExtraInfoForm() {
     )
 }
 
-function ExtraInfoItem( {value, onChange, onDeleteClick }: {value: ExtraInfo, onChange: (info: ExtraInfo) => void,  onDeleteClick?: React.MouseEventHandler<HTMLButtonElement>}) {
+function ExtraInfoItem({
+    value, 
+    onChange, 
+    onDeleteClick 
+}: {
+    value: KeyValuePair<string, string>, 
+    onChange: (info: KeyValuePair<string, string>) => void,  
+    onDeleteClick?: React.MouseEventHandler<HTMLButtonElement>}
+) {
     return (
         <div>
             <TextField 
