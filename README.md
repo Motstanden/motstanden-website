@@ -6,7 +6,7 @@
  - English should be used everywhere. Norwegian is not allowed.
 
 # Setup
- - Make sure node version 16 is installed: https://nodejs.org/
+ - Make sure node version 18 is installed: https://nodejs.org/
     - Test that node is installed by running these commands from the command line:
         ```
         node --version
@@ -61,7 +61,7 @@
  ## Client
  - [React](https://reactjs.org/)
  ## Server
- - [node version 16](https://nodejs.org/)
+ - [node version 18](https://nodejs.org/)
  - [Express version 4](https://expressjs.com/)
  - [better-sqlite3](https://github.com/JoshuaWise/better-sqlite3)
 
