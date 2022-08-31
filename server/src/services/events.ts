@@ -1,4 +1,5 @@
 import Database from "better-sqlite3";
+import { NewEventData, EventData } from "common/interfaces";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
 
 export function getEvents( { 
@@ -7,7 +8,7 @@ export function getEvents( {
 } : { 
     upcoming: boolean, 
     limit?: number 
-} ): Event[] {
+} ): EventData[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
     SELECT 
@@ -39,5 +40,5 @@ export function getEvents( {
 
     const events = stmt.all(args)
     db.close()
-    return events as Event[]
+    return events as EventData[]
 }

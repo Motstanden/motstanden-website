@@ -1,6 +1,6 @@
 import { KeyValuePair } from "./KeyValuePair";
 
-export interface NewEvent {
+export interface NewEventData {
     title: string
     startDateTime: string,                      // YYYY-MM-DD HH:MM:SS
     endDateTime: string | null                  // YYYY-MM-DD HH:MM:SS      
@@ -8,7 +8,7 @@ export interface NewEvent {
     description: string                         // Html
 }
 
-export interface Event extends NewEvent {
+export interface EventData extends NewEventData {
     eventId: number;
     
     createdByUserId: number

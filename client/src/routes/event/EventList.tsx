@@ -1,7 +1,7 @@
 import React from "react"
 import { Button } from "@mui/material"
 import {Link as RouterLink, Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
-import { Event as EventData } from "common/interfaces"
+import { EventData } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { useTitle } from "src/hooks/useTitle"
 

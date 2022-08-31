@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate";
 import * as events from "../services/events";
 

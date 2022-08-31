@@ -1,4 +1,4 @@
-export * from "./Events"
+export * from "./EventData"
 export * from "./User"
 export * from "./MagicLinkResponse"
 export * from "./Quote"

@@ -17,7 +17,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Form } from "src/components/form/Form"
 import React from "react"
-import { KeyValuePair, NewEvent } from "common/interfaces"
+import { KeyValuePair, NewEventData } from "common/interfaces"
 import { serialize } from "src/components/TextEditor/HtmlSerialize"
 
 export function NewEventPage() {
@@ -66,8 +66,8 @@ export function EventForm( {backUrl, postUrl, initialValue}: {backUrl: string, p
     const navigate = useNavigate()
     const [state, dispatch] = useReducer<Reducer<EventEditorState, Partial<EventEditorState>>>(reducer, initialValue)
 
-    const serializeState = (): NewEvent => {
-        const serializedEvent: NewEvent = {
+    const serializeState = (): NewEventData => {
+        const serializedEvent: NewEventData = {
             title: state.title,
             startDateTime: state.startTime!.format("YYYY-MM-DD HH:MM:00"),
             endDateTime: state.endTime?.format("YYYY-MM-DD HH:MM:00") ?? null,
