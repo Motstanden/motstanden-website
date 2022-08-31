@@ -35,12 +35,12 @@
       cd ../../..
       ```
 
-      - This step might cause trouble to some developers because it can be tricky to install the node package "better-sqlite3" on some systems. You can troubleshoot this step by reading the documentation for the package:
+      - This step might cause trouble for some developers because some systems may have difficulties installing `better-sqlite3`. You can troubleshoot this step by reading the documentation for the package:
           - https://github.com/WiseLibs/better-sqlite3
           - https://github.com/WiseLibs/better-sqlite3/blob/master/docs/troubleshooting.md
 
   3. Create databases, and populate them with data.<br/>
-  **Note**: You need a unix shell for this step. I recommend using [git bash](https://gitforwindows.org/) on windows.
+  **Note**: You need a unix shell for this step. If you are using windows, I recommend using [git bash](https://gitforwindows.org/).
       ```bash
       cd database
       sh ./create_all_dev_db.sh
@@ -61,7 +61,7 @@
    You will have to dedicate two terminals to run this project:
 
   ### Terminal 1
-  This terminal is dedicated to compile TypeScript to JavaScript. The following script will start a file watcher that automatically compiles TS to JS, and it will print out **very useful error message** if you write bad TS.
+  This terminal is dedicated to compile TypeScript to JavaScript. The following script will start a file watcher that automatically compiles TS to JS. It will also print out **very useful error message** if you write bad TS.
   ```bash
   cd server
   npm run tsc-watch 
@@ -69,14 +69,14 @@
   You will now see two new directories: `server/build` and `common/build`
 
   ### Terminal 2
-  This terminal will simultaneously run two servers:
-  1. http://localhost:3000/ – A front end server, responsible for compiling react and provide front end dev tools. This server is only used in development.
-  2. http://localhost:5000/ - A back end server, responsible for handling API calls and serving content. This server will be the actual server running in production.
-
+  Run start-up script
   ```bash
   cd server
   npm run dev
   ```
+  The terminal is now running two servers:
+  1. http://localhost:3000/ – A front end server, responsible for compiling react and provide front end dev tools. This server is only used in development.
+  2. http://localhost:5000/ - A back end server, responsible for handling API calls and serving content. This server will be the actual server running in production.
 
 You can now go to http://localhost:3000/ and start developing.<br/>
 Happy coding!
