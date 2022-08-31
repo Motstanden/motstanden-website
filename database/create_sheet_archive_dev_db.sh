@@ -1,6 +1,4 @@
 #!/bin/bash
-cd ..
-
 rm -fv sheet_archive_dev.db;
 
 # Create db
@@ -10,14 +8,14 @@ echo "Running: 02_insert_sheet_archive_data.sql"
 sqlite3 sheet_archive_dev.db < migrations/sheet_archive_db/02_insert_sheet_archive_data.sql;
 
 # Insert data:
-pushd scripts/js > /dev/null
+cd scripts/js
 node InsertSheetArchiveFiles.js ../../sheet_archive_dev.db ../../../server/files/private/notearkiv/
-popd  > /dev/null
+cd ../..
 
 # Update the data:
-pushd dev/data/insert > /dev/null
+cd data/db
 sh sheet-archive-db-data.sh 
-popd > /dev/null
+cd ../..
 
 echo "Dumping schema -> sheet_archive_schema.sql"
 sqlite3 sheet_archive_dev.db .schema > sheet_archive_schema.sql

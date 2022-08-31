@@ -1,6 +1,4 @@
 #!/bin/bash
-cd ..
-
 rm -fv motstanden_dev.db;
 
 # Create the first implementations of the db
@@ -28,9 +26,9 @@ echo "Running: 06_events.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/06_events.sql;
 
 # Insert data that is representative for the current data in the database
-pushd dev/data/insert > /dev/null
+cd data/db
 sh motstanden-db-data.sh 
-popd > /dev/null
+cd ../..
 
 echo "Dumping schema -> motstanden_schema.sql"
 sqlite3 motstanden_dev.db .schema > motstanden_schema.sql 
