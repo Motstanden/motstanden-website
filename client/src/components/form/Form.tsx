@@ -13,7 +13,7 @@ export function Form( {
     onPostFailure,
     onAbortClick
 }: { 
-    value: {},
+    value: {} | ( () => {} )    // Either any object, or a callback function that returns the object
     children: React.ReactNode 
     postUrl: string
     disabled?: boolean
@@ -29,11 +29,12 @@ export function Form( {
 
         if(preventSubmit && preventSubmit())
             return;
-
         setIsSubmitting(true)        
+
+        let newValue = typeof value === "function" ? value() : value
         let response = await fetch(postUrl, {
             method: "POST", 
-            body: JSON.stringify(value),
+            body: JSON.stringify(newValue),
             headers: {
                 "Content-Type": "application/json"
             }

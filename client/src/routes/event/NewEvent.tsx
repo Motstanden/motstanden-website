@@ -28,6 +28,19 @@ export function NewEventPage() {
     )   
 }
 
+interface NewEvent {
+    title: string
+    startTime: Dayjs | null,
+    endTime: Dayjs | null,
+    extraInfo: ExtraInfo[]
+    content: Descendant[]
+}
+
+interface ExtraInfo{ 
+    key: string,
+    value: string,
+}
+
 const emptyEventObj: NewEvent = {
     title: "",
     startTime: null,
@@ -56,9 +69,15 @@ export function EventForm( {backUrl, postUrl, initialValue}: {backUrl: string, p
     const navigate = useNavigate()
     const [state, dispatch] = useReducer<Reducer<NewEvent, Partial<NewEvent>>>(reducer, initialValue)
 
+    const serializeState = () => {
+        console.log("serializing")
+        // #TODO
+        return state;
+    }
+
     return (
         <Form 
-            value={state}       // #TODO: Serialize state
+            value={serializeState}       // #TODO: Serialize state
             postUrl={postUrl}
             onAbortClick={ e => navigate(backUrl)}
         >
@@ -233,18 +252,5 @@ function ExtraInfoItem( {value, onChange, onDeleteClick }: {value: ExtraInfo, on
 function AddInfoButton({onClick}: {onClick?: React.MouseEventHandler<HTMLButtonElement>}) {
     return (
         <Button variant="outlined" endIcon={<AddIcon/>} size="small" onClick={onClick} >Info</Button>
-        )
-    }
-
-interface NewEvent {
-    title: string
-    startTime: Dayjs | null,
-    endTime: Dayjs | null,
-    extraInfo: ExtraInfo[]
-    content: Descendant[]
-}
-
-interface ExtraInfo{ 
-    key: string,
-    value: string,
+    )
 }
