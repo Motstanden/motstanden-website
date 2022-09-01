@@ -5,7 +5,7 @@ VALUES
         1, 
         "Fadderuke: Rebusløp",          
         "2022-08-16 14:00:00", 
-        null,                
+        "2022-08-16 18:00:00",                
         1, 
         1, 
         json_array(
@@ -31,7 +31,7 @@ VALUES
         3, 
         "Åpen øvelse",                  
         "2022-08-30 19:00:00", 
-        "2022-09-01 19:00",  
+        "2022-08-31 02:00:00",  
         3, 
         1, 
         json_array(),             
@@ -39,7 +39,8 @@ VALUES
     ), (
         4, 
         "SMASH",                        
-        "2022-09-16 09:00:00", "2022-09-18 16:00",  
+        "2022-09-16 09:00:00", 
+        "2022-09-18 16:00",  
         4, 
         4, 
         json_array(
@@ -52,7 +53,7 @@ VALUES
         5, 
         "Rebusløp",          
         "2100-08-16 14:00:00", 
-        null,                
+        "2100-08-16 18:00:00",               
         5, 
         5, 
         json_array(
@@ -63,7 +64,7 @@ VALUES
         "Beskrivelse av rebusløpet"
     ), (
         6, 
-        "Fadderuke: Hybel til hybel",   
+        "Hybel til hybel",   
         "2100-08-23 15:00:00", 
         null,                
         1, 
@@ -77,7 +78,8 @@ VALUES
     ), (
         7, 
         "Åpen øvelse",                  
-        "2100-08-30 19:00:00", "2022-09-01 19:00",  
+        "2100-08-30 19:00:00", 
+        "2100-08-31 02:00:00",
         1, 
         1, 
         json_array(),             
@@ -86,12 +88,13 @@ VALUES
         8, 
         "SMASH",                        
         "2100-09-16 09:00:00", 
-        "2022-09-18 16:00",  
+        "2022-09-18 16:00:00",  
         1, 
         2, 
         json_array(
             json_object("key", "Sted:",             "value", "Ås"), 
             json_object("key", "Påmeldingsfrist:",  "value", "1. September"), 
+            json_object("key", "Oppmøte:",          "value", "Hovedbygget på gløs"), 
             json_object("key", "Antrekk:",          "value", "Full uniform")
         ),         
         "Beskrivelse av smash"
