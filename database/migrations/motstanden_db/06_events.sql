@@ -11,14 +11,14 @@ CREATE TABLE event (
     description TEXT NOT NULL,                                                                                  -- Html
     created_by INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_by INTEGER NOT NULL DEFAULT created_by,
+    updated_by INTEGER NOT NULL,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (created_by)
-        REFERENCES user (user_id)
+    FOREIGN KEY(created_by)
+        REFERENCES user(user_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT,
-    FOREIGN KEY (updated_by)
-        REFERENCES user (user_id)
+    FOREIGN KEY(updated_by)
+        REFERENCES user(user_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );

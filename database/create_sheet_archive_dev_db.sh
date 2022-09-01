@@ -19,5 +19,3 @@ cd ../..
 
 echo "Dumping schema -> sheet_archive_schema.sql"
 sqlite3 sheet_archive_dev.db .schema > sheet_archive_schema.sql
-
-cd dev
