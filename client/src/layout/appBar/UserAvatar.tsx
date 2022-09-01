@@ -12,7 +12,7 @@ import { useAuth } from '../../context/Authentication';
 
 import { getFullName } from 'common/utils';
 import { Divider, Link } from '@mui/material';
-import ListItemLink from './ListItemLink';
+import { IconPopupMenu } from 'src/components/IconPopupMenu';
 
 
 export default function UserAvatar() {
@@ -35,30 +35,17 @@ export default function UserAvatar() {
         }
     }
 
-    const [isOpen, setIsOpen] = useState(false)
-    const anchorEl = useRef(null)
-
     const user = auth.user!
     const fullName = getFullName(user)
     return (
-        <>
-        <Tooltip title={fullName}>
-            <IconButton ref={anchorEl} onClick={() => setIsOpen(!isOpen)}>
-                <Avatar alt={`Profilbilde for ${fullName}`} src={user.profilePicture}>{user.firstName[0]}</Avatar>
-            </IconButton>
-        </Tooltip>
-        <Menu 
-            anchorEl={anchorEl.current}
-            open={isOpen}
-            onClose={() => setIsOpen(false)}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        <IconPopupMenu 
+            icon={(
+                <Tooltip title={fullName}>
+                    <Avatar alt={`Profilbilde for ${fullName}`} src={user.profilePicture}>{user.firstName[0]}</Avatar>
+                </Tooltip>
+            )}
         >
-            <MenuItem 
-                component={RouterLink} 
-                to={`/medlem/${user.userId}`} 
-                onClick={() => setIsOpen(false)}
-            >
+            <MenuItem component={RouterLink} to={`/medlem/${user.userId}`}>
                 Profil
             </MenuItem>
             <Divider/>
@@ -69,7 +56,6 @@ export default function UserAvatar() {
             <MenuItem onClick={onSignOutAllClick} >
                 Logg ut alle enheter
             </MenuItem>
-        </Menu>
-        </>
+        </IconPopupMenu>
     )
 }
