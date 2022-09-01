@@ -25,7 +25,7 @@ export function NewEventPage() {
     return (
         <>
             <h1>Nytt arrangement</h1> 
-            <EventForm backUrl="/arrangement" postUrl="" initialValue={emptyEventObj}/>
+            <EventForm backUrl="/arrangement" postUrl="/api/events/new" initialValue={emptyEventObj}/>
         </>
     )   
 }
@@ -172,7 +172,7 @@ function TimeForm({ sx }: {sx?: SxProps } ) {
                 onChange={(newVal: Dayjs | null) => dispatch({endTime: newVal})}
                 renderInput={ params => (
                     <>
-                        <TextField {...params} required autoComplete="off" variant="standard" style={{maxWidth: "180px"}}/>
+                        <TextField {...params} autoComplete="off" variant="standard" style={{maxWidth: "180px"}}/>
                     </>
                 )}
                 />

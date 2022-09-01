@@ -4,6 +4,7 @@ import {Link as RouterLink, Navigate, Outlet, useOutletContext, useParams } from
 import { EventData } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { useTitle } from "src/hooks/useTitle"
+import DOMPurify from "dompurify"
 
 export function EventListPage( { mode }: {mode?: "upcoming" | "previous" | "all"} ){
     useTitle("Arrangement")
@@ -58,7 +59,10 @@ export function EventItemContext(){
 export function EventItemPage(){
     const event = useOutletContext<EventData>()
     return (
-        <h1>{event.title}</h1>
+        <>
+            <h1>{event.title}</h1>
+            <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(event.description)}}/>
+        </>
     )   
 }
 

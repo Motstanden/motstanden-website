@@ -1,6 +1,8 @@
+import { NewEventData } from "common/interfaces";
 import express, { Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate";
 import * as events from "../services/events";
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 
 let router = express.Router()
 
@@ -33,7 +35,30 @@ router.get("/events/all",
         ]
         
     )
+)
 
+router.post("/events/new", 
+    AuthenticateUser(),
+    (req: Request, res: Response) => {
+        const payload = req.body as NewEventData
+        if(!payload) {
+            res.status(400).send("Bad data")
+        }
+
+        const user = req.user as AccessTokenData
+        if(!user) {
+            res.status(401).send("Unauthorized")
+        }
+
+        try {
+            const eventId = events.newEvent(payload, user.userId)
+            res.json({eventId: eventId})
+        } catch (err) {
+            console.log(err)
+            res.status(400).send("Failed to create event")
+        }
+        res.end()
+    }
 )
 
 export default router
