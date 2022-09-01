@@ -1,14 +1,101 @@
 INSERT INTO 
-    event(event_id, title, start_date_time, end_date_time, created_by, updated_by, description)
+    event(event_id, title, start_date_time, end_date_time, created_by, updated_by, key_info, description)
 VALUES
-    (1, "Fadderuke: Rebusløp",          "2022-08-16 14:00:00", null,                1, 1, "Beskrivelse av rebusløpet"),
-    (2, "Fadderuke: Hybel til hybel",   "2022-08-23 15:00:00", null,                2, 2, "Beskrivelse av hybel til hybel"),
-    (3, "Åpen øvelse",                  "2022-08-30 19:00:00", "2022-09-01 19:00",  3, 3, "Beskrivelse av åpen øvelse"),
-    (4, "SMASH",                        "2022-09-16 09:00:00", "2022-09-18 16:00",  4, 4, "Beskrivelse av smash"),
-    (5, "Fadderuke: Rebusløp",          "2100-08-16 14:00:00", null,                5, 5, "Beskrivelse av rebusløpet"),
-    (6, "Fadderuke: Hybel til hybel",   "2100-08-23 15:00:00", null,                1, 1, "Beskrivelse av hybel til hybel"),
-    (7, "Åpen øvelse",                  "2100-08-30 19:00:00", "2022-09-01 19:00",  1, 1, "Beskrivelse av åpen øvelse"),
-    (8, "SMASH",                        "2100-09-16 09:00:00", "2022-09-18 16:00",  1, 1, "Beskrivelse av smash");
+    (
+        1, 
+        "Fadderuke: Rebusløp",          
+        "2022-08-16 14:00:00", 
+        null,                
+        1, 
+        1, 
+        json_array(
+            json_object("key", "Kategori:", "value", "Fadderuke"), 
+            json_object("key", "Sted:",     "value", "Høgskoleparken"), 
+            json_object("key", "Antrekk:",  "value", "Full uniform")
+        ),
+        "Beskrivelse av rebusløpet"
+    ), (
+        2, 
+        "Hybel til hybel",   
+        "2022-08-23 15:00:00", 
+        null,                
+        2, 
+        2, 
+        json_array(
+            json_object("key", "Kategori:", "value", "Fadderuke"), 
+            json_object("key", "Sted:",     "value", "Bergstua"), 
+            json_object("key", "Antrekk:",  "value", "Full uniform")
+        ),
+        "Beskrivelse av hybel til hybel"
+    ), (
+        3, 
+        "Åpen øvelse",                  
+        "2022-08-30 19:00:00", 
+        "2022-09-01 19:00",  
+        3, 
+        1, 
+        json_array(),             
+        "Beskrivelse av åpen øvelse"
+    ), (
+        4, 
+        "SMASH",                        
+        "2022-09-16 09:00:00", "2022-09-18 16:00",  
+        4, 
+        4, 
+        json_array(
+            json_object("key", "Sted:",             "value", "Ås"), 
+            json_object("key", "Påmeldingsfrist:",  "value", "1. September"), 
+            json_object("key", "Antrekk:",          "value", "Full uniform")
+        ),          
+        "Beskrivelse av smash"
+    ), (
+        5, 
+        "Rebusløp",          
+        "2100-08-16 14:00:00", 
+        null,                
+        5, 
+        5, 
+        json_array(
+            json_object("key", "Kategori:", "value", "Fadderuke"), 
+            json_object("key", "Sted:",     "value", "Høgskoleparken"), 
+            json_object("key", "Antrekk:",  "value", "Full uniform")
+        ),                                                            
+        "Beskrivelse av rebusløpet"
+    ), (
+        6, 
+        "Fadderuke: Hybel til hybel",   
+        "2100-08-23 15:00:00", 
+        null,                
+        1, 
+        1, 
+        json_array(
+            json_object("key", "Kategori:", "value", "Fadderuke"), 
+            json_object("key", "Sted:",     "value", "Bergstua"), 
+            json_object("key", "Antrekk:",  "value", "Full uniform")
+        ),                                                                    
+        "Beskrivelse av hybel til hybel"
+    ), (
+        7, 
+        "Åpen øvelse",                  
+        "2100-08-30 19:00:00", "2022-09-01 19:00",  
+        1, 
+        1, 
+        json_array(),             
+        "Beskrivelse av åpen øvelse"
+    ), (
+        8, 
+        "SMASH",                        
+        "2100-09-16 09:00:00", 
+        "2022-09-18 16:00",  
+        1, 
+        2, 
+        json_array(
+            json_object("key", "Sted:",             "value", "Ås"), 
+            json_object("key", "Påmeldingsfrist:",  "value", "1. September"), 
+            json_object("key", "Antrekk:",          "value", "Full uniform")
+        ),         
+        "Beskrivelse av smash"
+    );
 
 INSERT INTO 
     event_participant(event_id, user_id, participation_status_id)

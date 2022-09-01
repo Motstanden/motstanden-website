@@ -32,5 +32,3 @@ cd ../..
 
 echo "Dumping schema -> motstanden_schema.sql"
 sqlite3 motstanden_dev.db .schema > motstanden_schema.sql 
-
-cd dev
