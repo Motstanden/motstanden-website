@@ -40,9 +40,23 @@ export function getEvents( {
     if(!!limit)
         args.push(limit)
 
-    const events = stmt.all(args)
+    let events = stmt.all(args)
     db.close()
-    return events as EventData[]
+
+    const parsedEvents: EventData[] = events.map(item => {
+        try {
+            return {
+                ...item,
+                keyInfo: JSON.parse(item.keyInfo)
+            }
+        } catch { 
+            // This should never happen. 
+            // But if there somehow is an error in the database we will simply filter the error out
+            return null 
+        }
+    }).filter(item => !!item);
+    
+    return parsedEvents
 }
 
 function createValidEvent(event: NewEventData): NewEventData | undefined {
