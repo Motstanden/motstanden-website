@@ -1,5 +1,6 @@
 import { Divider, Tab, Tabs, TabsProps, Theme, useMediaQuery } from "@mui/material";
-import { Link as RouterLink, matchPath, resolvePath, useLocation } from "react-router-dom";
+import { Link as RouterLink, matchPath, useLocation } from "react-router-dom";
+import { matchUrl } from "../utils/matchUrl";
 
 export function PageTab( {items, tabProps, matchChildPath}: {items: PageTabItem[], tabProps?: TabsProps, matchChildPath?: boolean }){
 
@@ -8,18 +9,7 @@ export function PageTab( {items, tabProps, matchChildPath}: {items: PageTabItem[
     // Find the item that matches the current url.
     //  - Logic retrieved from NavLink at https://github.com/remix-run/react-router/blob/main/packages/react-router-dom/index.tsx
     const location = useLocation()
-    const currentValue = items.find( item => {
-        
-        const path = resolvePath(item.to)
-        const locationPathname = location.pathname.toLowerCase()
-        const toPathname = path.pathname.toLowerCase()
-
-        const isExact = locationPathname === toPathname
-        const isChild = matchChildPath && (locationPathname.startsWith(toPathname) && locationPathname.charAt(toPathname.length) === "/") 
-        
-        return isExact || isChild
-
-    }) ?? items[0]
+    const currentValue = items.find( item => matchUrl(item.to, location, {matchChildPath: matchChildPath})) ?? items[0]
 
     return (
         <div>
