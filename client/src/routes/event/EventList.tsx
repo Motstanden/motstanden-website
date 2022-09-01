@@ -222,9 +222,3 @@ export function EventItemPage(){
     )   
 }
 
-export function EditEventPage(){
-    const event = useOutletContext<EventData>()
-    return (
-        <h1>Rediger: {event.title}</h1>
-    )
-}

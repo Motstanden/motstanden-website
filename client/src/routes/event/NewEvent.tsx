@@ -30,7 +30,7 @@ export function NewEventPage() {
     )   
 }
 
-interface EventEditorState {
+export interface EventEditorState {
     title: string
     startTime: Dayjs | null,
     endTime: Dayjs | null,
