@@ -77,6 +77,7 @@ function App() {
 						</Route>
 						<Route path="/arrangement" element={<EventContext/>}>
 							<Route path=""  		element={<Navigate to="kommende"/>}/>
+							<Route path=':eventId' element={<EventItemContext/>}/> 	{/* Will redirect to correct path */}
 							<Route path="kommende"  element={<EventListPage mode='upcoming'/>}/>
 							<Route path="kommende/:eventId" element={<EventItemContext/>}>
 								<Route index element={<EventItemPage/>}/>

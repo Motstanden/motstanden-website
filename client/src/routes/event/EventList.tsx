@@ -1,10 +1,11 @@
 import React from "react"
 import { Button } from "@mui/material"
-import {Link as RouterLink, Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
+import {Link as RouterLink, Navigate, Outlet, useLocation, useOutletContext, useParams } from "react-router-dom"
 import { EventData } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { useTitle } from "src/hooks/useTitle"
 import DOMPurify from "dompurify"
+import { matchUrl } from "src/utils/matchUrl"
 
 export function EventListPage( { mode }: {mode?: "upcoming" | "previous" | "all"} ){
     useTitle("Arrangement")
@@ -29,26 +30,38 @@ export function EventList( { events }: {events: EventData[]}){
         <ul>
             {events.map( e => ( 
                 <li key={e.eventId}>
-                    <RouterLink to={`/arrangement/${e.isUpcoming ? "kommende" : "tidligere"}/${e.eventId}`} > {e.title}</RouterLink> 
+                    <RouterLink to={buildEventItemUrl(e)} > {e.title}</RouterLink> 
                 </li>
             ))}
         </ul>
     )
 }
 
+function buildEventItemUrl(event: EventData) {
+    return `/arrangement/${event.isUpcoming ? "kommende" : "tidligere"}/${event.eventId}`
+}
+
 export function EventItemContext(){
     const allEvents = useOutletContext<EventData[]>()
+    const location = useLocation()
 
+    // Check if the url parameter is a number
     const params = useParams();
     const eventId = strToNumber(params.eventId)
     if(!eventId){
         return <Navigate to="/arrangement"/>
     }
     
+    // Check if the provided parameter matches and even id
     const event = allEvents.find( item => item.eventId === eventId)
-
     if(!event) {
         return <Navigate to="/arrangement"/>
+    }
+
+    // Redirect to correct url if the pattern does not match '/arrangement/[kommende | tidligere]/:eventId'
+    const expectedPattern = buildEventItemUrl(event);
+    if(!matchUrl(expectedPattern, location)){
+        return <Navigate to={expectedPattern}/>
     }
 
     return (
