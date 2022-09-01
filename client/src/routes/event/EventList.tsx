@@ -1,13 +1,19 @@
 import React from "react"
-import { Paper, Theme, useMediaQuery } from "@mui/material"
-import {Link as RouterLink, Navigate, Outlet, useLocation, useOutletContext, useParams } from "react-router-dom"
+import { IconButton, ListItemIcon, ListItemText, MenuItem, MenuList, Paper, Stack, Theme, Tooltip, useMediaQuery } from "@mui/material"
+import {Link as RouterLink, Navigate, Outlet, useLocation, useNavigate, useOutletContext, useParams } from "react-router-dom"
 import Link from "@mui/material/Link" 
 import { EventData, KeyValuePair } from "common/interfaces"
-import { strToNumber } from "common/utils"
+import { hasGroupAccess, strToNumber } from "common/utils"
 import { useTitle } from "src/hooks/useTitle"
 import DOMPurify from "dompurify"
 import { matchUrl } from "src/utils/matchUrl"
 import dayjs from "dayjs"
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import EditIcon from '@mui/icons-material/Edit';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { IconPopupMenu } from "src/components/IconPopupMenu"
+import { useAuth } from "src/context/Authentication"
+import { UserGroup } from "common/enums"
 
 export function EventListPage( { mode }: {mode?: "upcoming" | "previous" | "all"} ){
     useTitle("Arrangement")
@@ -31,17 +37,21 @@ export function EventListPage( { mode }: {mode?: "upcoming" | "previous" | "all"
 
 function EventItem( {event}: {event: EventData} ) {
     return (
-        <Paper sx={{mb: 4, p: 2}} elevation={3}>
-            <h4 style={{margin: 0}}>
-                <Link 
-                    color="secondary" 
-                    component={RouterLink}
-                    to={buildEventItemUrl(event)}
-                    underline="hover"
-                    >
-                        {event.title}
-                </Link>
-            </h4>
+        <Paper sx={{mb: 4, p: 2, pt: 1.5}} elevation={3}>
+            <Stack direction="row"  justifyContent="space-between" alignItems="center">
+                <h3 style={{margin: 0}}>
+                    <Link 
+                        color="secondary" 
+                        component={RouterLink}
+                        to={buildEventItemUrl(event)}
+                        underline="hover"
+                        >
+                            {event.title}
+                    </Link>
+
+                </h3>
+                <ItemMenu event={event}/>
+            </Stack>
             <KeyValueList 
                 items={[
                     { 
@@ -132,6 +142,46 @@ function buildEventItemUrl(event: EventData) {
     return `/arrangement/${event.isUpcoming ? "kommende" : "tidligere"}/${event.eventId}`
 }
 
+function ItemMenu({event}: {event: EventData}){
+    const user = useAuth().user!
+    const navigate = useNavigate()
+
+    const onEditClick = () => navigate(`${buildEventItemUrl(event)}/rediger`)
+
+    if(!hasGroupAccess(user, UserGroup.Administrator) && user.userId !== event.createdByUserId ) {
+        return ( 
+            <Tooltip title="Rediger">
+                <IconButton onClick={onEditClick}>
+                    <EditIcon/>
+                </IconButton>
+            </Tooltip>
+        )
+    }
+
+    return(
+        <IconPopupMenu icon={<MoreHorizIcon/>} >
+            <MenuList style={{minWidth: "180px"}} disablePadding> 
+                <MenuItem style={{minHeight: "50px"}} divider={true} onClick={onEditClick}>
+                    <ListItemIcon>
+                        <EditIcon fontSize="small"/>
+                    </ListItemIcon>
+                    <ListItemText>
+                        Rediger
+                    </ListItemText>
+                </MenuItem>
+                <MenuItem style={{minHeight: "50px"}} sx={{backgroundColor: "error"}}>
+                    <ListItemIcon>
+                        <DeleteForeverIcon fontSize="small" color="error" />
+                    </ListItemIcon>
+                    <ListItemText primaryTypographyProps={{color: "error"}}>
+                        Slett
+                    </ListItemText>
+                </MenuItem>
+            </MenuList>
+        </IconPopupMenu>
+    )
+}
+
 export function EventItemContext(){
     const allEvents = useOutletContext<EventData[]>()
     const location = useLocation()
@@ -150,9 +200,11 @@ export function EventItemContext(){
     }
 
     // Redirect to correct url if the pattern does not match '/arrangement/[kommende | tidligere]/:eventId'
-    const expectedPattern = buildEventItemUrl(event);
-    if(!matchUrl(expectedPattern, location)){
-        return <Navigate to={expectedPattern}/>
+    const expectedUrlBase = buildEventItemUrl(event);
+    const isBaseUrl = matchUrl(expectedUrlBase, location)
+    const isEditUrl = matchUrl(`${expectedUrlBase}/rediger`, location) || matchUrl(`${expectedUrlBase}/rediger/`, location)
+    if(!isBaseUrl && !isEditUrl){
+        return <Navigate to={expectedUrlBase}/>
     }
 
     return (

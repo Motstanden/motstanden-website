@@ -86,6 +86,7 @@ function App() {
 							<Route path="tidligere" element={<EventListPage mode='previous'/>}/>
 							<Route path="tidligere/:eventId" element={<EventItemContext/>}>
 								<Route index element={<EventItemPage/>}/>
+								<Route path="rediger" element={<EditEventPage/>}/>
 							</Route>
 							<Route path="ny" element={<NewEventPage/>}/>
 						</Route>
