@@ -57,7 +57,7 @@ function EditPage( { editMode, user }: { editMode: UserEditMode, user: User}) {
     const onIsValidChange = (isValid: boolean) => setDisableSubmit(!isValid)
 
     const onAbort = () => canExitPage(user, newUser) && navigate(`/medlem/${user.userId}`)
-    const onPostSuccess = () => window.location.href = `${window.location.origin}/medlem/${user.userId}`    // Will trigger a reload of the page
+    const onPostSuccess = (res: Response) => window.location.href = `${window.location.origin}/medlem/${user.userId}`    // Will trigger a reload of the page
     const preventSubmit = () => false // TODO: Validate user here. Return true if user is invalid
 
     return (

@@ -18,7 +18,7 @@ export function Form( {
     postUrl: string
     disabled?: boolean
     preventSubmit?: () => boolean
-    onPostSuccess?: () => void
+    onPostSuccess?: ( (res: Response) => Promise<void> ) | ( (res: Response) => void )
     onPostFailure?: () => void
     onAbortClick?: React.MouseEventHandler<HTMLButtonElement>
 }) {
@@ -40,7 +40,7 @@ export function Form( {
             }
         })  
         if(response.ok){
-            onPostSuccess && onPostSuccess()
+            onPostSuccess && await onPostSuccess(response)
         }
         else {
             onPostFailure && onPostFailure()

@@ -77,11 +77,17 @@ export function EventForm( {backUrl, postUrl, initialValue}: {backUrl: string, p
         return serializedEvent;
     }
 
+    const onPostSuccess = async (res: Response) => {
+        const data = await res.json()
+        window.location.href = `${window.location.origin}/arrangement/${data.eventId ?? ""}`    // Will trigger a page reload
+    }
+
     return (
         <Form 
             value={serializeState}
             postUrl={postUrl}
             onAbortClick={ e => navigate(backUrl)}
+            onPostSuccess={onPostSuccess}
         >
             <Paper elevation={6} sx={{px: 2, pb: 4, pt: 1}}>
                 <EventStateContext.Provider value={state}>
