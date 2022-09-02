@@ -14,6 +14,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { IconPopupMenu } from "src/components/IconPopupMenu"
 import { useAuth } from "src/context/Authentication"
 import { UserGroup } from "common/enums"
+import postJson from "src/utils/postJson"
 
 export function EventListPage( { mode }: {mode?: "upcoming" | "previous" | "all"} ){
     useTitle("Arrangement")
@@ -169,7 +170,7 @@ function ItemMenu({event}: {event: EventData}){
                         Rediger
                     </ListItemText>
                 </MenuItem>
-                <MenuItem style={{minHeight: "50px"}} sx={{backgroundColor: "error"}}>
+                <MenuItem style={{minHeight: "50px"}} sx={{backgroundColor: "error"}} onClick={() => deleteEvent(event)}>
                     <ListItemIcon>
                         <DeleteForeverIcon fontSize="small" color="error" />
                     </ListItemIcon>
@@ -180,6 +181,19 @@ function ItemMenu({event}: {event: EventData}){
             </MenuList>
         </IconPopupMenu>
     )
+}
+
+async function deleteEvent(event: EventData) {
+    if(window.confirm(`Vil du permanent slette:\n«${event.title}»`)) {
+        const response = await postJson("/api/events/delete", {eventId: event.eventId})
+        if(response.ok){
+            window.location.href = `${window.location.origin}/arrangement`
+        }
+        else {
+            console.log(response)
+            window.alert("Noe gikk galt\nSi ifra til webansvarlig")
+        }
+    }
 }
 
 export function EventItemContext(){

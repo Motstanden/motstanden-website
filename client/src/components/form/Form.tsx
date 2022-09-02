@@ -1,6 +1,7 @@
 import Divider from "@mui/material/Divider"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import postJson from "src/utils/postJson"
 import SubmitFormButtons from "./SubmitButtons"
 
 export function Form( {
@@ -32,13 +33,7 @@ export function Form( {
         setIsSubmitting(true)        
 
         let newValue = typeof value === "function" ? value() : value
-        let response = await fetch(postUrl, {
-            method: "POST", 
-            body: JSON.stringify(newValue),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })  
+        let response = await postJson(postUrl, newValue)
         if(response.ok){
             onPostSuccess && await onPostSuccess(response)
         }
