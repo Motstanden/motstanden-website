@@ -1,8 +1,10 @@
-import { NewEventData } from "common/interfaces";
-import express, { Request, Response } from "express";
+import { UserGroup } from "common/enums";
+import { NewEventData, User } from "common/interfaces";
+import express, { NextFunction, Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate";
 import * as events from "../services/events";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
+import { hasGroupAccess } from "../utils/accessTokenUtils";
 
 let router = express.Router()
 
@@ -61,4 +63,32 @@ router.post("/events/new",
     }
 )
 
+router.post("/events/delete",
+    AuthenticateUser(),
+    (req: Request, res: Response, next: NextFunction) => {
+
+        // Check if the posted eventId is valid
+        const eventId: number | unknown = req.body.eventId
+        if(!eventId || typeof eventId !== "number"){
+            return res.status(400).send("Bad data")
+        }
+        let event
+        try {
+            event = events.getEvent(eventId) 
+        } catch {
+            return res.status(400).send("bad data")
+        }
+
+        // Delete the event if the user is admin, or if the user is the original author of the event
+        const user = req.user as AccessTokenData
+        const isAdmin = hasGroupAccess(user, UserGroup.Administrator)
+        const isEventAuthor = event.createdByUserId === user.userId
+        if(isAdmin || isEventAuthor){
+            events.deleteEvent(eventId)
+            return res.end()
+        }
+        
+        res.status(401).send("Unauthorized")
+    }
+)
 export default router

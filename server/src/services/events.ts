@@ -4,6 +4,44 @@ import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/dat
 import domPurify from "../lib/DOMPurify";
 import { stringIsNullOrWhiteSpace } from "../utils/stringUtils";
 
+const allEventColumns = `
+    event_id as eventId, 
+    title, 
+    start_date_time as startDateTime,
+    end_date_time as endDateTime,
+    key_info as keyInfo,
+    description,
+
+    created_by_user_id as createdByUserId,
+    created_by_full_name as createdByName,
+    created_at,
+
+    updated_by_user_id as updatedByUserId,
+    updated_by_full_name as updatedByName,
+    updated_at,
+
+    is_upcoming as isUpcoming
+`
+
+export function getEvent(eventId: number): EventData {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(`
+        SELECT 
+            ${allEventColumns}
+        FROM
+            vw_event
+        WHERE event_id = ?
+    `)
+    const dbResult = stmt.get(eventId)
+
+    if(!dbResult)
+        throw "Bad data"
+    
+    const event: EventData = {...dbResult, keyInfo: JSON.parse(dbResult.keyInfo)}
+    
+    return event
+}
+
 export function getEvents( { 
     upcoming, 
     limit
@@ -14,22 +52,7 @@ export function getEvents( {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
     SELECT 
-        event_id as eventId, 
-        title, 
-        start_date_time as startDateTime,
-        end_date_time as endDateTime,
-        key_info as keyInfo,
-        description,
-
-        created_by_user_id as createdByUserId,
-        created_by_full_name as createdByName,
-        created_at,
-
-        updated_by_user_id as updatedByUserId,
-        updated_by_full_name as updatedByName,
-        updated_at,
-
-        is_upcoming as isUpcoming
+        ${allEventColumns}
     FROM 
         vw_event 
     WHERE is_upcoming = ?
@@ -131,5 +154,19 @@ export function newEvent( unsafeEvent: NewEventData, createdByUserId: number): n
     if(result)
         return result.lastInsertRowid
     else 
-        throw "something wen wrong"
+        throw "something went wrong"
+}
+
+export function deleteEvent(eventId: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const startTransaction = db.transaction( () => {
+        const stmt = db.prepare(`
+            DELETE FROM 
+                event
+            WHERE event_id = ?;`
+        )
+        stmt.run(eventId)
+    })
+    startTransaction()
+    db.close()
 }

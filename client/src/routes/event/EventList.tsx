@@ -186,10 +186,7 @@ function ItemMenu({event}: {event: EventData}){
 async function deleteEvent(event: EventData) {
     if(window.confirm(`Vil du permanent slette:\n«${event.title}»`)) {
         const response = await postJson("/api/events/delete", {eventId: event.eventId})
-        if(response.ok){
-            window.location.href = `${window.location.origin}/arrangement`
-        }
-        else {
+        if(!response.ok){
             console.log(response)
             window.alert("Noe gikk galt\nSi ifra til webansvarlig")
         }
