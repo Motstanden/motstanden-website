@@ -36,7 +36,7 @@ function NewQuoteForm(){
                 "Content-Type": "application/json"
             }
         })  
-        window.location.reload()
+        window.location.href = `${window.location.origin}/sitater`
     }
 
     return (
