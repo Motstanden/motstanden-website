@@ -1,7 +1,9 @@
 import Database from "better-sqlite3";
-import { NewEventData, EventData } from "common/interfaces";
+import { NewEventData, EventData, UpsertEventData } from "common/interfaces";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
 import domPurify from "../lib/DOMPurify";
+import { DbWriteAction } from "../ts/enums/DbWriteAction";
+import { UpsertDb } from "../ts/types/UpsertDb";
 import { stringIsNullOrWhiteSpace } from "../utils/stringUtils";
 
 const allEventColumns = `
@@ -103,7 +105,6 @@ function createValidEvent(event: NewEventData): NewEventData | undefined {
         !isValidExtraInfo                                                           ||
         stringIsNullOrWhiteSpace(event.description)
     ) {
-        console.log("-------------------------------------------")
         return undefined
     }
 
@@ -123,38 +124,75 @@ function createValidEvent(event: NewEventData): NewEventData | undefined {
     return newEvent
 }
 
-export function newEvent( unsafeEvent: NewEventData, createdByUserId: number): number | bigint {
+export function upsertEvent( unsafeEvent: UpsertEventData, modifiedBy: number, action: UpsertDb): number | bigint {
     const validEvent = createValidEvent(unsafeEvent)
     if(!validEvent)
-        throw "Bad data"
+        throw "Bad data"  
 
+    const sql = buildUpsertSql({...validEvent, eventId: unsafeEvent.eventId}, modifiedBy, action)
     const db = new Database(motstandenDB, dbReadWriteConfig)
     let result: Database.RunResult | undefined
     const startTransaction = db.transaction( () => {
-        const stmt = db.prepare(
-            `INSERT INTO 
-                event(title, start_date_time, end_date_time, key_info, description, created_by, updated_by)
-            VALUES
-                (?, ?, ?, ?, ?, ?, ?);`
-        )
-        result = stmt.run([
-            validEvent.title,
-            validEvent.startDateTime,
-            validEvent.endDateTime,
-            JSON.stringify(validEvent.keyInfo),
-            validEvent.description,
-            createdByUserId,
-            createdByUserId,
-        ])
+        const stmt = db.prepare(sql.stmt)
+        result = stmt.run(sql.args)
     })
 
     startTransaction()
     db.close()
 
-    if(result)
+    if(result && result.changes > 0)
         return result.lastInsertRowid
     else 
         throw "something went wrong"
+}
+
+function buildUpsertSql( 
+    validEvent: UpsertEventData, 
+    modifiedBy: number, 
+    action: UpsertDb 
+) : { 
+    stmt: string, 
+    args: any[] 
+}  { 
+
+    const commonArgs = [
+        validEvent.title,
+        validEvent.startDateTime,
+        validEvent.endDateTime,
+        JSON.stringify(validEvent.keyInfo),
+        validEvent.description,
+        modifiedBy,
+    ]
+
+    if(action === DbWriteAction.Update) {
+        if(!validEvent.eventId)
+            throw `Requires eventId`
+
+        return {
+            stmt: 
+                `UPDATE event
+                SET
+                    title = ?,
+                    start_date_time = ?,
+                    end_date_time = ?,
+                    key_info = ?,
+                    description = ?,
+                    updated_by = ?
+                WHERE 
+                    event_id = ?;
+                `,
+            args: [...commonArgs, validEvent.eventId]
+        }
+    }
+
+    return {
+        stmt: 
+            `INSERT INTO 
+                event(title, start_date_time, end_date_time, key_info, description, created_by, updated_by)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?);`,
+        args: [ ...commonArgs, modifiedBy ]
+    }
 }
 
 export function deleteEvent(eventId: number) {

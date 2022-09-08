@@ -8,6 +8,10 @@ export interface NewEventData {
     description: string                         // Html
 }
 
+export interface UpsertEventData extends NewEventData, Partial<Pick<EventData, "eventId">> {
+ 
+}
+
 export interface EventData extends NewEventData {
     eventId: number;
     

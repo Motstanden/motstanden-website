@@ -21,7 +21,7 @@ export function EditEventPage() {
                 <span>Redigerer </span> 
                 <em><q>{event.title}</q></em>
             </h1>
-            <EventForm backUrl="/arrangement" postUrl="/api/events/update" initialValue={initialValue} />
+            <EventForm backUrl="/arrangement" postUrl="/api/events/update" initialValue={initialValue} eventId={event.eventId}/>
         </>
     );
 }

@@ -1,1 +1,0 @@
-Create ts enums in this directory

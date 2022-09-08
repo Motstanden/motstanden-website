@@ -17,7 +17,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Form } from "src/components/form/Form"
 import React from "react"
-import { KeyValuePair, NewEventData } from "common/interfaces"
+import { KeyValuePair, UpsertEventData } from "common/interfaces"
 import { serialize } from "src/components/TextEditor/HtmlSerialize"
 
 export function NewEventPage() {
@@ -57,7 +57,7 @@ function useEvent(): [EventEditorState, React.Dispatch<Partial<EventEditorState>
     return [ useContext(EventStateContext), useContext(EventDispatchContext) ]
 }
 
-export function EventForm( {backUrl, postUrl, initialValue}: {backUrl: string, postUrl: string, initialValue: EventEditorState} ) {
+export function EventForm( {backUrl, postUrl, initialValue, eventId}: {backUrl: string, postUrl: string, initialValue: EventEditorState, eventId?: number} ) {
 
     const reducer = (state: EventEditorState, newVal: Partial<EventEditorState>): EventEditorState => {
         return {...state, ...newVal}
@@ -66,8 +66,9 @@ export function EventForm( {backUrl, postUrl, initialValue}: {backUrl: string, p
     const navigate = useNavigate()
     const [state, dispatch] = useReducer<Reducer<EventEditorState, Partial<EventEditorState>>>(reducer, initialValue)
 
-    const serializeState = (): NewEventData => {
-        const serializedEvent: NewEventData = {
+    const serializeState = (): UpsertEventData => {
+        const serializedEvent: UpsertEventData = {
+            eventId: eventId,
             title: state.title,
             startDateTime: state.startTime!.format("YYYY-MM-DD HH:MM:00"),
             endDateTime: state.endTime?.format("YYYY-MM-DD HH:MM:00") ?? null,

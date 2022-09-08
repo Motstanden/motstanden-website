@@ -1,9 +1,11 @@
 import { UserGroup } from "common/enums";
-import { NewEventData, User } from "common/interfaces";
+import { EventData, NewEventData, UpsertEventData, User } from "common/interfaces";
 import express, { NextFunction, Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate";
 import * as events from "../services/events";
+import { DbWriteAction } from "../ts/enums/DbWriteAction";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
+import { UpsertDb } from "../ts/types/UpsertDb";
 import { hasGroupAccess } from "../utils/accessTokenUtils";
 
 let router = express.Router()
@@ -39,29 +41,31 @@ router.get("/events/all",
     )
 )
 
-router.post("/events/new", 
-    AuthenticateUser(),
-    (req: Request, res: Response) => {
-        const payload = req.body as NewEventData
-        if(!payload) {
-            res.status(400).send("Bad data")
-        }
+router.post("/events/new", AuthenticateUser(), (req, res) => handleUpsert(DbWriteAction.Insert, req, res))
 
-        const user = req.user as AccessTokenData
-        if(!user) {
-            res.status(401).send("Unauthorized")
-        }
+router.post("/events/update", AuthenticateUser(), (req, res) => handleUpsert(DbWriteAction.Update, req, res))
 
-        try {
-            const eventId = events.newEvent(payload, user.userId)
-            res.json({eventId: eventId})
-        } catch (err) {
-            console.log(err)
-            res.status(400).send("Failed to create event")
-        }
-        res.end()
+function handleUpsert(writeAction: UpsertDb, req: Request, res: Response) {
+    const payload: UpsertEventData = req.body
+    if(!payload) {
+        res.status(400).send("Bad data")
     }
-)
+
+    const user = req.user as AccessTokenData
+    if(!user) {
+        res.status(401).send("Unauthorized")
+    }
+
+    try {
+        const eventId = events.upsertEvent(payload, user.userId, writeAction)
+        res.json({eventId: eventId})
+    } catch (err) {
+        console.log(err)
+        res.status(400).send("Failed to create event")
+    }
+    res.end()
+}
+
 
 router.post("/events/delete",
     AuthenticateUser(),
@@ -91,4 +95,5 @@ router.post("/events/delete",
         res.status(401).send("Unauthorized")
     }
 )
+
 export default router
