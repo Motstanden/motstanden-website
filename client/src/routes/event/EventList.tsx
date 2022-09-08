@@ -254,10 +254,9 @@ function EditInfo({event}: {event: EventData}) {
             opacity: 0.75, 
             paddingBlock: "10px",
             display: "grid",
-            gridTemplateColumns: "min-content max-content",
+            gridTemplateColumns: "min-content auto",
             columnGap: "5px",
             rowGap: "4px"
-            
         }}>
             <div>
                 Opprettet:
@@ -290,6 +289,7 @@ function EditInfoItem({ userName, userId, dateTime }: {userName: string, userId:
                 to={`/medlem/${userId}`}
                 underline="hover"
                 >
+
                 {`${userName}`}
             </Link>
         </span>
