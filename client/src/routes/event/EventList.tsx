@@ -67,7 +67,7 @@ function EventItem( {event}: {event: EventData} ) {
     )
 }
 
-function KeyValueList( {items}: {items: KeyValuePair<string, string>[]}) {
+function KeyValueList( {items, style}: {items: KeyValuePair<string, string>[], style?: React.CSSProperties}) {
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     
     if(items.length === 0){
@@ -77,7 +77,12 @@ function KeyValueList( {items}: {items: KeyValuePair<string, string>[]}) {
     // Small screen
     if(isSmallScreen){
         return(
-            <div style={{marginBlock: "10px"}}>
+            <div style={{
+                marginTop: "10px",
+                marginBottom: "10px",
+                ...style
+                }}
+            >
                 {items.map( (item, index) => ( 
                     <div 
                         key={`${index} ${item.key} ${item.value}`} 
@@ -101,6 +106,7 @@ function KeyValueList( {items}: {items: KeyValuePair<string, string>[]}) {
             columnGap: "10px",
             rowGap: "5px",
             margin: "10px",
+            ...style
         }}
     >
         {items.map( (item, index) => (
@@ -241,6 +247,20 @@ export function EventItemPage(){
             </Stack>
             <Divider/>
             <EditInfo event={event}/>
+            <KeyValueList 
+                style={{
+                    margin: "0px",
+                    marginTop: "30px",
+                    marginBottom: "30px"
+                }}
+                items={[
+                    { 
+                        key: "Tid:", 
+                        value: formatTimeInfo(event.startDateTime, event.endDateTime)
+                    },
+                    ...event.keyInfo
+                ]}
+                />
             <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(event.description)}}/>
          </Paper>
         </>
