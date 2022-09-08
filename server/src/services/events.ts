@@ -16,11 +16,11 @@ const allEventColumns = `
 
     created_by_user_id as createdByUserId,
     created_by_full_name as createdByName,
-    created_at,
+    created_at as updatedAt,
 
     updated_by_user_id as updatedByUserId,
     updated_by_full_name as updatedByName,
-    updated_at,
+    updated_at as createdAt,
 
     is_upcoming as isUpcoming
 `
