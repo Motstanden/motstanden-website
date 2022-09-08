@@ -1,5 +1,5 @@
 import React from "react"
-import { IconButton, ListItemIcon, ListItemText, MenuItem, MenuList, Paper, Stack, Theme, Tooltip, useMediaQuery } from "@mui/material"
+import { Divider, IconButton, ListItemIcon, ListItemText, MenuItem, MenuList, Paper, Stack, Theme, Tooltip, useMediaQuery } from "@mui/material"
 import {Link as RouterLink, Navigate, Outlet, useLocation, useNavigate, useOutletContext, useParams } from "react-router-dom"
 import Link from "@mui/material/Link" 
 import { EventData, KeyValuePair } from "common/interfaces"
@@ -11,6 +11,7 @@ import dayjs from "dayjs"
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconPopupMenu } from "src/components/IconPopupMenu"
 import { useAuth } from "src/context/Authentication"
 import { UserGroup } from "common/enums"
@@ -143,7 +144,7 @@ function buildEventItemUrl(event: EventData) {
     return `/arrangement/${event.isUpcoming ? "kommende" : "tidligere"}/${event.eventId}`
 }
 
-function ItemMenu({event}: {event: EventData}){
+function ItemMenu({event, iconOrientation}: {event: EventData, iconOrientation?: "horizontal" | "vertical"}){
     const user = useAuth().user!
     const navigate = useNavigate()
 
@@ -160,7 +161,7 @@ function ItemMenu({event}: {event: EventData}){
     }
 
     return(
-        <IconPopupMenu icon={<MoreHorizIcon/>} >
+        <IconPopupMenu icon={iconOrientation === "vertical" ? <MoreVertIcon/> : <MoreHorizIcon/>} >
             <MenuList style={{minWidth: "180px"}} disablePadding> 
                 <MenuItem style={{minHeight: "50px"}} divider={true} onClick={onEditClick}>
                     <ListItemIcon>
@@ -227,9 +228,73 @@ export function EventItemPage(){
     const event = useOutletContext<EventData>()
     return (
         <>
-            <h1>{event.title}</h1>
+        <Paper elevation={6} sx={{p: 2, pt: 0, mt: 4}}>
+            <Stack 
+                direction="row" 
+                justifyContent="space-between" 
+                alignItems="center" 
+                marginTop={3}
+                paddingTop={2} 
+            >
+                <h1 style={{margin: 0}}>{event.title}</h1>
+                <ItemMenu event={event} iconOrientation="vertical"/>
+            </Stack>
+            <Divider/>
+            <EditInfo event={event}/>
             <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(event.description)}}/>
+         </Paper>
         </>
     )   
 }
+
+function EditInfo({event}: {event: EventData}) {
+    return (
+        <div style={{
+            fontSize: "xx-small", 
+            opacity: 0.75, 
+            paddingBlock: "10px",
+            display: "grid",
+            gridTemplateColumns: "min-content max-content",
+            columnGap: "5px",
+            rowGap: "4px"
+            
+        }}>
+            <div>
+                Opprettet:
+            </div>
+            <div>
+                <EditInfoItem userName={event.createdByName} userId={event.createdByUserId} dateTime={event.createdAt}/>
+            </div>
+            {event.createdAt !== event.updatedAt && (
+                <>
+                    <div>
+                        Redigert:
+                    </div>
+                    <div>
+                        <EditInfoItem userName={event.updatedByName} userId={event.updatedByUserId} dateTime={event.updatedAt}/>
+                    </div>
+                </>
+            )}
+        </div>
+    )
+} 
+
+
+function EditInfoItem({ userName, userId, dateTime }: {userName: string, userId: number, dateTime: string}) {
+    return(
+        <span>
+            {`${dayjs(dateTime).format("DD. MMM YYYY HH:mm")}, av `}
+            <Link 
+                color="secondary" 
+                component={RouterLink}
+                to={`/medlem/${userId}`}
+                underline="hover"
+                >
+                {`${userName}`}
+            </Link>
+        </span>
+    )
+}
+
+
 
