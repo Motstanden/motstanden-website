@@ -1,7 +1,7 @@
 import React from "react";
 import { useOutletContext } from "react-router-dom";
 import { EventData } from "common/interfaces";
-import { EventForm, EventEditorState } from "./NewEvent";
+import { EventForm, EventEditorState } from "./NewPage";
 import dayjs from "dayjs";
 import { deserialize } from "src/components/TextEditor/HtmlSerialize";
 
