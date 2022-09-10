@@ -1,11 +1,10 @@
 import React from "react"
-import { Divider, IconButton, ListItemIcon, ListItemText, MenuItem, MenuList, Paper, Stack, Theme, Tooltip, useMediaQuery } from "@mui/material"
+import { IconButton, ListItemIcon, ListItemText, MenuItem, MenuList, Paper, Stack, Theme, Tooltip, useMediaQuery } from "@mui/material"
 import {Link as RouterLink, Navigate, Outlet, useLocation, useNavigate, useOutletContext, useParams } from "react-router-dom"
 import Link from "@mui/material/Link" 
 import { EventData, KeyValuePair } from "common/interfaces"
 import { hasGroupAccess, strToNumber } from "common/utils"
 import { useTitle } from "src/hooks/useTitle"
-import DOMPurify from "dompurify"
 import { matchUrl } from "src/utils/matchUrl"
 import dayjs from "dayjs"
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -67,7 +66,7 @@ function EventItem( {event}: {event: EventData} ) {
     )
 }
 
-function KeyValueList( {items, style}: {items: KeyValuePair<string, string>[], style?: React.CSSProperties}) {
+export function KeyValueList( {items, style}: {items: KeyValuePair<string, string>[], style?: React.CSSProperties}) {
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     
     if(items.length === 0){
@@ -124,7 +123,7 @@ function KeyValueList( {items, style}: {items: KeyValuePair<string, string>[], s
     )
 }
 
-function formatTimeInfo(startStr: string, endStr: string | null): string {
+export function formatTimeInfo(startStr: string, endStr: string | null): string {
     const start = dayjs(startStr)
 
     const dayFormat = start.year() === dayjs().year() 
@@ -150,7 +149,7 @@ function buildEventItemUrl(event: EventData) {
     return `/arrangement/${event.isUpcoming ? "kommende" : "tidligere"}/${event.eventId}`
 }
 
-function ItemMenu({event, iconOrientation}: {event: EventData, iconOrientation?: "horizontal" | "vertical"}){
+export function ItemMenu({event, iconOrientation}: {event: EventData, iconOrientation?: "horizontal" | "vertical"}){
     const user = useAuth().user!
     const navigate = useNavigate()
 
@@ -229,92 +228,3 @@ export function EventItemContext(){
         <Outlet context={event}/>
     )
 }   
-
-export function EventItemPage(){
-    const event = useOutletContext<EventData>()
-    return (
-        <>
-        <Paper elevation={6} sx={{p: 2, pt: 0, mt: 4}}>
-            <Stack 
-                direction="row" 
-                justifyContent="space-between" 
-                alignItems="center" 
-                marginTop={3}
-                paddingTop={2} 
-            >
-                <h1 style={{margin: 0}}>{event.title}</h1>
-                <ItemMenu event={event} iconOrientation="vertical"/>
-            </Stack>
-            <Divider/>
-            <EditInfo event={event}/>
-            <KeyValueList 
-                style={{
-                    margin: "0px",
-                    marginTop: "30px",
-                    marginBottom: "30px"
-                }}
-                items={[
-                    { 
-                        key: "Tid:", 
-                        value: formatTimeInfo(event.startDateTime, event.endDateTime)
-                    },
-                    ...event.keyInfo
-                ]}
-                />
-            <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(event.description)}}/>
-         </Paper>
-        </>
-    )   
-}
-
-function EditInfo({event}: {event: EventData}) {
-    return (
-        <div style={{
-            fontSize: "xx-small", 
-            opacity: 0.75, 
-            paddingBlock: "10px",
-            display: "grid",
-            gridTemplateColumns: "min-content auto",
-            columnGap: "5px",
-            rowGap: "4px"
-        }}>
-            <div>
-                Opprettet:
-            </div>
-            <div>
-                <EditInfoItem userName={event.createdByName} userId={event.createdByUserId} dateTime={event.createdAt}/>
-            </div>
-            {event.createdAt !== event.updatedAt && (
-                <>
-                    <div>
-                        Redigert:
-                    </div>
-                    <div>
-                        <EditInfoItem userName={event.updatedByName} userId={event.updatedByUserId} dateTime={event.updatedAt}/>
-                    </div>
-                </>
-            )}
-        </div>
-    )
-} 
-
-
-function EditInfoItem({ userName, userId, dateTime }: {userName: string, userId: number, dateTime: string}) {
-    return(
-        <span>
-            {`${dayjs(dateTime).format("DD. MMM YYYY HH:mm")}, av `}
-            <Link 
-                color="secondary" 
-                component={RouterLink}
-                to={`/medlem/${userId}`}
-                underline="hover"
-                >
-
-                {`${userName}`}
-            </Link>
-        </span>
-    )
-}
-
-
-

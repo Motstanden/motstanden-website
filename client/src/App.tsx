@@ -24,7 +24,8 @@ import { NewUserPage } from './routes/user/NewUser';
 import { EditUserPage } from './routes/user/EditUser';
 import { UserContext } from './routes/user/UserContext';
 import { UserPage, UserProfileContext } from './routes/user/UserPage';
-import { EventItemContext, EventItemPage, EventListPage } from './routes/event/EventList';
+import { EventItemContext, EventListPage } from './routes/event/EventList';
+import { ItemPage } from "./routes/event/ItemPage";
 import { EditEventPage } from "./routes/event/EditEventPage";
 import { NewEventPage } from './routes/event/NewEvent';
 import { EventContext } from './routes/event/EventContext';
@@ -81,12 +82,12 @@ function App() {
 							<Route path=':eventId' element={<EventItemContext/>}/> 	{/* Will redirect to correct path */}
 							<Route path="kommende"  element={<EventListPage mode='upcoming'/>}/>
 							<Route path="kommende/:eventId" element={<EventItemContext/>}>
-								<Route index element={<EventItemPage/>}/>
+								<Route index element={<ItemPage/>}/>
 								<Route path="rediger" element={<EditEventPage/>}/>
 							</Route>							
 							<Route path="tidligere" element={<EventListPage mode='previous'/>}/>
 							<Route path="tidligere/:eventId" element={<EventItemContext/>}>
-								<Route index element={<EventItemPage/>}/>
+								<Route index element={<ItemPage/>}/>
 								<Route path="rediger" element={<EditEventPage/>}/>
 							</Route>
 							<Route path="ny" element={<NewEventPage/>}/>
