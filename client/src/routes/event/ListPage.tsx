@@ -6,8 +6,8 @@ import { EventData } from "common/interfaces"
 import { useTitle } from "src/hooks/useTitle"
 import postJson from "src/utils/postJson"
 import { buildEventItemUrl } from "./Context"
-import { KeyInfo } from "./KeyInfo"
-import { ItemMenu } from "./ItemMenu"
+import { KeyInfo } from "./components/KeyInfo"
+import { ItemMenu } from "./components/ItemMenu"
 
 export function EventListPage( { mode }: {mode?: "upcoming" | "previous" | "all"} ){
     useTitle("Arrangement")

@@ -3,9 +3,9 @@ import { Divider, Link, Paper, Stack } from "@mui/material";
 import { useOutletContext } from "react-router-dom";
 import { EventData } from "common/interfaces";
 import DOMPurify from "dompurify";
-import { ItemMenu } from "./ItemMenu";
+import { ItemMenu } from "./components/ItemMenu";
 import dayjs from "dayjs";
-import { KeyInfo } from "./KeyInfo";
+import { KeyInfo } from "./components/KeyInfo";
 import {Link as RouterLink} from "react-router-dom"
 
 export function ItemPage() {

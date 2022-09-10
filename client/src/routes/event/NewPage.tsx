@@ -12,7 +12,7 @@ import { DateTimePicker } from "@mui/x-date-pickers"
 import { Button, Divider, IconButton, SxProps, TextField } from "@mui/material"
 import Stack from "@mui/system/Stack"
 import { useNavigate } from "react-router-dom"
-import { Toolbar } from "./RichTextEditor"
+import { Toolbar } from "./components/RichTextEditor"
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Form } from "src/components/form/Form"

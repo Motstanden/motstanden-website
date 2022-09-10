@@ -10,8 +10,8 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconPopupMenu } from "src/components/IconPopupMenu";
 import { useAuth } from "src/context/Authentication";
 import { UserGroup } from "common/enums";
-import { buildEventItemUrl } from "./Context";
-import { deleteEvent } from "./ListPage";
+import { buildEventItemUrl } from "../Context";
+import { deleteEvent } from "../ListPage";
 
 
 export function ItemMenu({ event, iconOrientation }: { event: EventData; iconOrientation?: "horizontal" | "vertical"; }) {
