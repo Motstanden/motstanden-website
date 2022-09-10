@@ -24,11 +24,11 @@ import { NewUserPage } from './routes/user/NewUser';
 import { EditUserPage } from './routes/user/EditUser';
 import { UserContext } from './routes/user/UserContext';
 import { UserPage, UserProfileContext } from './routes/user/UserPage';
-import { EventItemContext, EventListPage } from './routes/event/EventList';
+import { EventListPage } from './routes/event/EventList';
 import { ItemPage } from "./routes/event/ItemPage";
 import { EditEventPage } from "./routes/event/EditEventPage";
 import { NewEventPage } from './routes/event/NewEvent';
-import { EventContext } from './routes/event/EventContext';
+import { EventContext, EventItemContext } from './routes/event/Context';
 import { QuotesContext } from './routes/quotes/QuotesContext';
 import { NewQuotePage } from './routes/quotes/NewQuotePage';
 

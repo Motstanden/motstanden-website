@@ -1,11 +1,10 @@
 import React from "react"
 import { IconButton, ListItemIcon, ListItemText, MenuItem, MenuList, Paper, Stack, Theme, Tooltip, useMediaQuery } from "@mui/material"
-import {Link as RouterLink, Navigate, Outlet, useLocation, useNavigate, useOutletContext, useParams } from "react-router-dom"
+import {Link as RouterLink, useNavigate, useOutletContext, useParams } from "react-router-dom"
 import Link from "@mui/material/Link" 
 import { EventData, KeyValuePair } from "common/interfaces"
 import { hasGroupAccess, strToNumber } from "common/utils"
 import { useTitle } from "src/hooks/useTitle"
-import { matchUrl } from "src/utils/matchUrl"
 import dayjs from "dayjs"
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
@@ -15,6 +14,7 @@ import { IconPopupMenu } from "src/components/IconPopupMenu"
 import { useAuth } from "src/context/Authentication"
 import { UserGroup } from "common/enums"
 import postJson from "src/utils/postJson"
+import { buildEventItemUrl } from "./Context"
 
 export function EventListPage( { mode }: {mode?: "upcoming" | "previous" | "all"} ){
     useTitle("Arrangement")
@@ -145,10 +145,6 @@ export function formatTimeInfo(startStr: string, endStr: string | null): string 
     return `${start.format(dayFormat)} kl: ${start.format(hourFormat)} – ${end.format(dayFormat)} kl: ${end.format(hourFormat)}`
 }
 
-function buildEventItemUrl(event: EventData) {
-    return `/arrangement/${event.isUpcoming ? "kommende" : "tidligere"}/${event.eventId}`
-}
-
 export function ItemMenu({event, iconOrientation}: {event: EventData, iconOrientation?: "horizontal" | "vertical"}){
     const user = useAuth().user!
     const navigate = useNavigate()
@@ -198,33 +194,3 @@ async function deleteEvent(event: EventData) {
         }
     }
 }
-
-export function EventItemContext(){
-    const allEvents = useOutletContext<EventData[]>()
-    const location = useLocation()
-
-    // Check if the url parameter is a number
-    const params = useParams();
-    const eventId = strToNumber(params.eventId)
-    if(!eventId){
-        return <Navigate to="/arrangement"/>
-    }
-    
-    // Check if the provided parameter matches and even id
-    const event = allEvents.find( item => item.eventId === eventId)
-    if(!event) {
-        return <Navigate to="/arrangement"/>
-    }
-
-    // Redirect to correct url if the pattern does not match '/arrangement/[kommende | tidligere]/:eventId'
-    const expectedUrlBase = buildEventItemUrl(event);
-    const isBaseUrl = matchUrl(expectedUrlBase, location)
-    const isEditUrl = matchUrl(`${expectedUrlBase}/rediger`, location) || matchUrl(`${expectedUrlBase}/rediger/`, location)
-    if(!isBaseUrl && !isEditUrl){
-        return <Navigate to={expectedUrlBase}/>
-    }
-
-    return (
-        <Outlet context={event}/>
-    )
-}   
