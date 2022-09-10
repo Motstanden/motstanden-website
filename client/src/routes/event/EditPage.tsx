@@ -1,7 +1,7 @@
 import React from "react";
 import { useOutletContext } from "react-router-dom";
 import { EventData } from "common/interfaces";
-import { EventForm, EventEditorState } from "./NewPage";
+import { EventEditorForm, EventEditorState } from "./components/EventEditorForm";
 import dayjs from "dayjs";
 import { deserialize } from "src/components/TextEditor/HtmlSerialize";
 
@@ -21,7 +21,7 @@ export function EditEventPage() {
                 <span>Redigerer </span> 
                 <em><q>{event.title}</q></em>
             </h1>
-            <EventForm backUrl="/arrangement" postUrl="/api/events/update" initialValue={initialValue} eventId={event.eventId}/>
+            <EventEditorForm backUrl="/arrangement" postUrl="/api/events/update" initialValue={initialValue} eventId={event.eventId}/>
         </>
     );
 }
