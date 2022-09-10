@@ -1,11 +1,10 @@
 import React from "react"
-import { IconButton, ListItemIcon, ListItemText, MenuItem, MenuList, Paper, Stack, Theme, Tooltip, useMediaQuery } from "@mui/material"
+import { IconButton, ListItemIcon, ListItemText, MenuItem, MenuList, Paper, Stack, Tooltip } from "@mui/material"
 import {Link as RouterLink, useNavigate, useOutletContext, useParams } from "react-router-dom"
 import Link from "@mui/material/Link" 
-import { EventData, KeyValuePair } from "common/interfaces"
+import { EventData } from "common/interfaces"
 import { hasGroupAccess, strToNumber } from "common/utils"
 import { useTitle } from "src/hooks/useTitle"
-import dayjs from "dayjs"
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -15,6 +14,7 @@ import { useAuth } from "src/context/Authentication"
 import { UserGroup } from "common/enums"
 import postJson from "src/utils/postJson"
 import { buildEventItemUrl } from "./Context"
+import { KeyInfo } from "./KeyInfo"
 
 export function EventListPage( { mode }: {mode?: "upcoming" | "previous" | "all"} ){
     useTitle("Arrangement")
@@ -53,96 +53,9 @@ function EventItem( {event}: {event: EventData} ) {
                 </h3>
                 <ItemMenu event={event}/>
             </Stack>
-            <KeyValueList 
-                items={[
-                    { 
-                        key: "Tid:", 
-                        value: formatTimeInfo(event.startDateTime, event.endDateTime)
-                    },
-                    ...event.keyInfo
-                ]}
-            />
+            <KeyInfo keyInfo={event.keyInfo} startTime={event.startDateTime} endTime={event.endDateTime} />
         </Paper>
     )
-}
-
-export function KeyValueList( {items, style}: {items: KeyValuePair<string, string>[], style?: React.CSSProperties}) {
-    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
-    
-    if(items.length === 0){
-        return <></>
-    }   
-
-    // Small screen
-    if(isSmallScreen){
-        return(
-            <div style={{
-                marginTop: "10px",
-                marginBottom: "10px",
-                ...style
-                }}
-            >
-                {items.map( (item, index) => ( 
-                    <div 
-                        key={`${index} ${item.key} ${item.value}`} 
-                        style={{
-                            marginBottom: "10px"
-                        }} 
-                    >
-                        <strong>{item.key + " "}</strong>
-                        <span>{item.value}</span>  
-                    </div>
-                ))}
-            </div>
-        )
-    }
-
-    // Large screen
-    return (
-        <div style={{
-            display: "grid",
-            gridTemplateColumns: "min-content auto", //
-            columnGap: "10px",
-            rowGap: "5px",
-            margin: "10px",
-            ...style
-        }}
-    >
-        {items.map( (item, index) => (
-            // We must use react fragment in order to access the key attribute 
-            <React.Fragment key={`${index} ${item.key} ${item.value}`}> 
-                <div>
-                    <strong>{item.key}</strong>
-                </div>
-                <div>
-                    {item.value}
-                </div>
-            </React.Fragment>
-        ))}
-    </div>
-    )
-}
-
-export function formatTimeInfo(startStr: string, endStr: string | null): string {
-    const start = dayjs(startStr)
-
-    const dayFormat = start.year() === dayjs().year() 
-                    ? "ddd D. MMM" 
-                    : "ddd D. MMM YYYY,"
-    const hourFormat = "HH:mm"
-
-    if(!endStr) {
-        return `${start.format(dayFormat)} ${start.format(hourFormat)}`
-    }
-
-    const end = dayjs(endStr)
-    const isSameDate = start.format("YYYY-MM-DD") === end.format("YYYY-MM-DD")
-    const isSmallDiff = start.diff(end, "hours") < 24 && end.hour() < 6
-
-    if(isSameDate || isSmallDiff) {
-        return `${start.format(dayFormat)} kl: ${start.format(hourFormat)} – ${end.format(hourFormat)}`
-    }
-    return `${start.format(dayFormat)} kl: ${start.format(hourFormat)} – ${end.format(dayFormat)} kl: ${end.format(hourFormat)}`
 }
 
 export function ItemMenu({event, iconOrientation}: {event: EventData, iconOrientation?: "horizontal" | "vertical"}){

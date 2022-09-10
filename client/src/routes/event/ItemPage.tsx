@@ -3,8 +3,9 @@ import { Divider, Link, Paper, Stack } from "@mui/material";
 import { useOutletContext } from "react-router-dom";
 import { EventData } from "common/interfaces";
 import DOMPurify from "dompurify";
-import { ItemMenu, KeyValueList, formatTimeInfo } from "./EventList";
+import { ItemMenu } from "./EventList";
 import dayjs from "dayjs";
+import { KeyInfo } from "./KeyInfo";
 import {Link as RouterLink} from "react-router-dom"
 
 export function ItemPage() {
@@ -24,19 +25,16 @@ export function ItemPage() {
                 </Stack>
                 <Divider />
                 <AuthorList event={event} />
-                <KeyValueList
+                <KeyInfo 
+                    keyInfo={event.keyInfo}
+                    startTime={event.startDateTime}
+                    endTime={event.endDateTime}
                     style={{
                         margin: "0px",
                         marginTop: "30px",
                         marginBottom: "30px"
                     }}
-                    items={[
-                        {
-                            key: "Tid:",
-                            value: formatTimeInfo(event.startDateTime, event.endDateTime)
-                        },
-                        ...event.keyInfo
-                    ]} />
+                />
                 <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(event.description) }} />
             </Paper>
         </>
