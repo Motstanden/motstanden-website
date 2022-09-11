@@ -19,7 +19,6 @@ export function EmailLogin( { onEmailSent }: {onEmailSent: (e: EmailInfo) => voi
         setIsSubmitting(true)
         const emailTrimmed = email.toLowerCase().trim()
         if(!validateEmail(emailTrimmed)) {
-            console.log("Email invalid")
             setIsValidEmail(false)
             setIsSubmitting(false)
             return;

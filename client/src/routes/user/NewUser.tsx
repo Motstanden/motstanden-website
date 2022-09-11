@@ -74,14 +74,13 @@ function NewUserForm() {
     }
 
     const onSubmit = async (event: React.FormEvent) => {
-        console.log("Submitting")
         event.preventDefault()
         setIsSubmitting(true)
 
         const user = buildUser()
 
         //# TODO validate user
-        console.log(user)
+        
         let response = await fetch("/api/create-user", {
             method: "POST", 
             body: JSON.stringify(user),

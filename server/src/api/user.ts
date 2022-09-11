@@ -64,9 +64,9 @@ function RequireSelf(req: Request, res: Response, next: NextFunction) {
 
 router.post("/create-user", requiresGroup(UserGroup.SuperAdministrator), (req: Request, res: Response) => {
     const user = req.body as NewUser
-    console.log(user)
 
     // TODO: validate user
+    
     userService.createUser(user)
     
     res.end()

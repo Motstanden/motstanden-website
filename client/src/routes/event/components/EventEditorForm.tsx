@@ -73,7 +73,6 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
                 queue = queue.concat(child.children)
             }
         }
-        console.log("Returning false")
         return false
     }
 
@@ -114,9 +113,9 @@ function useEvent(): [EventEditorState, React.Dispatch<Partial<EventEditorState>
 }
 
 function EventEditor(){
-    // const editor = useMemo(() => withHistory(withHistory(withReact(createEditor()))), [])        // Production
+    const editor = useMemo(() => withHistory(withHistory(withReact(createEditor()))), [])        // Production
+    // const [editor] = useState(withHistory(withReact(createEditor())))                         // Development
     const [ event, dispatch] = useEvent()
-    const [editor] = useState(withHistory(withReact(createEditor())))            // Development
     const renderElement = useCallback( (props: RenderElementProps) => <Element {...props} />, [])
     const renderLeaf = useCallback( (props: RenderLeafProps) => <Leaf {...props}/>, [])
 

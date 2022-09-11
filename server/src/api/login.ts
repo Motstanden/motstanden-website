@@ -58,9 +58,6 @@ router.get("/userMetaData",
     }
 )
 
-router.get("/userMetaDataFailure", (req, res) =>  {
-    console.log("Redirected")
-    res.status(204).end()
-}) 
+router.get("/userMetaDataFailure", (req, res) => res.status(204).end()) 
 
 export default router
