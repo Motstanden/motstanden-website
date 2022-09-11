@@ -38,15 +38,15 @@ CREATE TABLE participation_status (
 INSERT INTO 
     participation_status(participation_status_id, status)
 VALUES
-    (1, "Deltar"),
-    (2, "Deltar kanskje"),
-    (3, "Deltar ikke"),
-    (4, "Ukjent");
+    (1, "Ukjent"),
+    (2, "Deltar"),
+    (3, "Deltar kanskje"),
+    (4, "Deltar ikke");
 
 CREATE TABLE event_participant (
     event_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    participation_status_id INTEGER NOT NULL DEFAULT 4,
+    participation_status_id INTEGER NOT NULL DEFAULT 1,
     PRIMARY KEY (user_id, event_id),
     FOREIGN KEY (user_id)
         REFERENCES user (user_id)
