@@ -133,6 +133,8 @@ function TitleForm( { sx }: { sx?: SxProps } ) {
     )
 }
 
+const beginningOfTime = dayjs("2018-09-11")  // Motstandens birth day
+
 function TimeForm({ sx }: {sx?: SxProps } ) {
     const today = dayjs()
     const [ event, dispatch] = useEvent()
@@ -156,9 +158,9 @@ function TimeForm({ sx }: {sx?: SxProps } ) {
             </Box>
             <DateTimePicker
                 label="Starter"
-                minDateTime={today}
+                minDateTime={beginningOfTime}
+                defaultCalendarMonth={dayjs()}
                 value={event.startTime}
-                
                 onChange={(newVal: Dayjs | null) => dispatch({startTime: newVal})}
                 renderInput={ params => ( 
                     <>
@@ -171,7 +173,7 @@ function TimeForm({ sx }: {sx?: SxProps } ) {
             <DateTimePicker
                 label="Slutter"
                 disabled={!event.startTime}
-                minDateTime={event.startTime ?? today}
+                minDateTime={event.startTime ?? beginningOfTime}
                 value={event.endTime}
                 onChange={(newVal: Dayjs | null) => dispatch({endTime: newVal})}
                 renderInput={ params => (
