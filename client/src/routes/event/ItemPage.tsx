@@ -1,12 +1,17 @@
 import React from "react";
-import { Divider, Link, Paper, Stack } from "@mui/material";
+import { Divider, Link, Paper, Stack, Avatar } from "@mui/material";
 import { useOutletContext } from "react-router-dom";
-import { EventData } from "common/interfaces";
+import { EventData, Participant, ParticipationList } from "common/interfaces";
 import DOMPurify from "dompurify";
 import { ItemMenu } from "./components/ItemMenu";
 import dayjs from "dayjs";
 import { KeyInfo } from "./components/KeyInfo";
 import {Link as RouterLink} from "react-router-dom"
+import { useQuery } from "@tanstack/react-query";
+import { fetchAsync } from "src/utils/fetchAsync";
+import { ParticipationStatus } from "common/enums";
+import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
+import { TitleCard } from "src/components/TitleCard";
 
 export function ItemPage() {
     const event = useOutletContext<EventData>();
@@ -37,6 +42,8 @@ export function ItemPage() {
                 />
                 <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(event.description) }} />
             </Paper>
+            <Divider sx={{my: 4}}/>
+            <ParticipationContainer eventId={event.eventId}/>
         </>
     );
 }
@@ -85,5 +92,61 @@ function AuthorItem({ userName, userId, dateTime }: {userName: string, userId: n
                 {`${userName}`}
             </Link>
         </span>
+    )
+}
+
+function ParticipationContainer( {eventId}: {eventId: number}) {
+    const {isLoading, isError, data, error} = useQuery<ParticipationList>(["FetchEvenParticipants", eventId], () => fetchAsync<ParticipationList>(`/api/event-participants?eventId=${eventId}`) )
+    
+    if (isLoading) {
+        return <></>
+    }
+    
+    if (isError) {
+        return <div>{`${error}`}</div>
+    }
+
+    const attending = data.participants.filter( user => user.participationStatus === ParticipationStatus.Attending) 
+    const maybeAttending = data.participants.filter( user => user.participationStatus === ParticipationStatus.Maybe) 
+    const notAttending = data.participants.filter( user => user.participationStatus === ParticipationStatus.NotAttending) 
+
+    return (
+        <>
+            <AttendingList title="Deltar" items={attending}/>
+            <AttendingList title="Deltar kanskje" items={maybeAttending}/>
+            <AttendingList title="Deltar ikke" items={notAttending}/>
+        </>
+    )
+}
+
+function AttendingList({title, items}: {title: string, items: Participant[]}) {
+    if(items.length === 0) {
+        return <></>
+    }
+    return (
+        <TitleCard title={title} sx={{my: 6}}>
+            {items.map( (user, index) => (
+                <Stack 
+                    key={user.userId}
+                    direction="row" 
+                    alignItems="center" 
+                    sx={{py: 1, pl: 1}} 
+                    spacing={2} 
+                    borderRadius="7px"
+                    bgcolor={index % 2 === 1 ? "action.hover" : "transparent"}
+                >
+                        <Avatar>{user.firstName[0] + user.lastName[0]}</Avatar>
+                        <Link 
+                            color="secondary" 
+                            component={RouterLink}
+                            to={`/medlem/${user.userId}`}
+                            underline="hover"
+                            >
+                            {`${user.firstName} ${isNullOrWhitespace(user.middleName) ? user.lastName : user.middleName + " " + user.lastName}`}
+                        </Link>
+                    </Stack>
+                )
+                )}
+        </TitleCard>
     )
 }
