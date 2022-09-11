@@ -23,7 +23,7 @@ export interface EventEditorState {
     title: string
     startTime: Dayjs | null,
     endTime: Dayjs | null,
-    extraInfo: KeyValuePair<string, string>[]
+    keyInfo: KeyValuePair<string, string>[]
     content: Descendant[]
 }
 
@@ -42,7 +42,7 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
             title: state.title,
             startDateTime: state.startTime!.format("YYYY-MM-DD HH:MM:00"),
             endDateTime: state.endTime?.format("YYYY-MM-DD HH:MM:00") ?? null,
-            keyInfo: state.extraInfo,
+            keyInfo: state.keyInfo,
             description: serialize(state.content)
         };
         return serializedEvent;
@@ -105,7 +105,7 @@ function EventInfoForm(){
         <Stack sx={{mb: 6}}>
             <TitleForm sx={{mb: 4}}/>
             <TimeForm sx={{mb: 2}}/>
-            <ExtraInfoForm/>
+            <KeyInfoForm/>
         </Stack>
     )
 }
@@ -162,27 +162,27 @@ function TimeForm({ sx }: {sx?: SxProps } ) {
     )   
 }
 
-function ExtraInfoForm() {
+function KeyInfoForm() {
     const [event, dispatch] = useEvent()
 
     const onAddClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        let newItems = [...event.extraInfo, {key: "", value: ""}]
-        dispatch({extraInfo: newItems})
+        let newItems = [...event.keyInfo, {key: "", value: ""}]
+        dispatch({keyInfo: newItems})
     }
 
     const onDeleteClick = (i: number) => {
-        let newItems = [...event.extraInfo]
+        let newItems = [...event.keyInfo]
         newItems.splice(i, 1)
-        dispatch({extraInfo: newItems})
+        dispatch({keyInfo: newItems})
     }
 
     const onValueChange = (i: number, newVal: KeyValuePair<string, string>) => {
-        let newItems = [...event.extraInfo]
+        let newItems = [...event.keyInfo]
         newItems[i] = newVal
-        dispatch({extraInfo: newItems})
+        dispatch({keyInfo: newItems})
     }
 
-    if(event.extraInfo.length === 0) {
+    if(event.keyInfo.length === 0) {
         return ( 
             <div>
                 <AddInfoButton onClick={onAddClick}/>
@@ -192,7 +192,7 @@ function ExtraInfoForm() {
 
     return (
         <Stack>
-            {event.extraInfo.map( (item, index) => <ExtraInfoItem 
+            {event.keyInfo.map( (item, index) => <KeyInfoItem 
                 key={index} 
                 value={item} 
                 onChange={ newVal => onValueChange(index, newVal)}
@@ -205,7 +205,7 @@ function ExtraInfoForm() {
     )
 }
 
-function ExtraInfoItem({
+function KeyInfoItem({
     value, 
     onChange, 
     onDeleteClick 

@@ -12,7 +12,7 @@ export function EditEventPage() {
         title: event.title,
         startTime: dayjs(event.startDateTime),
         endTime: event.endDateTime ? dayjs(event.endDateTime) : null,
-        extraInfo: event.keyInfo,
+        keyInfo: event.keyInfo,
         content: deserialize(event.description)
     }
     return (
