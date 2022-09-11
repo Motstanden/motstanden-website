@@ -12,7 +12,7 @@
       npm --version
       ```
 
-  - [sqlite 3.31](https://www.sqlite.org/download.html) or later.
+  - [sqlite 3.38](https://www.sqlite.org/download.html) or later.
       ```bash
       # Check which version is installed
       sqlite3 --version 
