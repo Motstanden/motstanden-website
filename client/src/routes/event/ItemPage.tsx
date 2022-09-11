@@ -85,7 +85,7 @@ function AuthorList({event}: {event: EventData}) {
 function AuthorItem({ userName, userId, dateTime }: {userName: string, userId: number, dateTime: string}) {
     return(
         <span>
-            {`${dayjs(dateTime).utc(true).format("DD. MMM YYYY HH:mm")}, av `}
+            {`${dayjs(dateTime).utc(true).local().format("DD. MMM YYYY HH:mm")}, av `}
             <Link 
                 color="secondary" 
                 component={RouterLink}
