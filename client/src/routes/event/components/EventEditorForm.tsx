@@ -3,9 +3,9 @@ import { Leaf } from "src/components/TextEditor/Leaf"
 import { Element } from "src/components/TextEditor/Element"
 import { Editable, RenderElementProps, RenderLeafProps, Slate, withReact } from "slate-react"
 import { withHistory } from "slate-history"
-import { createEditor, Descendant, Editor } from "slate"
+import { createEditor, Descendant, Editor, Text } from "slate"
 import { handleAllFormatHotkeys } from "src/components/TextEditor/Hotkey"
-import { CustomEditor, ElementType } from "src/components/TextEditor/Types"
+import { CustomEditor, ElementType, FormattedText, ListItemElement } from "src/components/TextEditor/Types"
 import dayjs, { Dayjs } from "dayjs"
 import { DateTimePicker } from "@mui/x-date-pickers"
 import { Box, Button, Divider, IconButton, InputAdornment, Paper, SxProps, TextField, Theme, useMediaQuery } from "@mui/material"
@@ -18,6 +18,7 @@ import { KeyValuePair, UpsertEventData } from "common/interfaces"
 import { useNavigate } from "react-router-dom"
 import { serialize } from "src/components/TextEditor/HtmlSerialize"
 import { Form } from "src/components/form/Form"
+import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace"
 
 export interface EventEditorState {
     title: string
@@ -50,8 +51,42 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
 
     const onPostSuccess = async (res: Response) => {
         const data = await res.json();
-        window.location.href = `${window.location.origin}/arrangement/${data.eventId ?? ""}`; // Will trigger a page reload
+        window.location.href = `${window.location.origin}/arrangement/${data.eventId ?? ""}`;   // Will trigger a page reload
     };
+
+    const editorHasContent = (): boolean =>  {
+
+        let queue: Descendant[] = [ ...state.content ] 
+        while(queue.length > 0) {
+            const child = queue.pop()
+
+            if(!child) {
+                continue
+            }
+
+            const isText = Text.isText(child)
+            if(isText && !isNullOrWhitespace(child.text)) {
+                return true
+            }
+
+            if(!isText){
+                queue = queue.concat(child.children)
+            }
+        }
+        console.log("Returning false")
+        return false
+    }
+
+    const validateState = () => {
+        const isValidTitle = !isNullOrWhitespace(state.title)
+        const isValidStartTime = state.startTime && state.startTime.isValid()
+        const isValidEndTime = state.endTime ? state.endTime.isValid() : true
+        const isValidKeyInfo = !state.keyInfo.find(item => item.key.length === 0 || item.value.length === 0)
+
+        return isValidTitle && isValidStartTime && isValidEndTime && isValidKeyInfo && editorHasContent() 
+    }
+
+    const isStateValid = useMemo( () => validateState(), [{...state}])    
 
     return (
         <Form
@@ -59,6 +94,7 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
             postUrl={postUrl}
             onAbortClick={e => navigate(backUrl)}
             onPostSuccess={onPostSuccess}
+            disabled={!isStateValid}
         >
             <Paper elevation={6} sx={{ px: 2, pb: 4, pt: 3 }}>
                 <EventStateContext.Provider value={state}>
