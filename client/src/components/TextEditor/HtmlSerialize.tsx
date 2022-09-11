@@ -54,6 +54,10 @@ function deserializeNode(el: HTMLElement | ChildNode): Descendant[] {
                         .map(deserializeNode)
                         .flat()
 
+    if (children.length === 0) {
+        children = [{ text: '' }]
+    }
+
     const elType = strToElementType(el.nodeName)
     if(elType){
         return [ jsx("element", {type: elType}, children) ]
@@ -65,6 +69,15 @@ function deserializeNode(el: HTMLElement | ChildNode): Descendant[] {
         return  children.map(child => jsx("text", attribute, child)) // Apply text formatting to all children
     }
 
+    children = children.map( child => {
+        // This should never happen if the data is correctly formatted in the database. 
+        // However, lets just assume that bad data will at some point be stored in the database.
+        if(Text.isText(child)){
+            return jsx("element", {type: ElementType.Paragraph}, child)
+        }
+        return child
+    })    
+
     return children
 }
 
@@ -73,10 +86,10 @@ function strToElementType(nodeName: string): ElementType | undefined {
         case "H1": return ElementType.H1
         case "H2": return ElementType.H2
         case "H3": return ElementType.H3
-        case "DIV": return ElementType.Paragraph
         case "UL": return ElementType.BulletedList
         case "LI": return ElementType.ListItem
         case "OL": return ElementType.NumberedList
+        case "DIV": return ElementType.Paragraph
         default: return undefined
     }
 }
