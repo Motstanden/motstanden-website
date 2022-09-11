@@ -16,12 +16,12 @@ export function EditEventPage() {
         description: deserialize(event.description)
     }
     return (
-        <>
+        <div style={{maxWidth: "900px"}}>
             <h1>
                 <span>Redigerer </span> 
                 <em><q>{event.title}</q></em>
             </h1>
             <EventEditorForm backUrl="/arrangement" postUrl="/api/events/update" initialValue={initialValue} eventId={event.eventId}/>
-        </>
+        </div>
     );
 }

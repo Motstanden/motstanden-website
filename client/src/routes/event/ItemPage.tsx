@@ -18,7 +18,8 @@ import postJson from "src/utils/postJson";
 export function ItemPage() {
     const event = useOutletContext<EventData>();
     return (
-        <>
+        <div style={{maxWidth: "900px"}}>
+
             <Paper elevation={6} sx={{ p: 2, pt: 0, mt: 4 }}>
                 <Stack
                     direction="row"
@@ -46,7 +47,7 @@ export function ItemPage() {
             </Paper>
             <Divider sx={{my: 4}}/>
             <ParticipationContainer eventId={event.eventId}/>
-        </>
+        </div>
     );
 }
 
@@ -149,23 +150,25 @@ function AttendingForm({eventId, queryKey, user}: {eventId: number, queryKey: an
     }
     
     return (
-        <Paper sx={{py: 4, px: 4}} elevation={6}>
-            <TextField
-                select
-                label="Min status"
-                value={attendingStatus}
-                style={{width: "100%"}}
-                onChange={changeHandler}
-                disabled={isSubmitting}
-                helperText={attendingStatus === ParticipationStatus.Unknown ? "Jeg vet ikke ennå..." : `Jeg ${attendingStatus.toLowerCase()} på arrangementet...`}
-                FormHelperTextProps={{style: {opacity: 0.7}}}
-            >
-                <MenuItem value={ParticipationStatus.Unknown}>——————</MenuItem>   
-                <MenuItem value={ParticipationStatus.Attending}>{`${ParticipationStatus.Attending}`}</MenuItem>   
-                <MenuItem value={ParticipationStatus.Maybe}>{`${ParticipationStatus.Maybe}`}</MenuItem>   
-                <MenuItem value={ParticipationStatus.NotAttending}>{`${ParticipationStatus.NotAttending}`}</MenuItem>   
-            </TextField>
-        </Paper>
+        <div style={{maxWidth: "450px"}}>
+            <Paper sx={{py: 4, px: 4}} elevation={6} >
+                <TextField
+                    select
+                    label="Min status"
+                    value={attendingStatus}
+                    style={{width: "100%"}}
+                    onChange={changeHandler}
+                    disabled={isSubmitting}
+                    helperText={attendingStatus === ParticipationStatus.Unknown ? "Jeg vet ikke ennå..." : `Jeg ${attendingStatus.toLowerCase()} på arrangementet...`}
+                    FormHelperTextProps={{style: {opacity: 0.7}}}
+                    >
+                    <MenuItem value={ParticipationStatus.Unknown}>——————</MenuItem>   
+                    <MenuItem value={ParticipationStatus.Attending}>{`${ParticipationStatus.Attending}`}</MenuItem>   
+                    <MenuItem value={ParticipationStatus.Maybe}>{`${ParticipationStatus.Maybe}`}</MenuItem>   
+                    <MenuItem value={ParticipationStatus.NotAttending}>{`${ParticipationStatus.NotAttending}`}</MenuItem>   
+                </TextField>
+            </Paper>
+        </div>
     )
 }
 
