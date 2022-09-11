@@ -40,12 +40,13 @@ INSERT INTO
 VALUES
     (1, "Deltar"),
     (2, "Deltar kanskje"),
-    (3, "Deltar ikke");
+    (3, "Deltar ikke"),
+    (4, "Ukjent");
 
 CREATE TABLE event_participant (
     event_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    participation_status_id INTEGER NOT NULL DEFAULT 1,
+    participation_status_id INTEGER NOT NULL DEFAULT 4,
     PRIMARY KEY (user_id, event_id),
     FOREIGN KEY (user_id)
         REFERENCES user (user_id)
