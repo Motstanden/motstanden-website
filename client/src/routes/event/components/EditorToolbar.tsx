@@ -13,7 +13,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { ElementType, FormattedText, TextFormat } from 'src/components/TextEditor/Types';
 import Stack from '@mui/material/Stack';
-import { Divider, SxProps } from '@mui/material';
+import { Divider, SxProps, Tooltip } from '@mui/material';
 
 
 export function EditorToolbar() {
@@ -75,13 +75,19 @@ function TextFormatButtons() {
             sx={toggleButtonGroupStyle}
             >
             <ToggleButton value={TextFormat.Bold} >
-                <FormatBoldIcon/>
+                <Tooltip title="Fet tekst (Ctrl+B)">
+                    <FormatBoldIcon/>
+                </Tooltip>
             </ToggleButton>
             <ToggleButton value={TextFormat.Italic}>
-                <FormatItalicIcon/>
+                <Tooltip title="Kursiv tekst (Ctrl+I)">
+                    <FormatItalicIcon/>
+                </Tooltip>
             </ToggleButton>
             <ToggleButton value={TextFormat.Underline}>
-                <FormatUnderlinedIcon/>
+                <Tooltip title="Understreket tekst (Ctrl+U)">
+                    <FormatUnderlinedIcon/>
+                </Tooltip>
             </ToggleButton>
         </ToggleButtonGroup>
     )
@@ -119,6 +125,7 @@ function BlockElementButtons() {
     value = isMatch(ElementType.H3) ? ElementType.H3 : value
     value = isMatch(ElementType.BulletedList) ? ElementType.BulletedList : value
     value = isMatch(ElementType.NumberedList) ? ElementType.NumberedList : value
+    console.log(value)
     return (
         <ToggleButtonGroup 
             exclusive
@@ -128,15 +135,21 @@ function BlockElementButtons() {
             sx={toggleButtonGroupStyle}
             >
             <ToggleButton value={ElementType.H3}>
-                <strong style={{fontSize: "22px"}}>
-                    H 
-                </strong>
+                <Tooltip title="Liten overskrift">
+                    <strong style={{fontSize: "22px"}}>
+                        H 
+                    </strong>
+                </Tooltip>
             </ToggleButton>
             <ToggleButton value={ElementType.BulletedList}>
-                <FormatListBulletedIcon/>
+                <Tooltip title="Punktliste">
+                    <FormatListBulletedIcon/>
+                </Tooltip>
             </ToggleButton>
             <ToggleButton value={ElementType.NumberedList}>
+                <Tooltip title="Nummerert liste">
                 <FormatListNumberedIcon/>
+                </Tooltip>
             </ToggleButton>
         </ToggleButtonGroup>
     )
