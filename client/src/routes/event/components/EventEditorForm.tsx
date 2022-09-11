@@ -25,7 +25,7 @@ export interface EventEditorState {
     startTime: Dayjs | null,
     endTime: Dayjs | null,
     keyInfo: KeyValuePair<string, string>[]
-    content: Descendant[]
+    description: Descendant[]
 }
 
 export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { backUrl: string; postUrl: string; initialValue: EventEditorState; eventId?: number; }) {
@@ -44,7 +44,7 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
             startDateTime: state.startTime!.format("YYYY-MM-DD HH:MM:00"),
             endDateTime: state.endTime?.format("YYYY-MM-DD HH:MM:00") ?? null,
             keyInfo: state.keyInfo,
-            description: serialize(state.content)
+            description: serialize(state.description)
         };
         return serializedEvent;
     };
@@ -56,7 +56,7 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
 
     const editorHasContent = (): boolean =>  {
 
-        let queue: Descendant[] = [ ...state.content ] 
+        let queue: Descendant[] = [ ...state.description ] 
         while(queue.length > 0) {
             const child = queue.pop()
 
@@ -121,7 +121,7 @@ function EventEditor(){
     const renderLeaf = useCallback( (props: RenderLeafProps) => <Leaf {...props}/>, [])
 
     return (
-        <Slate editor={editor}  value={event.content} onChange={ newVal => dispatch({content: newVal})}>
+        <Slate editor={editor}  value={event.description} onChange={ newVal => dispatch({description: newVal})}>
             <EventInfoForm/>
             <div style={{border: "1px solid gray"}}>
                 <div style={{borderBottom: "1px solid #888888"}}>

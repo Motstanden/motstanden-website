@@ -16,7 +16,7 @@ const emptyEventObj: EventEditorState = {
     startTime: null,
     endTime: null,
     keyInfo: [],
-    content: [
+    description: [
         {
             type: ElementType.Paragraph,
             children: [{text: ""}]
