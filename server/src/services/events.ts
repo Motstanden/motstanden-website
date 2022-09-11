@@ -35,7 +35,8 @@ export function getEvent(eventId: number): EventData {
         WHERE event_id = ?
     `)
     const dbResult = stmt.get(eventId)
-
+    db.close()
+    
     if(!dbResult)
         throw "Bad data"
     

@@ -1,5 +1,5 @@
 import { UserGroup } from "common/enums";
-import { EventData, NewEventData, UpsertEventData, User } from "common/interfaces";
+import { EventData, NewEventData, ParticipationList, UpsertEventData, User } from "common/interfaces";
 import express, { NextFunction, Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate";
 import * as events from "../services/events";
@@ -7,6 +7,8 @@ import { DbWriteAction } from "../ts/enums/DbWriteAction";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 import { UpsertDb } from "../ts/types/UpsertDb";
 import { hasGroupAccess } from "../utils/accessTokenUtils";
+import * as eventParticipant from "../services/eventParticipant"
+import { strToNumber } from "common/utils";
 
 let router = express.Router()
 
@@ -93,6 +95,40 @@ router.post("/events/delete",
         }
         
         res.status(401).send("Unauthorized")
+    }
+)
+
+router.get("/event-participants", 
+    AuthenticateUser(),
+    (req: Request, res: Response) => {
+        
+        let param = req.query.eventId
+        let eventId : number | undefined
+        if(typeof param === "string") {
+            eventId = strToNumber(param)
+        } 
+        else if(typeof param === "number"){
+            eventId = param
+        }
+
+        if(!eventId){
+            return res.status(400).send("bad data")
+        }
+
+        let participants: ParticipationList
+        try {
+            participants = eventParticipant.getAll(eventId)
+            res.json(participants)
+        } catch {
+            return res.status(400).send("Bad data")
+        }
+    }
+)
+
+router.get("/event-participants/update", 
+    AuthenticateUser(),
+    (req: Request, res: Response) => {
+        //Todo
     }
 )
 
