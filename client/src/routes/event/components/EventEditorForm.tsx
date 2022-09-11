@@ -8,7 +8,7 @@ import { handleAllFormatHotkeys } from "src/components/TextEditor/Hotkey"
 import { CustomEditor, ElementType } from "src/components/TextEditor/Types"
 import dayjs, { Dayjs } from "dayjs"
 import { DateTimePicker } from "@mui/x-date-pickers"
-import { Button, Divider, IconButton, InputAdornment, Paper, SxProps, TextField } from "@mui/material"
+import { Box, Button, Divider, IconButton, InputAdornment, Paper, SxProps, TextField, Theme, useMediaQuery } from "@mui/material"
 import { TextFieldProps } from "@mui/material/TextField";
 import Stack from "@mui/system/Stack"
 import { EditorToolbar } from "./EditorToolbar"
@@ -60,7 +60,7 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
             onAbortClick={e => navigate(backUrl)}
             onPostSuccess={onPostSuccess}
         >
-            <Paper elevation={6} sx={{ px: 2, pb: 4, pt: 1 }}>
+            <Paper elevation={6} sx={{ px: 2, pb: 4, pt: 3 }}>
                 <EventStateContext.Provider value={state}>
                     <EventDispatchContext.Provider value={dispatch}>
                         <EventEditor />
@@ -86,16 +86,21 @@ function EventEditor(){
 
     return (
         <Slate editor={editor}  value={event.content} onChange={ newVal => dispatch({content: newVal})}>
-            <EditorToolbar/>
-            <Divider sx={{mt: 1, mb: 4}}/>
             <EventInfoForm/>
-            <Editable 
-                renderElement={renderElement}
-                renderLeaf={renderLeaf}
-                spellCheck
-                placeholder="Beskrivelse av arrangementet*"
-                onKeyDown={event => handleAllFormatHotkeys(editor, event)}
-            />
+            <div style={{border: "1px solid gray"}}>
+                <div style={{borderBottom: "1px solid #888888"}}>
+                    <EditorToolbar/>
+                </div>
+                <div style={{minHeight: "100px", padding: "10px"}}>
+                    <Editable 
+                        renderElement={renderElement}
+                        renderLeaf={renderLeaf}
+                        spellCheck
+                        placeholder="Beskrivelse av arrangementet*"
+                        onKeyDown={event => handleAllFormatHotkeys(editor, event)}
+                        />
+                </div>
+            </div>
         </Slate>
     )
 }
@@ -104,7 +109,7 @@ function EventInfoForm(){
     return (
         <Stack sx={{mb: 6}}>
             <TitleForm sx={{mb: 4}}/>
-            <TimeForm sx={{mb: 2}}/>
+            <TimeForm sx={{mb: {xs: 4, sm: 2}}}/>
             <KeyInfoForm/>
         </Stack>
     )
@@ -112,6 +117,7 @@ function EventInfoForm(){
 
 function TitleForm( { sx }: { sx?: SxProps } ) {
     const [ event, dispatch] = useEvent()
+    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     return (
         <TextField
             variant="standard"
@@ -121,7 +127,7 @@ function TitleForm( { sx }: { sx?: SxProps } ) {
             fullWidth
             value={event.title}
             onChange={e => dispatch({title: e.target.value})}
-            InputProps={{ style: {fontSize: "1.5em", fontWeight: "bolder"}}}
+            InputProps={{ style: {fontSize: isSmallScreen ? "1.25em" : "1.5em", fontWeight: "bolder"}}}
             sx={sx}
         />
     )
@@ -130,22 +136,38 @@ function TitleForm( { sx }: { sx?: SxProps } ) {
 function TimeForm({ sx }: {sx?: SxProps } ) {
     const today = dayjs()
     const [ event, dispatch] = useEvent()
+    const textFieldProps: TextFieldProps = {
+        autoComplete: "off", 
+        variant: "standard", 
+        fullWidth: true, 
+        sx: {
+            maxWidth: {xs: "100%", sm: "180px"}
+        }
+    }
     return (
-        <Stack direction="row" alignItems="flex-end" sx={sx}>
+        <Stack direction={{xs: "column", sm: "row"}} alignItems={{xs: "top", sm: "flex-end"}} sx={sx}>
+            <Box sx={{
+                minWidth: "145px", 
+                marginBottom: {xs: "-5px", sm: "5px"}
+            }}>
+                <strong >
+                    Tidspunkt: 
+                </strong>
+            </Box>
             <DateTimePicker
                 label="Starter"
                 minDateTime={today}
                 value={event.startTime}
+                
                 onChange={(newVal: Dayjs | null) => dispatch({startTime: newVal})}
                 renderInput={ params => ( 
                     <>
-                        <strong style={{minWidth: "110px", marginBottom: "5px"}}>Tidspunkt: </strong>
-                        <TextField {...params} required autoComplete="off" variant="standard" style={{maxWidth: "180px"}}/> 
+                        <TextField {...params} {...textFieldProps} required/> 
                     </>)}
                 />
-            <div style={{marginInline: "20px", marginBottom: "5px"}}>
+            <Box display={{xs: "none", sm: "inline"}} style={{marginInline: "20px", marginBottom: "5px"}}>
                 –
-            </div>
+            </Box>
             <DateTimePicker
                 label="Slutter"
                 disabled={!event.startTime}
@@ -154,7 +176,7 @@ function TimeForm({ sx }: {sx?: SxProps } ) {
                 onChange={(newVal: Dayjs | null) => dispatch({endTime: newVal})}
                 renderInput={ params => (
                     <>
-                        <TextField {...params} autoComplete="off" variant="standard" style={{maxWidth: "180px"}}/>
+                        <TextField {...params} {...textFieldProps} />
                     </>
                 )}
                 />
@@ -184,7 +206,7 @@ function KeyInfoForm() {
 
     if(event.keyInfo.length === 0) {
         return ( 
-            <div>
+            <div style={{marginTop: "30px"}}>
                 <AddInfoButton onClick={onAddClick}/>
             </div>
         )
@@ -216,6 +238,7 @@ function KeyInfoItem({
 ) {
     const maxKeyChars = 16
     const maxValueChars = 100
+    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
     useEffect( () => {
         if(value.key.length > maxKeyChars || value.value.length > maxValueChars) {
@@ -228,7 +251,6 @@ function KeyInfoItem({
 
     const sharedProps: TextFieldProps = {
         required: true,
-        sx: {mb: 4},
         variant: "standard",
         FormHelperTextProps: {
             style: {
@@ -238,11 +260,19 @@ function KeyInfoItem({
     }
 
     return (
-        <div>
+        <div 
+            style={{
+                display: "grid",
+                gridTemplateColumns: isSmallScreen ?  "auto min-content" : "min-content auto min-content max-content",
+                columnGap: "15px",
+                marginBottom: "30px",
+                width: "100%"
+            }}
+        >
             <TextField 
                 {...sharedProps}
                 value={value.key}
-                style={{maxWidth: "100px", marginRight: "10px"}}
+                style={{minWidth: "130px"}}
                 variant="standard"
                 placeholder="Tittel*"
                 onChange={ e => onChange({...value, key: e.target.value})}
@@ -258,14 +288,24 @@ function KeyInfoItem({
                 {...sharedProps}
                 value={value.value}
                 placeholder="info*" 
+                style={{width: "100%"}}
                 onChange={ e => onChange({...value, value: e.target.value})}
                 helperText={value.value.length === 0 ? "F.eks. Bergstua" : `${value.value.length}/${maxValueChars}`}
                 inputProps={{
                     maxLength: maxValueChars,
                 }}
             /> 
-            <IconButton style={{marginLeft: "20px"}} onClick={onDeleteClick}>
-                <DeleteIcon/>
+            <IconButton 
+                style={{
+                    width: "min-content",
+                    height: "min-content",
+                    margin: "auto",
+                    gridColumn: isSmallScreen ? "2" : "3 ",
+                    gridRow: isSmallScreen  ? "1 / 3" : "1"
+                    
+                }} 
+                onClick={onDeleteClick}>
+                    <DeleteIcon color="error"/>
             </IconButton>
         </div>
     )
@@ -274,6 +314,6 @@ function KeyInfoItem({
 
 function AddInfoButton({onClick}: {onClick?: React.MouseEventHandler<HTMLButtonElement>}) {
     return (
-        <Button variant="outlined" endIcon={<AddIcon/>} size="small" onClick={onClick} >Info</Button>
+        <Button variant="contained" endIcon={<AddIcon/>} size="small" onClick={onClick} >Nøkkelinformasjon</Button>
     )
 }
