@@ -13,16 +13,32 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { ElementType, FormattedText, TextFormat } from 'src/components/TextEditor/Types';
 import Stack from '@mui/material/Stack';
+import { Divider, SxProps } from '@mui/material';
 
 
 export function EditorToolbar() {
 
     return (
-        <Stack spacing={2} direction="row" alignItems="center">
-            <TextFormatButtons />
-            <BlockElementButtons />
+        <Stack direction="row"  alignItems="center" justifyContent="flex-start">
+            <div>
+                <TextFormatButtons />
+            </div>
+            <Divider flexItem orientation='vertical' sx={{my: "4px", mx: "4px"}}/>
+            <div>
+                <BlockElementButtons />
+            </div>
         </Stack>
     );
+}
+
+const toggleButtonGroupStyle: SxProps = {
+    '& .MuiToggleButtonGroup-grouped': {
+        margin: "0px",
+        border: 0,
+        borderRadius: "0px",
+        height: "35px",
+        width:  "35px"
+    }
 }
 
 function TextFormatButtons() {
@@ -52,7 +68,12 @@ function TextFormatButtons() {
     values = buildValue(values, TextFormat.Underline)
 
     return (
-        <ToggleButtonGroup value={values} onChange={onChange}>
+        <ToggleButtonGroup 
+            value={values} 
+            onChange={onChange}
+            size="small"
+            sx={toggleButtonGroupStyle}
+            >
             <ToggleButton value={TextFormat.Bold} >
                 <FormatBoldIcon/>
             </ToggleButton>
@@ -66,7 +87,6 @@ function TextFormatButtons() {
     )
 }
     
-    
 function BlockElementButtons() {
     const editor = useSlate()
 
@@ -78,8 +98,6 @@ function BlockElementButtons() {
     }
 
     const onChange = ( event: React.MouseEvent<HTMLElement>, newType: ElementType) => {
-        console.log(newType)
-
         Transforms.unwrapNodes(editor, {
             match: (n: any) => n.type === ElementType.BulletedList || n.type === ElementType.NumberedList,
             split: true
@@ -101,21 +119,17 @@ function BlockElementButtons() {
     value = isMatch(ElementType.H3) ? ElementType.H3 : value
     value = isMatch(ElementType.BulletedList) ? ElementType.BulletedList : value
     value = isMatch(ElementType.NumberedList) ? ElementType.NumberedList : value
-    console.log(value)
     return (
         <ToggleButtonGroup 
             exclusive
             value={value}
             onChange={onChange}
+            size="small"
+            sx={toggleButtonGroupStyle}
             >
-            <ToggleButton value={ElementType.H2} >
-                <strong>
-                    H1
-                </strong>
-            </ToggleButton>
             <ToggleButton value={ElementType.H3}>
-                <strong>
-                    H2
+                <strong style={{fontSize: "22px"}}>
+                    H 
                 </strong>
             </ToggleButton>
             <ToggleButton value={ElementType.BulletedList}>
