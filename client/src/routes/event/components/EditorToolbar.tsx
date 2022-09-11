@@ -1,23 +1,7 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import * as ReactDOMServer from 'react-dom/server';
-import * as DOMPurify from 'dompurify';
-import { BaseEditor, Text, Transforms } from 'slate';
-import isHotkey from 'is-hotkey'
-import {
-    createEditor,
-    Descendant,
-    Editor,
-    NodeMatch
-    } from 'slate';
-import {
-    Editable,
-    RenderLeafProps,
-    Slate,
-    useSlate,
-    withReact
-    } from 'slate-react';
-import { RenderElementProps } from 'slate-react';
-import { withHistory } from 'slate-history'
+import React from 'react';
+import { Transforms } from 'slate';
+import { Editor } from 'slate';
+import { useSlate } from 'slate-react';
 import * as RichText from "src/components/TextEditor/FormattedText"
 
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
@@ -27,59 +11,18 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import Stack from '@mui/material/Stack';
 import { ElementType, FormattedText, TextFormat } from 'src/components/TextEditor/Types';
-import { Leaf, UnsafeLeaf } from 'src/components/TextEditor/Leaf';
-import { Element, UnsafeElement } from 'src/components/TextEditor/Element';
-import { handleAllFormatHotkeys, handleHotkey } from 'src/components/TextEditor/Hotkey';
+import Stack from '@mui/material/Stack';
 
 
-function EditorContainer( {children}: {children: React.ReactNode}) {
-    return (
-        <>
-        <div>
-            <Toolbar/>
-        </div>
-        <div style={{
-            padding: "10px",
-            border: "1px solid gray",
-            minHeight: "50px",
-            marginTop: "10px"
-        }}>
-            {children}
-        </div>
-        </>
-    )
-}
-
-const initialValue: Descendant[] = [
-    {
-        type: ElementType.Paragraph,
-        children: [
-            { text: ""}
-        ]
-    }
-]
-
-function TextEditor() {
-    const editor = useMemo(() => withHistory(withReact(createEditor())), [])        // Production
-    // const [editor] = useState(withHistory(withReact(createEditor())))            // Development
-    const renderElement = useCallback( (props: RenderElementProps) => <Element {...props} />, [])
-    const renderLeaf = useCallback( (props: RenderLeafProps) => <Leaf {...props}/>, [])
+export function EditorToolbar() {
 
     return (
-        <Slate editor={editor}  value={initialValue}>
-            <EditorContainer>
-                <Editable 
-                    renderElement={renderElement}
-                    renderLeaf={renderLeaf}
-                    spellCheck
-                    placeholder='Beskrivelse av arrangement'
-                    onKeyDown={event => handleAllFormatHotkeys(editor, event)}
-                />
-            </EditorContainer>
-        </Slate>
-    )
+        <Stack spacing={2} direction="row" alignItems="center">
+            <TextFormatButtons />
+            <BlockElementButtons />
+        </Stack>
+    );
 }
 
 function TextFormatButtons() {
@@ -91,8 +34,8 @@ function TextFormatButtons() {
 
         // Remove formats that does not exists in 'newFormats'
         Object.values(TextFormat)
-              .filter( format => !newFormats.includes(format))
-              .forEach( format => RichText.setMark(editor, format, false))
+                .filter( format => !newFormats.includes(format))
+                .forEach( format => RichText.setMark(editor, format, false))
 
     }
 
@@ -122,8 +65,8 @@ function TextFormatButtons() {
         </ToggleButtonGroup>
     )
 }
-
-
+    
+    
 function BlockElementButtons() {
     const editor = useSlate()
 
@@ -183,16 +126,3 @@ function BlockElementButtons() {
         </ToggleButtonGroup>
     )
 } 
-
-export function Toolbar(){
-
-    return (
-        <Stack spacing={2} direction="row" alignItems="center">
-            <TextFormatButtons/>
-            <BlockElementButtons/>
-        </Stack>
-    )
-
-}
-
-export {TextEditor as RichTextEditor}

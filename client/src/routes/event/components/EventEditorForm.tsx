@@ -11,7 +11,7 @@ import { DateTimePicker } from "@mui/x-date-pickers"
 import { Button, Divider, IconButton, InputAdornment, Paper, SxProps, TextField } from "@mui/material"
 import { TextFieldProps } from "@mui/material/TextField";
 import Stack from "@mui/system/Stack"
-import { Toolbar } from "./RichTextEditor"
+import { EditorToolbar } from "./EditorToolbar"
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { KeyValuePair, UpsertEventData } from "common/interfaces"
@@ -86,7 +86,7 @@ function EventEditor(){
 
     return (
         <Slate editor={editor}  value={event.content} onChange={ newVal => dispatch({content: newVal})}>
-            <Toolbar/>
+            <EditorToolbar/>
             <Divider sx={{mt: 1, mb: 4}}/>
             <EventInfoForm/>
             <Editable 
