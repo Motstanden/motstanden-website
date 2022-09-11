@@ -236,6 +236,7 @@ function KeyInfoItem({
     onChange: (info: KeyValuePair<string, string>) => void,  
     onDeleteClick?: React.MouseEventHandler<HTMLButtonElement>}
 ) {
+    const [randomExample, setRandomExample] = useState(keyValueExample[Math.floor(Math.random() * keyValueExample.length)])
     const maxKeyChars = 16
     const maxValueChars = 100
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
@@ -276,7 +277,7 @@ function KeyInfoItem({
                 variant="standard"
                 placeholder="Tittel*"
                 onChange={ e => onChange({...value, key: e.target.value})}
-                helperText={value.key.length === 0 ? "F.eks. Sted:" : `${value.key.length}/${maxKeyChars}`}
+                helperText={value.key.length === 0 ? `${randomExample.key}` : `${value.key.length}/${maxKeyChars}`}
                 inputProps={{
                     maxLength: maxKeyChars,
                     style: {
@@ -290,7 +291,7 @@ function KeyInfoItem({
                 placeholder="info*" 
                 style={{width: "100%"}}
                 onChange={ e => onChange({...value, value: e.target.value})}
-                helperText={value.value.length === 0 ? "F.eks. Bergstua" : `${value.value.length}/${maxValueChars}`}
+                helperText={value.value.length === 0 ? `${randomExample.value}` : `${value.value.length}/${maxValueChars}`}
                 inputProps={{
                     maxLength: maxValueChars,
                 }}
@@ -311,6 +312,29 @@ function KeyInfoItem({
     )
 }
 
+const keyValueExample: KeyValuePair<string, string>[] = [
+    { key: "Sted:", value: "Bergstua" },
+    { key: "Sted:", value: "Gamle Åsvei 44" },
+    { key: "Sted:", value: "TBD"},
+    { key: "Kategori:", value: "Fadderuke"},
+    { key: "Kategori:", value: "SMASH"},
+    { key: "Kategori:", value: "FYLLA, WOHO!!!"},
+    { key: "Kategori:", value: "Spilleopdrag (faktisk!) 🤯🤯"},
+    { key: "Framkomstmiddel:", value: "Hurtigruta"},
+    { key: "Framkomstmiddel:", value: "Buss"},
+    { key: "Framkomstmiddel:", value: "Leiebil"},
+    { key: "Påmeldingsfrist:", value: "I KVELD!!!"},
+    { key: "Kleskode:", value: "Maskestrøm"},
+    { key: "Kleskode:", value: "Studentergalla"},
+    { key: "Antrekk:", value: "Full uniform"},
+    { key: "Nødvendigheter:", value: "Pils, tran og uniform"},
+    { key: "Oppmøte:", value: "Lageret på P15" },
+    { key: "Oppmøte:", value: "Hovedbygget" },
+    { key: "Pils?", value: "Pils!"},
+    { key: "Minttu?", value: "Minttu!"},
+    { key: "💩?", value: "💩!" },
+    { key: "Fun fact:", value: "SMASH er relativt trygt ettersom det er relativt liten sannsynlighet for å møte på jerv" },
+]
 
 function AddInfoButton({onClick}: {onClick?: React.MouseEventHandler<HTMLButtonElement>}) {
     return (
