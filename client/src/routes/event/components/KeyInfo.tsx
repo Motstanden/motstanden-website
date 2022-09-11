@@ -95,7 +95,7 @@ function KeyValueList({ items, style }: { items: KeyValuePair<string, string>[];
             {items.map((item, index) => (
                 // We must use react fragment in order to access the key attribute 
                 <React.Fragment key={`${index} ${item.key} ${item.value}`}>
-                    <div>
+                    <div style={{whiteSpace: "nowrap"}}>
                         <strong>{item.key}</strong>
                     </div>
                     <div>
