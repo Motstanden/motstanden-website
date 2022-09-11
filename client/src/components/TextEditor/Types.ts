@@ -11,19 +11,25 @@ export enum TextFormat {
 export enum ElementType {
     H1 = "h1",
     H2 = "h2",
+    H3 = "h3",
     Paragraph = "paragraph",
     NumberedList = "numbered-list",
     BulletedList = "bulleted-list",
     ListItem = "list-item",
 }
 
-export type HeadingOneElement = {
+export type H1Element = {
     type: ElementType.H1,
     children: CustomText[]
 }
 
-export type HeadingTwoElement = {
+export type H2Element = {
     type: ElementType.H2,
+    children: CustomText[]
+}
+
+export type H3Element = {
+    type: ElementType.H3,
     children: CustomText[]
 }
 
@@ -55,7 +61,7 @@ export type FormattedText = {
 }
 
 export type CustomEditor = BaseEditor & ReactEditor & HistoryEditor
-export type CustomElement = HeadingOneElement | HeadingTwoElement | ParagraphElement | NumberedListElement | BulletedListElement | ListItemElement
+export type CustomElement = H1Element | H2Element | H3Element | ParagraphElement | NumberedListElement | BulletedListElement | ListItemElement
 export type CustomText = FormattedText
 
 declare module 'slate' {

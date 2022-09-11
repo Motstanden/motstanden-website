@@ -24,11 +24,17 @@ export function UnsafeElement( { attributes, children, element }: UnsafeRenderEl
     switch (element.type) {
         case ElementType.H1:
             return (
+                <h1 {...attributes}>
+                    {children}
+                </h1>
+            )
+        case ElementType.H2:
+            return (
                 <h2 {...attributes}>
                     {children}
                 </h2>
             )
-        case ElementType.H2:
+        case ElementType.H3:
             return (
                 <h3 {...attributes}>
                     {children}

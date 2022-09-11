@@ -70,8 +70,9 @@ function deserializeNode(el: HTMLElement | ChildNode): Descendant[] {
 
 function strToElementType(nodeName: string): ElementType | undefined {
     switch(nodeName) {
-        case "H2" || "H1": return ElementType.H1
-        case "H3": return ElementType.H2
+        case "H1": return ElementType.H1
+        case "H2": return ElementType.H2
+        case "H3": return ElementType.H3
         case "DIV": return ElementType.Paragraph
         case "UL": return ElementType.BulletedList
         case "LI": return ElementType.ListItem

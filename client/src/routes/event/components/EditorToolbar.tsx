@@ -78,7 +78,8 @@ function BlockElementButtons() {
     }
 
     const onChange = ( event: React.MouseEvent<HTMLElement>, newType: ElementType) => {
-        
+        console.log(newType)
+
         Transforms.unwrapNodes(editor, {
             match: (n: any) => n.type === ElementType.BulletedList || n.type === ElementType.NumberedList,
             split: true
@@ -87,7 +88,7 @@ function BlockElementButtons() {
         const isList = newType === ElementType.BulletedList || newType === ElementType.NumberedList
         Transforms.setNodes(
             editor,
-            {type: isList ? ElementType.ListItem : newType },
+            { type: isList ? ElementType.ListItem : newType },
             { match: n => Editor.isBlock(editor, n)}
         )
         if(isList) {
@@ -96,23 +97,23 @@ function BlockElementButtons() {
     }
 
     let value = undefined;
-    value = isMatch(ElementType.H1) ? ElementType.H1 : value
     value = isMatch(ElementType.H2) ? ElementType.H2 : value
+    value = isMatch(ElementType.H3) ? ElementType.H3 : value
     value = isMatch(ElementType.BulletedList) ? ElementType.BulletedList : value
     value = isMatch(ElementType.NumberedList) ? ElementType.NumberedList : value
-
+    console.log(value)
     return (
         <ToggleButtonGroup 
             exclusive
             value={value}
             onChange={onChange}
             >
-            <ToggleButton value={ElementType.H1} >
+            <ToggleButton value={ElementType.H2} >
                 <strong>
                     H1
                 </strong>
             </ToggleButton>
-            <ToggleButton value={ElementType.H2}>
+            <ToggleButton value={ElementType.H3}>
                 <strong>
                     H2
                 </strong>
