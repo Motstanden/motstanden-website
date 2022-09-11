@@ -1,5 +1,5 @@
 import { UserGroup } from "common/enums";
-import { EventData, NewEventData, ParticipationList, UpsertEventData, User } from "common/interfaces";
+import { EventData, NewEventData, ParticipationList, UpsertEventData, UpsertParticipant, User } from "common/interfaces";
 import express, { NextFunction, Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate";
 import * as events from "../services/events";
@@ -110,7 +110,6 @@ router.get("/event-participants",
         else if(typeof param === "number"){
             eventId = param
         }
-
         if(!eventId){
             return res.status(400).send("bad data")
         }
@@ -125,10 +124,17 @@ router.get("/event-participants",
     }
 )
 
-router.get("/event-participants/update", 
+router.post("/event-participants/upsert", 
     AuthenticateUser(),
     (req: Request, res: Response) => {
-        //Todo
+        const user = req.user as AccessTokenData
+        const newData: UpsertParticipant = req.body   
+        try {
+            eventParticipant.upsert(newData.eventId, user.userId, newData.participationStatus)
+        } catch {
+            return res.status(400).send("bad data")
+        }
+        res.end()
     }
 )
 

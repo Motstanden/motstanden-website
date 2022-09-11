@@ -16,9 +16,9 @@ export function getAll(eventId: number): ParticipationList {
     `);
     const dbResult: {eventId: number, participants: string} = stmt.get(eventId);
     db.close()
-
-    if (!dbResult)
-        throw "Bad data";
+    if (!dbResult) {
+        return {eventId: eventId, participants: []}
+    }
 
     return {...dbResult, participants: JSON.parse(dbResult.participants) };
 }
@@ -39,7 +39,7 @@ export function upsert(eventId: number, userId: number, newStatus: Participation
             WHERE 
                 event_id = excluded.event_id AND user_id = excluded.user_id;`
         )
-        const info = stmt.run()
+        const info = stmt.run([eventId, userId, statusId])
     })
 
     startTransaction();

@@ -16,3 +16,8 @@ export interface Participant extends Pick<
 > {
     participationStatus: ParticipationStatus
 }
+
+export interface UpsertParticipant extends 
+    Pick<Participant, "participationStatus">, 
+    Pick<ParticipationList, "eventId"> {
+}
