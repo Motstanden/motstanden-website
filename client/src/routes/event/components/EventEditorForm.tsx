@@ -1,4 +1,4 @@
-import React, { Reducer, useCallback, useContext, useMemo, useReducer, useState } from "react"
+import React, { Reducer, useCallback, useContext, useEffect, useMemo, useReducer, useState } from "react"
 import { Leaf } from "src/components/TextEditor/Leaf"
 import { Element } from "src/components/TextEditor/Element"
 import { Editable, RenderElementProps, RenderLeafProps, Slate, withReact } from "slate-react"
@@ -8,7 +8,8 @@ import { handleAllFormatHotkeys } from "src/components/TextEditor/Hotkey"
 import { CustomEditor, ElementType } from "src/components/TextEditor/Types"
 import dayjs, { Dayjs } from "dayjs"
 import { DateTimePicker } from "@mui/x-date-pickers"
-import { Button, Divider, IconButton, Paper, SxProps, TextField } from "@mui/material"
+import { Button, Divider, IconButton, InputAdornment, Paper, SxProps, TextField } from "@mui/material"
+import { TextFieldProps } from "@mui/material/TextField";
 import Stack from "@mui/system/Stack"
 import { Toolbar } from "./RichTextEditor"
 import AddIcon from '@mui/icons-material/Add';
@@ -213,24 +214,55 @@ function ExtraInfoItem({
     onChange: (info: KeyValuePair<string, string>) => void,  
     onDeleteClick?: React.MouseEventHandler<HTMLButtonElement>}
 ) {
+    const maxKeyChars = 16
+    const maxValueChars = 100
+
+    useEffect( () => {
+        if(value.key.length > maxKeyChars || value.value.length > maxValueChars) {
+            onChange({
+                key: value.key.slice(0, maxKeyChars),
+                value: value.value.slice(0, maxValueChars) 
+            })
+        }
+    }, [value.key, value.value])
+
+    const sharedProps: TextFieldProps = {
+        required: true,
+        sx: {mb: 4},
+        variant: "standard",
+        FormHelperTextProps: {
+            style: {
+                opacity: 0.8
+            }
+        }
+    }
+
     return (
         <div>
             <TextField 
+                {...sharedProps}
                 value={value.key}
-                required 
-                sx={{mb: 4}}
                 style={{maxWidth: "100px", marginRight: "10px"}}
-                InputProps={{ style: {fontWeight: "bold"}}}
                 variant="standard"
                 placeholder="Tittel*"
                 onChange={ e => onChange({...value, key: e.target.value})}
+                helperText={value.key.length === 0 ? "F.eks. Sted:" : `${value.key.length}/${maxKeyChars}`}
+                inputProps={{
+                    maxLength: maxKeyChars,
+                    style: {
+                        fontWeight: "bold"
+                    }
+                }}
             />
             <TextField 
+                {...sharedProps}
                 value={value.value}
-                required 
-                variant="standard" 
                 placeholder="info*" 
                 onChange={ e => onChange({...value, value: e.target.value})}
+                helperText={value.value.length === 0 ? "F.eks. Bergstua" : `${value.value.length}/${maxValueChars}`}
+                inputProps={{
+                    maxLength: maxValueChars,
+                }}
             /> 
             <IconButton style={{marginLeft: "20px"}} onClick={onDeleteClick}>
                 <DeleteIcon/>

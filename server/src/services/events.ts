@@ -92,9 +92,15 @@ function createValidEvent(event: NewEventData): NewEventData | undefined {
             isValidExtraInfo = true
         }
         else {
-            event.keyInfo.forEach( item => {
-                isValidExtraInfo = Object.keys(item).length === 2 && "key" in item && "value" in item
-            })
+            for(let i = 0; i < event.keyInfo.length; i++) {
+                const item = event.keyInfo[i]
+                const hasCorrectProps = Object.keys(item).length === 2 && "key" in item && "value" in item
+                const isCorrectLength = item.key.length <= 16 && item.value.length <= 100
+                isValidExtraInfo = hasCorrectProps && isCorrectLength
+                if(!isValidExtraInfo) {
+                    break
+                }
+            }
         }
     }
 
