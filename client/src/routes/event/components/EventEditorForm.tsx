@@ -41,8 +41,8 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
         const serializedEvent: UpsertEventData = {
             eventId: eventId,
             title: state.title,
-            startDateTime: state.startTime!.format("YYYY-MM-DD HH:MM:00"),
-            endDateTime: state.endTime?.format("YYYY-MM-DD HH:MM:00") ?? null,
+            startDateTime: state.startTime!.format("YYYY-MM-DD HH:mm:00"),
+            endDateTime: state.endTime?.format("YYYY-MM-DD HH:mm:00") ?? null,
             keyInfo: state.keyInfo,
             description: serialize(state.description)
         };
