@@ -51,7 +51,7 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
 
     const onPostSuccess = async (res: Response) => {
         const data = await res.json();
-        window.location.href = `${window.location.origin}/arrangement/${data.eventId ?? ""}`;   // Will trigger a page reload
+        window.location.href = `${window.location.origin}/arrangement/${eventId ?? data.eventId ?? ""}`;   // Will trigger a page reload
     };
 
     const editorHasContent = (): boolean =>  {
