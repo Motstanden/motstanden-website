@@ -1,0 +1,18 @@
+import { ParticipationStatus } from "../enums";
+import { User } from "./User";
+
+export interface ParticipationList {
+    eventId: number,
+    participants: Participant[]
+}
+
+export interface Participant extends Pick< 
+    User, 
+    "userId"        | 
+    "firstName"     | 
+    "middleName"    |
+    "lastName"      |
+    "profilePicture"
+> {
+    participationStatus: ParticipationStatus
+}

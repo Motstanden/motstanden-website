@@ -1,4 +1,5 @@
 export * from "./EventData"
+export * from "./EventParticipation"
 export * from "./User"
 export * from "./MagicLinkResponse"
 export * from "./Quote"
