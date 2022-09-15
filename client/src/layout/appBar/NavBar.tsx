@@ -50,6 +50,8 @@ function PrivateNavBar(){
                     <ListItemLink text="Bli Medlem" to="/bli-medlem" />
                     {/* <ListItemLink text="FAQ" to="/faq" disabled /> */}
                     <Divider/>
+                    <ListItemLink text="Lisens" to="/lisens" />
+                    <Divider/>
                     <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/"/>
                 </List>
             </NavDropDown>
@@ -72,6 +74,8 @@ function PublicNavBar(){
                     <Divider/>
                     <ListItemLink text="Bli Medlem" to="/bli-medlem" />
                     {/* <ListItemLink text="FAQ" to="/faq" disabled /> */}
+                                        <Divider/>
+                    <ListItemLink text="Lisens" to="/lisens" />
                     <Divider/>
                     <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/"/>
                 </List>
