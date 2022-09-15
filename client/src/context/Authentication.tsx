@@ -4,6 +4,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { User } from "common/interfaces"
 import { UserGroup } from "common/enums";
 import { hasGroupAccess } from "common/utils";
+import { fetchAsync } from "src/utils/fetchAsync";
 
 interface AuthContextType{
 	user: User | null
@@ -19,7 +20,7 @@ export function useAuth(){
 
 export function AuthProvider({ children }: {children: React.ReactNode} ){
     
-    let [user, setUser] = useState<User | null>(null)     // TODO: Persist log in between refreshes
+    let [user, setUser] = useState<User | null>(null) 
     
     const signOutRequest = async (url: string): Promise<boolean> => {
         const response = await fetch(url, { method: "POST" })
@@ -34,31 +35,25 @@ export function AuthProvider({ children }: {children: React.ReactNode} ){
     const signOut = async (): Promise<boolean> => await signOutRequest("/api/logout")
     const signOutAllUnits = async (): Promise<boolean> => await signOutRequest("/api/logout-all-units")
 
-    // Fetch user data on initial load
-    const { status } = useQuery(["GetUserMetaData"], 
-        async () =>{
-            let response = await fetch("/api/userMetaData") 
-            if (!response.ok) {
-                throw new Error(response.statusText)
-            }
+    const fetchUserData = async (): Promise<User | null> => {
+        let res = await fetch("/api/userMetaData")
+        if (!res.ok) {
+            throw new Error(res.statusText)
+        }
 
-            if(response.status === 204) {   // Request was successful but user is not logged in. 
-                setUser(null)
-                return
-            }
+        if(res.status === 204) {   // Request was successful but user is not logged in. 
+            setUser(null)
+            return null
+        }
 
-            const userData = await response.json() as User;    
-            setUser(userData)   
-    }, {
-       enabled: !user,
-       retryOnMount: false,
-       refetchOnMount: false,
-       refetchInterval: false,
-       refetchOnWindowFocus: false,
-       keepPreviousData: true,
-    })
+        const userData = await res.json() as User;    
+        setUser(userData)   
+        return userData
+    } 
 
-    if (status === 'loading'){
+    const {isLoading } = useQuery<User | null>(["GetUserMetaData"], ()  => fetchUserData())
+    
+    if (isLoading){
         return <></>
     }
 
