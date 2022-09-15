@@ -2,6 +2,7 @@ import Divider from "@mui/material/Divider";
 import Link from "@mui/material/Link";
 import { PageContainer } from "src/layout/PageContainer";
 import { linkStyle } from "src/assets/style/tableStyle"
+import LicenseLogo from "src/assets/logos/license.png"
 
 export function LicensePage() {
     return (
@@ -51,8 +52,17 @@ function Introduction() {
 function License() {
     return (
         <pre style={{whiteSpace: "pre-wrap"}} >
-            <h1>MÅKESODD v1</h1>
-            <h3>Motstandens Åpne Kildekodelisens egnet Studentorchesterets Diverse Dataprosjekter</h3>
+            <div style={{textAlign: "center"}}>
+                <h1 style={{margin: 0}}>MÅKESODD v1</h1>
+                <img 
+                    src={LicenseLogo} 
+                    style={{
+                        maxWidth: "300px", 
+                        width: "95%",
+                        marginBlock: "20px"
+                    }}/>
+                <h3>Motstandens Åpne Kildekodelisens egnet Studentorchesterets Diverse Dataprosjekter</h3>
+            </div>
             <p>
                 Copyright (c) 2022, Studentorchesteret den Ohmske Motstanden
                 All rights reserved. MÅKESODD 4-klausulslisens, versjon 1.
