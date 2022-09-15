@@ -20,6 +20,18 @@ export function LicensePage() {
     )
 }
 
+export function LicenseOnlyPage(){
+    useTitle("Måkesodd")
+    useEffect(() => window.scrollTo(0, 0), [])
+    return (
+        <PageContainer>
+            <div style={{maxWidth: "600px", marginInline: "auto"}}>
+                <License/>
+            </div>
+        </PageContainer>
+    )
+}
+
 function Introduction() {
     return (
         <>

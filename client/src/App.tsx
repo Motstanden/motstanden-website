@@ -31,7 +31,7 @@ import { NewEventPage } from './routes/event/NewPage';
 import { EventContext, EventItemContext } from './routes/event/Context';
 import { QuotesContext } from './routes/quotes/QuotesContext';
 import { NewQuotePage } from './routes/quotes/NewQuotePage';
-import { LicensePage } from './routes/license/LicensePage';
+import { LicenseOnlyPage, LicensePage } from './routes/license/LicensePage';
 
 function App() {
 	const auth = useAuth()
@@ -53,6 +53,7 @@ function App() {
 					<Route path="/dokumenter" element={<Documents/>}/>
 					<Route path="/bli-medlem" element={<BecomeMember/>}/>
 					<Route path="/lisens" element={<LicensePage/>}/>
+					<Route path="/maakesodd" element={<LicenseOnlyPage/>}/>
 
 					{/* Routes that requires the user to be logged in */}
 					<Route element={<RequireAuthRouter requiredGroup={UserGroup.Contributor}/>}> 
