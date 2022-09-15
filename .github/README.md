@@ -49,7 +49,7 @@
   You should now see two new SQLite db files that are fully populated with data: `database/motstanden_dev.db` and `database/sheet_archive_dev.db`
 
   ## Create server environment
-  1. Rename the sample environment files: 
+  1. Copy and then rename the sample environment files: 
       - `server/.env.sample` --> `server/.env` 
       - `server/src/info-mail-key.json.sample` --> `server/src/info-mail-key.json` <br/>
       **Note:** Mail functionality does not work with this sample file. If you want to use mail functionality, you must either request a secret OAuth2 from Motstanden, or generate a secret OAuth2 key for your own mail. 
