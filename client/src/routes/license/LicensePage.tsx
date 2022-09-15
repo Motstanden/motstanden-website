@@ -1,10 +1,14 @@
+import React, { useEffect } from "react"
 import Divider from "@mui/material/Divider";
 import Link from "@mui/material/Link";
 import { PageContainer } from "src/layout/PageContainer";
 import { linkStyle } from "src/assets/style/tableStyle"
 import LicenseLogo from "src/assets/logos/license.png"
+import { useTitle } from "src/hooks/useTitle";
 
 export function LicensePage() {
+    useTitle("Lisens")
+    useEffect(() => window.scrollTo(0, 0), [])
     return (
         <PageContainer>
             <div style={{maxWidth: "600px", marginInline: "auto"}}>
