@@ -21,20 +21,10 @@ export default function Home(){
             <h1>Hjem</h1>
             <p>Velkommen {user.firstName}!</p>
             <br/>
-                <TitleCard title="Dagens sitater" sx={{maxWidth: "600px"}}>
-                    <QuoteLoader/>
-                </TitleCard>
+            <TitleCard title="Dagens sitater" sx={{maxWidth: "600px"}}>
+                <QuoteLoader/>
+            </TitleCard>
         </PageContainer>
-    )
-}
-
-function QuoteOfTheDay(){
-    return (
-        <Paper elevation={6} sx={{p: 2, maxWidth: "600px"}}>
-            <h2 style={{margin: 0}} >Dagens sitater</h2>
-            <Divider sx={{mt: 1.5}}/>
-            <QuoteLoader/>
-        </Paper>
     )
 }
 
