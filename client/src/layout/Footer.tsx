@@ -9,7 +9,16 @@ import Typography from '@mui/material/Typography';
 
 import ElektraImg from '../assets/logos/elektra.svg';
 import MotstandenImg from '../assets/logos/motstanden.png';
+import Link from '@mui/material/Link';
+import {Link as RouterLink } from "react-router-dom"
+import { SxProps } from '@mui/material/styles';
 
+
+const dividerStyle: SxProps = {
+    "&::before, &::after": {
+        borderColor: "primary.contrastText",
+    },
+}
 
 
 export function FooterContent(){
@@ -32,15 +41,13 @@ export function FooterContent(){
                     <Divider 
                         textAlign="center"
                         flexItem 
-                        sx={{
-                            "&::before, &::after": {
-                                borderColor: "primary.contrastText",
-                            },
-                        }}
+                        sx={dividerStyle}
                         >
                             SPONSORER
                     </Divider>
                     <SponsorInfo/>
+                    <Divider flexItem sx={dividerStyle}/>
+                    <LicenseInfo/>
                 </Stack>
             </Stack>
         </Paper>
@@ -125,6 +132,29 @@ function SitLogo(){
             loading="lazy"
             alt="Sit sin logo"
             style={{maxWidth: "160px"}}/>
+    )
+}
+
+function LicenseInfo() {
+    return (
+        <Typography  textAlign="center" maxWidth="300px">
+            Nettsiden er et <em>åpen-kildekode-prosjekt</em> lisensert på {" "}
+            <Link 
+                component={RouterLink}
+                to="/lisens" 
+                sx={{
+                    color: "secondary.light",
+                    "&:visited": {
+                        color: "secondary.light"
+                    },
+                    "&:hover": {
+                        color: "secondary.main"
+                    },  
+                }}
+                >
+                    MÅKESODD v1
+            </Link>
+        </Typography>
     )
 }
 
