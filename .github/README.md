@@ -72,11 +72,13 @@
   You will now see two new directories: `server/build` and `common/build`
 
   ### Terminal 2
-  Run start-up script
+  Run start-up script.
   ```bash
   cd server
   npm run dev
   ```
+  **Note:** There is a bug somewhere (probably in npm or react) that sometimes causes the startup script to fail. This issue often solved by rerunning the start-up script a few times.   
+
   The terminal is now running two servers:
   1. http://localhost:3000/ – A front end server, responsible for compiling react and provide front end dev tools. This server is only used in development.
   2. http://localhost:5000/ - A back end server, responsible for handling API calls and serving content. This server will be the actual server running in production.
