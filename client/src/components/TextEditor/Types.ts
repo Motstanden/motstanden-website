@@ -10,7 +10,6 @@ export enum TextFormat {
     Italic = "EM",
     Underline = "U"
 }
-
 export enum ElementType {
     H1 = "H1",
     H2 = "H2",

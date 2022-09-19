@@ -22,8 +22,16 @@ export function toggleMark(editor: CustomEditor, format: TextFormat) {
 
 export function setMark(editor: CustomEditor, format: TextFormat, value: boolean) {
     if(value) {
-        Editor.addMark(editor, format.toString(), true)
+        Editor.addMark(editor, formatToMarkStr(format), true)
     } else {
-        Editor.removeMark(editor, format.toString())
+        Editor.removeMark(editor, formatToMarkStr(format))
+    }
+}
+
+function formatToMarkStr(format: TextFormat): string {
+    switch (format) {
+        case TextFormat.Bold:       return "bold"
+        case TextFormat.Italic:     return "italic"
+        case TextFormat.Underline:  return "underline"
     }
 }
