@@ -2,20 +2,23 @@ import { BaseEditor } from 'slate';
 import { ReactEditor } from 'slate-react';
 import { HistoryEditor } from 'slate-history'
 
+
+// The string values of the following enums corresponds to their HTML DOM Node counterpart.
+// They should match the well known property Node.nodeName: https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeName
 export enum TextFormat {
-    Bold = "bold",
-    Italic = "italic",
-    Underline = "underline"
+    Bold = "STRONG",
+    Italic = "EM",
+    Underline = "U"
 }
 
 export enum ElementType {
-    H1 = "h1",
-    H2 = "h2",
-    H3 = "h3",
-    Paragraph = "paragraph",
-    NumberedList = "numbered-list",
-    BulletedList = "bulleted-list",
-    ListItem = "list-item",
+    H1 = "H1",
+    H2 = "H2",
+    H3 = "H3",
+    Paragraph = "DIV",      // TODO: Fix this ugliness
+    NumberedList = "OL",
+    BulletedList = "UL",
+    ListItem = "LI",
 }
 
 export type H1Element = {
