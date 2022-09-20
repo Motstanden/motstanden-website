@@ -121,11 +121,9 @@ function BlockElementButtons() {
     }
 
     let value = undefined;
-    value = isMatch(ElementType.H2) ? ElementType.H2 : value
     value = isMatch(ElementType.H3) ? ElementType.H3 : value
     value = isMatch(ElementType.BulletedList) ? ElementType.BulletedList : value
     value = isMatch(ElementType.NumberedList) ? ElementType.NumberedList : value
-    console.log(value)
     return (
         <ToggleButtonGroup 
             exclusive
