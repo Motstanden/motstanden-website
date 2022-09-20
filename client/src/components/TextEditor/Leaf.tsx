@@ -21,17 +21,28 @@ interface UnsafeRenderLeafProps extends Partial<RenderLeafProps> {
 }
 
 export function UnsafeLeaf( {attributes, children, leaf}: UnsafeRenderLeafProps) {
+
+    const isBold = !!leaf.bold
+    const isItalic = !!leaf.italic
+    const isUnderline = !!leaf.underline
+
+    if(!isBold && !isItalic && !isUnderline){
+        return <span {...attributes}>{children}</span>
+    }
+
     if (leaf.bold) {
-        children = <strong>{children}</strong>
+        const attrs = isItalic || isUnderline ? {} : attributes
+        children = <strong {...attrs} >{children}</strong>
     }
     
     if (leaf.italic) {
-        children = <em>{children}</em>
+        const attrs = isUnderline ? {} : attributes
+        children = <em {...attrs}>{children}</em>
     }
     
     if (leaf.underline) {
-        children = <u>{children}</u>
+        children = <u {...attributes}>{children}</u>
     }
 
-    return <span {...attributes}>{children}</span>
+    return children
 }
