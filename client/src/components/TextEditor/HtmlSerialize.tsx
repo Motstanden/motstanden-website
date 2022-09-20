@@ -73,7 +73,7 @@ function deserializeNode(el: HTMLElement | ChildNode): Descendant[] {
         // This should never happen if the data is correctly formatted in the database. 
         // However, lets just assume that bad data will at some point be stored in the database.
         if(Text.isText(child)){
-            return jsx("element", {type: ElementType.Paragraph}, child)
+            return jsx("element", {type: ElementType.Div}, child)
         }
         return child
     })    
@@ -89,7 +89,7 @@ function strToElementType(nodeName: string): ElementType | undefined {
         case "UL": return ElementType.BulletedList
         case "LI": return ElementType.ListItem
         case "OL": return ElementType.NumberedList
-        case "DIV": return ElementType.Paragraph
+        case "DIV": return ElementType.Div
         default: return undefined
     }
 }

@@ -40,7 +40,7 @@ export function UnsafeElement( { attributes, children, element }: UnsafeRenderEl
                     {children}
                 </h3>
             )
-        case ElementType.Paragraph: 
+        case ElementType.Div: 
             return (
                 <div {...attributes}>
                     {children}

@@ -14,7 +14,7 @@ export enum ElementType {
     H1 = "H1",
     H2 = "H2",
     H3 = "H3",
-    Paragraph = "DIV",      // TODO: Fix this ugliness
+    Div = "DIV",          
     NumberedList = "OL",
     BulletedList = "UL",
     ListItem = "LI",
@@ -35,8 +35,8 @@ export type H3Element = {
     children: CustomText[]
 }
 
-export type ParagraphElement = {
-    type: ElementType.Paragraph,
+export type DivElement = {
+    type: ElementType.Div,
     children: CustomText[]
 }
 
@@ -63,7 +63,7 @@ export type FormattedText = {
 }
 
 export type CustomEditor = BaseEditor & ReactEditor & HistoryEditor
-export type CustomElement = H1Element | H2Element | H3Element | ParagraphElement | NumberedListElement | BulletedListElement | ListItemElement
+export type CustomElement = H1Element | H2Element | H3Element | DivElement | NumberedListElement | BulletedListElement | ListItemElement
 export type CustomText = FormattedText
 
 declare module 'slate' {
