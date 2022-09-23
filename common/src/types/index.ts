@@ -1,3 +1,3 @@
 // Export all types in this directory
 
-// export * from "./MyTypeFile"
+export * from "./Optional"
