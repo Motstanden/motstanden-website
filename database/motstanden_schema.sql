@@ -131,11 +131,14 @@ CREATE TABLE event (
     start_date_time TEXT NOT NULL CHECK(start_date_time is datetime(start_date_time)),                          -- yyyy-mm-dd hh:mm
     end_date_time TEXT DEFAULT NULL CHECK(end_date_time = NULL OR end_date_time is datetime(end_date_time)),    -- yyyy-mm-dd hh:mm
     key_info TEXT NOT NULL DEFAULT "[]" CHECK(json_valid(key_info) = 1),                                                                        -- Json array    
-    description TEXT NOT NULL,                                                                                  -- Html
+    description_html TEXT NOT NULL,                                                                                  -- Html
     created_by INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_by INTEGER NOT NULL,
-    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, description_json 
+    TEXT NOT NULL 
+    DEFAULT '[{"type":"DIV","children":[{"text":""}]}]'
+    CHECK(json_valid(description_json) = 1),
     FOREIGN KEY(created_by)
         REFERENCES user(user_id)
         ON UPDATE CASCADE
@@ -173,6 +176,24 @@ CREATE TABLE event_participant (
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
+CREATE VIEW vw_event_participant
+AS 
+SELECT 
+	event_id,
+	JSON_GROUP_ARRAY(JSON_OBJECT(
+		'userId', 				user_id,
+		'firstName', 			user.first_name,
+		'middleName',			user.middle_name,
+		'lastName',				user.last_name,
+		'profilePicture',		user.profile_picture,
+		'participationStatus',	participation_status.status
+	)) AS participants
+FROM
+	event_participant
+LEFT JOIN user USING(user_id)
+LEFT JOIN participation_status USING(participation_status_id)
+GROUP BY event_id
+/* vw_event_participant(event_id,participants) */;
 CREATE VIEW vw_event
 AS
 SELECT
@@ -181,7 +202,8 @@ SELECT
     start_date_time,
     end_date_time,
     key_info,
-    description,
+    description_html,
+    description_json,
     created_by as created_by_user_id,
     created_by.first_name || ' '
         || IIF(length(trim(created_by.middle_name)) = 0, '', created_by.middle_name || ' ') 
@@ -204,22 +226,4 @@ LEFT JOIN user created_by
 ON  created_by.user_id = e.created_by
 LEFT JOIN user updated_by
 ON  updated_by.user_id = e.updated_by
-/* vw_event(event_id,title,start_date_time,end_date_time,key_info,description,created_by_user_id,created_by_full_name,created_at,updated_by_user_id,updated_by_full_name,updated_at,is_upcoming) */;
-CREATE VIEW vw_event_participant
-AS 
-SELECT 
-	event_id,
-	JSON_GROUP_ARRAY(JSON_OBJECT(
-		'userId', 				user_id,
-		'firstName', 			user.first_name,
-		'middleName',			user.middle_name,
-		'lastName',				user.last_name,
-		'profilePicture',		user.profile_picture,
-		'participationStatus',	participation_status.status
-	)) AS participants
-FROM
-	event_participant
-LEFT JOIN user USING(user_id)
-LEFT JOIN participation_status USING(participation_status_id)
-GROUP BY event_id
-/* vw_event_participant(event_id,participants) */;
+/* vw_event(event_id,title,start_date_time,end_date_time,key_info,description_html,description_json,created_by_user_id,created_by_full_name,created_at,updated_by_user_id,updated_by_full_name,updated_at,is_upcoming) */;

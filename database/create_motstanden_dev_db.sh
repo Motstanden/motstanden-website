@@ -25,6 +25,10 @@ sqlite3 motstanden_dev.db < migrations/motstanden_db/05_fix_quote_trigger.sql;
 echo "Running: 06_events.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/06_events.sql;
 
+# Refactor event tables
+echo "Running: 07_events_refactor.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/07_events_refactor.sql;
+
 # Insert data that is representative for the current data in the database
 cd data/db
 sh motstanden-db-data.sh 

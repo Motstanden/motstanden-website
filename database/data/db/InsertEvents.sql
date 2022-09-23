@@ -1,5 +1,5 @@
 INSERT INTO 
-    event(event_id, title, start_date_time, end_date_time, created_by, updated_by, key_info, description)
+    event(event_id, title, start_date_time, end_date_time, created_by, updated_by, key_info, description_html, description_json)
 VALUES
     (
         1, 
@@ -13,7 +13,17 @@ VALUES
             json_object("key", "Sted:",     "value", "Høgskoleparken"), 
             json_object("key", "Antrekk:",  "value", "Full uniform")
         ),
-        "Beskrivelse av rebusløpet"
+        "<div>Beskrivelse av rebusløpet</div>",
+        json_array(
+            json_object(
+                "type", "DIV", 
+                "children", json_array (
+                    json_object(
+                        "text", "Beskrivelse av rebusløpet"
+                    )
+                )
+            )
+        )
     ), (
         2, 
         "Hybel til hybel",   
@@ -26,7 +36,17 @@ VALUES
             json_object("key", "Sted:",     "value", "Bergstua"), 
             json_object("key", "Antrekk:",  "value", "Full uniform")
         ),
-        "Beskrivelse av hybel til hybel"
+        "Beskrivelse av hybel til hybel",
+        json_array(
+            json_object(
+                "type", "DIV", 
+                "children", json_array (
+                    json_object(
+                        "text", "Beskrivelse av hybel til hybel"
+                    )
+                )
+            )
+        )
     ), (
         3, 
         "Åpen øvelse",                  
@@ -35,7 +55,17 @@ VALUES
         3, 
         1, 
         json_array(),             
-        "Beskrivelse av åpen øvelse"
+        "Beskrivelse av åpen øvelse",
+        json_array(
+            json_object(
+                "type", "DIV", 
+                "children", json_array (
+                    json_object(
+                        "text", "Beskrivelse av åpen øvelse"
+                    )
+                )
+            )
+        )
     ), (
         4, 
         "SMASH",                        
@@ -48,7 +78,17 @@ VALUES
             json_object("key", "Påmeldingsfrist:",  "value", "1. September"), 
             json_object("key", "Antrekk:",          "value", "Full uniform")
         ),          
-        "Beskrivelse av smash"
+        "Beskrivelse av smash",
+        json_array(
+            json_object(
+                "type", "DIV", 
+                "children", json_array (
+                    json_object(
+                        "text", "Beskrivelse av smash"
+                    )
+                )
+            )
+        )
     ), (
         5, 
         "Rebusløp",          
@@ -61,7 +101,17 @@ VALUES
             json_object("key", "Sted:",     "value", "Høgskoleparken"), 
             json_object("key", "Antrekk:",  "value", "Full uniform")
         ),                                                            
-        "Beskrivelse av rebusløpet"
+        "Beskrivelse av rebusløpet",
+        json_array(
+            json_object(
+                "type", "DIV", 
+                "children", json_array (
+                    json_object(
+                        "text", "Beskrivelse av rebusløpet"
+                    )
+                )
+            )
+        )
     ), (
         6, 
         "Hybel til hybel",   
@@ -74,7 +124,17 @@ VALUES
             json_object("key", "Sted:",     "value", "Bergstua"), 
             json_object("key", "Antrekk:",  "value", "Full uniform")
         ),                                                                    
-        "Beskrivelse av hybel til hybel"
+        "Beskrivelse av hybel til hybel",
+        json_array(
+            json_object(
+                "type", "DIV", 
+                "children", json_array (
+                    json_object(
+                        "text", "Beskrivelse av hyble tili hybel"
+                    )
+                )
+            )
+        )
     ), (
         7, 
         "Åpen øvelse",                  
@@ -83,7 +143,17 @@ VALUES
         1, 
         1, 
         json_array(),             
-        "Beskrivelse av åpen øvelse"
+        "Beskrivelse av åpen øvelse",
+        json_array(
+            json_object(
+                "type", "DIV", 
+                "children", json_array (
+                    json_object(
+                        "text", "Beskrivelse av åpen øvelse"
+                    )
+                )
+            )
+        )
     ), (
         8, 
         "SMASH",                        
@@ -97,7 +167,17 @@ VALUES
             json_object("key", "Oppmøte:",          "value", "Hovedbygget på gløs"), 
             json_object("key", "Antrekk:",          "value", "Full uniform")
         ),         
-        "Beskrivelse av smash"
+        "Beskrivelse av smash",
+        json_array(
+            json_object(
+                "type", "DIV", 
+                "children", json_array (
+                    json_object(
+                        "text", "Beskrivelse av smash"
+                    )
+                )
+            )
+        )
     );
 
 INSERT INTO 
