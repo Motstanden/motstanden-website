@@ -103,13 +103,14 @@ function BlockElementButtons() {
         return !!match
     }
 
-    const onChange = ( event: React.MouseEvent<HTMLElement>, newType: ElementType) => {
+    const onChange = ( event: React.MouseEvent<HTMLElement>, newType?: ElementType) => {
         Transforms.unwrapNodes(editor, {
             match: (n: any) => n.type === ElementType.BulletedList || n.type === ElementType.NumberedList,
             split: true
         })
 
         const isList = newType === ElementType.BulletedList || newType === ElementType.NumberedList
+        newType ??= ElementType.Div
         Transforms.setNodes(
             editor,
             { type: isList ? ElementType.ListItem : newType },
@@ -120,7 +121,7 @@ function BlockElementButtons() {
         }
     }
 
-    let value = undefined;
+    let value: undefined | ElementType.H3 | ElementType.BulletedList | ElementType.NumberedList = undefined;
     value = isMatch(ElementType.H3) ? ElementType.H3 : value
     value = isMatch(ElementType.BulletedList) ? ElementType.BulletedList : value
     value = isMatch(ElementType.NumberedList) ? ElementType.NumberedList : value
