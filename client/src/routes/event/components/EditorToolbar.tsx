@@ -11,7 +11,7 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { ElementType, FormattedText, TextFormat } from 'src/components/TextEditor/Types';
+import { ElementType, FormattedText, TextFormat } from "common/richTextSchema";
 import Stack from '@mui/material/Stack';
 import { Divider, SxProps, Tooltip } from '@mui/material';
 

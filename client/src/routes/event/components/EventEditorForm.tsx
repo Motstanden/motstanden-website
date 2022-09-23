@@ -5,7 +5,6 @@ import { Editable, RenderElementProps, RenderLeafProps, Slate, withReact } from 
 import { withHistory } from "slate-history"
 import { createEditor, Descendant, Editor, Text } from "slate"
 import { handleAllFormatHotkeys } from "src/components/TextEditor/Hotkey"
-import { CustomEditor, ElementType, FormattedText, ListItemElement } from "src/components/TextEditor/Types"
 import dayjs, { Dayjs } from "dayjs"
 import { DateTimePicker } from "@mui/x-date-pickers"
 import { Box, Button, Divider, IconButton, InputAdornment, Paper, SxProps, TextField, Theme, useMediaQuery } from "@mui/material"

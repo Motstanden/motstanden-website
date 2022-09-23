@@ -1,5 +1,5 @@
 import { RenderElementProps, RenderLeafProps } from "slate-react"
-import { CustomElement, ElementType, FormattedText } from "./Types"
+import { CustomElement, ElementType, FormattedText } from "common/richTextSchema"
 
 export function Element({ attributes, children, element }: RenderElementProps ){
     return <UnsafeElement 

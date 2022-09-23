@@ -1,6 +1,7 @@
 import { BaseEditor, Editor } from 'slate';
 import { ReactEditor } from 'slate-react';
-import { CustomEditor, CustomElement, TextFormat } from './Types';
+import { CustomElement, TextFormat } from "common/richTextSchema";
+import { CustomEditor } from './Types';
 
 export function isMarkActive (editor: CustomEditor, format: TextFormat): boolean {
     const marks = Editor.marks(editor)

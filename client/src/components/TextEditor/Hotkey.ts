@@ -1,6 +1,8 @@
 import isHotkey from "is-hotkey"
 import { toggleMark } from "./FormattedText"
-import { CustomEditor, TextFormat } from "./Types"
+import { TextFormat } from "common/richTextSchema"
+import { CustomEditor } from "./Types"
+
 
 function getTextHotkey( format: TextFormat): string {
     switch(format) {

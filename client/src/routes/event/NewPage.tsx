@@ -1,4 +1,4 @@
-import { ElementType } from "src/components/TextEditor/Types"
+import { ElementType } from "common/richTextSchema"
 import { EventEditorForm, EventEditorState } from "./components/EventEditorForm"
 
 export function NewEventPage() {

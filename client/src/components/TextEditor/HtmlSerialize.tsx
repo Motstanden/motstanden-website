@@ -2,9 +2,10 @@ import React from "react"
 import DOMPurify from "dompurify"
 import ReactDOMServer from "react-dom/server"
 import { Descendant, Text, Editor } from 'slate';
-import { CustomEditor, CustomElement, ElementType, FormattedText, TextFormat } from "./Types"
+import { CustomElement, ElementType, FormattedText, TextFormat } from "common/richTextSchema"
 import { jsx } from "slate-hyperscript"
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
+import { CustomEditor } from "./Types";
 
 export function serialize( value: CustomEditor | Descendant[]): string{
     

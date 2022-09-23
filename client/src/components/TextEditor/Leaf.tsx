@@ -1,5 +1,5 @@
 import { RenderLeafProps } from "slate-react"
-import { FormattedText } from "./Types"
+import { FormattedText } from "common/richTextSchema"
 
 export function Leaf( {attributes, children, leaf}: RenderLeafProps) {
     return <UnsafeLeaf
