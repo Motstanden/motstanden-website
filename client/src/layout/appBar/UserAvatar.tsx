@@ -12,7 +12,7 @@ import { useAuth } from '../../context/Authentication';
 
 import { getFullName } from 'common/utils';
 import { Divider, Link } from '@mui/material';
-import { IconPopupMenu } from 'src/components/IconPopupMenu';
+import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 
 
 export default function UserAvatar() {

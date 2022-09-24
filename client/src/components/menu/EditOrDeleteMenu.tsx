@@ -4,7 +4,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { IconPopupMenu } from "src/components/IconPopupMenu";
+import { IconPopupMenu } from "src/components/menu/IconPopupMenu";
 
 export function EditOrDeleteMenu({
     onEditClick, onDeleteClick, iconOrientation
