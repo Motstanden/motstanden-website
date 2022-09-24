@@ -3,9 +3,10 @@ const Database = require('better-sqlite3')
 const {dbReadOnlyConfig, dbReadWriteConfig, sheetArchiveDB} = require("./databaseConfig")
 // const sheetsDb = path.join(__dirname, "..", "sheet_archive_dev.db")
 
-const getSongTitleId = (db, title) => {
-    let stmt = db.prepare("SELECT song_title_id FROM song_title where title = ?");
-    let dbResult = stmt.get(title)
+const getSongTitleId = (db, title, extraInfo) => {
+    extraInfo ??= ""
+    let stmt = db.prepare("SELECT song_title_id FROM song_title where title = ? AND extra_info = ?");
+    let dbResult = stmt.get([title, extraInfo])
     if(!dbResult)
         throw `Could not find id of song title: ${title}`
     return dbResult.song_title_id
@@ -62,14 +63,14 @@ const getToneId = (db, tone_name) => {
     return dbResult.tone_id
 }
 
-const insertSongFile = (title, filename, clef_name, instrument_voice, instrument, transposition, instrument_category) => {
+const insertSongFile = (title, extra_info, filename, clef_name, instrument_voice, instrument, transposition, instrument_category) => {
     const db = new Database(sheetArchiveDB, dbReadWriteConfig)
 
     // Throws exceptions if not found
     const clefId = getClefId(db, clef_name)
     const instrumentId = getInstrumentId(db, instrument, instrument_category) 
     const transpositionId = getToneId(db, transposition)
-    const titleId = getSongTitleId(db, title);
+    const titleId = getSongTitleId(db, title, extra_info);
 
     // Define transaction
     const startTransaction = db.transaction( () => {

@@ -232,7 +232,7 @@ const DbInsertSongArray = (songArray) => {
         
         song.files.forEach( songFile => {
             try {
-                insertSongFile(song.prettyName, songFile.urlPath, songFile.clef, songFile.instrumentVoice, songFile.instrument, songFile.transposition, song.partSystem)
+                insertSongFile(song.prettyName, song.extraInfo, songFile.urlPath, songFile.clef, songFile.instrumentVoice, songFile.instrument, songFile.transposition, song.partSystem)
                 successCount += 1
             }
             catch (err) {
