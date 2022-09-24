@@ -1,15 +1,43 @@
 import ClickAwayListener  from "@mui/material/ClickAwayListener";
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-export function IconPopupMenu( {children, icon}: {children: React.ReactNode, icon: React.ReactNode}){
+export function IconPopupMenu({
+    children, 
+    icon,
+    onMouseEnter,
+    onMouseLeave,
+    onMenuOpen,
+    onMenuClose
+}: {
+    children: React.ReactNode, 
+    icon: React.ReactNode,
+    onMouseEnter?: React.MouseEventHandler<HTMLButtonElement>,
+    onMouseLeave?: React.MouseEventHandler<HTMLButtonElement>,
+    onMenuOpen?: VoidFunction,
+    onMenuClose?: VoidFunction,
+}){
     const [isOpen, setIsOpen] = useState(false)
     const anchorEl = useRef(null)
+    useEffect( () => {
+        if(anchorEl && isOpen){
+            onMenuOpen && onMenuOpen()
+        }
+        if(anchorEl && !isOpen) {
+            onMenuClose && onMenuClose()
+        }
+    }, [isOpen])
+    
     return (
         <>
             <ClickAwayListener onClickAway={() => setIsOpen(false)}>
-                <IconButton ref={anchorEl} onClick={() => setIsOpen( prevValue => !prevValue)}>
+                <IconButton 
+                    ref={anchorEl} 
+                    onClick={() => setIsOpen( prevValue => !prevValue)} 
+                    onMouseEnter={onMouseEnter}
+                    onMouseLeave={onMouseLeave}
+                    >
                     {icon}
                 </IconButton>
             </ClickAwayListener>
