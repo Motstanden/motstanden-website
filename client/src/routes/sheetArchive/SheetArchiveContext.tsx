@@ -9,8 +9,7 @@ import { TabbedPageContainer } from "src/layout/PageContainer";
 
 
 export function SheetArchiveContext() {
-    useTitle("Notearkiv");
-
+    
     const { isLoading, isError, data, error } = useQuery<ISongInfo[]>(["FetchSheetArchiveTitles"], () => fetchAsync<ISongInfo[]>("/api/sheet_archive/song_title"));
 
     if (isLoading) {

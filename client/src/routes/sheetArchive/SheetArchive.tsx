@@ -8,8 +8,12 @@ import { useTitle } from "../../hooks/useTitle"
 
 export function SongListPage( {mode}: {mode?: "repertoire"}){
 
+    const isRepertoire: boolean = mode === "repertoire" 
+
+    useTitle(isRepertoire ? "Repertoar" : "Alle noter");
+
     let data = useOutletContext<ISongInfo[]>()
-    if(mode == "repertoire")
+    if(isRepertoire)
         data = data.filter(item => !!item.isRepertoire)
 
     return (
@@ -19,7 +23,7 @@ export function SongListPage( {mode}: {mode?: "repertoire"}){
                 { data.map( song => (
                         <UrlListItem 
                             key={song.url} 
-                            to={`/notearkiv/${mode === "repertoire" ? "repertoar" : "alle"}/${song.url}`} 
+                            to={`/notearkiv/${isRepertoire ? "repertoar" : "alle"}/${song.url}`} 
                             text={song.title}
                             /> 
                     ))
