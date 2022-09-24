@@ -51,6 +51,7 @@ function PageContainer({ children }: {children?: React.ReactNode}) {
                 {to: "/notearkiv/repertoar",    label: "Repertoar"},
                 {to: "/notearkiv/alle",         label: "Alle"},
             ]}
+            matchChildPath={true}
         >
             {children}
         </TabbedPageContainer>
