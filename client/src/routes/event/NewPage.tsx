@@ -1,4 +1,5 @@
 import { ElementType } from "common/richTextSchema"
+import { emptyRichText } from "src/components/TextEditor/Assets"
 import { EventEditorForm, EventEditorState } from "./components/EventEditorForm"
 
 export function NewEventPage() {
@@ -16,10 +17,5 @@ const emptyEventObj: EventEditorState = {
     startTime: null,
     endTime: null,
     keyInfo: [],
-    description: [
-        {
-            type: ElementType.Div,
-            children: [{text: ""}]
-        }
-    ]
+    description: emptyRichText
 }
