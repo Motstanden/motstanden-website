@@ -107,7 +107,7 @@ function saveTokenInCookie(res: Response, tokenType: TokenType, tokenStr: string
         tokenStr,
         {
             httpOnly: true, 
-            secure: true, 
+            secure: process.env.IS_DEV_ENV === "true" ? false : true,       // In development we need this to be true in order to log in to the site from a mobile phone
             sameSite: true,
             maxAge: maxAge
         })
