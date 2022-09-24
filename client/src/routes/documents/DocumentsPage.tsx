@@ -5,7 +5,7 @@ import { fetchAsync } from "../../utils/fetchAsync"
 import { UrlList, UrlListItem } from "../../components/UrlList"
 import { useTitle } from "../../hooks/useTitle"
 
-export default function Documents(){
+export default function DocumentsPage(){
     useTitle("Dokumenter")
     return (
         <PageContainer>

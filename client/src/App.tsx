@@ -4,7 +4,7 @@ import { RequireAuthRouter, useAuth }  from "./context/Authentication"
 
 // URL routes
 import BecomeMember from './routes/becomeMember/BecomeMember';
-import Documents from './routes/documents/Documents';
+import DocumentsPage from './routes/documents/DocumentsPage';
 import Home from './routes/home/Home';
 import { LoginPage } from './routes/login/Login';
 import { LyricListPage, LyricItemPage, LyricPageContainer } from './routes/lyric/Lyric';
@@ -19,18 +19,18 @@ import { AppLayout }from './layout/AppLayout';
 import { UserGroup } from 'common/enums';
 import { AdminPage } from './routes/admin/Admin';
 import { SuperAdminPage } from './routes/admin/SuperAdmin';
-import { UserListPage } from './routes/user/UserList';
-import { NewUserPage } from './routes/user/NewUser';
-import { EditUserPage } from './routes/user/EditUser';
-import { UserContext } from './routes/user/UserContext';
+import { UserListPage } from './routes/user/ListPage';
+import { NewUserPage } from './routes/user/NewPage';
+import { EditUserPage } from './routes/user/EditPage';
+import { UserContext } from './routes/user/Context';
 import { UserPage, UserProfileContext } from './routes/user/UserPage';
 import { EventListPage } from './routes/event/ListPage';
 import { ItemPage } from "./routes/event/ItemPage";
 import { EditEventPage } from "./routes/event/EditPage";
 import { NewEventPage } from './routes/event/NewPage';
 import { EventContext, EventItemContext } from './routes/event/Context';
-import { QuotesContext } from './routes/quotes/QuotesContext';
-import { NewQuotePage } from './routes/quotes/NewQuotePage';
+import { QuotesContext } from './routes/quotes/Context';
+import { NewQuotePage } from './routes/quotes/NewPage';
 import { LicenseOnlyPage, LicensePage } from './routes/license/LicensePage';
 
 function App() {
@@ -50,7 +50,7 @@ function App() {
 						<Route index element={<LyricListPage/>}/>
             			<Route path=":title" element={<LyricItemPage/>}/>
         			</Route>
-					<Route path="/dokumenter" element={<Documents/>}/>
+					<Route path="/dokumenter" element={<DocumentsPage/>}/>
 					<Route path="/bli-medlem" element={<BecomeMember/>}/>
 					<Route path="/lisens" element={<LicensePage/>}/>
 					<Route path="/maakesodd" element={<LicenseOnlyPage/>}/>
