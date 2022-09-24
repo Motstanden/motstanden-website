@@ -32,6 +32,10 @@ export interface EventEditorState {
 function createValidState(initialValue: EventEditorState): EventEditorState {
     let newValue = { ...initialValue };
     if(!isValidRichText(initialValue.description)){
+        console.group("Feil")
+        console.error("Klarte ikke tolke arrangementbeskrivelsen")
+        console.log(initialValue.description)
+        console.groupEnd()
         newValue.description = emptyRichText
     }
     return newValue;
@@ -44,7 +48,8 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
     };
 
     const navigate = useNavigate()
-    const [state, dispatch] = useReducer<Reducer<EventEditorState, Partial<EventEditorState>>>(reducer, createValidState(initialValue));
+    const validInitialState = useMemo( () => createValidState(initialValue), [])
+    const [state, dispatch] = useReducer<Reducer<EventEditorState, Partial<EventEditorState>>>(reducer, validInitialState);
 
     const serializeState = (): UpsertEventData => {
         const serializedEvent: UpsertEventData = {
