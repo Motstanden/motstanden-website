@@ -1,7 +1,7 @@
 import Divider from "@mui/material/Divider"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import postJson from "src/utils/postJson"
+import { postJson } from "src/utils/postJson"
 import SubmitFormButtons from "./SubmitButtons"
 
 export function Form( {
@@ -32,16 +32,17 @@ export function Form( {
             return;
         setIsSubmitting(true)        
 
-        let newValue = typeof value === "function" ? value() : value
-        let response = await postJson(postUrl, newValue)
-        if(response.ok){
+        const newValue = typeof value === "function" ? value() : value
+        const response = await postJson(postUrl, newValue, { alertOnFailure: true })
+
+        if(response && response.ok){
             onPostSuccess && await onPostSuccess(response)
-        }
-        else {
+        } 
+
+        if(response && !response.ok){
             onPostFailure && onPostFailure()
-            console.log(response)
-            window.alert("Noe gikk galt\nSi ifra til webansvarlig")
         }
+
         setIsSubmitting(false)
     } 
 

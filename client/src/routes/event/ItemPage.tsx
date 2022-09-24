@@ -12,7 +12,7 @@ import { ParticipationStatus } from "common/enums";
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
 import { TitleCard } from "src/components/TitleCard";
 import { useAuth } from "src/context/Authentication";
-import postJson from "src/utils/postJson";
+import { postJson } from "src/utils/postJson";
 import { serialize } from "src/components/TextEditor/HtmlSerialize";
 import { useTitle } from "src/hooks/useTitle";
 
@@ -137,17 +137,15 @@ function AttendingForm({eventId, queryKey, user}: {eventId: number, queryKey: an
     const changeHandler = async (e: any) => {
         setIsSubmitting(true)
         const newVal: UpsertParticipant = {eventId: eventId, participationStatus: e.target.value}
-        const response = await postJson("/api/event-participants/upsert", newVal )
-        if(!response.ok){
-            console.log(response)
-            window.alert("Noe gikk galt\nSi ifra til webansvarlig")
-            setIsSubmitting(false)
-        }
-        if(response.ok){
+        const response = await postJson("/api/event-participants/upsert", newVal, { alertOnFailure: true } )
+        
+        if(response && response.ok){
             queryClient.invalidateQueries(queryKey)
             setTimeout(() => {
                 setIsSubmitting(false)
             }, (700));
+        } else {
+            setIsSubmitting(false)
         }
     }
     

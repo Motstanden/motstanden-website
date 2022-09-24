@@ -4,7 +4,7 @@ import {Link as RouterLink, useOutletContext, useParams } from "react-router-dom
 import Link from "@mui/material/Link" 
 import { EventData } from "common/interfaces"
 import { useTitle } from "src/hooks/useTitle"
-import postJson from "src/utils/postJson"
+import { postJson } from "src/utils/postJson"
 import { buildEventItemUrl } from "./Context"
 import { KeyInfo } from "./components/KeyInfo"
 import { ItemMenu } from "./components/ItemMenu"
@@ -52,11 +52,12 @@ function EventItem( {event}: {event: EventData} ) {
 }
 
 export async function deleteEvent(event: EventData) {
-    if(window.confirm(`Vil du permanent slette:\n«${event.title}»`)) {
-        const response = await postJson("/api/events/delete", {eventId: event.eventId})
-        if(!response.ok){
-            console.log(response)
-            window.alert("Noe gikk galt\nSi ifra til webansvarlig")
+    const response = await postJson(
+        "/api/events/delete", 
+        {eventId: event.eventId}, 
+        {
+            confirmText: `Vil du permanent slette:\n«${event.title}»`,
+            alertOnFailure: true
         }
-    }
+    )
 }
