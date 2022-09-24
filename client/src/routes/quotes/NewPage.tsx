@@ -8,7 +8,7 @@ import { NewQuote } from "common/interfaces";
 import { useTitle } from "src/hooks/useTitle";
 
 export function NewQuotePage() {
-    useTitle("Nytt sitat")
+    useTitle("Nytt sitat*")
     return (
         <>
             <h1>Nytt sitat</h1>

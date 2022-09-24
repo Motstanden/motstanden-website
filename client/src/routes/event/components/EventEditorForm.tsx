@@ -20,6 +20,7 @@ import { Form } from "src/components/form/Form"
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace"
 import { isValidRichText } from "common/richTextSchema"
 import { emptyRichText } from "src/components/TextEditor/Assets"
+import { useTitle } from "src/hooks/useTitle"
 
 export interface EventEditorState {
     title: string
@@ -50,6 +51,8 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
     const navigate = useNavigate()
     const validInitialState = useMemo( () => createValidState(initialValue), [])
     const [state, dispatch] = useReducer<Reducer<EventEditorState, Partial<EventEditorState>>>(reducer, validInitialState);
+
+    useTitle(`${isNullOrWhitespace(state.title) ? "Ingen tittel" : state.title}*`)
 
     const serializeState = (): UpsertEventData => {
         const serializedEvent: UpsertEventData = {

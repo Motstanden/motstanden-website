@@ -8,5 +8,5 @@ export function useTitle(title: string | undefined): void{
         else {
             document.title = "Motstanden"
         }
-    }, [])
+    }, [title])
 }

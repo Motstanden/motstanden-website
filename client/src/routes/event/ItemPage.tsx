@@ -14,9 +14,11 @@ import { TitleCard } from "src/components/TitleCard";
 import { useAuth } from "src/context/Authentication";
 import postJson from "src/utils/postJson";
 import { serialize } from "src/components/TextEditor/HtmlSerialize";
+import { useTitle } from "src/hooks/useTitle";
 
 export function ItemPage() {
     const event = useOutletContext<EventData>();
+    useTitle(event.title)
     return (
         <div style={{maxWidth: "900px"}}>
 

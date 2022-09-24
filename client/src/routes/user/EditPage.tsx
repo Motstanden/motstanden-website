@@ -21,8 +21,6 @@ export function EditUserPage () {
     const currentUser = useAuth().user!
     const viewedUser = useOutletContext<User>()
 
-    useTitle(`Rediger: ${viewedUser.firstName}`)
-
     const isSelfEditing = currentUser.userId === viewedUser.userId
     const isSuperAdmin = hasGroupAccess(currentUser, UserGroup.SuperAdministrator)
     const isAdmin = hasGroupAccess(currentUser, UserGroup.Administrator)
@@ -51,8 +49,10 @@ export function EditUserPage () {
 function EditPage( { editMode, user }: { editMode: UserEditMode, user: User}) {
     const [newUser, setNewUser] = useState<User>(user)
     const [disableSubmit, setDisableSubmit] = useState(false)
+    
+    useTitle(user.firstName + `${isUserEqual(user, newUser) ? "" : "*"}`)
     const navigate = useNavigate()
-
+    
     const onChange = (user: User) => setNewUser(user);
     const onIsValidChange = (isValid: boolean) => setDisableSubmit(!isValid)
 
