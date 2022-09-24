@@ -3,7 +3,6 @@ import { useOutletContext } from "react-router-dom";
 import { EventData } from "common/interfaces";
 import { EventEditorForm, EventEditorState } from "./components/EventEditorForm";
 import dayjs from "dayjs";
-import { deserialize } from "src/components/TextEditor/HtmlSerialize";
 
 
 export function EditEventPage() {
@@ -13,7 +12,7 @@ export function EditEventPage() {
         startTime: dayjs(event.startDateTime),
         endTime: event.endDateTime ? dayjs(event.endDateTime) : null,
         keyInfo: event.keyInfo,
-        description: deserialize(event.description)
+        description: event.description
     }
     return (
         <div style={{maxWidth: "900px"}}>

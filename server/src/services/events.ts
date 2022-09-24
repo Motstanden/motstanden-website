@@ -1,4 +1,5 @@
 import Database from "better-sqlite3";
+import { isValidRichText } from "common/richTextSchema";
 import { NewEventData, EventData, UpsertEventData } from "common/interfaces";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
 import domPurify from "../lib/DOMPurify";
@@ -12,7 +13,7 @@ const allEventColumns = `
     start_date_time as startDateTime,
     end_date_time as endDateTime,
     key_info as keyInfo,
-    description,
+    description_json as description,
 
     created_by_user_id as createdByUserId,
     created_by_full_name as createdByName,
@@ -40,7 +41,7 @@ export function getEvent(eventId: number): EventData {
     if(!dbResult)
         throw "Bad data"
     
-    const event: EventData = {...dbResult, keyInfo: JSON.parse(dbResult.keyInfo)}
+    const event: EventData = {...dbResult, keyInfo: JSON.parse(dbResult.keyInfo), description: JSON.parse(dbResult.description)}
     
     return event
 }
@@ -73,7 +74,8 @@ export function getEvents( {
         try {
             return {
                 ...item,
-                keyInfo: JSON.parse(item.keyInfo)
+                keyInfo: JSON.parse(item.keyInfo),
+                description: JSON.parse(item.description)
             }
         } catch { 
             // This should never happen. 
@@ -110,13 +112,14 @@ function createValidEvent(event: NewEventData): NewEventData | undefined {
         stringIsNullOrWhiteSpace(event.startDateTime)                               ||
         (stringIsNullOrWhiteSpace(event.endDateTime) && event.endDateTime !== null) ||
         !isValidExtraInfo                                                           ||
-        stringIsNullOrWhiteSpace(event.description)
+        stringIsNullOrWhiteSpace(event.descriptionHtml)                             ||
+        !isValidRichText(event.description)
     ) {
         return undefined
     }
 
     // THIS STEP IS SUPER IMPORTANT!!! It prevents xss attacks
-    const sanitizedHtml = domPurify.sanitize(event.description, { USE_PROFILES: { html: true } })
+    const sanitizedHtml = domPurify.sanitize(event.descriptionHtml, { USE_PROFILES: { html: true } })
 
     if(stringIsNullOrWhiteSpace(sanitizedHtml))
         return undefined
@@ -126,7 +129,8 @@ function createValidEvent(event: NewEventData): NewEventData | undefined {
         startDateTime: event.startDateTime.trim(),
         endDateTime: event.endDateTime?.trim() ?? null,
         keyInfo: event.keyInfo,
-        description: sanitizedHtml.trim()
+        description: event.description,
+        descriptionHtml: sanitizedHtml.trim()
     }
     return newEvent
 }
@@ -167,7 +171,8 @@ function buildUpsertSql(
         validEvent.startDateTime,
         validEvent.endDateTime,
         JSON.stringify(validEvent.keyInfo),
-        validEvent.description,
+        JSON.stringify(validEvent.description),
+        validEvent.descriptionHtml,
         modifiedBy,
     ]
 
@@ -183,7 +188,8 @@ function buildUpsertSql(
                     start_date_time = ?,
                     end_date_time = ?,
                     key_info = ?,
-                    description = ?,
+                    description_json = ?,
+                    description_html = ?,
                     updated_by = ?
                 WHERE 
                     event_id = ?;
@@ -195,7 +201,7 @@ function buildUpsertSql(
     return {
         stmt: 
             `INSERT INTO 
-                event(title, start_date_time, end_date_time, key_info, description, created_by, updated_by)
+                event(title, start_date_time, end_date_time, key_info, description_json, description_html, created_by, updated_by)
             VALUES
                 (?, ?, ?, ?, ?, ?, ?);`,
         args: [ ...commonArgs, modifiedBy ]

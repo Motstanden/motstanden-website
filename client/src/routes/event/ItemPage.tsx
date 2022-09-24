@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Divider, Link, Paper, Stack, Avatar, TextField, MenuItem } from "@mui/material";
 import { useOutletContext } from "react-router-dom";
 import { EventData, Participant, ParticipationList, UpsertParticipant } from "common/interfaces";
-import DOMPurify from "dompurify";
 import { ItemMenu } from "./components/ItemMenu";
 import dayjs from "dayjs";
 import { KeyInfo } from "./components/KeyInfo";
@@ -14,6 +13,7 @@ import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
 import { TitleCard } from "src/components/TitleCard";
 import { useAuth } from "src/context/Authentication";
 import postJson from "src/utils/postJson";
+import { serialize } from "src/components/TextEditor/HtmlSerialize";
 
 export function ItemPage() {
     const event = useOutletContext<EventData>();
@@ -43,7 +43,7 @@ export function ItemPage() {
                         marginBottom: "30px"
                     }}
                 />
-                <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(event.description) }} />
+                <div dangerouslySetInnerHTML={{ __html: serialize(event.description) }} />
             </Paper>
             <Divider sx={{my: 4}}/>
             <ParticipationContainer eventId={event.eventId}/>

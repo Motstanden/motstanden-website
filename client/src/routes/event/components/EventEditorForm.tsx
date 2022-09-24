@@ -18,6 +18,8 @@ import { useNavigate } from "react-router-dom"
 import { serialize } from "src/components/TextEditor/HtmlSerialize"
 import { Form } from "src/components/form/Form"
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace"
+import { isValidRichText } from "common/richTextSchema"
+import { emptyRichText } from "src/components/TextEditor/Assets"
 
 export interface EventEditorState {
     title: string
@@ -27,14 +29,22 @@ export interface EventEditorState {
     description: Descendant[]
 }
 
+function createValidState(initialValue: EventEditorState): EventEditorState {
+    let newValue = { ...initialValue };
+    if(!isValidRichText(initialValue.description)){
+        newValue.description = emptyRichText
+    }
+    return newValue;
+}
+
 export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { backUrl: string; postUrl: string; initialValue: EventEditorState; eventId?: number; }) {
 
     const reducer = (state: EventEditorState, newVal: Partial<EventEditorState>): EventEditorState => {
         return { ...state, ...newVal };
     };
 
-    const navigate = useNavigate();
-    const [state, dispatch] = useReducer<Reducer<EventEditorState, Partial<EventEditorState>>>(reducer, initialValue);
+    const navigate = useNavigate()
+    const [state, dispatch] = useReducer<Reducer<EventEditorState, Partial<EventEditorState>>>(reducer, createValidState(initialValue));
 
     const serializeState = (): UpsertEventData => {
         const serializedEvent: UpsertEventData = {
@@ -43,7 +53,8 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
             startDateTime: state.startTime!.format("YYYY-MM-DD HH:mm:00"),
             endDateTime: state.endTime?.format("YYYY-MM-DD HH:mm:00") ?? null,
             keyInfo: state.keyInfo,
-            description: serialize(state.description)
+            description: state.description,
+            descriptionHtml: serialize(state.description)
         };
         return serializedEvent;
     };
