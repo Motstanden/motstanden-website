@@ -8,7 +8,6 @@ import { useTitle } from "src/hooks/useTitle";
 
 export function LicensePage() {
     useTitle("Lisens")
-    useEffect(() => window.scrollTo(0, 0), [])
     return (
         <PageContainer>
             <div style={{maxWidth: "600px", marginInline: "auto"}}>
@@ -22,7 +21,6 @@ export function LicensePage() {
 
 export function LicenseOnlyPage(){
     useTitle("Måkesodd")
-    useEffect(() => window.scrollTo(0, 0), [])
     return (
         <PageContainer>
             <div style={{maxWidth: "600px", marginInline: "auto"}}>

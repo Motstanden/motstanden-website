@@ -21,7 +21,7 @@ export function SongListPage( {mode}: {mode?: "repertoire"}){
                             key={song.url} 
                             to={`/notearkiv/${mode === "repertoire" ? "repertoar" : "alle"}/${song.url}`} 
                             text={song.title}
-                            reloadDocument/> 
+                            /> 
                     ))
                 }
             </UrlList>

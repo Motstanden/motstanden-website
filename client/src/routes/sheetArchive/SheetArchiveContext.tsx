@@ -50,7 +50,7 @@ function PageContainer({ children }: {children?: React.ReactNode}) {
         <TabbedPageContainer 
             tabItems={[
                 {to: "/notearkiv/repertoar",    label: "Repertoar"},
-                {to: "/notearkiv/alle",        label: "Alle"},
+                {to: "/notearkiv/alle",         label: "Alle"},
             ]}
         >
             {children}
