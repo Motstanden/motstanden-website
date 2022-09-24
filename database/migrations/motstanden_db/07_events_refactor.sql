@@ -1,6 +1,6 @@
 -- Insert current version into the DB.
 INSERT INTO version(migration) VALUES
-    ('07_events.sql');
+    ('07_events_refactor.sql');
  
 
 ALTER TABLE event
