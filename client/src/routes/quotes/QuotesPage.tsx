@@ -5,6 +5,9 @@ import dayjs from "dayjs"
 import { useOutletContext } from "react-router-dom"
 import Stack from "@mui/material/Stack"
 import { EditOrDeleteMenu } from "src/components/menu/EditOrDeleteMenu"
+import { useAuth } from "src/context/Authentication"
+import { hasGroupAccess } from "common/utils"
+import { UserGroup } from "common/enums"
 
 export default function QuotesPage(){
     useTitle("Sitater")
@@ -48,6 +51,9 @@ function QuoteItem( {quoteData}: {quoteData: QuoteData}){
         setIsHighlighted(false)
     }
 
+    const user = useAuth().user!
+    const hasEditPrivilege = user.userId === quoteData.userId || hasGroupAccess(user, UserGroup.Administrator) 
+
     return ( 
         <li style={{ marginBottom: "25px", maxWidth: "700px"}}>
             <Stack 
@@ -70,14 +76,16 @@ function QuoteItem( {quoteData}: {quoteData: QuoteData}){
                     – {`${quoteData.utterer}, ${dayjs(quoteData.createdAt).utc(true).local().format("D MMMM YYYY")}`}
                     </span>
                 </div>
-                <div>
-                    <ItemMenu 
-                        quoteData={quoteData} 
-                        onMouseEnter={onMouseEnter} 
-                        onMouseLeave={onMouseLeave} 
-                        onMenuOpen={onMenuOpen} 
-                        onMenuClose={onMenuClose}/>
-                </div>
+                {hasEditPrivilege && (
+                    <div>
+                        <ItemMenu 
+                            quoteData={quoteData} 
+                            onMouseEnter={onMouseEnter} 
+                            onMouseLeave={onMouseLeave} 
+                            onMenuOpen={onMenuOpen} 
+                            onMenuClose={onMenuClose}/>
+                    </div>
+                )}
             </Stack>
         </li>
     )
@@ -113,7 +121,7 @@ function ItemMenu( {
                 onMouseEnter={onMouseEnter} 
                 onMenuOpen={onMenuOpen}
                 onMenuClose={onMenuClose}
-            />
+                />
         </div>
     )
 }
