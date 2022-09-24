@@ -128,8 +128,8 @@ function useEvent(): [EventEditorState, React.Dispatch<Partial<EventEditorState>
 }
 
 function EventEditor(){
-    const editor = useMemo(() => withHistory(withHistory(withReact(createEditor()))), [])        // Production
-    // const [editor] = useState(withHistory(withReact(createEditor())))                         // Development
+    const editor = useMemo(() => withReact(withHistory(createEditor())), [])        // Production
+    // const [editor] = useState(withReact(withHistory(createEditor())))            // Development
     const [ event, dispatch] = useEvent()
     const renderElement = useCallback( (props: RenderElementProps) => <Element {...props} />, [])
     const renderLeaf = useCallback( (props: RenderLeafProps) => <Leaf {...props}/>, [])
