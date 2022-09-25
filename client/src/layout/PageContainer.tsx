@@ -4,7 +4,8 @@ import { PageTab, PageTabItem } from "src/components/PageTab";
 import { useLocation } from "react-router-dom";
 import { matchUrl } from "src/utils/matchUrl";
 
-export const defaultPagePadding = "15Px 35px 150px 35px"
+const defaultPadding = "15Px 35px 150px 35px"
+const smallScreenPadding = "15px 15px 150px 15px"
 
 export function PageContainer({ 
     children, 
@@ -18,7 +19,11 @@ export function PageContainer({
     disableScrollToTop?: boolean
 }) {
     const theme = useTheme();
-    const padding = disableGutters ? { padding: "0px 0px" } : { padding: defaultPagePadding };
+    const isSmallScreen = useMediaQuery((_theme: Theme) => _theme.breakpoints.down('sm'));
+    
+    let padding = isSmallScreen ? smallScreenPadding : defaultPadding
+    if(disableGutters)
+        padding = "0px 0px"
 
     const location = useLocation();
     useEffect(() => {
@@ -33,7 +38,7 @@ export function PageContainer({
             marginInline: "auto",
             backgroundColor: theme.palette.background.paper,
             paddingBottom: "150px",
-            ...padding,
+            padding: padding,
             ...props
         }}>
             {children}
@@ -63,7 +68,7 @@ export function TabbedPageContainer( {
     return (
         <PageContainer disableGutters={isSmallScreen} disableScrollToTop={true}>
             <PageTab items={tabItems} matchChildPath={matchChildPath}/>
-            <div style={{padding: isSmallScreen ? defaultPagePadding : 0}}>
+            <div style={{padding: isSmallScreen ? smallScreenPadding : 0}}>
                 {children}
             </div>
         </PageContainer>
