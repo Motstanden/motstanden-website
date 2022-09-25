@@ -75,8 +75,12 @@ router.post("/quotes/delete",
     AuthenticateUser(),
     authenticatePermission,
     (req: Request, res: Response) => {
-        const quoteId: number = req.body.quoteId 
-        quoteService.deleteQuote(quoteId)
+        const quoteId: number = req.body.id
+        try {
+            quoteService.deleteQuote(quoteId)
+        } catch {
+            res.status(400).send("Bad data")
+        }
         res.end();
     }
 )
@@ -87,7 +91,7 @@ router.post("/quotes/delete",
 function authenticatePermission(req: Request, res: Response, next: NextFunction) {
     
     // Check if the posted quoteId is valid
-    let quoteId: number | unknown = req.body.quoteId
+    let quoteId: number | unknown = req.body.id
     if(!quoteId || typeof quoteId !== "number"){
         return res.status(400).send("Bad data")
     }

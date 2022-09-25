@@ -185,7 +185,7 @@ function ItemMenu( {
         onDeleting && onDeleting()
         const response = await postJson(
             "/api/quotes/delete", 
-            {quoteId: quoteData.id},
+            {id: quoteData.id},
             {
                 alertOnFailure: true,
                 confirmText: `Vil du permanent slette sitatet?`
