@@ -1,14 +1,15 @@
 import React from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Outlet } from "react-router-dom"
 import { TabbedPageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
 import { Quote as QuoteData } from "common/interfaces"
 
+const quotesQueryKey = ["FetchAllQuotes"]
 
 export function QuotesContext(){
     
-    const {isLoading, isError, data, error} = useQuery<QuoteData[]>(["FetchQuotes"], () => fetchAsync<QuoteData[]>("/api/quotes") )
+    const {isLoading, isError, data, error} = useQuery<QuoteData[]>(quotesQueryKey, () => fetchAsync<QuoteData[]>("/api/quotes") )
     
     if (isLoading) {
         return <PageContainer/>
@@ -36,4 +37,14 @@ function PageContainer({ children }: {children?: React.ReactNode}) {
             {children}
         </TabbedPageContainer>
     )
+}
+
+export function useContextInvalidator(){
+    const queryClient = useQueryClient()
+
+    const invalidateQuery = () => {
+        queryClient.invalidateQueries(quotesQueryKey)
+    }
+    
+    return invalidateQuery
 }
