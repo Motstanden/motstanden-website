@@ -107,7 +107,7 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
 
     return (
         <Form
-            value={serializeState}
+            value={() => serializeState()}
             postUrl={postUrl}
             onAbortClick={e => navigate(backUrl)}
             onPostSuccess={onPostSuccess}
