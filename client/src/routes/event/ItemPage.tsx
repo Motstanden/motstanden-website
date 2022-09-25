@@ -159,7 +159,7 @@ function AttendingForm({eventId, queryKey, user}: {eventId: number, queryKey: an
                     style={{width: "100%"}}
                     onChange={changeHandler}
                     disabled={isSubmitting}
-                    helperText={attendingStatus === ParticipationStatus.Unknown ? "Jeg vet ikke ennå..." : `Jeg ${attendingStatus.toLowerCase()} på arrangementet...`}
+                    helperText={attendingStatus === ParticipationStatus.Unknown ? "Jeg vil ikke svare..." : `Jeg ${attendingStatus.toLowerCase()} på arrangementet...`}
                     FormHelperTextProps={{style: {opacity: 0.7}}}
                     >
                     <MenuItem value={ParticipationStatus.Unknown}>——————</MenuItem>   
