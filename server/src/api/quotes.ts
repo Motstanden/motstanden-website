@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import Database from "better-sqlite3";
 import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "../config/databaseConfig.js";
 import passport from "passport";
@@ -7,6 +7,8 @@ import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import * as quoteService from "../services/quotes"
 import { NewQuote } from "common/interfaces";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
+import { hasGroupAccess } from "../utils/accessTokenUtils";
+import { UserGroup } from "common/enums";
 
 let router = express.Router()
 
@@ -66,6 +68,36 @@ router.post("/insert_quote",
             res.status(400).send("Bad data")  
         }
         res.end();
-    })
+    }
+)
 
-    export default router
+router.post("/quotes/delete", 
+    AuthenticateUser(),
+    (req: Request, res: Response, next: NextFunction) => {
+    
+        // Check if the posted quoteId is valid
+        const quoteId: number | unknown = req.body.quoteId
+        if(!quoteId || typeof quoteId !== "number"){
+            return res.status(400).send("Bad data")
+        }
+        let quote
+        try {
+            quote = quoteService.getQuote(quoteId) 
+        } catch {
+            return res.status(400).send("bad data")
+        }
+        
+        // Delete the quote if the user is admin, or if the user is the original author of the quote
+        const user = req.user as AccessTokenData
+        const isAdmin = hasGroupAccess(user, UserGroup.Administrator)
+        const isEventAuthor = quote.userId === user.userId
+        if(isAdmin || isEventAuthor){
+            quoteService.deleteQuote(quoteId)
+            return res.end()
+        }
+        
+        res.status(401).send("Unauthorized")
+    }
+)
+
+export default router

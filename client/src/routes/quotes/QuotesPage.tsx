@@ -8,6 +8,7 @@ import { EditOrDeleteMenu } from "src/components/menu/EditOrDeleteMenu"
 import { useAuth } from "src/context/Authentication"
 import { hasGroupAccess } from "common/utils"
 import { UserGroup } from "common/enums"
+import { postJson } from "src/utils/postJson"
 
 export default function QuotesPage(){
     useTitle("Sitater")
@@ -109,8 +110,15 @@ function ItemMenu( {
         // #TODO
     }
 
-    const onDeleteClick = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-        // #TODO
+    const onDeleteClick = async (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+        const response = await postJson(
+            "/api/quotes/delete", 
+            {quoteId: quoteData.id},
+            {
+                alertOnFailure: true,
+                confirmText: `Vil du permanent slette sitatet?`
+            }
+        )
     }
 
     return (

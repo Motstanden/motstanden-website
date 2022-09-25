@@ -3,6 +3,29 @@ import { NewQuote, Quote } from "common/interfaces";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
 import { stringIsNullOrWhiteSpace } from "../utils/stringUtils";
 
+export function getQuote(quoteId: number): Quote{
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(`
+        SELECT 
+            quote_id as id, 
+            utterer, 
+            quote,
+            user_id as userId,
+            created_at as createdAt,
+            updated_at as updatedAt 
+        FROM 
+            quote 
+        WHERE quote_id = ?
+    `)
+    const quote: Quote | undefined = stmt.get(quoteId)
+    db.close()
+
+    if(!quote)
+        throw "Bad data"
+
+    return quote
+}
+
 export function getQuotes(limit?: number): Quote[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
@@ -35,4 +58,18 @@ export function insertQuote(quote: NewQuote, userId: number) {
         `)    
         stmt.run(quote.utterer, quote.quote, userId)
         db.close();
+}
+
+export function deleteQuote(quoteId: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const startTransaction = db.transaction( () => {
+        const stmt = db.prepare(`
+            DELETE FROM 
+                quote
+            WHERE quote_id = ?;`
+        )
+        stmt.run(quoteId)
+    })
+    startTransaction()
+    db.close()   
 }
