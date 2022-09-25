@@ -10,6 +10,7 @@ export function EditOrDeleteMenu({
     onEditClick, 
     onDeleteClick, 
     iconOrientation,
+    disabled,
     onMouseEnter,
     onMouseLeave,
     onMenuOpen,
@@ -18,6 +19,7 @@ export function EditOrDeleteMenu({
     onEditClick: React.MouseEventHandler<HTMLLIElement>,
     onDeleteClick: React.MouseEventHandler<HTMLLIElement>,
     iconOrientation?: "horizontal" | "vertical",
+    disabled?: boolean,
     onMouseEnter?: React.MouseEventHandler<HTMLButtonElement> | undefined,
     onMouseLeave?: React.MouseEventHandler<HTMLButtonElement> | undefined,
     onMenuOpen?: VoidFunction,
@@ -30,6 +32,7 @@ export function EditOrDeleteMenu({
             onMouseLeave={onMouseLeave}
             onMenuOpen={onMenuOpen}
             onMenuClose={onMenuClose}
+            disabled={disabled}
         >
             <MenuItem style={{ minHeight: "50px", minWidth: "180px" }} divider={true} onClick={onEditClick} >
                 <ListItemIcon>

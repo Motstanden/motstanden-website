@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 export function IconPopupMenu({
     children, 
     icon,
+    disabled,
     onMouseEnter,
     onMouseLeave,
     onMenuOpen,
@@ -13,6 +14,7 @@ export function IconPopupMenu({
 }: {
     children: React.ReactNode, 
     icon: React.ReactNode,
+    disabled?: boolean,
     onMouseEnter?: React.MouseEventHandler<HTMLButtonElement>,
     onMouseLeave?: React.MouseEventHandler<HTMLButtonElement>,
     onMenuOpen?: VoidFunction,
@@ -35,6 +37,7 @@ export function IconPopupMenu({
                 <IconButton 
                     ref={anchorEl} 
                     onClick={() => setIsOpen( prevValue => !prevValue)} 
+                    disabled={disabled}
                     onMouseEnter={onMouseEnter}
                     onMouseLeave={onMouseLeave}
                     >
@@ -44,7 +47,7 @@ export function IconPopupMenu({
             <Menu 
                 style={{margin: 0, padding: 0}}
                 anchorEl={anchorEl.current}
-                open={isOpen}
+                open={!disabled && isOpen}
                 onClose={() => setIsOpen(false)}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
