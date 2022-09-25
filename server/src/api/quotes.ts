@@ -73,31 +73,40 @@ router.post("/insert_quote",
 
 router.post("/quotes/delete", 
     AuthenticateUser(),
-    (req: Request, res: Response, next: NextFunction) => {
-    
-        // Check if the posted quoteId is valid
-        const quoteId: number | unknown = req.body.quoteId
-        if(!quoteId || typeof quoteId !== "number"){
-            return res.status(400).send("Bad data")
-        }
-        let quote
-        try {
-            quote = quoteService.getQuote(quoteId) 
-        } catch {
-            return res.status(400).send("bad data")
-        }
-        
-        // Delete the quote if the user is admin, or if the user is the original author of the quote
-        const user = req.user as AccessTokenData
-        const isAdmin = hasGroupAccess(user, UserGroup.Administrator)
-        const isEventAuthor = quote.userId === user.userId
-        if(isAdmin || isEventAuthor){
-            quoteService.deleteQuote(quoteId)
-            return res.end()
-        }
-        
-        res.status(401).send("Unauthorized")
+    authenticatePermission,
+    (req: Request, res: Response) => {
+        const quoteId: number = req.body.quoteId 
+        quoteService.deleteQuote(quoteId)
+        res.end();
     }
 )
+
+// Check if:
+//  1. Quote exists.
+//  2. The user is admin or is the author of the quote
+function authenticatePermission(req: Request, res: Response, next: NextFunction) {
+    
+    // Check if the posted quoteId is valid
+    let quoteId: number | unknown = req.body.quoteId
+    if(!quoteId || typeof quoteId !== "number"){
+        return res.status(400).send("Bad data")
+    }
+    let quote
+    try {
+        quote = quoteService.getQuote(quoteId) 
+    } catch {
+        return res.status(400).send("bad data")
+    }
+    
+    // Allow quote to be modified if the user is admin or is original author
+    const user = req.user as AccessTokenData
+    const isAdmin = hasGroupAccess(user, UserGroup.Administrator)
+    const isEventAuthor = quote.userId === user.userId
+    if(isAdmin || isEventAuthor) {
+        next()
+    } else {
+        res.status(401).send("Unauthorized")
+    }
+}
 
 export default router
