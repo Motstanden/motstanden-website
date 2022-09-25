@@ -6,6 +6,9 @@ import SendIcon from '@mui/icons-material/Send';
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
 import { NewQuote } from "common/interfaces";
 import { useTitle } from "src/hooks/useTitle";
+import { postJson } from "src/utils/postJson";
+import { useNavigate } from "react-router-dom";
+import { useContextInvalidator } from "./Context";
 
 export function NewQuotePage() {
     useTitle("Nytt sitat*")
@@ -18,29 +21,45 @@ export function NewQuotePage() {
 }
 
 function NewQuoteForm(){
-    const [utterer, setUtterer] = useState("");
-    const [quote, setQuote] = useState("")
+    const [newQuote, setNewQuote] = useState<NewQuote>({quote: "", utterer: ""})
     const [isSubmitting, setIsSubmitting] = useState(false)
-
+    const navigate = useNavigate() 
+    const contextInvalidator = useContextInvalidator()
     const onSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
         setIsSubmitting(true)
         const data: NewQuote = {
-            utterer: utterer.trim(),
-            quote: quote.trim()
+            utterer: newQuote.utterer.trim(),
+            quote: newQuote.quote.trim()
         }
-        let response = await fetch("/api/insert_quote", {
-            method: "POST", 
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })  
-        window.location.href = `${window.location.origin}/sitater`
+
+        const response = await postJson("/api/insert_quote", data, { alertOnFailure: true })
+        if(response?.ok){
+            contextInvalidator()
+            navigate("/sitater")
+        }
     }
 
     return (
         <form onSubmit={onSubmit}>
+            <UpsertQuoteInputs quoteData={newQuote} onChange={newVal => setNewQuote(newVal)}/>
+            <Button 
+                variant="contained" 
+                size="large"
+                type="submit"
+                sx={{mt: 4}}
+                disabled={isSubmitting || isNullOrWhitespace(newQuote.utterer) || isNullOrWhitespace(newQuote.quote)}
+                endIcon={<SendIcon/>} >
+                Legg inn sitat
+            </Button>
+        </form>
+    )
+}
+
+export function UpsertQuoteInputs( {quoteData, onChange}: {quoteData: NewQuote, onChange: (newVal: NewQuote) => void}) {
+
+    return (
+        <>
             <TextField 
                 label="Sitat"
                 name="quote"
@@ -48,13 +67,12 @@ function NewQuoteForm(){
                 required 
                 fullWidth
                 autoComplete="off"
-                value={quote}
-                onChange={(event) => setQuote(event.target.value)}
+                value={quoteData.quote}
+                onChange={(e) => onChange({...quoteData, quote: e.target.value})}
                 multiline
                 minRows={4}
+                sx={{mb: 4}}
                 />
-            <br/>
-            <br/>
             <TextField 
                 label="Sitatytrer" 
                 name="utterer"
@@ -62,19 +80,10 @@ function NewQuoteForm(){
                 required 
                 fullWidth 
                 autoComplete="off"
-                value={utterer}
-                onChange={(event) => setUtterer(event.target.value)}
+                value={quoteData.utterer}
+                onChange={(e) => onChange({...quoteData, utterer: e.target.value})}
                 sx={{maxWidth: "600px"}}/>
-            <br/>
-            <br/>
-            <Button 
-                variant="contained" 
-                size="large"
-                type="submit"
-                disabled={isSubmitting || isNullOrWhitespace(utterer) || isNullOrWhitespace(quote)}
-                endIcon={<SendIcon/>} >
-                Legg inn sitat
-            </Button>
-        </form>
+        </>
+
     )
 }
