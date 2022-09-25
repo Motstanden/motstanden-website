@@ -9,6 +9,10 @@ import { useAuth } from "src/context/Authentication"
 import { hasGroupAccess } from "common/utils"
 import { UserGroup } from "common/enums"
 import { postJson } from "src/utils/postJson"
+import Divider from "@mui/material/Divider"
+import { Form } from "src/components/form/Form"
+import { UpsertQuoteInputs } from "./NewPage"
+import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace"
 
 export default function QuotesPage(){
     useTitle("Sitater")
@@ -33,6 +37,19 @@ export function QuoteList( {quotes}: {quotes: QuoteData[] } ){
 }
 
 function QuoteItem( {quoteData}: {quoteData: QuoteData}){
+    const [isEditing, setIsEditing] = useState(false)
+
+    const onEditClick = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => setIsEditing(true)
+    const onEditComplete = () => setIsEditing(false)
+
+    if(isEditing) {
+        return <EditableQuoteItem quoteData={quoteData} onEditComplete={onEditComplete}/>
+    }
+
+    return <ReadOnlyQuoteItem quoteData={quoteData} onEditClick={onEditClick}/>
+}
+
+function ReadOnlyQuoteItem( {quoteData, onEditClick}: {quoteData: QuoteData, onEditClick: React.MouseEventHandler<HTMLLIElement>}){
 
     const [isHighlighted, setIsHighlighted] = useState(false)
     const [isDisabled, setIsDisabled] = useState(false)
@@ -96,6 +113,7 @@ function QuoteItem( {quoteData}: {quoteData: QuoteData}){
                             disabled={isDisabled}
                             onDeleting={onDeleting}
                             onDeleteFailure={onDeleteFailure}
+                            onEditClick={onEditClick}
                             onMouseEnter={onMouseEnter} 
                             onMouseLeave={onMouseLeave} 
                             onMenuOpen={onMenuOpen} 
@@ -107,8 +125,10 @@ function QuoteItem( {quoteData}: {quoteData: QuoteData}){
     )
 }   
 
+
 function ItemMenu( {
     quoteData,
+    onEditClick,
     onMouseEnter,
     onMouseLeave,
     onMenuOpen,
@@ -118,6 +138,7 @@ function ItemMenu( {
     disabled
 }: {
     quoteData: QuoteData,
+    onEditClick: React.MouseEventHandler<HTMLLIElement>,
     onMouseEnter?: React.MouseEventHandler<HTMLButtonElement> | undefined,
     onMouseLeave?: React.MouseEventHandler<HTMLDivElement> | undefined,
     onMenuOpen?: VoidFunction,
@@ -126,10 +147,6 @@ function ItemMenu( {
     onDeleteFailure?: VoidFunction,
     disabled?: boolean
 }){
-
-    const onEditClick = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-        // #TODO
-    }
 
     const onDeleteClick = async (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
         onDeleting && onDeleting()
@@ -163,4 +180,34 @@ function ItemMenu( {
 function NewlineText({ text }: {text: string}) {
     const newText = text.split('\n').map( (str, i) => <p key={i} style={{margin: 0}}>{str}</p>);
     return <span>{newText}</span>
+}
+
+
+function EditableQuoteItem( {quoteData, onEditComplete}: {quoteData: QuoteData, onEditComplete: VoidFunction}){
+
+    const [newData, setNewData] = useState(quoteData)
+
+    const validateData = () => {
+        const isEmpty = isNullOrWhitespace(newData.quote) || isNullOrWhitespace(newData.utterer)
+        const isEqual = newData.quote.trim() === quoteData.quote.trim() && newData.utterer.trim() === quoteData.utterer.trim()
+        return !isEmpty && !isEqual 
+    }
+
+    const disabled = !validateData()
+    return ( 
+        <li>
+            <Divider sx={{mb: 4}}/>
+            <Form 
+                value={newData}  
+                postUrl={"/api/quotes/update"}
+                disabled={disabled}
+                onAbortClick={() => onEditComplete()}
+                onPostSuccess={() => onEditComplete()}
+                >
+                <div style={{marginBottom: "-2em"}}>
+                    <UpsertQuoteInputs quoteData={newData} onChange={(newVal) => setNewData({...quoteData, ...newVal})}/>
+                </div>
+            </Form>
+        </li>
+    )
 }
