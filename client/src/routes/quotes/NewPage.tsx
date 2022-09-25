@@ -41,7 +41,7 @@ function NewQuoteForm(){
     }
 
     return (
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} style={{maxWidth: "600px"}}>
             <UpsertQuoteInputs quoteData={newQuote} onChange={newVal => setNewQuote(newVal)}/>
             <Button 
                 variant="contained" 
@@ -56,33 +56,45 @@ function NewQuoteForm(){
     )
 }
 
-export function UpsertQuoteInputs( {quoteData, onChange}: {quoteData: NewQuote, onChange: (newVal: NewQuote) => void}) {
+export function UpsertQuoteInputs( {
+    quoteData, 
+    onChange,
+    size 
+}: {
+    quoteData: NewQuote, 
+    onChange: (newVal: NewQuote) => void
+    size?: "small" | "normal"
+}) {
 
     return (
         <>
-            <TextField 
-                label="Sitat"
-                name="quote"
-                type="text"
-                required 
-                fullWidth
-                autoComplete="off"
-                value={quoteData.quote}
-                onChange={(e) => onChange({...quoteData, quote: e.target.value})}
-                multiline
-                minRows={4}
-                sx={{mb: 4}}
-                />
-            <TextField 
-                label="Sitatytrer" 
-                name="utterer"
-                type="text"
-                required 
-                fullWidth 
-                autoComplete="off"
-                value={quoteData.utterer}
-                onChange={(e) => onChange({...quoteData, utterer: e.target.value})}
-                sx={{maxWidth: "600px"}}/>
+            <div>
+                <TextField 
+                    label="Sitat"
+                    name="quote"
+                    type="text"
+                    required 
+                    fullWidth
+                    autoComplete="off"
+                    value={quoteData.quote}
+                    onChange={(e) => onChange({...quoteData, quote: e.target.value})}
+                    multiline
+                    minRows={size === "small" ? 2 : 4}
+                    sx={{mb: 4}}
+                    />
+            </div>
+            <div>
+                <TextField 
+                    label="Sitatytrer" 
+                    name="utterer"
+                    type="text"
+                    required 
+                    fullWidth 
+                    autoComplete="off"
+                    value={quoteData.utterer}
+                    onChange={(e) => onChange({...quoteData, utterer: e.target.value})}
+                    sx={{maxWidth:  "450px"}}/>
+            </div>
         </>
 
     )

@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useTitle } from "../../hooks/useTitle"
-import { Quote as QuoteData } from "common/interfaces"
+import { NewQuote, Quote as QuoteData } from "common/interfaces"
 import dayjs from "dayjs"
 import { useOutletContext } from "react-router-dom"
 import Stack from "@mui/material/Stack"
@@ -96,15 +96,22 @@ function ReadOnlyQuoteItem( {quoteData, onEditClick}: {quoteData: QuoteData, onE
                 >
                 <div style={{marginBlock: "10px"}}>
                     <NewlineText text={quoteData.quote}/>
-                    <span style={{
+                    <div style={{
                         marginLeft: "20px", 
-                        marginTop: 0, 
+                        marginTop: "2px", 
                         opacity: 0.6, 
                         fontSize: "small", 
-                        fontWeight: "bold"
+                        fontWeight: "bold",
+                        display: "flex",
+                        gap: "1ch"
                     }}>
-                    – {`${quoteData.utterer}, ${dayjs(quoteData.createdAt).utc(true).local().format("D MMMM YYYY")}`}
-                    </span>
+                        <div>
+                            –
+                        </div>
+                        <div>
+                            {`${quoteData.utterer}, ${dayjs(quoteData.createdAt).utc(true).local().format("D MMMM YYYY")}`}
+                        </div>
+                    </div>
                 </div>
                 {hasEditPrivilege && (
                     <div>
@@ -187,6 +194,8 @@ function EditableQuoteItem( {quoteData, onEditComplete}: {quoteData: QuoteData, 
 
     const [newData, setNewData] = useState(quoteData)
 
+    const onChange = (newVal: NewQuote) => setNewData({...quoteData, ...newVal})
+
     const validateData = () => {
         const isEmpty = isNullOrWhitespace(newData.quote) || isNullOrWhitespace(newData.utterer)
         const isEqual = newData.quote.trim() === quoteData.quote.trim() && newData.utterer.trim() === quoteData.utterer.trim()
@@ -195,7 +204,7 @@ function EditableQuoteItem( {quoteData, onEditComplete}: {quoteData: QuoteData, 
 
     const disabled = !validateData()
     return ( 
-        <li>
+        <li style={{maxWidth: "700px"}}>
             <Divider sx={{mb: 4}}/>
             <Form 
                 value={newData}  
@@ -205,7 +214,10 @@ function EditableQuoteItem( {quoteData, onEditComplete}: {quoteData: QuoteData, 
                 onPostSuccess={() => onEditComplete()}
                 >
                 <div style={{marginBottom: "-2em"}}>
-                    <UpsertQuoteInputs quoteData={newData} onChange={(newVal) => setNewData({...quoteData, ...newVal})}/>
+                    <UpsertQuoteInputs 
+                        quoteData={newData} 
+                        onChange={onChange}
+                        size="small"/>
                 </div>
             </Form>
         </li>
