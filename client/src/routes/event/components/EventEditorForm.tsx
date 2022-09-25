@@ -189,7 +189,6 @@ function TitleForm( { sx }: { sx?: SxProps } ) {
 const beginningOfTime = dayjs("2018-09-11")  // Motstandens birth day
 
 function TimeForm({ sx }: {sx?: SxProps } ) {
-    const today = dayjs()
     const [ event, dispatch] = useEvent()
     const textFieldProps: TextFieldProps = {
         autoComplete: "off", 
@@ -203,7 +202,7 @@ function TimeForm({ sx }: {sx?: SxProps } ) {
         <Stack direction={{xs: "column", sm: "row"}} alignItems={{xs: "top", sm: "flex-end"}} sx={sx}>
             <Box sx={{
                 minWidth: "145px", 
-                marginBottom: {xs: "-5px", sm: "5px"}
+                marginBottom: "5px"
             }}>
                 <strong >
                     Tidspunkt: 
