@@ -1,7 +1,7 @@
 import Divider from "@mui/material/Divider"
 import Grid from "@mui/material/Grid"
 import Paper from "@mui/material/Paper"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Quote } from "common/interfaces"
 import React, { useEffect } from "react"
 import { TitleCard } from "src/components/TitleCard"
@@ -29,8 +29,13 @@ export default function Home(){
 }
 
 function QuoteLoader(){
-    const {isLoading, isError, data, error} = useQuery<Quote[]>(["FetchQuoteOfTheDay"], () => fetchAsync<Quote[]>("/api/quotes-of-the-day") )
-    
+
+    const queryClient = useQueryClient()
+    const queryKey = ["FetchQuoteOfTheDay"]    
+    const onItemChanged = () => queryClient.invalidateQueries(queryKey)
+
+    const {isLoading, isError, data, error} = useQuery<Quote[]>(queryKey, () => fetchAsync<Quote[]>("/api/quotes-of-the-day") )
+
     if (isLoading) {
         return <div style={{minHeight: "100px"}}/>
     }
@@ -40,6 +45,6 @@ function QuoteLoader(){
     }
 
     return (
-        <QuoteList quotes={data.filter((item, index) => index <= 3)}/>
+        <QuoteList quotes={data.filter((item, index) => index <= 3)} onItemChanged={onItemChanged}/>
     )
 }

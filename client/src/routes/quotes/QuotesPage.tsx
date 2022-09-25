@@ -13,30 +13,35 @@ import Divider from "@mui/material/Divider"
 import { Form } from "src/components/form/Form"
 import { UpsertQuoteInputs } from "./NewPage"
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace"
+import { useContextInvalidator } from "./Context"
 
 export default function QuotesPage(){
     useTitle("Sitater")
     const data = useOutletContext<QuoteData[]>()
+    const contextInvalidator = useContextInvalidator()
+
+    const onItemChanged = () => contextInvalidator()
+
     return (
         <>
             <h1>Sitater</h1>
-            <QuoteList quotes={data}/>
+            <QuoteList quotes={data} onItemChanged={onItemChanged}/>
         </>
     )
 }
 
-export function QuoteList( {quotes}: {quotes: QuoteData[] } ){
+export function QuoteList( {quotes, onItemChanged}: {quotes: QuoteData[], onItemChanged?: VoidFunction } ){
     return (
         <ul style={{ 
                 paddingLeft: "5px", 
                 listStyleType: "none" 
         }}>
-            { quotes.map( item => <QuoteItem key={item.id} quoteData={item}/>)}
+            { quotes.map( item => <QuoteItem key={item.id} quoteData={item} onItemChanged={onItemChanged}/>)}
         </ul>
     )
 }
 
-function QuoteItem( {quoteData}: {quoteData: QuoteData}){
+function QuoteItem( {quoteData, onItemChanged}: {quoteData: QuoteData, onItemChanged?: VoidFunction }){
     const [isEditing, setIsEditing] = useState(false)
 
     const onEditClick = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => setIsEditing(true)
@@ -46,10 +51,18 @@ function QuoteItem( {quoteData}: {quoteData: QuoteData}){
         return <EditableQuoteItem quoteData={quoteData} onEditComplete={onEditComplete}/>
     }
 
-    return <ReadOnlyQuoteItem quoteData={quoteData} onEditClick={onEditClick}/>
+    return <ReadOnlyQuoteItem quoteData={quoteData} onEditClick={onEditClick} onDeleteSuccess={onItemChanged}/>
 }
 
-function ReadOnlyQuoteItem( {quoteData, onEditClick}: {quoteData: QuoteData, onEditClick: React.MouseEventHandler<HTMLLIElement>}){
+function ReadOnlyQuoteItem( {
+    quoteData, 
+    onEditClick, 
+    onDeleteSuccess
+}: {
+    quoteData: QuoteData, 
+    onEditClick: React.MouseEventHandler<HTMLLIElement>,
+    onDeleteSuccess?: VoidFunction
+}){
 
     const [isHighlighted, setIsHighlighted] = useState(false)
     const [isDisabled, setIsDisabled] = useState(false)
@@ -124,7 +137,8 @@ function ReadOnlyQuoteItem( {quoteData, onEditClick}: {quoteData: QuoteData, onE
                             onMouseEnter={onMouseEnter} 
                             onMouseLeave={onMouseLeave} 
                             onMenuOpen={onMenuOpen} 
-                            onMenuClose={onMenuClose}/>
+                            onMenuClose={onMenuClose}
+                            onDeleteSuccess={onDeleteSuccess}/>
                     </div>
                 )}
             </Stack>
@@ -142,6 +156,7 @@ function ItemMenu( {
     onMenuClose,
     onDeleting,
     onDeleteFailure,
+    onDeleteSuccess,
     disabled
 }: {
     quoteData: QuoteData,
@@ -152,8 +167,9 @@ function ItemMenu( {
     onMenuClose?: VoidFunction,
     onDeleting?: VoidFunction,
     onDeleteFailure?: VoidFunction,
+    onDeleteSuccess?: VoidFunction
     disabled?: boolean
-}){
+}) {
 
     const onDeleteClick = async (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
         onDeleting && onDeleting()
@@ -167,6 +183,9 @@ function ItemMenu( {
         )
         if (!response?.ok){
             onDeleteFailure && onDeleteFailure()
+        }
+        if(response?.ok){
+            onDeleteSuccess && onDeleteSuccess()
         }
     }
 
