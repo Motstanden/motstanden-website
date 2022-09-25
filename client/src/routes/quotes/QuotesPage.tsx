@@ -14,6 +14,7 @@ import { Form } from "src/components/form/Form"
 import { UpsertQuoteInputs } from "./NewPage"
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace"
 import { useContextInvalidator } from "./Context"
+import { Skeleton } from "@mui/material"
 
 export default function QuotesPage(){
     useTitle("Sitater")
@@ -44,7 +45,11 @@ export function QuoteList( {quotes, onItemChanged}: {quotes: QuoteData[], onItem
 function QuoteItem( {quoteData, onItemChanged}: {quoteData: QuoteData, onItemChanged?: VoidFunction }){
     const [isEditing, setIsEditing] = useState(false)
 
+    const [prevData, setPrevData] = useState(quoteData) 
+    const [isChanging, setIsChanging] = useState(false)
+
     const onEditClick = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+        setPrevData(quoteData)
         setIsEditing(true)
     }
     
@@ -54,7 +59,16 @@ function QuoteItem( {quoteData, onItemChanged}: {quoteData: QuoteData, onItemCha
     
     const onEditSuccess = () => {
         setIsEditing(false)
+        setIsChanging(true)
         onItemChanged && onItemChanged()
+    }
+
+    if(isChanging) {
+        if(prevData.utterer === quoteData.utterer && prevData.quote === quoteData.quote) {
+            return <QuoteSkeleton/>
+        }
+        setPrevData(quoteData)
+        setIsChanging(false)
     }
 
     if(isEditing) {
@@ -62,6 +76,31 @@ function QuoteItem( {quoteData, onItemChanged}: {quoteData: QuoteData, onItemCha
     }
 
     return <ReadOnlyQuoteItem quoteData={quoteData} onEditClick={onEditClick} onDeleteSuccess={onItemChanged}/>
+}
+
+export function QuoteSkeleton() {
+    return (
+        <>
+            <div>
+                <Skeleton 
+                    style={{
+                        maxWidth: "700px", 
+                        // marginRight: "50px", 
+                        marginBottom: "-10px",
+                        height: "6em"
+                    }}/>
+            </div>
+            <div style={{marginBottom: "35px"}}>
+                <Skeleton 
+                    style={{
+                        maxWidth: "650px", 
+                        marginLeft: "50px", 
+                        height: "2em"
+                    }}
+                />
+            </div>
+        </>
+    )
 }
 
 function ReadOnlyQuoteItem( {
