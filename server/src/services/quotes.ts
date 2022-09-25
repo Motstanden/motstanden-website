@@ -50,14 +50,38 @@ export function insertQuote(quote: NewQuote, userId: number) {
     if(stringIsNullOrWhiteSpace(quote.quote) || stringIsNullOrWhiteSpace(quote.utterer) || !userId)
         throw `Invalid data`
     
-        const db = new Database(motstandenDB, dbReadWriteConfig)
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(`
+        INSERT INTO 
+            quote(utterer, quote, user_id) 
+        VALUES (?, ?, ?)
+    `)    
+    stmt.run(quote.utterer, quote.quote, userId)
+    db.close();
+}
+
+export function updateQuote(quote: Quote) {
+
+    const isInvalid =   stringIsNullOrWhiteSpace(quote.quote)   || 
+                        stringIsNullOrWhiteSpace(quote.utterer) || 
+                        !quote.id || typeof quote.id !== "number"
+    if(isInvalid)
+        throw `Invalid data`
+
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const startTransaction = db.transaction( () => {
         const stmt = db.prepare(`
-            INSERT INTO 
-                quote(utterer, quote, user_id) 
-            VALUES (?, ?, ?)
-        `)    
-        stmt.run(quote.utterer, quote.quote, userId)
-        db.close();
+            UPDATE 
+                quote
+            SET
+                utterer = ?,
+                quote = ?
+            WHERE quote_id = ?`
+        )
+        stmt.run([quote.utterer, quote.quote, quote.id])
+    })
+    startTransaction()
+    db.close()   
 }
 
 export function deleteQuote(quoteId: number) {

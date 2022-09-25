@@ -5,7 +5,7 @@ import passport from "passport";
 import { stringIsNullOrWhiteSpace } from "../utils/stringUtils.js";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import * as quoteService from "../services/quotes"
-import { NewQuote } from "common/interfaces";
+import { NewQuote, Quote } from "common/interfaces";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 import { hasGroupAccess } from "../utils/accessTokenUtils";
 import { UserGroup } from "common/enums";
@@ -80,6 +80,20 @@ router.post("/quotes/delete",
             quoteService.deleteQuote(quoteId)
         } catch {
             res.status(400).send("Bad data")
+        }
+        res.end();
+    }
+)
+
+router.post("/quotes/update", 
+    AuthenticateUser(),
+    authenticatePermission,
+    (req: Request, res: Response) => {
+        const quote: Quote = req.body
+        try {
+            quoteService.updateQuote(quote)
+        } catch {
+            return res.status(400).send("bad data")
         }
         res.end();
     }
