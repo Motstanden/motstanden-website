@@ -9,7 +9,7 @@ import { fetchAsync } from "src/utils/fetchAsync"
 import { useAuth } from "../../context/Authentication"
 import { useTitle } from "../../hooks/useTitle"
 import { PageContainer } from "../../layout/PageContainer"
-import { QuoteList } from "../quotes/QuotesPage"
+import { QuoteList, QuoteSkeleton } from "../quotes/QuotesPage"
 
 
 export default function Home(){
@@ -37,7 +37,11 @@ function QuoteLoader(){
     const {isLoading, isError, data, error} = useQuery<Quote[]>(queryKey, () => fetchAsync<Quote[]>("/api/quotes-of-the-day") )
 
     if (isLoading) {
-        return <div style={{minHeight: "100px"}}/>
+        return (
+            <>
+                {Array(3).fill(1).map( (_, i) => <QuoteSkeleton key={i}/>)}
+            </>
+        )
     }
     
     if (isError) {

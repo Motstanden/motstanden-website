@@ -87,10 +87,10 @@ export function QuoteSkeleton() {
                         maxWidth: "700px", 
                         // marginRight: "50px", 
                         marginBottom: "-10px",
-                        height: "6em"
+                        height: "5em"
                     }}/>
             </div>
-            <div style={{marginBottom: "35px"}}>
+            <div style={{marginBottom: "25px"}}>
                 <Skeleton 
                     style={{
                         maxWidth: "650px", 
