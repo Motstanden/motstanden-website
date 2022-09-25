@@ -44,11 +44,21 @@ export function QuoteList( {quotes, onItemChanged}: {quotes: QuoteData[], onItem
 function QuoteItem( {quoteData, onItemChanged}: {quoteData: QuoteData, onItemChanged?: VoidFunction }){
     const [isEditing, setIsEditing] = useState(false)
 
-    const onEditClick = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => setIsEditing(true)
-    const onEditComplete = () => setIsEditing(false)
+    const onEditClick = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+        setIsEditing(true)
+    }
+    
+    const onEditAbort = () => {
+        setIsEditing(false)
+    }
+    
+    const onEditSuccess = () => {
+        setIsEditing(false)
+        onItemChanged && onItemChanged()
+    }
 
     if(isEditing) {
-        return <EditableQuoteItem quoteData={quoteData} onEditComplete={onEditComplete}/>
+        return <EditableQuoteItem quoteData={quoteData} onEditAbort={onEditAbort} onEditSuccess={onEditSuccess}/>
     }
 
     return <ReadOnlyQuoteItem quoteData={quoteData} onEditClick={onEditClick} onDeleteSuccess={onItemChanged}/>
@@ -209,8 +219,15 @@ function NewlineText({ text }: {text: string}) {
 }
 
 
-function EditableQuoteItem( {quoteData, onEditComplete}: {quoteData: QuoteData, onEditComplete: VoidFunction}){
-
+function EditableQuoteItem( {
+    quoteData, 
+    onEditAbort,
+    onEditSuccess
+}: {
+    quoteData: QuoteData, 
+    onEditAbort: VoidFunction,
+    onEditSuccess: VoidFunction
+}){
     const [newData, setNewData] = useState(quoteData)
 
     const onChange = (newVal: NewQuote) => setNewData({...quoteData, ...newVal})
@@ -229,8 +246,8 @@ function EditableQuoteItem( {quoteData, onEditComplete}: {quoteData: QuoteData, 
                 value={newData}  
                 postUrl={"/api/quotes/update"}
                 disabled={disabled}
-                onAbortClick={() => onEditComplete()}
-                onPostSuccess={() => onEditComplete()}
+                onAbortClick={() => onEditAbort()}
+                onPostSuccess={() => onEditSuccess()}
                 >
                 <div style={{marginBottom: "-2em"}}>
                     <UpsertQuoteInputs 
