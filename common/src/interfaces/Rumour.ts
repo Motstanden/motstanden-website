@@ -1,9 +1,8 @@
-export interface NewQuote {
-    utterer: string,
-    quote: string,
+export interface NewRumour {
+    rumour: string
 }
 
-export interface Quote extends NewQuote {
+export interface Rumour extends NewRumour {
     id: number,
     createdBy: number,
     createdAt: string,          // Format: 'YYYY-MM-DD HH-MM-SS'
