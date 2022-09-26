@@ -32,6 +32,7 @@ import { EventContext, EventItemContext } from './routes/event/Context';
 import { QuotesContext } from './routes/quotes/Context';
 import { NewQuotePage } from './routes/quotes/NewPage';
 import { LicenseOnlyPage, LicensePage } from './routes/license/LicensePage';
+import { RumourPage } from './routes/rumour/RumourPage';
 
 function App() {
 	const auth = useAuth()
@@ -68,6 +69,9 @@ function App() {
 						<Route path="/sitater" element={<QuotesContext/>}>
 							<Route index element={<QuotesPage/>}/>
 							<Route path='ny' element={<NewQuotePage/>}/>
+						</Route>
+						<Route path="/rykter">
+							<Route index element={<RumourPage/>}/>
 						</Route>
 						<Route path="/medlem" element={<UserContext/>}>
 							<Route path="" element={<Navigate to="liste"/>}/>
