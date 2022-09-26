@@ -119,7 +119,7 @@ function authenticatePermission(req: Request, res: Response, next: NextFunction)
     // Allow quote to be modified if the user is admin or is original author
     const user = req.user as AccessTokenData
     const isAdmin = hasGroupAccess(user, UserGroup.Administrator)
-    const isEventAuthor = quote.userId === user.userId
+    const isEventAuthor = quote.createdBy === user.userId
     if(isAdmin || isEventAuthor) {
         next()
     } else {

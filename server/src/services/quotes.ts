@@ -10,7 +10,7 @@ export function getQuote(quoteId: number): Quote{
             quote_id as id, 
             utterer, 
             quote,
-            user_id as userId,
+            created_by as createdBy,
             created_at as createdAt,
             updated_at as updatedAt 
         FROM 
@@ -33,7 +33,7 @@ export function getQuotes(limit?: number): Quote[] {
         quote_id as id, 
         utterer, 
         quote,
-        user_id as userId,
+        created_by as createdBy,
         created_at as createdAt,
         updated_at as updatedAt 
     FROM 
@@ -53,7 +53,7 @@ export function insertQuote(quote: NewQuote, userId: number) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
     const stmt = db.prepare(`
         INSERT INTO 
-            quote(utterer, quote, user_id) 
+            quote(utterer, quote, created_by) 
         VALUES (?, ?, ?)
     `)    
     stmt.run(quote.utterer, quote.quote, userId)

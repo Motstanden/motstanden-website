@@ -1,4 +1,4 @@
-INSERT INTO quote(user_id, utterer, quote) VALUES
+INSERT INTO quote(created_by, utterer, quote) VALUES
 ('1', 'Gustav K. til Albert E.',                             '"Se på det monsteret der da!"' || char(13) || char(10) || char(13) || char(10) || '* Kirchhoff. viser telefonen til Einstein. *' || char(13) || char(10) || char(13) || char(10) || 'Einstein: "...ehmm... men det er jo..."' || char(13) || char(10) || 'Kirchhoff: "Nei, ignorer fargen da!"'),
 ('5', 'Gustav Kirchhoff',                                    'Gustav K.: I dag er den offisielle nynorsk dagen. De har vært smarte ved å velge en dag som...' || char(13) || char(10) || '*Faraday avbryter*: ...bare kommer 4 ganger i året.'),
 ('2', 'Georg Ohm',                                           'De var flinke! Jeg ble skikkelig kåt ... of guard!'),

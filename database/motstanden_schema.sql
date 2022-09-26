@@ -111,10 +111,10 @@ CREATE TABLE IF NOT EXISTS "quote" (
     quote_id INTEGER PRIMARY KEY NOT NULL,
     utterer TEXT NOT NULL,
     quote TEXT NOT NULL,
-    user_id INTEGER NOT NULL,
+    created_by INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id)
+    FOREIGN KEY (created_by)
         REFERENCES user (user_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT

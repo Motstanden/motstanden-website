@@ -141,7 +141,7 @@ function ReadOnlyQuoteItem( {
     }
 
     const user = useAuth().user!
-    const hasEditPrivilege = user.userId === quoteData.userId || hasGroupAccess(user, UserGroup.Administrator) 
+    const hasEditPrivilege = user.userId === quoteData.createdBy || hasGroupAccess(user, UserGroup.Administrator) 
 
     return ( 
         <li style={{ marginBottom: "25px", maxWidth: "700px"}}>
