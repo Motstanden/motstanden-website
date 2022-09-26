@@ -34,13 +34,14 @@ function PrivateNavBar(){
             alignItems="center"
             justifyContent={{lg: "flex-start", xl: "center"}}
             sx={{width: "100%", maxWidth: "1200px"}}
-            spacing={{sm: 1, md: 1, lg: 4, xl: 6}}
+            spacing={{sm: 1, md: 1, lg: 4, xl: 7}}
             >
             <NavLink text="Hjem" to="/hjem"/>
-            <NavLink text="Notearkiv" to="/notearkiv"/>
+            <NavLink text="Arrangementer" to="/arrangement" />
             <NavLink text="Sitater" to="/sitater"/>
-            <NavLink text="Studenttraller" to="/studenttraller"/>
-            <NavLink text="Arrangement" to="/arrangement" />
+            <NavLink text="Rykter" to="/rykter"/>
+            <NavLink text="Traller" to="/studenttraller"/>
+            <NavLink text="Noter" to="/notearkiv"/>
             <NavLink text="Dokumenter" to="/dokumenter" />
             <AdminDropDown/>
             <NavDropDown text="Om oss">
@@ -142,7 +143,7 @@ function NavDropDown({ text, sx, children }: {text: string, sx?: SxProps, childr
                     ...sx
                 }}
                 >
-                <Typography variant="subtitle1">
+                <Typography variant="subtitle1" noWrap>
                     {text}
                 </Typography>
                 {isOpen ? <ExpandLess/> : <ExpandMore/>}
