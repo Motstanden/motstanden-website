@@ -6,8 +6,11 @@ import { fetchAsync } from "src/utils/fetchAsync"
 import { Quote as QuoteData } from "common/interfaces"
 import { QuoteSkeleton } from "./QuotesPage"
 import { matchUrl } from "src/utils/matchUrl"
+import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
 
 const quotesQueryKey = ["FetchAllQuotes"]
+
+export const useContextInvalidator = () => useQueryInvalidator(quotesQueryKey)
 
 export function QuotesContext(){
     
@@ -41,7 +44,7 @@ export function QuotesContext(){
 
 function PageContainer({ children }: {children?: React.ReactNode}) {
     return (
-        <TabbedPageContainer 
+        <TabbedPageContainer
             tabItems={[
                 {to: "/sitater",    label: "sitater"},
                 {to: "/sitater/ny", label: "ny"},
@@ -50,14 +53,4 @@ function PageContainer({ children }: {children?: React.ReactNode}) {
             {children}
         </TabbedPageContainer>
     )
-}
-
-export function useContextInvalidator(){
-    const queryClient = useQueryClient()
-
-    const invalidateQuery = () => {
-        queryClient.invalidateQueries(quotesQueryKey)
-    }
-    
-    return invalidateQuery
 }
