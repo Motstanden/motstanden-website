@@ -87,11 +87,14 @@ function PrivateContent(props: SideDrawerContentProps) {
         <List sx={{minWidth: 230}} >
             <ListItemHeader/>
             <ListItemLink text="Hjem" to="/hjem" onLinkClick={onRequestedExit}/>
-            <ListItemLink text="Notearkiv" to="/notearkiv" onLinkClick={onRequestedExit}/>
-            <ListItemLink text="Sitater" to="/sitater" onLinkClick={onRequestedExit}/>
-            <ListItemLink text="Studenttraller" to="/studenttraller" onLinkClick={onRequestedExit}/>
             <ListItemLink text="Arrangement" to="/Arrangement" onLinkClick={onRequestedExit}/>
+            <ListItemLink text="Sitater" to="/sitater" onLinkClick={onRequestedExit}/>
+            <ListItemLink text="Ryktebørsen" to="/rykter" onLinkClick={onRequestedExit}/>
+            <Divider/>
+            <ListItemLink text="Notearkiv" to="/notearkiv" onLinkClick={onRequestedExit}/>
+            <ListItemLink text="Studenttraller" to="/studenttraller" onLinkClick={onRequestedExit}/>
             <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit}/>
+            <Divider/>
             <MemberList onLinkClick={onRequestedExit} />
             <ListItemExpander text="Om oss">
                 <ListItemLink text="Framside" to="/framside" onLinkClick={onRequestedExit}/>
