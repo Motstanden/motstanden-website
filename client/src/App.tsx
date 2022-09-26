@@ -33,6 +33,7 @@ import { QuotesContext } from './routes/quotes/Context';
 import { NewQuotePage } from './routes/quotes/NewPage';
 import { LicenseOnlyPage, LicensePage } from './routes/license/LicensePage';
 import { RumourPage } from './routes/rumour/RumourPage';
+import { RumourContext } from './routes/rumour/Context';
 
 function App() {
 	const auth = useAuth()
@@ -70,7 +71,7 @@ function App() {
 							<Route index element={<QuotesPage/>}/>
 							<Route path='ny' element={<NewQuotePage/>}/>
 						</Route>
-						<Route path="/rykter">
+						<Route path="/rykter" element={<RumourContext/>}>
 							<Route index element={<RumourPage/>}/>
 						</Route>
 						<Route path="/medlem" element={<UserContext/>}>
