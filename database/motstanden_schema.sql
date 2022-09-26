@@ -227,3 +227,20 @@ ON  created_by.user_id = e.created_by
 LEFT JOIN user updated_by
 ON  updated_by.user_id = e.updated_by
 /* vw_event(event_id,title,start_date_time,end_date_time,key_info,description_html,description_json,created_by_user_id,created_by_full_name,created_at,updated_by_user_id,updated_by_full_name,updated_at,is_upcoming) */;
+CREATE TABLE rumour (
+    rumour_id INTEGER PRIMARY KEY NOT NULL,
+    rumour TEXT NOT NULL,
+    created_by INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by)
+        REFERENCES user (user_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+CREATE TRIGGER trig_rumour_updated_at
+    AFTER UPDATE ON rumour FOR EACH ROW
+BEGIN
+    UPDATE rumour SET updated_at = current_timestamp
+        WHERE rumour_id = old.rumour_id;
+END;
