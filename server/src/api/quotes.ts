@@ -1,8 +1,4 @@
 import express, { NextFunction, Request, Response } from "express";
-import Database from "better-sqlite3";
-import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "../config/databaseConfig.js";
-import passport from "passport";
-import { stringIsNullOrWhiteSpace } from "../utils/stringUtils.js";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import * as quoteService from "../services/quotes"
 import { NewQuote, Quote } from "common/interfaces";
