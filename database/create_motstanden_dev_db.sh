@@ -29,6 +29,11 @@ sqlite3 motstanden_dev.db < migrations/motstanden_db/06_events.sql;
 echo "Running: 07_events_refactor.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/07_events_refactor.sql;
 
+# Create rumours table
+echo "Running: 08_rumours.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/08_rumours.sql;
+
+
 # Insert data that is representative for the current data in the database
 cd data/db
 sh motstanden-db-data.sh 
