@@ -33,7 +33,7 @@ function NewQuoteForm(){
             quote: newQuote.quote.trim()
         }
 
-        const response = await postJson("/api/insert_quote", data, { alertOnFailure: true })
+        const response = await postJson("/api/quotes/new", data, { alertOnFailure: true })
         if(response?.ok){
             contextInvalidator()
             navigate("/sitater")

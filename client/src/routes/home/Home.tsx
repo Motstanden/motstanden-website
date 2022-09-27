@@ -36,7 +36,7 @@ export default function Home(){
             <Grid container spacing={4} sx={{mt: 4}} xs={12} >
                 <ItemOfTheDay 
                     title="Dagens sitater" 
-                    fetchUrl="/api/quotes-of-the-day" 
+                    fetchUrl="/api/quotes/daily-quotes" 
                     renderSkeleton={<QuotesListSkeleton length={3}/>}
                     renderItems={renderQuotes}
                 />

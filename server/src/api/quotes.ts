@@ -15,7 +15,7 @@ router.get("/quotes",
     (req, res) => res.send(quoteService.getQuotes())
 )
 
-router.get("/quotes-of-the-day",
+router.get("/quotes/daily-quotes",
     AuthenticateUser(),
     (req, res) => {
         const limit = 100 
@@ -29,7 +29,7 @@ router.get("/quotes-of-the-day",
         ])
     })
 
-router.post("/insert_quote",    
+router.post("/quotes/new",    
     AuthenticateUser(),
     (req, res) => {
         const user = req.user as AccessTokenData
