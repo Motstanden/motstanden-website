@@ -33,7 +33,7 @@ export default function Home(){
         <PageContainer>
             <h1>Hjem</h1>
             <p>Velkommen {user.firstName}!</p>
-            <Grid container spacing={4} sx={{mt: 4}} xs={12} >
+            <Grid container spacing={4} sx={{mt: 4}} >
                 <ItemOfTheDay 
                     title="Dagens sitater" 
                     fetchUrl="/api/quotes/daily-quotes" 
