@@ -171,7 +171,7 @@ function UpsertRumourForm( {
                 onAbortClick={ (e) => onAbortClick()} 
                 onPostSuccess={ (e) => onPostSuccess()}
                 >
-                <div style={{marginBottom: "-2em"}}>
+                <div style={{marginBottom: "-1em"}}>
                     <TextField 
                         label="Har du hørt at...?"
                         name="rumour"

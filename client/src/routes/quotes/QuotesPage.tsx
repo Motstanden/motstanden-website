@@ -188,7 +188,7 @@ function UpsertQuoteForm({
                 onPostSuccess={ (e) => onPostSuccess()}
                 
                 >
-                <div style={{marginBottom: "-2em"}}>
+                <div style={{marginBottom: "-1em"}}>
                     <div>
                         <TextField 
                             label="Sitat"
