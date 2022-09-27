@@ -46,7 +46,7 @@ function PageContainer({ children }: {children?: React.ReactNode}) {
     return (
         <TabbedPageContainer 
             tabItems={[
-                {to: "/rykter",    label: "Ryktebørsen"},
+                {to: "/rykter",    label: "Rykter"},
                 {to: "/rykter/ny", label: "Ny"},
             ]}
         >

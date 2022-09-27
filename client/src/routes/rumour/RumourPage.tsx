@@ -117,6 +117,7 @@ function EditItem(props: RenderEditFormProps<Rumour>) {
 }
 
 export function NewRumourPage() {
+    useTitle("Nytt rykte")
     const navigate = useNavigate()
     const contextInvalidator = useContextInvalidator()
 
