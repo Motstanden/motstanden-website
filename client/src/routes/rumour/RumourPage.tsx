@@ -132,7 +132,7 @@ export function NewRumourPage() {
             <h1>Nytt rykte</h1>
             <UpsertRumourForm 
                 initialValue={{rumour: ""}}
-                postUrl="/api/rumour/new"    
+                postUrl="/api/rumours/new"    
                 onAbortClick={onAbort}
                 onPostSuccess={onSuccess}
             />

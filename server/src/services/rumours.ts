@@ -1,6 +1,6 @@
 import Database from "better-sqlite3";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
-import { Rumour } from "common/interfaces"
+import { NewRumour, Rumour } from "common/interfaces"
 import { stringIsNullOrWhiteSpace } from "../utils/stringUtils";
 
 function get(rumourId: number): Rumour{
@@ -45,7 +45,23 @@ function getAll(limit?: number): Rumour[] {
     return rumours as Rumour[]
 }
 
+function insertNew(rumour: NewRumour, userId: number) {
+
+    if(stringIsNullOrWhiteSpace(rumour.rumour) || ( typeof userId !== "number" && userId < 0 ) )
+        throw `Invalid data`
+
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(`
+        INSERT INTO 
+            rumour(rumour, created_by) 
+        VALUES (?, ?)
+    `)    
+    stmt.run(rumour.rumour, userId)
+    db.close();
+}
+
 export const rumourService = {
     get: get,
-    getAll: getAll
+    getAll: getAll,
+    insertNew: insertNew
 }
