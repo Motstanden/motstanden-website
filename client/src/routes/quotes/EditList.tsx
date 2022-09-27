@@ -15,6 +15,7 @@ type EditListProps<T> = {
     confirmDeleteItemText: string,
     itemComparer?: (a: T, b: T) => boolean,
     renderItemSkeleton?: React.ReactElement,
+    itemSpacing?: string
 }
 
 type ItemBase = {
@@ -36,7 +37,12 @@ export function EditList<T extends ItemBase>(props: EditListProps<T>) {
             }}
         >
             {props.items.map( item => ( 
-                <li key={item.id} style={{maxWidth: "700px"}}>
+                <li key={item.id} 
+                    style={{
+                        maxWidth: "700px", 
+                        marginBottom: props.itemSpacing ?? "0px"
+                        }}
+                    >
                     <RootItem<T> 
                         data={item} 
                         {...props}

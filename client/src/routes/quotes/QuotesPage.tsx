@@ -53,7 +53,6 @@ function ItemSkeleton() {
                 <Skeleton 
                     style={{
                         maxWidth: "700px", 
-                        // marginRight: "50px", 
                         marginBottom: "-10px",
                         height: "5em"
                     }}/>
@@ -87,13 +86,14 @@ export function QuoteList( {quotes, onItemChanged}: {quotes: QuoteData[], onItem
             renderItemSkeleton={<ItemSkeleton/>}
             deleteItemUrl="/api/quotes/delete"
             confirmDeleteItemText="Vil du permanent slette dette sitatet?"
+            itemSpacing="25px"
         />
     )
 }
 
 function DefaultItem({quote}: {quote: QuoteData}) {
     return (
-        <div style={{marginBlock: "10px"}}>
+        <div style={{marginTop: "10px", marginBottom: "10px"}}>
             <NewlineText text={quote.quote}/>
             <div style={{
                 marginLeft: "20px", 
@@ -150,14 +150,15 @@ function RenderEditForm(props: RenderEditFormProps<QuoteData>) {
 }
 
 function NewlineText({ text }: {text: string}) {
+    const lines = text.split('\n')
     return (
         <div>
-            {text.split('\n')
-                 .map( (str, i) => ( 
-                    <React.Fragment key={i}>
+            {lines.map( (str, i) => ( 
+                <React.Fragment key={i}>
+                    <div style={{minHeight: "10px"}}>
                         {str}
-                        <br/>
-                    </React.Fragment>
+                    </div>
+                </React.Fragment>
             ))}
         </div>
     )
