@@ -5,10 +5,27 @@ import { AuthenticateUser } from "../middleware/jwtAuthenticate";
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor";
 import { rumourService } from "../services/rumours"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
+import dailyRandomInt from "../utils/dailyRandomInt";
 
 let router = express.Router()
 
 router.get("/rumours", AuthenticateUser(), (req, res) => res.send(rumourService.getAll()))
+
+router.get("/rumours/daily-rumour",
+    AuthenticateUser(),
+    (req, res) => {
+        const limit = 100 
+        const rumours = rumourService.getAll(limit)
+        const i = dailyRandomInt(limit)
+        const mod = Math.min(limit, rumours.length)
+        res.send([
+            rumours[i % mod],
+            rumours[(i + 1) % mod],
+            rumours[(i + 2) % mod],
+            rumours[(i + 3) % mod]
+        ])
+    }
+)
 
 router.post("/rumours/new", 
     AuthenticateUser(),
