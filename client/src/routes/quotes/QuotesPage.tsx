@@ -130,6 +130,11 @@ export function ItemSkeleton() {
 }
 
 function NewlineText({ text }: {text: string}) {
-    const newText = text.split('\n').map( (str, i) => <p key={i} style={{margin: 0}}>{str}</p>);
-    return <span>{newText}</span>
+    const newText = text.split('\n').map( (str, i) => ( 
+        <React.Fragment key={i}>
+            {str}
+            <br/>
+        </React.Fragment>
+    ));
+    return <div>{newText}</div>
 }
