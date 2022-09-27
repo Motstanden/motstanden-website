@@ -2,44 +2,104 @@ import Divider from "@mui/material/Divider"
 import Grid from "@mui/material/Grid"
 import Paper from "@mui/material/Paper"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Quote } from "common/interfaces"
+import { Quote, Rumour } from "common/interfaces"
 import React, { useEffect } from "react"
 import { TitleCard } from "src/components/TitleCard"
 import { fetchAsync } from "src/utils/fetchAsync"
 import { useAuth } from "../../context/Authentication"
 import { useTitle } from "../../hooks/useTitle"
 import { PageContainer } from "../../layout/PageContainer"
-import { QuoteList, ListSkeleton } from "../quotes/QuotesPage"
+import { QuoteList, ListSkeleton as QuotesListSkeleton } from "../quotes/QuotesPage"
+import { RumourList, ListSkeleton as RumourListSkeleton } from "../rumour/RumourPage"
 
 
 export default function Home(){
-    let auth = useAuth()
-    const user = auth.user!;
     useTitle("Hjem")
+
+    const user = useAuth().user!
+
+    const renderQuotes = (items: Quote[], refetchItems: VoidFunction) => <QuoteList quotes={items} onItemChanged={refetchItems} />
+
+    const renderRumours = (items: Rumour[], refetchItems: VoidFunction) => {
+        return (
+            <RumourList 
+                rumours={items}
+                onItemChanged={refetchItems}        
+            />
+        )
+    }
+
     return (
         <PageContainer>
             <h1>Hjem</h1>
             <p>Velkommen {user.firstName}!</p>
-            <br/>
-            <TitleCard title="Dagens sitater" sx={{maxWidth: "600px"}}>
-                <QuoteLoader/>
-            </TitleCard>
+            <Grid container spacing={4} sx={{mt: 4}} xs={12} >
+                <ItemOfTheDay 
+                    title="Dagens sitater" 
+                    fetchUrl="/api/quotes-of-the-day" 
+                    renderSkeleton={<QuotesListSkeleton length={3}/>}
+                    renderItems={renderQuotes}
+                />
+                <ItemOfTheDay
+                    title="Dagens rykter"
+                    fetchUrl="/api/rumour-of-the-day"
+                    renderSkeleton={<RumourListSkeleton length={4}/>}
+                    renderItems={renderRumours}
+                />
+            </Grid>
         </PageContainer>
     )
 }
 
-function QuoteLoader(){
+function ItemOfTheDay<T>({
+    title, 
+    fetchUrl, 
+    renderSkeleton,
+    renderItems
+}: {
+    title: string, 
+    fetchUrl: string, 
+    renderSkeleton: React.ReactElement,
+    renderItems: (items: T[], refetchItems: VoidFunction) => React.ReactElement,
+} ){
+    return (
+        <Grid item xs={12} sm={12} md={6} >
+            <TitleCard 
+                title={title} 
+                sx={{maxWidth: "600px", height: "100%"}}>
+                <ItemLoader<T>
+                    queryKey={ [`${title}: ${fetchUrl}`] } 
+                    fetchUrl={fetchUrl} 
+                    renderSkeleton={renderSkeleton}
+                    renderItems={renderItems}
+                    />
+            </TitleCard>
+        </Grid>
+    )
+}
 
+function ItemLoader<T>({
+    queryKey, 
+    fetchUrl, 
+    renderSkeleton,
+    renderItems
+}: {
+    queryKey: any[], 
+    fetchUrl: string, 
+    renderSkeleton: React.ReactElement,
+    renderItems: (items: T[], refetchItems: VoidFunction) => React.ReactElement
+}) {
+
+    
     const queryClient = useQueryClient()
-    const queryKey = ["FetchQuoteOfTheDay"]    
-    const onItemChanged = () => queryClient.invalidateQueries(queryKey)
+    const onRefetchItems = () => queryClient.invalidateQueries(queryKey)
 
-    const {isLoading, isError, data, error} = useQuery<Quote[]>(queryKey, () => fetchAsync<Quote[]>("/api/quotes-of-the-day") )
+    const {isLoading, isError, data, error} = useQuery<T[]>(queryKey, () => fetchAsync<T[]>(fetchUrl) )
 
     if (isLoading) {
         return (
             <>
-                <ListSkeleton length={3}/>
+                {renderSkeleton}
             </>
         )
     }
@@ -49,6 +109,8 @@ function QuoteLoader(){
     }
 
     return (
-        <QuoteList quotes={data.filter((item, index) => index <= 3)} onItemChanged={onItemChanged}/>
+        <>
+            {renderItems(data, onRefetchItems)}
+        </>
     )
 }
