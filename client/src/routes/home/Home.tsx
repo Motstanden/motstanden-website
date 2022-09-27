@@ -43,7 +43,7 @@ export default function Home(){
                 <ItemOfTheDay
                     title="Dagens rykter"
                     fetchUrl="/api/rumours/daily-rumour"
-                    renderSkeleton={<RumourListSkeleton length={4}/>}
+                    renderSkeleton={<RumourListSkeleton length={3}/>}
                     renderItems={renderRumours}
                 />
             </Grid>

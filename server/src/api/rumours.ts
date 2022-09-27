@@ -22,7 +22,6 @@ router.get("/rumours/daily-rumour",
             rumours[i % mod],
             rumours[(i + 1) % mod],
             rumours[(i + 2) % mod],
-            rumours[(i + 3) % mod]
         ])
     }
 )
