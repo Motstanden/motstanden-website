@@ -5,6 +5,7 @@ import { NewQuote, Quote } from "common/interfaces";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 import { hasGroupAccess } from "../utils/accessTokenUtils";
 import { UserGroup } from "common/enums";
+import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
 
 let router = express.Router()
 
@@ -69,7 +70,10 @@ router.post("/insert_quote",
 
 router.post("/quotes/delete", 
     AuthenticateUser(),
-    authenticatePermission,
+    requiresGroupOrAuthor({ 
+        requiredGroup: UserGroup.Administrator, 
+        getAuthorInfo: id => quoteService.getQuote(id)  
+    }),
     (req: Request, res: Response) => {
         const quoteId: number = req.body.id
         try {
@@ -83,7 +87,10 @@ router.post("/quotes/delete",
 
 router.post("/quotes/update", 
     AuthenticateUser(),
-    authenticatePermission,
+    requiresGroupOrAuthor({ 
+        requiredGroup: UserGroup.Administrator, 
+        getAuthorInfo: id => quoteService.getQuote(id)  
+    }),
     (req: Request, res: Response) => {
         const quote: Quote = req.body
         try {
@@ -95,32 +102,6 @@ router.post("/quotes/update",
     }
 )
 
-// Check if:
-//  1. Quote exists.
-//  2. The user is admin or is the author of the quote
-function authenticatePermission(req: Request, res: Response, next: NextFunction) {
-    
-    // Check if the posted quoteId is valid
-    let quoteId: number | unknown = req.body.id
-    if(!quoteId || typeof quoteId !== "number"){
-        return res.status(400).send("Bad data")
-    }
-    let quote
-    try {
-        quote = quoteService.getQuote(quoteId) 
-    } catch {
-        return res.status(400).send("bad data")
-    }
-    
-    // Allow quote to be modified if the user is admin or is original author
-    const user = req.user as AccessTokenData
-    const isAdmin = hasGroupAccess(user, UserGroup.Administrator)
-    const isEventAuthor = quote.createdBy === user.userId
-    if(isAdmin || isEventAuthor) {
-        next()
-    } else {
-        res.status(401).send("Unauthorized")
-    }
-}
+
 
 export default router
