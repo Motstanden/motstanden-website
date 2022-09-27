@@ -78,7 +78,7 @@ router.post("/quotes/delete",
         const quoteId: number = req.body.id
         try {
             quoteService.deleteQuote(quoteId)
-        } catch {
+        } catch  {
             res.status(400).send("Bad data")
         }
         res.end();

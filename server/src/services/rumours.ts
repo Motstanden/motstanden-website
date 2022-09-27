@@ -74,9 +74,30 @@ function deleteItem(quoteId: number) {
     db.close()   
 }
 
+function update(newRumour: Rumour) {
+    const isInvalid =   stringIsNullOrWhiteSpace(newRumour.rumour) || !newRumour.id || typeof newRumour.id !== "number"
+    if(isInvalid)
+        throw `Invalid data`
+
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const startTransaction = db.transaction( () => {
+        const stmt = db.prepare(`
+            UPDATE 
+                rumour
+            SET
+                rumour = ?
+            WHERE rumour_id = ?`
+        )
+        stmt.run([newRumour.rumour, newRumour.id])
+    })
+    startTransaction()
+    db.close()  
+}
+
 export const rumourService = {
     get: get,
     getAll: getAll,
     insertNew: insertNew,
-    delete: deleteItem
+    delete: deleteItem,
+    update: update
 }

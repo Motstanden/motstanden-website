@@ -110,7 +110,7 @@ function EditItem(props: RenderEditFormProps<Rumour>) {
                 initialValue={props.data}
                 onAbortClick={props.onEditAbort}
                 onPostSuccess={props.onEditSuccess}
-                postUrl="/api/rumour/update"
+                postUrl="/api/rumours/update"
                 />
         </div>
     )
@@ -146,12 +146,12 @@ function UpsertRumourForm( {
     onAbortClick,
     onPostSuccess,
 }: {
-    initialValue: NewRumour, 
+    initialValue: NewRumour | Rumour, 
     postUrl: string, 
     onAbortClick: VoidFunction
     onPostSuccess: VoidFunction
 }) {
-    const [newValue, setNewValue] = useState<NewRumour>(initialValue)
+    const [newValue, setNewValue] = useState<NewRumour | Rumour>(initialValue)
 
     const validateData = () => {
         const isEmpty = isNullOrWhitespace(newValue.rumour)
