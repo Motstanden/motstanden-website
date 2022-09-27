@@ -15,35 +15,7 @@ import { RumourList, ListSkeleton as RumourListSkeleton } from "../rumour/Rumour
 
 export default function Home(){
     useTitle("Hjem")
-
     const user = useAuth().user!
-
-    const renderQuotes = (items: Quote[], refetchItems: VoidFunction) => {
-        return (
-            <QuoteList 
-                quotes={items} 
-                onItemChanged={refetchItems} />
-        )
-    }
-
-    const renderRumours = (items: Rumour[], refetchItems: VoidFunction) => {
-        return (
-            <>
-                <div style={{opacity: 0.6, fontSize: "small", marginBottom: "-10px", marginLeft: "5px"}}>
-                    <em>
-                        <strong>
-                            Har du hørt at...
-                        </strong>
-                    </em>
-                </div>
-                <RumourList 
-                    rumours={items}
-                    onItemChanged={refetchItems}        
-                    />
-            </>
-        )
-    }
-
     return (
         <PageContainer>
             <h1>Hjem</h1>
@@ -53,16 +25,52 @@ export default function Home(){
                     title="Dagens sitater" 
                     fetchUrl="/api/quotes/daily-quotes" 
                     renderSkeleton={<QuotesListSkeleton length={3}/>}
-                    renderItems={renderQuotes}
+                    renderItems={RenderQuotesList}
                 />
                 <ItemOfTheDay
                     title="Dagens rykter"
                     fetchUrl="/api/rumours/daily-rumour"
                     renderSkeleton={<RumourListSkeleton length={3}/>}
-                    renderItems={renderRumours}
+                    renderItems={RenderRumourList}
                 />
             </Grid>
         </PageContainer>
+    )
+}
+
+type RenderItemProps<T> = {
+    items: T[], 
+    refetchItems: VoidFunction
+}
+
+function RenderRumourList( props: RenderItemProps<Rumour>) {
+    return (
+        <>
+            <div style={{
+                opacity: 0.6, 
+                fontSize: "small", 
+                marginBottom: "-10px", 
+                marginLeft: "5px"
+            }}>
+                <em>
+                    <strong>
+                        Har du hørt at...
+                    </strong>
+                </em>
+            </div>
+            <RumourList 
+                rumours={props.items}
+                onItemChanged={props.refetchItems}        
+                />
+        </>
+    )
+}
+
+function RenderQuotesList(props: RenderItemProps<Quote>) {
+    return (
+        <QuoteList 
+            quotes={props.items} 
+            onItemChanged={props.refetchItems} />
     )
 }
 
@@ -75,7 +83,7 @@ function ItemOfTheDay<T>({
     title: string, 
     fetchUrl: string, 
     renderSkeleton: React.ReactElement,
-    renderItems: (items: T[], refetchItems: VoidFunction) => React.ReactElement,
+    renderItems: (props: RenderItemProps<T>) => React.ReactElement,
 } ){
     return (
         <Grid item xs={12} sm={12} md={6} >
@@ -102,7 +110,7 @@ function ItemLoader<T>({
     queryKey: any[], 
     fetchUrl: string, 
     renderSkeleton: React.ReactElement,
-    renderItems: (items: T[], refetchItems: VoidFunction) => React.ReactElement
+    renderItems: (props: RenderItemProps<T>) => React.ReactElement
 }) {
 
     
@@ -125,7 +133,7 @@ function ItemLoader<T>({
 
     return (
         <>
-            {renderItems(data, onRefetchItems)}
+            {renderItems({items: data, refetchItems: onRefetchItems})}
         </>
     )
 }
