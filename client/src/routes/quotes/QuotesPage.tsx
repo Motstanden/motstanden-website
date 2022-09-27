@@ -2,17 +2,16 @@ import React, { useState } from "react"
 import { useTitle } from "../../hooks/useTitle"
 import { NewQuote, Quote, Quote as QuoteData } from "common/interfaces"
 import dayjs from "dayjs"
-import { useOutletContext } from "react-router-dom"
+import { useNavigate, useOutletContext } from "react-router-dom"
 import Divider from "@mui/material/Divider"
 import { Form } from "src/components/form/Form"
-import { UpsertQuoteInputs } from "./NewPage"
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace"
 import { useContextInvalidator } from "./Context"
-import { Skeleton } from "@mui/material"
+import { Skeleton, TextField } from "@mui/material"
 import { EditList, RenderEditFormProps } from "./components/EditList"
 import { NewlineText } from "./components/NewlineText"
 
-export default function QuotesPage(){
+export function QuotesPage(){
     useTitle("Sitater")
 
     const data = useOutletContext<QuoteData[]>()
@@ -117,35 +116,108 @@ function ReadOnlyItem({quote}: {quote: QuoteData}) {
 }
 
 function EditItem(props: RenderEditFormProps<QuoteData>) {
-    const quoteData = props.data
-    const [newData, setNewData] = useState(quoteData)
+    return (
+        <div>
+            <Divider sx={{mb: 4}}/>
+            <UpsertQuoteForm 
+                initialValue={props.data} 
+                postUrl="/api/quotes/update"
+                onAbortClick={props.onEditAbort} 
+                onPostSuccess={props.onEditSuccess} />
+        </div>
+    )
+}
 
-    const onChange = (newVal: NewQuote) => setNewData({...quoteData, ...newVal})
+export function NewQuotePage() {
+    useTitle("Nytt sitat")
+    const navigate = useNavigate()
+    const contextInvalidator = useContextInvalidator()
+
+    const onAbort = () => navigate("/sitater")
+
+    const onSuccess = () => {
+        contextInvalidator()
+        navigate("/sitater")
+    }
+
+    return (
+        <>
+            <h1>Nytt sitat</h1>
+            <UpsertQuoteForm 
+                initialValue={{quote: "", utterer: ""}}
+                postUrl="/api/quotes/new"    
+                onAbortClick={onAbort}
+                onPostSuccess={onSuccess}
+            />
+        </>
+    )
+}
+
+function UpsertQuoteForm({
+    initialValue, 
+    postUrl, 
+    onAbortClick,
+    onPostSuccess,
+}: {
+    initialValue: NewQuote | QuoteData, 
+    postUrl: string, 
+    onAbortClick: VoidFunction
+    onPostSuccess: VoidFunction
+}) {
+    const [newValue, setNewValue] = useState<NewQuote | Quote>(initialValue)
 
     const validateData = () => {
-        const isEmpty = isNullOrWhitespace(newData.quote) || isNullOrWhitespace(newData.utterer)
-        const isEqual = newData.quote.trim() === quoteData.quote.trim() && newData.utterer.trim() === quoteData.utterer.trim()
-        return !isEmpty && !isEqual 
+        const isEmpty = isNullOrWhitespace(newValue.quote) || isNullOrWhitespace(newValue.utterer) 
+        const isEqual = newValue.quote.trim() === initialValue.quote.trim() && newValue.utterer.trim() === initialValue.utterer.trim()
+        return !isEmpty && !isEqual
+    }
+
+    const getSubmitData = () => {
+        return { ...newValue, quote: newValue.quote.trim(), utterer: newValue.utterer.trim()}
     }
 
     const disabled = !validateData()
-    return ( 
-        <>
-            <Divider sx={{mb: 4}}/>
+
+    return (
+        <div style={{maxWidth: "700px"}}>
             <Form 
-                value={newData}  
-                postUrl={"/api/quotes/update"}
+                value={getSubmitData} 
+                postUrl={postUrl} 
                 disabled={disabled}
-                onAbortClick={() => props.onEditAbort()}
-                onPostSuccess={() => props.onEditSuccess()}
+                onAbortClick={ (e) => onAbortClick()} 
+                onPostSuccess={ (e) => onPostSuccess()}
+                
                 >
                 <div style={{marginBottom: "-2em"}}>
-                    <UpsertQuoteInputs 
-                        quoteData={newData} 
-                        onChange={onChange}
-                        size="small"/>
+                    <div>
+                        <TextField 
+                            label="Sitat"
+                            name="quote"
+                            type="text"
+                            required 
+                            fullWidth
+                            autoComplete="off"
+                            value={newValue.quote}
+                            onChange={(e) => setNewValue({...newValue, quote: e.target.value})}
+                            multiline
+                            minRows={4}
+                            sx={{mb: 4}}
+                            />
+                    </div>
+                    <div>
+                        <TextField 
+                            label="Sitatytrer" 
+                            name="utterer"
+                            type="text"
+                            required 
+                            fullWidth 
+                            autoComplete="off"
+                            value={newValue.utterer}
+                            onChange={(e) => setNewValue({...newValue, utterer: e.target.value})}
+                            sx={{maxWidth:  "450px"}}/>
+                    </div>
                 </div>
             </Form>
-        </>
+        </div>
     )
 }
