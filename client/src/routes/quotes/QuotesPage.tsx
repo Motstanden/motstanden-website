@@ -26,6 +26,51 @@ export default function QuotesPage(){
     )
 }
 
+export function PageSkeleton() {
+    return (
+        <>
+            <h1>Sitater</h1>
+            <ListSkeleton length={20} />
+        </>
+    )
+}
+
+export function ListSkeleton( {length}: {length: number}) {
+    return (
+        <ul style={{ 
+                paddingLeft: "5px", 
+                listStyleType: "none" 
+            }}>
+            { Array(length).fill(1).map( (_, i) => <ItemSkeleton key={i}/>) }
+        </ul>
+    ) 
+} 
+
+function ItemSkeleton() {
+    return (
+        <li>
+            <div>
+                <Skeleton 
+                    style={{
+                        maxWidth: "700px", 
+                        // marginRight: "50px", 
+                        marginBottom: "-10px",
+                        height: "5em"
+                    }}/>
+            </div>
+            <div style={{marginBottom: "25px"}}>
+                <Skeleton 
+                    style={{
+                        maxWidth: "650px", 
+                        marginLeft: "50px", 
+                        height: "2em"
+                    }}
+                />
+            </div>
+        </li>
+    )
+}
+
 export function QuoteList( {quotes, onItemChanged}: {quotes: QuoteData[], onItemChanged?: VoidFunction } ){
 
     const renderItem = (quote: QuoteData) => <DefaultItem quote={quote}/>
@@ -104,37 +149,16 @@ function RenderEditForm(props: RenderEditFormProps<QuoteData>) {
     )
 }
 
-export function ItemSkeleton() {
-    return (
-        <>
-            <div>
-                <Skeleton 
-                    style={{
-                        maxWidth: "700px", 
-                        // marginRight: "50px", 
-                        marginBottom: "-10px",
-                        height: "5em"
-                    }}/>
-            </div>
-            <div style={{marginBottom: "25px"}}>
-                <Skeleton 
-                    style={{
-                        maxWidth: "650px", 
-                        marginLeft: "50px", 
-                        height: "2em"
-                    }}
-                />
-            </div>
-        </>
-    )
-}
-
 function NewlineText({ text }: {text: string}) {
-    const newText = text.split('\n').map( (str, i) => ( 
-        <React.Fragment key={i}>
-            {str}
-            <br/>
-        </React.Fragment>
-    ));
-    return <div>{newText}</div>
+    return (
+        <div>
+            {text.split('\n')
+                 .map( (str, i) => ( 
+                    <React.Fragment key={i}>
+                        {str}
+                        <br/>
+                    </React.Fragment>
+            ))}
+        </div>
+    )
 }
