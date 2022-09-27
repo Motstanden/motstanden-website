@@ -4,7 +4,7 @@ import { Outlet, useLocation } from "react-router-dom"
 import { TabbedPageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
 import { Quote as QuoteData } from "common/interfaces"
-import { QuoteSkeleton } from "./QuotesPage"
+import { ItemSkeleton } from "./QuotesPage"
 import { matchUrl } from "src/utils/matchUrl"
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
 
@@ -23,7 +23,7 @@ export function QuotesContext(){
             return (
                 <PageContainer>
                     <h1>Sitater</h1>
-                    {Array(20).fill(1).map( (_, i) => <QuoteSkeleton key={i}/>)}
+                    {Array(20).fill(1).map( (_, i) => <ItemSkeleton key={i}/>)}
                 </PageContainer>
             )
         }

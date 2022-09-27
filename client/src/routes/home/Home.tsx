@@ -9,7 +9,7 @@ import { fetchAsync } from "src/utils/fetchAsync"
 import { useAuth } from "../../context/Authentication"
 import { useTitle } from "../../hooks/useTitle"
 import { PageContainer } from "../../layout/PageContainer"
-import { QuoteList, QuoteSkeleton } from "../quotes/QuotesPage"
+import { QuoteList, ItemSkeleton } from "../quotes/QuotesPage"
 
 
 export default function Home(){
@@ -39,7 +39,7 @@ function QuoteLoader(){
     if (isLoading) {
         return (
             <>
-                {Array(3).fill(1).map( (_, i) => <QuoteSkeleton key={i}/>)}
+                {Array(3).fill(1).map( (_, i) => <ItemSkeleton key={i}/>)}
             </>
         )
     }
