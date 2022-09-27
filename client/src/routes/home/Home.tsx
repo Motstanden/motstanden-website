@@ -18,14 +18,29 @@ export default function Home(){
 
     const user = useAuth().user!
 
-    const renderQuotes = (items: Quote[], refetchItems: VoidFunction) => <QuoteList quotes={items} onItemChanged={refetchItems} />
+    const renderQuotes = (items: Quote[], refetchItems: VoidFunction) => {
+        return (
+            <QuoteList 
+                quotes={items} 
+                onItemChanged={refetchItems} />
+        )
+    }
 
     const renderRumours = (items: Rumour[], refetchItems: VoidFunction) => {
         return (
-            <RumourList 
-                rumours={items}
-                onItemChanged={refetchItems}        
-            />
+            <>
+                <div style={{opacity: 0.6, fontSize: "small", marginBottom: "-20px"}}>
+                    <em>
+                        <strong>
+                            Har du hørt at...
+                        </strong>
+                    </em>
+                </div>
+                <RumourList 
+                    rumours={items}
+                    onItemChanged={refetchItems}        
+                    />
+            </>
         )
     }
 
