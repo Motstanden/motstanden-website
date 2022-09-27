@@ -9,7 +9,7 @@ import { UpsertQuoteInputs } from "./NewPage"
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace"
 import { useContextInvalidator } from "./Context"
 import { Skeleton } from "@mui/material"
-import { EditList, RenderEditFormProps } from "./EditList"
+import { EditList, RenderEditFormProps } from "./components/EditList"
 import { NewlineText } from "./components/NewlineText"
 
 export default function QuotesPage(){
