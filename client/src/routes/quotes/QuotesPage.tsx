@@ -10,6 +10,7 @@ import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace"
 import { useContextInvalidator } from "./Context"
 import { Skeleton } from "@mui/material"
 import { EditList, RenderEditFormProps } from "./EditList"
+import { NewlineText } from "./components/NewlineText"
 
 export default function QuotesPage(){
     useTitle("Sitater")
@@ -146,20 +147,5 @@ function RenderEditForm(props: RenderEditFormProps<QuoteData>) {
                 </div>
             </Form>
         </>
-    )
-}
-
-function NewlineText({ text }: {text: string}) {
-    const lines = text.split('\n')
-    return (
-        <div>
-            {lines.map( (str, i) => ( 
-                <React.Fragment key={i}>
-                    <div style={{minHeight: "10px"}}>
-                        {str}
-                    </div>
-                </React.Fragment>
-            ))}
-        </div>
     )
 }
