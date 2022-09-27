@@ -60,8 +60,23 @@ function insertNew(rumour: NewRumour, userId: number) {
     db.close();
 }
 
+function deleteItem(quoteId: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const startTransaction = db.transaction( () => {
+        const stmt = db.prepare(`
+            DELETE FROM 
+                rumour
+            WHERE rumour_id = ?;`
+        )
+        stmt.run(quoteId)
+    })
+    startTransaction()
+    db.close()   
+}
+
 export const rumourService = {
     get: get,
     getAll: getAll,
-    insertNew: insertNew
+    insertNew: insertNew,
+    delete: deleteItem
 }

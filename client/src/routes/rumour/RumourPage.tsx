@@ -75,7 +75,7 @@ export function RumourList({ rumours, onItemChanged}: {rumours: Rumour[], onItem
                 renderEditForm={renderEditForm} 
                 itemComparer={isEqual}
                 renderItemSkeleton={<ItemSkeleton/>}
-                deleteItemUrl="/api/rumour/delete"
+                deleteItemUrl="/api/rumours/delete"
                 confirmDeleteItemText="Vil du permanent slette dette ryktet?"
                 itemSpacing="15px"
             />

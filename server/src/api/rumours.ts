@@ -1,6 +1,8 @@
+import { UserGroup } from "common/enums";
 import { NewRumour } from "common/interfaces";
 import express, { NextFunction, Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate";
+import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor";
 import { rumourService } from "../services/rumours"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 
@@ -20,6 +22,23 @@ router.post("/rumours/new",
         }
         res.end()
     }
+)
+
+router.post("/rumours/delete", 
+    AuthenticateUser(),
+    requiresGroupOrAuthor({
+        requiredGroup: UserGroup.Administrator,
+        getAuthorInfo: (id) => rumourService.get(id)
+    }),
+    (req: Request, res: Response) => {
+        const id: number = req.body.id
+        try {
+            rumourService.delete(id)
+        } catch {
+            res.status(400).send("Bad data")
+        }
+        res.end()
+    } 
 )
 
 export default router
