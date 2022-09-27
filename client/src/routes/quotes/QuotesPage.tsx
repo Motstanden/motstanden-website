@@ -73,8 +73,8 @@ function ItemSkeleton() {
 
 export function QuoteList( {quotes, onItemChanged}: {quotes: QuoteData[], onItemChanged?: VoidFunction } ){
 
-    const renderItem = (quote: QuoteData) => <DefaultItem quote={quote}/>
-    const renderEditForm = (props: RenderEditFormProps<QuoteData>) => <RenderEditForm {...props}/>
+    const renderItem = (quote: QuoteData) => <ReadOnlyItem quote={quote}/>
+    const renderEditForm = (props: RenderEditFormProps<QuoteData>) => <EditItem {...props}/>
     const isEqual = (a: QuoteData, b: QuoteData) => a.utterer === b.utterer && a.quote === b.quote
 
     return (
@@ -92,7 +92,7 @@ export function QuoteList( {quotes, onItemChanged}: {quotes: QuoteData[], onItem
     )
 }
 
-function DefaultItem({quote}: {quote: QuoteData}) {
+function ReadOnlyItem({quote}: {quote: QuoteData}) {
     return (
         <div style={{marginTop: "10px", marginBottom: "10px"}}>
             <NewlineText text={quote.quote}/>
@@ -116,7 +116,7 @@ function DefaultItem({quote}: {quote: QuoteData}) {
     )
 }
 
-function RenderEditForm(props: RenderEditFormProps<QuoteData>) {
+function EditItem(props: RenderEditFormProps<QuoteData>) {
     const quoteData = props.data
     const [newData, setNewData] = useState(quoteData)
 
