@@ -156,8 +156,12 @@ function UpsertRumourForm( {
 
     const validateData = () => {
         const isEmpty = isNullOrWhitespace(newValue.rumour)
-        const isEqual = newValue.rumour === initialValue.rumour
+        const isEqual = newValue.rumour.trim() === initialValue.rumour.trim()
         return !isEmpty && !isEqual
+    }
+
+    const getSubmitData = () => {
+        return {...newValue, rumour: newValue.rumour.trim()}
     }
 
     const disabled = !validateData()
@@ -165,7 +169,7 @@ function UpsertRumourForm( {
     return (
         <div style={{maxWidth: "700px"}}>
             <Form 
-                value={newValue} 
+                value={getSubmitData} 
                 postUrl={postUrl} 
                 disabled={disabled}
                 onAbortClick={ (e) => onAbortClick()} 
