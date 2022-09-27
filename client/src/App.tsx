@@ -32,7 +32,7 @@ import { EventContext, EventItemContext } from './routes/event/Context';
 import { QuotesContext } from './routes/quotes/Context';
 import { NewQuotePage } from './routes/quotes/NewPage';
 import { LicenseOnlyPage, LicensePage } from './routes/license/LicensePage';
-import { RumourPage } from './routes/rumour/RumourPage';
+import { NewRumourPage, RumourPage } from './routes/rumour/RumourPage';
 import { RumourContext } from './routes/rumour/Context';
 
 function App() {
@@ -73,6 +73,7 @@ function App() {
 						</Route>
 						<Route path="/rykter" element={<RumourContext/>}>
 							<Route index element={<RumourPage/>}/>
+							<Route path="ny" element={<NewRumourPage/>}/>
 						</Route>
 						<Route path="/medlem" element={<UserContext/>}>
 							<Route path="" element={<Navigate to="liste"/>}/>

@@ -1,10 +1,14 @@
+import Divider from "@mui/material/Divider"
 import Skeleton from "@mui/material/Skeleton"
 import Stack from "@mui/material/Stack"
-import { Rumour } from "common/interfaces"
+import TextField from "@mui/material/TextField"
+import { NewRumour, Rumour } from "common/interfaces"
 import dayjs from "dayjs"
-import { useOutletContext } from "react-router-dom"
+import { useState } from "react"
+import { useNavigate, useOutletContext } from "react-router-dom"
+import { Form } from "src/components/form/Form"
 import { useTitle } from "src/hooks/useTitle"
-import { PageContainer } from "src/layout/PageContainer"
+import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace"
 import { EditList, RenderEditFormProps } from "../quotes/components/EditList"
 import { NewlineText } from "../quotes/components/NewlineText"
 import { useContextInvalidator } from "./Context"
@@ -19,7 +23,6 @@ export function RumourPage() {
         <>
             <h1>Ryktebørsen</h1>
             <h3>Har du hørt at...</h3>
-            {/* <ListSkeleton length={3}/> */}
             <RumourList rumours={data} onItemChanged={onItemChanged} />
         </>
     )
@@ -101,8 +104,87 @@ function ReadOnlyItem({rumour}: {rumour: Rumour}) {
 
 function EditItem(props: RenderEditFormProps<Rumour>) {
     return (
+        <div style={{marginRight: "10px"}}>
+            <Divider sx={{mb: 4}}/>
+            <UpsertRumourForm 
+                initialValue={props.data}
+                onAbortClick={props.onEditAbort}
+                onPostSuccess={props.onEditSuccess}
+                postUrl="/api/rumour/update"
+                />
+        </div>
+    )
+}
+
+export function NewRumourPage() {
+    const navigate = useNavigate()
+    const contextInvalidator = useContextInvalidator()
+
+    const onAbort = () => navigate("/rykter")
+
+    const onSuccess = () => {
+        contextInvalidator()
+        navigate("/rykter")
+    }
+
+    return (
         <>
-            #todo
+            <h1>Nytt rykte</h1>
+            <UpsertRumourForm 
+                initialValue={{rumour: ""}}
+                postUrl="/api/rumour/new"    
+                onAbortClick={onAbort}
+                onPostSuccess={onSuccess}
+            />
         </>
+    )
+}
+
+function UpsertRumourForm( { 
+    initialValue, 
+    postUrl, 
+    onAbortClick,
+    onPostSuccess,
+}: {
+    initialValue: NewRumour, 
+    postUrl: string, 
+    onAbortClick: VoidFunction
+    onPostSuccess: VoidFunction
+}) {
+    const [newValue, setNewValue] = useState<NewRumour>(initialValue)
+
+    const validateData = () => {
+        const isEmpty = isNullOrWhitespace(newValue.rumour)
+        const isEqual = newValue.rumour === initialValue.rumour
+        return !isEmpty && !isEqual
+    }
+
+    const disabled = !validateData()
+
+    return (
+        <div style={{maxWidth: "700px"}}>
+            <Form 
+                value={newValue} 
+                postUrl={postUrl} 
+                disabled={disabled}
+                onAbortClick={ (e) => onAbortClick()} 
+                onPostSuccess={ (e) => onPostSuccess()}
+                >
+                <div style={{marginBottom: "-2em"}}>
+                    <TextField 
+                        label="Har du hørt at...?"
+                        name="rumour"
+                        type="text"
+                        required
+                        fullWidth
+                        autoComplete="off"
+                        value={newValue.rumour}
+                        onChange={ (e) => setNewValue({...newValue, rumour: e.target.value})}
+                        multiline
+                        minRows={2}
+                        />
+                </div>
+            </Form>
+        </div>
     )
 }
