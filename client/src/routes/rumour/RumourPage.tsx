@@ -23,7 +23,9 @@ export function RumourPage() {
         <>
             <h1>Ryktebørsen</h1>
             <h3>Har du hørt at...</h3>
-            <RumourList rumours={data} onItemChanged={onItemChanged} />
+            <div style={{marginLeft: "10px"}}>
+                <RumourList rumours={data} onItemChanged={onItemChanged} />
+            </div>
         </>
     )
 }
@@ -33,7 +35,9 @@ export function PageSkeleton() {
         <>
             <h1>Ryktebørsen</h1>
             <h3>Har du hørt at...</h3>
-            <ListSkeleton length={20}/>
+            <div style={{marginLeft: "10px"}}>
+                <ListSkeleton length={20}/>
+            </div>
         </>
     )
 }
@@ -43,8 +47,6 @@ export function ListSkeleton( {length}: {length: number}) {
         <ul style={{
             paddingLeft: "5px",
             listStyleType: "none",
-            marginLeft: "10px",
-
         }}>
             { Array(length).fill(1).map( (_, i) => <ItemSkeleton key={i}/>) }
         </ul>
@@ -67,19 +69,17 @@ export function RumourList({ rumours, onItemChanged}: {rumours: Rumour[], onItem
     const isEqual = (a: Rumour, b: Rumour) => a.rumour === b.rumour
 
     return (
-        <div style={{marginLeft: "10px"}}>
-            <EditList 
-                items={rumours} 
-                onItemChanged={() => onItemChanged && onItemChanged()} 
-                renderItem={renderItem}
-                renderEditForm={renderEditForm} 
-                itemComparer={isEqual}
-                renderItemSkeleton={<ItemSkeleton/>}
-                deleteItemUrl="/api/rumours/delete"
-                confirmDeleteItemText="Vil du permanent slette dette ryktet?"
-                itemSpacing="15px"
-            />
-        </div>
+        <EditList 
+            items={rumours} 
+            onItemChanged={() => onItemChanged && onItemChanged()} 
+            renderItem={renderItem}
+            renderEditForm={renderEditForm} 
+            itemComparer={isEqual}
+            renderItemSkeleton={<ItemSkeleton/>}
+            deleteItemUrl="/api/rumours/delete"
+            confirmDeleteItemText="Vil du permanent slette dette ryktet?"
+            itemSpacing="15px"
+        />
     )
 }
 

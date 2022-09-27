@@ -29,7 +29,7 @@ export default function Home(){
     const renderRumours = (items: Rumour[], refetchItems: VoidFunction) => {
         return (
             <>
-                <div style={{opacity: 0.6, fontSize: "small", marginBottom: "-20px"}}>
+                <div style={{opacity: 0.6, fontSize: "small", marginBottom: "-10px", marginLeft: "5px"}}>
                     <em>
                         <strong>
                             Har du hørt at...
@@ -47,8 +47,8 @@ export default function Home(){
     return (
         <PageContainer>
             <h1>Hjem</h1>
-            <p>Velkommen {user.firstName}!</p>
-            <Grid container spacing={4} sx={{mt: 4}} >
+            <p style={{marginBottom: "40px"}}>Velkommen {user.firstName}!</p>
+            <Grid container spacing={4} >
                 <ItemOfTheDay 
                     title="Dagens sitater" 
                     fetchUrl="/api/quotes/daily-quotes" 
