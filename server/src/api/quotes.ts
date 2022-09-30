@@ -7,12 +7,18 @@ import { hasGroupAccess } from "../utils/accessTokenUtils";
 import { UserGroup } from "common/enums";
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
 import dailyRandomInt from "../utils/dailyRandomInt.js";
+import { strToNumber } from "common/utils";
 
 let router = express.Router()
 
-router.get("/quotes", 
+
+
+router.get("/quotes?:limit", 
     AuthenticateUser(),
-    (req, res) => res.send(quoteService.getQuotes())
+    (req, res) => {
+        const limit = strToNumber(req.query.limit?.toString())
+        res.send(quoteService.getQuotes(limit))
+    }
 )
 
 router.get("/quotes/daily-quotes",

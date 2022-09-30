@@ -1,5 +1,6 @@
 import { UserGroup } from "common/enums";
 import { NewRumour, Rumour } from "common/interfaces";
+import { strToNumber } from "common/utils";
 import express, { NextFunction, Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate";
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor";
@@ -9,7 +10,12 @@ import dailyRandomInt from "../utils/dailyRandomInt";
 
 let router = express.Router()
 
-router.get("/rumours", AuthenticateUser(), (req, res) => res.send(rumourService.getAll()))
+router.get("/rumours?:limit", 
+    AuthenticateUser(), 
+    (req, res) =>  {
+        const limit = strToNumber(req.query.limit?.toString())
+        res.send(rumourService.getAll(limit))
+    })
 
 router.get("/rumours/daily-rumour",
     AuthenticateUser(),

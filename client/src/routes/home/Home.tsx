@@ -22,6 +22,18 @@ export default function Home(){
             <p style={{marginBottom: "40px"}}>Velkommen {user.firstName}!</p>
             <Grid container spacing={4} >
                 <ItemOfTheDay 
+                    title="Nyeste sitater" 
+                    fetchUrl="/api/quotes?limit=3" 
+                    renderSkeleton={<QuotesListSkeleton length={3}/>}
+                    renderItems={RenderQuotesList}
+                />
+                <ItemOfTheDay
+                    title="Nyeste rykter"
+                    fetchUrl="/api/rumours?limit=3"
+                    renderSkeleton={<RumourListSkeleton length={3}/>}
+                    renderItems={RenderRumourList}
+                />
+                <ItemOfTheDay 
                     title="Dagens sitater" 
                     fetchUrl="/api/quotes/daily-quotes" 
                     renderSkeleton={<QuotesListSkeleton length={3}/>}
