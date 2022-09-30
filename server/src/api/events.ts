@@ -14,22 +14,18 @@ let router = express.Router()
 
 router.get("/events/upcoming",
     AuthenticateUser(),
-    (req, res) => res.send(
-        events.getEvents( { 
-            upcoming: true,
-            limit: !!req.body.limit ? req.body.limit : undefined 
-        })
-    )
+    (req, res) =>  {
+        const limit = strToNumber(req.query.limit?.toString())
+        res.send(events.getEvents( { upcoming: true, limit: limit }))
+    }
 )
 
 router.get("/events/previous",
     AuthenticateUser(),
-    (req, res) => res.send(
-        events.getEvents( { 
-            upcoming: false,
-            limit: !!req.body.limit ? req.body.limit : undefined 
-        })
-    )
+    (req, res) =>  {
+        const limit = strToNumber(req.query.limit?.toString())
+        res.send(events.getEvents( { upcoming: true, limit: limit }))
+    }
 )
 
 router.get("/events/all", 

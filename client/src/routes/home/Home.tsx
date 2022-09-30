@@ -1,16 +1,21 @@
 import Divider from "@mui/material/Divider"
 import Grid from "@mui/material/Grid"
+import Link from "@mui/material/Link"
+import { Link as RouterLink } from "react-router-dom"
 import Paper from "@mui/material/Paper"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Quote, Rumour } from "common/interfaces"
+import { EventData, Quote, Rumour } from "common/interfaces"
 import React, { useEffect } from "react"
 import { TitleCard } from "src/components/TitleCard"
 import { fetchAsync } from "src/utils/fetchAsync"
 import { useAuth } from "../../context/Authentication"
 import { useTitle } from "../../hooks/useTitle"
 import { PageContainer } from "../../layout/PageContainer"
+import { buildEventItemUrl } from "../event/Context"
 import { QuoteList, ListSkeleton as QuotesListSkeleton } from "../quotes/QuotesPage"
 import { RumourList, ListSkeleton as RumourListSkeleton } from "../rumour/RumourPage"
+import dayjs from "dayjs"
+import Skeleton from "@mui/material/Skeleton"
 
 
 export default function Home(){
@@ -21,6 +26,13 @@ export default function Home(){
             <h1>Hjem</h1>
             <p style={{marginBottom: "40px"}}>Velkommen {user.firstName}!</p>
             <Grid container spacing={4} >
+                <ItemOfTheDay 
+                    title="Arrangement" 
+                    fetchUrl="/api/events/upcoming?limit=5" 
+                    renderSkeleton={<EventListSkeleton length={5}/>}
+                    renderItems={RenderEventList}
+                />
+                <NoItem/>
                 <ItemOfTheDay 
                     title="Nyeste sitater" 
                     fetchUrl="/api/quotes?limit=3" 
@@ -55,6 +67,62 @@ type RenderItemProps<T> = {
     refetchItems: VoidFunction
 }
 
+function RenderEventList(props: RenderItemProps<EventData> ){
+    return (
+        <ul style={{
+            listStyle: "none", 
+            paddingLeft: "10px"
+            }}
+        >
+            {props.items.map( (event, index) => ( 
+                <li key={`${index} ${event.title}}`} style={{marginBottom: "15px"}}>
+                    <Link 
+                        color="secondary" 
+                        component={RouterLink}
+                        to={buildEventItemUrl(event)}
+                        underline="hover"
+                        >
+                            {event.title}
+                    </Link>              
+                    <div style={{
+                            marginLeft: "15px",
+                            opacity: 0.65,
+                            fontSize: "small"
+                        }} 
+                    > 
+                        {dayjs(event.startDateTime).format("dddd D. MMM k[l]: HH:mm")}
+                    </div>                
+                </li>
+            ))}
+        </ul>
+    )
+}
+
+
+
+function EventListSkeleton( {length}: {length: number}){
+    return(
+        <>
+            <ul style={{
+                listStyle: "none", 
+                paddingLeft: "10px"
+            }}
+            >
+                { Array(length).fill(1).map( (_, i) => (
+                    <li key={i} style={{marginBottom: "15px"}}>
+                        <div>
+                            <Skeleton style={{width: "125px", height: "2em"}} />
+                        </div>
+                        <div>
+                            <Skeleton style={{marginLeft: "15px", width: "155px"}} />                        
+                        </div>                
+                    </li>
+                ))}
+            </ul>
+        </>
+    )    
+}
+
 function RenderRumourList( props: RenderItemProps<Rumour>) {
     return (
         <>
@@ -83,6 +151,15 @@ function RenderQuotesList(props: RenderItemProps<Quote>) {
         <QuoteList 
             quotes={props.items} 
             onItemChanged={props.refetchItems} />
+    )
+}
+
+function NoItem(){
+    return (
+        <Grid 
+            item 
+            xs={12} sm={12} md={6} 
+            display={{xs: "none", xm: "none", md: "block"}}/>
     )
 }
 
