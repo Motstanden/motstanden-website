@@ -1,0 +1,6 @@
+// Although this file seems pointless, 
+// it is actually necessary for Playwright to resolve node API:
+// https://github.com/microsoft/playwright/issues/17932
+{
+    
+}
