@@ -216,7 +216,7 @@ function RenderInfo() {
         }}
         >
             {items.map( (info, index) => (
-                <>
+                <li style={{marginBottom: "20px"}}>
                     <Link
                         color="secondary"
                         href={info.link}
@@ -225,14 +225,13 @@ function RenderInfo() {
                             {info.title}
                     </Link>
                     <div style={{
-                        marginBottom: "20px",
                         paddingLeft: "10px",
                         opacity: 0.65,
                         fontSize: "small",
                     }}>
                         {info.subtitle}
                     </div>
-                </>
+                </li>
             ))}
         </ul>
     )
