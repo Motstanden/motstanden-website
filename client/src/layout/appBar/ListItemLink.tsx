@@ -36,10 +36,16 @@ export default function ListItemLink(props: ListItemLinkProps){
             component={externalRoute ? "a" : RouterLink}
             {...urlAttribute}
             disabled={disabled}
-            sx={sx}
+            sx={{
+                '& .MuiSvgIcon-root': {
+                    // Target icon properties here
+                    // fontSize: "x-large"
+                },
+                ...sx
+            }}
             onClick={onLinkClick}
             >
-            <ListItemIcon sx={{minWidth: "0px", paddingRight: "10px"}}>
+            <ListItemIcon sx={{minWidth: "0px", paddingRight: "10px"}} style={{fontSize: "tiny"}} >
                 {icon}
             </ListItemIcon>
             <ListItemText primary={text}/>
