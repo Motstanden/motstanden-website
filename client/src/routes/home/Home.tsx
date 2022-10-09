@@ -167,7 +167,7 @@ function RenderInfo() {
 
     const items: InfoItem[] = [{
             link:"https://www.facebook.com/groups/399149784137861",
-            title: "Motstanden - Medlemsgruppe",
+            title: "Facebook medlemsgruppe",
             subtitle: "Facebookgruppe",
             icon: <></>
         }, {
@@ -182,27 +182,27 @@ function RenderInfo() {
             icon: <></>
         }, {
             link:"https://www.messenger.com/t/1795481677236473",
-            title:"Motstandens Messengergruppe",
+            title:"Facebook chat",
             subtitle:"Spør noen i motstanden for å bli med",
             icon: <></>
         }, {
             link:"https://www.snapchat.com/invite/NWM3NGQ4MjktODBlYS0zNTczLTk1MDctOWRkZTYyMWU5OGZl/MTM5ZDdmMmItMmVmMC1mMDRlLTM3NTUtMTRiMTA2ZjkyZDBm",
-            title:"Motstandens Snapchatgruppe",
+            title:"Snapchat",
             subtitle:"",
             icon: <></>
         }, {
             link:"https://discord.gg/Np3uAfS28V",
-            title:"Motstandens Discord",
+            title:"Discord",
             subtitle:"",
             icon: <></>
         }, {
             link:"https://www.instagram.com/denohmskemotstanden/",
-            title:"Motstandens Instagram",
+            title:"Instagram",
             subtitle:"",
             icon: <></>
         }, {
             link:"https://www.tiktok.com/@denohmskemotstanden",
-            title:"Motstandens Tiktok",
+            title:"Tiktok",
             subtitle:"",
             icon: <></>
         }
