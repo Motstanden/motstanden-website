@@ -13,6 +13,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LocalPoliceIcon from '@mui/icons-material/LocalPolice';
 import InfoIcon from '@mui/icons-material/Info';
 import GroupsIcon from '@mui/icons-material/Groups';
+import PersonIcon from '@mui/icons-material/Person';
 
 
 const icons = {
@@ -30,7 +31,8 @@ const icons = {
     Rumour: <ForumIcon/>,
     SheetArchive: <MusicVideoIcon/>,
     MemberAdd: <PersonAddIcon/>,
-    MemberList: <GroupsIcon/>
+    MemberList: <GroupsIcon/>,
+    Profile: <PersonIcon/>
 }
 
 export { icons as MenuIcons}
