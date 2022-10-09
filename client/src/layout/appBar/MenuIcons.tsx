@@ -13,26 +13,21 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LocalPoliceIcon from '@mui/icons-material/LocalPolice';
 import InfoIcon from '@mui/icons-material/Info';
 import GroupsIcon from '@mui/icons-material/Groups';
-import PersonIcon from '@mui/icons-material/Person';
 
-
-const icons = {
-    ExpandLess: <ExpandLess/>,
-    ExpandMore: <ExpandMore/>,
-    FrontPage: <InfoIcon/>,
-    BecomeMember: <EmojiPeopleIcon/>,
-    Wiki: <LanguageIcon/>,
-    Lyric: <NightlifeIcon/>,
-    Documents: <DescriptionIcon/>,
-    License: <LocalPoliceIcon/>,
-    Home: <HomeIcon/>,
-    Event: <EventNoteIcon/>,
-    Quotes: <FormatQuoteIcon/>,
-    Rumour: <ForumIcon/>,
-    SheetArchive: <MusicVideoIcon/>,
-    MemberAdd: <PersonAddIcon/>,
-    MemberList: <GroupsIcon/>,
-    Profile: <PersonIcon/>
+export  {
+    ExpandLess      as  ExpandLess,
+    ExpandMore      as  ExpandMore,
+    InfoIcon        as  FrontPage,
+    EmojiPeopleIcon as  BecomeMember,
+    LanguageIcon    as  Wiki,
+    NightlifeIcon   as  Lyric,
+    DescriptionIcon as  Documents,
+    LocalPoliceIcon as  License,
+    HomeIcon        as  Home,
+    EventNoteIcon   as  Event,
+    FormatQuoteIcon as  Quotes,
+    ForumIcon       as  Rumour,
+    MusicVideoIcon  as  SheetArchive,
+    PersonAddIcon   as  MemberAdd,
+    GroupsIcon      as  MemberList,
 }
-
-export { icons as MenuIcons}

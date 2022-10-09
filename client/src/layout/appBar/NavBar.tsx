@@ -17,7 +17,7 @@ import { SxProps } from '@mui/system';
 
 import { hasGroupAccess } from 'common/utils';
 import { UserGroup } from 'common/enums';
-import { MenuIcons } from './MenuIcons';
+import * as MenuIcons from './MenuIcons';
 
 
 export function NavBar(){
@@ -47,14 +47,14 @@ function PrivateNavBar(){
             <AdminDropDown/>
             <NavDropDown text="Om oss">
                 <List component="nav" disablePadding sx={{minWidth: 200}}>
-                    <ListItemLink text="Framside" to="/framside" icon={MenuIcons.FrontPage}/>
+                    <ListItemLink text="Framside" to="/framside" icon={<MenuIcons.FrontPage/>}/>
                     <Divider/>
-                    <ListItemLink text="Bli Medlem" to="/bli-medlem" icon={MenuIcons.BecomeMember}/>
+                    <ListItemLink text="Bli Medlem" to="/bli-medlem" icon={<MenuIcons.BecomeMember/>}/>
                     {/* <ListItemLink text="FAQ" to="/faq" disabled /> */}
                     <Divider/>
-                    <ListItemLink text="Lisens" to="/lisens" icon={MenuIcons.License}/>
+                    <ListItemLink text="Lisens" to="/lisens" icon={<MenuIcons.License/>}/>
                     <Divider/>
-                    <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={MenuIcons.Wiki}/>
+                    <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={<MenuIcons.Wiki/>}/>
                 </List>
             </NavDropDown>
         </Stack>
@@ -72,14 +72,14 @@ function PublicNavBar(){
             >
             <NavDropDown text="Om oss" sx={{mr: -2}}>
                 <List component="nav" disablePadding sx={{minWidth: 200}}>
-                    <ListItemLink text="Framside" to="/" icon={MenuIcons.FrontPage}/>
+                    <ListItemLink text="Framside" to="/" icon={<MenuIcons.FrontPage/>}/>
                     <Divider/>
-                    <ListItemLink text="Bli Medlem" to="/bli-medlem" icon={MenuIcons.BecomeMember}/>
+                    <ListItemLink text="Bli Medlem" to="/bli-medlem" icon={<MenuIcons.BecomeMember/>}/>
                     {/* <ListItemLink text="FAQ" to="/faq" disabled /> */}
                                         <Divider/>
-                    <ListItemLink text="Lisens" to="/lisens" icon={MenuIcons.License}/>
+                    <ListItemLink text="Lisens" to="/lisens" icon={<MenuIcons.License/>}/>
                     <Divider/>
-                    <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={MenuIcons.Wiki}/>
+                    <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={<MenuIcons.Wiki/>}/>
                 </List>
             </NavDropDown>
             <NavLink text="Studenttraller" to="/studenttraller"/>
@@ -94,9 +94,9 @@ function AdminDropDown() {
         return (
             <NavDropDown text="Medlem" sx={{pr: 0}}>
                 <List component="nav" disablePadding sx={{minWidth: 200}}>
-                    <ListItemLink text="Ny" to="/medlem/ny" icon={MenuIcons.MemberAdd}/>
+                    <ListItemLink text="Ny" to="/medlem/ny" icon={<MenuIcons.MemberAdd/>}/>
                     <Divider/>
-                    <ListItemLink text="Liste" to="/medlem/liste" icon={MenuIcons.MemberList}/>
+                    <ListItemLink text="Liste" to="/medlem/liste" icon={<MenuIcons.MemberList/>}/>
                 </List>
             </NavDropDown>
         )

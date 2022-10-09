@@ -2,13 +2,13 @@ import React, { useRef, useState } from 'react';
 
 // Material UI
 import Avatar from '@mui/material/Avatar';
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import LogoutIcon from '@mui/icons-material/Logout';
+import PersonIcon from '@mui/icons-material/Person';
+
 
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/Authentication';
@@ -16,7 +16,6 @@ import { useAuth } from '../../context/Authentication';
 import { getFullName } from 'common/utils';
 import { Divider, Link } from '@mui/material';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
-import { MenuIcons } from './MenuIcons';
 
 
 export default function UserAvatar() {
@@ -50,7 +49,7 @@ export default function UserAvatar() {
             )}
         >
             <MenuItem component={RouterLink} to={`/medlem/${user.userId}`} >
-                <ListItemIcon>{MenuIcons.Profile}</ListItemIcon>
+                <ListItemIcon><PersonIcon/></ListItemIcon>
                 Profil
             </MenuItem>
             <Divider/>
