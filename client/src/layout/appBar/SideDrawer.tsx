@@ -3,21 +3,6 @@ import React, { useEffect, useRef, useState } from 'react';
 // Material UI 
 import Collapse from '@mui/material/Collapse';
 import Divider from '@mui/material/Divider';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import HomeIcon from '@mui/icons-material/Home';
-import EventNoteIcon from '@mui/icons-material/EventNote';
-import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
-import ForumIcon from '@mui/icons-material/Forum';
-import MusicVideoIcon from '@mui/icons-material/MusicVideo';
-import NightlifeIcon from '@mui/icons-material/Nightlife';
-import DescriptionIcon from '@mui/icons-material/Description';
-import EmojiPeopleIcon from '@mui/icons-material/EmojiPeople';
-import LanguageIcon from '@mui/icons-material/Language';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import LocalPoliceIcon from '@mui/icons-material/LocalPolice';
-import InfoIcon from '@mui/icons-material/Info';
-import GroupsIcon from '@mui/icons-material/Groups';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -30,6 +15,7 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 
 import MotstandenImg from "../../assets/logos/motstanden.png"
 
+import { MenuIcons } from './MenuIcons';
 import ThemeSwitcher from './ThemeSwitcher';
 import { useAuth } from '../../context/Authentication';
 import { hasGroupAccess } from 'common/utils';
@@ -42,6 +28,7 @@ export default function SideDrawer() {
     const [isOpen, setIsOpen] = useState(false)
     return (
         <>
+            
             <IconButton
                 size="small"
                 color="inherit"
@@ -81,14 +68,14 @@ function PublicContent(props: SideDrawerContentProps) {
         <List sx={{minWidth: 230}} >
             <ListItemHeader/>
             <ListItemExpander text="Om oss" startsOpen>
-                <ListItemLink text="Framside" to="/" onLinkClick={onRequestedExit} icon={<InfoIcon/>}/>
-                <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onRequestedExit} icon={<EmojiPeopleIcon/>}/>
+                <ListItemLink text="Framside" to="/" onLinkClick={onRequestedExit} icon={MenuIcons.FrontPage}/>
+                <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onRequestedExit} icon={MenuIcons.BecomeMember}/>
                 {/* <ListItemLink text="FAQ" to="/faq" disabled onLinkClick={onRequestedExit}/> */}
-                <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={<LanguageIcon/>}/>
+                <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={MenuIcons.Wiki}/>
             </ListItemExpander>
-            <ListItemLink text="Studenttraller" to="/studenttraller" onLinkClick={onRequestedExit} icon={<NightlifeIcon/>}/>
-            <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit} icon={<DescriptionIcon/>}/>
-            <ListItemLink externalRoute text="Lisens" to="/lisens"  onLinkClick={onRequestedExit} icon={<LocalPoliceIcon/>}/>
+            <ListItemLink text="Studenttraller" to="/studenttraller" onLinkClick={onRequestedExit} icon={MenuIcons.Lyric}/>
+            <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit} icon={MenuIcons.Documents}/>
+            <ListItemLink externalRoute text="Lisens" to="/lisens"  onLinkClick={onRequestedExit} icon={MenuIcons.License}/>
             <ListItemThemeSwitcher/>
         </List>
     )
@@ -99,22 +86,22 @@ function PrivateContent(props: SideDrawerContentProps) {
     return (
         <List sx={{minWidth: 230}} >
             <ListItemHeader/>
-            <ListItemLink text="Hjem" to="/hjem" onLinkClick={onRequestedExit} icon={<HomeIcon/>}/>
-            <ListItemLink text="Arrangement" to="/Arrangement" onLinkClick={onRequestedExit} icon={<EventNoteIcon/>}/>
-            <ListItemLink text="Sitater" to="/sitater" onLinkClick={onRequestedExit} icon={<FormatQuoteIcon/>}/>
-            <ListItemLink text="Rykter" to="/rykter" onLinkClick={onRequestedExit} icon={<ForumIcon/>}/>
+            <ListItemLink text="Hjem" to="/hjem" onLinkClick={onRequestedExit} icon={MenuIcons.Home}/>
+            <ListItemLink text="Arrangement" to="/Arrangement" onLinkClick={onRequestedExit} icon={MenuIcons.Event}/>
+            <ListItemLink text="Sitater" to="/sitater" onLinkClick={onRequestedExit} icon={MenuIcons.Quotes}/>
+            <ListItemLink text="Rykter" to="/rykter" onLinkClick={onRequestedExit} icon={MenuIcons.Rumour}/>
             <Divider light sx={{ml: 2, mr: 4, opacity: 0.7}}/>
-            <ListItemLink text="Noter" to="/notearkiv" onLinkClick={onRequestedExit} icon={<MusicVideoIcon/>}/>
-            <ListItemLink text="Traller" to="/studenttraller" onLinkClick={onRequestedExit} icon={<NightlifeIcon/>}/>
-            <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit} icon={<DescriptionIcon/>}/>
+            <ListItemLink text="Noter" to="/notearkiv" onLinkClick={onRequestedExit} icon={MenuIcons.SheetArchive}/>
+            <ListItemLink text="Traller" to="/studenttraller" onLinkClick={onRequestedExit} icon={MenuIcons.Lyric}/>
+            <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit} icon={MenuIcons.Documents}/>
             <Divider light sx={{ml: 2, mr: 4, opacity: 0.7}}/>
             <MemberList onLinkClick={onRequestedExit} />
             <ListItemExpander text="Om oss">
-                <ListItemLink text="Framside" to="/framside" onLinkClick={onRequestedExit} icon={<InfoIcon/>}/>
-                <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onRequestedExit} icon={<EmojiPeopleIcon/>}/>
+                <ListItemLink text="Framside" to="/framside" onLinkClick={onRequestedExit} icon={MenuIcons.FrontPage}/>
+                <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onRequestedExit} icon={MenuIcons.BecomeMember}/>
                 {/* <ListItemLink text="FAQ" to="/faq" disabled onLinkClick={onRequestedExit}/> */}
-                <ListItemLink externalRoute text="Lisens" to="/lisens"  onLinkClick={onRequestedExit} icon={<LocalPoliceIcon/>}/>
-                <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" onLinkClick={onRequestedExit} icon={<LanguageIcon/>}/>
+                <ListItemLink externalRoute text="Lisens" to="/lisens"  onLinkClick={onRequestedExit} icon={MenuIcons.License}/>
+                <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" onLinkClick={onRequestedExit} icon={MenuIcons.Wiki}/>
             </ListItemExpander>
             <ListItemThemeSwitcher/>
         </List>
@@ -127,8 +114,8 @@ function MemberList( {onLinkClick} : {onLinkClick?: VoidFunction}) {
     if(hasGroupAccess(user, UserGroup.SuperAdministrator)) {
         return (
             <ListItemExpander text="Medlem">
-                <ListItemLink text="Ny" to="/medlem/ny" onLinkClick={onLinkClick} icon={<PersonAddIcon/>}/>
-                <ListItemLink text="Liste" to="/medlem/liste" onLinkClick={onLinkClick} icon={<GroupsIcon/>}/>
+                <ListItemLink text="Ny" to="/medlem/ny" onLinkClick={onLinkClick} icon={MenuIcons.MemberAdd}/>
+                <ListItemLink text="Liste" to="/medlem/liste" onLinkClick={onLinkClick} icon={MenuIcons.MemberList}/>
             </ListItemExpander>
         )
     }
@@ -158,7 +145,7 @@ function ListItemExpander({ text, startsOpen, children }: { text: string, starts
         <>
             <ListItemButton onClick={() => setIsOpen(!isOpen)}>
                 <ListItemText primary={text}/>
-                {isOpen ? <ExpandLess/> : <ExpandMore/>}
+                {isOpen ? MenuIcons.ExpandLess : MenuIcons.ExpandMore}
             </ListItemButton>
             <Collapse in={isOpen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding sx={{pl: 4}}>
