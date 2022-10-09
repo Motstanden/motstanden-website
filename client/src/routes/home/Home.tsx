@@ -16,6 +16,7 @@ import { QuoteList, ListSkeleton as QuotesListSkeleton } from "../quotes/QuotesP
 import { RumourList, ListSkeleton as RumourListSkeleton } from "../rumour/RumourPage"
 import dayjs from "dayjs"
 import Skeleton from "@mui/material/Skeleton"
+import FacebookIcon from "@mui/icons-material/Facebook"
 
 
 export default function Home(){
@@ -155,42 +156,81 @@ function RenderQuotesList(props: RenderItemProps<Quote>) {
     )
 }
 
+interface InfoItem {
+    link: string,
+    title: string,
+    subtitle: string,
+    icon: React.ReactNode
+}
+
 function RenderInfo() {
-    let items: string[][] = [
-        ["https://www.facebook.com/groups/399149784137861",
-            "Motstanden - Medlemsgruppe", "Facebookgruppe"],
-        ["https://www.facebook.com/groups/1496116444049224",
-            "NASH", "Facebookgruppe for alle studentorchesterne i Norge"],
-        ["https://www.facebook.com/groups/824108334919023",
-            "SOT", "Facebookgruppe for alle studentorchesterne i Trondheim"],
-        ["https://www.messenger.com/t/1795481677236473",
-            "Motstandens Messengergruppe", "Spør noen i motstanden for å bli med"],
-        ["https://www.snapchat.com/invite/NWM3NGQ4MjktODBlYS0zNTczLTk1MDctOWRkZTYyMWU5OGZl/MTM5ZDdmMmItMmVmMC1mMDRlLTM3NTUtMTRiMTA2ZjkyZDBm",
-            "Motstandens Snapchatgruppe", ""],
-        ["https://discord.gg/Np3uAfS28V",
-            "Motstandens Discord", ""],
-        ["https://www.instagram.com/denohmskemotstanden/",
-            "Motstandens Instagram", ""],
-        ["https://www.tiktok.com/@denohmskemotstanden",
-            "Motstandens Tiktok", ""],
+
+    const items: InfoItem[] = [{
+            link:"https://www.facebook.com/groups/399149784137861",
+            title: "Motstanden - Medlemsgruppe",
+            subtitle: "Facebookgruppe",
+            icon: <></>
+        }, {
+            link:"https://www.facebook.com/groups/1496116444049224",
+            title:"NASH",
+            subtitle:"Facebookgruppe for alle studentorchesterne i Norge",
+            icon: <></>
+        }, {
+            link:"https://www.facebook.com/groups/824108334919023",
+            title:"SOT",
+            subtitle:"Facebookgruppe for alle studentorchesterne i Trondheim",
+            icon: <></>
+        }, {
+            link:"https://www.messenger.com/t/1795481677236473",
+            title:"Motstandens Messengergruppe",
+            subtitle:"Spør noen i motstanden for å bli med",
+            icon: <></>
+        }, {
+            link:"https://www.snapchat.com/invite/NWM3NGQ4MjktODBlYS0zNTczLTk1MDctOWRkZTYyMWU5OGZl/MTM5ZDdmMmItMmVmMC1mMDRlLTM3NTUtMTRiMTA2ZjkyZDBm",
+            title:"Motstandens Snapchatgruppe",
+            subtitle:"",
+            icon: <></>
+        }, {
+            link:"https://discord.gg/Np3uAfS28V",
+            title:"Motstandens Discord",
+            subtitle:"",
+            icon: <></>
+        }, {
+            link:"https://www.instagram.com/denohmskemotstanden/",
+            title:"Motstandens Instagram",
+            subtitle:"",
+            icon: <></>
+        }, {
+            link:"https://www.tiktok.com/@denohmskemotstanden",
+            title:"Motstandens Tiktok",
+            subtitle:"",
+            icon: <></>
+        }
     ]
     
 
     return (
-        <ul style={styles.title}
+        <ul style={{
+            listStyle: "none", 
+            textAlign: "center",
+            marginLeft: "-50px"
+        }}
         >
             {items.map( (info, index) => (
                 <>
                     <Link
                         color="secondary"
-                        href={info[0]}
+                        href={info.link}
                         underline="hover"
                         >
-                            {info[1]}
+                            {info.title}
                     </Link>
-                    <div style={styles.undertitle}>
-                        {info[2]}
-                        <br></br>
+                    <div style={{
+                        marginBottom: "20px",
+                        opacity: 0.65,
+                        fontSize: "small",
+                    }}>
+                        {info.subtitle}
                     </div>
                 </>
             ))}
@@ -289,19 +329,4 @@ function ItemLoader<T>({
             {renderItems({items: data, refetchItems: onRefetchItems})}
         </>
     )
-}
-
-const styles : {
-    undertitle: React.CSSProperties,
-    title: React.CSSProperties
-} = {
-    undertitle: {
-        marginLeft: "15px",
-        opacity: 0.65,
-        fontSize: "small",
-    },
-    title: {
-        listStyle: "none", 
-        paddingLeft: "10px"
-    }
 }
