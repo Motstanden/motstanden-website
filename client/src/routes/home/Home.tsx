@@ -164,6 +164,7 @@ function NoItem(){
         display={{xs: "none", xm: "none", md: "block"}}/>
         )
     }
+    
 interface InfoItem {
     link: string,
     title: string,
