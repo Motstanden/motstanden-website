@@ -156,13 +156,68 @@ function RenderQuotesList(props: RenderItemProps<Quote>) {
 }
 
 function RenderInfo() {
+    const links = {
+
+    }
+    
+
     return (
-        <ul style={{
-            listStyle: "none", 
-            paddingLeft: "10px"
-            }}
+        <ul style={styles.title}
         >
-            <h1>hello</h1>
+            <Link
+                href="https://www.facebook.com/groups/399149784137861"
+                underline="hover" color="secondary"
+                >
+                Motstanden - medlemsgruppe
+            </Link>
+            <div style={styles.undertitle}>
+                Facebookgruppe
+            </div>
+            <Link
+                href="https://www.facebook.com/groups/1496116444049224"
+                underline="hover" color="secondary"
+                >
+                NASH
+            </Link>
+            <div style={styles.undertitle}>
+                Facebookgruppe for alle studentorkesterne i Norge
+            </div>
+            <Link
+                href="https://www.facebook.com/groups/1496116444049224"
+                underline="hover" color="secondary"
+                >
+                NASH
+            </Link>
+            <div style={styles.undertitle}>
+                Facebookgruppe for alle studentorkesterne i Norge
+            </div>
+            <Link
+                href="https://www.facebook.com/groups/1496116444049224"
+                underline="hover" color="secondary"
+                >
+                NASH
+            </Link>
+            <div style={styles.undertitle}>
+                Facebookgruppe for alle studentorkesterne i Norge
+            </div>
+            <Link
+                href="https://www.facebook.com/groups/1496116444049224"
+                underline="hover" color="secondary"
+                >
+                NASH
+            </Link>
+            <div style={styles.undertitle}>
+                Facebookgruppe for alle studentorkesterne i Norge
+            </div>
+            <Link
+                href="https://www.facebook.com/groups/1496116444049224"
+                underline="hover" color="secondary"
+                >
+                NASH
+            </Link>
+            <div style={styles.undertitle}>
+                Facebookgruppe for alle studentorkesterne i Norge
+            </div>
         </ul>
     )
 }
@@ -258,4 +313,19 @@ function ItemLoader<T>({
             {renderItems({items: data, refetchItems: onRefetchItems})}
         </>
     )
+}
+
+const styles : {
+    undertitle: React.CSSProperties,
+    title: React.CSSProperties
+} = {
+    undertitle: {
+        marginLeft: "15px",
+        opacity: 0.65,
+        fontSize: "small",
+    },
+    title: {
+        listStyle: "none", 
+        paddingLeft: "10px"
+    }
 }
