@@ -34,9 +34,6 @@ export default function Home(){
                     renderItems={RenderEventList}
                 />
                 <NoItem/>
-                <InfoItem
-                    title="Nyttige lenker"
-                />
                 <ItemOfTheDay 
                     title="Nyeste sitater" 
                     fetchUrl="/api/quotes?limit=3" 
@@ -60,6 +57,9 @@ export default function Home(){
                     fetchUrl="/api/rumours/daily-rumour"
                     renderSkeleton={<RumourListSkeleton length={3}/>}
                     renderItems={RenderRumourList}
+                />
+                <InfoItem
+                    title="Nyttige lenker"
                 />
             </Grid>
         </PageContainer>
@@ -212,8 +212,7 @@ function RenderInfo() {
     return (
         <ul style={{
             listStyle: "none", 
-            textAlign: "center",
-            marginLeft: "-50px"
+            paddingLeft: "10px"
         }}
         >
             {items.map( (info, index) => (
@@ -227,6 +226,7 @@ function RenderInfo() {
                     </Link>
                     <div style={{
                         marginBottom: "20px",
+                        paddingLeft: "10px",
                         opacity: 0.65,
                         fontSize: "small",
                     }}>
