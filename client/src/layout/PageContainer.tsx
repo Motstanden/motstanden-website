@@ -32,7 +32,7 @@ export function PageContainer({
     }, [location.pathname])
 
     return (
-        <div style={{
+        <div className={`kek`} style={{
             minHeight: "100vh",
             maxWidth: "1200px",
             marginInline: "auto",
