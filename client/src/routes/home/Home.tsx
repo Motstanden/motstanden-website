@@ -33,6 +33,9 @@ export default function Home(){
                     renderItems={RenderEventList}
                 />
                 <NoItem/>
+                <InfoItem
+                    title="Nyttige lenker"
+                />
                 <ItemOfTheDay 
                     title="Nyeste sitater" 
                     fetchUrl="/api/quotes?limit=3" 
@@ -98,8 +101,6 @@ function RenderEventList(props: RenderItemProps<EventData> ){
     )
 }
 
-
-
 function EventListSkeleton( {length}: {length: number}){
     return(
         <>
@@ -154,6 +155,18 @@ function RenderQuotesList(props: RenderItemProps<Quote>) {
     )
 }
 
+function RenderInfo() {
+    return (
+        <ul style={{
+            listStyle: "none", 
+            paddingLeft: "10px"
+            }}
+        >
+            <h1>hello</h1>
+        </ul>
+    )
+}
+
 function NoItem(){
     return (
         <Grid 
@@ -162,6 +175,26 @@ function NoItem(){
             display={{xs: "none", xm: "none", md: "block"}}/>
     )
 }
+
+
+
+function InfoItem({
+    title
+}: {
+    title: string
+}) {
+    return (
+        <Grid item xs={12} sm={12} md={6} >
+            <TitleCard 
+                title={title}
+                sx={{maxWidth: "600px", height: "100%"}}
+                >
+                <RenderInfo />
+            </TitleCard>
+        </Grid>
+    )
+}
+
 
 function ItemOfTheDay<T>({
     title, 
