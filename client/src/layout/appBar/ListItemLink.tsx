@@ -3,6 +3,7 @@ import React from 'react';
 // Material UI 
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import { Link as RouterLink } from 'react-router-dom';
 import { SxProps } from '@mui/system';
 
@@ -13,6 +14,7 @@ interface ListItemLinkProps {
     externalRoute?: boolean
     disabled?: boolean 
     sx?: SxProps
+    icon?: React.ReactNode
     onLinkClick?: VoidFunction
 }
 
@@ -23,6 +25,7 @@ export default function ListItemLink(props: ListItemLinkProps){
         externalRoute, 
         disabled, 
         sx, 
+        icon,
         onLinkClick 
     } = props
     
@@ -36,6 +39,9 @@ export default function ListItemLink(props: ListItemLinkProps){
             sx={sx}
             onClick={onLinkClick}
             >
+            <ListItemIcon sx={{minWidth: "0px", paddingRight: "10px"}}>
+                {icon}
+            </ListItemIcon>
             <ListItemText primary={text}/>
         </ListItem>
     )
