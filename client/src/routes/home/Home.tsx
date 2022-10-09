@@ -156,68 +156,44 @@ function RenderQuotesList(props: RenderItemProps<Quote>) {
 }
 
 function RenderInfo() {
-    const links = {
-
-    }
+    let items: string[][] = [
+        ["https://www.facebook.com/groups/399149784137861",
+            "Motstanden - Medlemsgruppe", "Facebookgruppe"],
+        ["https://www.facebook.com/groups/1496116444049224",
+            "NASH", "Facebookgruppe for alle studentorchesterne i Norge"],
+        ["https://www.facebook.com/groups/824108334919023",
+            "SOT", "Facebookgruppe for alle studentorchesterne i Trondheim"],
+        ["https://www.messenger.com/t/1795481677236473",
+            "Motstandens Messengergruppe", "Spør noen i motstanden for å bli med"],
+        ["https://www.snapchat.com/invite/NWM3NGQ4MjktODBlYS0zNTczLTk1MDctOWRkZTYyMWU5OGZl/MTM5ZDdmMmItMmVmMC1mMDRlLTM3NTUtMTRiMTA2ZjkyZDBm",
+            "Motstandens Snapchatgruppe", ""],
+        ["https://discord.gg/Np3uAfS28V",
+            "Motstandens Discord", ""],
+        ["https://www.instagram.com/denohmskemotstanden/",
+            "Motstandens Instagram", ""],
+        ["https://www.tiktok.com/@denohmskemotstanden",
+            "Motstandens Tiktok", ""],
+    ]
     
 
     return (
         <ul style={styles.title}
         >
-            <Link
-                href="https://www.facebook.com/groups/399149784137861"
-                underline="hover" color="secondary"
-                >
-                Motstanden - medlemsgruppe
-            </Link>
-            <div style={styles.undertitle}>
-                Facebookgruppe
-            </div>
-            <Link
-                href="https://www.facebook.com/groups/1496116444049224"
-                underline="hover" color="secondary"
-                >
-                NASH
-            </Link>
-            <div style={styles.undertitle}>
-                Facebookgruppe for alle studentorkesterne i Norge
-            </div>
-            <Link
-                href="https://www.facebook.com/groups/1496116444049224"
-                underline="hover" color="secondary"
-                >
-                NASH
-            </Link>
-            <div style={styles.undertitle}>
-                Facebookgruppe for alle studentorkesterne i Norge
-            </div>
-            <Link
-                href="https://www.facebook.com/groups/1496116444049224"
-                underline="hover" color="secondary"
-                >
-                NASH
-            </Link>
-            <div style={styles.undertitle}>
-                Facebookgruppe for alle studentorkesterne i Norge
-            </div>
-            <Link
-                href="https://www.facebook.com/groups/1496116444049224"
-                underline="hover" color="secondary"
-                >
-                NASH
-            </Link>
-            <div style={styles.undertitle}>
-                Facebookgruppe for alle studentorkesterne i Norge
-            </div>
-            <Link
-                href="https://www.facebook.com/groups/1496116444049224"
-                underline="hover" color="secondary"
-                >
-                NASH
-            </Link>
-            <div style={styles.undertitle}>
-                Facebookgruppe for alle studentorkesterne i Norge
-            </div>
+            {items.map( (info, index) => (
+                <>
+                    <Link
+                        color="secondary"
+                        href={info[0]}
+                        underline="hover"
+                        >
+                            {info[1]}
+                    </Link>
+                    <div style={styles.undertitle}>
+                        {info[2]}
+                        <br></br>
+                    </div>
+                </>
+            ))}
         </ul>
     )
 }
