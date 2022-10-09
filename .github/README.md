@@ -44,20 +44,24 @@
       ```bash
       cd database
       sh ./create_all_dev_db.sh
+      cd ..
       ```
       
   You should now see two new SQLite db files that are fully populated with data: `database/motstanden_dev.db` and `database/sheet_archive_dev.db`
 
   ## Create server environment
-  1. Copy and then rename the sample environment files: 
-      - `server/.env.sample` --> `server/.env` 
-      - `server/src/info-mail-key.json.sample` --> `server/src/info-mail-key.json` <br/>
+  1. Copy and then rename the sample environment files.
+      ```bash
+      cp server/.env.sample server/.env
+      cp server/src/info-mail-key.json.sample server/src/info-mail-key.json
+      ```
       **Note:** Mail functionality does not work with this sample file. If you want to use mail functionality, you must either request a secret OAuth2 from Motstanden, or generate a secret OAuth2 key for your own mail. 
 
   2. Install dependencies
       ```bash
       cd server
       npm install
+      cd ..
       ```
 
 # Start project
@@ -84,6 +88,7 @@
   2. http://localhost:5000/ - A back end server, responsible for handling API calls and serving content. This server will be the actual server running in production.
 
 You can now go to http://localhost:3000/ and start developing.<br/>
+To log in, enter `web@motstanden.no` and use the `DEV LOGG INN`-button.<br/>
 Happy coding!
 
 # Project structure
