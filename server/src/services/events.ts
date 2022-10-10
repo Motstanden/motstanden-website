@@ -203,7 +203,7 @@ function buildUpsertSql(
             `INSERT INTO 
                 event(title, start_date_time, end_date_time, key_info, description_json, description_html, created_by, updated_by)
             VALUES
-                (?, ?, ?, ?, ?, ?, ?);`,
+                (?, ?, ?, ?, ?, ?, ?, ?);`,
         args: [ ...commonArgs, modifiedBy ]
     }
 }

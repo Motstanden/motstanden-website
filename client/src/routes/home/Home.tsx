@@ -16,6 +16,7 @@ import { QuoteList, ListSkeleton as QuotesListSkeleton } from "../quotes/QuotesP
 import { RumourList, ListSkeleton as RumourListSkeleton } from "../rumour/RumourPage"
 import dayjs from "dayjs"
 import Skeleton from "@mui/material/Skeleton"
+import FacebookIcon from "@mui/icons-material/Facebook"
 
 
 export default function Home(){
@@ -57,6 +58,9 @@ export default function Home(){
                     renderSkeleton={<RumourListSkeleton length={3}/>}
                     renderItems={RenderRumourList}
                 />
+                <InfoCard
+                    title="Nyttige lenker"
+                />
             </Grid>
         </PageContainer>
     )
@@ -97,8 +101,6 @@ function RenderEventList(props: RenderItemProps<EventData> ){
         </ul>
     )
 }
-
-
 
 function EventListSkeleton( {length}: {length: number}){
     return(
@@ -157,11 +159,99 @@ function RenderQuotesList(props: RenderItemProps<Quote>) {
 function NoItem(){
     return (
         <Grid 
-            item 
-            xs={12} sm={12} md={6} 
-            display={{xs: "none", xm: "none", md: "block"}}/>
+        item 
+        xs={12} sm={12} md={6} 
+        display={{xs: "none", xm: "none", md: "block"}}/>
+        )
+    }
+    
+interface InfoItem {
+    link: string,
+    title: string,
+    subtitle: string,
+    icon: React.ReactNode
+}
+
+function InfoCard({
+    title
+}: {
+    title: string
+}) {
+
+    const items: InfoItem[] = [{
+        link:"https://www.facebook.com/groups/399149784137861",
+        title: "Facebook medlemsgruppe",
+        subtitle: "Facebookgruppe",
+        icon: <></>
+    }, {
+        link:"https://www.facebook.com/groups/1496116444049224",
+        title:"NASH",
+        subtitle:"Facebookgruppe for alle studentorchesterne i Norge",
+        icon: <></>
+    }, {
+        link:"https://www.facebook.com/groups/824108334919023",
+        title:"SOT",
+        subtitle:"Facebookgruppe for alle studentorchesterne i Trondheim",
+        icon: <></>
+    }, {
+        link:"https://www.messenger.com/t/1795481677236473",
+        title:"Facebook chat",
+        subtitle:"Spør noen i motstanden for å bli med",
+        icon: <></>
+    }, {
+        link:"https://www.snapchat.com/invite/NWM3NGQ4MjktODBlYS0zNTczLTk1MDctOWRkZTYyMWU5OGZl/MTM5ZDdmMmItMmVmMC1mMDRlLTM3NTUtMTRiMTA2ZjkyZDBm",
+        title:"Snapchat",
+        subtitle:"",
+        icon: <></>
+    }, {
+        link:"https://discord.gg/Np3uAfS28V",
+        title:"Discord",
+        subtitle:"",
+        icon: <></>
+    }, {
+        link:"https://www.instagram.com/denohmskemotstanden/",
+        title:"Instagram",
+        subtitle:"",
+        icon: <></>
+    }, {
+        link:"https://www.tiktok.com/@denohmskemotstanden",
+        title:"Tiktok",
+        subtitle:"",
+        icon: <></>
+    }
+    ]
+
+    return (
+        <Grid item xs={12} sm={12} md={6} >
+            <TitleCard 
+                title={title}
+                sx={{maxWidth: "600px", height: "100%"}}
+                >
+                <ul style={{ listStyle: "none", paddingLeft: "10px"}}>
+                    {items.map( (info, index) => (
+                        <li style={{marginBottom: "20px"}}>
+                            <Link
+                                color="secondary"
+                                href={info.link}
+                                underline="hover"
+                                >
+                                    {info.title}
+                            </Link> 
+                            <div style={{
+                                paddingLeft: "10px",
+                                opacity: 0.65,
+                                fontSize: "small",
+                            }}>
+                                {info.subtitle}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </TitleCard>
+        </Grid>
     )
 }
+
 
 function ItemOfTheDay<T>({
     title, 
