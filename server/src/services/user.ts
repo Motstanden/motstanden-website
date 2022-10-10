@@ -1,19 +1,19 @@
-import Database, {Database as DatabaseType} from "better-sqlite3";
-import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
-import { NewUser, User } from "common/interfaces";
+import Database, { Database as DatabaseType } from "better-sqlite3";
 import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
-import { isNtnuMail, validateEmail } from "common/utils"
-import { JwtTokenData } from "../middleware/jwtAuthenticate";
+import { NewUser, User } from "common/interfaces";
+import { isNtnuMail, validateEmail } from "common/utils";
 import jwt from 'jsonwebtoken';
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
+import { JwtTokenData } from "../middleware/jwtAuthenticate";
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 import { stringIsNullOrWhiteSpace } from "../utils/stringUtils";
 
 export function userExists(unsafeEmail: string | undefined): boolean {
     const email = unsafeEmail?.trim().toLowerCase();
-    
-    if(!email || !validateEmail(email))
+
+    if (!email || !validateEmail(email))
         return false
-    
+
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
         `SELECT 
@@ -23,8 +23,8 @@ export function userExists(unsafeEmail: string | undefined): boolean {
         WHERE email = ?`)
     const user = stmt.get(email)
     db.close()
-    
-    if(!user)
+
+    if (!user)
         return false;
 
     return true;
@@ -32,10 +32,10 @@ export function userExists(unsafeEmail: string | undefined): boolean {
 
 export function getAccessTokenData(unsafeEmail: string): AccessTokenData {
     const email = unsafeEmail?.trim().toLowerCase();
-    
-    if(!email || !validateEmail(email))
+
+    if (!email || !validateEmail(email))
         throw `The email is invalid.`
-    
+
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
         `SELECT 
@@ -49,14 +49,14 @@ export function getAccessTokenData(unsafeEmail: string): AccessTokenData {
     const user = stmt.get(unsafeEmail)
     db.close()
 
-    if(!user)
+    if (!user)
         throw `The user does not exist in the database`
-    
+
     const accessToken = user as AccessTokenData;
-    if(!accessToken.userId || !accessToken.email || !accessToken.groupId || !accessToken.groupName)
+    if (!accessToken.userId || !accessToken.email || !accessToken.groupId || !accessToken.groupName)
         throw `Database yielded invalid result.`
 
-    return accessToken 
+    return accessToken
 }
 
 export function getTokenDataFromId(userId: number): AccessTokenData {
@@ -73,13 +73,13 @@ export function getTokenDataFromId(userId: number): AccessTokenData {
     const user = stmt.get(userId) as AccessTokenData
     db.close()
 
-    if(!user.userId || !user.email || !user.groupId || !user.groupName)
+    if (!user.userId || !user.email || !user.groupId || !user.groupName)
         throw `Database yielded invalid result.`
 
-    return user    
+    return user
 }
 
-export function insertLoginToken(refreshToken: string){
+export function insertLoginToken(refreshToken: string) {
     const jwtPayload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET) as JwtTokenData
 
     const db = new Database(motstandenDB, dbReadWriteConfig)
@@ -106,11 +106,11 @@ export function verifyLoginToken(loginToken: string, userId: number): boolean {
     )
     const tokens = stmt.all(userId)
     db.close()
-    const tokenMatch = tokens.find( item => item.token === loginToken)
+    const tokenMatch = tokens.find(item => item.token === loginToken)
     return !!tokenMatch
 }
 
-export function removeLoginToken(loginToken: string){
+export function removeLoginToken(loginToken: string) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
     const stmt = db.prepare(
         `DELETE FROM
@@ -121,7 +121,7 @@ export function removeLoginToken(loginToken: string){
     db.close()
 }
 
-export function removeAllLoginTokens(user: AccessTokenData){
+export function removeAllLoginTokens(user: AccessTokenData) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
     const stmt = db.prepare(
         `DELETE FROM
@@ -129,7 +129,7 @@ export function removeAllLoginTokens(user: AccessTokenData){
         WHERE user_id = ?`
     )
     const info = stmt.run(user.userId)
-    db.close()    
+    db.close()
 }
 
 export function getUserData(userToken: AccessTokenData): User {
@@ -159,11 +159,11 @@ export function getUserData(userToken: AccessTokenData): User {
     const user = stmt.get(userToken.userId) as User
     db.close()
 
-    if(!user || user.email !== userToken.email)
+    if (!user || user.email !== userToken.email)
         throw `Database yielded invalid result.`
-    
+
     return user
-}   
+}
 
 export function getAllUsers(): User[] {
 
@@ -195,7 +195,7 @@ export function getAllUsers(): User[] {
     db.close()
 
     return user
-} 
+}
 
 export function createUser(user: NewUser) {
     const dbRd = new Database(motstandenDB, dbReadOnlyConfig)   // Read only instance of db
@@ -209,7 +209,7 @@ export function createUser(user: NewUser) {
     const dbWr = new Database(motstandenDB, dbReadWriteConfig)  // Read/Write instance of db
 
     // Define transaction
-    const startTransaction = dbWr.transaction( () => {
+    const startTransaction = dbWr.transaction(() => {
         const stmt = dbWr.prepare(`
             INSERT INTO user(
                 user_group_id, 
@@ -230,12 +230,12 @@ export function createUser(user: NewUser) {
                 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `)
         const info = stmt.run(
-            groupId, 
-            rankId, 
-            user.email, 
-            user.firstName, 
-            user.middleName, 
-            user.lastName, 
+            groupId,
+            rankId,
+            user.email,
+            user.firstName,
+            user.middleName,
+            user.lastName,
             user.profilePicture,
             user.capeName ?? "",
             user.phoneNumber ?? null,
@@ -243,30 +243,30 @@ export function createUser(user: NewUser) {
             statusId,
             user.startDate,
             user.endDate ?? null
-        )   
+        )
     })
 
     // Run transaction
     startTransaction()
     dbWr.close()
-} 
+}
 
 function isValidDate(dateStr: string): boolean {
     return /^\d{4}-\d{2}-\d{2}$/.test(dateStr)
 }
 
-function makeValidUser( user: User ): User | undefined {
+function makeValidUser(user: User): User | undefined {
 
-    if( 
-        !validateEmail(user.email)                   ||
-        isNtnuMail(user.email)                       ||
-        !user.groupName                              ||
-        !user.rank                                   ||
-        stringIsNullOrWhiteSpace(user.firstName)     ||
-        stringIsNullOrWhiteSpace(user.lastName)      ||
-        !user.status                                 ||
-        stringIsNullOrWhiteSpace(user.startDate)     ||
-        !isValidDate(user.startDate)                 ||
+    if (
+        !validateEmail(user.email) ||
+        isNtnuMail(user.email) ||
+        !user.groupName ||
+        !user.rank ||
+        stringIsNullOrWhiteSpace(user.firstName) ||
+        stringIsNullOrWhiteSpace(user.lastName) ||
+        !user.status ||
+        stringIsNullOrWhiteSpace(user.startDate) ||
+        !isValidDate(user.startDate) ||
         (user.endDate && !isValidDate(user.endDate)) ||
         (user.phoneNumber && !(user.phoneNumber >= 10000000 || user.phoneNumber <= 99999999)) ||
         (user.birthDate && !isValidDate(user.birthDate))
@@ -276,14 +276,14 @@ function makeValidUser( user: User ): User | undefined {
 
     return {
         ...user,
-        email:      user.email.trim(),
-        firstName:  user.firstName.trim(),
+        email: user.email.trim(),
+        firstName: user.firstName.trim(),
         middleName: user.middleName.trim(),
-        lastName:   user.lastName.trim(),
-        capeName:   user.capeName.trim(),
-        startDate:  user.startDate.trim(),
-        endDate:    user.endDate?.trim() ?? null,
-        birthDate:  user.birthDate?.trim() ?? null        
+        lastName: user.lastName.trim(),
+        capeName: user.capeName.trim(),
+        startDate: user.startDate.trim(),
+        endDate: user.endDate?.trim() ?? null,
+        birthDate: user.birthDate?.trim() ?? null
     }
 }
 
@@ -292,24 +292,24 @@ export function updateUser(newUser: User, updateMode: UserEditMode) {
 
     const validUser = makeValidUser(newUser)
 
-    if(!validUser)
+    if (!validUser)
         throw "Invalid data"
 
-    if(validUser.status === UserStatus.Inactive && updateMode === UserEditMode.Self )
+    if (validUser.status === UserStatus.Inactive && updateMode === UserEditMode.Self)
         throw "Invalid data"
-    
-    if(validUser.groupName === UserGroup.SuperAdministrator && updateMode !== UserEditMode.SuperAdmin)
+
+    if (validUser.groupName === UserGroup.SuperAdministrator && updateMode !== UserEditMode.SuperAdmin)
         throw "Invalid data"
-        
-    if(validUser.groupName !== UserGroup.Contributor && updateMode === UserEditMode.Self)
+
+    if (validUser.groupName !== UserGroup.Contributor && updateMode === UserEditMode.Self)
         throw "Invalid data"
-        
-        
+
+
     const db = new Database(motstandenDB, dbReadWriteConfig)  // Read/Write instance of db
     const sql = getUpdateUserSql(validUser, updateMode)
-    const startTransaction = db.transaction( () => {
+    const startTransaction = db.transaction(() => {
         const stmt = db.prepare(sql.stmt)
-        const info = stmt.run(sql.params)   
+        const info = stmt.run(sql.params)
     })
     startTransaction()
     db.close()
@@ -361,16 +361,17 @@ function getUpdateUserSql(user: User, updateMode: UserEditMode): SqlHelper {
                 user_rank_id = ?,
                 user_group_id = ?
             WHERE user_id = ?
-        `, 
+        `,
         params: [
             ...selfDefault.params,
             rankId,
             groupId,
             user.userId
-    ]}
+        ]
+    }
 
-    switch(updateMode){
-        case UserEditMode.Self:         
+    switch (updateMode) {
+        case UserEditMode.Self:
             return {
                 stmt: `
                 UPDATE 
@@ -378,13 +379,13 @@ function getUpdateUserSql(user: User, updateMode: UserEditMode): SqlHelper {
                 SET
                     ${selfDefault.stmt}
                 WHERE user_id = ?
-                `, 
+                `,
                 params: [
                     ...selfDefault.params,
                     user.userId,
                 ]
             }
-        case UserEditMode.Admin: 
+        case UserEditMode.Admin:
             return {
                 stmt: `
                 UPDATE 
@@ -397,7 +398,7 @@ function getUpdateUserSql(user: User, updateMode: UserEditMode): SqlHelper {
                     end_date = ?,
                     user_group_id = ?
                 WHERE user_id = ?
-                `, 
+                `,
                 params: [
 
                     user.capeName,
@@ -423,33 +424,33 @@ interface SqlHelper {
 
 function getGroupId(group: UserGroup, db?: DatabaseType): number {
     return dangerouslyGetStringEnumId(
-        group, 
+        group,
         {
             __dangerousTableName: "user_group",
             __dangerousColumnName: "name"
-        }, 
+        },
         db
     )
 }
 
 function getRankId(rank: UserRank, db?: DatabaseType): number {
     return dangerouslyGetStringEnumId(
-        rank, 
+        rank,
         {
             __dangerousTableName: "user_rank",
             __dangerousColumnName: "name"
-        }, 
+        },
         db
     )
 }
 
 function getUserStatusId(status: UserStatus, db?: DatabaseType): number {
     return dangerouslyGetStringEnumId(
-        status, 
+        status,
         {
             __dangerousTableName: "user_status",
             __dangerousColumnName: "status"
-        }, 
+        },
         db
     )
 }
@@ -460,10 +461,9 @@ function getUserStatusId(status: UserStatus, db?: DatabaseType): number {
 // This method is super dangerous to use because it is vulnerable to sql injections attacks.
 // USE WITH GREAT CAUTION!
 function dangerouslyGetStringEnumId(
-    strEnum: StrEnum, 
-    dangerousInput: DangerousInput, 
-    db?: DatabaseType) : number 
-{
+    strEnum: StrEnum,
+    dangerousInput: DangerousInput,
+    db?: DatabaseType): number {
     db = db ?? new Database(motstandenDB, dbReadOnlyConfig)
 
     const tableName = dangerousInput.__dangerousTableName
@@ -471,19 +471,19 @@ function dangerouslyGetStringEnumId(
     const stmt = db.prepare(`
         SELECT 
             ${tableName}_id as id`      // DANGER!!!!
-    +`  FROM 
+        + `  FROM 
             ${tableName}`               // DANGER!!!!
-    +`  WHERE 
+        + `  WHERE 
             ${columnName} = ?`         // DANGER!!!!
-        )
+    )
     const dbResult = stmt.get(strEnum.valueOf())
-    if(!dbResult)
+    if (!dbResult)
         throw `Failed to retrieve value from database`
     return dbResult.id
 }
 
 interface StrEnum {
-    valueOf (): string 
+    valueOf(): string
 }
 
 interface DangerousInput {

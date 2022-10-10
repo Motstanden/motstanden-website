@@ -25,30 +25,30 @@ type ItemBase = {
 
 export type RenderEditFormProps<T> = {
     data: T,
-    onEditSuccess: VoidFunction, 
+    onEditSuccess: VoidFunction,
     onEditAbort: VoidFunction
 }
 
 export function EditList<T extends ItemBase>(props: EditListProps<T>) {
     return (
-        <ul style={{ 
-                paddingLeft: "5px", 
-                listStyleType: "none" 
-            }}
+        <ul style={{
+            paddingLeft: "5px",
+            listStyleType: "none"
+        }}
         >
-            {props.items.map( item => ( 
-                <li key={item.id} 
+            {props.items.map(item => (
+                <li key={item.id}
                     style={{
-                        maxWidth: "700px", 
+                        maxWidth: "700px",
                         marginBottom: props.itemSpacing ?? "0px"
-                        }}
-                    >
-                    <RootItem<T> 
-                        data={item} 
+                    }}
+                >
+                    <RootItem<T>
+                        data={item}
                         {...props}
-                        />
+                    />
                 </li>
-                )
+            )
             )}
         </ul>
     )
@@ -58,61 +58,61 @@ type RootItemProps<T> = Omit<EditListProps<T>, "items"> & {
     data: T
 }
 
-function RootItem<T extends ItemBase>( props: RootItemProps<T>) {
+function RootItem<T extends ItemBase>(props: RootItemProps<T>) {
     const [isEditing, setIsEditing] = useState(false)
-    const [prevData, setPrevData] = useState(props.data) 
+    const [prevData, setPrevData] = useState(props.data)
     const [isChanging, setIsChanging] = useState(false)
 
     const onEditClick = () => {
         setPrevData(props.data)
         setIsEditing(true)
     }
-    
+
     const onEditAbort = () => {
         setIsEditing(false)
     }
-    
+
     const onEditSuccess = () => {
         setIsEditing(false)
         setIsChanging(true)
         props.onItemChanged && props.onItemChanged()
     }
 
-    if(isChanging) {
-        if(props.itemComparer && props.itemComparer(prevData, props.data)) {
+    if (isChanging) {
+        if (props.itemComparer && props.itemComparer(prevData, props.data)) {
             return <>{props.renderItemSkeleton}</>
         }
         setPrevData(props.data)
         setIsChanging(false)
     }
 
-    if(isEditing) {
-        
-        return props.renderEditForm({data: props.data, onEditAbort: onEditAbort, onEditSuccess: onEditSuccess})
+    if (isEditing) {
+
+        return props.renderEditForm({ data: props.data, onEditAbort: onEditAbort, onEditSuccess: onEditSuccess })
     }
 
     return <DefaultItem<T>
-                data={props.data}
-                renderItem={props.renderItem}
-                onEditClick={onEditClick}
-                onItemDeleted={props.onItemChanged}
-                deleteItemUrl={props.deleteItemUrl}
-                confirmDeleteItemText={props.confirmDeleteItemText}
+        data={props.data}
+        renderItem={props.renderItem}
+        onEditClick={onEditClick}
+        onItemDeleted={props.onItemChanged}
+        deleteItemUrl={props.deleteItemUrl}
+        confirmDeleteItemText={props.confirmDeleteItemText}
 
-            />
+    />
 }
 
-function DefaultItem<T extends ItemBase>( {
-    data, 
-    renderItem, 
-    onEditClick, 
+function DefaultItem<T extends ItemBase>({
+    data,
+    renderItem,
+    onEditClick,
     onItemDeleted,
     deleteItemUrl,
     confirmDeleteItemText
 }: {
-    data: T, 
+    data: T,
     renderItem: (item: T) => React.ReactElement,
-    onEditClick: VoidFunction, 
+    onEditClick: VoidFunction,
     onItemDeleted: VoidFunction,
     deleteItemUrl: string,
     confirmDeleteItemText: string
@@ -139,33 +139,33 @@ function DefaultItem<T extends ItemBase>( {
     const onDeleteClick = async (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
         setIsDisabled(true)
         const response = await postJson(
-            deleteItemUrl, 
-            {id: data.id},
+            deleteItemUrl,
+            { id: data.id },
             {
                 alertOnFailure: true,
                 confirmText: confirmDeleteItemText
             }
         )
-        if (!response?.ok){
+        if (!response?.ok) {
             setIsDisabled(false)
         }
-        if(response?.ok){
+        if (response?.ok) {
             onItemDeleted()
         }
     }
 
     const user = useAuth().user!
-    const hasEditPrivilege = user.userId === data.createdBy || hasGroupAccess(user, UserGroup.Administrator) 
+    const hasEditPrivilege = user.userId === data.createdBy || hasGroupAccess(user, UserGroup.Administrator)
 
     return (
-        <Stack 
-            direction="row" 
-            justifyContent="space-between" 
+        <Stack
+            direction="row"
+            justifyContent="space-between"
             bgcolor={isHighlighted || isDisabled ? "action.hover" : "transparent"}
             pl={1}
             ml={-1}
             style={{
-                borderRadius: "5px", 
+                borderRadius: "5px",
                 opacity: isDisabled ? 0.4 : 1
             }}
         >
@@ -174,14 +174,14 @@ function DefaultItem<T extends ItemBase>( {
             </div>
             {hasEditPrivilege && (
                 <div onMouseLeave={onMouseLeave}>
-                    <EditOrDeleteMenu 
+                    <EditOrDeleteMenu
                         disabled={isDisabled}
-                        onEditClick={onEditClick} 
-                        onDeleteClick={onDeleteClick} 
-                        onMouseEnter={onMouseEnter} 
+                        onEditClick={onEditClick}
+                        onDeleteClick={onDeleteClick}
+                        onMouseEnter={onMouseEnter}
                         onMenuOpen={onMenuOpen}
                         onMenuClose={onMenuClose}
-                        />
+                    />
                 </div>
             )}
         </Stack>

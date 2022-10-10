@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 
-export function useTitle(title: string | undefined): void{
+export function useTitle(title: string | undefined): void {
     useEffect(() => {
-        if(title){
+        if (title) {
             document.title = `Motstanden | ${title}`
         }
         else {

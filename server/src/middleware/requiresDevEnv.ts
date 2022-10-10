@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 export function requiresDevEnv(req: Request, res: Response, next: NextFunction) {
-    if(process.env.IS_DEV_ENV){
+    if (process.env.IS_DEV_ENV) {
         next()
     }
     else {

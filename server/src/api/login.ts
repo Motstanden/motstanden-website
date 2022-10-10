@@ -1,21 +1,19 @@
-import express, { response, Response } from "express";
-import passport from "passport";
-import jwt from 'jsonwebtoken';
-import * as passportConfig from "../config/passportConfig" 
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
-import * as userService from "../services/user";
-import { requiresDevEnv } from "../middleware/requiresDevEnv";
 import { MagicLinkResponse } from "common/interfaces";
+import express from "express";
+import passport from "passport";
+import * as passportConfig from "../config/passportConfig";
+import { AuthenticateUser, loginUser, logOut, logOutAllUnits } from "../middleware/jwtAuthenticate";
+import { requiresDevEnv } from "../middleware/requiresDevEnv";
+import * as userService from "../services/user";
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 import { getRandomInt } from "../utils/getRandomInt";
 import { sleepAsync } from "../utils/sleepAsync";
-import { AuthenticateUser, loginUser, logOut, logOutAllUnits } from "../middleware/jwtAuthenticate";
 
 const router = express.Router()
 
 router.post("/auth/magic_login", (req, res) => {
 
-    if(userService.userExists(req.body.destination))
-    {
+    if (userService.userExists(req.body.destination)) {
         passportConfig.magicLogin.send(req, res)
     }
     else {
@@ -30,15 +28,15 @@ router.post("/auth/magic_login", (req, res) => {
 });
 
 router.get(
-    passportConfig.MagicLinkCallbackPath, 
-    passport.authenticate("magiclogin", {session: false}), 
+    passportConfig.MagicLinkCallbackPath,
+    passport.authenticate("magiclogin", { session: false }),
     loginUser);
 
-if(process.env.IS_DEV_ENV) {
+if (process.env.IS_DEV_ENV) {
     router.post("/dev/login", requiresDevEnv, (req, res) => {
 
         const unsafeEmail = req.body.destination as string;
-        if(!userService.userExists(unsafeEmail)) {
+        if (!userService.userExists(unsafeEmail)) {
             res.end()
         }
         const token = userService.getAccessTokenData(req.body.destination)
@@ -49,15 +47,15 @@ if(process.env.IS_DEV_ENV) {
 
 router.post("/logout", AuthenticateUser(), logOut)
 
-router.post("/logout-all-units", AuthenticateUser(), logOutAllUnits )
+router.post("/logout-all-units", AuthenticateUser(), logOutAllUnits)
 
 router.get("/userMetaData",
-    AuthenticateUser({failureRedirect: "/api/userMetaDataFailure"}),
+    AuthenticateUser({ failureRedirect: "/api/userMetaDataFailure" }),
     (req, res) => {
         res.send(userService.getUserData(req.user as AccessTokenData))
     }
 )
 
-router.get("/userMetaDataFailure", (req, res) => res.status(204).end()) 
+router.get("/userMetaDataFailure", (req, res) => res.status(204).end())
 
 export default router

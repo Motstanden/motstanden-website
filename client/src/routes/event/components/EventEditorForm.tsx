@@ -1,26 +1,26 @@
-import React, { Reducer, useCallback, useContext, useEffect, useMemo, useReducer, useState } from "react"
-import { Leaf } from "src/components/TextEditor/Leaf"
-import { Element } from "src/components/TextEditor/Element"
-import { Editable, RenderElementProps, RenderLeafProps, Slate, withReact } from "slate-react"
-import { withHistory } from "slate-history"
-import { createEditor, Descendant, Editor, Text } from "slate"
-import { handleAllFormatHotkeys } from "src/components/TextEditor/Hotkey"
-import dayjs, { Dayjs } from "dayjs"
-import { DateTimePicker } from "@mui/x-date-pickers"
-import { Box, Button, Divider, IconButton, InputAdornment, Paper, SxProps, TextField, Theme, useMediaQuery } from "@mui/material"
-import { TextFieldProps } from "@mui/material/TextField";
+import AddIcon from '@mui/icons-material/Add'
+import DeleteIcon from '@mui/icons-material/Delete'
+import { Box, Button, IconButton, Paper, SxProps, TextField, Theme, useMediaQuery } from "@mui/material"
+import { TextFieldProps } from "@mui/material/TextField"
 import Stack from "@mui/system/Stack"
-import { EditorToolbar } from "./EditorToolbar"
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { DateTimePicker } from "@mui/x-date-pickers"
 import { KeyValuePair, UpsertEventData } from "common/interfaces"
-import { useNavigate } from "react-router-dom"
-import { serialize } from "src/components/TextEditor/HtmlSerialize"
-import { Form } from "src/components/form/Form"
-import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace"
 import { isValidRichText } from "common/richTextSchema"
+import dayjs, { Dayjs } from "dayjs"
+import React, { Reducer, useCallback, useContext, useEffect, useMemo, useReducer, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { createEditor, Descendant, Text } from "slate"
+import { withHistory } from "slate-history"
+import { Editable, RenderElementProps, RenderLeafProps, Slate, withReact } from "slate-react"
+import { Form } from "src/components/form/Form"
 import { emptyRichText } from "src/components/TextEditor/Assets"
+import { Element } from "src/components/TextEditor/Element"
+import { handleAllFormatHotkeys } from "src/components/TextEditor/Hotkey"
+import { serialize } from "src/components/TextEditor/HtmlSerialize"
+import { Leaf } from "src/components/TextEditor/Leaf"
 import { useTitle } from "src/hooks/useTitle"
+import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace"
+import { EditorToolbar } from "./EditorToolbar"
 
 export interface EventEditorState {
     title: string
@@ -32,7 +32,7 @@ export interface EventEditorState {
 
 function createValidState(initialValue: EventEditorState): EventEditorState {
     let newValue = { ...initialValue };
-    if(!isValidRichText(initialValue.description)){
+    if (!isValidRichText(initialValue.description)) {
         console.group("Feil")
         console.error("Klarte ikke tolke arrangementbeskrivelsen")
         console.log(initialValue.description)
@@ -49,7 +49,7 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
     };
 
     const navigate = useNavigate()
-    const validInitialState = useMemo( () => createValidState(initialValue), [])
+    const validInitialState = useMemo(() => createValidState(initialValue), [])
     const [state, dispatch] = useReducer<Reducer<EventEditorState, Partial<EventEditorState>>>(reducer, validInitialState);
 
     useTitle(`${isNullOrWhitespace(state.title) ? "Ingen tittel" : state.title}*`)
@@ -72,22 +72,22 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
         window.location.href = `${window.location.origin}/arrangement/${eventId ?? data.eventId ?? ""}`;   // Will trigger a page reload
     };
 
-    const editorHasContent = (): boolean =>  {
+    const editorHasContent = (): boolean => {
 
-        let queue: Descendant[] = [ ...state.description ] 
-        while(queue.length > 0) {
+        let queue: Descendant[] = [...state.description]
+        while (queue.length > 0) {
             const child = queue.pop()
 
-            if(!child) {
+            if (!child) {
                 continue
             }
 
             const isText = Text.isText(child)
-            if(isText && !isNullOrWhitespace(child.text)) {
+            if (isText && !isNullOrWhitespace(child.text)) {
                 return true
             }
 
-            if(!isText){
+            if (!isText) {
                 queue = queue.concat(child.children)
             }
         }
@@ -100,10 +100,10 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
         const isValidEndTime = state.endTime ? state.endTime.isValid() : true
         const isValidKeyInfo = !state.keyInfo.find(item => item.key.length === 0 || item.value.length === 0)
 
-        return isValidTitle && isValidStartTime && isValidEndTime && isValidKeyInfo && editorHasContent() 
+        return isValidTitle && isValidStartTime && isValidEndTime && isValidKeyInfo && editorHasContent()
     }
 
-    const isStateValid = useMemo( () => validateState(), [{...state}])    
+    const isStateValid = useMemo(() => validateState(), [{ ...state }])
 
     return (
         <Form
@@ -124,52 +124,52 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
     );
 }
 
-const EventStateContext = React.createContext<EventEditorState>(null!) 
+const EventStateContext = React.createContext<EventEditorState>(null!)
 const EventDispatchContext = React.createContext<React.Dispatch<Partial<EventEditorState>>>(null!)
 function useEvent(): [EventEditorState, React.Dispatch<Partial<EventEditorState>>] {
-    return [ useContext(EventStateContext), useContext(EventDispatchContext) ]
+    return [useContext(EventStateContext), useContext(EventDispatchContext)]
 }
 
-function EventEditor(){
+function EventEditor() {
     const editor = useMemo(() => withReact(withHistory(createEditor())), [])        // Production
     // const [editor] = useState(withReact(withHistory(createEditor())))            // Development
-    const [ event, dispatch] = useEvent()
-    const renderElement = useCallback( (props: RenderElementProps) => <Element {...props} />, [])
-    const renderLeaf = useCallback( (props: RenderLeafProps) => <Leaf {...props}/>, [])
+    const [event, dispatch] = useEvent()
+    const renderElement = useCallback((props: RenderElementProps) => <Element {...props} />, [])
+    const renderLeaf = useCallback((props: RenderLeafProps) => <Leaf {...props} />, [])
 
     return (
-        <Slate editor={editor}  value={event.description} onChange={ newVal => dispatch({description: newVal})}>
-            <EventInfoForm/>
-            <div style={{border: "1px solid gray"}}>
-                <div style={{borderBottom: "1px solid #888888"}}>
-                    <EditorToolbar/>
+        <Slate editor={editor} value={event.description} onChange={newVal => dispatch({ description: newVal })}>
+            <EventInfoForm />
+            <div style={{ border: "1px solid gray" }}>
+                <div style={{ borderBottom: "1px solid #888888" }}>
+                    <EditorToolbar />
                 </div>
-                <div style={{minHeight: "100px", padding: "10px"}}>
-                    <Editable 
+                <div style={{ minHeight: "100px", padding: "10px" }}>
+                    <Editable
                         renderElement={renderElement}
                         renderLeaf={renderLeaf}
                         spellCheck
                         placeholder="Beskrivelse av arrangementet*"
                         onKeyDown={event => handleAllFormatHotkeys(editor, event)}
-                        />
+                    />
                 </div>
             </div>
         </Slate>
     )
 }
 
-function EventInfoForm(){
+function EventInfoForm() {
     return (
-        <Stack sx={{mb: 6}}>
-            <TitleForm sx={{mb: 4}}/>
-            <TimeForm sx={{mb: {xs: 4, sm: 2}}}/>
-            <KeyInfoForm/>
+        <Stack sx={{ mb: 6 }}>
+            <TitleForm sx={{ mb: 4 }} />
+            <TimeForm sx={{ mb: { xs: 4, sm: 2 } }} />
+            <KeyInfoForm />
         </Stack>
     )
 }
 
-function TitleForm( { sx }: { sx?: SxProps } ) {
-    const [ event, dispatch] = useEvent()
+function TitleForm({ sx }: { sx?: SxProps }) {
+    const [event, dispatch] = useEvent()
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     return (
         <TextField
@@ -179,8 +179,8 @@ function TitleForm( { sx }: { sx?: SxProps } ) {
             required
             fullWidth
             value={event.title}
-            onChange={e => dispatch({title: e.target.value})}
-            InputProps={{ style: {fontSize: isSmallScreen ? "1.25em" : "1.5em", fontWeight: "bolder"}}}
+            onChange={e => dispatch({ title: e.target.value })}
+            InputProps={{ style: { fontSize: isSmallScreen ? "1.25em" : "1.5em", fontWeight: "bolder" } }}
             sx={sx}
         />
     )
@@ -188,24 +188,24 @@ function TitleForm( { sx }: { sx?: SxProps } ) {
 
 const beginningOfTime = dayjs("2018-09-11")  // Motstandens birth day
 
-function TimeForm({ sx }: {sx?: SxProps } ) {
-    const [ event, dispatch] = useEvent()
+function TimeForm({ sx }: { sx?: SxProps }) {
+    const [event, dispatch] = useEvent()
     const textFieldProps: TextFieldProps = {
-        autoComplete: "off", 
-        variant: "standard", 
-        fullWidth: true, 
+        autoComplete: "off",
+        variant: "standard",
+        fullWidth: true,
         sx: {
-            maxWidth: {xs: "100%", sm: "180px"}
+            maxWidth: { xs: "100%", sm: "180px" }
         }
     }
     return (
-        <Stack direction={{xs: "column", sm: "row"}} alignItems={{xs: "top", sm: "flex-end"}} sx={sx}>
+        <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ xs: "top", sm: "flex-end" }} sx={sx}>
             <Box sx={{
-                minWidth: "145px", 
+                minWidth: "145px",
                 marginBottom: "5px"
             }}>
                 <strong >
-                    Tidspunkt: 
+                    Tidspunkt:
                 </strong>
             </Box>
             <DateTimePicker
@@ -213,13 +213,13 @@ function TimeForm({ sx }: {sx?: SxProps } ) {
                 minDateTime={beginningOfTime}
                 defaultCalendarMonth={dayjs()}
                 value={event.startTime}
-                onChange={(newVal: Dayjs | null) => dispatch({startTime: newVal})}
-                renderInput={ params => ( 
+                onChange={(newVal: Dayjs | null) => dispatch({ startTime: newVal })}
+                renderInput={params => (
                     <>
-                        <TextField {...params} {...textFieldProps} required/> 
+                        <TextField {...params} {...textFieldProps} required />
                     </>)}
-                />
-            <Box display={{xs: "none", sm: "inline"}} style={{marginInline: "20px", marginBottom: "5px"}}>
+            />
+            <Box display={{ xs: "none", sm: "inline" }} style={{ marginInline: "20px", marginBottom: "5px" }}>
                 –
             </Box>
             <DateTimePicker
@@ -227,79 +227,80 @@ function TimeForm({ sx }: {sx?: SxProps } ) {
                 disabled={!event.startTime}
                 minDateTime={event.startTime ?? beginningOfTime}
                 value={event.endTime}
-                onChange={(newVal: Dayjs | null) => dispatch({endTime: newVal})}
-                renderInput={ params => (
+                onChange={(newVal: Dayjs | null) => dispatch({ endTime: newVal })}
+                renderInput={params => (
                     <>
                         <TextField {...params} {...textFieldProps} />
                     </>
                 )}
-                />
+            />
         </Stack>
-    )   
+    )
 }
 
 function KeyInfoForm() {
     const [event, dispatch] = useEvent()
 
     const onAddClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        let newItems = [...event.keyInfo, {key: "", value: ""}]
-        dispatch({keyInfo: newItems})
+        let newItems = [...event.keyInfo, { key: "", value: "" }]
+        dispatch({ keyInfo: newItems })
     }
 
     const onDeleteClick = (i: number) => {
         let newItems = [...event.keyInfo]
         newItems.splice(i, 1)
-        dispatch({keyInfo: newItems})
+        dispatch({ keyInfo: newItems })
     }
 
     const onValueChange = (i: number, newVal: KeyValuePair<string, string>) => {
         let newItems = [...event.keyInfo]
         newItems[i] = newVal
-        dispatch({keyInfo: newItems})
+        dispatch({ keyInfo: newItems })
     }
 
-    if(event.keyInfo.length === 0) {
-        return ( 
-            <div style={{marginTop: "30px"}}>
-                <AddInfoButton onClick={onAddClick}/>
+    if (event.keyInfo.length === 0) {
+        return (
+            <div style={{ marginTop: "30px" }}>
+                <AddInfoButton onClick={onAddClick} />
             </div>
         )
     }
 
     return (
         <Stack>
-            {event.keyInfo.map( (item, index) => <KeyInfoItem 
-                key={index} 
-                value={item} 
-                onChange={ newVal => onValueChange(index, newVal)}
+            {event.keyInfo.map((item, index) => <KeyInfoItem
+                key={index}
+                value={item}
+                onChange={newVal => onValueChange(index, newVal)}
                 onDeleteClick={() => onDeleteClick(index)} />
             )}
             <div>
-                <AddInfoButton onClick={onAddClick}/>
+                <AddInfoButton onClick={onAddClick} />
             </div>
         </Stack>
     )
 }
 
 function KeyInfoItem({
-    value, 
-    onChange, 
-    onDeleteClick 
+    value,
+    onChange,
+    onDeleteClick
 }: {
-    value: KeyValuePair<string, string>, 
-    onChange: (info: KeyValuePair<string, string>) => void,  
-    onDeleteClick?: React.MouseEventHandler<HTMLButtonElement>}
+    value: KeyValuePair<string, string>,
+    onChange: (info: KeyValuePair<string, string>) => void,
+    onDeleteClick?: React.MouseEventHandler<HTMLButtonElement>
+}
 ) {
     const [randomExample, setRandomExample] = useState(keyValueExample[Math.floor(Math.random() * keyValueExample.length)])
     const maxKeyChars = 16
     const maxValueChars = 100
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
-    useEffect( () => {
-        if(value.key.length > maxKeyChars || value.value.length > maxValueChars) {
+    useEffect(() => {
+        if (value.key.length > maxKeyChars || value.value.length > maxValueChars) {
             onChange({
                 key: value.key.slice(0, maxKeyChars),
-                value: value.value.slice(0, maxValueChars) 
+                value: value.value.slice(0, maxValueChars)
             })
         }
     }, [value.key, value.value])
@@ -315,22 +316,22 @@ function KeyInfoItem({
     }
 
     return (
-        <div 
+        <div
             style={{
                 display: "grid",
-                gridTemplateColumns: isSmallScreen ?  "auto min-content" : "min-content auto min-content max-content",
+                gridTemplateColumns: isSmallScreen ? "auto min-content" : "min-content auto min-content max-content",
                 columnGap: "15px",
                 marginBottom: "30px",
                 width: "100%"
             }}
         >
-            <TextField 
+            <TextField
                 {...sharedProps}
                 value={value.key}
-                style={{minWidth: "130px"}}
+                style={{ minWidth: "130px" }}
                 variant="standard"
                 placeholder="Tittel*"
-                onChange={ e => onChange({...value, key: e.target.value})}
+                onChange={e => onChange({ ...value, key: e.target.value })}
                 helperText={value.key.length === 0 ? `${randomExample.key}` : `${value.key.length}/${maxKeyChars}`}
                 inputProps={{
                     maxLength: maxKeyChars,
@@ -339,28 +340,28 @@ function KeyInfoItem({
                     }
                 }}
             />
-            <TextField 
+            <TextField
                 {...sharedProps}
                 value={value.value}
-                placeholder="info*" 
-                style={{width: "100%"}}
-                onChange={ e => onChange({...value, value: e.target.value})}
+                placeholder="info*"
+                style={{ width: "100%" }}
+                onChange={e => onChange({ ...value, value: e.target.value })}
                 helperText={value.value.length === 0 ? `${randomExample.value}` : `${value.value.length}/${maxValueChars}`}
                 inputProps={{
                     maxLength: maxValueChars,
                 }}
-            /> 
-            <IconButton 
+            />
+            <IconButton
                 style={{
                     width: "min-content",
                     height: "min-content",
                     margin: "auto",
                     gridColumn: isSmallScreen ? "2" : "3 ",
-                    gridRow: isSmallScreen  ? "1 / 3" : "1"
-                    
-                }} 
+                    gridRow: isSmallScreen ? "1 / 3" : "1"
+
+                }}
                 onClick={onDeleteClick}>
-                    <DeleteIcon color="error"/>
+                <DeleteIcon color="error" />
             </IconButton>
         </div>
     )
@@ -369,29 +370,29 @@ function KeyInfoItem({
 const keyValueExample: KeyValuePair<string, string>[] = [
     { key: "Sted:", value: "Bergstua" },
     { key: "Sted:", value: "Gamle Åsvei 44" },
-    { key: "Sted:", value: "TBD"},
-    { key: "Kategori:", value: "Fadderuke"},
-    { key: "Kategori:", value: "SMASH"},
-    { key: "Kategori:", value: "FYLLA, WOHO!!!"},
-    { key: "Kategori:", value: "Spilleopdrag (faktisk!) 🤯🤯"},
-    { key: "Framkomstmiddel:", value: "Hurtigruta"},
-    { key: "Framkomstmiddel:", value: "Buss"},
-    { key: "Framkomstmiddel:", value: "Leiebil"},
-    { key: "Påmeldingsfrist:", value: "I KVELD!!!"},
-    { key: "Kleskode:", value: "Maskestrøm"},
-    { key: "Kleskode:", value: "Studentergalla"},
-    { key: "Antrekk:", value: "Full uniform"},
-    { key: "Nødvendigheter:", value: "Pils, tran og uniform"},
+    { key: "Sted:", value: "TBD" },
+    { key: "Kategori:", value: "Fadderuke" },
+    { key: "Kategori:", value: "SMASH" },
+    { key: "Kategori:", value: "FYLLA, WOHO!!!" },
+    { key: "Kategori:", value: "Spilleopdrag (faktisk!) 🤯🤯" },
+    { key: "Framkomstmiddel:", value: "Hurtigruta" },
+    { key: "Framkomstmiddel:", value: "Buss" },
+    { key: "Framkomstmiddel:", value: "Leiebil" },
+    { key: "Påmeldingsfrist:", value: "I KVELD!!!" },
+    { key: "Kleskode:", value: "Maskestrøm" },
+    { key: "Kleskode:", value: "Studentergalla" },
+    { key: "Antrekk:", value: "Full uniform" },
+    { key: "Nødvendigheter:", value: "Pils, tran og uniform" },
     { key: "Oppmøte:", value: "Lageret på P15" },
     { key: "Oppmøte:", value: "Hovedbygget" },
-    { key: "Pils?", value: "Pils!"},
-    { key: "Minttu?", value: "Minttu!"},
+    { key: "Pils?", value: "Pils!" },
+    { key: "Minttu?", value: "Minttu!" },
     { key: "💩?", value: "💩!" },
     { key: "Fun fact:", value: "SMASH er relativt trygt ettersom det er relativt liten sannsynlighet for å møte på jerv" },
 ]
 
-function AddInfoButton({onClick}: {onClick?: React.MouseEventHandler<HTMLButtonElement>}) {
+function AddInfoButton({ onClick }: { onClick?: React.MouseEventHandler<HTMLButtonElement> }) {
     return (
-        <Button variant="contained" endIcon={<AddIcon/>} size="small" onClick={onClick} >Nøkkelinformasjon</Button>
+        <Button variant="contained" endIcon={<AddIcon />} size="small" onClick={onClick} >Nøkkelinformasjon</Button>
     )
 }

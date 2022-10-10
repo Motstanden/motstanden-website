@@ -1,4 +1,4 @@
-export default function dailyRandomInt(max: number){
+export default function dailyRandomInt(max: number) {
     const currentDate = getCurrentDate();
     const salt = "åæøloxz),m_.!#?¤bxvuesaJM"
     const salt2 = "Ωvs&<>/*-TC^'$€%I`~"
@@ -8,7 +8,7 @@ export default function dailyRandomInt(max: number){
 
 function getCurrentDate(): string {
     return new Date()
-        .toLocaleString("no-no", { timeZone: "cet"})
+        .toLocaleString("no-no", { timeZone: "cet" })
         .split(",")[0]
 }
 

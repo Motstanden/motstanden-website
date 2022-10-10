@@ -1,23 +1,21 @@
-import { Box,  Grid, MenuItem, TextField } from "@mui/material";
-import { UserGroup, UserRank, UserStatus, UserEditMode } from "common/enums";
-import { User } from "common/interfaces";
-import { hasGroupAccess, userRankToPrettyStr } from "common/utils";
-import { useEffect, useState } from "react";
-import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
-import { useAuth } from "src/context/Authentication";
+import { Box, Grid, MenuItem, TextField } from "@mui/material";
 import { Stack } from "@mui/system";
-import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { strToNumber } from "common/utils"
-import { Card, CardTextItem, groupTVPair, rankTVPair, statusTVPair } from "./Components";
-import { AccountDetailsCard, formatExactDate, MemberCard, PersonCard } from "./UserPage";
-import { validateEmail, isNtnuMail as checkIsNtnuMail } from 'common/utils';
-import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
-import { HelpButton } from "src/components/HelpButton";
+import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
+import { User } from "common/interfaces";
+import { hasGroupAccess, isNtnuMail as checkIsNtnuMail, strToNumber, userRankToPrettyStr, validateEmail } from "common/utils";
+import dayjs, { Dayjs } from "dayjs";
+import { useEffect, useState } from "react";
+import { Navigate, useNavigate, useOutletContext } from "react-router-dom";
 import { Form } from "src/components/form/Form";
+import { HelpButton } from "src/components/HelpButton";
+import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
+import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
+import { Card, CardTextItem, groupTVPair, rankTVPair, statusTVPair } from "./Components";
+import { AccountDetailsCard, formatExactDate, PersonCard } from "./UserPage";
 
-export function EditUserPage () {
+export function EditUserPage() {
     const currentUser = useAuth().user!
     const viewedUser = useOutletContext<User>()
 
@@ -26,33 +24,33 @@ export function EditUserPage () {
     const isAdmin = hasGroupAccess(currentUser, UserGroup.Administrator)
 
     let editMode: UserEditMode | undefined
-    if(isSuperAdmin){
+    if (isSuperAdmin) {
         editMode = UserEditMode.SuperAdmin
     }
     else if (isSelfEditing && isAdmin) {
         editMode = UserEditMode.SelfAndAdmin
     }
-    else if (isSelfEditing){
+    else if (isSelfEditing) {
         editMode = UserEditMode.Self
     }
     else if (isAdmin) {
         editMode = UserEditMode.Admin
     }
 
-    if(editMode){
-        return <EditPage editMode={editMode} user={viewedUser}/>
+    if (editMode) {
+        return <EditPage editMode={editMode} user={viewedUser} />
     }
 
-    return <Navigate to={`/medlem/${viewedUser.userId}`}/>
+    return <Navigate to={`/medlem/${viewedUser.userId}`} />
 }
 
-function EditPage( { editMode, user }: { editMode: UserEditMode, user: User}) {
+function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
     const [newUser, setNewUser] = useState<User>(user)
     const [disableSubmit, setDisableSubmit] = useState(false)
-    
+
     useTitle(user.firstName + `${isUserEqual(user, newUser) ? "" : "*"}`)
     const navigate = useNavigate()
-    
+
     const onChange = (user: User) => setNewUser(user);
     const onIsValidChange = (isValid: boolean) => setDisableSubmit(!isValid)
 
@@ -61,64 +59,64 @@ function EditPage( { editMode, user }: { editMode: UserEditMode, user: User}) {
     const preventSubmit = () => false // TODO: Validate user here. Return true if user is invalid
 
     return (
-        <Form 
-            value={newUser} 
-            postUrl={getPostUrl(editMode)} 
+        <Form
+            value={newUser}
+            postUrl={getPostUrl(editMode)}
             disabled={isUserEqual(user, newUser) || disableSubmit}
             preventSubmit={preventSubmit}
             onAbortClick={onAbort}
             onPostSuccess={onPostSuccess}
-            >
+        >
             <Grid container alignItems="top" spacing={4}>
-                <PersonForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode}/>
-                <MemberForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode}/>
-                <AccountDetailsForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode}/> 
+                <PersonForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode} />
+                <MemberForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode} />
+                <AccountDetailsForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode} />
             </Grid>
         </Form>
     )
 }
 
-function PersonForm({value, onChange, onIsValidChange, editMode}: FormParams) {
+function PersonForm({ value, onChange, onIsValidChange, editMode }: FormParams) {
     const [isValid, setIsValid] = useState(true)
-    useEffect( () => onIsValidChange(isValid), [isValid])
+    useEffect(() => onIsValidChange(isValid), [isValid])
 
     const isSelf = editMode === UserEditMode.Self || editMode === UserEditMode.SelfAndAdmin
     const isSuperAdmin = editMode === UserEditMode.SuperAdmin
-    if(!isSelf && !isSuperAdmin) {
-        return <PersonCard user={value}/>
+    if (!isSelf && !isSuperAdmin) {
+        return <PersonCard user={value} />
     }
 
-    const isNtnuMail =  checkIsNtnuMail(value.email)
+    const isNtnuMail = checkIsNtnuMail(value.email)
     const isValidEmail = validateEmail(value.email)
-    const isValidPhone = value.phoneNumber === null || ( value.phoneNumber >= 10000000 && value.phoneNumber <= 99999999)  
+    const isValidPhone = value.phoneNumber === null || (value.phoneNumber >= 10000000 && value.phoneNumber <= 99999999)
 
     const userIsValid = !isNtnuMail && isValidEmail && isValidPhone && !isNullOrWhitespace(value.firstName) && !isNullOrWhitespace(value.lastName)
-    const validChanged = ( userIsValid && !isValid ) || ( !userIsValid && isValid )  
-    if(validChanged) {
-        setIsValid( prev => !prev)
-    }    
-    
+    const validChanged = (userIsValid && !isValid) || (!userIsValid && isValid)
+    if (validChanged) {
+        setIsValid(prev => !prev)
+    }
+
     return (
         <Card title="Personalia" spacing={4}>
             <TextField
                 label="Fornavn"
                 name="firstName"
                 value={value.firstName}
-                onChange={ e => onChange({...value, firstName: e.target.value}) }
+                onChange={e => onChange({ ...value, firstName: e.target.value })}
                 required
-                sx={{mt: 2}}
+                sx={{ mt: 2 }}
             />
-            <TextField 
+            <TextField
                 label="Mellomnavn"
                 name="middleName"
                 value={value.middleName}
-                onChange={ e => onChange({...value, middleName: e.target.value})}
+                onChange={e => onChange({ ...value, middleName: e.target.value })}
             />
             <TextField
                 label="Etternavn"
                 name="lastName"
                 value={value.lastName}
-                onChange={ e => onChange({...value, lastName: e.target.value})}
+                onChange={e => onChange({ ...value, lastName: e.target.value })}
                 required
             />
             <DatePicker
@@ -127,24 +125,24 @@ function PersonForm({value, onChange, onIsValidChange, editMode}: FormParams) {
                 minDate={dayjs().subtract(100, "year")}
                 maxDate={dayjs().subtract(18, "year")}
                 value={value.birthDate ? dayjs(value.birthDate) : null}
-                onChange={ (newVal: Dayjs | null) => onChange({...value, birthDate: newVal?.format("YYYY-MM-DD") ?? null})}
-                renderInput={ params => <TextField {...params} />}
+                onChange={(newVal: Dayjs | null) => onChange({ ...value, birthDate: newVal?.format("YYYY-MM-DD") ?? null })}
+                renderInput={params => <TextField {...params} />}
             />
             <div>
-                <TextField 
+                <TextField
                     label="E-post"
                     name="email"
                     value={value.email}
-                    onChange={ e => onChange({...value, email: e.target.value})}
+                    onChange={e => onChange({ ...value, email: e.target.value })}
                     error={isNtnuMail || !isValidEmail}
                     fullWidth
                     required
-                    />
+                />
                 {isNtnuMail && <div color="error.main">Ntnu mail ikke tillat</div>}
                 {!isValidEmail && <div color="error.main">Ugyldig E-post</div>}
             </div>
             <div>
-                <TextField 
+                <TextField
                     type="tel"
                     label="Tlf."
                     name="phoneNumber"
@@ -153,67 +151,67 @@ function PersonForm({value, onChange, onIsValidChange, editMode}: FormParams) {
                     onChange={e => {
                         const newVal = strToNumber(e.target.value) ?? null
                         const inRange = newVal && newVal < 99999999
-                        const isEmpty = e.target.value.length === 0 
-                        if( inRange || isEmpty ) {
-                            onChange({...value, phoneNumber: newVal })
+                        const isEmpty = e.target.value.length === 0
+                        if (inRange || isEmpty) {
+                            onChange({ ...value, phoneNumber: newVal })
                         }
                     }}
-                    />
-                    {!isValidPhone && "Ugyldig nummer"}
+                />
+                {!isValidPhone && "Ugyldig nummer"}
             </div>
-        </Card>  
+        </Card>
     )
 }
 
-function MemberForm({value, onChange, editMode}: FormParams ){
+function MemberForm({ value, onChange, editMode }: FormParams) {
     const isAdmin = hasAdminAccess(editMode)
 
-    const userStatusSrc = isAdmin 
-                        ? statusTVPair 
-                        : statusTVPair.filter( item => item.value !== UserStatus.Inactive)
-   
-    return (    
+    const userStatusSrc = isAdmin
+        ? statusTVPair
+        : statusTVPair.filter(item => item.value !== UserStatus.Inactive)
+
+    return (
         <Card title="Medlemskap" spacing={4}>
-            <div style={{position: "relative"}}>
-                <TextField 
+            <div style={{ position: "relative" }}>
+                <TextField
                     label="Kappe"
                     name="capeName"
                     fullWidth
                     value={value.capeName}
-                    onChange={ e => onChange({...value, capeName: e.target.value})}
-                    sx={{mt: 2}}
+                    onChange={e => onChange({ ...value, capeName: e.target.value })}
+                    sx={{ mt: 2 }}
                 />
-                { !isNullOrWhitespace(value.capeName) && 
+                {!isNullOrWhitespace(value.capeName) &&
                     <span style={{
-                        fontSize: "xx-small", 
+                        fontSize: "xx-small",
                         position: "absolute",
                         bottom: -20,
                         left: 5,
-                        }}>
-                            Den grønne <b>{value.capeName}</b>
+                    }}>
+                        Den grønne <b>{value.capeName}</b>
                     </span>}
-                </div>
-            { isAdmin && (
+            </div>
+            {isAdmin && (
                 <TextField
                     select
                     label="Rang"
                     name="userRank"
                     required
                     value={value.rank}
-                    onChange={ (e) => onChange({...value, rank: e.target.value as UserRank})} 
+                    onChange={(e) => onChange({ ...value, rank: e.target.value as UserRank })}
                 >
-                    { rankTVPair.map( item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
+                    {rankTVPair.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
                 </TextField>
             )}
-            { !isAdmin && (
+            {!isAdmin && (
                 <div style={{
-                    minHeight: "56px", 
-                    paddingLeft: "10px", 
+                    minHeight: "56px",
+                    paddingLeft: "10px",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center"
-                    }}>
-                    <CardTextItem label="Rang" text={userRankToPrettyStr(value.rank)}/>
+                }}>
+                    <CardTextItem label="Rang" text={userRankToPrettyStr(value.rank)} />
                 </div>
             )}
             <Stack direction="row" alignItems="center">
@@ -224,46 +222,46 @@ function MemberForm({value, onChange, editMode}: FormParams ){
                     name="userStatus"
                     required
                     value={value.status}
-                    onChange={ e => onChange({...value, status: e.target.value as UserStatus})}
-                    >
-                    { userStatusSrc.map( item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
+                    onChange={e => onChange({ ...value, status: e.target.value as UserStatus })}
+                >
+                    {userStatusSrc.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
                 </TextField>
-                <Box sx={{ml: 2}}>
-                    <HelpButton text={getStatusExplanation(value.status)}/>
+                <Box sx={{ ml: 2 }}>
+                    <HelpButton text={getStatusExplanation(value.status)} />
                 </Box>
             </Stack>
-            <DatePicker 
+            <DatePicker
                 views={["year", "month"]}
                 label="Startet"
                 minDate={dayjs().year(2018).month(7)}
                 maxDate={dayjs()}
                 value={dayjs(value.startDate)}
-                onChange={ (newVal: Dayjs | null) => newVal && onChange({...value, startDate: newVal?.format("YYYY-MM-DD")})}
-                renderInput={(params) => <TextField {...params} required/>}
+                onChange={(newVal: Dayjs | null) => newVal && onChange({ ...value, startDate: newVal?.format("YYYY-MM-DD") })}
+                renderInput={(params) => <TextField {...params} required />}
             />
-            <DatePicker 
+            <DatePicker
                 views={["year", "month"]}
                 label="Sluttet"
                 minDate={dayjs().year(2018).month(7)}
                 maxDate={dayjs().add(6, "year")}
                 value={value.endDate ? dayjs(value.endDate) : null}
-                onChange={ (newVal: Dayjs | null) => onChange({...value, endDate: newVal?.format("YYYY-MM-DD") ?? null})}
-                renderInput={(params) => <TextField {...params}/>}
+                onChange={(newVal: Dayjs | null) => onChange({ ...value, endDate: newVal?.format("YYYY-MM-DD") ?? null })}
+                renderInput={(params) => <TextField {...params} />}
             />
         </Card>
     )
 }
 
-function AccountDetailsForm( {value, onChange, onIsValidChange, editMode}: FormParams ) {
+function AccountDetailsForm({ value, onChange, onIsValidChange, editMode }: FormParams) {
 
-    if(!hasAdminAccess(editMode)){
-        return <AccountDetailsCard user={value}/>
+    if (!hasAdminAccess(editMode)) {
+        return <AccountDetailsCard user={value} />
     }
 
     const isSuperAdmin = editMode === UserEditMode.SuperAdmin
-    const groupSource = isSuperAdmin 
-                       ? groupTVPair 
-                       : groupTVPair.filter( item => item.value !== UserGroup.SuperAdministrator)
+    const groupSource = isSuperAdmin
+        ? groupTVPair
+        : groupTVPair.filter(item => item.value !== UserGroup.SuperAdministrator)
 
     return (
         <Card title="Brukerkonto" spacing={4}>
@@ -272,17 +270,17 @@ function AccountDetailsForm( {value, onChange, onIsValidChange, editMode}: FormP
                 label="Rolle"
                 name="groupName"
                 required
-                sx={{mt: 2}}
+                sx={{ mt: 2 }}
                 value={value.groupName}
-                onChange={ (e) => onChange({...value, groupName: e.target.value as UserGroup})} 
+                onChange={(e) => onChange({ ...value, groupName: e.target.value as UserGroup })}
             >
-                { groupSource.map( item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
+                {groupSource.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
             </TextField>
-            <div style={{paddingLeft: "10px"}}>
-                <CardTextItem label="Laget" text={formatExactDate(value.createdAt)}/>
+            <div style={{ paddingLeft: "10px" }}>
+                <CardTextItem label="Laget" text={formatExactDate(value.createdAt)} />
             </div>
-            <div style={{paddingLeft: "10px"}}>
-                <CardTextItem label="Oppdatert" text={formatExactDate(value.updatedAt)}/>
+            <div style={{ paddingLeft: "10px" }}>
+                <CardTextItem label="Oppdatert" text={formatExactDate(value.updatedAt)} />
             </div>
         </Card>
     )
@@ -297,32 +295,32 @@ type FormParams = {
 
 
 function canExitPage(oldUser: User, newUser: User): boolean {
-    if(!isUserEqual(oldUser, newUser)){
+    if (!isUserEqual(oldUser, newUser)) {
         return window.confirm("Du har ikke lagret endringene\nVil du avslutte redigering av profil?")
     }
     return true
 }
 
-function isUserEqual(oldUser: User, newUser: User): boolean{
+function isUserEqual(oldUser: User, newUser: User): boolean {
     return (
-        oldUser.birthDate       === newUser.birthDate       &&
-        oldUser.capeName        === newUser.capeName        &&
-        oldUser.email           === newUser.email           &&
-        oldUser.endDate         === newUser.endDate         &&
-        oldUser.firstName       === newUser.firstName       &&
-        oldUser.groupName       === newUser.groupName       &&
-        oldUser.lastName        === newUser.lastName        &&
-        oldUser.middleName      === newUser.middleName      &&
-        oldUser.phoneNumber     === newUser.phoneNumber     &&
-        oldUser.profilePicture  === newUser.profilePicture  &&
-        oldUser.rank            === newUser.rank            &&
-        oldUser.startDate       === newUser.startDate       &&
-        oldUser.status          === newUser.status
-    )     
+        oldUser.birthDate === newUser.birthDate &&
+        oldUser.capeName === newUser.capeName &&
+        oldUser.email === newUser.email &&
+        oldUser.endDate === newUser.endDate &&
+        oldUser.firstName === newUser.firstName &&
+        oldUser.groupName === newUser.groupName &&
+        oldUser.lastName === newUser.lastName &&
+        oldUser.middleName === newUser.middleName &&
+        oldUser.phoneNumber === newUser.phoneNumber &&
+        oldUser.profilePicture === newUser.profilePicture &&
+        oldUser.rank === newUser.rank &&
+        oldUser.startDate === newUser.startDate &&
+        oldUser.status === newUser.status
+    )
 }
 
 function getPostUrl(mode: UserEditMode): string {
-    switch(mode){
+    switch (mode) {
         case UserEditMode.Self: return "/api/self/update-user"
         case UserEditMode.Admin: return "/api/admin/update-user"
         case UserEditMode.SelfAndAdmin: return "/api/self-and-admin/update-user"
@@ -331,16 +329,16 @@ function getPostUrl(mode: UserEditMode): string {
 }
 
 function getStatusExplanation(status: UserStatus): string {
-    switch (status){
-        case UserStatus.Active:  return "Aktiv: Aktivt medlem av motstanden"
+    switch (status) {
+        case UserStatus.Active: return "Aktiv: Aktivt medlem av motstanden"
         case UserStatus.Veteran: return "Veteran: Medlem som generelt ikke er aktiv, men som likevel deltar på ting av og til (f.eks SMASH og Forohming)"
         case UserStatus.Retired: return "Pensjonist: Medlem som hverken er aktiv eller deltar på ting. Medlemmet deltar kanskje på større jubileum."
         case UserStatus.Inactive: return "Inaktiv: Medlem som sluttet kort tid etter at vedkommende ble medlem"
     }
 }
 
-function hasAdminAccess( mode: UserEditMode ): boolean {
-    return  mode === UserEditMode.Admin || 
-            mode === UserEditMode.SelfAndAdmin || 
-            mode === UserEditMode.SuperAdmin
+function hasAdminAccess(mode: UserEditMode): boolean {
+    return mode === UserEditMode.Admin ||
+        mode === UserEditMode.SelfAndAdmin ||
+        mode === UserEditMode.SuperAdmin
 }

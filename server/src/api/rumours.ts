@@ -1,18 +1,18 @@
 import { UserGroup } from "common/enums";
 import { NewRumour, Rumour } from "common/interfaces";
 import { strToNumber } from "common/utils";
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate";
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor";
-import { rumourService } from "../services/rumours"
+import { rumourService } from "../services/rumours";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
 import dailyRandomInt from "../utils/dailyRandomInt";
 
 let router = express.Router()
 
-router.get("/rumours?:limit", 
-    AuthenticateUser(), 
-    (req, res) =>  {
+router.get("/rumours?:limit",
+    AuthenticateUser(),
+    (req, res) => {
         const limit = strToNumber(req.query.limit?.toString())
         res.send(rumourService.getAll(limit))
     })
@@ -20,7 +20,7 @@ router.get("/rumours?:limit",
 router.get("/rumours/daily-rumour",
     AuthenticateUser(),
     (req, res) => {
-        const limit = 100 
+        const limit = 100
         const rumours = rumourService.getAll(limit)
         const i = dailyRandomInt(limit)
         const mod = Math.min(limit, rumours.length)
@@ -32,13 +32,13 @@ router.get("/rumours/daily-rumour",
     }
 )
 
-router.post("/rumours/new", 
+router.post("/rumours/new",
     AuthenticateUser(),
-    (req, res ) => {
+    (req, res) => {
         const user = req.user as AccessTokenData
         try {
             rumourService.insertNew(req.body as NewRumour, user.userId)
-        } catch(err) {
+        } catch (err) {
             console.log(err)
             res.status(400).send("Bad data")
         }
@@ -46,7 +46,7 @@ router.post("/rumours/new",
     }
 )
 
-router.post("/rumours/delete", 
+router.post("/rumours/delete",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
@@ -60,15 +60,15 @@ router.post("/rumours/delete",
             res.status(400).send("Bad data")
         }
         res.end()
-    } 
+    }
 )
 
-router.post("/rumours/update", 
+router.post("/rumours/update",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getAuthorInfo: id => rumourService.get(id)
-    }), 
+    }),
     (req: Request, res: Response) => {
         const rumour: Rumour = req.body
         try {
@@ -77,7 +77,7 @@ router.post("/rumours/update",
             res.status(400).send("Bad data")
         }
         res.end()
-    } 
+    }
 )
 
 export default router

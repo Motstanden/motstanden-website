@@ -4,6 +4,6 @@ import { Descendant } from "slate";
 export const emptyRichText: Descendant[] = [
     {
         type: ElementType.Div,
-        children: [{text: ""}]
+        children: [{ text: "" }]
     }
 ]

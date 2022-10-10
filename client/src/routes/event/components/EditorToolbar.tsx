@@ -1,29 +1,28 @@
 import React from 'react';
-import { Transforms } from 'slate';
-import { Editor } from 'slate';
+import { Editor, Transforms } from 'slate';
 import { useSlate } from 'slate-react';
-import * as RichText from "src/components/TextEditor/FormattedText"
+import * as RichText from "src/components/TextEditor/FormattedText";
 
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
-import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
+import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
+import { Divider, SxProps, Tooltip } from '@mui/material';
+import Stack from '@mui/material/Stack';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { ElementType, FormattedText, TextFormat } from "common/richTextSchema";
-import Stack from '@mui/material/Stack';
-import { Divider, SxProps, Tooltip } from '@mui/material';
+import { ElementType, TextFormat } from "common/richTextSchema";
 
 
 export function EditorToolbar() {
 
     return (
-        <Stack direction="row"  alignItems="center" justifyContent="flex-start">
+        <Stack direction="row" alignItems="center" justifyContent="flex-start">
             <div>
                 <TextFormatButtons />
             </div>
-            <Divider flexItem orientation='vertical' sx={{my: "4px", mx: "4px"}}/>
+            <Divider flexItem orientation='vertical' sx={{ my: "4px", mx: "4px" }} />
             <div>
                 <BlockElementButtons />
             </div>
@@ -37,26 +36,26 @@ const toggleButtonGroupStyle: SxProps = {
         border: 0,
         borderRadius: "0px",
         height: "35px",
-        width:  "35px"
+        width: "35px"
     }
 }
 
 function TextFormatButtons() {
     const editor = useSlate()
 
-    const onChange = ( event: React.MouseEvent<HTMLElement>, newFormats: TextFormat[]) => {
+    const onChange = (event: React.MouseEvent<HTMLElement>, newFormats: TextFormat[]) => {
         // Apply all new formats
-        newFormats.forEach( format => RichText.setMark(editor, format, true))
+        newFormats.forEach(format => RichText.setMark(editor, format, true))
 
         // Remove formats that does not exists in 'newFormats'
         Object.values(TextFormat)
-                .filter( format => !newFormats.includes(format))
-                .forEach( format => RichText.setMark(editor, format, false))
+            .filter(format => !newFormats.includes(format))
+            .forEach(format => RichText.setMark(editor, format, false))
 
     }
 
     const buildValue = (value: TextFormat[], format: TextFormat): TextFormat[] => {
-        if(RichText.isMarkActive(editor, format)) {
+        if (RichText.isMarkActive(editor, format)) {
             return [...value, format]
         }
         return value
@@ -68,42 +67,42 @@ function TextFormatButtons() {
     values = buildValue(values, TextFormat.Underline)
 
     return (
-        <ToggleButtonGroup 
-            value={values} 
+        <ToggleButtonGroup
+            value={values}
             onChange={onChange}
             size="small"
             sx={toggleButtonGroupStyle}
-            >
+        >
             <ToggleButton value={TextFormat.Bold} >
                 <Tooltip title="Fet tekst (Ctrl+B)">
-                    <FormatBoldIcon/>
+                    <FormatBoldIcon />
                 </Tooltip>
             </ToggleButton>
             <ToggleButton value={TextFormat.Italic}>
                 <Tooltip title="Kursiv tekst (Ctrl+I)">
-                    <FormatItalicIcon/>
+                    <FormatItalicIcon />
                 </Tooltip>
             </ToggleButton>
             <ToggleButton value={TextFormat.Underline}>
                 <Tooltip title="Understreket tekst (Ctrl+U)">
-                    <FormatUnderlinedIcon/>
+                    <FormatUnderlinedIcon />
                 </Tooltip>
             </ToggleButton>
         </ToggleButtonGroup>
     )
 }
-    
+
 function BlockElementButtons() {
     const editor = useSlate()
 
-    const isMatch = ( type: ElementType ): boolean => {
+    const isMatch = (type: ElementType): boolean => {
         const [match]: any = Editor.nodes(editor, {
             match: (n: any) => n.type === type
         })
         return !!match
     }
 
-    const onChange = ( event: React.MouseEvent<HTMLElement>, newType?: ElementType) => {
+    const onChange = (event: React.MouseEvent<HTMLElement>, newType?: ElementType) => {
         Transforms.unwrapNodes(editor, {
             match: (n: any) => n.type === ElementType.BulletedList || n.type === ElementType.NumberedList,
             split: true
@@ -114,9 +113,9 @@ function BlockElementButtons() {
         Transforms.setNodes(
             editor,
             { type: isList ? ElementType.ListItem : newType },
-            { match: n => Editor.isBlock(editor, n)}
+            { match: n => Editor.isBlock(editor, n) }
         )
-        if(isList) {
+        if (isList) {
             Transforms.wrapNodes(editor, { type: newType, children: [] })
         }
     }
@@ -126,28 +125,28 @@ function BlockElementButtons() {
     value = isMatch(ElementType.BulletedList) ? ElementType.BulletedList : value
     value = isMatch(ElementType.NumberedList) ? ElementType.NumberedList : value
     return (
-        <ToggleButtonGroup 
+        <ToggleButtonGroup
             exclusive
             value={value}
             onChange={onChange}
             size="small"
             sx={toggleButtonGroupStyle}
-            >
+        >
             <ToggleButton value={ElementType.H3}>
                 <Tooltip title="Liten overskrift">
-                    <strong style={{fontSize: "22px"}}>
-                        H 
+                    <strong style={{ fontSize: "22px" }}>
+                        H
                     </strong>
                 </Tooltip>
             </ToggleButton>
             <ToggleButton value={ElementType.BulletedList}>
                 <Tooltip title="Punktliste">
-                    <FormatListBulletedIcon/>
+                    <FormatListBulletedIcon />
                 </Tooltip>
             </ToggleButton>
             <ToggleButton value={ElementType.NumberedList}>
                 <Tooltip title="Nummerert liste">
-                <FormatListNumberedIcon/>
+                    <FormatListNumberedIcon />
                 </Tooltip>
             </ToggleButton>
         </ToggleButtonGroup>

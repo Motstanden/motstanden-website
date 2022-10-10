@@ -1,10 +1,10 @@
 const path = require('path')
 
-const motstandenDBName =  'motstanden_dev.db'
+const motstandenDBName = 'motstanden_dev.db'
 
 const sheetArchiveDBName = 'sheet_archive_dev.db'
 
-const motstandenDB   = path.join(__dirname, "..", "..", motstandenDBName)
+const motstandenDB = path.join(__dirname, "..", "..", motstandenDBName)
 const sheetArchiveDB = path.join(__dirname, "..", "..", sheetArchiveDBName)
 
 const dbReadOnlyConfig = {

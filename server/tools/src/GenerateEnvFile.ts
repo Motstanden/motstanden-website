@@ -9,9 +9,9 @@
 //
 // ******************************************************************
 
+import { randomBytes } from "crypto";
 import fs from "fs";
 import path from "path";
-import { randomBytes } from "crypto";
 
 let envObjects = []
 
@@ -38,7 +38,7 @@ envObjects.push({
 // Build string with the env data
 let fileString = ""
 envObjects.forEach(item => {
-    fileString += `${ item.name }=${ item.value }\n`
+    fileString += `${item.name}=${item.value}\n`
 });
 
 // Write data string to file

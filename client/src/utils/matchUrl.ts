@@ -1,4 +1,4 @@
-import { resolvePath, Location as RouterLocation } from "react-router-dom";
+import { Location as RouterLocation, resolvePath } from "react-router-dom";
 
 /**
  * Checks if a react-router-dom path pattern matches the current url

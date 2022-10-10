@@ -1,17 +1,17 @@
-import React, { useState } from "react"
-import { useTitle } from "../../hooks/useTitle"
+import { Skeleton, TextField } from "@mui/material"
+import Divider from "@mui/material/Divider"
 import { NewQuote, Quote, Quote as QuoteData } from "common/interfaces"
 import dayjs from "dayjs"
+import { useState } from "react"
 import { useNavigate, useOutletContext } from "react-router-dom"
-import Divider from "@mui/material/Divider"
 import { Form } from "src/components/form/Form"
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace"
-import { useContextInvalidator } from "./Context"
-import { Skeleton, TextField } from "@mui/material"
+import { useTitle } from "../../hooks/useTitle"
 import { EditList, RenderEditFormProps } from "./components/EditList"
 import { NewlineText } from "./components/NewlineText"
+import { useContextInvalidator } from "./Context"
 
-export function QuotesPage(){
+export function QuotesPage() {
     useTitle("Sitater")
 
     const data = useOutletContext<QuoteData[]>()
@@ -21,7 +21,7 @@ export function QuotesPage(){
     return (
         <>
             <h1>Sitater</h1>
-            <QuoteList quotes={data} onItemChanged={onItemChanged}/>
+            <QuoteList quotes={data} onItemChanged={onItemChanged} />
         </>
     )
 }
@@ -35,33 +35,33 @@ export function PageSkeleton() {
     )
 }
 
-export function ListSkeleton( {length}: {length: number}) {
+export function ListSkeleton({ length }: { length: number }) {
     return (
-        <ul style={{ 
-                paddingLeft: "5px", 
-                listStyleType: "none" 
-            }}>
-            { Array(length).fill(1).map( (_, i) => <ItemSkeleton key={i}/>) }
+        <ul style={{
+            paddingLeft: "5px",
+            listStyleType: "none"
+        }}>
+            {Array(length).fill(1).map((_, i) => <ItemSkeleton key={i} />)}
         </ul>
-    ) 
-} 
+    )
+}
 
 function ItemSkeleton() {
     return (
         <li>
             <div>
-                <Skeleton 
+                <Skeleton
                     style={{
-                        maxWidth: "700px", 
+                        maxWidth: "700px",
                         marginBottom: "-10px",
                         height: "5em"
-                    }}/>
+                    }} />
             </div>
-            <div style={{marginBottom: "25px"}}>
-                <Skeleton 
+            <div style={{ marginBottom: "25px" }}>
+                <Skeleton
                     style={{
-                        maxWidth: "650px", 
-                        marginLeft: "50px", 
+                        maxWidth: "650px",
+                        marginLeft: "50px",
                         height: "2em"
                     }}
                 />
@@ -70,20 +70,20 @@ function ItemSkeleton() {
     )
 }
 
-export function QuoteList( {quotes, onItemChanged}: {quotes: QuoteData[], onItemChanged?: VoidFunction } ){
+export function QuoteList({ quotes, onItemChanged }: { quotes: QuoteData[], onItemChanged?: VoidFunction }) {
 
-    const renderItem = (quote: QuoteData) => <ReadOnlyItem quote={quote}/>
-    const renderEditForm = (props: RenderEditFormProps<QuoteData>) => <EditItem {...props}/>
+    const renderItem = (quote: QuoteData) => <ReadOnlyItem quote={quote} />
+    const renderEditForm = (props: RenderEditFormProps<QuoteData>) => <EditItem {...props} />
     const isEqual = (a: QuoteData, b: QuoteData) => a.utterer === b.utterer && a.quote === b.quote
 
     return (
-        <EditList 
-            items={quotes} 
-            onItemChanged={() => onItemChanged && onItemChanged()} 
+        <EditList
+            items={quotes}
+            onItemChanged={() => onItemChanged && onItemChanged()}
             renderItem={renderItem}
-            renderEditForm={renderEditForm} 
+            renderEditForm={renderEditForm}
             itemComparer={isEqual}
-            renderItemSkeleton={<ItemSkeleton/>}
+            renderItemSkeleton={<ItemSkeleton />}
             deleteItemUrl="/api/quotes/delete"
             confirmDeleteItemText="Vil du permanent slette dette sitatet?"
             itemSpacing="25px"
@@ -91,15 +91,15 @@ export function QuoteList( {quotes, onItemChanged}: {quotes: QuoteData[], onItem
     )
 }
 
-function ReadOnlyItem({quote}: {quote: QuoteData}) {
+function ReadOnlyItem({ quote }: { quote: QuoteData }) {
     return (
-        <div style={{marginTop: "10px", marginBottom: "10px"}}>
-            <NewlineText text={quote.quote}/>
+        <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+            <NewlineText text={quote.quote} />
             <div style={{
-                marginLeft: "20px", 
-                marginTop: "2px", 
-                opacity: 0.6, 
-                fontSize: "small", 
+                marginLeft: "20px",
+                marginTop: "2px",
+                opacity: 0.6,
+                fontSize: "small",
                 fontWeight: "bold",
                 display: "flex",
                 gap: "1ch"
@@ -118,11 +118,11 @@ function ReadOnlyItem({quote}: {quote: QuoteData}) {
 function EditItem(props: RenderEditFormProps<QuoteData>) {
     return (
         <div>
-            <Divider sx={{mb: 4}}/>
-            <UpsertQuoteForm 
-                initialValue={props.data} 
+            <Divider sx={{ mb: 4 }} />
+            <UpsertQuoteForm
+                initialValue={props.data}
                 postUrl="/api/quotes/update"
-                onAbortClick={props.onEditAbort} 
+                onAbortClick={props.onEditAbort}
                 onPostSuccess={props.onEditSuccess} />
         </div>
     )
@@ -143,9 +143,9 @@ export function NewQuotePage() {
     return (
         <>
             <h1>Nytt sitat</h1>
-            <UpsertQuoteForm 
-                initialValue={{quote: "", utterer: ""}}
-                postUrl="/api/quotes/new"    
+            <UpsertQuoteForm
+                initialValue={{ quote: "", utterer: "" }}
+                postUrl="/api/quotes/new"
                 onAbortClick={onAbort}
                 onPostSuccess={onSuccess}
             />
@@ -154,67 +154,67 @@ export function NewQuotePage() {
 }
 
 function UpsertQuoteForm({
-    initialValue, 
-    postUrl, 
+    initialValue,
+    postUrl,
     onAbortClick,
     onPostSuccess,
 }: {
-    initialValue: NewQuote | QuoteData, 
-    postUrl: string, 
+    initialValue: NewQuote | QuoteData,
+    postUrl: string,
     onAbortClick: VoidFunction
     onPostSuccess: VoidFunction
 }) {
     const [newValue, setNewValue] = useState<NewQuote | Quote>(initialValue)
 
     const validateData = () => {
-        const isEmpty = isNullOrWhitespace(newValue.quote) || isNullOrWhitespace(newValue.utterer) 
+        const isEmpty = isNullOrWhitespace(newValue.quote) || isNullOrWhitespace(newValue.utterer)
         const isEqual = newValue.quote.trim() === initialValue.quote.trim() && newValue.utterer.trim() === initialValue.utterer.trim()
         return !isEmpty && !isEqual
     }
 
     const getSubmitData = () => {
-        return { ...newValue, quote: newValue.quote.trim(), utterer: newValue.utterer.trim()}
+        return { ...newValue, quote: newValue.quote.trim(), utterer: newValue.utterer.trim() }
     }
 
     const disabled = !validateData()
 
     return (
-        <div style={{maxWidth: "700px"}}>
-            <Form 
-                value={getSubmitData} 
-                postUrl={postUrl} 
+        <div style={{ maxWidth: "700px" }}>
+            <Form
+                value={getSubmitData}
+                postUrl={postUrl}
                 disabled={disabled}
-                onAbortClick={ (e) => onAbortClick()} 
-                onPostSuccess={ (e) => onPostSuccess()}
-                
-                >
-                <div style={{marginBottom: "-1em"}}>
+                onAbortClick={(e) => onAbortClick()}
+                onPostSuccess={(e) => onPostSuccess()}
+
+            >
+                <div style={{ marginBottom: "-1em" }}>
                     <div>
-                        <TextField 
+                        <TextField
                             label="Sitat"
                             name="quote"
                             type="text"
-                            required 
+                            required
                             fullWidth
                             autoComplete="off"
                             value={newValue.quote}
-                            onChange={(e) => setNewValue({...newValue, quote: e.target.value})}
+                            onChange={(e) => setNewValue({ ...newValue, quote: e.target.value })}
                             multiline
                             minRows={4}
-                            sx={{mb: 4}}
-                            />
+                            sx={{ mb: 4 }}
+                        />
                     </div>
                     <div>
-                        <TextField 
-                            label="Sitatytrer" 
+                        <TextField
+                            label="Sitatytrer"
                             name="utterer"
                             type="text"
-                            required 
-                            fullWidth 
+                            required
+                            fullWidth
                             autoComplete="off"
                             value={newValue.utterer}
-                            onChange={(e) => setNewValue({...newValue, utterer: e.target.value})}
-                            sx={{maxWidth:  "450px"}}/>
+                            onChange={(e) => setNewValue({ ...newValue, utterer: e.target.value })}
+                            sx={{ maxWidth: "450px" }} />
                     </div>
                 </div>
             </Form>

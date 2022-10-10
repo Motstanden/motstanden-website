@@ -3,7 +3,7 @@ import { NewQuote, Quote } from "common/interfaces";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
 import { stringIsNullOrWhiteSpace } from "../utils/stringUtils";
 
-export function getQuote(quoteId: number): Quote{
+export function getQuote(quoteId: number): Quote {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT 
@@ -20,7 +20,7 @@ export function getQuote(quoteId: number): Quote{
     const quote: Quote | undefined = stmt.get(quoteId)
     db.close()
 
-    if(!quote)
+    if (!quote)
         throw "Bad data"
 
     return quote
@@ -47,29 +47,29 @@ export function getQuotes(limit?: number): Quote[] {
 
 export function insertQuote(quote: NewQuote, userId: number) {
 
-    if(stringIsNullOrWhiteSpace(quote.quote) || stringIsNullOrWhiteSpace(quote.utterer) || !userId)
+    if (stringIsNullOrWhiteSpace(quote.quote) || stringIsNullOrWhiteSpace(quote.utterer) || !userId)
         throw `Invalid data`
-    
+
     const db = new Database(motstandenDB, dbReadWriteConfig)
     const stmt = db.prepare(`
         INSERT INTO 
             quote(utterer, quote, created_by) 
         VALUES (?, ?, ?)
-    `)    
+    `)
     stmt.run(quote.utterer, quote.quote, userId)
     db.close();
 }
 
 export function updateQuote(quote: Quote) {
 
-    const isInvalid =   stringIsNullOrWhiteSpace(quote.quote)   || 
-                        stringIsNullOrWhiteSpace(quote.utterer) || 
-                        !quote.id || typeof quote.id !== "number"
-    if(isInvalid)
+    const isInvalid = stringIsNullOrWhiteSpace(quote.quote) ||
+        stringIsNullOrWhiteSpace(quote.utterer) ||
+        !quote.id || typeof quote.id !== "number"
+    if (isInvalid)
         throw `Invalid data`
 
     const db = new Database(motstandenDB, dbReadWriteConfig)
-    const startTransaction = db.transaction( () => {
+    const startTransaction = db.transaction(() => {
         const stmt = db.prepare(`
             UPDATE 
                 quote
@@ -81,12 +81,12 @@ export function updateQuote(quote: Quote) {
         stmt.run([quote.utterer, quote.quote, quote.id])
     })
     startTransaction()
-    db.close()   
+    db.close()
 }
 
 export function deleteQuote(quoteId: number) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
-    const startTransaction = db.transaction( () => {
+    const startTransaction = db.transaction(() => {
         const stmt = db.prepare(`
             DELETE FROM 
                 quote
@@ -95,5 +95,5 @@ export function deleteQuote(quoteId: number) {
         stmt.run(quoteId)
     })
     startTransaction()
-    db.close()   
+    db.close()
 }

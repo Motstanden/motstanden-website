@@ -5,19 +5,19 @@ import { PageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
 
 export function UserContext() {
-    const {isLoading, isError, data, error} = useQuery<User[]>(["FetchAllUsers"], () => fetchAsync<User[]>("/api/member-list") )
-    
+    const { isLoading, isError, data, error } = useQuery<User[]>(["FetchAllUsers"], () => fetchAsync<User[]>("/api/member-list"))
+
     if (isLoading) {
-        return <PageContainer><div/></PageContainer>
+        return <PageContainer><div /></PageContainer>
     }
-    
+
     if (isError) {
         return <PageContainer><span>{`${error}`}</span></PageContainer>
-    }   
-    
+    }
+
     return (
         <PageContainer>
-            <Outlet context={data}/>
+            <Outlet context={data} />
         </PageContainer>
     )
 }

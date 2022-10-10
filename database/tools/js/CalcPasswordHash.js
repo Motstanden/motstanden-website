@@ -25,8 +25,8 @@ const rl = readline.createInterface({
     output: process.stdout
 })
 
-rl.question('Password: ', (terminalInput) =>{
+rl.question('Password: ', (terminalInput) => {
     const hash = CalcHash(terminalInput)
-    console.log(`${ terminalInput } --> ${ hash }`)
+    console.log(`${terminalInput} --> ${hash}`)
     rl.close()
 })

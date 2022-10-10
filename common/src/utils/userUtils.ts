@@ -1,8 +1,8 @@
-import { User } from "../interfaces/index";
 import { UserGroup, UserRank, UserStatus } from "../enums/index";
+import { User } from "../interfaces/index";
 
 export function userGroupToNum(group: UserGroup): number {
-    switch(group) {
+    switch (group) {
         case UserGroup.Contributor: return 1
         case UserGroup.Editor: return 2
         case UserGroup.Administrator: return 3
@@ -17,17 +17,17 @@ export function hasGroupAccess(user: User, requiredGroup: UserGroup): boolean {
 
 export function getFullName(user: User): string {
     let fullName = user.firstName
-    if(user.middleName)
+    if (user.middleName)
         fullName += " " + user.middleName
 
-    if(user.lastName)
+    if (user.lastName)
         fullName += " " + user.lastName
 
     return fullName
 }
 
 export function userRankToPrettyStr(rank: UserRank): string {
-    switch(rank){
+    switch (rank) {
         case UserRank.ShortCircuit: return "0Ω"
         case UserRank.Ohm: return "1Ω"
         case UserRank.KiloOhm: return "kΩ"
@@ -39,7 +39,7 @@ export function userRankToPrettyStr(rank: UserRank): string {
 }
 
 export function userGroupToPrettyStr(group: UserGroup): string {
-    switch(group) {
+    switch (group) {
         case UserGroup.Contributor: return "-"
         case UserGroup.Editor: return "Redaktør"
         case UserGroup.Administrator: return "Admin"

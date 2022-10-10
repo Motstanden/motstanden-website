@@ -1,26 +1,26 @@
-import { Divider, Grid, Paper, Stack } from "@mui/material"
+import { Grid, Stack } from "@mui/material"
 import { UserGroup, UserRank, UserStatus } from "common/enums"
 import { userGroupToPrettyStr, userRankToPrettyStr, userStatusToPrettyStr } from "common/utils"
 import { ResponsiveTitleCard, TitleCardProps } from "src/components/TitleCard"
 
 export function Card({
-    title, 
-    children, 
+    title,
+    children,
     spacing
-}: 
-    TitleCardProps & { 
-    spacing?: number 
-}) {
+}:
+    TitleCardProps & {
+        spacing?: number
+    }) {
     return (
-        <ResponsiveTitleCard title={title} sx={{height: "100%"}}>
+        <ResponsiveTitleCard title={title} sx={{ height: "100%" }}>
             <Stack spacing={spacing ?? 2}>
                 {children}
             </Stack>
         </ResponsiveTitleCard>
-    )    
+    )
 }
 
-export function CardTextItem( { label, text }: {label: string, text: string}) {
+export function CardTextItem({ label, text }: { label: string, text: string }) {
     return (
         <Grid container>
             <Grid item xs={3} sm={12} md={3} >
@@ -29,7 +29,7 @@ export function CardTextItem( { label, text }: {label: string, text: string}) {
             <Grid item xs={9} sm={12} md={9}>
                 {text}
             </Grid>
-        </Grid> 
+        </Grid>
     )
 }
 
@@ -39,28 +39,28 @@ type TextValuePair<T> = {
 }
 
 function enumToTextValuePair<T>(
-    enumObj: {}, 
-    toStrCallback: (enumItem: T) => string) : TextValuePair<T>[] 
-{   
-    return Object.keys(enumObj).map( (itemStr) => {
+    enumObj: {},
+    toStrCallback: (enumItem: T) => string): TextValuePair<T>[] {
+    return Object.keys(enumObj).map((itemStr) => {
         const item = enumObj[itemStr as keyof typeof enumObj] as T
         return {
-            value: item, 
-            text: toStrCallback(item)} as TextValuePair<T>
-        }
+            value: item,
+            text: toStrCallback(item)
+        } as TextValuePair<T>
+    }
     )
 }
 
-export const rankTVPair            = enumToTextValuePair<UserRank> (UserRank,  rank => userRankToPrettyStr(rank))
-export const groupTVPair           = enumToTextValuePair<UserGroup>(UserGroup, group => userGroupToPrettyStr(group))
-export const statusTVPair          = enumToTextValuePair<UserStatus>(UserStatus, status => userStatusToPrettyStr(status))
-export const profilePictureTVPair:  TextValuePair<string>[] = [ 
+export const rankTVPair = enumToTextValuePair<UserRank>(UserRank, rank => userRankToPrettyStr(rank))
+export const groupTVPair = enumToTextValuePair<UserGroup>(UserGroup, group => userGroupToPrettyStr(group))
+export const statusTVPair = enumToTextValuePair<UserStatus>(UserStatus, status => userStatusToPrettyStr(status))
+export const profilePictureTVPair: TextValuePair<string>[] = [
     {
         text: "Gutt",
-        value: "files/private/profilbilder/boy.png" 
+        value: "files/private/profilbilder/boy.png"
     }, {
         text: "Jente",
-        value: "files/private/profilbilder/girl.png" 
-    } 
-] 
+        value: "files/private/profilbilder/girl.png"
+    }
+]
 

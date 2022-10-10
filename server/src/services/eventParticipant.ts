@@ -14,20 +14,20 @@ export function getAll(eventId: number): ParticipationList {
             vw_event_participant
         WHERE event_id = ?
     `);
-    const dbResult: {eventId: number, participants: string} = stmt.get(eventId);
+    const dbResult: { eventId: number, participants: string } = stmt.get(eventId);
     db.close()
     if (!dbResult) {
-        return {eventId: eventId, participants: []}
+        return { eventId: eventId, participants: [] }
     }
 
-    return {...dbResult, participants: JSON.parse(dbResult.participants) };
+    return { ...dbResult, participants: JSON.parse(dbResult.participants) };
 }
 
 export function upsert(eventId: number, userId: number, newStatus: ParticipationStatus) {
     const statusId = getStatusId(newStatus)
     const db = new Database(motstandenDB, dbReadWriteConfig)
-    
-    const startTransaction = db.transaction( () => {
+
+    const startTransaction = db.transaction(() => {
         const stmt = db.prepare(`
             INSERT INTO 
                 event_participant(event_id, user_id, participation_status_id) 
@@ -59,9 +59,9 @@ function getStatusId(status: ParticipationStatus): number {
     const result = stmt.get(status.toString())
     db.close()
 
-    if(!result.statusId)
+    if (!result.statusId)
         throw "Could not retrieve participation status id"
-    
-    
+
+
     return result.statusId as number
 }

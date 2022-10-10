@@ -6,18 +6,18 @@ export interface ParticipationList {
     participants: Participant[]
 }
 
-export interface Participant extends Pick< 
-    User, 
-    "userId"        | 
-    "firstName"     | 
-    "middleName"    |
-    "lastName"      |
+export interface Participant extends Pick<
+    User,
+    "userId" |
+    "firstName" |
+    "middleName" |
+    "lastName" |
     "profilePicture"
 > {
     participationStatus: ParticipationStatus
 }
 
-export interface UpsertParticipant extends 
-    Pick<Participant, "participationStatus">, 
+export interface UpsertParticipant extends
+    Pick<Participant, "participationStatus">,
     Pick<ParticipationList, "eventId"> {
 }

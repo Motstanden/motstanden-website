@@ -5,7 +5,7 @@ export const stringIsNullOrWhiteSpace = (inputString: string | undefined | null)
     if (inputString) {                              // Check if value is defined
         if (typeof inputString === 'string') {      // Check if value is a string
             if (inputString.trim()) {               // Check if value contains any non white space characters
-               result = false 
+                result = false
             }
         }
     }

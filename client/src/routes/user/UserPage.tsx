@@ -1,66 +1,64 @@
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
+import EditIcon from '@mui/icons-material/Edit';
+import { Tooltip } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
-import EditIcon from '@mui/icons-material/Edit';
-import { User } from "common/interfaces";
-import { getFullName, hasGroupAccess, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";
-import dayjs from "dayjs";
-import { Navigate, Outlet, useOutletContext, useParams, Link as RouterLink, useLocation } from "react-router-dom";
-import { Tooltip } from "@mui/material";
-import { useAuth } from "src/context/Authentication";
 import { UserGroup } from "common/enums";
-import { strToNumber } from "common/utils"
-import { Card, CardTextItem } from "./Components";
+import { User } from "common/interfaces";
+import { getFullName, hasGroupAccess, strToNumber, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";
+import dayjs from "dayjs";
+import { Link as RouterLink, Navigate, Outlet, useOutletContext, useParams } from "react-router-dom";
+import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
+import { Card, CardTextItem } from "./Components";
 
 export function UserProfileContext() {
     const users = useOutletContext<User[]>()
 
     const params = useParams();
     const userId = strToNumber(params.userId)
-    if(!userId){
-        return <Navigate to="/medlem/liste"/>
-    }
-    
-    const user = users.find( item => item.userId === userId)
-
-    if(!user) {
-        return <Navigate to="/medlem/liste"/>
+    if (!userId) {
+        return <Navigate to="/medlem/liste" />
     }
 
-    return(
+    const user = users.find(item => item.userId === userId)
+
+    if (!user) {
+        return <Navigate to="/medlem/liste" />
+    }
+
+    return (
         <>
-            <ProfileBanner user={user}/>
-            <EditButton user={user}/>
-            <Divider sx={{mt: 2, mb: 2}}/>
-            <Outlet context={user}/>
+            <ProfileBanner user={user} />
+            <EditButton user={user} />
+            <Divider sx={{ mt: 2, mb: 2 }} />
+            <Outlet context={user} />
         </>
     )
 }
 
-export function UserPage(){
+export function UserPage() {
     const user = useOutletContext<User>()
     useTitle(user.firstName)
     return (
         <Grid container alignItems="top" spacing={4}>
-            <PersonCard user={user}/>
-            <MemberCard user={user}/>
-            <AccountDetailsCard user={user}/>
+            <PersonCard user={user} />
+            <MemberCard user={user} />
+            <AccountDetailsCard user={user} />
         </Grid>
     )
 }
 
-function ProfileBanner( {user}: {user: User}) {
+function ProfileBanner({ user }: { user: User }) {
     const fullName = getFullName(user)
     return (
-        <Paper 
+        <Paper
             elevation={6}
-            style={{textAlign: "center"}}
+            style={{ textAlign: "center" }}
         >
-            <h1 style={{paddingTop: "10px"}}>{fullName}</h1>
-            <img 
+            <h1 style={{ paddingTop: "10px" }}>{fullName}</h1>
+            <img
                 src={`${window.location.origin}/${user.profilePicture}`}
                 alt={`Profilbildet til ${fullName}`}
                 style={{
@@ -68,33 +66,33 @@ function ProfileBanner( {user}: {user: User}) {
                     maxWidth: "300px",
                     borderRadius: "50%",
                     paddingBottom: "10px"
-                }}/>
+                }} />
         </Paper>
     )
 }
 
-function EditButton( { user }: { user: User } ){
+function EditButton({ user }: { user: User }) {
     const loggedInUser = useAuth().user!
-    
-    const isSelf = loggedInUser.userId === user.userId    
+
+    const isSelf = loggedInUser.userId === user.userId
     const groupPermission = hasGroupAccess(loggedInUser, UserGroup.Administrator)
     const canEdit = isSelf || groupPermission
-    if(!canEdit) {
+    if (!canEdit) {
         return <></>
     }
 
-    return( 
-        <div style={{position: "relative"}}>
+    return (
+        <div style={{ position: "relative" }}>
             <Tooltip title="Rediger Profil" >
-                <IconButton 
-                    component={RouterLink} 
-                    to={`/medlem/${user.userId}/rediger`} 
+                <IconButton
+                    component={RouterLink}
+                    to={`/medlem/${user.userId}/rediger`}
                     style={{
-                        position: "absolute", 
-                        right: "0px", 
+                        position: "absolute",
+                        right: "0px",
                         bottom: "0px"
                     }}>
-                    <EditIcon/>
+                    <EditIcon />
                 </IconButton>
             </Tooltip>
         </div>
@@ -102,50 +100,50 @@ function EditButton( { user }: { user: User } ){
     )
 }
 
-export function PersonCard( {user}: {user: User} ) {
+export function PersonCard({ user }: { user: User }) {
     return (
         <Card title="Personalia">
-            <CardTextItem label="Navn" text={getFullName(user)}/>
-            <CardTextItem label="Bursdag" text={formatDateStr(user.birthDate)}/>
-            <CardTextItem label="E-post" text={user.email}/>
-            <CardTextItem label="Tlf" text={ user.phoneNumber?.toString() ?? "-"}/>
+            <CardTextItem label="Navn" text={getFullName(user)} />
+            <CardTextItem label="Bursdag" text={formatDateStr(user.birthDate)} />
+            <CardTextItem label="E-post" text={user.email} />
+            <CardTextItem label="Tlf" text={user.phoneNumber?.toString() ?? "-"} />
         </Card>
     )
 }
 
-export function MemberCard({user}: {user: User} ) {
+export function MemberCard({ user }: { user: User }) {
     return (
         <Card title="Medlemskap">
-            <CardTextItem label="Kappe" text={user.capeName ? `Den grønne ${user.capeName}` : "-"}/>
-            <CardTextItem label="Rang" text={userRankToPrettyStr(user.rank)}/>
-            <CardTextItem label="Status" text={user.status}/>
-            <CardTextItem label="Aktiv periode" text={formatDateInterval(user.startDate, user.endDate)}/>
+            <CardTextItem label="Kappe" text={user.capeName ? `Den grønne ${user.capeName}` : "-"} />
+            <CardTextItem label="Rang" text={userRankToPrettyStr(user.rank)} />
+            <CardTextItem label="Status" text={user.status} />
+            <CardTextItem label="Aktiv periode" text={formatDateInterval(user.startDate, user.endDate)} />
         </Card>
     )
 }
 
-export function AccountDetailsCard({user}: {user: User} ) {
+export function AccountDetailsCard({ user }: { user: User }) {
     return (
         <Card title="Brukerkonto">
-            <CardTextItem label="Rolle" text={userGroupToPrettyStr(user.groupName)}/>
-            <CardTextItem label="Laget" text={formatExactDate(user.createdAt)}/>
-            <CardTextItem label="Oppdatert" text={formatExactDate(user.updatedAt)}/>
+            <CardTextItem label="Rolle" text={userGroupToPrettyStr(user.groupName)} />
+            <CardTextItem label="Laget" text={formatExactDate(user.createdAt)} />
+            <CardTextItem label="Oppdatert" text={formatExactDate(user.updatedAt)} />
         </Card>
     )
 
 }
 
-export function formatExactDate( dateStr: string): string{
+export function formatExactDate(dateStr: string): string {
     return dayjs(dateStr).utc(true).local().format("DD MMM YYYY HH:mm:ss")
 }
 
-function formatDateStr( dateStr: string | null): string{
-    if(!dateStr)
+function formatDateStr(dateStr: string | null): string {
+    if (!dateStr)
         return "-"
     return dayjs(dateStr).format("DD MMMM YYYY")
 }
 
-function formatDateInterval( startDate: string, endDate: string | null): string {
+function formatDateInterval(startDate: string, endDate: string | null): string {
     let result = dayjs(startDate).format("MMMM YYYY") + " - "
     result += endDate ? dayjs(endDate).format("MMMM YYYY") : "dags dato"
     return result
