@@ -87,9 +87,14 @@
   1. http://localhost:3000/ – A front end server, responsible for compiling react and provide front end dev tools. This server is only used in development.
   2. http://localhost:5000/ - A back end server, responsible for handling API calls and serving content. This server will be the actual server running in production.
 
-You can now go to http://localhost:3000/ and start developing.<br/>
-To log in, enter `web@motstanden.no` and use the `DEV LOGG INN`-button.<br/>
-Happy coding!
+You can now go to [http://localhost:3000/](http://localhost:3000/) and start developing.<br/>
+To log in, enter one of the following email addresses and click the `DEV LOGG INN`-button. 
+- contributor@motstanden.no
+- editor@motstanden.no
+- admin@motstanden.no
+- superadmin@motstanden.no
+
+**Happy coding!**
 
 # Project structure
  ## [database](/database)
