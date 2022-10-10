@@ -1,10 +1,10 @@
-import ClickAwayListener  from "@mui/material/ClickAwayListener";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import React, { useEffect, useRef, useState } from "react";
 
 export function IconPopupMenu({
-    children, 
+    children,
     icon,
     disabled,
     onMouseEnter,
@@ -12,40 +12,40 @@ export function IconPopupMenu({
     onMenuOpen,
     onMenuClose
 }: {
-    children: React.ReactNode, 
+    children: React.ReactNode,
     icon: React.ReactNode,
     disabled?: boolean,
     onMouseEnter?: React.MouseEventHandler<HTMLButtonElement>,
     onMouseLeave?: React.MouseEventHandler<HTMLButtonElement>,
     onMenuOpen?: VoidFunction,
     onMenuClose?: VoidFunction,
-}){
+}) {
     const [isOpen, setIsOpen] = useState(false)
     const anchorEl = useRef(null)
-    useEffect( () => {
-        if(anchorEl && isOpen){
+    useEffect(() => {
+        if (anchorEl && isOpen) {
             onMenuOpen && onMenuOpen()
         }
-        if(anchorEl && !isOpen) {
+        if (anchorEl && !isOpen) {
             onMenuClose && onMenuClose()
         }
     }, [isOpen])
-    
+
     return (
         <>
             <ClickAwayListener onClickAway={() => setIsOpen(false)}>
-                <IconButton 
-                    ref={anchorEl} 
-                    onClick={() => setIsOpen( prevValue => !prevValue)} 
+                <IconButton
+                    ref={anchorEl}
+                    onClick={() => setIsOpen(prevValue => !prevValue)}
                     disabled={disabled}
                     onMouseEnter={onMouseEnter}
                     onMouseLeave={onMouseLeave}
-                    >
+                >
                     {icon}
                 </IconButton>
             </ClickAwayListener>
-            <Menu 
-                style={{margin: 0, padding: 0}}
+            <Menu
+                style={{ margin: 0, padding: 0 }}
                 anchorEl={anchorEl.current}
                 open={!disabled && isOpen}
                 onClose={() => setIsOpen(false)}

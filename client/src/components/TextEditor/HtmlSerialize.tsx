@@ -1,13 +1,12 @@
-import React from "react"
-import DOMPurify from "dompurify"
-import ReactDOMServer from "react-dom/server"
-import { Descendant, Text, Editor } from 'slate';
-import { CustomElement, ElementType, FormattedText, TextFormat } from "common/richTextSchema"
+import { CustomElement, ElementType, FormattedText } from "common/richTextSchema";
+import DOMPurify from "dompurify";
+import ReactDOMServer from "react-dom/server";
+import { Descendant, Editor, Text } from 'slate';
 import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
 import { CustomEditor } from "./Types";
 
-export function serialize( value: CustomEditor | Descendant[]): string{
-    
+export function serialize(value: CustomEditor | Descendant[]): string {
+
     const children = Editor.isEditor(value) ? value.children : value
 
     const dirtyContent = serializeNode(children)
@@ -15,36 +14,36 @@ export function serialize( value: CustomEditor | Descendant[]): string{
     // It is not necessary to sanitize the content (the serialization logic should have done this for us already).
     // But we do it anyway because it only affects performance and it can potentially catch bugs in our serialization logic.
     const cleanContent = DOMPurify.sanitize(dirtyContent, { USE_PROFILES: { html: true } })
-    
+
     return cleanContent
 }
 
 function serializeNode(node: Descendant | Descendant[]): string {
-    
-    if(Array.isArray(node)){
-        return node.map( child => serializeNode(child) + `${Text.isText(child) ? "" : "\n"}`)   // Recursive serialize the children array
-                   .join("") 
+
+    if (Array.isArray(node)) {
+        return node.map(child => serializeNode(child) + `${Text.isText(child) ? "" : "\n"}`)   // Recursive serialize the children array
+            .join("")
     }
 
     // Base case
-    if(Text.isText(node)) {
+    if (Text.isText(node)) {
         return serializeText(node)
     }
 
     const childStr: string = serializeNode(node.children)           // Recursive serialize children
-    const elemStr: string  = serializeElement(node, childStr) 
+    const elemStr: string = serializeElement(node, childStr)
     return elemStr
-}   
+}
 
 function serializeText(node: FormattedText): string {
     let txt = <>{node.text.replace(/\s\s+/g, " ")}</>
-    if(node.bold) {
+    if (node.bold) {
         txt = <strong>{txt}</strong>
     }
-    if(node.italic) {
+    if (node.italic) {
         txt = <em>{txt}</em>
     }
-    if(node.underline){
+    if (node.underline) {
         txt = <u>{txt}</u>
     }
     return ReactDOMServer.renderToString(txt)
@@ -52,9 +51,9 @@ function serializeText(node: FormattedText): string {
 
 function serializeElement(node: CustomElement, childStr: string) {
     switch (node.type) {
-        case ElementType.Div: 
-            return isNullOrWhitespace(childStr) 
-                ? `<br/>` 
+        case ElementType.Div:
+            return isNullOrWhitespace(childStr)
+                ? `<br/>`
                 : `<div>${childStr}</div>`
         case ElementType.H1: return `<h1>${childStr}</h1>`
         case ElementType.H2: return `<h2>${childStr}</h2>`

@@ -1,8 +1,8 @@
 export function strToNumber(str: string | undefined): number | undefined {
-    if(!str)
+    if (!str)
         return undefined
 
-    if(!isOnlyNumbers(str))
+    if (!isOnlyNumbers(str))
         return undefined
 
     return parseInt(str)

@@ -1,30 +1,29 @@
-import React, { useEffect } from "react"
 import Divider from "@mui/material/Divider";
 import Link from "@mui/material/Link";
-import { PageContainer } from "src/layout/PageContainer";
-import { linkStyle } from "src/assets/style/tableStyle"
-import LicenseLogo from "src/assets/logos/license.png"
+import LicenseLogo from "src/assets/logos/license.png";
+import { linkStyle } from "src/assets/style/tableStyle";
 import { useTitle } from "src/hooks/useTitle";
+import { PageContainer } from "src/layout/PageContainer";
 
 export function LicensePage() {
     useTitle("Lisens")
     return (
         <PageContainer>
-            <div style={{maxWidth: "600px", marginInline: "auto"}}>
-                <Introduction/>
-                <Divider sx={{my: 5}}/>
-                <License/>
+            <div style={{ maxWidth: "600px", marginInline: "auto" }}>
+                <Introduction />
+                <Divider sx={{ my: 5 }} />
+                <License />
             </div>
         </PageContainer>
     )
 }
 
-export function LicenseOnlyPage(){
+export function LicenseOnlyPage() {
     useTitle("Måkesodd")
     return (
         <PageContainer>
-            <div style={{maxWidth: "600px", marginInline: "auto"}}>
-                <License/>
+            <div style={{ maxWidth: "600px", marginInline: "auto" }}>
+                <License />
             </div>
         </PageContainer>
     )
@@ -35,26 +34,26 @@ function Introduction() {
         <>
             <h1>Lisens</h1>
             <p>
-                Denne nettsiden er et <em>åpen-kildekode-prosjekt</em> og er lisensiert under Motstanden sin egen lisens: <strong>MÅKESODD v1</strong> 
+                Denne nettsiden er et <em>åpen-kildekode-prosjekt</em> og er lisensiert under Motstanden sin egen lisens: <strong>MÅKESODD v1</strong>
             </p>
             <p>
-                På  
-                { " " } 
-                <Link 
+                På
+                {" "}
+                <Link
                     href="https://github.com/Motstanden"
                     underline="hover"
                     sx={linkStyle}>
                     Motstanden sin github
-                </Link> 
-                { " " }
-                kan du finne 
-                { " " }
-                <Link 
-                    href="https://github.com/Motstanden/motstanden-website" 
+                </Link>
+                {" "}
+                kan du finne
+                {" "}
+                <Link
+                    href="https://github.com/Motstanden/motstanden-website"
                     underline="hover"
                     sx={linkStyle}>
-                        kildekoden for denne nettsiden
-                </Link>. 
+                    kildekoden for denne nettsiden
+                </Link>.
             </p>
             <p>
                 <strong>MÅKESODD v1</strong> kan leses i sin helhet i avsnittet under.
@@ -65,16 +64,16 @@ function Introduction() {
 
 function License() {
     return (
-        <pre style={{whiteSpace: "pre-wrap"}} >
-            <div style={{textAlign: "center"}}>
-                <h1 style={{margin: 0}}>MÅKESODD v1</h1>
-                <img 
-                    src={LicenseLogo} 
+        <pre style={{ whiteSpace: "pre-wrap" }} >
+            <div style={{ textAlign: "center" }}>
+                <h1 style={{ margin: 0 }}>MÅKESODD v1</h1>
+                <img
+                    src={LicenseLogo}
                     style={{
-                        maxWidth: "300px", 
+                        maxWidth: "300px",
                         width: "95%",
                         marginBlock: "20px"
-                    }}/>
+                    }} />
                 <h3>Motstandens Åpne Kildekodelisens egnet Studentorchesterets Diverse Dataprosjekter</h3>
             </div>
             <p>
@@ -118,7 +117,7 @@ function License() {
                 </li>
             </ul>
             {/* <Divider sx={{my: 4}} light/> */}
-            <p style={{marginTop: "60px"}}>
+            <p style={{ marginTop: "60px" }}>
                 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
                 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
                 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE

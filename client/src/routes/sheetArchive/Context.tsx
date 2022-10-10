@@ -1,15 +1,14 @@
-import React from "react";
 import { useQuery } from '@tanstack/react-query';
-import { fetchAsync } from "../../utils/fetchAsync";
+import React from "react";
 import { Outlet } from "react-router-dom";
-import { strToPrettyUrl } from "../../utils/strToPrettyUrl";
-import { useTitle } from "../../hooks/useTitle";
-import { ISongInfo } from "./SheetArchive";
 import { TabbedPageContainer } from "src/layout/PageContainer";
+import { fetchAsync } from "../../utils/fetchAsync";
+import { strToPrettyUrl } from "../../utils/strToPrettyUrl";
+import { ISongInfo } from "./SheetArchive";
 
 
 export function SheetArchiveContext() {
-    
+
     const { isLoading, isError, data, error } = useQuery<ISongInfo[]>(["FetchSheetArchiveTitles"], () => fetchAsync<ISongInfo[]>("/api/sheet_archive/song_title"));
 
     if (isLoading) {
@@ -44,12 +43,12 @@ export function SheetArchiveContext() {
 }
 
 
-function PageContainer({ children }: {children?: React.ReactNode}) {
+function PageContainer({ children }: { children?: React.ReactNode }) {
     return (
-        <TabbedPageContainer 
+        <TabbedPageContainer
             tabItems={[
-                {to: "/notearkiv/repertoar",    label: "Repertoar"},
-                {to: "/notearkiv/alle",         label: "Alle"},
+                { to: "/notearkiv/repertoar", label: "Repertoar" },
+                { to: "/notearkiv/alle", label: "Alle" },
             ]}
             matchChildPath={true}
         >

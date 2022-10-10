@@ -1,16 +1,16 @@
 // Loads secret keys from the local .env file. The .env file should always be a hidden secret, and should not be committed to github.
 import dotenv from "dotenv";
-dotenv.config({ path: "../.env"});
+dotenv.config({ path: "../.env" });
 
-import express from "express"
-import cookieParser from 'cookie-parser'
-import path from "path"
-import cors from "cors"
-import helmet from "helmet"
-import * as passportConfig from "./config/passportConfig.js"
-import serveIndex from "serve-index"
+import cookieParser from 'cookie-parser';
+import cors from "cors";
+import express from "express";
+import helmet from "helmet";
+import path from "path";
+import serveIndex from "serve-index";
+import * as passportConfig from "./config/passportConfig.js";
 
-import router from "./api/apiRouter.js"
+import router from "./api/apiRouter.js";
 import { AuthenticateUser } from "./middleware/jwtAuthenticate.js";
 
 const PORT = process.env.PORT || 5000
@@ -22,7 +22,7 @@ app.use(helmet({
         useDefaults: true,
         directives: {
             scriptSrc: ["'self'"],
-            frameSrc: [ "'self'", "https://docs.google.com"],
+            frameSrc: ["'self'", "https://docs.google.com"],
         }
     }
 }))
@@ -44,19 +44,19 @@ app.use(express.json());                            // support json encoded bodi
 const passport = passportConfig.createPassport()
 app.use(passport.initialize());
 
-app.use("/files/private", 
-    AuthenticateUser({failureRedirect: "/files/public"}),
+app.use("/files/private",
+    AuthenticateUser({ failureRedirect: "/files/public" }),
     express.static(path.join(__dirname, "..", "files", "private")),
-    serveIndex(path.join(__dirname, "..", "files", "private"), {icons: true}))
+    serveIndex(path.join(__dirname, "..", "files", "private"), { icons: true }))
 
-app.use("/files/public", 
+app.use("/files/public",
     express.static(path.join(__dirname, "..", "files", "public")),
-    serveIndex(path.join(__dirname, "..", "files", "public"), {icons: true}))
+    serveIndex(path.join(__dirname, "..", "files", "public"), { icons: true }))
 
-app.use("/files", 
-    AuthenticateUser({failureRedirect: "/files/public"}),
+app.use("/files",
+    AuthenticateUser({ failureRedirect: "/files/public" }),
     express.static(path.join(__dirname, "..", "files")),
-    serveIndex(path.join(__dirname, "..", "files"), {icons: true}))
+    serveIndex(path.join(__dirname, "..", "files"), { icons: true }))
 
 app.use("/api", router)
 

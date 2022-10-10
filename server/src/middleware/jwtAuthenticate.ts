@@ -1,19 +1,19 @@
-import { Request, Response, NextFunction, CookieOptions } from 'express';
-import passport from 'passport';
-import jwt from 'jsonwebtoken';
-import { AccessTokenData } from '../ts/interfaces/AccessTokenData';
-import * as userService from '../services/user';
-import { RefreshTokenData } from '../ts/interfaces/RefreshTokenData';
 import crypto from "crypto";
+import { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import passport from 'passport';
+import * as userService from '../services/user';
+import { AccessTokenData } from '../ts/interfaces/AccessTokenData';
+import { RefreshTokenData } from '../ts/interfaces/RefreshTokenData';
 
 
-export function AuthenticateUser(options?: AuthenticateOptions){
-    return (req: Request, res: Response, next: NextFunction) => onAuthenticateRequest(req, res, next, options ?? {}) 
+export function AuthenticateUser(options?: AuthenticateOptions) {
+    return (req: Request, res: Response, next: NextFunction) => onAuthenticateRequest(req, res, next, options ?? {})
 }
 
 function onAuthenticateRequest(req: Request, res: Response, next: NextFunction, options: AuthenticateOptions) {
     const accessToken = getToken(req, TokenType.AccessToken)
-    if(accessToken){
+    if (accessToken) {
         return passport.authenticate("jwt", { session: false, ...options })(req, res, next)
     }
     else {
@@ -25,17 +25,17 @@ export function updateAccessToken(req: Request, res: Response, next: NextFunctio
 
     const onFailure = () => {
         clearAllAuthCookies(res)
-        if(options.failureRedirect) {
+        if (options.failureRedirect) {
             return res.redirect(options.failureRedirect)
         }
         return res.status(401).send("Unauthorized").end()
     }
 
     const refreshToken = getToken(req, TokenType.RefreshToken)
-    if(!refreshToken){
+    if (!refreshToken) {
         return onFailure()
     }
-    
+
     let payload: JwtTokenData
     try {
         payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET) as JwtTokenData
@@ -45,10 +45,10 @@ export function updateAccessToken(req: Request, res: Response, next: NextFunctio
     }
 
     const validToken = userService.verifyLoginToken(refreshToken, payload.userId)
-    if(!validToken){
+    if (!validToken) {
         return onFailure()
     }
-    
+
     const user = userService.getTokenDataFromId(payload.userId)
     const accessToken = createToken(TokenType.AccessToken, user)
     saveTokenInCookie(res, TokenType.AccessToken, accessToken)
@@ -59,21 +59,21 @@ export function updateAccessToken(req: Request, res: Response, next: NextFunctio
 
 function getToken(req: Request, tokenType: TokenType): string | undefined {
     let token = undefined
-    if(req && req.cookies){
-        token = req.cookies[tokenType.toString()]     
+    if (req && req.cookies) {
+        token = req.cookies[tokenType.toString()]
     }
     return token;
-}   
+}
 
 
 export function createToken(tokenType: TokenType, user: AccessTokenData): string {
-    return tokenType === TokenType.AccessToken 
+    return tokenType === TokenType.AccessToken
         ? createAccessToken(user)
         : createRefreshToken(user)
 }
 
 function createAccessToken(user: AccessTokenData): string {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m"})
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" })
 }
 
 function createRefreshToken(user: AccessTokenData): string {
@@ -81,7 +81,7 @@ function createRefreshToken(user: AccessTokenData): string {
         userId: user.userId,
         salt: crypto.randomBytes(16).toString("hex")
     } as RefreshTokenData
-    return jwt.sign(data,  process.env.REFRESH_TOKEN_SECRET, { expiresIn: "365d"})
+    return jwt.sign(data, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "365d" })
 }
 
 export function loginUser(req: Request, res: Response) {
@@ -94,19 +94,19 @@ export function loginUser(req: Request, res: Response) {
 
     saveTokenInCookie(res, TokenType.AccessToken, accessToken)
     saveTokenInCookie(res, TokenType.RefreshToken, refreshToken)
- 
+
     res.redirect("/hjem")
 }
 
-function saveTokenInCookie(res: Response, tokenType: TokenType, tokenStr: string | RefreshTokenData){
+function saveTokenInCookie(res: Response, tokenType: TokenType, tokenStr: string | RefreshTokenData) {
     const maxAge = tokenType === TokenType.AccessToken
         ? 1000 * 60 * 15                 // 15 min
         : 1000 * 60 * 60 * 24 * 365      // 365 days
-    res.cookie( 
+    res.cookie(
         tokenType.toString(),
         tokenStr,
         {
-            httpOnly: true, 
+            httpOnly: true,
             secure: process.env.IS_DEV_ENV === "true" ? false : true,       // In development we need this to be true in order to log in to the site from a mobile phone
             sameSite: true,
             maxAge: maxAge
@@ -115,7 +115,7 @@ function saveTokenInCookie(res: Response, tokenType: TokenType, tokenStr: string
 
 export function logOut(req: Request, res: Response) {
     const refreshToken = getToken(req, TokenType.RefreshToken)
-    if(refreshToken){
+    if (refreshToken) {
         userService.removeLoginToken(refreshToken)
     }
     clearAllAuthCookies(res)
@@ -129,7 +129,7 @@ export function logOutAllUnits(req: Request, res: Response) {
     res.end()
 }
 
-function clearAllAuthCookies(res: Response){
+function clearAllAuthCookies(res: Response) {
     res.clearCookie(TokenType.AccessToken.toString())
     res.clearCookie(TokenType.RefreshToken.toString())
 }

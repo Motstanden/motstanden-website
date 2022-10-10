@@ -1,116 +1,116 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../context/Authentication';
 
 // Material UI 
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import Link from '@mui/material/Link';
 import List from '@mui/material/List';
-import ListItemLink from './ListItemLink';
 import Menu from '@mui/material/Menu';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { SxProps } from '@mui/system';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
+import ListItemLink from './ListItemLink';
 
-import { hasGroupAccess } from 'common/utils';
 import { UserGroup } from 'common/enums';
+import { hasGroupAccess } from 'common/utils';
 import * as MenuIcons from './MenuIcons';
 
 
-export function NavBar(){
+export function NavBar() {
     let auth = useAuth()
-    return auth.user 
-        ? <PrivateNavBar/> 
-        : <PublicNavBar/>
+    return auth.user
+        ? <PrivateNavBar />
+        : <PublicNavBar />
 }
 
-function PrivateNavBar(){
+function PrivateNavBar() {
     return (
-        <Stack 
+        <Stack
             component="nav"
             direction="row"
             alignItems="center"
-            justifyContent={{lg: "flex-start", xl: "center"}}
-            sx={{width: "100%", maxWidth: "1200px"}}
-            spacing={{sm: 1, md: 1, lg: 4, xl: 7}}
-            >
-            <NavLink text="Hjem" to="/hjem"/>
+            justifyContent={{ lg: "flex-start", xl: "center" }}
+            sx={{ width: "100%", maxWidth: "1200px" }}
+            spacing={{ sm: 1, md: 1, lg: 4, xl: 7 }}
+        >
+            <NavLink text="Hjem" to="/hjem" />
             <NavLink text="Arrangementer" to="/arrangement" />
-            <NavLink text="Sitater" to="/sitater"/>
-            <NavLink text="Rykter" to="/rykter"/>
-            <NavLink text="Traller" to="/studenttraller"/>
-            <NavLink text="Noter" to="/notearkiv"/>
+            <NavLink text="Sitater" to="/sitater" />
+            <NavLink text="Rykter" to="/rykter" />
+            <NavLink text="Traller" to="/studenttraller" />
+            <NavLink text="Noter" to="/notearkiv" />
             <NavLink text="Dokumenter" to="/dokumenter" />
-            <AdminDropDown/>
+            <AdminDropDown />
             <NavDropDown text="Om oss">
-                <List component="nav" disablePadding sx={{minWidth: 200}}>
-                    <ListItemLink text="Framside" to="/framside" icon={<MenuIcons.FrontPage/>}/>
-                    <Divider/>
-                    <ListItemLink text="Bli Medlem" to="/bli-medlem" icon={<MenuIcons.BecomeMember/>}/>
+                <List component="nav" disablePadding sx={{ minWidth: 200 }}>
+                    <ListItemLink text="Framside" to="/framside" icon={<MenuIcons.FrontPage />} />
+                    <Divider />
+                    <ListItemLink text="Bli Medlem" to="/bli-medlem" icon={<MenuIcons.BecomeMember />} />
                     {/* <ListItemLink text="FAQ" to="/faq" disabled /> */}
-                    <Divider/>
-                    <ListItemLink text="Lisens" to="/lisens" icon={<MenuIcons.License/>}/>
-                    <Divider/>
-                    <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={<MenuIcons.Wiki/>}/>
+                    <Divider />
+                    <ListItemLink text="Lisens" to="/lisens" icon={<MenuIcons.License />} />
+                    <Divider />
+                    <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={<MenuIcons.Wiki />} />
                 </List>
             </NavDropDown>
         </Stack>
     )
 }
 
-function PublicNavBar(){
+function PublicNavBar() {
     return (
-        <Stack 
+        <Stack
             component="nav"
             direction="row"
             alignItems="center"
             justifyContent="center"
-            spacing={{md: 6, lg: 12, xl: 16 }}
-            >
-            <NavDropDown text="Om oss" sx={{mr: -2}}>
-                <List component="nav" disablePadding sx={{minWidth: 200}}>
-                    <ListItemLink text="Framside" to="/" icon={<MenuIcons.FrontPage/>}/>
-                    <Divider/>
-                    <ListItemLink text="Bli Medlem" to="/bli-medlem" icon={<MenuIcons.BecomeMember/>}/>
+            spacing={{ md: 6, lg: 12, xl: 16 }}
+        >
+            <NavDropDown text="Om oss" sx={{ mr: -2 }}>
+                <List component="nav" disablePadding sx={{ minWidth: 200 }}>
+                    <ListItemLink text="Framside" to="/" icon={<MenuIcons.FrontPage />} />
+                    <Divider />
+                    <ListItemLink text="Bli Medlem" to="/bli-medlem" icon={<MenuIcons.BecomeMember />} />
                     {/* <ListItemLink text="FAQ" to="/faq" disabled /> */}
-                                        <Divider/>
-                    <ListItemLink text="Lisens" to="/lisens" icon={<MenuIcons.License/>}/>
-                    <Divider/>
-                    <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={<MenuIcons.Wiki/>}/>
+                    <Divider />
+                    <ListItemLink text="Lisens" to="/lisens" icon={<MenuIcons.License />} />
+                    <Divider />
+                    <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={<MenuIcons.Wiki />} />
                 </List>
             </NavDropDown>
-            <NavLink text="Studenttraller" to="/studenttraller"/>
-            <NavLink text="Dokumenter" to="/dokumenter"/>
+            <NavLink text="Studenttraller" to="/studenttraller" />
+            <NavLink text="Dokumenter" to="/dokumenter" />
         </Stack>
     )
 }
 
 function AdminDropDown() {
     const user = useAuth().user!
-    if(hasGroupAccess(user, UserGroup.SuperAdministrator)) {
+    if (hasGroupAccess(user, UserGroup.SuperAdministrator)) {
         return (
-            <NavDropDown text="Medlem" sx={{pr: 0}}>
-                <List component="nav" disablePadding sx={{minWidth: 200}}>
-                    <ListItemLink text="Ny" to="/medlem/ny" icon={<MenuIcons.MemberAdd/>}/>
-                    <Divider/>
-                    <ListItemLink text="Liste" to="/medlem/liste" icon={<MenuIcons.MemberList/>}/>
+            <NavDropDown text="Medlem" sx={{ pr: 0 }}>
+                <List component="nav" disablePadding sx={{ minWidth: 200 }}>
+                    <ListItemLink text="Ny" to="/medlem/ny" icon={<MenuIcons.MemberAdd />} />
+                    <Divider />
+                    <ListItemLink text="Liste" to="/medlem/liste" icon={<MenuIcons.MemberList />} />
                 </List>
             </NavDropDown>
         )
     }
 
-    return ( 
-        <NavLink text="Medlemmer" to="/medlem/liste"/>
+    return (
+        <NavLink text="Medlemmer" to="/medlem/liste" />
     )
 
 }
 
-export function NavLink( { to, text, sx }: { to: string, text: string, sx?: SxProps}) {
+export function NavLink({ to, text, sx }: { to: string, text: string, sx?: SxProps }) {
     return (
-        <Link 
+        <Link
             component={RouterLink}
             to={to}
             underline="hover"
@@ -125,7 +125,7 @@ export function NavLink( { to, text, sx }: { to: string, text: string, sx?: SxPr
     )
 }
 
-function NavDropDown({ text, sx, children }: {text: string, sx?: SxProps, children?: JSX.Element}) {
+function NavDropDown({ text, sx, children }: { text: string, sx?: SxProps, children?: JSX.Element }) {
     const [isOpen, setIsOpen] = useState(false)
     const anchorEl = useRef(null)
 
@@ -143,20 +143,20 @@ function NavDropDown({ text, sx, children }: {text: string, sx?: SxProps, childr
                     color: "inherit",
                     ...sx
                 }}
-                >
+            >
                 <Typography variant="subtitle1" noWrap>
                     {text}
                 </Typography>
-                {isOpen ? <ExpandLess/> : <ExpandMore/>}
+                {isOpen ? <ExpandLess /> : <ExpandMore />}
             </Button>
-            <Menu 
+            <Menu
                 anchorEl={anchorEl.current}
                 open={isOpen}
                 anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
                 transformOrigin={{ horizontal: 'center', vertical: 'top' }}
                 onClose={() => setIsOpen(false)}
-                >
-                    {children}
+            >
+                {children}
             </Menu>
         </>
     )

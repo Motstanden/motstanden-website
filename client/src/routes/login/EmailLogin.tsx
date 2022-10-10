@@ -1,24 +1,23 @@
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
+import Button from '@mui/material/Button';
 import FormHelperText from '@mui/material/FormHelperText';
-import React, { useState } from "react"
-import { json } from 'stream/consumers';
-import DevLogin from './DevLogin';
+import TextField from '@mui/material/TextField';
 import { MagicLinkResponse } from 'common/interfaces';
 import { validateEmail } from 'common/utils';
+import React, { useState } from "react";
+import DevLogin from './DevLogin';
 
-export function EmailLogin( { onEmailSent }: {onEmailSent: (e: EmailInfo) => void }) {
-    
+export function EmailLogin({ onEmailSent }: { onEmailSent: (e: EmailInfo) => void }) {
+
     const [email, setEmail] = useState("")
     const [isValidEmail, setIsValidEmail] = useState(true)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-		event.preventDefault();
+        event.preventDefault();
         setIsSubmitting(true)
         const emailTrimmed = email.toLowerCase().trim()
-        if(!validateEmail(emailTrimmed)) {
+        if (!validateEmail(emailTrimmed)) {
             setIsValidEmail(false)
             setIsSubmitting(false)
             return;
@@ -30,10 +29,10 @@ export function EmailLogin( { onEmailSent }: {onEmailSent: (e: EmailInfo) => voi
             body: JSON.stringify({
                 destination: emailTrimmed,
             }),
-                headers: { 'Content-Type': 'application/json' }
-            })
+            headers: { 'Content-Type': 'application/json' }
+        })
         const data = await res.json() as MagicLinkResponse  // TODO: Display data
-        if(data.success) {
+        if (data.success) {
             onEmailSent({
                 code: data.code,
                 email: email
@@ -42,14 +41,14 @@ export function EmailLogin( { onEmailSent }: {onEmailSent: (e: EmailInfo) => voi
         setIsSubmitting(false)
     }
 
-    function onEmailChanged(event: React.ChangeEvent<HTMLInputElement>){
+    function onEmailChanged(event: React.ChangeEvent<HTMLInputElement>) {
         setIsValidEmail(true)
         setEmail(event.target.value)
     }
 
     return (
         <form onSubmit={handleSubmit}>
-            <TextField 
+            <TextField
                 label="E-post"
                 type="email"
                 value={email}
@@ -58,19 +57,19 @@ export function EmailLogin( { onEmailSent }: {onEmailSent: (e: EmailInfo) => voi
                 required
                 fullWidth
                 style={{ maxWidth: "350px" }}
-                />
-            <br/>
-            <br/>
-				{!isValidEmail && (<><FormHelperText error={true} style={{ textAlign: "center" }}>Ugyldig E-postadresse</FormHelperText><br /></>)}
-            <Button 
+            />
+            <br />
+            <br />
+            {!isValidEmail && (<><FormHelperText error={true} style={{ textAlign: "center" }}>Ugyldig E-postadresse</FormHelperText><br /></>)}
+            <Button
                 variant="contained"
                 size="large"
                 type="submit"
                 disabled={!isValidEmail || isSubmitting}
-                endIcon={<ForwardToInboxIcon/>}>
+                endIcon={<ForwardToInboxIcon />}>
                 Send E-post
             </Button>
-            <DevLogin email={email}/>
+            <DevLogin email={email} />
         </form>
     )
 }

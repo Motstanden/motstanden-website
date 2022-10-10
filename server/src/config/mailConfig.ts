@@ -1,7 +1,7 @@
-import nodemailer from "nodemailer"
+import nodemailer from "nodemailer";
 import key from "../info-mail-key.json";
 
-export const InfoMail = "info@motstanden.no" 
+export const InfoMail = "info@motstanden.no"
 
 export const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",

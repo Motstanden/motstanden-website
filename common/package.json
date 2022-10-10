@@ -7,19 +7,29 @@
     "build": "tsc"
   },
   "exports": {
-    "./enums":  "./build/enums/index.js",
-    "./interfaces":  "./build/interfaces/index.js",
-    "./richTextSchema":  "./build/richTextSchema/index.js",
-    "./types":  "./build/types/index.js",
-    "./utils":  "./build/utils/index.js"
+    "./enums": "./build/enums/index.js",
+    "./interfaces": "./build/interfaces/index.js",
+    "./richTextSchema": "./build/richTextSchema/index.js",
+    "./types": "./build/types/index.js",
+    "./utils": "./build/utils/index.js"
   },
   "typesVersions": {
     "*": {
-      "enums": ["./build/enums/index.d.ts"],
-      "interfaces": ["./build/interfaces/index.d.ts"],
-      "richTextSchema":  ["./build/richTextSchema/index.d.js"],
-      "types": ["./build/interfaces/types.d.ts"],
-      "utils": ["./build/utils/index.d.ts"]
+      "enums": [
+        "./build/enums/index.d.ts"
+      ],
+      "interfaces": [
+        "./build/interfaces/index.d.ts"
+      ],
+      "richTextSchema": [
+        "./build/richTextSchema/index.d.js"
+      ],
+      "types": [
+        "./build/interfaces/types.d.ts"
+      ],
+      "utils": [
+        "./build/utils/index.d.ts"
+      ]
     }
   },
   "files": [

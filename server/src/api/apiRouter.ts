@@ -1,12 +1,12 @@
 import express from "express";
-import login from "./login";
-import user from "./user"
-import songLyric from "./songLyric";
 import documents from "./documents";
+import events from "./events";
+import login from "./login";
 import quotes from "./quotes";
-import sheetArchive from "./sheetArchive";
-import events from "./events"
 import rumours from "./rumours";
+import sheetArchive from "./sheetArchive";
+import songLyric from "./songLyric";
+import user from "./user";
 
 const router = express.Router()
 

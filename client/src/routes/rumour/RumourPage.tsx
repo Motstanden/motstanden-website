@@ -23,7 +23,7 @@ export function RumourPage() {
         <>
             <h1>Ryktebørsen</h1>
             <h3>Har du hørt at...</h3>
-            <div style={{marginLeft: "10px"}}>
+            <div style={{ marginLeft: "10px" }}>
                 <RumourList rumours={data} onItemChanged={onItemChanged} />
             </div>
         </>
@@ -35,47 +35,47 @@ export function PageSkeleton() {
         <>
             <h1>Ryktebørsen</h1>
             <h3>Har du hørt at...</h3>
-            <div style={{marginLeft: "10px"}}>
-                <ListSkeleton length={20}/>
+            <div style={{ marginLeft: "10px" }}>
+                <ListSkeleton length={20} />
             </div>
         </>
     )
 }
 
-export function ListSkeleton( {length}: {length: number}) {
+export function ListSkeleton({ length }: { length: number }) {
     return (
         <ul style={{
             paddingLeft: "5px",
             listStyleType: "none",
         }}>
-            { Array(length).fill(1).map( (_, i) => <ItemSkeleton key={i}/>) }
+            {Array(length).fill(1).map((_, i) => <ItemSkeleton key={i} />)}
         </ul>
-    ) 
-} 
+    )
+}
 
 
 function ItemSkeleton() {
     return (
-        <li style={{marginBottom: "30px"}}>
-            <Skeleton style={{maxWidth: "700px", height: "2.5em"}}/>
-            <Skeleton style={{maxWidth: "95px", height: "1em", marginLeft: "25px"}}/>
+        <li style={{ marginBottom: "30px" }}>
+            <Skeleton style={{ maxWidth: "700px", height: "2.5em" }} />
+            <Skeleton style={{ maxWidth: "95px", height: "1em", marginLeft: "25px" }} />
         </li>
     )
 }
 
-export function RumourList({ rumours, onItemChanged}: {rumours: Rumour[], onItemChanged: VoidFunction}) {
-    const renderItem = (rumour: Rumour) => <ReadOnlyItem rumour={rumour}/>
-    const renderEditForm = (props: RenderEditFormProps<Rumour>) => <EditItem {...props}/>
+export function RumourList({ rumours, onItemChanged }: { rumours: Rumour[], onItemChanged: VoidFunction }) {
+    const renderItem = (rumour: Rumour) => <ReadOnlyItem rumour={rumour} />
+    const renderEditForm = (props: RenderEditFormProps<Rumour>) => <EditItem {...props} />
     const isEqual = (a: Rumour, b: Rumour) => a.rumour === b.rumour
 
     return (
-        <EditList 
-            items={rumours} 
-            onItemChanged={() => onItemChanged && onItemChanged()} 
+        <EditList
+            items={rumours}
+            onItemChanged={() => onItemChanged && onItemChanged()}
             renderItem={renderItem}
-            renderEditForm={renderEditForm} 
+            renderEditForm={renderEditForm}
             itemComparer={isEqual}
-            renderItemSkeleton={<ItemSkeleton/>}
+            renderItemSkeleton={<ItemSkeleton />}
             deleteItemUrl="/api/rumours/delete"
             confirmDeleteItemText="Vil du permanent slette dette ryktet?"
             itemSpacing="15px"
@@ -83,11 +83,11 @@ export function RumourList({ rumours, onItemChanged}: {rumours: Rumour[], onItem
     )
 }
 
-function ReadOnlyItem({rumour}: {rumour: Rumour}) { 
+function ReadOnlyItem({ rumour }: { rumour: Rumour }) {
     return (
-        <div style={{marginTop: "10px", marginBottom: "10px"}}>
+        <div style={{ marginTop: "10px", marginBottom: "10px" }}>
             <Stack direction="row" columnGap="5px">
-                { "- " }
+                {"- "}
                 <NewlineText text={rumour.rumour} />
             </Stack>
             <div style={{
@@ -104,14 +104,14 @@ function ReadOnlyItem({rumour}: {rumour: Rumour}) {
 
 function EditItem(props: RenderEditFormProps<Rumour>) {
     return (
-        <div style={{marginRight: "10px"}}>
-            <Divider sx={{mb: 4}}/>
-            <UpsertRumourForm 
+        <div style={{ marginRight: "10px" }}>
+            <Divider sx={{ mb: 4 }} />
+            <UpsertRumourForm
                 initialValue={props.data}
                 onAbortClick={props.onEditAbort}
                 onPostSuccess={props.onEditSuccess}
                 postUrl="/api/rumours/update"
-                />
+            />
         </div>
     )
 }
@@ -131,9 +131,9 @@ export function NewRumourPage() {
     return (
         <>
             <h1>Nytt rykte</h1>
-            <UpsertRumourForm 
-                initialValue={{rumour: ""}}
-                postUrl="/api/rumours/new"    
+            <UpsertRumourForm
+                initialValue={{ rumour: "" }}
+                postUrl="/api/rumours/new"
                 onAbortClick={onAbort}
                 onPostSuccess={onSuccess}
             />
@@ -141,14 +141,14 @@ export function NewRumourPage() {
     )
 }
 
-function UpsertRumourForm( { 
-    initialValue, 
-    postUrl, 
+function UpsertRumourForm({
+    initialValue,
+    postUrl,
     onAbortClick,
     onPostSuccess,
 }: {
-    initialValue: NewRumour | Rumour, 
-    postUrl: string, 
+    initialValue: NewRumour | Rumour,
+    postUrl: string,
     onAbortClick: VoidFunction
     onPostSuccess: VoidFunction
 }) {
@@ -161,22 +161,22 @@ function UpsertRumourForm( {
     }
 
     const getSubmitData = () => {
-        return {...newValue, rumour: newValue.rumour.trim()}
+        return { ...newValue, rumour: newValue.rumour.trim() }
     }
 
     const disabled = !validateData()
 
     return (
-        <div style={{maxWidth: "700px"}}>
-            <Form 
-                value={getSubmitData} 
-                postUrl={postUrl} 
+        <div style={{ maxWidth: "700px" }}>
+            <Form
+                value={getSubmitData}
+                postUrl={postUrl}
                 disabled={disabled}
-                onAbortClick={ (e) => onAbortClick()} 
-                onPostSuccess={ (e) => onPostSuccess()}
-                >
-                <div style={{marginBottom: "-1em"}}>
-                    <TextField 
+                onAbortClick={(e) => onAbortClick()}
+                onPostSuccess={(e) => onPostSuccess()}
+            >
+                <div style={{ marginBottom: "-1em" }}>
+                    <TextField
                         label="Har du hørt at...?"
                         name="rumour"
                         type="text"
@@ -184,10 +184,10 @@ function UpsertRumourForm( {
                         fullWidth
                         autoComplete="off"
                         value={newValue.rumour}
-                        onChange={ (e) => setNewValue({...newValue, rumour: e.target.value})}
+                        onChange={(e) => setNewValue({ ...newValue, rumour: e.target.value })}
                         multiline
                         minRows={2}
-                        />
+                    />
                 </div>
             </Form>
         </div>

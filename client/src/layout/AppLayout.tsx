@@ -1,23 +1,22 @@
-import React from "react"
-import { Outlet } from "react-router-dom"
 import Stack from "@mui/material/Stack"
+import { Outlet } from "react-router-dom"
 
+import { useTheme } from "@mui/material"
 import ResponsiveAppBar from "./appBar/ResponsiveAppBar"
 import { FooterContent } from "./Footer"
-import { useTheme } from "@mui/material"
 
-export function AppLayout(){
+export function AppLayout() {
     const theme = useTheme()
-    return(
+    return (
         <Stack direction="column" minHeight="100vh">
             <header>
-                <ResponsiveAppBar/>
+                <ResponsiveAppBar />
             </header>
-            <main style={{minHeight: "100vh", color: theme.palette.text.secondary }}>
-                <Outlet/>
+            <main style={{ minHeight: "100vh", color: theme.palette.text.secondary }}>
+                <Outlet />
             </main>
             <footer>
-                <FooterContent/>
+                <FooterContent />
             </footer>
         </Stack>
     )

@@ -1,6 +1,6 @@
-export async function fetchAsync<Type>(url: string) : Promise<Type> {
+export async function fetchAsync<Type>(url: string): Promise<Type> {
     const res = await fetch(url)
-    if(!res.ok) {
+    if (!res.ok) {
         throw new Error(`${res.status} ${res.statusText}`)
     }
     else {

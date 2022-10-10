@@ -1,7 +1,7 @@
+import { CustomElement, CustomText } from "common/richTextSchema";
 import { BaseEditor } from 'slate';
+import { HistoryEditor } from 'slate-history';
 import { ReactEditor } from 'slate-react';
-import { HistoryEditor } from 'slate-history'
-import { CustomElement, CustomText } from "common/richTextSchema"
 
 export type CustomEditor = BaseEditor & ReactEditor & HistoryEditor
 

@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import LoginIcon from '@mui/icons-material/Login';
 import Button from '@mui/material/Button';
 import FormHelperText from '@mui/material/FormHelperText';
-import LoginIcon from '@mui/icons-material/Login';
 import TextField from '@mui/material/TextField';
-import { AnimationAvatar } from './AnimationAvatar';
-import { useAuth } from '../../context/Authentication';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/Authentication';
+import { AnimationAvatar } from './AnimationAvatar';
 
 
 interface ILocationProps {
 	state: {
-	  	from: Location;
+		from: Location;
 	}
 }
 
-export function PasswordLogin(){
+export function PasswordLogin() {
 	let location = useLocation() as ILocationProps;
 	return (
-		<PasswordLoginForm loginRedirect={location.state?.from?.pathname || "/hjem"}/>
+		<PasswordLoginForm loginRedirect={location.state?.from?.pathname || "/hjem"} />
 	)
 }
 
@@ -76,7 +76,7 @@ function PasswordLoginForm({ loginRedirect }: { loginRedirect: string; }) {
 					onChange={onFormChanged}
 					required
 					fullWidth
-					style={{maxWidth: "min(85vw,400px)"}}
+					style={{ maxWidth: "min(85vw,400px)" }}
 					autoComplete="off" />
 				<br />
 				<br />
@@ -89,12 +89,12 @@ function PasswordLoginForm({ loginRedirect }: { loginRedirect: string; }) {
 					onChange={onFormChanged}
 					required
 					fullWidth
-					style={{maxWidth: "min(85vw,400px)"}}
+					style={{ maxWidth: "min(85vw,400px)" }}
 					autoComplete="current-password" />
 				<br />
 				<br />
 				{
-					isError && (<><FormHelperText error={true} style={{textAlign: "center"}}>Brukernavn eller passord er feil.</FormHelperText><br/></>) 
+					isError && (<><FormHelperText error={true} style={{ textAlign: "center" }}>Brukernavn eller passord er feil.</FormHelperText><br /></>)
 				}
 				<Button
 					variant="contained"

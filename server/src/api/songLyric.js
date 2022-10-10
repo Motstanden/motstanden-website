@@ -1,8 +1,8 @@
-import express from "express";
 import Database from "better-sqlite3";
-import { motstandenDB, dbReadOnlyConfig, dbReadWriteConfig } from "../config/databaseConfig.js";
+import express from "express";
 import fs from "fs";
 import path from "path";
+import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig.js";
 
 let router = express.Router()
 
@@ -27,7 +27,7 @@ router.get("/song_lyric_data", (req, res) => {
     const stmt = db.prepare("SELECT filename AS file FROM song_lyric WHERE title = ?")
     const title = req.query.title;
     const rows = stmt.get([title])
-    if(!rows){
+    if (!rows) {
         res.status(400)
         res.end()
     }
@@ -36,11 +36,11 @@ router.get("/song_lyric_data", (req, res) => {
 
     // Send html file as string
     fs.readFile(filename, (err, data) => {
-        if(err) {
+        if (err) {
             res.status(400)
         }
-        else{
-            res.json({lyricHtml: data.toString()})
+        else {
+            res.json({ lyricHtml: data.toString() })
         }
     });
 })

@@ -2,37 +2,37 @@ import React from 'react';
 
 // Material UI 
 import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import { Link as RouterLink } from 'react-router-dom';
+import ListItemText from '@mui/material/ListItemText';
 import { SxProps } from '@mui/system';
+import { Link as RouterLink } from 'react-router-dom';
 
 
 interface ListItemLinkProps {
     to: string
     text: string
     externalRoute?: boolean
-    disabled?: boolean 
+    disabled?: boolean
     sx?: SxProps
     icon?: React.ReactNode
     onLinkClick?: VoidFunction
 }
 
-export default function ListItemLink(props: ListItemLinkProps){
-    const { 
-        to, 
-        text, 
-        externalRoute, 
-        disabled, 
-        sx, 
+export default function ListItemLink(props: ListItemLinkProps) {
+    const {
+        to,
+        text,
+        externalRoute,
+        disabled,
+        sx,
         icon,
-        onLinkClick 
+        onLinkClick
     } = props
-    
-    let urlAttribute = externalRoute ? { href: to } : { to: to}
+
+    let urlAttribute = externalRoute ? { href: to } : { to: to }
     return (
-        <ListItem 
-            button 
+        <ListItem
+            button
             component={externalRoute ? "a" : RouterLink}
             {...urlAttribute}
             disabled={disabled}
@@ -44,11 +44,11 @@ export default function ListItemLink(props: ListItemLinkProps){
                 ...sx
             }}
             onClick={onLinkClick}
-            >
-            <ListItemIcon sx={{minWidth: "0px", paddingRight: "10px"}} style={{fontSize: "tiny"}} >
+        >
+            <ListItemIcon sx={{ minWidth: "0px", paddingRight: "10px" }} style={{ fontSize: "tiny" }} >
                 {icon}
             </ListItemIcon>
-            <ListItemText primary={text}/>
+            <ListItemText primary={text} />
         </ListItem>
     )
 }

@@ -1,13 +1,13 @@
-import React from "react";
-import type {} from '@mui/x-date-pickers/themeAugmentation';
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import type { } from '@mui/x-date-pickers/themeAugmentation';
 import dayjs from 'dayjs';
-import "dayjs/locale/nb"
-import utc from "dayjs/plugin/utc"
-import CustomParseFormat from "dayjs/plugin/customParseFormat"
+import "dayjs/locale/nb";
+import CustomParseFormat from "dayjs/plugin/customParseFormat";
+import utc from "dayjs/plugin/utc";
+import React from "react";
 
-export function LocaleProvider( {children}: {children: React.ReactNode}) {
+export function LocaleProvider({ children }: { children: React.ReactNode }) {
     dayjs.locale("nb")
     dayjs.extend(utc)
     dayjs.extend(CustomParseFormat)
