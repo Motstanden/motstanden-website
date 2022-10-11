@@ -1,19 +1,12 @@
-import { test, expect } from '@playwright/test';
-import { Quote, NewQuote } from "common/interfaces"
-import { randomUUID } from "crypto"
+import { expect, test } from '@playwright/test';
+import { UserGroup } from 'common/enums';
+import { NewQuote } from "common/interfaces";
+import { randomUUID } from "crypto";
+import { logIn } from './auth.spec';
 
 test('Quotes can be created, updated and deleted', async ({ page }) => {
 
-    // log in
-    await page.goto('/logg-inn');
-
-    await page.getByLabel('E-post *').click();
-
-    await page.getByLabel('E-post *').fill('web@motstanden.no');
-
-    await page.getByRole('button', { name: 'Dev logg inn' }).click();
-    await expect(page).toHaveURL('/hjem');
-
+    await logIn(page, UserGroup.Contributor)
 
     await page.goto('/sitater/ny');
 
@@ -66,5 +59,4 @@ test('Quotes can be created, updated and deleted', async ({ page }) => {
   
     await expect(page.getByText(editedQuote.quote)).not.toBeVisible();
     await expect(page.getByText(editedQuote.utterer)).not.toBeVisible();
-
 });
