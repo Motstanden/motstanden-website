@@ -65,10 +65,12 @@ export function UserListPage() {
                 </Grid>
                 <Grid container  spacing={0}>
                     <Grid item xs={12}>Nedlast email-lister:</Grid>
-                    <EmailLink label="Alle"></EmailLink>
+                    <EmailLink users={actualUsers}  label="Alle"/>
+                    {/*
                     <EmailLink label="Aktive"></EmailLink>
                     <EmailLink label="Veteran"></EmailLink>
                     <EmailLink label="Pensjonist"></EmailLink>
+                    */}
                 </Grid>
             </Paper>
             <UserTable
@@ -121,7 +123,8 @@ function FilterBox({ label, checked, onClick }: { label: string, checked: boolea
     )
 }
 
-function EmailLink({label}:{label: string}){
+function EmailLink({users, label}:{users: User[], label: string}) {
+
     return (
         <Grid item xs={3}><Link href="" color="secondary" underline="hover">{label}</Link></Grid>
     )
