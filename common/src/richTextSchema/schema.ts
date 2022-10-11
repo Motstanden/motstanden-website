@@ -9,7 +9,7 @@ export enum ElementType {
     H1 = "H1",
     H2 = "H2",
     H3 = "H3",
-    Div = "DIV",          
+    Div = "DIV",
     NumberedList = "OL",
     BulletedList = "UL",
     ListItem = "LI",
@@ -50,8 +50,8 @@ export type BulletedListElement = {
     children: ListItemElement[]
 }
 
-export type FormattedText = { 
-    text: string, 
+export type FormattedText = {
+    text: string,
     bold?: true,
     italic?: true,
     underline?: true

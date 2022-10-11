@@ -1,30 +1,29 @@
-import React, { useContext, useEffect, useState } from "react";
 import { useQuery } from '@tanstack/react-query';
-import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { User } from "common/interfaces"
 import { UserGroup } from "common/enums";
+import { User } from "common/interfaces";
 import { hasGroupAccess } from "common/utils";
-import { fetchAsync } from "src/utils/fetchAsync";
+import React, { useContext, useState } from "react";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-interface AuthContextType{
-	user: User | null
+interface AuthContextType {
+    user: User | null
     signOut: () => Promise<boolean>;
     signOutAllUnits: () => Promise<boolean>;
 }
 
 export const AuthContext = React.createContext<AuthContextType>(null!);
 
-export function useAuth(){
-	return useContext(AuthContext)
+export function useAuth() {
+    return useContext(AuthContext)
 }
 
-export function AuthProvider({ children }: {children: React.ReactNode} ){
-    
-    let [user, setUser] = useState<User | null>(null) 
-    
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+
+    let [user, setUser] = useState<User | null>(null)
+
     const signOutRequest = async (url: string): Promise<boolean> => {
         const response = await fetch(url, { method: "POST" })
-        if (!response.ok){
+        if (!response.ok) {
             return false
         }
         setUser(null)
@@ -41,31 +40,31 @@ export function AuthProvider({ children }: {children: React.ReactNode} ){
             throw new Error(res.statusText)
         }
 
-        if(res.status === 204) {   // Request was successful but user is not logged in. 
+        if (res.status === 204) {   // Request was successful but user is not logged in. 
             setUser(null)
             return null
         }
 
-        const userData = await res.json() as User;    
-        setUser(userData)   
+        const userData = await res.json() as User;
+        setUser(userData)
         return userData
-    } 
+    }
 
-    const {isLoading } = useQuery<User | null>(["GetUserMetaData"], ()  => fetchUserData())
-    
-    if (isLoading){
+    const { isLoading } = useQuery<User | null>(["GetUserMetaData"], () => fetchUserData())
+
+    if (isLoading) {
         return <></>
     }
 
-    let contextValue = {user, signOut, signOutAllUnits}
-    return (  
+    let contextValue = { user, signOut, signOutAllUnits }
+    return (
         <AuthContext.Provider value={contextValue}>
             {children}
         </AuthContext.Provider>
     )
 }
 
-export function RequireAuth({requiredGroup, children }: {requiredGroup: UserGroup, children: JSX.Element}){
+export function RequireAuth({ requiredGroup, children }: { requiredGroup: UserGroup, children: JSX.Element }) {
     let auth = useAuth();
     let location = useLocation()
 
@@ -77,13 +76,13 @@ export function RequireAuth({requiredGroup, children }: {requiredGroup: UserGrou
         return <Navigate to="/logg-inn" state={{ from: location }} replace />;
     }
 
-    if(!hasGroupAccess(auth.user, requiredGroup)) {
+    if (!hasGroupAccess(auth.user, requiredGroup)) {
         return <Navigate to="/hjem" state={{ from: location }} replace />;
     }
 
     return children
 }
 
-export function RequireAuthRouter({ requiredGroup }: { requiredGroup: UserGroup }){
-    return <RequireAuth requiredGroup={requiredGroup}><Outlet/></RequireAuth>
+export function RequireAuthRouter({ requiredGroup }: { requiredGroup: UserGroup }) {
+    return <RequireAuth requiredGroup={requiredGroup}><Outlet /></RequireAuth>
 }

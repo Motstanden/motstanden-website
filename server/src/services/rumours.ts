@@ -1,9 +1,9 @@
 import Database from "better-sqlite3";
+import { NewRumour, Rumour } from "common/interfaces";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
-import { NewRumour, Rumour } from "common/interfaces"
 import { stringIsNullOrWhiteSpace } from "../utils/stringUtils";
 
-function get(rumourId: number): Rumour{
+function get(rumourId: number): Rumour {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT 
@@ -19,7 +19,7 @@ function get(rumourId: number): Rumour{
     const rumour: Rumour | undefined = stmt.get(rumourId)
     db.close()
 
-    if(!rumour)
+    if (!rumour)
         throw "Bad data"
 
     return rumour
@@ -47,7 +47,7 @@ function getAll(limit?: number): Rumour[] {
 
 function insertNew(rumour: NewRumour, userId: number) {
 
-    if(stringIsNullOrWhiteSpace(rumour.rumour) || ( typeof userId !== "number" && userId < 0 ) )
+    if (stringIsNullOrWhiteSpace(rumour.rumour) || (typeof userId !== "number" && userId < 0))
         throw `Invalid data`
 
     const db = new Database(motstandenDB, dbReadWriteConfig)
@@ -55,14 +55,14 @@ function insertNew(rumour: NewRumour, userId: number) {
         INSERT INTO 
             rumour(rumour, created_by) 
         VALUES (?, ?)
-    `)    
+    `)
     stmt.run(rumour.rumour, userId)
     db.close();
 }
 
 function deleteItem(quoteId: number) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
-    const startTransaction = db.transaction( () => {
+    const startTransaction = db.transaction(() => {
         const stmt = db.prepare(`
             DELETE FROM 
                 rumour
@@ -71,16 +71,16 @@ function deleteItem(quoteId: number) {
         stmt.run(quoteId)
     })
     startTransaction()
-    db.close()   
+    db.close()
 }
 
 function update(newRumour: Rumour) {
-    const isInvalid =   stringIsNullOrWhiteSpace(newRumour.rumour) || !newRumour.id || typeof newRumour.id !== "number"
-    if(isInvalid)
+    const isInvalid = stringIsNullOrWhiteSpace(newRumour.rumour) || !newRumour.id || typeof newRumour.id !== "number"
+    if (isInvalid)
         throw `Invalid data`
 
     const db = new Database(motstandenDB, dbReadWriteConfig)
-    const startTransaction = db.transaction( () => {
+    const startTransaction = db.transaction(() => {
         const stmt = db.prepare(`
             UPDATE 
                 rumour
@@ -91,7 +91,7 @@ function update(newRumour: Rumour) {
         stmt.run([newRumour.rumour, newRumour.id])
     })
     startTransaction()
-    db.close()  
+    db.close()
 }
 
 export const rumourService = {

@@ -1,7 +1,6 @@
 import { UserEditMode, UserGroup } from "common/enums"
 import { NewUser, User } from "common/interfaces"
-import express, { NextFunction } from "express"
-import { Request, Response } from "express"
+import express, { NextFunction, Request, Response } from "express"
 import { AuthenticateUser, updateAccessToken } from "../middleware/jwtAuthenticate"
 import { requiresGroup } from "../middleware/requiresGroup"
 import * as userService from "../services/user"
@@ -22,12 +21,12 @@ router.post("/self-and-admin/update-user", requiresGroup(UserGroup.Administrator
 
 router.post("/self/update-user", AuthenticateUser(), RequireSelf, handleUserUpdate(UserEditMode.Self))
 
-function handleUserUpdate(updateMode: UserEditMode){
+function handleUserUpdate(updateMode: UserEditMode) {
     return (req: Request, res: Response, next: NextFunction) => {
 
         const payload = req.body as User
-        if(!payload){
-            res.status(400).send("Bad data")  
+        if (!payload) {
+            res.status(400).send("Bad data")
         }
 
         let changeSuccess = false
@@ -39,11 +38,11 @@ function handleUserUpdate(updateMode: UserEditMode){
             console.log(err)
             res.status(400).send("Failed to update user")
         }
-        
-        if(changeSuccess) {
+
+        if (changeSuccess) {
             const currentUser = req.user as AccessTokenData
-            if(payload.userId === currentUser.userId) { 
-                updateAccessToken(req, res, () => {}, {})
+            if (payload.userId === currentUser.userId) {
+                updateAccessToken(req, res, () => { }, {})
             }
         }
 
@@ -54,7 +53,7 @@ function handleUserUpdate(updateMode: UserEditMode){
 function RequireSelf(req: Request, res: Response, next: NextFunction) {
     const user = req.user as AccessTokenData
     const newUser = req.body as User | undefined
-    if(newUser?.userId && newUser.userId === user.userId){
+    if (newUser?.userId && newUser.userId === user.userId) {
         next()
     }
     else {
@@ -66,9 +65,9 @@ router.post("/create-user", requiresGroup(UserGroup.SuperAdministrator), (req: R
     const user = req.body as NewUser
 
     // TODO: validate user
-    
+
     userService.createUser(user)
-    
+
     res.end()
 })
 export default router

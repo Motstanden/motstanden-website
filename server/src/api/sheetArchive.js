@@ -1,12 +1,11 @@
-import express from "express";
 import Database from "better-sqlite3";
-import { sheetArchiveDB, dbReadOnlyConfig, dbReadWriteConfig } from "../config/databaseConfig.js";
-import passport from "passport";
+import express from "express";
+import { dbReadOnlyConfig, sheetArchiveDB } from "../config/databaseConfig.js";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 
 let router = express.Router()
 
-router.get("/sheet_archive/song_title", 
+router.get("/sheet_archive/song_title",
     AuthenticateUser(),
     (req, res) => {
 
@@ -24,9 +23,9 @@ router.get("/sheet_archive/song_title",
         const sheets = stmt.all()
         res.send(sheets);
         db.close()
-})
+    })
 
-router.get("/sheet_archive/song_files", 
+router.get("/sheet_archive/song_files",
     AuthenticateUser(),
     (req, res) => {
 
@@ -46,6 +45,6 @@ router.get("/sheet_archive/song_files",
         const sheets = stmt.all(titleId)
         res.send(sheets);
         db.close()
-})
+    })
 
 export default router;

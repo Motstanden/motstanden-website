@@ -1,4 +1,3 @@
-import React from 'react';
 
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -11,8 +10,8 @@ import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
 
 import { ISongFile } from './SheetArchive';
 
-import { Link as RouterLink } from 'react-router-dom';
 import Link from '@mui/material/Link';
+import { Link as RouterLink } from 'react-router-dom';
 
 
 export function FileTable({ files }: { files: ISongFile[]; }) {
@@ -27,21 +26,21 @@ export function FileTable({ files }: { files: ISongFile[]; }) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    { files.map( (file) => (
+                    {files.map((file) => (
                         <TableRow key={file.url} sx={rowStyle}>
                             <TableCell>
-                                <Link 
+                                <Link
                                     component={RouterLink}
-                                    to={`/${file.url}`} 
-                                    type="application/pdf" 
+                                    to={`/${file.url}`}
+                                    type="application/pdf"
                                     reloadDocument
                                     underline="hover"
                                     sx={linkStyle}>
                                     {formatFileName(file.instrument, file.instrumentVoice)}
                                 </Link>
-                            </TableCell>       
-                            <TableCell>{file.transposition}</TableCell>       
-                            <TableCell>{file.clef}</TableCell>       
+                            </TableCell>
+                            <TableCell>{file.transposition}</TableCell>
+                            <TableCell>{file.clef}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -50,13 +49,13 @@ export function FileTable({ files }: { files: ISongFile[]; }) {
     );
 }
 
-function formatFileName(instrument: string, voiceNum: number | undefined) : string {
+function formatFileName(instrument: string, voiceNum: number | undefined): string {
     const isValidVoice = voiceNum && voiceNum > 1
     const isPart = instrument.toLowerCase().startsWith("part")
-    if(!isValidVoice || isPart) {
+    if (!isValidVoice || isPart) {
         return instrument
-    }   
+    }
     else {
-        return `${instrument} ${voiceNum}` 
+        return `${instrument} ${voiceNum}`
     }
 }

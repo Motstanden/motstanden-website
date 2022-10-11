@@ -1,14 +1,14 @@
-import React from "react";
-import { ListItemIcon, ListItemText, MenuItem, MenuList } from "@mui/material";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { ListItemIcon, ListItemText, MenuItem } from "@mui/material";
+import React from "react";
 import { IconPopupMenu } from "src/components/menu/IconPopupMenu";
 
 export function EditOrDeleteMenu({
-    onEditClick, 
-    onDeleteClick, 
+    onEditClick,
+    onDeleteClick,
     iconOrientation,
     disabled,
     onMouseEnter,
@@ -26,9 +26,9 @@ export function EditOrDeleteMenu({
     onMenuClose?: VoidFunction,
 }) {
     return (
-        <IconPopupMenu 
-            icon={iconOrientation === "vertical" ? <MoreVertIcon /> : <MoreHorizIcon />} 
-            onMouseEnter={onMouseEnter} 
+        <IconPopupMenu
+            icon={iconOrientation === "vertical" ? <MoreVertIcon /> : <MoreHorizIcon />}
+            onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
             onMenuOpen={onMenuOpen}
             onMenuClose={onMenuClose}

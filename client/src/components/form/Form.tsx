@@ -1,11 +1,10 @@
 import Divider from "@mui/material/Divider"
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
 import { postJson } from "src/utils/postJson"
 import SubmitFormButtons from "./SubmitButtons"
 
-export function Form( {
-    value, 
+export function Form({
+    value,
     children,
     disabled,
     postUrl,
@@ -13,48 +12,48 @@ export function Form( {
     onPostSuccess,
     onPostFailure,
     onAbortClick
-}: { 
-    value: {} | ( () => {} )    // Either any object, or a callback function that returns the object
-    children: React.ReactNode 
+}: {
+    value: {} | (() => {})    // Either any object, or a callback function that returns the object
+    children: React.ReactNode
     postUrl: string
     disabled?: boolean
     preventSubmit?: () => boolean
-    onPostSuccess?: ( (res: Response) => Promise<void> ) | ( (res: Response) => void )
+    onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
     onPostFailure?: () => void
     onAbortClick?: React.MouseEventHandler<HTMLButtonElement>
 }) {
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const onSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()  
+        e.preventDefault()
 
-        if(preventSubmit && preventSubmit())
+        if (preventSubmit && preventSubmit())
             return;
-        setIsSubmitting(true)        
+        setIsSubmitting(true)
 
         const newValue = typeof value === "function" ? value() : value
         const response = await postJson(postUrl, newValue, { alertOnFailure: true })
 
-        if(response && response.ok){
+        if (response && response.ok) {
             onPostSuccess && await onPostSuccess(response)
-        } 
+        }
 
-        if(response && !response.ok){
+        if (response && !response.ok) {
             onPostFailure && onPostFailure()
         }
 
         setIsSubmitting(false)
-    } 
+    }
 
     return (
         <>
             <form onSubmit={onSubmit}>
                 {children}
-                <div style={{marginTop: "4em"}}>
-                    <SubmitFormButtons loading={isSubmitting} onAbort={onAbortClick} disabled={disabled}/>
+                <div style={{ marginTop: "4em" }}>
+                    <SubmitFormButtons loading={isSubmitting} onAbort={onAbortClick} disabled={disabled} />
                 </div>
             </form>
-            <Divider sx={{my: 3}}/>
+            <Divider sx={{ my: 3 }} />
         </>
     )
 }

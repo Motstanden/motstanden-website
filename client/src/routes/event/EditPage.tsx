@@ -1,13 +1,12 @@
-import React from "react";
-import { useOutletContext } from "react-router-dom";
 import { EventData } from "common/interfaces";
-import { EventEditorForm, EventEditorState } from "./components/EventEditorForm";
 import dayjs from "dayjs";
+import { useOutletContext } from "react-router-dom";
+import { EventEditorForm, EventEditorState } from "./components/EventEditorForm";
 
 
 export function EditEventPage() {
     const event = useOutletContext<EventData>();
-    let initialValue: EventEditorState ={
+    let initialValue: EventEditorState = {
         title: event.title,
         startTime: dayjs(event.startDateTime),
         endTime: event.endDateTime ? dayjs(event.endDateTime) : null,
@@ -15,12 +14,12 @@ export function EditEventPage() {
         description: event.description
     }
     return (
-        <div style={{maxWidth: "900px"}}>
+        <div style={{ maxWidth: "900px" }}>
             <h1>
-                <span>Redigerer </span> 
+                <span>Redigerer </span>
                 <em><q>{event.title}</q></em>
             </h1>
-            <EventEditorForm backUrl="/arrangement" postUrl="/api/events/update" initialValue={initialValue} eventId={event.eventId}/>
+            <EventEditorForm backUrl="/arrangement" postUrl="/api/events/update" initialValue={initialValue} eventId={event.eventId} />
         </div>
     );
 }

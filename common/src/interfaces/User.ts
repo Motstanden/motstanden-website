@@ -11,10 +11,10 @@ export interface NewUser {
     lastName: string;
     profilePicture: string;
     capeName: string;
-    
+
     status: UserStatus;
     startDate: string;              // Format: 'YYYY-MM-DD'
-    
+
     endDate: string | null;         // Format: 'YYYY-MM-DD'
     phoneNumber: number | null;
     birthDate: string | null;       // Format: 'YYYY-MM-DD'

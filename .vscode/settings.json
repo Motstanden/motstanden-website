@@ -16,5 +16,8 @@
         "studenttraller",
         "tanstack",
         "Upsert"
-    ]
+    ],
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    }
 }

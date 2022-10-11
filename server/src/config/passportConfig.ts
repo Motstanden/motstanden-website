@@ -1,13 +1,13 @@
 import dotenv from "dotenv";
-import * as Mail from './mailConfig.js';
-import MagicLoginStrategy from 'passport-magic-login';
-import passport, { PassportStatic } from 'passport';
 import { Request } from 'express';
-import { Strategy as JWTStrategy } from 'passport-jwt';
-import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload";
-import * as user from "../services/user.js";
-import path from "path";
 import fs from "fs/promises";
+import passport, { PassportStatic } from 'passport';
+import { Strategy as JWTStrategy } from 'passport-jwt';
+import MagicLoginStrategy from 'passport-magic-login';
+import path from "path";
+import * as user from "../services/user.js";
+import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload";
+import * as Mail from './mailConfig.js';
 
 // Ensure .env is loaded
 dotenv.config()
@@ -17,7 +17,7 @@ dotenv.config()
 // --------------------------------------------
 function extractJwtFromCookie(req: Request): any | null {
     let token = null
-    if(req && req.cookies){
+    if (req && req.cookies) {
         token = req.cookies["AccessToken"]      // TODO: figure out what type this is
     }
     return token;
@@ -26,7 +26,7 @@ function extractJwtFromCookie(req: Request): any | null {
 const jwtLogin = new JWTStrategy({
     secretOrKey: process.env.ACCESS_TOKEN_SECRET,
     jwtFromRequest: extractJwtFromCookie
-}, (user, done) => done(null, user)) 
+}, (user, done) => done(null, user))
 
 
 // --------------------------------------------
@@ -50,19 +50,19 @@ async function onSendMagicLinkRequest(email: string, href: string, code: string)
 }
 
 async function createMagicLinkHtml(email: string, href: string, code: string) {
-    
+
     const filePath = path.join(__dirname, "..", "..", "assets", "mail-templates", "MagicLink.html")
     const html = await fs.readFile(filePath, "utf-8")
-    
-    const date = new Date().toLocaleString("no-no", { timeZone: "cet"})
+
+    const date = new Date().toLocaleString("no-no", { timeZone: "cet" })
 
     return html.replace("${magiclink}", `${DomainUrl}/${href}`)
-               .replace("${verificationcode}", code)
-               .replace("${timestamp}", `${date}` )
+        .replace("${verificationcode}", code)
+        .replace("${timestamp}", `${date}`)
 }
 
 function onVerifyLinkClick(
-    payload: MagicLinkPayload, 
+    payload: MagicLinkPayload,
     callback: (err?: Error | undefined, user?: Object | undefined, info?: any) => void
 ): void {
     // TODO:
@@ -76,7 +76,7 @@ export const magicLogin = new MagicLoginStrategy({
     secret: process.env.ACCESS_TOKEN_SECRET,
     callbackUrl: `api${MagicLinkCallbackPath}`,
     sendMagicLink: onSendMagicLinkRequest,
-    verify: onVerifyLinkClick,     
+    verify: onVerifyLinkClick,
 })
 
 // --------------------------------------------

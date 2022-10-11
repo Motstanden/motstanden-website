@@ -1,17 +1,17 @@
 {
-    "extends": "../tsconfig.json",
-    "compilerOptions": {
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
 		"baseUrl": "./",
-		"outDir": "./build", 	/* Specify an output folder for all emitted files. */
-		"typeRoots" : [
+		"outDir": "./build", /* Specify an output folder for all emitted files. */
+		"typeRoots": [
 			"../node_modules/@types"
 		]
-    },
-    "exclude": [
-    	"../node_modules",
-		  "build/**/*"
-    ],
-    "include": [
-      	"./src/**/*"
-    ]
+	},
+	"exclude": [
+		"../node_modules",
+		"build/**/*"
+	],
+	"include": [
+		"./src/**/*"
+	]
 }

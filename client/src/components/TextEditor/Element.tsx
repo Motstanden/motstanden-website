@@ -1,7 +1,7 @@
-import { RenderElementProps } from "slate-react"
 import { ElementType } from "common/richTextSchema"
+import { RenderElementProps } from "slate-react"
 
-export function Element({ attributes, children, element }: RenderElementProps ){
+export function Element({ attributes, children, element }: RenderElementProps) {
     switch (element.type) {
         case ElementType.H1:
             return (
@@ -21,25 +21,25 @@ export function Element({ attributes, children, element }: RenderElementProps ){
                     {children}
                 </h3>
             )
-        case ElementType.Div: 
+        case ElementType.Div:
             return (
                 <div {...attributes}>
                     {children}
                 </div>
             )
-        case ElementType.NumberedList: 
+        case ElementType.NumberedList:
             return (
                 <ol {...attributes}>
                     {children}
                 </ol>
             )
-        case ElementType.BulletedList: 
+        case ElementType.BulletedList:
             return (
                 <ul {...attributes}>
                     {children}
                 </ul>
             )
-        case ElementType.ListItem: 
+        case ElementType.ListItem:
             return (
                 <li {...attributes}>
                     {children}
