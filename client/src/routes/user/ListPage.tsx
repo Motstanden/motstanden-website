@@ -52,7 +52,7 @@ export function UserListPage() {
                 px: 2 
             }}>
                 <h4 style={{margin: "0px"}}>Visning</h4>
-                <Grid container spacing={0} justifyContent="start">
+                <Grid container spacing={0}>
                     <FilterBox label="Navn"   checked={showName}    onClick={() => setShowName(!showName)}/>
                     <FilterBox label="Rang"   checked={showRank}    onClick={() => setShowRank(!showRank)}/>
                     <FilterBox label="Kappe"  checked={showCape}    onClick={() => setShowCape(!showCape)}/>
@@ -64,6 +64,12 @@ export function UserListPage() {
                     <FilterBox label="Slutt"   checked={showEnd}    onClick={() => setShowEnd(!showEnd)}/>
                     <FilterBox label="Rolle"  checked={showRole}    onClick={() => setShowRole(!showRole)}/>
                     <FilterBox label="Styret" checked={showBoard}   onClick={() => setShowBoard(!showBoard)}/>
+                </Grid>
+                <Grid container  spacing={0}>
+                    <Grid item xs={10}><Link href="" color="secondary" underline="hover">Medlemmer</Link></Grid>
+                    <Grid item><Link href="" color="secondary" underline="hover">hello</Link></Grid>
+                    <Grid item><Link href="" color="secondary" underline="hover">nedlast</Link></Grid>
+                    <Grid item><Link href="" color="secondary" underline="hover">nedlast</Link></Grid>
                 </Grid>
             </Paper>
             <UserTable 
