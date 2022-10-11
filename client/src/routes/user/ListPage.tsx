@@ -64,10 +64,11 @@ export function UserListPage() {
                     <FilterBox label="Styret" checked={showBoard}   onClick={() => setShowBoard(!showBoard)}/>
                 </Grid>
                 <Grid container  spacing={0}>
-                    <Grid item xs={10}><Link href="" color="secondary" underline="hover">Medlemmer</Link></Grid>
-                    <Grid item><Link href="" color="secondary" underline="hover">hello</Link></Grid>
-                    <Grid item><Link href="" color="secondary" underline="hover">nedlast</Link></Grid>
-                    <Grid item><Link href="" color="secondary" underline="hover">nedlast</Link></Grid>
+                    <Grid item xs={12}>Nedlast email-lister:</Grid>
+                    <EmailLink label="Alle"></EmailLink>
+                    <EmailLink label="Aktive"></EmailLink>
+                    <EmailLink label="Veteran"></EmailLink>
+                    <EmailLink label="Pensjonist"></EmailLink>
                 </Grid>
             </Paper>
             <UserTable
@@ -117,6 +118,12 @@ function FilterBox({ label, checked, onClick }: { label: string, checked: boolea
                 label={label}
             />
         </Grid>
+    )
+}
+
+function EmailLink({label}:{label: string}){
+    return (
+        <Grid item xs={3}><Link href="" color="secondary" underline="hover">{label}</Link></Grid>
     )
 }
 
