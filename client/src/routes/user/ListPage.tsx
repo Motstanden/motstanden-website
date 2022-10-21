@@ -66,13 +66,6 @@ export function UserListPage() {
                     <FilterBox label="Rolle"  checked={showRole}    onClick={() => setShowRole(!showRole)}/>
                     <FilterBox label="Styret" checked={showBoard}   onClick={() => setShowBoard(!showBoard)}/>
                 </Grid>
-                <Grid container  spacing={0}>
-                    <Grid item xs={12}>Nedlast email-lister:</Grid>
-                    <EmailLink users={actualUsers} label="Alle"/>
-                    <EmailLink users={activeUsers} label="Aktive"/>
-                    <EmailLink users={boardUsers} label="Styret"/>
-                    <EmailLink users={inactiveUsers} label="Pensjonist"/>
-                </Grid>
             </Paper>
             <UserTable
                 users={actualUsers}
@@ -109,6 +102,21 @@ export function UserListPage() {
                     />
                 </>
             )}
+            <Divider sx={{ mt: "60px", mb: "40px" }} />
+            <Paper sx={{
+                mb: 4,
+                pt: 2,
+                pb: 1,
+                px: 2
+            }}>
+                <Grid container  spacing={0}>
+                    <Grid item xs={12}><h4 style={{margin: "0px"}}>Nedlast e-postlister</h4></Grid>
+                    <EmailLink users={actualUsers} label="Alle"/>
+                    <EmailLink users={activeUsers} label="Aktive"/>
+                    <EmailLink users={boardUsers} label="Styret"/>
+                    <EmailLink users={inactiveUsers} label="Pensjonist"/>
+                </Grid>
+            </Paper>
         </>
     )
 }
