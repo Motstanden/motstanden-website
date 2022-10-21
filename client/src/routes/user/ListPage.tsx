@@ -41,7 +41,7 @@ export function UserListPage() {
     const actualUsers = data.filter(user => !isMotstandenMail(user.email))
     const boardUsers = data.filter(user => isMotstandenMail(user.email))
     const activeUsers = data.filter(user => isActive(user.status))
-    const inactiveUsers = data.filter(user => !isActive(user.status))
+    const retiredUsers = data.filter(user => isRetired(user.status))
 
     return (
         <>
@@ -114,7 +114,7 @@ export function UserListPage() {
                     <EmailLink users={actualUsers} label="Alle"/>
                     <EmailLink users={activeUsers} label="Aktive"/>
                     <EmailLink users={boardUsers} label="Styret"/>
-                    <EmailLink users={inactiveUsers} label="Pensjonist"/>
+                    <EmailLink users={retiredUsers} label="Pensjonist"/>
                 </Grid>
             </Paper>
         </>
@@ -269,6 +269,10 @@ function isMotstandenMail(email: string): boolean {
 
 function isActive(status: string): boolean {
     return status == UserStatus.Active
+}
+
+function isRetired(status: string): boolean {
+    return status == UserStatus.Retired
 }
 
 function formatDate(dateStr: string | null) {
