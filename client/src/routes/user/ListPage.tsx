@@ -18,6 +18,7 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Link as RouterLink, useOutletContext } from 'react-router-dom';
 import { useTitle } from 'src/hooks/useTitle';
+import { UserStatus } from 'common/enums';
 
 export function UserListPage() {
     useTitle("Medlemsliste")
@@ -39,6 +40,8 @@ export function UserListPage() {
 
     const actualUsers = data.filter(user => !isMotstandenMail(user.email))
     const boardUsers = data.filter(user => isMotstandenMail(user.email))
+    const activeUsers = data.filter(user => isActive(user.status))
+    const inactiveUsers = data.filter(user => !isActive(user.status))
 
     return (
         <>
@@ -65,12 +68,10 @@ export function UserListPage() {
                 </Grid>
                 <Grid container  spacing={0}>
                     <Grid item xs={12}>Nedlast email-lister:</Grid>
-                    <EmailLink users={actualUsers}  label="Alle"/>
-                    {/*
-                    <EmailLink label="Aktive"></EmailLink>
-                    <EmailLink label="Veteran"></EmailLink>
-                    <EmailLink label="Pensjonist"></EmailLink>
-                    */}
+                    <EmailLink users={actualUsers} label="Alle"/>
+                    <EmailLink users={activeUsers} label="Aktive"/>
+                    <EmailLink users={boardUsers} label="Styret"/>
+                    <EmailLink users={inactiveUsers} label="Pensjonist"/>
                 </Grid>
             </Paper>
             <UserTable
@@ -123,10 +124,31 @@ function FilterBox({ label, checked, onClick }: { label: string, checked: boolea
     )
 }
 
-function EmailLink({users, label}:{users: User[], label: string}) {
+function EmailLink({
+    users,
+    label
+}:{
+    users: User[],
+    label: string
+}) {
+    
+    const links = users.map((user: User) => (
+        [
+            user.middleName == "" ? [user.firstName, user.lastName].join(" ") : [user.firstName, user.middleName, user.lastName].join(" "),
+            [user.email]
+        ].join(": ")
+    ));
+
+    const fileData = links.join("\n")
+    const blob = new Blob([fileData], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
 
     return (
-        <Grid item xs={3}><Link href="" color="secondary" underline="hover">{label}</Link></Grid>
+        <Grid item xs={3}>
+            <Link href={url} download={"E-postliste - " + label + " - Motstanden"} color="secondary" underline="hover">
+                {label}
+            </Link>
+        </Grid>
     )
 }
 
@@ -235,6 +257,10 @@ function UserTable({
 
 function isMotstandenMail(email: string): boolean {
     return email.trim().toLowerCase().endsWith("@motstanden.no")
+}
+
+function isActive(status: string): boolean {
+    return status == UserStatus.Active
 }
 
 function formatDate(dateStr: string | null) {
