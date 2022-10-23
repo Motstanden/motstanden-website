@@ -5,8 +5,8 @@ export async function logIn(page: Page, group: UserGroup) {
     await page.goto('/logg-inn');
     
     const user = getUserEmail(group)
-    await page.getByLabel('E-post *').click();    
-    await page.getByLabel('E-post *').fill(user);
+    await page.getByLabel('E-post *').click();    
+    await page.getByLabel('E-post *').fill(user);
 
     await page.getByRole('button', { name: 'Dev logg inn' }).click();
     await expect(page).toHaveURL('/hjem');

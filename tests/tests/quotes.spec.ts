@@ -16,11 +16,11 @@ test('Quotes can be created, updated and deleted', async ({ page }) => {
         quote: `quote id: ${randomUUID()}` 
     }
     
-    await page.getByLabel('Sitat *').click();
-    await page.getByLabel('Sitat *').fill(newQuote.quote);
+    await page.getByLabel('Sitat *').click();
+    await page.getByLabel('Sitat *').fill(newQuote.quote);
 
-    await page.getByLabel('Sitatytrer *').click();
-    await page.getByLabel('Sitatytrer *').fill(newQuote.utterer);
+    await page.getByLabel('Sitatytrer *').click();
+    await page.getByLabel('Sitatytrer *').fill(newQuote.utterer);
 
     await page.getByRole('button', { name: 'Lagre' }).click();
     await expect(page).toHaveURL('/sitater');
@@ -39,11 +39,11 @@ test('Quotes can be created, updated and deleted', async ({ page }) => {
 
     await page.getByRole('menuitem', { name: 'Rediger' }).click();
   
-    await page.getByLabel('Sitat *').click();
-    await page.getByLabel('Sitat *').fill(editedQuote.quote);
+    await page.getByLabel('Sitat *').click();
+    await page.getByLabel('Sitat *').fill(editedQuote.quote);
   
-    await page.getByLabel('Sitatytrer *').click();
-    await page.getByLabel('Sitatytrer *').fill(editedQuote.utterer);
+    await page.getByLabel('Sitatytrer *').click();
+    await page.getByLabel('Sitatytrer *').fill(editedQuote.utterer);
   
     await page.getByRole('button', { name: 'Lagre' }).click();
   
