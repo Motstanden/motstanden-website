@@ -146,12 +146,12 @@ function EmailLink({
     
     const info = users.map((user: User) => (
         [
-            user.middleName == "" ? [user.firstName, user.lastName].join(" ") : [user.firstName, user.middleName, user.lastName].join(" "),
+            user.middleName === "" ? [user.firstName, user.lastName].join(" ") : [user.firstName, user.middleName, user.lastName].join(" "),
             [user.email]
         ].join(": ")
     ));
     
-    const fileData = info.length == 0 ? "Fant ingen brukere" : info.join("\n")
+    const fileData = info.length === 0 ? "Fant ingen brukere" : info.join("\n")
     const blob = new Blob([fileData], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
 
