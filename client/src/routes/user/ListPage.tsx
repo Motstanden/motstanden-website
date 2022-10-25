@@ -19,6 +19,7 @@ import { useState } from 'react';
 import { Link as RouterLink, useOutletContext } from 'react-router-dom';
 import { useTitle } from 'src/hooks/useTitle';
 import { UserStatus } from 'common/enums';
+import { isEmptyBindingElement } from 'typescript';
 
 export function UserListPage() {
     useTitle("Medlemsliste")
@@ -143,14 +144,14 @@ function EmailLink({
     label: string
 }) {
     
-    const links = users.map((user: User) => (
+    const info = users.map((user: User) => (
         [
             user.middleName == "" ? [user.firstName, user.lastName].join(" ") : [user.firstName, user.middleName, user.lastName].join(" "),
             [user.email]
         ].join(": ")
     ));
-
-    const fileData = links.join("\n")
+    
+    const fileData = info.length == 0 ? "Fant ingen brukere" : info.join("\n")
     const blob = new Blob([fileData], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
 
