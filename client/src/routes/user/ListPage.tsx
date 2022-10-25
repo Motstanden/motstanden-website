@@ -40,8 +40,10 @@ export function UserListPage() {
 
     const actualUsers = data.filter(user => !isMotstandenMail(user.email))
     const boardUsers = data.filter(user => isMotstandenMail(user.email))
-    const activeUsers = data.filter(user => isActive(user.status))
-    const retiredUsers = data.filter(user => isRetired(user.status))
+    const activeUsers = data.filter(user => user.status === UserStatus.Active && !isMotstandenMail(user.email))
+    const inactiveUsers = data.filter(user => !(user.status === UserStatus.Active) && !isMotstandenMail(user.email))
+    const retiredUsers = data.filter(user => user.status === UserStatus.Retired && !isMotstandenMail(user.email))
+    const veteranUsers = data.filter(user => user.status === UserStatus.Veteran && !isMotstandenMail(user.email))
 
     return (
         <>
@@ -113,8 +115,9 @@ export function UserListPage() {
                     <Grid item xs={12}><h4 style={{margin: "0px"}}>Nedlast e-postlister</h4></Grid>
                     <EmailLink users={actualUsers} label="Alle"/>
                     <EmailLink users={activeUsers} label="Aktive"/>
-                    <EmailLink users={boardUsers} label="Styret"/>
-                    <EmailLink users={retiredUsers} label="Pensjonist"/>
+                    <EmailLink users={veteranUsers} label="Veteraner"/>
+                    <EmailLink users={retiredUsers} label="Pensjonister"/>
+                    <EmailLink users={inactiveUsers} label="Inaktive"/>
                 </Grid>
             </Paper>
         </>
@@ -152,7 +155,7 @@ function EmailLink({
     const url = URL.createObjectURL(blob);
 
     return (
-        <Grid item xs={3}>
+        <Grid item xs={4} sm={2.4}>
             <Link href={url} download={"E-postliste - " + label + " - Motstanden"} color="secondary" underline="hover">
                 {label}
             </Link>
@@ -265,14 +268,6 @@ function UserTable({
 
 function isMotstandenMail(email: string): boolean {
     return email.trim().toLowerCase().endsWith("@motstanden.no")
-}
-
-function isActive(status: string): boolean {
-    return status == UserStatus.Active
-}
-
-function isRetired(status: string): boolean {
-    return status == UserStatus.Retired
 }
 
 function formatDate(dateStr: string | null) {
