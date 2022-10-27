@@ -2,8 +2,10 @@ import { expect, test } from '@playwright/test';
 import { UserGroup } from 'common/enums';
 import { NewQuote } from "common/interfaces";
 import { randomUUID } from "crypto";
-import { logIn } from './auth.spec';
+import { getStoragePath } from '../utils/auth';
 
+
+test.use({ storageState: getStoragePath(UserGroup.Contributor)})
 
 test("Quotes can be created, updated and deleted", async ({page}) => {
     
@@ -16,10 +18,6 @@ test("Quotes can be created, updated and deleted", async ({page}) => {
         utterer: `utterer id: ${randomUUID()}`, 
         quote: `quote id: ${randomUUID()}` 
     }
-
-    await test.step("Log in", async () => {
-        await logIn(page, UserGroup.Contributor)
-    })
 
     await test.step("New quote", async () => {
         await page.goto('/sitater/ny');
