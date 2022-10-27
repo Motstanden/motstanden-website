@@ -54,10 +54,7 @@ test.describe("Login tokens are created and persisted", () => {
     test("Should renew AccessToken if browser only has RefreshToken", async ({page}) => {
         await logIn(page, UserGroup.Contributor)
 
-        const initialCookies = await page.context().cookies()
-        const expiredCookies = initialCookies.filter( c => c.name !== "AccessToken")
-        await page.context().clearCookies()
-        await page.context().addCookies(expiredCookies)
+        await expireAccessToken(page)
 
         await page.goto("/sitater")
         await expect(page).toHaveURL("/sitater")
@@ -70,6 +67,7 @@ test.describe("Login tokens are created and persisted", () => {
 })
 
 test.describe("User can log out", () => {
+    
     test("Log out in current browser", async ({ page }) => {
         await emailLogIn(page, "web@motstanden.no")
 
@@ -80,10 +78,60 @@ test.describe("User can log out", () => {
         await testUserIsLoggedOut(page)
     });
   
-    test.fixme("Log out in all browser", async ({ page }) => {
-        // ...
+    test("Log out of all browser", async ({ browser }) => {
+        
+        await browser.newContext()
+        await browser.newContext()
+        await browser.newContext()
+        const contexts = browser.contexts()
+
+        await test.step("Log in in all browsers", async () => {
+            for(let i = 0; i < contexts.length; i++) {
+                const page = await contexts[i].newPage()
+                await emailLogIn(page, "leder@motstanden.no")
+            }
+        })
+
+        await test.step("Click 'log out of all units'", async () => {
+            const page = contexts[0].pages()[0]
+
+            page.once('dialog', dialog => dialog.accept());
+            await page.getByRole('button', { name: 'Profilmeny' }).click();
+            await page.getByRole('menuitem', { name: 'Logg ut alle enheter' }).click();
+            
+            await expect(page).toHaveURL('')
+            await testUserIsLoggedOut(page)
+        })
+
+        await test.step("Test that the user is logged out of all browsers", async () => {
+            for(let i = 1; i < contexts.length; i++){
+                const page = contexts[i].pages()[0]
+                
+                // The user should be logged out when the AccessToken expires.
+                await expireAccessToken(page)
+                
+                // A page reload will trigger the client to request a new AccessToken. 
+                // The server should refuse to generate a new token.
+                await page.reload()
+                
+                await expect(page).toHaveURL('/logg-inn')
+                await testUserIsLoggedOut(page)
+            }
+        })
+
     });
+
 });
+
+async function expireAccessToken(page: Page) {
+    // ideally we would be able to fast forward the browser to a time when the AccessToken has expired.
+    // This is not possible at the moment.
+    // We will therefore simulate this by manually deleting the AccessToken cookie
+    const oldCookies = await page.context().cookies()
+    const newCookies = oldCookies.filter( c => c.name !== "AccessToken")
+    await page.context().clearCookies()
+    await page.context().addCookies(newCookies)
+}
 
 async function testUserIsLoggedOut(page: Page) {
     const cookies = await page.context().cookies()
