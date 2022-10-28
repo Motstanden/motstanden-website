@@ -22,6 +22,20 @@ test("New users can only be created by super admin", async ({browser}) => {
     await expect(superAdminPage).toHaveURL("/medlem/ny")
 })
 
+test("Admin can not promote self to super admin", async ({browser}) => {
+    const page = await storageLogIn(browser, UserGroup.Administrator)
+
+    await page.getByRole('button', { name: 'Profilmeny' }).click();
+    await page.getByRole('menuitem', { name: 'Profil' }).click();
+    await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
+    
+    await editCurrentUser(page)
+
+    await page.getByRole('button', { name: /Rolle/ }).click()
+
+    expect(await page.getByRole('option', { name: userGroupToPrettyStr(UserGroup.SuperAdministrator)}).count() ).toBe(0)
+})
+
 test.describe.serial("Create and update user data", async () => {
 
     let user: NewUser
