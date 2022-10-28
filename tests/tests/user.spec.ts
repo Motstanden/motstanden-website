@@ -1,15 +1,15 @@
-import test, { expect, Page } from '@playwright/test';
-import { UserGroup, UserRank, UserStatus } from 'common/enums';
-import { NewUser } from 'common/interfaces';
+import test, { expect, Page } from '@playwright/test'
+import { UserGroup, UserRank, UserStatus } from 'common/enums'
+import { NewUser } from 'common/interfaces'
 import {
     isNullOrWhitespace,
     userGroupToPrettyStr,
     userRankToPrettyStr,
     userStatusToPrettyStr
-} from "common/utils";
-import { randomInt, randomUUID } from 'crypto';
-import dayjs from '../lib/dayjs';
-import { storageLogIn } from '../utils/auth';
+} from "common/utils"
+import { randomInt, randomUUID } from 'crypto'
+import dayjs from '../lib/dayjs'
+import { storageLogIn } from '../utils/auth'
 
 test("New users can only be created by super admin", async ({browser}) => {
     const adminPage = await storageLogIn(browser, UserGroup.Administrator)
@@ -39,24 +39,17 @@ test.describe.serial("Create and update user data", async () => {
 
         await test.step("Post new user", async () => {
 
-            await page.getByLabel('Fornavn *').fill(user.firstName);
-            await page.getByLabel('Mellomnavn').fill(user.middleName);
-            await page.getByLabel('Etternavn *').fill(user.lastName);
-            await page.getByLabel('E-post *').fill(user.email);
-          
-            await select(page, "UserRank", user.rank)
+            await fillPersonalForm(page, user)
+            await fillMembershipForm(page, user)
+        
             await select(page, "UserGroup", user.groupName)
-            await select(page, "UserStatus", user.status)
           
-            await page.getByLabel('Startet *').fill(monthFormat(user.startDate));
-            await page.getByLabel('Sluttet').fill(monthFormat(user.endDate));
+            await page.getByRole('button', { name: 'Profilbilde Gutt' }).click()
+            await page.getByRole('option', { name: 'Jente' }).click()
           
-            await page.getByRole('button', { name: 'Profilbilde Gutt' }).click();
-            await page.getByRole('option', { name: 'Jente' }).click();
+            await page.getByLabel('All informasjon er riktig(Ingen vei tilbake)').check()
           
-            await page.getByLabel('All informasjon er riktig(Ingen vei tilbake)').check();
-          
-            await page.getByRole('button', { name: 'Legg til bruker' }).click();
+            await page.getByRole('button', { name: 'Legg til bruker' }).click()
         })
 
         await test.step("Test user exists", async () => {
@@ -65,40 +58,79 @@ test.describe.serial("Create and update user data", async () => {
         })
     })
 
-    test("Should update user", async ({browser}) => {
-
-        await page.getByRole('link', { name: 'Rediger Profil' }).click();
-        await expect(page).toHaveURL(/\/medlem\/[0-9]+\/rediger/);
-
+    test("Super admin can update all info", async () => {
+        
         user = createNewUser({
             groupName: UserGroup.Contributor,
             rank: UserRank.Ohm,
             status: UserStatus.Active
         })
-        
-        await page.getByLabel('Fornavn *').fill(user.firstName);
-        await page.getByLabel('Mellomnavn').fill(user.middleName);
-        await page.getByLabel('Etternavn *').fill(user.lastName);
-        await page.getByLabel("Fødselsdato").fill(birthFormat(user.birthDate));
-        await page.getByLabel('E-post *').fill(user.email);
-        await page.getByLabel('Tlf.').fill(`${user.phoneNumber}`);
-        await page.getByLabel('Kappe').fill(user.capeName);
- 
-        await select(page, "UserRank", user.rank)
-        await select(page, "UserStatus", user.status)
- 
-        await page.getByLabel('Startet *').fill(monthFormat(user.startDate));
-        await page.getByLabel('Sluttet').fill(monthFormat(user.endDate));
-        
-        await select(page, "UserGroup", user.groupName)
-      
-        await page.getByRole('button', { name: 'Lagre' }).click();
 
-        await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
+        await editCurrentUser(page)
+        
+        await fillPersonalForm(page, user)
+        await fillMembershipForm(page, user)
+        await select(page, "UserGroup", user.groupName)
+        await saveChanges(page)
         await validateUserProfile(page, user)
 
     })
+
+    test("Admin can update membership info", async ({browser}) => {
+        page = await storageLogIn(browser, UserGroup.Administrator)
+        const newData = createNewUser()
+        user = {
+            ...user,
+            // Data that the admin is allowed to change
+            capeName: newData.capeName,
+            rank: UserRank.MegaOhm,
+            status: UserStatus.Retired,
+            startDate: newData.startDate,
+            endDate: newData.endDate,
+            groupName: UserGroup.Administrator
+        }
+        
+        await gotoUserProfile(page, user)
+        await editCurrentUser(page)
+        
+        // Expect personal details to be read only
+        expect(await page.getByLabel('Fornavn *').count()).toBe(0)
+        expect(await page.getByLabel('Mellomnavn').count()).toBe(0)
+        expect(await page.getByLabel('Etternavn *').count()).toBe(0)
+        expect(await page.getByLabel('E-post *').count()).toBe(0)
+        expect(await page.getByLabel("Fødselsdato").count()).toBe(0)
+        expect(await page.getByLabel('Tlf.').count()).toBe(0)
+        
+        await fillMembershipForm(page, user)
+        await select(page, "UserGroup", user.groupName)
+        await saveChanges(page)
+        await validateUserProfile(page, user)
+    })
 })
+
+async function fillPersonalForm(page: Page, user: NewUser) {
+    await page.getByLabel('Fornavn *').fill(user.firstName)
+    await page.getByLabel('Mellomnavn').fill(user.middleName)
+    await page.getByLabel('Etternavn *').fill(user.lastName)
+    await page.getByLabel('E-post *').fill(user.email)
+    
+    if(user.birthDate){
+        await page.getByLabel("Fødselsdato").fill(birthFormat(user.birthDate))
+    }
+    if(user.phoneNumber){
+        await page.getByLabel('Tlf.').fill(`${user.phoneNumber}`)
+    }
+}
+
+async function fillMembershipForm(page: Page, user: NewUser) {
+    if(user.capeName) {
+        await page.getByLabel('Kappe').fill(user.capeName)
+    }
+    await select(page, "UserRank", user.rank)
+    await select(page, "UserStatus", user.status)
+    await page.getByLabel('Startet *').fill(monthFormat(user.startDate))
+    await page.getByLabel('Sluttet').fill(monthFormat(user.endDate))
+}
 
 type UserEnum = UserRank | UserGroup | UserStatus
 type UserEnumName = "UserRank" | "UserGroup" | "UserStatus"
@@ -110,22 +142,22 @@ async function select<T extends UserEnum>(page: Page, typeName: UserEnumName,  v
     switch(typeName) {
         case "UserRank": 
             buttonRegEx = /Rang/
-            selectValue = userRankToPrettyStr(value as UserRank);
+            selectValue = userRankToPrettyStr(value as UserRank)
             break
         case "UserGroup": 
             buttonRegEx = /Rolle/
-            selectValue = userGroupToPrettyStr(value as UserGroup);
+            selectValue = userGroupToPrettyStr(value as UserGroup)
             break
         case "UserStatus": 
             buttonRegEx = /Status/
-            selectValue = userStatusToPrettyStr(value as UserStatus);
+            selectValue = userStatusToPrettyStr(value as UserStatus)
             break
         default: 
             throw `The type is not implemented: "${typeName}"`
     }
 
-    await page.getByRole('button', { name: buttonRegEx}).click();
-    await page.getByRole('option', { name: selectValue }).click();
+    await page.getByRole('button', { name: buttonRegEx}).click()
+    await page.getByRole('option', { name: selectValue }).click()
 }
 
 function createNewUser(userData?: Partial<NewUser>): NewUser {
@@ -146,7 +178,7 @@ function createNewUser(userData?: Partial<NewUser>): NewUser {
         birthDate: `${randomInt(1980, 2003)}-${randomInt(1, 12)}-${randomInt(1, 28)}`,
         ...userData
     }
-    return newUser;
+    return newUser
 }
 
 interface UserName {
@@ -172,7 +204,7 @@ function birthFormat(date: string): string {
 
 async function gotoUserProfile(page: Page, user: UserName) {
     await page.goto("/medlem/liste")
-    await page.getByLabel('Styret').check();
+    await page.getByLabel('Styret').check()
 
     const fullName = getFullName(user)
     await expect(page.getByText(fullName)).toBeVisible()
@@ -182,6 +214,16 @@ async function gotoUserProfile(page: Page, user: UserName) {
 
     await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
     await expect(page.getByText(fullName).first()).toBeVisible()
+}
+
+async function editCurrentUser(page: Page) {
+    await page.getByRole('link', { name: 'Rediger Profil' }).click()
+    await expect(page).toHaveURL(/\/medlem\/[0-9]+\/rediger/)
+}
+
+async function saveChanges(page: Page) {
+    await page.getByRole('button', { name: 'Lagre' }).click()
+    await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
 }
 
 async function validateUserProfile(page: Page, user: NewUser) {
