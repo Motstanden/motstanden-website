@@ -25,15 +25,35 @@ test("New users can only be created by super admin", async ({browser}) => {
 test("Admin can not promote self to super admin", async ({browser}) => {
     const page = await storageLogIn(browser, UserGroup.Administrator)
 
-    await page.getByRole('button', { name: 'Profilmeny' }).click();
-    await page.getByRole('menuitem', { name: 'Profil' }).click();
-    await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
-    
+    await gotoCurrentUser(page)
     await editCurrentUser(page)
 
     await page.getByRole('button', { name: /Rolle/ }).click()
 
-    expect(await page.getByRole('option', { name: userGroupToPrettyStr(UserGroup.SuperAdministrator)}).count() ).toBe(0)
+    const superAdminCount = await page.getByRole('option', { name: userGroupToPrettyStr(UserGroup.SuperAdministrator)}).count()
+    expect(superAdminCount).toBe(0)
+})
+
+test.describe("Set inactive status", async () => {
+    
+    test("Contributor can not update self to be inactive", async ({browser}) => {
+        const page = await storageLogIn(browser, UserGroup.Contributor)
+        expect(await canUpdateInactive(page)).not.toBeTruthy()
+    })
+
+    test("Admin can update self to be inactive", async ({browser}) => {
+        const page = await storageLogIn(browser, UserGroup.Administrator)
+        expect(await canUpdateInactive(page)).toBeTruthy()
+    })
+
+    async function canUpdateInactive(page: Page): Promise<boolean> {
+        await gotoCurrentUser(page)
+        await editCurrentUser(page)
+
+        await page.getByRole('button', { name: /Status/ }).click()
+        const inactiveCount = await page.getByRole('option', { name: userStatusToPrettyStr(UserStatus.Inactive) }).count()
+        return inactiveCount === 1
+    }
 })
 
 test.describe.serial("Create and update user data", async () => {
@@ -67,7 +87,7 @@ test.describe.serial("Create and update user data", async () => {
         })
 
         await test.step("Test user exists", async () => {
-            await gotoUserProfile(page, user)
+            await gotoUser(page, user)
             await validateUserProfile(page, user)
         })
     })
@@ -104,7 +124,7 @@ test.describe.serial("Create and update user data", async () => {
             groupName: UserGroup.Administrator
         }
         
-        await gotoUserProfile(page, user)
+        await gotoUser(page, user)
         await editCurrentUser(page)
         
         // Expect personal details to be read only
@@ -123,7 +143,7 @@ test.describe.serial("Create and update user data", async () => {
 
     test("Admin can update all info about themselves", async ({page}) => {
         await emailLogIn(page, user.email)
-        await gotoUserProfile(page, user)
+        await gotoCurrentUser(page)
         await editCurrentUser(page)
         
         user = createNewUser({ groupName: UserGroup.Contributor })
@@ -136,13 +156,13 @@ test.describe.serial("Create and update user data", async () => {
 
     test("Contributor can update all info about themselves except rank and group", async ({page}) => {
         await emailLogIn(page, user.email)
-        await gotoUserProfile(page, user)
+        await gotoCurrentUser(page)
         await editCurrentUser(page)
-
+        
         // Expect the user not to be able to edit rank or group
         expect(await page.getByRole('button', { name: /Rang/ }).count()).toBe(0)
         expect(await page.getByRole('button', { name: /Rolle/ }).count()).toBe(0)
-
+        
         user = createNewUser({
             rank: user.rank,
             groupName: user.groupName,
@@ -253,7 +273,13 @@ function birthFormat(date: string): string {
     return dayjs(date).format("DD.MM.YYYY")
 }
 
-async function gotoUserProfile(page: Page, user: UserName) {
+async function gotoCurrentUser(page: Page) {
+    await page.getByRole('button', { name: 'Profilmeny' }).click();
+    await page.getByRole('menuitem', { name: 'Profil' }).click();
+    await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
+}
+
+async function gotoUser(page: Page, user: UserName) {
     await page.goto("/medlem/liste")
     await page.getByLabel('Styret').check()
 
