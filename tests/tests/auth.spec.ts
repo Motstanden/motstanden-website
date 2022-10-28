@@ -62,7 +62,7 @@ test.describe("User can log out", () => {
         const contexts = browser.contexts()
 
         await test.step("Click 'log out of all units'", async () => {
-            const page = contexts[0].pages()[0]
+            const page = contexts[contexts.length - 1].pages()[0]
 
             page.once('dialog', dialog => dialog.accept());
             await page.getByRole('button', { name: 'Profilmeny' }).click();
@@ -73,7 +73,7 @@ test.describe("User can log out", () => {
         })
 
         await test.step("Test that the user is logged out of all browsers", async () => {
-            for(let i = 1; i < contexts.length; i++){
+            for(let i = 0; i < contexts.length; i++){
                 const page = contexts[i].pages()[0]
                 
                 // The user should be logged out when the AccessToken expires.
