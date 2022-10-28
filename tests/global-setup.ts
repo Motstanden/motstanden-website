@@ -2,7 +2,11 @@ import { chromium, FullConfig } from "@playwright/test";
 import { UserGroup } from "common/enums";
 import { getStoragePath, logIn } from "./utils/auth";
 
-export default async function globalSetup(config:FullConfig) {
+export default async function globalSetup(config: FullConfig) {
+    await authSetup()
+}
+
+async function authSetup() {
     const browser = await chromium.launch()
     const groups: UserGroup[] = Object.values(UserGroup)
 
