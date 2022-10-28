@@ -107,7 +107,7 @@ test.describe.serial("Create and update user data", async () => {
         await validateUserProfile(page, user)
     })
 
-    test("Admin can update all info on themselves", async ({page}) => {
+    test("Admin can update all info about themselves", async ({page}) => {
         await emailLogIn(page, user.email)
         await gotoUserProfile(page, user)
         await editCurrentUser(page)
@@ -116,6 +116,28 @@ test.describe.serial("Create and update user data", async () => {
         await fillPersonalForm(page, user)
         await fillMembershipForm(page, user)
         await select(page, "UserGroup", user.groupName)
+        await saveChanges(page)
+        await validateUserProfile(page, user)
+    })
+
+    test("Contributor can update all info about themselves except rank and group", async ({page}) => {
+        await emailLogIn(page, user.email)
+        await gotoUserProfile(page, user)
+        await editCurrentUser(page)
+
+        // Expect the user not to be able to edit rank or group
+        expect(await page.getByRole('button', { name: /Rang/ }).count()).toBe(0)
+        expect(await page.getByRole('button', { name: /Rolle/ }).count()).toBe(0)
+
+        user = createNewUser({
+            rank: user.rank,
+            groupName: user.groupName,
+            status: UserStatus.Active
+        })
+
+        await fillPersonalForm(page, user)
+        await fillMembershipForm(page, user, {skipRank: true})
+        
         await saveChanges(page)
         await validateUserProfile(page, user)
     })
@@ -135,11 +157,13 @@ async function fillPersonalForm(page: Page, user: NewUser) {
     }
 }
 
-async function fillMembershipForm(page: Page, user: NewUser) {
+async function fillMembershipForm(page: Page, user: NewUser, opts?: { skipRank?: boolean }) {
     if(user.capeName) {
         await page.getByLabel('Kappe').fill(user.capeName)
     }
-    await select(page, "UserRank", user.rank)
+    if(!opts?.skipRank){
+        await select(page, "UserRank", user.rank)
+    }
     await select(page, "UserStatus", user.status)
     await page.getByLabel('Startet *').fill(monthFormat(user.startDate))
     await page.getByLabel('Sluttet').fill(monthFormat(user.endDate))
