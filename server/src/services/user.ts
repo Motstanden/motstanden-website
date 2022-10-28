@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
 import { JwtTokenData } from "../middleware/jwtAuthenticate";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
-import { stringIsNullOrWhiteSpace } from "../utils/stringUtils";
+import { isNullOrWhitespace } from "common/utils";
 
 export function userExists(unsafeEmail: string | undefined): boolean {
     const email = unsafeEmail?.trim().toLowerCase();
@@ -262,10 +262,10 @@ function makeValidUser(user: User): User | undefined {
         isNtnuMail(user.email) ||
         !user.groupName ||
         !user.rank ||
-        stringIsNullOrWhiteSpace(user.firstName) ||
-        stringIsNullOrWhiteSpace(user.lastName) ||
+        isNullOrWhitespace(user.firstName) ||
+        isNullOrWhitespace(user.lastName) ||
         !user.status ||
-        stringIsNullOrWhiteSpace(user.startDate) ||
+        isNullOrWhitespace(user.startDate) ||
         !isValidDate(user.startDate) ||
         (user.endDate && !isValidDate(user.endDate)) ||
         (user.phoneNumber && !(user.phoneNumber >= 10000000 || user.phoneNumber <= 99999999)) ||

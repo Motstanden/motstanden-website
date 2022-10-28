@@ -5,7 +5,7 @@ import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/dat
 import domPurify from "../lib/DOMPurify";
 import { DbWriteAction } from "../ts/enums/DbWriteAction";
 import { UpsertDb } from "../ts/types/UpsertDb";
-import { stringIsNullOrWhiteSpace } from "../utils/stringUtils";
+import { isNullOrWhitespace } from "common/utils";
 
 const allEventColumns = `
     event_id as eventId, 
@@ -108,11 +108,11 @@ function createValidEvent(event: NewEventData): NewEventData | undefined {
     }
 
     if (
-        stringIsNullOrWhiteSpace(event.title) ||
-        stringIsNullOrWhiteSpace(event.startDateTime) ||
-        (stringIsNullOrWhiteSpace(event.endDateTime) && event.endDateTime !== null) ||
+        isNullOrWhitespace(event.title) ||
+        isNullOrWhitespace(event.startDateTime) ||
+        (isNullOrWhitespace(event.endDateTime) && event.endDateTime !== null) ||
         !isValidExtraInfo ||
-        stringIsNullOrWhiteSpace(event.descriptionHtml) ||
+        isNullOrWhitespace(event.descriptionHtml) ||
         !isValidRichText(event.description)
     ) {
         return undefined
@@ -121,7 +121,7 @@ function createValidEvent(event: NewEventData): NewEventData | undefined {
     // THIS STEP IS SUPER IMPORTANT!!! It prevents xss attacks
     const sanitizedHtml = domPurify.sanitize(event.descriptionHtml, { USE_PROFILES: { html: true } })
 
-    if (stringIsNullOrWhiteSpace(sanitizedHtml))
+    if (isNullOrWhitespace(sanitizedHtml))
         return undefined
 
     const newEvent: NewEventData = {

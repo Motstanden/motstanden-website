@@ -3,7 +3,7 @@ import { Stack } from "@mui/system";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
 import { User } from "common/interfaces";
-import { hasGroupAccess, isNtnuMail as checkIsNtnuMail, strToNumber, userRankToPrettyStr, validateEmail } from "common/utils";
+import { hasGroupAccess, isNtnuMail as checkIsNtnuMail, isNullOrWhitespace, strToNumber, userRankToPrettyStr, validateEmail } from "common/utils";
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate, useOutletContext } from "react-router-dom";
@@ -11,7 +11,6 @@ import { Form } from "src/components/form/Form";
 import { HelpButton } from "src/components/HelpButton";
 import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
-import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
 import { Card, CardTextItem, groupTVPair, rankTVPair, statusTVPair } from "./Components";
 import { AccountDetailsCard, formatExactDate, PersonCard } from "./UserPage";
 

@@ -1,8 +1,8 @@
 import { CustomElement, ElementType, FormattedText } from "common/richTextSchema";
+import { isNullOrWhitespace } from "common/utils";
 import DOMPurify from "dompurify";
 import ReactDOMServer from "react-dom/server";
 import { Descendant, Editor, Text } from 'slate';
-import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
 import { CustomEditor } from "./Types";
 
 export function serialize(value: CustomEditor | Descendant[]): string {

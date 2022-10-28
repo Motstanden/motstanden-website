@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { NewQuote, Quote } from "common/interfaces";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
-import { stringIsNullOrWhiteSpace } from "../utils/stringUtils";
+import { isNullOrWhitespace } from "common/utils";
 
 export function getQuote(quoteId: number): Quote {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
@@ -47,7 +47,7 @@ export function getQuotes(limit?: number): Quote[] {
 
 export function insertQuote(quote: NewQuote, userId: number) {
 
-    if (stringIsNullOrWhiteSpace(quote.quote) || stringIsNullOrWhiteSpace(quote.utterer) || !userId)
+    if (isNullOrWhitespace(quote.quote) || isNullOrWhitespace(quote.utterer) || !userId)
         throw `Invalid data`
 
     const db = new Database(motstandenDB, dbReadWriteConfig)
@@ -62,8 +62,8 @@ export function insertQuote(quote: NewQuote, userId: number) {
 
 export function updateQuote(quote: Quote) {
 
-    const isInvalid = stringIsNullOrWhiteSpace(quote.quote) ||
-        stringIsNullOrWhiteSpace(quote.utterer) ||
+    const isInvalid = isNullOrWhitespace(quote.quote) ||
+        isNullOrWhitespace(quote.utterer) ||
         !quote.id || typeof quote.id !== "number"
     if (isInvalid)
         throw `Invalid data`

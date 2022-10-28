@@ -2,6 +2,7 @@ import { Avatar, Divider, Link, MenuItem, Paper, Stack, TextField } from "@mui/m
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ParticipationStatus } from "common/enums";
 import { EventData, Participant, ParticipationList, UpsertParticipant } from "common/interfaces";
+import { isNullOrWhitespace } from "common/utils";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { Link as RouterLink, useOutletContext } from "react-router-dom";
@@ -10,7 +11,6 @@ import { TitleCard } from "src/components/TitleCard";
 import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
 import { fetchAsync } from "src/utils/fetchAsync";
-import { isNullOrWhitespace } from "src/utils/isNullOrWhitespace";
 import { postJson } from "src/utils/postJson";
 import { ItemMenu } from "./components/ItemMenu";
 import { KeyInfo } from "./components/KeyInfo";
