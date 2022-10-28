@@ -9,7 +9,7 @@ import {
 } from "common/utils"
 import { randomInt, randomUUID } from 'crypto'
 import dayjs from '../lib/dayjs'
-import { storageLogIn } from '../utils/auth'
+import { emailLogIn, storageLogIn } from '../utils/auth'
 
 test("New users can only be created by super admin", async ({browser}) => {
     const adminPage = await storageLogIn(browser, UserGroup.Administrator)
@@ -101,6 +101,19 @@ test.describe.serial("Create and update user data", async () => {
         expect(await page.getByLabel("Fødselsdato").count()).toBe(0)
         expect(await page.getByLabel('Tlf.').count()).toBe(0)
         
+        await fillMembershipForm(page, user)
+        await select(page, "UserGroup", user.groupName)
+        await saveChanges(page)
+        await validateUserProfile(page, user)
+    })
+
+    test("Admin can update all info on themselves", async ({page}) => {
+        await emailLogIn(page, user.email)
+        await gotoUserProfile(page, user)
+        await editCurrentUser(page)
+        
+        user = createNewUser({ groupName: UserGroup.Contributor })
+        await fillPersonalForm(page, user)
         await fillMembershipForm(page, user)
         await select(page, "UserGroup", user.groupName)
         await saveChanges(page)
