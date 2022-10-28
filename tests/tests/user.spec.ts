@@ -1,4 +1,4 @@
-import test, { expect } from '@playwright/test';
+import test, { expect, Page } from '@playwright/test';
 import { UserGroup, UserRank, UserStatus } from 'common/enums';
 import { NewUser } from 'common/interfaces';
 import {
@@ -11,43 +11,45 @@ import { randomInt, randomUUID } from 'crypto';
 import dayjs from '../lib/dayjs';
 import { storageLogIn } from '../utils/auth';
 
-test.describe("Add new user", () => {
-    test("Should only be accessible to super admin", async ({browser}) => {
-        const adminPage = await storageLogIn(browser, UserGroup.Administrator)
-        const superAdminPage = await storageLogIn(browser, UserGroup.SuperAdministrator)
-        
-        await adminPage.goto("/medlem/ny")
-        await superAdminPage.goto("/medlem/ny")
-        
-        await expect(adminPage).toHaveURL("/hjem")
-        await expect(superAdminPage).toHaveURL("/medlem/ny")
-    })
+test("New users can only be created by super admin", async ({browser}) => {
+    const adminPage = await storageLogIn(browser, UserGroup.Administrator)
+    const superAdminPage = await storageLogIn(browser, UserGroup.SuperAdministrator)
+    
+    await adminPage.goto("/medlem/ny")
+    await superAdminPage.goto("/medlem/ny")
+    
+    await expect(adminPage).toHaveURL("/hjem")
+    await expect(superAdminPage).toHaveURL("/medlem/ny")
+})
 
-    const newUser = createNewUser()
+test.describe.serial("Create and update user data", async () => {
+
+    let user: NewUser
+    let page: undefined | Page
 
     test("Should create new user", async ({browser}) => {
+        user = createNewUser({
+            capeName: null,
+            phoneNumber: null,
+            birthDate: null
+        })
+        page = await storageLogIn(browser, UserGroup.SuperAdministrator)
 
-        const page = await storageLogIn(browser, UserGroup.SuperAdministrator)
         await page.goto("/medlem/ny")
 
         await test.step("Post new user", async () => {
 
-            await page.getByLabel('Fornavn *').fill(newUser.firstName);
-            await page.getByLabel('Mellomnavn').fill(newUser.middleName);
-            await page.getByLabel('Etternavn *').fill(newUser.lastName);
-            await page.getByLabel('E-post *').fill(newUser.email);
+            await page.getByLabel('Fornavn *').fill(user.firstName);
+            await page.getByLabel('Mellomnavn').fill(user.middleName);
+            await page.getByLabel('Etternavn *').fill(user.lastName);
+            await page.getByLabel('E-post *').fill(user.email);
           
-            await page.getByRole('button', { name: `Rang ${userRankToPrettyStr(UserRank.ShortCircuit)}` }).click();
-            await page.getByRole('option', { name: userRankToPrettyStr(newUser.rank) }).click();
+            await select(page, "UserRank", user.rank)
+            await select(page, "UserGroup", user.groupName)
+            await select(page, "UserStatus", user.status)
           
-            await page.getByRole('button', { name: `Rolle ${userGroupToPrettyStr(UserGroup.Contributor)}` }).click();
-            await page.getByRole('option', { name: userGroupToPrettyStr(UserGroup.Editor) }).click();
-          
-            await page.getByRole('button', { name: `Status ${userStatusToPrettyStr(UserStatus.Active)}` }).click();
-            await page.getByRole('option', { name: userStatusToPrettyStr(newUser.status) }).click();
-          
-            await page.getByLabel('Startet *').fill(formatDate(newUser.startDate));
-            await page.getByLabel('Sluttet').fill(formatDate(newUser.endDate));
+            await page.getByLabel('Startet *').fill(monthFormat(user.startDate));
+            await page.getByLabel('Sluttet').fill(monthFormat(user.endDate));
           
             await page.getByRole('button', { name: 'Profilbilde Gutt' }).click();
             await page.getByRole('option', { name: 'Jente' }).click();
@@ -58,36 +60,75 @@ test.describe("Add new user", () => {
         })
 
         await test.step("Test user exists", async () => {
-            await page.goto("/medlem/liste")
-            await page.getByLabel('Styret').check();
-
-            const fullName = getFullName(newUser)
-            await expect(page.getByText(fullName)).toBeVisible()
-            
-            const userLink = page.getByRole('link', { name: fullName })   
-            await userLink.click()
-
-            await expect(page).toHaveURL(/\/medlem\/[1-9]+/)
-            await expect(page.getByText(fullName).first()).toBeVisible()
-
-            // We expect all items in this array to be visible on the user profile page
-            const userData = [
-                newUser.email, 
-                userRankToPrettyStr(newUser.rank),
-                userGroupToPrettyStr(newUser.groupName),
-                userStatusToPrettyStr(newUser.status),
-                formatDate(newUser.startDate),
-                formatDate(newUser.endDate)
-            ]
-            for(let i = 0; i < userData.length; i++) {
-                await expect(page.getByText(userData[i])).toBeVisible()
-            }
+            await gotoUserProfile(page, user)
+            await validateUserProfile(page, user)
         })
+    })
+
+    test("Should update user", async ({browser}) => {
+
+        await page.getByRole('link', { name: 'Rediger Profil' }).click();
+        await expect(page).toHaveURL(/\/medlem\/[0-9]+\/rediger/);
+
+        user = createNewUser({
+            groupName: UserGroup.Contributor,
+            rank: UserRank.Ohm,
+            status: UserStatus.Active
+        })
+        
+        await page.getByLabel('Fornavn *').fill(user.firstName);
+        await page.getByLabel('Mellomnavn').fill(user.middleName);
+        await page.getByLabel('Etternavn *').fill(user.lastName);
+        await page.getByLabel("Fødselsdato").fill(birthFormat(user.birthDate));
+        await page.getByLabel('E-post *').fill(user.email);
+        await page.getByLabel('Tlf.').fill(`${user.phoneNumber}`);
+        await page.getByLabel('Kappe').fill(user.capeName);
+ 
+        await select(page, "UserRank", user.rank)
+        await select(page, "UserStatus", user.status)
+ 
+        await page.getByLabel('Startet *').fill(monthFormat(user.startDate));
+        await page.getByLabel('Sluttet').fill(monthFormat(user.endDate));
+        
+        await select(page, "UserGroup", user.groupName)
+      
+        await page.getByRole('button', { name: 'Lagre' }).click();
+
+        await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
+        await validateUserProfile(page, user)
 
     })
 })
 
-function createNewUser(): NewUser {
+type UserEnum = UserRank | UserGroup | UserStatus
+type UserEnumName = "UserRank" | "UserGroup" | "UserStatus"
+
+async function select<T extends UserEnum>(page: Page, typeName: UserEnumName,  value: T) {
+
+    let buttonRegEx: RegExp
+    let selectValue: string
+    switch(typeName) {
+        case "UserRank": 
+            buttonRegEx = /Rang/
+            selectValue = userRankToPrettyStr(value as UserRank);
+            break
+        case "UserGroup": 
+            buttonRegEx = /Rolle/
+            selectValue = userGroupToPrettyStr(value as UserGroup);
+            break
+        case "UserStatus": 
+            buttonRegEx = /Status/
+            selectValue = userStatusToPrettyStr(value as UserStatus);
+            break
+        default: 
+            throw `The type is not implemented: "${typeName}"`
+    }
+
+    await page.getByRole('button', { name: buttonRegEx}).click();
+    await page.getByRole('option', { name: selectValue }).click();
+}
+
+function createNewUser(userData?: Partial<NewUser>): NewUser {
     const uuid: string = randomUUID().toLowerCase()
     const newUser: NewUser = {
         email: `${uuid}@motstanden.no`,
@@ -98,22 +139,107 @@ function createNewUser(): NewUser {
         lastName: uuid,
         profilePicture: "files/private/profilbilder/girl.png",
         status: UserStatus.Veteran,
-        startDate: "2019-01-01",
-        endDate: "2022-01-01",
+        startDate: `2019-${randomInt(1, 12)}-${randomInt(1, 28)}`,
+        endDate: `2022-${randomInt(1, 12)}-${randomInt(1, 28)}`,
         capeName: `cape id ${uuid}`,
         phoneNumber: randomInt(10000000, 99999999),
-        birthDate: "2000-01-01"
+        birthDate: `${randomInt(1980, 2003)}-${randomInt(1, 12)}-${randomInt(1, 28)}`,
+        ...userData
     }
     return newUser;
 }
 
-function getFullName(user: {firstName: string, middleName: string, lastName: string}): string {
+interface UserName {
+    firstName: string, 
+    middleName: string, 
+    lastName: string
+}
+
+function getFullName(user: UserName): string {
     const lastName = isNullOrWhitespace(user.middleName) 
                    ? user.lastName 
                    : user.middleName + " " + user.lastName
     return user.firstName + " " + lastName
 }
 
-function formatDate(date: string): string {
+function monthFormat(date: string): string {
     return dayjs(date).locale("nb").format("MMMM YYYY").toLowerCase()
+}
+
+function birthFormat(date: string): string {
+    return dayjs(date).format("DD.MM.YYYY")
+}
+
+async function gotoUserProfile(page: Page, user: UserName) {
+    await page.goto("/medlem/liste")
+    await page.getByLabel('Styret').check();
+
+    const fullName = getFullName(user)
+    await expect(page.getByText(fullName)).toBeVisible()
+    
+    const userLink = page.getByRole('link', { name: fullName })   
+    await userLink.click()
+
+    await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
+    await expect(page.getByText(fullName).first()).toBeVisible()
+}
+
+async function validateUserProfile(page: Page, user: NewUser) {
+
+    const fullName = getFullName(user)
+    await expect(page.getByText(fullName).first()).toBeVisible()
+
+    // We expect all items in this array to be visible on the user profile page (exactly once)
+    const uniqueData: string[] = [
+        user.email, 
+        userRankToPrettyStr(user.rank),
+        monthFormat(user.startDate),
+        monthFormat(user.endDate)
+    ]
+
+    // The group is not unique on the page if it is contributor
+    if(user.groupName !== UserGroup.Contributor)
+        uniqueData.push(userGroupToPrettyStr(user.groupName))
+
+    // The status is not unique on the page if it is Active
+    if(user.status !== UserStatus.Active)
+        uniqueData.push(userStatusToPrettyStr(user.status))
+
+    if(!isNullOrWhitespace(user.capeName))
+        uniqueData.push(user.capeName)
+    
+    if(user.phoneNumber)
+        uniqueData.push(`${user.phoneNumber}`)
+
+    if(!isNullOrWhitespace(user.birthDate))
+        uniqueData.push(dayjs(user.birthDate).format("DD MMMM YYYY"))
+    
+    for(let i = 0; i < uniqueData.length; i++) {
+        await expect(page.getByText(uniqueData[i])).toBeVisible()
+    }
+
+    const absentData: string[] = []
+    if(user.groupName === UserGroup.Contributor) {
+        const allEnums: UserGroup[] = getEnums<UserGroup>(UserGroup)
+        const groupTexts = allEnums.filter(val => val !== UserGroup.Contributor)
+                                   .map(val => userGroupToPrettyStr(val))
+        absentData.push(...groupTexts)
+    }
+
+    if(user.status === UserStatus.Active) {
+        const allEnums: UserStatus[] = getEnums<UserStatus>(UserStatus)
+        const statusTexts = allEnums.filter(val => val !== UserStatus.Active)
+                                    .map(val => userStatusToPrettyStr(val))
+        absentData.push(...statusTexts)
+    }
+
+    for(let i = 0; i < absentData.length; i++) {
+        await expect(page.getByText(absentData[i])).not.toBeVisible()
+    }
+
+}
+
+function getEnums<T>(enumObj: {}): T[] {
+    return Object.keys(enumObj)
+                 .map(itemStr => enumObj[itemStr as keyof typeof enumObj] as T)
 }
