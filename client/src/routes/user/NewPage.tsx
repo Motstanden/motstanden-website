@@ -95,9 +95,10 @@ function NewUserForm() {
     }
 
     const isDisabled = isSubmitting ||
-                       !isValidEmail ||
                        isNullOrWhitespace(firstName) || 
-                       isNullOrWhitespace(lastName) 
+                       isNullOrWhitespace(lastName) ||
+                       isNtnuMail(email) ||
+                       !validateEmail(email)
     return (
         <form onSubmit={onSubmit}>
             <Stack spacing={4} alignItems="center">
