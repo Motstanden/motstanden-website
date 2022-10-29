@@ -44,10 +44,8 @@ function NewUserForm() {
     const [userGroup, setUserGroup] = useState<UserGroup>(UserGroup.Contributor)
     const [userStatus, setUserStatus] = useState<UserStatus>(UserStatus.Active)
     const [startDate, setStartDate] = useState<Dayjs>(dayjs());
-    const [endDate, setEndDate] = useState<Dayjs | null>(null)
     const [profilePicture, setProfilePicture] = useState(profilePictureTVPair[0].value)
 
-    const [isInfoOk, setIsInfoOk] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const buildUser = (): NewUser => {
@@ -61,7 +59,7 @@ function NewUserForm() {
             profilePicture: profilePicture,
             status: userStatus,
             startDate: startDate.format("YYYY-MM-DD"),
-            endDate: endDate?.format("YYYY-MM-DD") ?? null,
+            endDate: null,
 
             // TODO ?
             capeName: "",
@@ -170,15 +168,6 @@ function NewUserForm() {
                         onChange={newVal => setStartDate(newVal ?? dayjs())}
                         renderInput={(params) => <TextField {...params} required />}
                     />
-                    <DatePicker
-                        views={["year", "month"]}
-                        label="Sluttet"
-                        minDate={dayjs().year(2018).month(7)}
-                        maxDate={dayjs().add(6, "year")}
-                        value={endDate}
-                        onChange={newVal => setEndDate(newVal)}
-                        renderInput={(params) => <TextField {...params} />}
-                    />
                     <TextField
                         select
                         label="Profilbilde"
@@ -198,15 +187,11 @@ function NewUserForm() {
                                 borderRadius: "50%",
                                 textAlign: "center",
                             }} />
-                        <FormControlLabel
-                            control={<Checkbox checked={isInfoOk} onClick={e => setIsInfoOk(!isInfoOk)} />}
-                            label={<div style={{ marginLeft: "5px" }}>All informasjon er riktig<br />(Ingen vei tilbake)</div>}
-                        />
                         <Button
                             variant="contained"
                             size="large"
                             type="submit"
-                            disabled={isSubmitting || !isInfoOk}
+                            disabled={isSubmitting}
                             sx={{ maxWidth: "300px"}}
                             endIcon={<PersonAddIcon />}
                         >Legg til bruker</Button>

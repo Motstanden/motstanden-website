@@ -72,7 +72,8 @@ test.describe.serial("Create and update user data", async () => {
         user = createNewUser({
             capeName: null,
             phoneNumber: null,
-            birthDate: null
+            birthDate: null,
+            endDate: null
         })
         page = await storageLogIn(browser, UserGroup.SuperAdministrator)
 
@@ -87,8 +88,6 @@ test.describe.serial("Create and update user data", async () => {
           
             await page.getByRole('button', { name: 'Profilbilde Gutt' }).click()
             await page.getByRole('option', { name: 'Jente' }).click()
-          
-            await page.getByLabel('All informasjon er riktig(Ingen vei tilbake)').check()
           
             await page.getByRole('button', { name: 'Legg til bruker' }).click()
         })
@@ -202,15 +201,18 @@ async function fillPersonalForm(page: Page, user: NewUser) {
 }
 
 async function fillMembershipForm(page: Page, user: NewUser, opts?: { skipRank?: boolean }) {
+    await select(page, "UserStatus", user.status)
+    await page.getByLabel('Startet *').fill(monthFormat(user.startDate))
+
     if(user.capeName) {
         await page.getByLabel('Kappe').fill(user.capeName)
+    }
+    if(user.endDate){
+        await page.getByLabel('Sluttet').fill(monthFormat(user.endDate))
     }
     if(!opts?.skipRank){
         await select(page, "UserRank", user.rank)
     }
-    await select(page, "UserStatus", user.status)
-    await page.getByLabel('Startet *').fill(monthFormat(user.startDate))
-    await page.getByLabel('Sluttet').fill(monthFormat(user.endDate))
 }
 
 type UserEnum = UserRank | UserGroup | UserStatus
@@ -323,7 +325,6 @@ async function validateUserProfile(page: Page, user: NewUser) {
         user.email, 
         userRankToPrettyStr(user.rank),
         monthFormat(user.startDate),
-        monthFormat(user.endDate)
     ]
 
     // The group is not unique on the page if it is contributor
@@ -343,6 +344,9 @@ async function validateUserProfile(page: Page, user: NewUser) {
     if(!isNullOrWhitespace(user.birthDate))
         uniqueData.push(dayjs(user.birthDate).format("DD MMMM YYYY"))
     
+    if(user.endDate)
+        uniqueData.push(monthFormat(user.endDate))
+
     for(let i = 0; i < uniqueData.length; i++) {
         await expect(page.getByText(uniqueData[i])).toBeVisible()
     }
