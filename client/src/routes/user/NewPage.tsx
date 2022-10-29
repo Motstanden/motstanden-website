@@ -4,11 +4,11 @@ import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 
-import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { UserGroup, UserRank, UserStatus } from 'common/enums';
 import { NewUser } from 'common/interfaces';
+import { isNullOrWhitespace, validateEmail } from 'common/utils';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useState } from 'react';
 import { useTitle } from 'src/hooks/useTitle';
@@ -45,7 +45,20 @@ function NewUserForm() {
     const [profilePicture, setProfilePicture] = useState(profilePictureTVPair[0].value)
 
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [isValidEmail, setIsValidEmail] = useState(true)
 
+    const onEmailBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
+        if(!validateEmail(email) || isNtnuMail(email)) {
+            setIsValidEmail(false)
+        }
+    }
+
+    const onEmailChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setEmail(e.target.value)
+        if(!isValidEmail) 
+            setIsValidEmail(true)
+    }
+    
     const buildUser = (): NewUser => {
         return {
             email: email.trim().toLowerCase(),
@@ -57,9 +70,9 @@ function NewUserForm() {
             profilePicture: profilePicture,
             status: userStatus,
             startDate: startDate.format("YYYY-MM-DD"),
-            endDate: null,
-
+            
             // TODO ?
+            endDate: null,
             capeName: "",
             phoneNumber: null,
             birthDate: null
@@ -88,7 +101,10 @@ function NewUserForm() {
         }
     }
 
-    const isNtnuMail = email.trim().toLowerCase().endsWith("ntnu.no")
+    const isDisabled = isSubmitting ||
+                       !isValidEmail ||
+                       isNullOrWhitespace(firstName) || 
+                       isNullOrWhitespace(lastName) 
     return (
         <form onSubmit={onSubmit}>
             <Stack spacing={4} alignItems="center">
@@ -122,13 +138,14 @@ function NewUserForm() {
                     label="E-post"
                     name="email"
                     value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    error={isNtnuMail}
+                    onChange={onEmailChange}
+                    error={!isValidEmail}
                     required
+                    onBlur={onEmailBlur}
                     autoComplete="off"
                     fullWidth
+                    helperText={isValidEmail ? null : (isNtnuMail(email) ? "Ntnu-e-post ikke tillat" : "Ugyldig e-post")}
                 />
-                {isNtnuMail && <Box color="error.main">Ntnu mail ikke tillat<br /></Box>}
                 <TextField
                     select
                     label="Rang"
@@ -196,7 +213,7 @@ function NewUserForm() {
                     variant="contained"
                     size="large"
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isDisabled}
                     style={{marginTop: "3em"}}
                     sx={{ maxWidth: "300px"}}
                     endIcon={<PersonAddIcon />}
@@ -204,4 +221,8 @@ function NewUserForm() {
             </Stack>
         </form>
     )
+}
+
+function isNtnuMail(email: string) {
+    return email.trim().toLowerCase().endsWith("ntnu.no")
 }
