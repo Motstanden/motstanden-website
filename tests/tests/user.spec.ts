@@ -10,6 +10,7 @@ import {
 import { randomInt, randomUUID } from 'crypto'
 import dayjs from '../lib/dayjs'
 import { emailLogIn, storageLogIn } from '../utils/auth'
+import { selectDate } from '../utils/datePicker'
 
 test("New users can only be created by super admin", async ({browser}) => {
     const adminPage = await storageLogIn(browser, UserGroup.Administrator)
@@ -83,7 +84,7 @@ test.describe.serial("Create and update user data", async () => {
 
             await fillPersonalForm(page, user)
 
-            await page.getByLabel('Startet *').fill(monthFormat(user.startDate))
+            await selectDate(page, "Startet *", user.startDate, "MonthYear")
         
             await page.getByRole('button', { name: 'Profilbilde Gutt' }).click()
             await page.getByRole('option', { name: 'Jente' }).click()
@@ -196,7 +197,7 @@ async function fillPersonalForm(page: Page, user: NewUser) {
     await page.getByLabel('E-post *').fill(user.email)
     
     if(user.birthDate){
-        await page.getByLabel("Fødselsdato").fill(birthFormat(user.birthDate))
+        await selectDate(page, "Fødselsdato", user.birthDate, "DayMonthYear")
     }
     if(user.phoneNumber){
         await page.getByLabel('Tlf.').fill(`${user.phoneNumber}`)
@@ -205,13 +206,13 @@ async function fillPersonalForm(page: Page, user: NewUser) {
 
 async function fillMembershipForm(page: Page, user: NewUser, opts?: { skipRank?: boolean }) {
     await select(page, "UserStatus", user.status)
-    await page.getByLabel('Startet *').fill(monthFormat(user.startDate))
+    await selectDate(page, "Startet *", user.startDate, "MonthYear")
 
     if(user.capeName) {
         await page.getByLabel('Kappe').fill(user.capeName)
     }
     if(user.endDate){
-        await page.getByLabel('Sluttet').fill(monthFormat(user.endDate))
+        await selectDate(page, "Sluttet", user.endDate, "MonthYear")
     }
     if(!opts?.skipRank){
         await select(page, "UserRank", user.rank)
