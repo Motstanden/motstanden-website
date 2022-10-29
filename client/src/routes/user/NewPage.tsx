@@ -1,13 +1,11 @@
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Button from '@mui/material/Button';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 
 import Box from '@mui/material/Box';
-import Checkbox from '@mui/material/Checkbox';
-import FormControl from '@mui/material/FormControl';
+import Stack from '@mui/material/Stack';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { UserGroup, UserRank, UserStatus } from 'common/enums';
 import { NewUser } from 'common/interfaces';
@@ -15,7 +13,6 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { useState } from 'react';
 import { useTitle } from 'src/hooks/useTitle';
 import { groupTVPair, profilePictureTVPair, rankTVPair, statusTVPair } from './Components';
-import Stack from '@mui/material/Stack';
 
 export function NewUserPage() {
     useTitle("Ny bruker")
@@ -23,7 +20,8 @@ export function NewUserPage() {
         <Paper elevation={6}
             sx={{
                 px: 3,
-                py: 1,
+                pt: 1,
+                pb: 6,
                 maxWidth: "600px",
                 marginInline: "auto",
                 marginTop: "20px"
@@ -93,111 +91,117 @@ function NewUserForm() {
     const isNtnuMail = email.trim().toLowerCase().endsWith("ntnu.no")
     return (
         <form onSubmit={onSubmit}>
-            <FormControl fullWidth >
-                <Stack spacing={4} >
-                    <TextField
-                        label="Fornavn"
-                        name="firstName"
-                        value={firstName}
-                        onChange={e => setFirstName(e.target.value)}
-                        required
-                        autoComplete="off"
-                    />
-                    <TextField
-                        label="Mellomnavn"
-                        name="middleName"
-                        value={middleName}
-                        onChange={e => setMiddleName(e.target.value)}
-                        autoComplete="off"
-                    />
-                    <TextField
-                        label="Etternavn"
-                        name="lastName"
-                        value={lastName}
-                        onChange={e => setLastName(e.target.value)}
-                        required
-                        autoComplete="off"
-                    />
-                    <TextField
-                        label="E-post"
-                        name="email"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        error={isNtnuMail}
-                        required
-                        autoComplete="off"
-                    />
-                    {isNtnuMail && <Box color="error.main">Ntnu mail ikke tillat<br /></Box>}
-                    <TextField
-                        select
-                        label="Rang"
-                        name="userRank"
-                        required
-                        value={userRank}
-                        onChange={(e) => setUserRank(e.target.value as UserRank)}
-                    >
-                        {rankTVPair.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
-                    </TextField>
-                    <TextField
-                        select
-                        label="Rolle"
-                        name="userGroup"
-                        required
-                        value={userGroup}
-                        onChange={e => setUserGroup(e.target.value as UserGroup)}
-                    >
-                        {groupTVPair.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
-                    </TextField>
-                    <TextField
-                        select
-                        label="Status"
-                        name="userStatus"
-                        required
-                        value={userStatus}
-                        error={userStatus === UserStatus.Inactive}
-                        onChange={e => setUserStatus(e.target.value as UserStatus)}
-                    >
-                        {statusTVPair.map(item => item.value !== UserStatus.Inactive && (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
-                    </TextField>
-                    <DatePicker
-                        views={["year", "month"]}
-                        label="Startet"
-                        minDate={dayjs().year(2018).month(7)}
-                        maxDate={dayjs()}
-                        value={startDate}
-                        onChange={newVal => setStartDate(newVal ?? dayjs())}
-                        renderInput={(params) => <TextField {...params} required />}
-                    />
-                    <TextField
-                        select
-                        label="Profilbilde"
-                        required
-                        name="profilePicture"
-                        value={profilePicture}
-                        onChange={e => setProfilePicture(e.target.value)}
-                    >
-                        {profilePictureTVPair.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
-                    </TextField>
-                    <Stack alignItems="center" spacing={4} sx={{pb: 6}} >
-                        <img
-                            src={`${window.location.origin}/${profilePicture}`}
-                            alt={`Profilbilde for ny bruker: ${firstName}`}
-                            style={{
-                                maxWidth: "300px",
-                                borderRadius: "50%",
-                                textAlign: "center",
-                            }} />
-                        <Button
-                            variant="contained"
-                            size="large"
-                            type="submit"
-                            disabled={isSubmitting}
-                            sx={{ maxWidth: "300px"}}
-                            endIcon={<PersonAddIcon />}
-                        >Legg til bruker</Button>
-                    </Stack>
-                </Stack>
-            </FormControl>
+            <Stack spacing={4} alignItems="center">
+                <TextField
+                    label="Fornavn"
+                    name="firstName"
+                    value={firstName}
+                    onChange={e => setFirstName(e.target.value)}
+                    required
+                    autoComplete="off"
+                    fullWidth
+                />
+                <TextField
+                    label="Mellomnavn"
+                    name="middleName"
+                    value={middleName}
+                    onChange={e => setMiddleName(e.target.value)}
+                    autoComplete="off"
+                    fullWidth
+                />
+                <TextField
+                    label="Etternavn"
+                    name="lastName"
+                    value={lastName}
+                    onChange={e => setLastName(e.target.value)}
+                    required
+                    autoComplete="off"
+                    fullWidth
+                />
+                <TextField
+                    label="E-post"
+                    name="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    error={isNtnuMail}
+                    required
+                    autoComplete="off"
+                    fullWidth
+                />
+                {isNtnuMail && <Box color="error.main">Ntnu mail ikke tillat<br /></Box>}
+                <TextField
+                    select
+                    label="Rang"
+                    name="userRank"
+                    required
+                    value={userRank}
+                    onChange={(e) => setUserRank(e.target.value as UserRank)}
+                    fullWidth
+                >
+                    {rankTVPair.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
+                </TextField>
+                <TextField
+                    select
+                    label="Rolle"
+                    name="userGroup"
+                    required
+                    value={userGroup}
+                    onChange={e => setUserGroup(e.target.value as UserGroup)}
+                    fullWidth
+                >
+                    {groupTVPair.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
+                </TextField>
+                <TextField
+                    select
+                    label="Status"
+                    name="userStatus"
+                    required
+                    value={userStatus}
+                    error={userStatus === UserStatus.Inactive}
+                    onChange={e => setUserStatus(e.target.value as UserStatus)}
+                    fullWidth
+                >
+                    {statusTVPair.map(item => item.value !== UserStatus.Inactive && (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
+                </TextField>
+                <DatePicker
+                    views={["year", "month"]}
+                    label="Startet"
+                    minDate={dayjs().year(2018).month(7)}
+                    maxDate={dayjs()}
+                    value={startDate}
+                    onChange={newVal => setStartDate(newVal ?? dayjs())}
+                    renderInput={(params) => <TextField {...params} required fullWidth />}
+                />
+                <TextField
+                    select
+                    label="Profilbilde"
+                    required
+                    name="profilePicture"
+                    value={profilePicture}
+                    onChange={e => setProfilePicture(e.target.value)}
+                    sx={{pb: 1}}
+                    fullWidth
+                >
+                    {profilePictureTVPair.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
+                </TextField>
+                <img
+                    src={`${window.location.origin}/${profilePicture}`}
+                    alt={`Profilbilde for ny bruker: ${firstName}`}
+                    style={{
+                        maxWidth: "300px",
+                        borderRadius: "50%",
+                        textAlign: "center",
+                    }} />
+                <Button
+                    variant="contained"
+                    size="large"
+                    type="submit"
+                    disabled={isSubmitting}
+                    style={{marginTop: "3em"}}
+                    sx={{ maxWidth: "300px"}}
+                    endIcon={<PersonAddIcon />}
+                >Legg til bruker</Button>
+            </Stack>
         </form>
     )
 }
