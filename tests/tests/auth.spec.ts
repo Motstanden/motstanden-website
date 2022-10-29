@@ -57,14 +57,14 @@ test.describe("User can log out", () => {
     test("Log out of all browser", async ({ browser }) => {
         
         // Log in on multiple isolated pages
-        await storageLogIn(browser, UserGroup.Editor)
-        await storageLogIn(browser, UserGroup.Editor)
-        await storageLogIn(browser, UserGroup.Editor)
+        const p1 = await storageLogIn(browser, UserGroup.Editor)
+        const p2 = await storageLogIn(browser, UserGroup.Editor)
+        const p3 = await storageLogIn(browser, UserGroup.Editor)
 
-        const contexts = browser.contexts()
+        const pages = [p1, p2, p3]
 
         await test.step("Click 'log out of all units'", async () => {
-            const page = contexts[contexts.length - 1].pages()[0]
+            const page = pages[pages.length - 1]
 
             page.once('dialog', dialog => dialog.accept());
             await page.getByRole('button', { name: 'Profilmeny' }).click();
@@ -75,8 +75,8 @@ test.describe("User can log out", () => {
         })
 
         await test.step("Test that the user is logged out of all browsers", async () => {
-            for(let i = 0; i < contexts.length; i++){
-                const page = contexts[i].pages()[0]
+            for(let i = 0; i < pages.length; i++){
+                const page = pages[i]
                 
                 // The user should be logged out when the AccessToken expires.
                 await expireAccessToken(page)
