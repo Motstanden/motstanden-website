@@ -20,6 +20,9 @@ test("New users can only be created by super admin", async ({browser}) => {
     
     await expect(adminPage).toHaveURL("/hjem")
     await expect(superAdminPage).toHaveURL("/medlem/ny")
+
+    await adminPage.context().close()
+    await superAdminPage.context().close()
 })
 
 test("Admin can not promote self to super admin", async ({browser}) => {
@@ -32,6 +35,8 @@ test("Admin can not promote self to super admin", async ({browser}) => {
 
     const superAdminCount = await page.getByRole('option', { name: userGroupToPrettyStr(UserGroup.SuperAdministrator)}).count()
     expect(superAdminCount).toBe(0)
+
+    await page.context().close()    
 })
 
 test.describe("Set inactive status", async () => {
@@ -39,11 +44,13 @@ test.describe("Set inactive status", async () => {
     test("Contributor can not update self to be inactive", async ({browser}) => {
         const page = await storageLogIn(browser, UserGroup.Contributor)
         expect(await canUpdateInactive(page)).not.toBeTruthy()
+        await page.context().close()
     })
 
     test("Admin can update self to be inactive", async ({browser}) => {
         const page = await storageLogIn(browser, UserGroup.Administrator)
         expect(await canUpdateInactive(page)).toBeTruthy()
+        await page.context().close()
     })
 
     async function canUpdateInactive(page: Page): Promise<boolean> {
@@ -108,6 +115,7 @@ test.describe.serial("Create and update user data", async () => {
         await saveChanges(page)
         await validateUserProfile(page, user)
 
+        await page.context().close()
     })
 
     test("Admin can update membership info", async ({browser}) => {
@@ -139,6 +147,8 @@ test.describe.serial("Create and update user data", async () => {
         await select(page, "UserGroup", user.groupName)
         await saveChanges(page)
         await validateUserProfile(page, user)
+
+        page.context().close()
     })
 
     test("Admin can update all info about themselves", async ({page}) => {

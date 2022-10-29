@@ -50,6 +50,8 @@ test.describe("User can log out", () => {
 
         await expect(page).toHaveURL('')
         await testUserIsLoggedOut(page)
+
+        await page.context().close()
     });
   
     test("Log out of all browser", async ({ browser }) => {
@@ -85,6 +87,8 @@ test.describe("User can log out", () => {
                 
                 await expect(page).toHaveURL('/logg-inn')
                 await testUserIsLoggedOut(page)
+                
+                await page.context().close()
             }
         })
 
