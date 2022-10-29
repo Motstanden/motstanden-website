@@ -82,10 +82,9 @@ test.describe.serial("Create and update user data", async () => {
         await test.step("Post new user", async () => {
 
             await fillPersonalForm(page, user)
-            await fillMembershipForm(page, user)
+
+            await page.getByLabel('Startet *').fill(monthFormat(user.startDate))
         
-            await select(page, "UserGroup", user.groupName)
-          
             await page.getByRole('button', { name: 'Profilbilde Gutt' }).click()
             await page.getByRole('option', { name: 'Jente' }).click()
           
@@ -101,7 +100,7 @@ test.describe.serial("Create and update user data", async () => {
     test("Super admin can update all info", async () => {
         
         user = createNewUser({
-            groupName: UserGroup.Contributor,
+            groupName: UserGroup.Editor,
             rank: UserRank.Ohm,
             status: UserStatus.Active
         })
@@ -155,7 +154,11 @@ test.describe.serial("Create and update user data", async () => {
         await gotoCurrentUser(page)
         await editCurrentUser(page)
         
-        user = createNewUser({ groupName: UserGroup.Contributor })
+        user = createNewUser({ 
+            groupName: UserGroup.Contributor, 
+            rank: UserRank.KiloOhm,
+            status: UserStatus.Veteran 
+        })
         await fillPersonalForm(page, user)
         await fillMembershipForm(page, user)
         await select(page, "UserGroup", user.groupName)
@@ -175,7 +178,7 @@ test.describe.serial("Create and update user data", async () => {
         user = createNewUser({
             rank: user.rank,
             groupName: user.groupName,
-            status: UserStatus.Active
+            status: UserStatus.Retired
         })
 
         await fillPersonalForm(page, user)
@@ -247,13 +250,13 @@ function createNewUser(userData?: Partial<NewUser>): NewUser {
     const uuid: string = randomUUID().toLowerCase()
     const newUser: NewUser = {
         email: `${uuid}@motstanden.no`,
-        groupName: UserGroup.Editor,
-        rank: UserRank.KiloOhm,
+        groupName: UserGroup.Contributor,
+        rank: UserRank.ShortCircuit,
         firstName: "__Test",
         middleName: "User",
         lastName: uuid,
         profilePicture: "files/private/profilbilder/girl.png",
-        status: UserStatus.Veteran,
+        status: UserStatus.Active,
         startDate: `2019-${randomInt(1, 12)}-${randomInt(1, 28)}`,
         endDate: `2022-${randomInt(1, 12)}-${randomInt(1, 28)}`,
         capeName: `cape id ${uuid}`,

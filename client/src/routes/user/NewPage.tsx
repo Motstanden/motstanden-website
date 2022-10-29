@@ -12,7 +12,7 @@ import { isNullOrWhitespace, validateEmail } from 'common/utils';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useState } from 'react';
 import { useTitle } from 'src/hooks/useTitle';
-import { groupTVPair, profilePictureTVPair, rankTVPair, statusTVPair } from './Components';
+import { profilePictureTVPair } from './Components';
 
 export function NewUserPage() {
     useTitle("Ny bruker")
@@ -26,7 +26,7 @@ export function NewUserPage() {
                 marginInline: "auto",
                 marginTop: "20px"
             }}>
-            <h1>Ny bruker</h1>
+            <h1 style={{marginBottom: "1em"}}>Ny bruker</h1>
             <NewUserForm />
         </Paper>
     )
@@ -38,9 +38,6 @@ function NewUserForm() {
     const [middleName, setMiddleName] = useState("")
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
-    const [userRank, setUserRank] = useState<UserRank>(UserRank.ShortCircuit)
-    const [userGroup, setUserGroup] = useState<UserGroup>(UserGroup.Contributor)
-    const [userStatus, setUserStatus] = useState<UserStatus>(UserStatus.Active)
     const [startDate, setStartDate] = useState<Dayjs>(dayjs());
     const [profilePicture, setProfilePicture] = useState(profilePictureTVPair[0].value)
 
@@ -62,16 +59,16 @@ function NewUserForm() {
     const buildUser = (): NewUser => {
         return {
             email: email.trim().toLowerCase(),
-            groupName: userGroup,
-            rank: userRank,
-            firstName: firstName,
-            middleName: middleName,
-            lastName: lastName,
-            profilePicture: profilePicture,
-            status: userStatus,
+            firstName: firstName.trim(),
+            middleName: middleName.trim(),
+            lastName: lastName.trim(),
             startDate: startDate.format("YYYY-MM-DD"),
+            profilePicture: profilePicture,
             
-            // TODO ?
+            // Fields not in the form
+            rank: UserRank.ShortCircuit,
+            status: UserStatus.Active,
+            groupName: UserGroup.Contributor,
             endDate: null,
             capeName: "",
             phoneNumber: null,
@@ -82,11 +79,7 @@ function NewUserForm() {
     const onSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
         setIsSubmitting(true)
-
         const user = buildUser()
-
-        //# TODO validate user
-
         let response = await fetch("/api/create-user", {
             method: "POST",
             body: JSON.stringify(user),
@@ -146,40 +139,6 @@ function NewUserForm() {
                     fullWidth
                     helperText={isValidEmail ? null : (isNtnuMail(email) ? "Ntnu-e-post ikke tillat" : "Ugyldig e-post")}
                 />
-                <TextField
-                    select
-                    label="Rang"
-                    name="userRank"
-                    required
-                    value={userRank}
-                    onChange={(e) => setUserRank(e.target.value as UserRank)}
-                    fullWidth
-                >
-                    {rankTVPair.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
-                </TextField>
-                <TextField
-                    select
-                    label="Rolle"
-                    name="userGroup"
-                    required
-                    value={userGroup}
-                    onChange={e => setUserGroup(e.target.value as UserGroup)}
-                    fullWidth
-                >
-                    {groupTVPair.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
-                </TextField>
-                <TextField
-                    select
-                    label="Status"
-                    name="userStatus"
-                    required
-                    value={userStatus}
-                    error={userStatus === UserStatus.Inactive}
-                    onChange={e => setUserStatus(e.target.value as UserStatus)}
-                    fullWidth
-                >
-                    {statusTVPair.map(item => item.value !== UserStatus.Inactive && (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
-                </TextField>
                 <DatePicker
                     views={["year", "month"]}
                     label="Startet"
