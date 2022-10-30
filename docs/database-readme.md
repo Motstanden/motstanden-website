@@ -46,3 +46,20 @@ The names of databases and backup directory is set in [create_backup.sh](./creat
 The database names and backup directories will be different for production and development environments, and this is decided by the `IS_DEV_ENV` variable.
 
 The script creates a backup directory and a corresponding directory for each database there. Backup names will start with the date the backup was done and the name of the database.
+
+### Backup service and timer
+For backing up the database, a systemd timer and service is used. The service executes the `create_backup.sh` script, and the timer triggers the service routinely (for example every week).
+
+To implement automatic backup of database on the production server, the files [backup_motstanden.service](./systemd-backup-files/backup_motstanden.service) and [backup_motstanden.timer](./systemd-backup-files/backup_motstanden.timer) must be moved to the folder `/etc/systemd/system`, these must be loaded and the timer must be enabled.
+This for example be done via this script:
+```sh
+sudo mv ./systemd-backup-files/backup_motstanden.* /etc/systemd/system
+sudo systemctl daemon-reload
+sudo systemctl enable backup_motstanden.timer
+sudo systemctl start backup_motstanden.timer
+```
+
+The `.service` and `.timer` files lies in `/etc/systemd/system/` directory. 
+For interacting with systemd timers and services, see arch-linux's excellent wiki:
+- [Timers](https://wiki.archlinux.org/title/Systemd/Timers)
+- [Services](https://wiki.archlinux.org/title/Systemd)

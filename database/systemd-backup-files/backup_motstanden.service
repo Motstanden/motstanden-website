@@ -1,0 +1,11 @@
+[Unit]
+Description=Service for excecuting motstanden database backup script
+
+[Service] 
+User=simen
+WorkingDirectory=/MOTSTANDEN/motstanden-website/database
+ExecStart=/MOTSTANDEN/motstanden-website/database/create_backup.sh
+
+[Install]
+WantedBy=multi-user.target
+
