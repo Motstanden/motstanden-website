@@ -27,3 +27,22 @@ This project relies on two SQLite databases that exists independently:
 
  ### Resources
   - Good practices: https://enterprisecraftsmanship.com/posts/database-versioning-best-practices/
+
+## Development environment variable
+Usage of the database differs between production and development environments. An environment file is therefore used to differ between these environments. To set this variable, a `.env` file can be created and sourced.
+This can be done by copying the [.env.sample](./.env.sample) to `.env` and sourcing this file.
+
+In linux, this can be done like this:
+```sh
+cp .env.sample .env
+source .env
+```
+
+## Backup database
+To back up the database, make sure the environment variable `IS_DEV_ENV` is set.
+Run the backup script via the command `sh create_backup.sh` to create a backup.
+
+The names of databases and backup directory is set in [create_backup.sh](./create_backup.sh) and can be changed according to needs. 
+The database names and backup directories will be different for production and development environments, and this is decided by the `IS_DEV_ENV` variable.
+
+The script creates a backup directory and a corresponding directory for each database there. Backup names will start with the date the backup was done and the name of the database.
