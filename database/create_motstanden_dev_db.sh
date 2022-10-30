@@ -33,6 +33,9 @@ sqlite3 motstanden_dev.db < migrations/motstanden_db/07_events_refactor.sql;
 echo "Running: 08_rumours.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/08_rumours.sql;
 
+# Change the way upcoming events are calculated
+echo "Running: 09_vw_event_refactor.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/09_vw_event_refactor.sql;
 
 # Insert data that is representative for the current data in the database
 cd data/db
