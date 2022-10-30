@@ -121,7 +121,7 @@ function MemberList({ onLinkClick }: { onLinkClick?: VoidFunction }) {
     }
 
     return (
-        <ListItemLink text="Medlemmer" to="/medlem/liste" onLinkClick={onLinkClick} />
+        <ListItemLink text="Medlemmer" to="/medlem/liste" onLinkClick={onLinkClick} icon={<MenuIcons.MemberList />}/>
     )
 }
 
