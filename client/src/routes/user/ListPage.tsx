@@ -7,6 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { headerStyle, noVisitedLinkStyle, rowStyle } from 'src/assets/style/tableStyle';
 
+import { Button, Snackbar } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -18,8 +19,8 @@ import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/u
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Link as RouterLink, useOutletContext } from 'react-router-dom';
+import { TitleCard } from 'src/components/TitleCard';
 import { useTitle } from 'src/hooks/useTitle';
-import { Snackbar } from '@mui/material';
 
 export function UserListPage() {
     useTitle("Medlemsliste")
@@ -41,10 +42,6 @@ export function UserListPage() {
 
     const actualUsers = data.filter(user => !isMotstandenMail(user.email))
     const boardUsers = data.filter(user => isMotstandenMail(user.email))
-    const activeUsers = data.filter(user => user.status === UserStatus.Active && !isMotstandenMail(user.email))
-    const inactiveUsers = data.filter(user => !(user.status === UserStatus.Active) && !isMotstandenMail(user.email))
-    const retiredUsers = data.filter(user => user.status === UserStatus.Retired && !isMotstandenMail(user.email))
-    const veteranUsers = data.filter(user => user.status === UserStatus.Veteran && !isMotstandenMail(user.email))
 
     return (
         <>
@@ -106,21 +103,7 @@ export function UserListPage() {
                 </>
             )}
             <Divider sx={{ mt: "60px", mb: "40px" }} />
-            <Paper sx={{
-                mb: 4,
-                pt: 2,
-                pb: 1,
-                px: 2
-            }}>
-                <Grid container  spacing={0}>
-                    <Grid item xs={12}><h4 style={{margin: "0px"}}>Nedlast e-postlister</h4></Grid>
-                    <EmailLink users={actualUsers} label="Alle"/>
-                    <EmailLink users={activeUsers} label="Aktive"/>
-                    <EmailLink users={veteranUsers} label="Veteraner"/>
-                    <EmailLink users={retiredUsers} label="Pensjonister"/>
-                    <EmailLink users={inactiveUsers} label="Inaktive"/>
-                </Grid>
-            </Paper>
+            <EmailLists users={actualUsers}/>
         </>
     )
 }
@@ -136,37 +119,62 @@ function FilterBox({ label, checked, onClick }: { label: string, checked: boolea
     )
 }
 
-function EmailLink({
-    users,
-    label
-}:{
-    users: User[],
-    label: string
-}) {
-    const [open, setOpen] = useState(false)
-
-    const handleClick = () => {
-        setOpen(true);
-        navigator.clipboard.writeText(fileData);
-    }
-    
-    const info = users.map((user: User) => (user.email));
-    
-    const fileData = info.length === 0 ? "Fant ingen brukere" : info.join("\n")
+function EmailLists( { users }: { users: User[]}) {
+    const activeUsers = users.filter(user => user.status === UserStatus.Active)
+    const veteranUsers = users.filter(user => user.status === UserStatus.Veteran)
+    const retiredUsers = users.filter(user => user.status === UserStatus.Retired)
+    const inactiveUsers = users.filter(user => user.status === UserStatus.Inactive)
 
     return (
-        <Grid item xs={12}>
-            <Link onClick={handleClick} color="secondary" underline="hover">
+        <Grid container xs={12} sm={12} md={6}>
+            <TitleCard title='E-postlister' sx={{width: "100%", maxWidth: "600px"}}>
+                <ul style={{paddingLeft: "30px", listStyleType: `"-"`}}>
+                    <EmailListItem users={users} label="Alle"/>
+                    <EmailListItem users={activeUsers} label="Aktive"/>
+                    <EmailListItem users={veteranUsers} label="Veteraner"/>
+                    <EmailListItem users={retiredUsers} label="Pensjonister"/>
+                    <EmailListItem users={inactiveUsers} label="Inaktive"/>
+                </ul>
+            </TitleCard>
+        </Grid>
+    )
+}
+
+function EmailListItem({users, label }:{ users: User[], label: string }) {
+    const [open, setOpen] = useState(false)
+
+    const onClick = () => {
+        const data = users.map((user: User) => (user.email))
+                          .join("\n")
+        navigator.clipboard.writeText(data);
+        setOpen(true);
+    }
+
+    if(users.length <= 0){
+        return <>
+        </>
+    }
+
+    return (
+        <li style={{marginBottom: "10px"}}>
+            <Button 
+                onClick={onClick} 
+                color="secondary" 
+                sx={{
+                    textTransform: "none", 
+                    px: 1.5, 
+                    minWidth: "0px"
+                }}>
                 {label}
-            </Link>
+            </Button>
             <Snackbar
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                 open={open}
                 onClose={() => setOpen(false)}
                 autoHideDuration={2000}
-                message="Copied to clipboard"
+                message="Kopiert til skrivebord"
             />
-        </Grid>
+        </li>
     )
 }
 
