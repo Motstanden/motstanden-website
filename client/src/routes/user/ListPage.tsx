@@ -7,16 +7,19 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { headerStyle, noVisitedLinkStyle, rowStyle } from 'src/assets/style/tableStyle';
 
+import { Button, Snackbar } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
+import { UserStatus } from 'common/enums';
 import { User } from "common/interfaces";
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Link as RouterLink, useOutletContext } from 'react-router-dom';
+import { TitleCard } from 'src/components/TitleCard';
 import { useTitle } from 'src/hooks/useTitle';
 
 export function UserListPage() {
@@ -49,19 +52,19 @@ export function UserListPage() {
                 pb: 1,
                 px: 2
             }}>
-                <h4 style={{ margin: "0px" }}>Visning</h4>
+                <h4 style={{margin: "0px"}}>Visning</h4>
                 <Grid container spacing={0} justifyContent="start">
-                    <FilterBox label="Navn" checked={showName} onClick={() => setShowName(!showName)} />
-                    <FilterBox label="Rang" checked={showRank} onClick={() => setShowRank(!showRank)} />
-                    <FilterBox label="Kappe" checked={showCape} onClick={() => setShowCape(!showCape)} />
-                    <FilterBox label="Status" checked={showStatus} onClick={() => setShowStatus(!showStatus)} />
-                    <FilterBox label="E-post" checked={showMail} onClick={() => setShowMail(!showMail)} />
-                    <FilterBox label="Tlf" checked={showPhone} onClick={() => setShowPhone(!showPhone)} />
-                    <FilterBox label="Bursdag" checked={showBirth} onClick={() => setShowBirth(!showBirth)} />
-                    <FilterBox label="Start" checked={showStart} onClick={() => setShowStart(!showStart)} />
-                    <FilterBox label="Slutt" checked={showEnd} onClick={() => setShowEnd(!showEnd)} />
-                    <FilterBox label="Rolle" checked={showRole} onClick={() => setShowRole(!showRole)} />
-                    <FilterBox label="Styret" checked={showBoard} onClick={() => setShowBoard(!showBoard)} />
+                    <FilterBox label="Navn"   checked={showName}    onClick={() => setShowName(!showName)}/>
+                    <FilterBox label="Rang"   checked={showRank}    onClick={() => setShowRank(!showRank)}/>
+                    <FilterBox label="Kappe"  checked={showCape}    onClick={() => setShowCape(!showCape)}/>
+                    <FilterBox label="Status" checked={showStatus}  onClick={() => setShowStatus(!showStatus)}/>
+                    <FilterBox label="E-post" checked={showMail}    onClick={() => setShowMail(!showMail)}/>
+                    <FilterBox label="Tlf"     checked={showPhone}  onClick={() => setShowPhone(!showPhone)}/>
+                    <FilterBox label="Bursdag" checked={showBirth}  onClick={() => setShowBirth(!showBirth)}/>
+                    <FilterBox label="Start"   checked={showStart}  onClick={() => setShowStart(!showStart)}/>
+                    <FilterBox label="Slutt"   checked={showEnd}    onClick={() => setShowEnd(!showEnd)}/>
+                    <FilterBox label="Rolle"  checked={showRole}    onClick={() => setShowRole(!showRole)}/>
+                    <FilterBox label="Styret" checked={showBoard}   onClick={() => setShowBoard(!showBoard)}/>
                 </Grid>
             </Paper>
             <UserTable
@@ -99,6 +102,8 @@ export function UserListPage() {
                     />
                 </>
             )}
+            <Divider sx={{ mt: "60px", mb: "40px" }} />
+            <EmailLists users={actualUsers}/>
         </>
     )
 }
@@ -111,6 +116,65 @@ function FilterBox({ label, checked, onClick }: { label: string, checked: boolea
                 label={label}
             />
         </Grid>
+    )
+}
+
+function EmailLists( { users }: { users: User[]}) {
+    const activeUsers = users.filter(user => user.status === UserStatus.Active)
+    const veteranUsers = users.filter(user => user.status === UserStatus.Veteran)
+    const retiredUsers = users.filter(user => user.status === UserStatus.Retired)
+    const inactiveUsers = users.filter(user => user.status === UserStatus.Inactive)
+
+    return (
+        <Grid container xs={12} sm={12} md={6}>
+            <TitleCard title='E-postlister' sx={{width: "100%", maxWidth: "600px"}}>
+                <ul style={{paddingLeft: "30px", listStyleType: `"-"`}}>
+                    <EmailListItem users={users} label="Alle"/>
+                    <EmailListItem users={activeUsers} label="Aktive"/>
+                    <EmailListItem users={veteranUsers} label="Veteraner"/>
+                    <EmailListItem users={retiredUsers} label="Pensjonister"/>
+                    <EmailListItem users={inactiveUsers} label="Inaktive"/>
+                </ul>
+            </TitleCard>
+        </Grid>
+    )
+}
+
+function EmailListItem({users, label }:{ users: User[], label: string }) {
+    const [open, setOpen] = useState(false)
+
+    const onClick = () => {
+        const data = users.map((user: User) => (user.email))
+                          .join("\n")
+        navigator.clipboard.writeText(data);
+        setOpen(true);
+    }
+
+    if(users.length <= 0){
+        return <>
+        </>
+    }
+
+    return (
+        <li style={{marginBottom: "10px"}}>
+            <Button 
+                onClick={onClick} 
+                color="secondary" 
+                sx={{
+                    textTransform: "none", 
+                    px: 1.5, 
+                    minWidth: "0px"
+                }}>
+                {label}
+            </Button>
+            <Snackbar
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                open={open}
+                onClose={() => setOpen(false)}
+                autoHideDuration={2000}
+                message="Kopiert til skrivebord"
+            />
+        </li>
     )
 }
 
