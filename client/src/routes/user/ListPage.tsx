@@ -12,14 +12,14 @@ import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
+import { UserStatus } from 'common/enums';
 import { User } from "common/interfaces";
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Link as RouterLink, useOutletContext } from 'react-router-dom';
 import { useTitle } from 'src/hooks/useTitle';
-import { UserStatus } from 'common/enums';
-import { isEmptyBindingElement } from 'typescript';
+import { Snackbar } from '@mui/material';
 
 export function UserListPage() {
     useTitle("Medlemsliste")
@@ -143,23 +143,29 @@ function EmailLink({
     users: User[],
     label: string
 }) {
+    const [open, setOpen] = useState(false)
+
+    const handleClick = () => {
+        setOpen(true);
+        navigator.clipboard.writeText(fileData);
+    }
     
-    const info = users.map((user: User) => (
-        [
-            user.middleName === "" ? [user.firstName, user.lastName].join(" ") : [user.firstName, user.middleName, user.lastName].join(" "),
-            [user.email]
-        ].join(": ")
-    ));
+    const info = users.map((user: User) => (user.email));
     
     const fileData = info.length === 0 ? "Fant ingen brukere" : info.join("\n")
-    const blob = new Blob([fileData], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
 
     return (
-        <Grid item xs={4} sm={2.4}>
-            <Link href={url} download={"E-postliste - " + label + " - Motstanden"} color="secondary" underline="hover">
+        <Grid item xs={12}>
+            <Link onClick={handleClick} color="secondary" underline="hover">
                 {label}
             </Link>
+            <Snackbar
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                open={open}
+                onClose={() => setOpen(false)}
+                autoHideDuration={2000}
+                message="Copied to clipboard"
+            />
         </Grid>
     )
 }
