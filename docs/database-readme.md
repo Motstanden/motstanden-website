@@ -45,6 +45,10 @@ Run the backup script via the command `sh create_backup.sh` to create a backup.
 The names of databases and backup directory is set in [create_backup.sh](./create_backup.sh) and can be changed according to needs. 
 The database names and backup directories will be different for production and development environments, and this is decided by the `IS_DEV_ENV` variable.
 
+The variables in [create_backup.sh](./create_backup.sh) that may need to be changed in the future is:
+- `DB_NAMES`: Names of databases that will be backed up
+- `BACKUP_PARENT_DIRECTORY`: Directory where backups will be stored.
+
 The script creates a backup directory and a corresponding directory for each database there. Backup names will start with the date the backup was done and the name of the database.
 
 ### Backup service and timer
