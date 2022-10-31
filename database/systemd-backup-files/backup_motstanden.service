@@ -4,6 +4,7 @@ Description=Service for excecuting motstanden database backup script
 [Service] 
 User=simen
 WorkingDirectory=/MOTSTANDEN/motstanden-website/database
+Environment=IS_DEV_ENV=false
 ExecStart=/MOTSTANDEN/motstanden-website/database/create_backup.sh
 
 [Install]
