@@ -12,9 +12,10 @@ async function authSetup() {
 
     for(let i = 0; i < groups.length; i++) {
         const group = groups[i]
-        const page = await browser.newPage(); 
+        const page = await browser.newPage() 
         await logIn(page, group)
         await page.context().storageState({ path: getStoragePath(group) })
+        await page.context().close()
     }
 
     await browser.close()

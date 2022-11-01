@@ -9,7 +9,7 @@ import {
 } from "common/utils"
 import { randomInt, randomUUID } from 'crypto'
 import dayjs from '../lib/dayjs'
-import { emailLogIn, storageLogIn } from '../utils/auth'
+import { disposeStorageLogIn, emailLogIn, storageLogIn } from '../utils/auth'
 import { selectDate } from '../utils/datePicker'
 
 test("New users can only be created by super admin", async ({browser}) => {
@@ -37,21 +37,23 @@ test("Admin can not promote self to super admin", async ({browser}) => {
     const superAdminCount = await page.getByRole('option', { name: userGroupToPrettyStr(UserGroup.SuperAdministrator)}).count()
     expect(superAdminCount).toBe(0)
 
-    await page.context().close()    
+    await disposeStorageLogIn(page)
 })
 
 test.describe("Set inactive status", async () => {
     
+    test.afterEach(async ({page}) => {
+        await disposeStorageLogIn(page)
+    })
+
     test("Contributor can not update self to be inactive", async ({browser}) => {
         const page = await storageLogIn(browser, UserGroup.Contributor)
         expect(await canUpdateInactive(page)).not.toBeTruthy()
-        await page.context().close()
     })
 
     test("Admin can update self to be inactive", async ({browser}) => {
         const page = await storageLogIn(browser, UserGroup.Administrator)
         expect(await canUpdateInactive(page)).toBeTruthy()
-        await page.context().close()
     })
 
     async function canUpdateInactive(page: Page): Promise<boolean> {
@@ -65,7 +67,7 @@ test.describe("Set inactive status", async () => {
 })
 
 test.describe.serial("Create and update user data", async () => {
-
+    test.slow()
     let user: NewUser
     let page: undefined | Page
 
@@ -114,7 +116,7 @@ test.describe.serial("Create and update user data", async () => {
         await saveChanges(page)
         await validateUserProfile(page, user)
 
-        await page.context().close()
+        await disposeStorageLogIn(page)
     })
 
     test("Admin can update membership info", async ({browser}) => {
@@ -147,7 +149,7 @@ test.describe.serial("Create and update user data", async () => {
         await saveChanges(page)
         await validateUserProfile(page, user)
 
-        page.context().close()
+        await disposeStorageLogIn(page)
     })
 
     test("Admin can update all info about themselves", async ({page}) => {
@@ -290,8 +292,11 @@ function birthFormat(date: string): string {
 }
 
 async function gotoCurrentUser(page: Page) {
-    await page.getByRole('button', { name: 'Profilmeny' }).click();
-    await page.getByRole('menuitem', { name: 'Profil' }).click();
+    await page.getByRole('button', { name: 'Profilmeny' }).click(),
+    await Promise.all([
+        page.waitForNavigation(),
+        page.getByRole('menuitem', { name: 'Profil' }).click()
+    ])
     await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
 }
 
@@ -315,8 +320,11 @@ async function editCurrentUser(page: Page) {
 }
 
 async function saveChanges(page: Page) {
-    await page.getByRole('button', { name: 'Lagre' }).click()
-    await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
+    await Promise.all([
+        page.getByRole('button', { name: 'Lagre' }).click(),
+        page.waitForNavigation()
+    ])
+    await expect(page).toHaveURL(/\/medlem\/[0-9]+$/)
 }
 
 async function validateUserProfile(page: Page, user: NewUser) {

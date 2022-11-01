@@ -7,8 +7,8 @@ import { getStoragePath } from '../utils/auth';
 
 test.use({ storageState: getStoragePath(UserGroup.Contributor)})
 
-test("Quotes can be created, updated and deleted", async ({page}) => {
-    
+test.describe.serial("Quotes can be created, updated and deleted",  async () => {
+
     // Mockup data for the tests
     const newQuote: NewQuote = { 
         utterer: `utterer id: ${randomUUID()}`, 
@@ -19,7 +19,7 @@ test("Quotes can be created, updated and deleted", async ({page}) => {
         quote: `quote id: ${randomUUID()}` 
     }
 
-    await test.step("New quote", async () => {
+    test("New quote", async ({page}) => {
         await page.goto('/sitater/ny');
         await page.getByLabel('Sitat *').click();
         await page.getByLabel('Sitat *').fill(newQuote.quote);
@@ -27,14 +27,17 @@ test("Quotes can be created, updated and deleted", async ({page}) => {
         await page.getByLabel('Sitatytrer *').click();
         await page.getByLabel('Sitatytrer *').fill(newQuote.utterer);
     
-        await page.getByRole('button', { name: 'Lagre' }).click();
+        await Promise.all([
+            page.waitForNavigation(),
+            page.getByRole('button', { name: 'Lagre' }).click()
+        ])
         await expect(page).toHaveURL('/sitater');
     
         await expect(page.getByText(newQuote.quote)).toBeVisible();
         await expect(page.getByText(newQuote.utterer)).toBeVisible();
     })
 
-    await test.step("Update quote", async () => {
+    test("Update quote", async ({page}) => {
         await page.goto('/sitater');
         await page.locator(`li:has-text("${newQuote.quote}")`).getByRole('button').click();
 
@@ -54,13 +57,12 @@ test("Quotes can be created, updated and deleted", async ({page}) => {
         await expect(page.getByText(newQuote.utterer)).not.toBeVisible();
     })
 
-    await test.step("Delete quote", async () => {
+    test("Delete quote", async ({page}) => {
         await page.goto('/sitater');
 
         page.on('dialog', dialog => dialog.accept());
 
         await page.locator(`li:has-text("${editedQuote.quote}")`).getByRole('button').click();
-        
         await page.getByRole('menuitem', { name: 'Slett' }).click();
       
         await expect(page.getByText(editedQuote.quote)).not.toBeVisible();

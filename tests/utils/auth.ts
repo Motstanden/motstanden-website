@@ -20,10 +20,13 @@ export async function logIn(page: Page, group: UserGroup) {
 export async function emailLogIn(page: Page, email: string) {
     await page.goto(`${process.env.BASEURL}/logg-inn`);
     
-    await page.getByLabel('E-post *').click();    
     await page.getByLabel('E-post *').fill(email);
 
-    await page.getByRole('button', { name: 'Dev logg inn' }).click();
+    await Promise.all([
+        page.waitForNavigation(),
+        page.getByRole('button', { name: 'Dev logg inn' }).click()
+    ])
+    
     await expect(page).toHaveURL(`${process.env.BASEURL}/hjem`);
 }
 
@@ -39,6 +42,10 @@ export function getUserEmail(group: UserGroup): string {
 export async function storageLogIn(browser: Browser, group: UserGroup) {
     const context = await browser.newContext({ storageState: getStoragePath(group)}) 
     const page = await context.newPage()
-    await page.goto("/hjem")
+    await page.goto("/hjem", { waitUntil: "networkidle"})
     return page
+}
+
+export async function disposeStorageLogIn(page: Page) {
+    await page.context().close()
 }

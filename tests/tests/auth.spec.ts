@@ -1,12 +1,16 @@
-import test, { expect, type Page } from '@playwright/test';
+import test, { Browser, chromium, expect, firefox, webkit, type Page } from '@playwright/test';
 import { UserGroup } from 'common/enums';
-import { getStoragePath, storageLogIn } from '../utils/auth';
+import { emailLogIn, getStoragePath } from '../utils/auth';
 
 test.describe("Login tokens are created and persisted", () => {
 
-    test.use({ storageState: getStoragePath(UserGroup.Contributor)})
+    test.use( {storageState: getStoragePath(UserGroup.Contributor)})
 
-    test("Should create AccessToken and RefreshTokens on login", async ({ page }) => {
+    test.beforeEach( async ({page}) => {
+        await page.goto("/hjem", {waitUntil: "networkidle" })
+    })    
+
+    test("Should create AccessToken and RefreshTokens on login", async ({page}) => {
         const cookies = await page.context().cookies()
         
         expect(cookies.length).toBe(2)
@@ -27,11 +31,17 @@ test.describe("Login tokens are created and persisted", () => {
     })
 
     test("Should renew AccessToken if browser only has RefreshToken", async ({page}) => {
+        await expect(page).toHaveURL("/hjem")
+
         await expireAccessToken(page)
+        await expect(page).toHaveURL("/hjem")
+
+        await page.reload()
+        await expect(page).toHaveURL("/hjem")
 
         await page.goto("/sitater")
         await expect(page).toHaveURL("/sitater")
-
+        
         const newCookies = await page.context().cookies()
         const accessToken = newCookies.find(c => c.name === "AccessToken")
         expect(accessToken).toBeDefined()
@@ -39,29 +49,48 @@ test.describe("Login tokens are created and persisted", () => {
 
 })
 
-test.describe("User can log out", () => {
+test.describe.serial( "User can log out", () => {
     
-    test("Log out in current browser", async ({ browser }) => {
+    function getMail(browser: Browser) {
+        const browserName = browser.browserType().name()
         
-        const page = await storageLogIn(browser, UserGroup.Contributor)
+        if(browserName === chromium.name())
+            return "alan.turing@gmail.com"
+
+        if(browserName === firefox.name())
+            return "linus.torvalds@gmail.com"
+
+        if(browserName === webkit.name())
+            return "albert.einstein@gmail.com"
+
+        throw `The browser is not supported: "${browserName}"`
+    }
+
+
+    test("Log out in current browser", async ({ page, browser }) => {
         
+        const userMail = getMail(browser)
+        await emailLogIn(page, userMail)
+
         await page.getByRole('button', { name: 'Profilmeny' }).click();
         await page.getByRole('menuitem', { name: 'Logg ut' }).click();
 
         await expect(page).toHaveURL('')
         await testUserIsLoggedOut(page)
 
-        await page.context().close()
     });
   
     test("Log out of all browser", async ({ browser }) => {
-        
-        // Log in on multiple isolated pages
-        const p1 = await storageLogIn(browser, UserGroup.Editor)
-        const p2 = await storageLogIn(browser, UserGroup.Editor)
-        const p3 = await storageLogIn(browser, UserGroup.Editor)
+        test.slow()
 
-        const pages = [p1, p2, p3]
+        const pages: Page[] = []
+        const userMail = getMail(browser)
+        for(let i = 0; i < 3; i++) {
+            const context = await browser.newContext()
+            const page = await context.newPage()
+            await emailLogIn(page, userMail)
+            pages.push(page)
+        }
 
         await test.step("Click 'log out of all units'", async () => {
             const page = pages[pages.length - 1]
@@ -87,11 +116,10 @@ test.describe("User can log out", () => {
                 
                 await expect(page).toHaveURL('/logg-inn')
                 await testUserIsLoggedOut(page)
-                
+
                 await page.context().close()
             }
         })
-
     });
 
 });
