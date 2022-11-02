@@ -1,5 +1,6 @@
 import { Browser, expect, Page } from "@playwright/test"
 import { UserGroup } from "common/enums"
+import { navClick } from "./navClick"
 
 export function getStoragePath(group: UserGroup): string {
     switch(group) {
@@ -22,10 +23,7 @@ export async function emailLogIn(page: Page, email: string) {
     
     await page.getByLabel('E-post *').fill(email);
 
-    await Promise.all([
-        page.waitForNavigation(),
-        page.getByRole('button', { name: 'Dev logg inn' }).click()
-    ])
+    await navClick(page.getByRole('button', { name: 'Dev logg inn' }))
     
     await expect(page).toHaveURL(`${process.env.BASEURL}/hjem`);
 }

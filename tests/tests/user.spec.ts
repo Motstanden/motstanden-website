@@ -11,6 +11,7 @@ import { randomInt, randomUUID } from 'crypto'
 import dayjs from '../lib/dayjs'
 import { disposeStorageLogIn, emailLogIn, storageLogIn } from '../utils/auth'
 import { selectDate } from '../utils/datePicker'
+import { navClick } from '../utils/navClick'
 
 test("New users can only be created by super admin", async ({browser}) => {
     const adminPage = await storageLogIn(browser, UserGroup.Administrator)
@@ -292,11 +293,8 @@ function birthFormat(date: string): string {
 }
 
 async function gotoCurrentUser(page: Page) {
-    await page.getByRole('button', { name: 'Profilmeny' }).click(),
-    await Promise.all([
-        page.waitForNavigation(),
-        page.getByRole('menuitem', { name: 'Profil' }).click()
-    ])
+    await page.getByRole('button', { name: 'Profilmeny' }).click()
+    await navClick(page.getByRole('menuitem', { name: 'Profil' }))
     await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
 }
 
@@ -320,10 +318,7 @@ async function editCurrentUser(page: Page) {
 }
 
 async function saveChanges(page: Page) {
-    await Promise.all([
-        page.getByRole('button', { name: 'Lagre' }).click(),
-        page.waitForNavigation()
-    ])
+    await navClick(page.getByRole('button', { name: 'Lagre' }))
     await expect(page).toHaveURL(/\/medlem\/[0-9]+$/)
 }
 

@@ -3,6 +3,7 @@ import { UserGroup } from 'common/enums';
 import { NewQuote } from "common/interfaces";
 import { randomUUID } from "crypto";
 import { getStoragePath } from '../utils/auth';
+import { navClick } from '../utils/navClick';
 
 
 test.use({ storageState: getStoragePath(UserGroup.Contributor)})
@@ -27,10 +28,7 @@ test.describe.serial("Quotes can be created, updated and deleted",  async () => 
         await page.getByLabel('Sitatytrer *').click();
         await page.getByLabel('Sitatytrer *').fill(newQuote.utterer);
     
-        await Promise.all([
-            page.waitForNavigation(),
-            page.getByRole('button', { name: 'Lagre' }).click()
-        ])
+        await navClick(page.getByRole('button', { name: 'Lagre' }))
         await expect(page).toHaveURL('/sitater');
     
         await expect(page.getByText(newQuote.quote)).toBeVisible();
