@@ -1,13 +1,16 @@
 import test, { Browser, chromium, expect, firefox, webkit, type Page } from '@playwright/test';
-import { UserGroup } from 'common/enums';
-import { emailLogIn, getStoragePath } from '../utils/auth';
+import { emailLogIn } from '../utils/auth';
 
 test.describe("Login tokens are created and persisted", () => {
 
-    test.use( {storageState: getStoragePath(UserGroup.Contributor)})
-
     test.beforeEach( async ({page}) => {
-        await page.goto("/hjem", {waitUntil: "networkidle" })
+        // We must do a manual log in to prevent flaky tests.
+        // A race condition will eventually occur and fail the tests if we try to log in with storage state.
+        // The condition for this race condition are:
+        //      - The tests has been running repeatedly for more than 14 minutes.
+        //        This can happen if you are hunting for flaky tests.
+        //      - The AccessToken expires at a random time during the test
+        await emailLogIn(page, "stephen.hawking@gmail.com")
     })    
 
     test("Should create AccessToken and RefreshTokens on login", async ({page}) => {
@@ -51,6 +54,7 @@ test.describe("Login tokens are created and persisted", () => {
 
 test.describe.serial( "User can log out", () => {
     
+    // We need to provide a different user for each browser so that the tests can run isolated in parallel in different browsers.
     function getMail(browser: Browser) {
         const browserName = browser.browserType().name()
         
