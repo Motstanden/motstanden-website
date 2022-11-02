@@ -40,7 +40,8 @@ export function getUserEmail(group: UserGroup): string {
 export async function storageLogIn(browser: Browser, group: UserGroup) {
     const context = await browser.newContext({ storageState: getStoragePath(group)}) 
     const page = await context.newPage()
-    await page.goto("/hjem", { waitUntil: "networkidle"})
+    await page.goto("/hjem", { waitUntil: "load"})
+    await page.waitForLoadState("networkidle")      // Give the server enough time to refresh AccessToken cookie
     return page
 }
 
