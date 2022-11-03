@@ -1,8 +1,17 @@
-## Summary
+# Summary
 The project is using [playwright](https://playwright.dev/) for end to end testing.<br/>
 It is important to write tests because it ensures that the project works as expected and that developers can confidently write code without breaking anything.<br/>
 
 Run the tests in this project by following the steps in [README.md](/.github/README.md#Testing)
+
+## Creating new tests
+It is recommended to use playwright's code generation tool to mockup tests.
+```bash
+npx playwright codegen --output tests/myTest.spec.ts --load-storage storage-state/contributor.json
+```
+Note that this command assumes that the file `storage-state/contributor.json` exists. This file is auto generated when running tests. <br/>
+
+Auto generated tests are not perfect, but they serve as a good starting point. Manual refactor is therefore required.
 
 # Flakiness
 It is extremely important to avoid writing flaky tests. You should always check that your tests are not turning flaky.<br/>
@@ -25,22 +34,21 @@ npx playwright test --repeat-each 30 --trace on --grep myTest.spec.ts
 ✔️ Do consider to implement [test driven development](https://www.youtube.com/watch?v=Jv2uxzhPFl4) in your workflow.
 
 ## Element selection
-✔️ Do target user facing attributes when selecting elements. 
+✔️ Do target user-facing attributes when selecting elements. 
 These elements are most likely to remain stable throughout the projects lifespan.
 ```typescript
 const quoteField = page.getByLabel('Sitat *')
 const saveButton = page.getByRole('button', { name: 'Lagre' })   
 ```
 
-❌ Do not target attributes that is only visible in code. 
+❌ Do not target selectors tied to implementation. Implementations are likely to change in the future.
 ```typescript
-// #TODO: Find example here    // ❌ Don't do this
+// ❌ Don't do this
+await page.locator('section:has-text("sitater") > ul > li:nth-child(2) > div:nth-child(4) > button').click();
 ```
 
-❌ Do not target html structures. Html structure is considered to be implementations details and is likely to change in the future.
-```typescript
-// #TODO: Find example here    // ❌ Don't do this
-```
+✔️ Do follow playwright's definition of [best practices](https://playwright.dev/docs/selectors#best-practices).
+
 
 ## Loging in
 
