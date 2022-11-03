@@ -11,14 +11,8 @@ test.use({ storageState: getStoragePath(UserGroup.Contributor)})
 test.describe.serial("Quotes can be created, updated and deleted",  async () => {
 
     // Mockup data for the tests
-    const newQuote: NewQuote = { 
-        utterer: `utterer id: ${randomUUID()}`, 
-        quote: `quote id: ${randomUUID()}` 
-    }
-    const editedQuote: NewQuote = { 
-        utterer: `utterer id: ${randomUUID()}`, 
-        quote: `quote id: ${randomUUID()}` 
-    }
+    const newQuote: NewQuote = createRandomQuote()
+    const editedQuote: NewQuote = createRandomQuote()
 
     test("New quote", async ({page}) => {
         await page.goto('/sitater/ny');
@@ -38,10 +32,7 @@ test.describe.serial("Quotes can be created, updated and deleted",  async () => 
 
         await page.getByRole('menuitem', { name: 'Rediger' }).click();
       
-        await page.getByLabel('Sitat *').click();
         await page.getByLabel('Sitat *').fill(editedQuote.quote);
-      
-        await page.getByLabel('Sitatytrer *').click();
         await page.getByLabel('Sitatytrer *').fill(editedQuote.utterer);
       
         await page.getByRole('button', { name: 'Lagre' }).click();
@@ -64,3 +55,10 @@ test.describe.serial("Quotes can be created, updated and deleted",  async () => 
         await expect(page.getByText(editedQuote.utterer)).not.toBeVisible();
     })
 })
+
+function createRandomQuote(): NewQuote {
+    return {
+        utterer: `__test utterer id: ${randomUUID()}`, 
+        quote: `__test quote id: ${randomUUID()}`     
+    }
+}
