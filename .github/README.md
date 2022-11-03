@@ -94,7 +94,26 @@ To log in, enter one of the following email addresses and click the `DEV LOGG IN
 - admin@motstanden.no
 - superadmin@motstanden.no
 
+# Testing
+
+Run the end-to-end tests by following these steps:
+1. Ensure that the website is running on [http://localhost:3000/](http://localhost:3000/)
+2. Install test dependencies
+    ```bash
+    cd tests
+    npm install
+    ```
+3. Run all tests
+    ```bash 
+    npx playwright test   # --headed --project firefox --workers 1 
+                        # ^ Uncomment to see something magical
+    ```
+Read more about testing in our [test documentation](/doc/testing.md)
+<br/>
+<br/>
+Now you have all the tools you need to start developing<br/>
 **Happy coding!**
+
 
 # Project structure
  ## [database](/database)
