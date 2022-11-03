@@ -94,8 +94,6 @@ export function loginUser(req: Request, res: Response) {
 
     saveTokenInCookie(res, TokenType.AccessToken, accessToken)
     saveTokenInCookie(res, TokenType.RefreshToken, refreshToken)
-
-    res.redirect("/hjem")
 }
 
 function saveTokenInCookie(res: Response, tokenType: TokenType, tokenStr: string | RefreshTokenData) {

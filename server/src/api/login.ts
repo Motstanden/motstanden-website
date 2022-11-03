@@ -30,7 +30,10 @@ router.post("/auth/magic_login", (req, res) => {
 router.get(
     passportConfig.MagicLinkCallbackPath,
     passport.authenticate("magiclogin", { session: false }),
-    loginUser);
+    (req, res) => {
+        loginUser(req, res)
+        res.redirect("/hjem")
+    });
 
 if (process.env.IS_DEV_ENV) {
     router.post("/dev/login", requiresDevEnv, (req, res) => {
@@ -42,6 +45,7 @@ if (process.env.IS_DEV_ENV) {
         const token = userService.getAccessTokenData(req.body.destination)
         req.user = token
         loginUser(req, res)
+        res.end()
     })
 }
 

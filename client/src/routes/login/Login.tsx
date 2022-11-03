@@ -15,7 +15,7 @@ export function LoginPage() {
 	let location = useLocation()
 
 	if (auth.user) {
-		const to = location.pathname === "/logg-inn" ? "/hjem" : location.pathname
+		const to: string = location.state?.from?.pathname ?? "/hjem"
 		return <Navigate to={to} state={{ from: location }} replace />
 	}
 
