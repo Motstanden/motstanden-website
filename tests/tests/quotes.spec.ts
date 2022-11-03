@@ -22,10 +22,7 @@ test.describe.serial("Quotes can be created, updated and deleted",  async () => 
 
     test("New quote", async ({page}) => {
         await page.goto('/sitater/ny');
-        await page.getByLabel('Sitat *').click();
         await page.getByLabel('Sitat *').fill(newQuote.quote);
-    
-        await page.getByLabel('Sitatytrer *').click();
         await page.getByLabel('Sitatytrer *').fill(newQuote.utterer);
     
         await navClick(page.getByRole('button', { name: 'Lagre' }))
