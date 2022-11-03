@@ -303,9 +303,8 @@ async function gotoUser(page: Page, user: UserName) {
     await page.getByLabel('Styret').check()
 
     const fullName = getFullName(user)
-    await expect(page.getByText(fullName)).toBeVisible()
-    
     const userLink = page.getByRole('link', { name: fullName })   
+    await expect(userLink).toBeVisible()
     await userLink.click()
 
     await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
