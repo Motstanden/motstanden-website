@@ -1,64 +1,104 @@
-import { expect, test } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 import { UserGroup } from 'common/enums';
 import { NewQuote } from "common/interfaces";
 import { randomUUID } from "crypto";
-import { getStoragePath } from '../utils/auth';
-import { navClick } from '../utils/navClick';
+import { EditListPage } from "../pages/EditListPage";
+import { disposeStorageLogIn, getStoragePath, storageLogIn } from '../utils/auth';
 
-
-test.use({ storageState: getStoragePath(UserGroup.Contributor)})
-
-test.describe.serial("Quotes can be created, updated and deleted",  async () => {
-
-    // Mockup data for the tests
-    const newQuote: NewQuote = createRandomQuote()
-    const editedQuote: NewQuote = createRandomQuote()
-
-    test("New quote", async ({page}) => {
-        await page.goto('/sitater/ny');
-        await page.getByLabel('Sitat *').fill(newQuote.quote);
-        await page.getByLabel('Sitatytrer *').fill(newQuote.utterer);
-    
-        await navClick(page.getByRole('button', { name: 'Lagre' }))
-        await expect(page).toHaveURL('/sitater');
-    
-        await expect(page.getByText(newQuote.quote)).toBeVisible();
-        await expect(page.getByText(newQuote.utterer)).toBeVisible();
-    })
-
-    test("Update quote", async ({page}) => {
-        await page.goto('/sitater');
-        await page.locator(`li:has-text("${newQuote.quote}")`).getByRole('button').click();
-
-        await page.getByRole('menuitem', { name: 'Rediger' }).click();
-      
-        await page.getByLabel('Sitat *').fill(editedQuote.quote);
-        await page.getByLabel('Sitatytrer *').fill(editedQuote.utterer);
-      
-        await page.getByRole('button', { name: 'Lagre' }).click();
-      
-        await expect(page.getByText(editedQuote.quote)).toBeVisible();
-        await expect(page.getByText(editedQuote.utterer)).toBeVisible();
-        await expect(page.getByText(newQuote.quote)).not.toBeVisible();
-        await expect(page.getByText(newQuote.utterer)).not.toBeVisible();
-    })
-
-    test("Delete quote", async ({page}) => {
-        await page.goto('/sitater');
-
-        page.on('dialog', dialog => dialog.accept());
-
-        await page.locator(`li:has-text("${editedQuote.quote}")`).getByRole('button').click();
-        await page.getByRole('menuitem', { name: 'Slett' }).click();
-      
-        await expect(page.getByText(editedQuote.quote)).not.toBeVisible();
-        await expect(page.getByText(editedQuote.utterer)).not.toBeVisible();
+test.describe.serial("Users can update and delete quotes created by themselves",  async () => {
+    await testCrud({
+        creator: UserGroup.Contributor, 
+        moderator: UserGroup.Contributor, 
+        testId: 1
     })
 })
+
+test.describe.serial("Admin can update and delete quotes created by others", async () => {
+    await testCrud({
+        creator: UserGroup.Contributor, 
+        moderator: UserGroup.Administrator, 
+        testId: 2
+    }) 
+})
+
+test.describe.serial("Super admin can update and delete quotes created by others", async () => {
+    await testCrud({
+        creator: UserGroup.Contributor, 
+        moderator: UserGroup.SuperAdministrator, 
+        testId: 3
+    })
+})
+
+// crud -> create read update delete
+async function testCrud(opts: {creator: UserGroup, moderator: UserGroup, testId: number}) { 
+
+    test.use({ storageState: getStoragePath(opts.moderator)})
+
+    // Mockup data for the tests
+    const quote1: NewQuote = createRandomQuote()
+    const quote2: NewQuote = createRandomQuote()
+
+    test(`New (${opts.testId})`, async ({browser}) => {
+        const page = await storageLogIn(browser, opts.creator)
+        await testCreateNew(page, quote1)
+        disposeStorageLogIn(page)
+    })
+
+    test(`Update (${opts.testId})`, async ({page}) => {
+        await testUpdate(page, quote1, quote2)
+    })
+
+    test(`Delete (${opts.testId})`, async ({page}) => {
+        await testDelete(page, quote2)
+    })
+}
+
+async function testCreateNew(page: Page, quote: NewQuote) {
+    await page.goto('/sitater/ny');
+    
+    const quotePage = new QuotePage(page)
+    await quotePage.newItem(quote)
+
+    await expect(page.getByText(quote.quote)).toBeVisible();
+    await expect(page.getByText(quote.utterer)).toBeVisible();
+}
+
+async function testUpdate(page: Page, oldQuote: NewQuote, newQuote: NewQuote) {
+    await page.goto('/sitater');
+    
+    const quotePage = new QuotePage(page)
+    await quotePage.editItem(oldQuote, newQuote)
+
+    await expect(page.getByText(newQuote.quote)).toBeVisible();
+    await expect(page.getByText(newQuote.utterer)).toBeVisible();
+    await expect(page.getByText(oldQuote.quote)).not.toBeVisible();
+    await expect(page.getByText(oldQuote.utterer)).not.toBeVisible();
+}
+
+async function testDelete(page: Page, quote: NewQuote) {
+    await page.goto('/sitater')
+
+    const quotePage = new QuotePage(page)
+    await quotePage.deleteItem(quote)
+
+    await expect(page.getByText(quote.quote)).not.toBeVisible();
+    await expect(page.getByText(quote.utterer)).not.toBeVisible();
+}
 
 function createRandomQuote(): NewQuote {
     return {
         utterer: `__test utterer id: ${randomUUID()}`, 
         quote: `__test quote id: ${randomUUID()}`     
     }
+}
+
+class QuotePage extends EditListPage<NewQuote> {
+	protected override async fillForm(value: NewQuote): Promise<void> {
+		await this.page.getByLabel('Sitat *').fill(value.quote);
+        await this.page.getByLabel('Sitatytrer *').fill(value.utterer);
+	}
+
+	protected override async openMenu(value: NewQuote) {
+        await this.page.locator(`li:has-text("${value.quote}")`).getByRole('button').click();
+	}
 }
