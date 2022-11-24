@@ -14,7 +14,8 @@ export function EditOrDeleteMenu({
     onMouseEnter,
     onMouseLeave,
     onMenuOpen,
-    onMenuClose
+    onMenuClose,
+    ariaLabel
 }: {
     onEditClick: React.MouseEventHandler<HTMLLIElement>,
     onDeleteClick: React.MouseEventHandler<HTMLLIElement>,
@@ -24,15 +25,17 @@ export function EditOrDeleteMenu({
     onMouseLeave?: React.MouseEventHandler<HTMLButtonElement> | undefined,
     onMenuOpen?: VoidFunction,
     onMenuClose?: VoidFunction,
+    ariaLabel?: string
 }) {
     return (
         <IconPopupMenu
-            icon={iconOrientation === "vertical" ? <MoreVertIcon /> : <MoreHorizIcon />}
+            icon={iconOrientation === "vertical" ? <MoreVertIcon/> : <MoreHorizIcon/>}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
             onMenuOpen={onMenuOpen}
             onMenuClose={onMenuClose}
             disabled={disabled}
+            ariaLabel={ariaLabel}
         >
             <MenuItem style={{ minHeight: "50px", minWidth: "180px" }} divider={true} onClick={onEditClick} >
                 <ListItemIcon>

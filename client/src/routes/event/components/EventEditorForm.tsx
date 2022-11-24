@@ -146,6 +146,7 @@ function EventEditor() {
                 </div>
                 <div style={{ minHeight: "100px", padding: "10px" }}>
                     <Editable
+                        data-testid="event-description-editor"
                         renderElement={renderElement}
                         renderLeaf={renderLeaf}
                         spellCheck

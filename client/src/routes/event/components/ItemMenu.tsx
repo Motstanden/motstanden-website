@@ -29,6 +29,7 @@ export function ItemMenu({ event, iconOrientation }: { event: EventData; iconOri
     return (
         <EditOrDeleteMenu
             iconOrientation={iconOrientation}
+            ariaLabel="Arrangementmeny"
             onDeleteClick={() => deleteEvent(event)}
             onEditClick={onEditClick}
         />
