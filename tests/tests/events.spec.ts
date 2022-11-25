@@ -1,13 +1,12 @@
 import { expect, Page, test } from '@playwright/test';
-import { UserGroup } from 'common/enums';
+import { ParticipationStatus, UserGroup } from 'common/enums';
 import { NewEventData as NewEventApiData } from 'common/interfaces';
 import dayjs from "common/lib/dayjs";
 import { formatDateTimeInterval } from "common/utils/dateTime";
 import { randomInt, randomUUID } from 'crypto';
-import { disposeStorageLogIn, storageLogIn } from '../utils/auth';
+import { disposeStorageLogIn, getStoragePath, getUserFullName, storageLogIn } from '../utils/auth';
 import { selectDate } from '../utils/datePicker';
 import { navClick } from '../utils/navClick';
-
 
 test.describe("Contributor can update and delete events they have created", async () => {
     await testCrud({
@@ -42,8 +41,85 @@ test.describe("Contributors can update other events", async () => {
 	})
 })
 
-test.fixme("Users can participate on events @smoke", async () => {
-	throw "Not implemented"		// TODO	
+test.describe("Event participation @smoke", async () => {
+
+    const event: NewEventData = createRandomEvent()
+	let eventUrl: string
+	const testUser = UserGroup.Contributor
+	
+	test.use({storageState: getStoragePath(testUser)})
+	
+	// Setup: Create a new event
+	test.beforeAll( async ({browser}) => {
+		const _page = await storageLogIn(browser, UserGroup.SuperAdministrator)
+		await testCreateNew(_page, event)
+		eventUrl = _page.url()
+		await disposeStorageLogIn(_page)
+	})
+
+	// Clean up: Delete the event that was created in the setup
+	test.afterAll( async ({browser}) => {
+		const _page = await storageLogIn(browser, UserGroup.Administrator)
+    	await testDelete(_page, event)
+		await disposeStorageLogIn(_page)
+	})
+
+	function statusToString(status: ParticipationStatus): string {
+		if(status === ParticipationStatus.Unknown)
+			return "——————";
+		return status.toString()
+	}
+
+	async function selectItem(page: Page, status: ParticipationStatus) {
+  		const selectButton = page.getByRole('button', { name: /Min status/ })
+		await selectButton.click()
+
+		const option = page.getByRole('option', { name: statusToString(status) }) 			
+		await Promise.all([
+			option.click(),
+			option.waitFor({state: "detached"})
+		])
+		await page.waitForLoadState("networkidle")
+
+		// Wait for button to be enabled. Timeout after 10 seconds
+		let waitForEnable = true
+		setTimeout(() => waitForEnable = false, 10000);
+		while(waitForEnable && !(await selectButton.isEnabled())) { }
+	}
+
+	test("Users can participate on events", async ({page}) => {
+		page.goto(eventUrl)
+
+		const attendHeading = page.getByRole('heading', { name: statusToString(ParticipationStatus.Attending) })
+		const maybeHeading = page.getByRole('heading', { name: statusToString(ParticipationStatus.Maybe) })
+		const notAttendingHeading = page.getByRole('heading', { name: statusToString(ParticipationStatus.NotAttending) })
+
+		const userLink = page.getByRole('link', { name: getUserFullName(testUser) })
+
+		selectItem(page, ParticipationStatus.Attending)
+		await expect(userLink).toBeVisible();
+		await expect(attendHeading).toBeVisible();
+		await expect(maybeHeading).not.toBeVisible();
+		await expect(notAttendingHeading).not.toBeVisible();
+
+		selectItem(page, ParticipationStatus.Maybe)
+		await expect(userLink).toBeVisible();
+		await expect(attendHeading).not.toBeVisible();
+		await expect(maybeHeading).toBeVisible();
+		await expect(notAttendingHeading).not.toBeVisible();
+
+		selectItem(page, ParticipationStatus.NotAttending)
+		await expect(userLink).toBeVisible();
+		await expect(attendHeading).not.toBeVisible();
+		await expect(maybeHeading).not.toBeVisible();
+		await expect(notAttendingHeading).toBeVisible();
+
+		selectItem(page, ParticipationStatus.Unknown)
+		await expect(userLink).not.toBeVisible();
+		await expect(attendHeading).not.toBeVisible();
+		await expect(maybeHeading).not.toBeVisible();
+		await expect(notAttendingHeading).not.toBeVisible();
+	})
 })
 
 interface NewEventData extends Omit<NewEventApiData, "description" | "descriptionHtml"> {

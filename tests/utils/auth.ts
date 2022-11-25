@@ -37,6 +37,15 @@ export function getUserEmail(group: UserGroup): string {
     }
 }
 
+export function getUserFullName(group: UserGroup): string {
+    switch (group) {
+        case UserGroup.Contributor: return "Bidragsyter Euler"
+        case UserGroup.Editor: return "Redaktør Turing"
+        case UserGroup.Administrator: return "Admin Kirchhoff"
+        case UserGroup.SuperAdministrator: return "Super Admin Ohm"
+    }
+}
+
 export async function storageLogIn(browser: Browser, group: UserGroup) {
     const context = await browser.newContext({ storageState: getStoragePath(group)}) 
     const page = await context.newPage()
