@@ -11,13 +11,18 @@ export async function selectDate(
     date: Dayjs | string | undefined | null, 
     format: dateFormat
 ) {
+    const isMobilePage = await isMobile(page)
+
+    if(!date && isMobilePage)
+        throw "Not implemented";
+
     if(!date) 
         return await page.getByLabel(label).fill("");
 
     if(typeof date === "string")
         date = dayjs(date);
    
-    if(await isMobile(page)) {
+    if(isMobilePage) {
         return await mobileSelectDate(page, label, date, format)
     }        
 
