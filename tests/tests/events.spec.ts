@@ -1,9 +1,11 @@
-import { Page, test } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 import { UserGroup } from 'common/enums';
 import { NewEventData as NewEventApiData } from 'common/interfaces';
 import { randomInt, randomUUID } from 'crypto';
 import dayjs from "../lib/dayjs";
 import { disposeStorageLogIn, storageLogIn } from '../utils/auth';
+import { selectDate } from '../utils/datePicker';
+import { navClick } from '../utils/navClick';
 
 
 test.describe("Contributor can update and delete events they have created", async () => {
@@ -14,7 +16,7 @@ test.describe("Contributor can update and delete events they have created", asyn
     })
 })
 
-test.describe.fixme("Admin can update and delete events other have created", async () => {
+test.describe("Admin can update and delete events other have created", async () => {
 	await testCrud({
 		creator: UserGroup.Contributor,
 		updater: UserGroup.Administrator,
@@ -22,7 +24,7 @@ test.describe.fixme("Admin can update and delete events other have created", asy
 	})
 })
 
-test.describe.fixme("Super admin can update and delete events other have created", async () => {
+test.describe("Super admin can update and delete events other have created", async () => {
 	await testCrud({
 		creator: UserGroup.Contributor,
 		updater: UserGroup.SuperAdministrator,
@@ -30,7 +32,7 @@ test.describe.fixme("Super admin can update and delete events other have created
 	})
 })
 
-test.describe.fixme("Contributors can update other events", async () => {
+test.describe("Contributors can update other events", async () => {
     await testCrud({
 		creator: UserGroup.Editor,
 		updater: UserGroup.Contributor,
@@ -68,19 +70,19 @@ async function testCrud(opts: CrudOptions) {
 	test(`New (${opts.testId})`, async ({browser}) => {
 		const page = await storageLogIn(browser, opts.creator)
     	await testCreateNew(page, event1)
-		disposeStorageLogIn(page)
+		await disposeStorageLogIn(page)
 	})
 
 	test(`Update (${opts.testId})`, async ({browser}) => {
 		const page = await storageLogIn(browser, opts.updater)
     	await testUpdate(page, event1, event2)
-		disposeStorageLogIn(page)
+		await disposeStorageLogIn(page)
 	})
 
 	test(`Delete (${opts.testId})`, async ({browser}) => {
 		const page = await storageLogIn(browser, opts.deleter)
     	await testDelete(page, event2)
-		disposeStorageLogIn(page)
+		await disposeStorageLogIn(page)
 	})
 }
 
@@ -125,13 +127,89 @@ function randomBool(){
 }
 
 async function testCreateNew(page: Page, event: NewEventData) {
-	throw "Not implemented"		// TODO	
+	await page.goto("/arrangement/ny")
+	await submitForm(page, event)
+	await validateEventPage(page, event)
 }
 
 async function testUpdate(page: Page, oldEvent: NewEventData, newEvent: NewEventData) {
-	throw "Not implemented"		// TODO	
+	await page.goto(getBaseUrl(oldEvent))
+	await page.getByRole('link', { name: oldEvent.title }).click()	
+	await clickMenuItem(page, "Rediger")
+
+	await submitForm(page, newEvent)
+	await validateEventPage(page, newEvent)
 }
 
-async function testDelete(page: Page, rumour: NewEventData) {
-	throw "Not implemented"		// TODO	
+async function testDelete(page: Page, event: NewEventData) {
+	const baseUrl = getBaseUrl(event)
+	await page.goto(baseUrl)
+	await page.getByRole('link', { name: event.title }).click()	
+
+	await clickMenuItem(page, "Slett")
+
+	await expect(page.getByRole('link', { name: event.title })).not.toBeVisible()
+}
+
+async function submitForm(page: Page, event: NewEventData) {
+	await fillForm(page, event)
+	await saveForm(page)
+}
+
+async function fillForm(page: Page, event: NewEventData) {
+	await page.getByPlaceholder('Tittel på arrangement*').fill(event.title);
+	await selectDate(page, /Starter/, event.startDateTime, "TimeDayMonthYear")
+	
+	// TODO: 
+	//	1. Clear existing end time, and insert new end time
+	//	2. Clear existing key info, and insert new key info
+
+	const editor = page.getByTestId('event-description-editor') 
+	await editor.click()	// This circumvents a bug in the front end. See https://github.com/Motstanden/motstanden-website/issues/86
+	await editor.fill(event.description)
+}
+
+async function saveForm(page: Page) {
+	const saveButton = page.getByRole('button', { name: 'Lagre' })
+	await navClick(saveButton)
+}
+
+async function validateEventPage(page: Page, event: NewEventData) {
+	const urlRegExp = isUpcoming(event) 
+		? /\/arrangement\/kommende\/[0-9]+/ 
+		: /\/arrangement\/tidligere\/[0-9]+/ 
+	await expect(page).toHaveURL(urlRegExp)
+
+	await expect(page.getByText(event.title)).toBeVisible()
+	await expect(page.getByText(event.description)).toBeVisible()	
+}
+
+async function clickMenuItem(page: Page, menuItem: "Rediger" | "Slett") {
+	
+	const menuButton = page.getByRole('button', { name: 'Arrangementmeny' })
+	const isPopupMenu = await menuButton.isVisible()
+	if(isPopupMenu){
+		await menuButton.click()
+	}
+
+	const itemButton = page.getByRole(isPopupMenu ? 'menuitem' : 'button', { name: menuItem })
+
+	if(menuItem === "Slett") {
+		page.once('dialog', dialog => dialog.accept());
+		await itemButton.click();
+	} 
+
+	if(menuItem === "Rediger") {
+		await navClick(itemButton)
+	}
+}
+
+function isUpcoming(event: NewEventData) {
+	return dayjs(event.startDateTime).isAfter(dayjs())	
+}
+
+function getBaseUrl(event: NewEventData) {
+	return isUpcoming(event)
+		? "/arrangement/kommende" 
+		: "/arrangement/tidligere"
 }
