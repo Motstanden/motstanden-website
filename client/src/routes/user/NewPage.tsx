@@ -11,6 +11,7 @@ import { NewUser } from 'common/interfaces';
 import { isNullOrWhitespace, validateEmail } from 'common/utils';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useState } from 'react';
+import { datePickerStyle } from 'src/assets/style/timePickerStyles';
 import { useTitle } from 'src/hooks/useTitle';
 import { profilePictureTVPair } from './Components';
 
@@ -141,6 +142,7 @@ function NewUserForm() {
                     helperText={isValidEmail ? null : (isNtnuMail(email) ? "Ntnu-e-post ikke tillat" : "Ugyldig e-post")}
                 />
                 <DatePicker
+                    {...datePickerStyle}
                     views={["year", "month"]}
                     label="Startet"
                     minDate={dayjs().year(2018).month(7)}

@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom"
 import { createEditor, Descendant, Text } from "slate"
 import { withHistory } from "slate-history"
 import { Editable, RenderElementProps, RenderLeafProps, Slate, withReact } from "slate-react"
+import { dateTimePickerStyle } from 'src/assets/style/timePickerStyles'
 import { Form } from "src/components/form/Form"
 import { emptyRichText } from "src/components/TextEditor/Assets"
 import { Element } from "src/components/TextEditor/Element"
@@ -211,28 +212,29 @@ function TimeForm({ sx }: { sx?: SxProps }) {
             </Box>
             <DateTimePicker
                 label="Starter"
+                {...dateTimePickerStyle}
                 minDateTime={beginningOfTime}
                 defaultCalendarMonth={dayjs()}
                 value={event.startTime}
+                desktopModeMediaQuery="@media (min-width: 600px) or (pointer: fine)"
                 onChange={(newVal: Dayjs | null) => dispatch({ startTime: newVal })}
                 renderInput={params => (
-                    <>
-                        <TextField {...params} {...textFieldProps} required />
-                    </>)}
+                    <TextField {...params} {...textFieldProps} required />
+                )}
             />
             <Box display={{ xs: "none", sm: "inline" }} style={{ marginInline: "20px", marginBottom: "5px" }}>
                 –
             </Box>
             <DateTimePicker
                 label="Slutter"
+                {...dateTimePickerStyle}
                 disabled={!event.startTime}
                 minDateTime={event.startTime ?? beginningOfTime}
                 value={event.endTime}
+                desktopModeMediaQuery="@media (min-width: 600px) or (pointer: fine)"
                 onChange={(newVal: Dayjs | null) => dispatch({ endTime: newVal })}
                 renderInput={params => (
-                    <>
-                        <TextField {...params} {...textFieldProps} />
-                    </>
+                    <TextField {...params} {...textFieldProps} />
                 )}
             />
         </Stack>

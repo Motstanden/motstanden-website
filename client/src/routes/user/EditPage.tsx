@@ -7,6 +7,7 @@ import { hasGroupAccess, isNtnuMail as checkIsNtnuMail, isNullOrWhitespace, strT
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate, useOutletContext } from "react-router-dom";
+import { datePickerStyle } from "src/assets/style/timePickerStyles";
 import { Form } from "src/components/form/Form";
 import { HelpButton } from "src/components/HelpButton";
 import { useAuth } from "src/context/Authentication";
@@ -119,6 +120,7 @@ function PersonForm({ value, onChange, onIsValidChange, editMode }: FormParams) 
                 required
             />
             <DatePicker
+                {...datePickerStyle}
                 views={["year", "month", "day"]}
                 label="Fødselsdato"
                 minDate={dayjs().subtract(100, "year")}
@@ -230,6 +232,7 @@ function MemberForm({ value, onChange, editMode }: FormParams) {
                 </Box>
             </Stack>
             <DatePicker
+                {...datePickerStyle}
                 views={["year", "month"]}
                 label="Startet"
                 minDate={dayjs().year(2018).month(7)}
@@ -239,6 +242,7 @@ function MemberForm({ value, onChange, editMode }: FormParams) {
                 renderInput={(params) => <TextField {...params} required />}
             />
             <DatePicker
+                {...datePickerStyle}
                 views={["year", "month"]}
                 label="Sluttet"
                 minDate={dayjs().year(2018).month(7)}
