@@ -9,9 +9,11 @@
   "exports": {
     "./enums": "./build/enums/index.js",
     "./interfaces": "./build/interfaces/index.js",
+    "./lib/dayjs": "./build/lib/dayjs.js",
     "./richTextSchema": "./build/richTextSchema/index.js",
     "./types": "./build/types/index.js",
-    "./utils": "./build/utils/index.js"
+    "./utils": "./build/utils/index.js",
+    "./utils/dateTime": "./build/utils/dateTime/index.js"
   },
   "typesVersions": {
     "*": {
@@ -21,6 +23,9 @@
       "interfaces": [
         "./build/interfaces/index.d.ts"
       ],
+      "lib/dayjs": [
+        "./build/lib/dayjs.d.ts"
+      ],
       "richTextSchema": [
         "./build/richTextSchema/index.d.js"
       ],
@@ -29,6 +34,9 @@
       ],
       "utils": [
         "./build/utils/index.d.ts"
+      ],
+      "utils/dateTime": [
+        "./build/utils/dateTime/index.d.ts"
       ]
     }
   },
@@ -36,5 +44,8 @@
     "build/**/*"
   ],
   "author": "Studentorchesteret den Ohmske Motstanden",
-  "license": "MÅKESODD v1"
+  "license": "MÅKESODD v1",
+  "dependencies": {
+    "dayjs": "^1.11.6"
+  }
 }

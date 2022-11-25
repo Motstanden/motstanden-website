@@ -1,8 +1,9 @@
 import { expect, Page, test } from '@playwright/test';
 import { UserGroup } from 'common/enums';
 import { NewEventData as NewEventApiData } from 'common/interfaces';
+import dayjs from "common/lib/dayjs";
+import { formatDateTimeInterval } from "common/utils/dateTime";
 import { randomInt, randomUUID } from 'crypto';
-import dayjs from "../lib/dayjs";
 import { disposeStorageLogIn, storageLogIn } from '../utils/auth';
 import { selectDate } from '../utils/datePicker';
 import { navClick } from '../utils/navClick';
@@ -159,10 +160,9 @@ async function submitForm(page: Page, event: NewEventData) {
 async function fillForm(page: Page, event: NewEventData) {
 	await page.getByPlaceholder('Tittel på arrangement*').fill(event.title);
 	await selectDate(page, /Starter/, event.startDateTime, "TimeDayMonthYear")
+	await selectDate(page, /Slutter/, event.endDateTime, "TimeDayMonthYear")
 	
-	// TODO: 
-	//	1. Clear existing end time, and insert new end time
-	//	2. Clear existing key info, and insert new key info
+	// TODO: Clear existing key info, and insert new key info
 
 	const editor = page.getByTestId('event-description-editor') 
 	await editor.click()	// This circumvents a bug in the front end. See https://github.com/Motstanden/motstanden-website/issues/86
@@ -182,6 +182,9 @@ async function validateEventPage(page: Page, event: NewEventData) {
 
 	await expect(page.getByText(event.title)).toBeVisible()
 	await expect(page.getByText(event.description)).toBeVisible()	
+
+	const timeText = formatDateTimeInterval(event.startDateTime, event.endDateTime)
+	await expect(page.getByText(timeText)).toBeVisible()	
 }
 
 async function clickMenuItem(page: Page, menuItem: "Rediger" | "Slett") {

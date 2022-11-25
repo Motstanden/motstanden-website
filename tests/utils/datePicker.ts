@@ -1,6 +1,6 @@
 import { Page } from "@playwright/test";
+import dayjs from "common/lib/dayjs";
 import { Dayjs } from "dayjs";
-import dayjs from "../lib/dayjs";
 import { isMobile } from "./mediaQueries";
 
 type dateFormat = "MonthYear" | "DayMonthYear" | "TimeDayMonthYear"
@@ -8,21 +8,23 @@ type dateFormat = "MonthYear" | "DayMonthYear" | "TimeDayMonthYear"
 export async function selectDate(
     page: Page, 
     label: string | RegExp, 
-    date: Dayjs | string, 
+    date: Dayjs | string | undefined | null, 
     format: dateFormat
 ) {
+    if(!date) 
+        return await page.getByLabel(label).fill("");
+
     if(typeof date === "string")
         date = dayjs(date);
-
    
     if(await isMobile(page)) {
         return await mobileSelectDate(page, label, date, format)
     }        
 
-    return await defaultSelectDate(page, label, date, format)
+    return await desktopSelectDate(page, label, date, format)
 }
 
-async function defaultSelectDate(
+async function desktopSelectDate(
     page: Page, 
     label: string | RegExp, 
     date: Dayjs, 
