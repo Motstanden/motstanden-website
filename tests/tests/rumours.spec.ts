@@ -5,7 +5,7 @@ import { randomUUID } from "crypto";
 import { EditListPage } from '../pages/EditListPage';
 import { disposeStorageLogIn, getStoragePath, storageLogIn } from '../utils/auth';
 
-test.describe.serial("Users can update and delete rumours created by themselves",  async () => {
+test.describe.serial("Users can update and delete rumours created by themselves @smoke",  async () => {
 	await testCrud({
 		creator: UserGroup.Contributor,
 		moderator: UserGroup.Contributor,

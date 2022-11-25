@@ -108,6 +108,10 @@ Run the end-to-end tests by following these steps:
     npx playwright test   # --headed --project firefox --workers 1 
                         # ^ Uncomment to see something magical
     ```
+4. Run smoke tests
+  ```bash
+  npx playwright test --project smoke   # Useful for fast test feedback loop
+  ```
 Read more about testing in our [test documentation](/doc/testing.md)
 <br/>
 <br/>

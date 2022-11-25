@@ -84,7 +84,7 @@ test.describe.serial( "User can log out", () => {
 
     });
   
-    test("Log out of all browser", async ({ browser }) => {
+    test("Log out of all browser @smoke", async ({ browser }) => {
         test.slow()
 
         const pages: Page[] = []

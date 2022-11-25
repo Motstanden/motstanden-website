@@ -17,7 +17,7 @@ test.describe("Contributor can update and delete events they have created", asyn
     })
 })
 
-test.describe("Admin can update and delete events other have created", async () => {
+test.describe("Admin can update and delete events other have created @smoke", async () => {
 	await testCrud({
 		creator: UserGroup.Contributor,
 		updater: UserGroup.Administrator,
@@ -42,7 +42,7 @@ test.describe("Contributors can update other events", async () => {
 	})
 })
 
-test.fixme("Users can participate on events", async () => {
+test.fixme("Users can participate on events @smoke", async () => {
 	throw "Not implemented"		// TODO	
 })
 

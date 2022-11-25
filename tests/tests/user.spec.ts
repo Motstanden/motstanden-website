@@ -72,7 +72,7 @@ test.describe.serial("Create and update user data", async () => {
     let user: NewUser
     let page: undefined | Page
 
-    test("Should create new user", async ({browser}) => {
+    test("Should create new user @smoke", async ({browser}) => {
         user = createNewUser({
             capeName: null,
             phoneNumber: null,
@@ -101,7 +101,7 @@ test.describe.serial("Create and update user data", async () => {
         })
     })
 
-    test("Super admin can update all info", async () => {
+    test("Super admin can update all info @smoke", async () => {
         
         user = createNewUser({
             groupName: UserGroup.Editor,

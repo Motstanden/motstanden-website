@@ -13,7 +13,7 @@ test.describe.serial("Users can update and delete quotes created by themselves",
     })
 })
 
-test.describe.serial("Admin can update and delete quotes created by others", async () => {
+test.describe.serial("Admin can update and delete quotes created by others @smoke", async () => {
     await testCrud({
         creator: UserGroup.Contributor, 
         moderator: UserGroup.Administrator, 
