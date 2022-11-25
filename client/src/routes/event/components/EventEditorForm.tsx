@@ -216,7 +216,6 @@ function TimeForm({ sx }: { sx?: SxProps }) {
                 minDateTime={beginningOfTime}
                 defaultCalendarMonth={dayjs()}
                 value={event.startTime}
-                desktopModeMediaQuery="@media (min-width: 600px) or (pointer: fine)"
                 onChange={(newVal: Dayjs | null) => dispatch({ startTime: newVal })}
                 renderInput={params => (
                     <TextField {...params} {...textFieldProps} required />
@@ -231,7 +230,6 @@ function TimeForm({ sx }: { sx?: SxProps }) {
                 disabled={!event.startTime}
                 minDateTime={event.startTime ?? beginningOfTime}
                 value={event.endTime}
-                desktopModeMediaQuery="@media (min-width: 600px) or (pointer: fine)"
                 onChange={(newVal: Dayjs | null) => dispatch({ endTime: newVal })}
                 renderInput={params => (
                     <TextField {...params} {...textFieldProps} />

@@ -9,7 +9,11 @@ interface BaseProps {
 }
 
 const baseStyle: BaseProps  = {
-    desktopModeMediaQuery: "@media (min-width: 600px) or (pointer: fine)"
+    desktopModeMediaQuery: isWebKit() ?  undefined : "@media (min-width: 600px) or (pointer: fine)"
+}
+
+function isWebKit(): boolean {
+    return navigator.userAgent.indexOf('AppleWebKit') != -1
 }
 
 export const dateTimePickerStyle: Partial<DateTimePickerProps<any, any>> = {
