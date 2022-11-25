@@ -20,6 +20,12 @@ You can hunt for flaky tests by running them multiple times in a row:
 npx playwright test --repeat-each 30 --trace on --grep myTest.spec.ts
 ```
 
+# Troubleshooting
+
+## Typical error messages
+### tracing.startChunk: Tracing is already stopping
+This message is most likely appearing because you have forgotten to await an asynchronous function. 
+
 # Dos and don'ts
 
 ## Design considerations 
