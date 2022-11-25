@@ -361,6 +361,7 @@ function KeyInfoItem({
                     gridRow: isSmallScreen ? "1 / 3" : "1"
 
                 }}
+                aria-label="Fjern nøkkelinformasjon"
                 onClick={onDeleteClick}>
                 <DeleteIcon color="error" />
             </IconButton>

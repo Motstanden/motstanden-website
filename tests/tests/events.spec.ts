@@ -118,7 +118,7 @@ function createRandomEvent(): NewEventData {
 function randomString(name: string, maxChars?: number) {
 	let value = `${name} id: ${randomUUID()}`
 	if(maxChars) {
-		value = value.slice(Math.max(0, value.length - maxChars - 1)) 	// Prioritize end of string
+		value = value.slice(Math.max(0, value.length - maxChars)) 	// Prioritize end of string
 	}
 	return value
 }
@@ -140,6 +140,12 @@ async function testUpdate(page: Page, oldEvent: NewEventData, newEvent: NewEvent
 
 	await submitForm(page, newEvent)
 	await validateEventPage(page, newEvent)
+
+	// Test that key info from the old event is gone
+	for(let i = 0; i < oldEvent.keyInfo.length; i++) {
+		await expect(page.getByText(oldEvent.keyInfo[i].key)).not.toBeVisible()
+		await expect(page.getByText(oldEvent.keyInfo[i].value)).not.toBeVisible()
+	}
 }
 
 async function testDelete(page: Page, event: NewEventData) {
@@ -162,7 +168,18 @@ async function fillForm(page: Page, event: NewEventData) {
 	await selectDate(page, /Starter/, event.startDateTime, "TimeDayMonthYear")
 	await selectDate(page, /Slutter/, event.endDateTime, "TimeDayMonthYear")
 	
-	// TODO: Clear existing key info, and insert new key info
+	// Remove old key info items if they exists
+	const buttons = page.getByRole('button', { name: 'Fjern nøkkelinformasjon' })
+	while(await buttons.first().isVisible()) {
+		await buttons.last().click()
+	}
+
+	// Add new key info items
+	for(let i = 0; i < event.keyInfo.length; i++) {
+		await page.getByRole('button', { name: 'Nøkkelinformasjon' }).click();
+		await page.getByPlaceholder('Tittel*').nth(i).fill(event.keyInfo[i].key);
+		await page.getByPlaceholder('info*').nth(i).fill(event.keyInfo[i].value);
+	}
 
 	const editor = page.getByTestId('event-description-editor') 
 	await editor.click()	// This circumvents a bug in the front end. See https://github.com/Motstanden/motstanden-website/issues/86
@@ -185,6 +202,11 @@ async function validateEventPage(page: Page, event: NewEventData) {
 
 	const timeText = formatDateTimeInterval(event.startDateTime, event.endDateTime)
 	await expect(page.getByText(timeText)).toBeVisible()	
+
+	for(let i = 0; i < event.keyInfo.length; i++) {
+		await expect(page.getByText(event.keyInfo[i].key)).toBeVisible()
+		await expect(page.getByText(event.keyInfo[i].value)).toBeVisible()
+	}
 }
 
 async function clickMenuItem(page: Page, menuItem: "Rediger" | "Slett") {
