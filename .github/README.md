@@ -103,15 +103,23 @@ Run the end-to-end tests by following these steps:
     cd tests
     npm install
     ```
-3. Run all tests
-    ```bash 
-    npx playwright test   # --headed --project firefox --workers 1 
-                        # ^ Uncomment to see something magical
+3. Run tests
+    ```bash
+    # [Very slow] Run all tests in all browsers
+    npx playwright test
+
+    # [Moderate speed] Run all tests in firefox
+    npx playwright test --project firefox
+
+    # [Moderate speed] Run smoke tests in all browsers
+    npx playwright test --grep "@smoke"   
+
+    # [Very fast] Run smoke test only in firefox
+    npx playwright test --grep "@smoke" --project firefox
+
+    # [Pretty] Run and render smoke test in firefox
+    npx playwright test --grep "@smoke" --project firefox --headed --workers 1
     ```
-4. Run smoke tests
-  ```bash
-  npx playwright test --project smoke   # Useful for fast test feedback loop
-  ```
 Read more about testing in our [test documentation](/doc/testing.md)
 <br/>
 <br/>

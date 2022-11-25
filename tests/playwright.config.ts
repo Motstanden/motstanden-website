@@ -67,31 +67,6 @@ const config: PlaywrightTestConfig = {
         ...devices['Desktop Safari'],
       },
     },
-    
-    {
-      name: 'smoke',
-      grep: /@smoke/,
-    },
-    {
-      name: 'smoke chromium',       
-      grep: /@smoke/,
-      use: {
-        ...devices['Desktop Chrome'],
-      },
-    },
-    {
-      name: 'smoke firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-      },
-    },
-    {
-      name: 'smoke webkit',
-      grep: /@smoke/,
-      use: {
-        ...devices['Desktop Safari'],
-      },
-    },
 
     /* Test against mobile viewports. */
     // {
