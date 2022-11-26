@@ -1,23 +1,42 @@
+import { Dayjs } from "dayjs"
 import dayjs from "../../lib/dayjs"
 
-export function formatDateTimeInterval(startStr: string, endStr: string | null): string {
-    const start = dayjs(startStr)
+function getDateStr(date: Dayjs): string {
+    const isCurrentYear = date.year() === dayjs().year() 
+    return isCurrentYear 
+        ? date.format("ddd D. MMM")
+        : date.format("ddd D. MMM YYYY")
+}
 
-    const dayFormat = start.year() === dayjs().year()
-        ? "ddd D. MMM"
-        : "ddd D. MMM YYYY,"
-    const hourFormat = "HH:mm"
+function getTimeStr(date: Dayjs): string {
+    return date.format("HH:mm")    
+}
 
-    if (!endStr) {
-        return `${start.format(dayFormat)} kl: ${start.format(hourFormat)}`
-    }
+function getDateTimeStr(date: Dayjs): string {
+    return `${getDateStr(date)} kl: ${getTimeStr(date)}`
+}
 
-    const end = dayjs(endStr)
-    const isSameDate = start.format("YYYY-MM-DD") === end.format("YYYY-MM-DD")
-    const isSmallDiff = start.diff(end, "hours") < 24 && end.hour() < 6
+function isSameDate(a: Dayjs, b: Dayjs) {
+    return  a.format("YYYY-MM-DD") === b.format("YYYY-MM-DD")
+}
 
-    if (isSameDate || isSmallDiff) {
-        return `${start.format(dayFormat)} kl: ${start.format(hourFormat)} – ${end.format(hourFormat)}`
-    }
-    return `${start.format(dayFormat)} kl: ${start.format(hourFormat)} – ${end.format(dayFormat)} kl: ${end.format(hourFormat)}`
+function isSimilarDate(a: Dayjs, b: Dayjs) {
+    return a.diff(b, "hours") < 24 && b.hour() < 6
+}
+
+export function formatDateTimeInterval(start: string | Dayjs, end: string | Dayjs | null): string {
+
+    if(typeof start === "string")
+        start = dayjs(start);
+
+    if (!end) 
+        return getDateTimeStr(start);
+
+    if(typeof end === "string")
+        end = dayjs(end);
+
+    if (isSameDate(start, end) || isSimilarDate(start, end)) 
+        return `${getDateTimeStr(start)} – ${getTimeStr(end)}`;
+    
+    return `${getDateTimeStr(start)} – ${getDateTimeStr(end)}`
 }
