@@ -234,7 +234,7 @@ SELECT
         as updated_by_full_name,
     e.updated_at,
     IIF( end_date_time is  NULL,
-        IIF(datetime(start_date_time, 'start of day', '+1 day', '+16 hours', '+27 minutes') < datetime('now'), 0, 1),
+        IIF(datetime(start_date_time, 'start of day', '+1 day', '+6 hours') < datetime('now'), 0, 1),
         IIF(datetime(end_date_time, '+3 hours')   < datetime('now'), 0, 1)
     ) is_upcoming
 FROM
