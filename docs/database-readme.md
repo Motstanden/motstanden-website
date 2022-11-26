@@ -30,11 +30,11 @@ This project relies on two SQLite databases that exists independently:
 
 ## Development environment variable
 Usage of the database differs between production and development environments. An environment file is therefore used to differ between these environments. To set this variable, a `.env` file can be created and sourced.
-This can be done by copying the [.env.sample](./.env.sample) to `.env` and sourcing this file.
+This can be done by copying the [.env.example](.env.example) to `.env` and sourcing this file.
 
 In linux, this can be done like this:
 ```sh
-cp .env.sample .env
+cp .env.example .env
 source .env
 ```
 
