@@ -30,7 +30,7 @@ This project relies on two SQLite databases that exists independently:
 
 ## Development environment variable
 Usage of the database differs between production and development environments. An environment file is therefore used to differ between these environments. To set this variable, a `.env` file can be created and sourced.
-This can be done by copying the [.env.example](.env.example) to `.env` and sourcing this file.
+This can be done by copying the [.env.example](./../database/.env.example) to `.env` and sourcing this file.
 
 In linux, this can be done like this:
 ```sh
@@ -42,10 +42,10 @@ source .env
 To back up the database, make sure the environment variable `IS_DEV_ENV` is set.
 Run the backup script via the command `sh create_backup.sh` to create a backup.
 
-The names of databases and backup directory is set in [create_backup.sh](./create_backup.sh) and can be changed according to needs. 
+The names of databases and backup directory is set in [create_backup.sh](./../database/create_backup.sh) and can be changed according to needs. 
 The database names and backup directories will be different for production and development environments, and this is decided by the `IS_DEV_ENV` variable.
 
-The variables in [create_backup.sh](./create_backup.sh) that may need to be changed in the future is:
+The variables in [create_backup.sh](./../database/create_backup.sh) that may need to be changed in the future is:
 - `DB_NAMES`: Names of databases that will be backed up
 - `BACKUP_PARENT_DIRECTORY`: Directory where backups will be stored.
 
@@ -54,7 +54,7 @@ The script creates a backup directory and a corresponding directory for each dat
 ### Backup service and timer
 For backing up the database, a systemd timer and service is used. The service executes the `create_backup.sh` script, and the timer triggers the service routinely (for example every week).
 
-To implement automatic backup of database on the production server, the files [backup_motstanden.service](./systemd-backup-files/backup_motstanden.service) and [backup_motstanden.timer](./systemd-backup-files/backup_motstanden.timer) must be moved to the folder `/etc/systemd/system`, these must be loaded and the timer must be enabled.
+To implement automatic backup of database on the production server, the files [backup_motstanden.service](./../database/systemd-backup-files/backup_motstanden.service) and [backup_motstanden.timer](./../database/systemd-backup-files/backup_motstanden.timer) must be moved to the folder `/etc/systemd/system`, these must be loaded and the timer must be enabled.
 This for example be done via this script:
 ```sh
 sudo mv ./systemd-backup-files/backup_motstanden.* /etc/systemd/system
