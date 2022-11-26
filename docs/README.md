@@ -5,6 +5,7 @@ The project is licensed under the MÅKESODD v1 license. MÅKESODD v1 can be read
 # Code of conduct
   - This project follows the guidelines of [Gitflow Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow). 
   - English should be used everywhere. Norwegian is not allowed.
+  - It is allowed to write issues and pull requests in Norwegian.
 
 # Getting started
 Follow all the steps in [getting-started.md](../getting-started.md) to set up and run the website locally. <br/>
