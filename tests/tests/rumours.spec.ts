@@ -40,7 +40,7 @@ async function testCrud(opts: {creator: UserGroup, moderator: UserGroup, testId:
 	test(`New (${opts.testId})`, async ({browser}) => {
 		const page = await storageLogIn(browser, opts.creator)
     	await testCreateNew(page, rumour1)
-		disposeStorageLogIn(page)
+		await disposeStorageLogIn(page)
 	})
 
 	test(`Update (${opts.testId})`, async ({page}) => {
