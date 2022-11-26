@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serverdeploy": "cd ../common && tsc && cd ../client && npm install && npm run build && cd ../server && npm install && npm install ../common && tsc",
+    "serverdeploy": "cd ../common && npm install && tsc && cd ../client && npm install && npm run build && cd ../server && npm install && tsc",
     "server-dev": "npm install && npm install ../common && nodemon build/server.js",
     "common-dev": "cd ../common && tsc && cd ../server && npm install ../common && cd ../client && npm install",
     "client-dev": "cd ../client && npm install && npm start",
