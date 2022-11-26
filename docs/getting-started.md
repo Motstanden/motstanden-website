@@ -57,7 +57,9 @@ After completing this guide, you will have learned everything you need to know t
 
   2. Install dependencies
       ```bash
-      cd server
+      cd common
+      npm install
+      cd ../server
       npm install
       cd ..
       ```
