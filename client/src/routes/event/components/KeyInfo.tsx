@@ -1,6 +1,6 @@
 import { Theme, useMediaQuery } from "@mui/material";
 import { KeyValuePair } from "common/interfaces";
-import { formatDateTimeInterval } from "common/utils/dateTime"
+import { formatDateTimeInterval } from "common/utils/dateTime";
 import dayjs from "dayjs";
 import React from "react";
 
@@ -15,13 +15,15 @@ export function KeyInfo({
     endTime?: string | null     // yyyy-mm-dd hh:mm:ss
     style?: React.CSSProperties
 }) {
+    const localStartTime = dayjs(startTime).utc(true).local()
+    const localEndTime = endTime ? dayjs(endTime).utc(true).local()  : null
     return (
         <KeyValueList
             style={style}
             items={[
                 {
                     key: "Tid:",
-                    value: formatDateTimeInterval(startTime, endTime ?? null)
+                    value: formatDateTimeInterval(localStartTime, localEndTime)
                 },
                 ...keyInfo
             ]}

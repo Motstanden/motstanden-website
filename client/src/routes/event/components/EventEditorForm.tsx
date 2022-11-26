@@ -40,6 +40,8 @@ function createValidState(initialValue: EventEditorState): EventEditorState {
         console.groupEnd()
         newValue.description = emptyRichText
     }
+    newValue.startTime = initialValue.startTime?.utc(true).local() ?? null
+    newValue.endTime = initialValue.endTime?.utc(true).local() ?? null
     return newValue;
 }
 
@@ -59,8 +61,8 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
         const serializedEvent: UpsertEventData = {
             eventId: eventId,
             title: state.title,
-            startDateTime: state.startTime!.format("YYYY-MM-DD HH:mm:00"),
-            endDateTime: state.endTime?.format("YYYY-MM-DD HH:mm:00") ?? null,
+            startDateTime: state.startTime!.utc(false).format("YYYY-MM-DD HH:mm:00"),
+            endDateTime: state.endTime?.utc(false).format("YYYY-MM-DD HH:mm:00") ?? null,
             keyInfo: state.keyInfo,
             description: state.description,
             descriptionHtml: serialize(state.description)
