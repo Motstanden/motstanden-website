@@ -1,18 +1,20 @@
 #!/bin/bash
 
 # Check for development or production environment
-if test -f ./.env; then
-    source ./.env
-    if [[ -z "${IS_DEV_ENV}" ]]; then
-        echo "IS_DEV_ENV undefined, please set IS_DEV_ENV environment" \
-             "variable in .env file." \
-	     "Using development environment." 1>&2
-         IS_DEV_ENV=true
+if [[ -z "${IS_DEV_ENV}" ]]; then
+    # IS_DEV_ENV is not defined. Seatch for .env file
+    if test -f ./.env; then
+        source ./.env
+        if [[ -z "${IS_DEV_ENV}" ]]; then
+            echo "IS_DEV_ENV undefined in $PWD/.env, please set IS_DEV_ENV" \
+                 "variable in .env file. Using development environment." 1>&2
+            IS_DEV_ENV=true
+        fi
+    else
+        echo "Could not find IS_DEV_ENV variable or environment file" \
+             "$PWD/.env. Using development environment." 1>&2
+        IS_DEV_ENV=true
     fi
-else
-    echo "Could not find environment file ($PWD/.env)." \
-	     "Using development environment." 1>&2
-    IS_DEV_ENV=true
 fi
 
 # Backup directory and database path id dependent on dev environment variable
