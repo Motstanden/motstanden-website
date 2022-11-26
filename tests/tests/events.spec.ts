@@ -69,8 +69,11 @@ async function testCrud(opts: CrudOptions) {
 	let eventUrl: string
 
 	test(`New (${opts.testId})`, async ({browser}) => {
-		const page = await storageLogIn(browser, opts.creator, "/arrangement/ny")
-    	await testCreateNew(page, event1)
+		const page = await storageLogIn(browser, opts.creator)
+		await page.goto("/arrangement/ny")
+
+		await testCreateNew(page, event1)
+
 		eventUrl = page.url()
 		await disposeStorageLogIn(page)
 	})
@@ -82,19 +85,22 @@ async function testCrud(opts: CrudOptions) {
 		if(opts.participator === opts.creator) 
 			throw "Invalid operation: participator can creator can not be the same user";
 
-		const page = await storageLogIn(browser, opts.participator, eventUrl)
+		const page = await storageLogIn(browser, opts.participator)
+		await page.goto(eventUrl)
 		await testParticipation(page, opts.participator)
 		await disposeStorageLogIn(page)
 	})
 
 	test(`Update (${opts.testId})`, async ({browser}) => {
-		const page = await storageLogIn(browser, opts.updater, eventUrl)
+		const page = await storageLogIn(browser, opts.updater)
+		await page.goto(eventUrl)
     	await testUpdate(page, event1, event2)
 		await disposeStorageLogIn(page)
 	})
 
 	test(`Delete (${opts.testId})`, async ({browser}) => {
-		const page = await storageLogIn(browser, opts.deleter, eventUrl)
+		const page = await storageLogIn(browser, opts.deleter)
+		await page.goto(eventUrl)
     	await testDelete(page, event2)
 		await disposeStorageLogIn(page)
 	})

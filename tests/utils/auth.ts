@@ -46,11 +46,9 @@ export function getUserFullName(group: UserGroup): string {
     }
 }
 
-export async function storageLogIn(browser: Browser, group: UserGroup, targetUrl?: string) {
+export async function storageLogIn(browser: Browser, group: UserGroup) {
     const context = await browser.newContext({ storageState: getStoragePath(group)}) 
     const page = await context.newPage()
-    await page.goto(targetUrl ?? "/hjem", { waitUntil: "load"})
-    await page.waitForLoadState("networkidle")      // Give the server enough time to refresh AccessToken cookie
     return page
 }
 

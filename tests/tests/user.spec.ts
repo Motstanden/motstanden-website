@@ -29,8 +29,11 @@ test("New users can only be created by super admin", async ({browser}) => {
 
 test("Admin can not promote self to super admin", async ({browser}) => {
     const page = await storageLogIn(browser, UserGroup.Administrator)
-
+    
+    // TODO: Go directly to current user
+    await page.goto("/hjem")
     await gotoCurrentUser(page)
+
     await editCurrentUser(page)
 
     await page.getByRole('button', { name: /Rolle/ }).click()
@@ -58,7 +61,11 @@ test.describe("Set inactive status", async () => {
     })
 
     async function canUpdateInactive(page: Page): Promise<boolean> {
+
+        // TODO: Go directly to current user
+        await page.goto("/hjem")
         await gotoCurrentUser(page)
+        
         await editCurrentUser(page)
 
         await page.getByRole('button', { name: /Status/ }).click()
