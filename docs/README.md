@@ -120,7 +120,7 @@ Run the end-to-end tests by following these steps:
     # [Pretty] Run and render smoke test in firefox
     npx playwright test --grep "@smoke" --project firefox --headed --workers 1
     ```
-Read more about testing in our [test documentation](/doc/testing.md)
+Read more about testing in our [test documentation](./testing.md)
 <br/>
 <br/>
 Now you have all the tools you need to start developing<br/>
@@ -128,22 +128,22 @@ Now you have all the tools you need to start developing<br/>
 
 
 # Project structure
- ## [database](/database)
+ ## [database](./../database)
   - Contains everything that is related to the database.
   - The database is build in sqlite 3.31
 
-## [client](/client)
+## [client](./../client)
   - Contains the web page that is rendered on the users computer.
   - The web page is a single page react app.
   - The project is generated using [Create React App](https://github.com/facebook/create-react-app). See [doc/create-react-app.md](/doc/create-react-app.md)
 
-## [server](/server)
+## [server](./../server)
   - Contains all code that is running locally on the server.
   - The server is running in node version 18.
   - The framework [express](https://expressjs.com/) is extensively used.
   - The server is running on: http://localhost:5000/
 
-## [common](/common)
+## [common](./../common)
   - Contains code that is shared between the [server](/server) and the [client](/client)
   - Used for sharing utility functions and TS structures such as Enum, Interface and Type 
 
