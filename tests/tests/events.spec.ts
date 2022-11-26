@@ -58,6 +58,7 @@ interface CrudOptions {
 async function testCrud(opts: CrudOptions) {
 
 	test.describe.configure({mode: 'serial'})
+	test.slow()
 
 	opts.updater ??= opts.creator
     opts.deleter ??= opts.updater
