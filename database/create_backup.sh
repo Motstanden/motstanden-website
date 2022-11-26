@@ -1,9 +1,18 @@
 #!/bin/bash
 
-# Make sure to define IS_DEV_ENV before running this script
-if [[ -z "${IS_DEV_ENV}" ]]; then
-    echo "IS_DEV_ENV undefined, please set IS_DEV_ENV environment variable." 1>&2
-    exit 1
+# Check for development or production environment
+if test -f ./.env; then
+    source ./.env
+    if [[ -z "${IS_DEV_ENV}" ]]; then
+        echo "IS_DEV_ENV undefined, please set IS_DEV_ENV environment" \
+             "variable in .env file." \
+	     "Using development environment." 1>&2
+         IS_DEV_ENV=true
+    fi
+else
+    echo "Could not find environment file ($PWD/.env)." \
+	     "Using development environment." 1>&2
+    IS_DEV_ENV=true
 fi
 
 # Backup directory and database path id dependent on dev environment variable
