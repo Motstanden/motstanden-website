@@ -7,7 +7,7 @@ Run the tests in this project by following the steps in [README.md](/.github/REA
 ## Creating new tests
 It is recommended to use playwright's code generation tool to mockup tests.
 ```bash
-npx playwright codegen --output tests/myTest.spec.ts --load-storage storage-state/contributor.json
+npx playwright codegen --output tests/myTest.spec.ts --load-storage storage-state/contributor.json http://localhost:3000
 ```
 Note that this command assumes that the file `storage-state/contributor.json` exists. This file is auto generated when running tests. <br/>
 

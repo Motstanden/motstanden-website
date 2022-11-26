@@ -74,7 +74,7 @@ test.describe("Event participation @smoke", async () => {
   		const selectButton = page.getByRole('button', { name: /Min status/ })
 		await selectButton.click()
 
-		const option = page.getByRole('option', { name: statusToString(status) }) 			
+		const option = page.getByRole('option', { name: statusToString(status), exact: true})
 		await Promise.all([
 			option.click(),
 			option.waitFor({state: "detached"})
@@ -90,9 +90,9 @@ test.describe("Event participation @smoke", async () => {
 	test("Users can participate on events", async ({page}) => {
 		page.goto(eventUrl)
 
-		const attendHeading = page.getByRole('heading', { name: statusToString(ParticipationStatus.Attending) })
-		const maybeHeading = page.getByRole('heading', { name: statusToString(ParticipationStatus.Maybe) })
-		const notAttendingHeading = page.getByRole('heading', { name: statusToString(ParticipationStatus.NotAttending) })
+		const attendHeading = page.getByRole('heading', { name: statusToString(ParticipationStatus.Attending), exact: true })
+		const maybeHeading = page.getByRole('heading', { name: statusToString(ParticipationStatus.Maybe), exact: true })
+		const notAttendingHeading = page.getByRole('heading', { name: statusToString(ParticipationStatus.NotAttending), exact: true})
 
 		const userLink = page.getByRole('link', { name: getUserFullName(testUser) })
 
@@ -252,7 +252,7 @@ async function fillForm(page: Page, event: NewEventData) {
 
 	// Add new key info items
 	for(let i = 0; i < event.keyInfo.length; i++) {
-		await page.getByRole('button', { name: 'Nøkkelinformasjon' }).click();
+		await page.getByRole('button', { name: 'Nøkkelinformasjon', exact: true }).click();
 		await page.getByPlaceholder('Tittel*').nth(i).fill(event.keyInfo[i].key);
 		await page.getByPlaceholder('info*').nth(i).fill(event.keyInfo[i].value);
 	}

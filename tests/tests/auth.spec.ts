@@ -77,7 +77,7 @@ test.describe.serial( "User can log out", () => {
         await emailLogIn(page, userMail)
 
         await page.getByRole('button', { name: 'Profilmeny' }).click();
-        await page.getByRole('menuitem', { name: 'Logg ut' }).click();
+        await page.getByRole('menuitem', { name: 'Logg ut', exact: true }).click();
 
         await expect(page).toHaveURL('')
         await testUserIsLoggedOut(page)

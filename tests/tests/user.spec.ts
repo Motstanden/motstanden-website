@@ -247,7 +247,7 @@ async function select<T extends UserEnum>(page: Page, typeName: UserEnumName,  v
     }
 
     await page.getByRole('button', { name: buttonRegEx}).click()
-    await page.getByRole('option', { name: selectValue }).click()
+    await page.getByRole('option', { name: selectValue, exact: true }).click()
 }
 
 function createNewUser(userData?: Partial<NewUser>): NewUser {
