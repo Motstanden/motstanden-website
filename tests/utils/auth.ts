@@ -30,19 +30,19 @@ export async function emailLogIn(page: Page, email: string) {
 
 export function getUserEmail(group: UserGroup): string {
     switch (group) {
-        case UserGroup.Contributor: return "contributor@motstanden.no"
-        case UserGroup.Editor: return "editor@motstanden.no"
-        case UserGroup.Administrator: return "admin@motstanden.no"
-        case UserGroup.SuperAdministrator: return "superadmin@motstanden.no"
+        case UserGroup.Contributor: return "test-contributor@motstanden.no"
+        case UserGroup.Editor: return "test-editor@motstanden.no"
+        case UserGroup.Administrator: return "test-admin@motstanden.no"
+        case UserGroup.SuperAdministrator: return "test-superadmin@motstanden.no"
     }
 }
 
 export function getUserFullName(group: UserGroup): string {
     switch (group) {
-        case UserGroup.Contributor: return "Bidragsyter Euler"
-        case UserGroup.Editor: return "Redaktør Turing"
-        case UserGroup.Administrator: return "Admin Kirchhoff"
-        case UserGroup.SuperAdministrator: return "Super Admin Ohm"
+        case UserGroup.Contributor: return "__Test User Contributor"
+        case UserGroup.Editor: return "__Test User Editor"
+        case UserGroup.Administrator: return "__Test User Admin"
+        case UserGroup.SuperAdministrator: return "__Test User Super Admin"
     }
 }
 
