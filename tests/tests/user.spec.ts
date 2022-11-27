@@ -148,48 +148,47 @@ test.describe.serial("Create and update user data", async () => {
         await disposeStorageLogIn(page)
     })
 
-    test("Admin can update all info about themselves", async ({page}) => {
+    test("User can update info about themselves", async ({page}) => {
+
         await page.goto(`${userUrl}/rediger`)
         await expect(page).toHaveURL("/logg-inn")
 
         await emailLogIn(page, user.email)
         await expect(page).toHaveURL(`${userUrl}/rediger`)
-        
-        user = createNewUser({ 
-            groupName: UserGroup.Contributor, 
-            rank: UserRank.KiloOhm,
-            status: UserStatus.Veteran 
+
+        await test.step("Admin can update all", async () => {
+            user = createNewUser({ 
+                groupName: UserGroup.Contributor, 
+                rank: UserRank.KiloOhm,
+                status: UserStatus.Veteran 
+            })
+    
+            await fillPersonalForm(page, user)
+            await fillMembershipForm(page, user)
+            await select(page, "UserGroup", user.groupName)
+            await saveChanges(page)
+            await validateUserProfile(page, user)
         })
 
-        await fillPersonalForm(page, user)
-        await fillMembershipForm(page, user)
-        await select(page, "UserGroup", user.groupName)
-        await saveChanges(page)
-        await validateUserProfile(page, user)
-    })
-
-    test("Contributor can update all info about themselves except rank and group", async ({page}) => {
-        await page.goto(`${userUrl}/rediger`)
-        await expect(page).toHaveURL("/logg-inn")
-
-        await emailLogIn(page, user.email)
-        await expect(page).toHaveURL(`${userUrl}/rediger`)
+        await test.step("Contributor can update all except rank and group",  async () => {
+            await clickEditButton(page)
+            
+            // Expect the user not to be able to edit rank or group
+            expect(await page.getByRole('button', { name: /Rang/ }).count()).toBe(0)
+            expect(await page.getByRole('button', { name: /Rolle/ }).count()).toBe(0)
+            
+            user = createNewUser({
+                rank: user.rank,
+                groupName: user.groupName,
+                status: UserStatus.Retired
+            })
         
-        // Expect the user not to be able to edit rank or group
-        expect(await page.getByRole('button', { name: /Rang/ }).count()).toBe(0)
-        expect(await page.getByRole('button', { name: /Rolle/ }).count()).toBe(0)
-        
-        user = createNewUser({
-            rank: user.rank,
-            groupName: user.groupName,
-            status: UserStatus.Retired
+            await fillPersonalForm(page, user)
+            await fillMembershipForm(page, user, {skipRank: true})
+            
+            await saveChanges(page)
+            await validateUserProfile(page, user)
         })
-
-        await fillPersonalForm(page, user)
-        await fillMembershipForm(page, user, {skipRank: true})
-        
-        await saveChanges(page)
-        await validateUserProfile(page, user)
     })
 })
 
