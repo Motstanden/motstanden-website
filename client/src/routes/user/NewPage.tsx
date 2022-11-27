@@ -91,7 +91,8 @@ function NewUserForm() {
 
         setIsSubmitting(false)
         if (response.ok) {
-            window.location.reload() // TODO: Do something more than just refreshing the page
+            const data = await response.json()
+            window.location.href = `${window.location.origin}/medlem/${data.userId}`;   // Redirect to the profile page of the new user
         }
     }
 

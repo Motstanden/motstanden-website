@@ -82,22 +82,17 @@ test.describe.serial("Create and update user data", async () => {
         page = await storageLogIn(browser, UserGroup.SuperAdministrator)
         await page.goto("/medlem/ny")
 
-        await test.step("Post new user", async () => {
 
-            await fillPersonalForm(page, user)
-
-            await selectDate(page, "Startet *", user.startDate, "MonthYear")
+        await fillPersonalForm(page, user)
+        await selectDate(page, "Startet *", user.startDate, "MonthYear")
+    
+        await page.getByRole('button', { name: 'Profilbilde Gutt' }).click()
+        await page.getByRole('option', { name: 'Jente' }).click()
         
-            await page.getByRole('button', { name: 'Profilbilde Gutt' }).click()
-            await page.getByRole('option', { name: 'Jente' }).click()
-          
-            await page.getByRole('button', { name: 'Legg til bruker' }).click()
-        })
+        await navClick(page.getByRole('button', { name: 'Legg til bruker' }))
+        await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
 
-        await test.step("Test user exists", async () => {
-            await gotoUserPage(page, user)
-            await validateUserProfile(page, user)
-        })
+        await validateUserProfile(page, user)
     })
 
     test("Super admin can update all info @smoke", async () => {
