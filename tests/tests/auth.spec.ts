@@ -1,50 +1,39 @@
 import test, { Browser, chromium, expect, firefox, webkit, type Page } from '@playwright/test';
 import { emailLogIn } from '../utils/auth';
 
-test.describe("Login tokens are created and persisted", () => {
+test("Login tokens are created and persisted", async ({page}) => {
 
-    test.beforeEach( async ({page}) => {
-        // We must do a manual log in to prevent flaky tests.
-        // A race condition will eventually occur and fail the tests if we try to log in with storage state.
-        // The condition for this race condition are:
-        //      - The tests has been running repeatedly for more than 14 minutes.
-        //        This can happen if you are hunting for flaky tests.
-        //      - The AccessToken expires at a random time during the test
-        await emailLogIn(page, "stephen.hawking@gmail.com")
-    })    
+    // We must do a manual log in to prevent flaky tests.
+    // A race condition will eventually occur and fail the tests if we try to log in with storage state.
+    // The condition for this race condition are:
+    //      - The tests has been running repeatedly for more than 14 minutes.
+    //        This can happen if you are hunting for flaky tests.
+    //      - The AccessToken expires at a random time during the test
+    await emailLogIn(page, "stephen.hawking@gmail.com")
 
-    test("Should create AccessToken and RefreshTokens on login", async ({page}) => {
+    test.step("AccessToken and RefreshTokens is defined", async () => {
         const cookies = await page.context().cookies()
-        
         expect(cookies.length).toBe(2)
         
         const accessToken = cookies.find(c => c.name === "AccessToken")
         expect(accessToken).toBeDefined()
-
+    
         const refreshToken = cookies.find(c => c.name === "RefreshToken")
         expect(refreshToken).toBeDefined()
-    })
-
-    test("AccessToken expires within 15 minutes", async ({page}) => {
-        const cookies = await page.context().cookies()
-        const accessToken = cookies.find(c => c.name === "AccessToken")
 
         // Test that AccessToken expires within 15 minutes
         expect(accessToken.expires * 1000).toBeLessThanOrEqual(Date.now() + 1000*60*15)
     })
 
-    test("Should renew AccessToken if browser only has RefreshToken", async ({page}) => {
-        await expect(page).toHaveURL("/hjem")
-
+    test.step("AccessToken is renewed if browser only has RefreshToken", async () => {
+        
         await expireAccessToken(page)
-        await expect(page).toHaveURL("/hjem")
+        const oldCookies = await page.context().cookies()
+        const oldAccessToken = oldCookies.find(c => c.name === "AccessToken") 
+        expect(oldAccessToken).not.toBeDefined()
 
         await page.reload()
-        await expect(page).toHaveURL("/hjem")
 
-        await page.goto("/sitater")
-        await expect(page).toHaveURL("/sitater")
-        
         const newCookies = await page.context().cookies()
         const accessToken = newCookies.find(c => c.name === "AccessToken")
         expect(accessToken).toBeDefined()
@@ -83,49 +72,43 @@ test.describe.serial( "User can log out", () => {
         await testUserIsLoggedOut(page)
 
     });
-  
-    test("Log out of all browser @smoke", async ({ browser }) => {
-        test.slow()
 
-        const pages: Page[] = []
-        const userMail = getMail(browser)
-        for(let i = 0; i < 3; i++) {
+    test("Log out of all browser @smoke", async ({ browser }) => {
+    
+        const newLoginContext = async (): Promise<Page> => {
             const context = await browser.newContext()
             const page = await context.newPage()
+            const userMail = getMail(browser)
             await emailLogIn(page, userMail)
-            pages.push(page)
+            return page
         }
 
+        const page1 = await newLoginContext()
+        const page2 = await newLoginContext()
+      
         await test.step("Click 'log out of all units'", async () => {
-            const page = pages[pages.length - 1]
 
-            page.once('dialog', dialog => dialog.accept());
-            await page.getByRole('button', { name: 'Profilmeny' }).click();
-            await page.getByRole('menuitem', { name: 'Logg ut alle enheter' }).click();
+            // Log out of the last opened page to provide a nice viewing experience when running test in headed mode
+
+            page2.once('dialog', dialog => dialog.accept());
+            await page2.getByRole('button', { name: 'Profilmeny' }).click();
+            await page2.getByRole('menuitem', { name: 'Logg ut alle enheter' }).click();
             
-            await expect(page).toHaveURL('')
-            await testUserIsLoggedOut(page)
+            await expect(page2).toHaveURL('')
+            await testUserIsLoggedOut(page2)
+
+            await page2.context().close()
         })
 
-        await test.step("Test that the user is logged out of all browsers", async () => {
-            for(let i = 0; i < pages.length; i++){
-                const page = pages[i]
-                
-                // The user should be logged out when the AccessToken expires.
-                await expireAccessToken(page)
-                
-                // A page reload will trigger the client to request a new AccessToken. 
-                // The server should refuse to generate a new token.
-                await page.reload()
-                
-                await expect(page).toHaveURL('/logg-inn')
-                await testUserIsLoggedOut(page)
+        await test.step("Test that the user is logged out of other browser", async () => {
 
-                await page.context().close()
-            }
-        })
-    });
+            // The user should be logged out when the AccessToken expires.
+            await expireAccessToken(page1)
 
+            await testUserIsLoggedOut(page1)
+            await page1.context().close()
+        })  
+    })
 });
 
 async function expireAccessToken(page: Page) {
@@ -139,13 +122,10 @@ async function expireAccessToken(page: Page) {
 }
 
 async function testUserIsLoggedOut(page: Page) {
+    await page.goto('/hjem');
+    await expect(page.getByRole('link', { name: 'Logg Inn' })).toBeVisible()
+    await expect(page).toHaveURL('/logg-inn');
+
     const cookies = await page.context().cookies()
     expect(cookies.length).toBe(0)
-
-    await page.goto("")
-    await expect(page.getByRole('link', { name: 'Logg Inn' })).toBeVisible()
-    await page.goto('/hjem');
-    await expect(page).toHaveURL('/logg-inn');
-    await page.goto('/sitater');
-    await expect(page).toHaveURL('/logg-inn');
 }
