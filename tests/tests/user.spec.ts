@@ -9,7 +9,7 @@ import {
     userStatusToPrettyStr
 } from "common/utils"
 import { randomInt, randomUUID } from 'crypto'
-import { disposeStorageLogIn, emailLogIn, storageLogIn } from '../utils/auth'
+import { disposeStorageLogIn, emailLogIn, getUser, storageLogIn } from '../utils/auth'
 import { selectDate } from '../utils/datePicker'
 import { navClick } from '../utils/navClick'
 
@@ -23,18 +23,13 @@ test("New users can only be created by super admin", async ({browser}) => {
     await expect(adminPage).toHaveURL("/hjem")
     await expect(superAdminPage).toHaveURL("/medlem/ny")
 
-    await adminPage.context().close()
-    await superAdminPage.context().close()
+    await disposeStorageLogIn(adminPage)
+    await disposeStorageLogIn(superAdminPage)
 })
 
 test("Admin can not promote self to super admin", async ({browser}) => {
     const page = await storageLogIn(browser, UserGroup.Administrator)
-    
-    // TODO: Go directly to current user
-    await page.goto("/hjem")
-    await gotoCurrentUser(page)
-
-    await editCurrentUser(page)
+    await gotoUser(page, UserGroup.Administrator, { editUser: true})
 
     await page.getByRole('button', { name: /Rolle/ }).click()
 
@@ -46,28 +41,25 @@ test("Admin can not promote self to super admin", async ({browser}) => {
 
 test.describe("Set inactive status", async () => {
     
-    test.afterEach(async ({page}) => {
-        await disposeStorageLogIn(page)
-    })
-
     test("Contributor can not update self to be inactive", async ({browser}) => {
         const page = await storageLogIn(browser, UserGroup.Contributor)
+        await gotoUser(page, UserGroup.Contributor, {editUser: true})
+
         expect(await canUpdateInactive(page)).not.toBeTruthy()
+
+        await disposeStorageLogIn(page)
     })
 
     test("Admin can update self to be inactive", async ({browser}) => {
         const page = await storageLogIn(browser, UserGroup.Administrator)
+        await gotoUser(page, UserGroup.Administrator, {editUser: true})
+
         expect(await canUpdateInactive(page)).toBeTruthy()
+
+        await disposeStorageLogIn(page)
     })
-
-    async function canUpdateInactive(page: Page): Promise<boolean> {
-
-        // TODO: Go directly to current user
-        await page.goto("/hjem")
-        await gotoCurrentUser(page)
         
-        await editCurrentUser(page)
-
+    async function canUpdateInactive(page: Page): Promise<boolean> {
         await page.getByRole('button', { name: /Status/ }).click()
         const inactiveCount = await page.getByRole('option', { name: userStatusToPrettyStr(UserStatus.Inactive) }).count()
         return inactiveCount === 1
@@ -86,8 +78,8 @@ test.describe.serial("Create and update user data", async () => {
             birthDate: null,
             endDate: null
         })
-        page = await storageLogIn(browser, UserGroup.SuperAdministrator)
 
+        page = await storageLogIn(browser, UserGroup.SuperAdministrator)
         await page.goto("/medlem/ny")
 
         await test.step("Post new user", async () => {
@@ -103,7 +95,7 @@ test.describe.serial("Create and update user data", async () => {
         })
 
         await test.step("Test user exists", async () => {
-            await gotoUser(page, user)
+            await gotoUserPage(page, user)
             await validateUserProfile(page, user)
         })
     })
@@ -141,7 +133,7 @@ test.describe.serial("Create and update user data", async () => {
             groupName: UserGroup.Administrator
         }
         
-        await gotoUser(page, user)
+        await gotoUserPage(page, user)
         await editCurrentUser(page)
         
         // Expect personal details to be read only
@@ -305,7 +297,7 @@ async function gotoCurrentUser(page: Page) {
     await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
 }
 
-async function gotoUser(page: Page, user: UserName) {
+async function gotoUserPage(page: Page, user: UserName) {
     await page.goto("/medlem/liste")
     await page.getByLabel('Styret').check()
 
@@ -388,4 +380,17 @@ async function validateUserProfile(page: Page, user: NewUser) {
 function getEnums<T>(enumObj: {}): T[] {
     return Object.keys(enumObj)
                  .map(itemStr => enumObj[itemStr as keyof typeof enumObj] as T)
+}
+
+async function gotoUser(page: Page, group: UserGroup, opts?: {editUser?: boolean}) {
+    const url = getUserUrl(group, opts)
+    await page.goto(url)
+} 
+
+function getUserUrl( group: UserGroup, opts?: {editUser?: boolean}): string {
+    const id = getUser(group).userId
+    let url = `/medlem/${id}`
+    if(opts?.editUser) 
+        url += "/rediger"
+    return url;
 }
