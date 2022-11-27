@@ -3,6 +3,7 @@ import { UserGroup, UserRank, UserStatus } from 'common/enums'
 import { NewUser } from 'common/interfaces'
 import dayjs from 'common/lib/dayjs'
 import {
+    getFullName,
     isNullOrWhitespace,
     userGroupToPrettyStr,
     userRankToPrettyStr,
@@ -69,6 +70,7 @@ test.describe("Set inactive status", async () => {
 test.describe.serial("Create and update user data", async () => {
     test.slow()
     let user: NewUser
+    let userUrl: string
     let page: undefined | Page
 
     test("Should create new user @smoke", async ({browser}) => {
@@ -91,20 +93,20 @@ test.describe.serial("Create and update user data", async () => {
         
         await navClick(page.getByRole('button', { name: 'Legg til bruker' }))
         await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
+        userUrl = page.url()
 
         await validateUserProfile(page, user)
     })
 
     test("Super admin can update all info @smoke", async () => {
-        
+        await clickEditButton(page)   // Reuse the page from the previous test to reduce test time
+
         user = createNewUser({
             groupName: UserGroup.Editor,
             rank: UserRank.Ohm,
             status: UserStatus.Active
         })
 
-        await editCurrentUser(page)
-        
         await fillPersonalForm(page, user)
         await fillMembershipForm(page, user)
         await select(page, "UserGroup", user.groupName)
@@ -116,6 +118,8 @@ test.describe.serial("Create and update user data", async () => {
 
     test("Admin can update membership info", async ({browser}) => {
         page = await storageLogIn(browser, UserGroup.Administrator)
+        await page.goto(`${userUrl}/rediger`)
+
         const newData = createNewUser()
         user = {
             ...user,
@@ -127,9 +131,6 @@ test.describe.serial("Create and update user data", async () => {
             endDate: newData.endDate,
             groupName: UserGroup.Administrator
         }
-        
-        await gotoUserPage(page, user)
-        await editCurrentUser(page)
         
         // Expect personal details to be read only
         expect(await page.getByLabel('Fornavn *').count()).toBe(0)
@@ -148,15 +149,18 @@ test.describe.serial("Create and update user data", async () => {
     })
 
     test("Admin can update all info about themselves", async ({page}) => {
+        await page.goto(`${userUrl}/rediger`)
+        await expect(page).toHaveURL("/logg-inn")
+
         await emailLogIn(page, user.email)
-        await gotoCurrentUser(page)
-        await editCurrentUser(page)
+        await expect(page).toHaveURL(`${userUrl}/rediger`)
         
         user = createNewUser({ 
             groupName: UserGroup.Contributor, 
             rank: UserRank.KiloOhm,
             status: UserStatus.Veteran 
         })
+
         await fillPersonalForm(page, user)
         await fillMembershipForm(page, user)
         await select(page, "UserGroup", user.groupName)
@@ -165,9 +169,11 @@ test.describe.serial("Create and update user data", async () => {
     })
 
     test("Contributor can update all info about themselves except rank and group", async ({page}) => {
+        await page.goto(`${userUrl}/rediger`)
+        await expect(page).toHaveURL("/logg-inn")
+
         await emailLogIn(page, user.email)
-        await gotoCurrentUser(page)
-        await editCurrentUser(page)
+        await expect(page).toHaveURL(`${userUrl}/rediger`)
         
         // Expect the user not to be able to edit rank or group
         expect(await page.getByRole('button', { name: /Rang/ }).count()).toBe(0)
@@ -265,47 +271,7 @@ function createNewUser(userData?: Partial<NewUser>): NewUser {
     return newUser
 }
 
-interface UserName {
-    firstName: string, 
-    middleName: string, 
-    lastName: string
-}
-
-function getFullName(user: UserName): string {
-    const lastName = isNullOrWhitespace(user.middleName) 
-                   ? user.lastName 
-                   : user.middleName + " " + user.lastName
-    return user.firstName + " " + lastName
-}
-
-function monthFormat(date: string): string {
-    return dayjs(date).locale("nb").format("MMMM YYYY").toLowerCase()
-}
-
-function birthFormat(date: string): string {
-    return dayjs(date).format("DD.MM.YYYY")
-}
-
-async function gotoCurrentUser(page: Page) {
-    await page.getByRole('button', { name: 'Profilmeny' }).click()
-    await navClick(page.getByRole('menuitem', { name: 'Profil' }))
-    await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
-}
-
-async function gotoUserPage(page: Page, user: UserName) {
-    await page.goto("/medlem/liste")
-    await page.getByLabel('Styret').check()
-
-    const fullName = getFullName(user)
-    const userLink = page.getByRole('link', { name: fullName })   
-    await expect(userLink).toBeVisible()
-    await userLink.click()
-
-    await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
-    await expect(page.getByText(fullName).first()).toBeVisible()
-}
-
-async function editCurrentUser(page: Page) {
+async function clickEditButton(page: Page) {
     await page.getByRole('link', { name: 'Rediger Profil' }).click()
     await expect(page).toHaveURL(/\/medlem\/[0-9]+\/rediger/)
 }
@@ -320,11 +286,13 @@ async function validateUserProfile(page: Page, user: NewUser) {
     const fullName = getFullName(user)
     await expect(page.getByText(fullName).first()).toBeVisible()
 
+    const formatStartDate = (date: string) => dayjs(date).locale("nb").format("MMMM YYYY").toLowerCase()
+
     // We expect all items in this array to be visible on the user profile page (exactly once)
     const uniqueData: string[] = [
         user.email, 
         userRankToPrettyStr(user.rank),
-        monthFormat(user.startDate),
+        formatStartDate(user.startDate),
     ]
 
     // The group is not unique on the page if it is contributor
@@ -345,7 +313,7 @@ async function validateUserProfile(page: Page, user: NewUser) {
         uniqueData.push(dayjs(user.birthDate).format("DD MMMM YYYY"))
     
     if(user.endDate)
-        uniqueData.push(monthFormat(user.endDate))
+        uniqueData.push(formatStartDate(user.endDate))
 
     for(let i = 0; i < uniqueData.length; i++) {
         await expect(page.getByText(uniqueData[i])).toBeVisible()

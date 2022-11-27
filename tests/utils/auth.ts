@@ -1,4 +1,4 @@
-import { Browser, expect, Page } from "@playwright/test"
+import { Browser, Page } from "@playwright/test"
 import { UserGroup, UserRank, UserStatus } from "common/enums"
 import { NewUser } from "common/interfaces"
 import { navClick } from "./navClick"
@@ -20,13 +20,11 @@ export async function logIn(page: Page, group: UserGroup) {
 }
 
 export async function emailLogIn(page: Page, email: string) {
-    await page.goto(`${process.env.BASEURL}/logg-inn`);
-    
+    if(!page.url().endsWith("/logg-inn")) {
+        await page.goto(`${process.env.BASEURL}/logg-inn`);
+    }
     await page.getByLabel('E-post *').fill(email);
-
     await navClick(page.getByRole('button', { name: 'Dev logg inn' }))
-    
-    await expect(page).toHaveURL(`${process.env.BASEURL}/hjem`);
 }
 
 export async function storageLogIn(browser: Browser, group: UserGroup) {
