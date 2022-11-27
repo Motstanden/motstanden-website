@@ -3,7 +3,7 @@ import { UserGroup } from 'common/enums';
 import { NewRumour } from 'common/interfaces';
 import { randomUUID } from "crypto";
 import { EditListPage } from '../pages/EditListPage';
-import { disposeStorageLogIn, getStoragePath, storageLogIn } from '../utils/auth';
+import { disposeStorageLogIn, storageLogIn } from '../utils/auth';
 
 test.describe.serial("Users can update and delete rumours created by themselves @smoke",  async () => {
 	await testCrud({
@@ -32,23 +32,32 @@ test.describe.serial("Super admin can update and delete rumours created by other
 // crud -> create read update delete
 async function testCrud(opts: {creator: UserGroup, moderator: UserGroup, testId: number}) {
 	
-	test.use({storageState: getStoragePath(opts.moderator)})
-	
 	const rumour1: NewRumour = createRandomRumour()
 	const rumour2: NewRumour = createRandomRumour()
 
+	let page: Page
+
 	test(`New (${opts.testId})`, async ({browser}) => {
-		const page = await storageLogIn(browser, opts.creator)
-    	await testCreateNew(page, rumour1)
-		await disposeStorageLogIn(page)
+		page = await storageLogIn(browser, opts.creator)
+    	
+		await testCreateNew(page, rumour1)
+
+		if(opts.creator !== opts.moderator) {
+			await disposeStorageLogIn(page)
+		}
 	})
 
-	test(`Update (${opts.testId})`, async ({page}) => {
+	test(`Update (${opts.testId})`, async ({browser}) => {
+		page = opts.creator === opts.moderator 
+			 ? page 
+			 : await storageLogIn(browser, opts.moderator) 
+
     	await testUpdate(page, rumour1, rumour2)
 	})
 
-	test(`Delete (${opts.testId})`, async ({page}) => {
+	test(`Delete (${opts.testId})`, async () => {
     	await testDelete(page, rumour2)
+		await disposeStorageLogIn(page)
 	})
 }
 
@@ -63,7 +72,9 @@ async function testCreateNew(page: Page, rumour: NewRumour) {
 }
 
 async function testUpdate(page: Page, oldRumour: NewRumour, newRumour: NewRumour) {
-	await page.goto('/rykter');
+	if(!page.url().endsWith("/rykter")) {
+		await page.goto('/rykter');
+	}
 	
 	const rumourPage = new RumourPage(page)
 	await rumourPage.editItem(oldRumour, newRumour)
@@ -73,7 +84,9 @@ async function testUpdate(page: Page, oldRumour: NewRumour, newRumour: NewRumour
 }
 
 async function testDelete(page: Page, rumour: NewRumour) {
-	await page.goto('/rykter');
+	if(!page.url().endsWith("/rykter")) {
+		await page.goto('/rykter');
+	}
 	
 	const rumourPage = new RumourPage(page)
 	await rumourPage.deleteItem(rumour)
