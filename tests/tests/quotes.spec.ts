@@ -3,7 +3,7 @@ import { UserGroup } from 'common/enums';
 import { NewQuote } from "common/interfaces";
 import { randomUUID } from "crypto";
 import { EditListPage } from "../pages/EditListPage";
-import { disposeStorageLogIn, getStoragePath, storageLogIn } from '../utils/auth';
+import { disposeStorageLogIn, storageLogIn } from '../utils/auth';
 
 test.describe.serial("Users can update and delete quotes created by themselves",  async () => {
     await testCrud({
@@ -32,24 +32,33 @@ test.describe.serial("Super admin can update and delete quotes created by others
 // crud -> create read update delete
 async function testCrud(opts: {creator: UserGroup, moderator: UserGroup, testId: number}) { 
 
-    test.use({ storageState: getStoragePath(opts.moderator)})
-
     // Mockup data for the tests
     const quote1: NewQuote = createRandomQuote()
     const quote2: NewQuote = createRandomQuote()
 
+    let page: Page
+
     test(`New (${opts.testId})`, async ({browser}) => {
-        const page = await storageLogIn(browser, opts.creator)
+        page = await storageLogIn(browser, opts.creator)
+
         await testCreateNew(page, quote1)
-        await disposeStorageLogIn(page)
+
+        if(opts.creator !== opts.moderator) {
+            await disposeStorageLogIn(page)
+        }
     })
 
-    test(`Update (${opts.testId})`, async ({page}) => {
+    test(`Update (${opts.testId})`, async ({browser}) => {
+        page = opts.creator === opts.moderator 
+             ? page 
+             : await storageLogIn(browser, opts.moderator) 
+
         await testUpdate(page, quote1, quote2)
     })
 
-    test(`Delete (${opts.testId})`, async ({page}) => {
+    test(`Delete (${opts.testId})`, async () => {
         await testDelete(page, quote2)
+        await disposeStorageLogIn(page)
     })
 }
 
@@ -64,7 +73,9 @@ async function testCreateNew(page: Page, quote: NewQuote) {
 }
 
 async function testUpdate(page: Page, oldQuote: NewQuote, newQuote: NewQuote) {
-    await page.goto('/sitater');
+    if(!page.url().endsWith("/sitater")) {
+        await page.goto('/sitater');
+    }
     
     const quotePage = new QuotePage(page)
     await quotePage.editItem(oldQuote, newQuote)
@@ -76,7 +87,9 @@ async function testUpdate(page: Page, oldQuote: NewQuote, newQuote: NewQuote) {
 }
 
 async function testDelete(page: Page, quote: NewQuote) {
-    await page.goto('/sitater')
+    if(!page.url().endsWith("/sitater")) {
+        await page.goto('/sitater');
+    }
 
     const quotePage = new QuotePage(page)
     await quotePage.deleteItem(quote)
