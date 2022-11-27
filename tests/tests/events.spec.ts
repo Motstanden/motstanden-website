@@ -2,9 +2,10 @@ import { expect, Page, test } from '@playwright/test';
 import { ParticipationStatus, UserGroup } from 'common/enums';
 import { NewEventData as NewEventApiData } from 'common/interfaces';
 import dayjs from "common/lib/dayjs";
+import { getFullName } from 'common/utils';
 import { formatDateTimeInterval } from "common/utils/dateTime";
 import { randomInt, randomUUID } from 'crypto';
-import { disposeStorageLogIn, getUserFullName, storageLogIn } from '../utils/auth';
+import { disposeStorageLogIn, getUser, storageLogIn } from '../utils/auth';
 import { selectDate } from '../utils/datePicker';
 import { navClick } from '../utils/navClick';
 
@@ -106,9 +107,10 @@ async function testCrud(opts: CrudOptions) {
 	})
 }
 
-async function testParticipation(page: Page,  user: UserGroup) {
+async function testParticipation(page: Page,  userGroup: UserGroup) {
 
-	const userLink = page.getByRole('link', { name: getUserFullName(user) })
+	const userFullName = getFullName(getUser(userGroup))
+	const userLink = page.getByRole('link', { name: userFullName })
 
 	const attendHeading = page.getByRole('heading', { name: statusToString(ParticipationStatus.Attending), exact: true })
 	const maybeHeading = page.getByRole('heading', { name: statusToString(ParticipationStatus.Maybe), exact: true })

@@ -15,11 +15,11 @@ VALUES
     (4,     6,     '2018-09-01',        'Super Admin',      '',                 'Ohm',              'superadmin@motstanden.no'                  ),
 
     -- Board member accounts
-    (4,     4,      "2018-09-11",       "Web",              "",                 "Ω",                'web@motstanden.no'                         ),
-    (3,     5,      "2018-09-11",       "Leder",            "",                 "Ω",                'leder@motstanden.no'                       ),
-    (3,     4,      "2018-09-11",       "Okonomi",          "",                 "Ω",                'okonomi@motstanden.no'                     ),
-    (3,     4,      "2018-09-11",       "Dirigent",         "",                 "Ω",                'dirigent@motstanden.no'                    ),
-    (3,     4,      "2018-09-11",       "PR",               "",                 "Ω",                'pr@motstanden.no'                          ),
+    (4,     4,      "2018-09-01",       "Web",              "",                 "Ω",                'web@motstanden.no'                         ),
+    (3,     5,      "2018-09-01",       "Leder",            "",                 "Ω",                'leder@motstanden.no'                       ),
+    (3,     4,      "2018-09-01",       "Okonomi",          "",                 "Ω",                'okonomi@motstanden.no'                     ),
+    (3,     4,      "2018-09-01",       "Dirigent",         "",                 "Ω",                'dirigent@motstanden.no'                    ),
+    (3,     4,      "2018-09-01",       "PR",               "",                 "Ω",                'pr@motstanden.no'                          ),
 
     -- All other accounts
     (3,     6,      '2018-09-01',       'Gustav',           '',                 'Kirchhoff',        'gustav.kirchhoff@gmail.com'                ),                  

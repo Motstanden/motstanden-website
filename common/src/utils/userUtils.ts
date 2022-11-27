@@ -15,7 +15,7 @@ export function hasGroupAccess(user: User, requiredGroup: UserGroup): boolean {
     return userGroupToNum(user.groupName) >= userGroupToNum(requiredGroup)
 }
 
-export function getFullName(user: User): string {
+export function getFullName(user: Pick<User, "firstName" | "middleName" | "lastName">): string {
     let fullName = user.firstName
     if (user.middleName)
         fullName += " " + user.middleName
