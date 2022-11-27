@@ -63,20 +63,25 @@ async function testCrud(opts: CrudOptions) {
 
 	opts.updater ??= opts.creator
     opts.deleter ??= opts.updater
+	const runParticipationTest = !!opts.participator
 
     const event1: NewEventData = createRandomEvent()
 	const event2: NewEventData = createRandomEvent()
 
 	let eventUrl: string
+	let page: Page
 
 	test(`New (${opts.testId})`, async ({browser}) => {
-		const page = await storageLogIn(browser, opts.creator)
+		page = await storageLogIn(browser, opts.creator)
 		await page.goto("/arrangement/ny")
 
 		await testCreateNew(page, event1)
 
 		eventUrl = page.url()
-		await disposeStorageLogIn(page)
+
+		if(runParticipationTest || opts.creator !== opts.updater) {
+			await disposeStorageLogIn(page)
+		}
 	})
 
 	test(`User can participate on events (${opts.testId})`, async ({browser}) => {
@@ -86,22 +91,37 @@ async function testCrud(opts: CrudOptions) {
 		if(opts.participator === opts.creator) 
 			throw "Invalid operation: participator can creator can not be the same user";
 
-		const page = await storageLogIn(browser, opts.participator)
+		page = await storageLogIn(browser, opts.participator)
 		await page.goto(eventUrl)
 		await testParticipation(page, opts.participator)
-		await disposeStorageLogIn(page)
+
+		if(opts.updater !== opts.participator) {
+			await disposeStorageLogIn(page)
+		}
 	})
 
 	test(`Update (${opts.testId})`, async ({browser}) => {
-		const page = await storageLogIn(browser, opts.updater)
-		await page.goto(eventUrl)
+
+		const reusePage = opts.creator === opts.updater || (runParticipationTest && opts.updater === opts.participator) 
+		if(!reusePage) {
+			page = await storageLogIn(browser, opts.updater)
+			await page.goto(eventUrl)
+		}
+
     	await testUpdate(page, event1, event2)
-		await disposeStorageLogIn(page)
+
+		if(opts.updater !== opts.deleter) {
+			await disposeStorageLogIn(page)
+		}
 	})
 
 	test(`Delete (${opts.testId})`, async ({browser}) => {
-		const page = await storageLogIn(browser, opts.deleter)
-		await page.goto(eventUrl)
+		const reusePage = opts.updater === opts.deleter
+		if(!reusePage) {
+			page = await storageLogIn(browser, opts.deleter)
+			await page.goto(eventUrl)
+		}
+		
     	await testDelete(page, event2)
 		await disposeStorageLogIn(page)
 	})
