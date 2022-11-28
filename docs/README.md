@@ -8,7 +8,7 @@ The project is licensed under the MÅKESODD v1 license. MÅKESODD v1 can be read
   - It is allowed to write issues and pull requests in Norwegian.
 
 # Getting started
-Follow all the steps in [getting-started.md](../getting-started.md) to set up and run the website locally. <br/>
+Follow all the steps in [getting-started.md](./getting-started.md) to set up and run the website locally. <br/>
 After completing the guide, you will have learned everything you need to know to start developing on the website.  
 
 # Project structure
@@ -25,6 +25,9 @@ After completing the guide, you will have learned everything you need to know to
  ## [database](./../database)
   - Contains everything that is related to the database.
   - The database is build in sqlite 3.31
+
+## [docs](./../docs)
+  - Contains all documentation for the project.
 
 ## [server](./../server)
   - Contains all code that is running locally on the server.
