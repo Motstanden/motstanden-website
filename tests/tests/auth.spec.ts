@@ -1,5 +1,6 @@
-import test, { Browser, chromium, expect, firefox, webkit, type Page } from '@playwright/test';
+import test, { Browser, chromium, Cookie, expect, firefox, webkit, type Page } from '@playwright/test';
 import { emailLogIn } from '../utils/auth';
+import { navClick } from '../utils/navClick';
 
 test("Login tokens are created and persisted", async ({page}) => {
 
@@ -11,7 +12,7 @@ test("Login tokens are created and persisted", async ({page}) => {
     //      - The AccessToken expires at a random time during the test
     await emailLogIn(page, "stephen.hawking@gmail.com")
 
-    test.step("AccessToken and RefreshTokens is defined", async () => {
+    await test.step("AccessToken and RefreshTokens is defined", async () => {
         const cookies = await page.context().cookies()
         expect(cookies.length).toBe(2)
         
@@ -25,20 +26,30 @@ test("Login tokens are created and persisted", async ({page}) => {
         expect(accessToken.expires * 1000).toBeLessThanOrEqual(Date.now() + 1000*60*15)
     })
 
-    test.step("AccessToken is renewed if browser only has RefreshToken", async () => {
+    await test.step("AccessToken is renewed if browser only has RefreshToken", async () => {
         
+        const getAccessToken = async (): Promise<Cookie | undefined> => {
+            const cookies = await page.context().cookies()
+            const token = cookies.find(c => c.name === "AccessToken") 
+            return token
+        }
+
         await expireAccessToken(page)
-        const oldCookies = await page.context().cookies()
-        const oldAccessToken = oldCookies.find(c => c.name === "AccessToken") 
+        const oldAccessToken = await getAccessToken()
         expect(oldAccessToken).not.toBeDefined()
 
         await page.reload()
 
-        const newCookies = await page.context().cookies()
-        const accessToken = newCookies.find(c => c.name === "AccessToken")
-        expect(accessToken).toBeDefined()
-    })
+        // I wrote this hack because: 
+        //      1. I don't want to spend time figuring out exactly when the browser instantiates the token.
+        //      2. It performs better than simply just waiting for the page to completely load.
+        while( !(await getAccessToken()) ) 
+            await page.waitForTimeout(100);
 
+
+        const newAccessToken = await getAccessToken()
+        expect(newAccessToken).toBeDefined()
+    })
 })
 
 test.describe.serial( "User can log out", () => {
@@ -66,7 +77,7 @@ test.describe.serial( "User can log out", () => {
         await emailLogIn(page, userMail)
 
         await page.getByRole('button', { name: 'Profilmeny' }).click();
-        await page.getByRole('menuitem', { name: 'Logg ut', exact: true }).click();
+        await navClick(page.getByRole('menuitem', { name: 'Logg ut', exact: true }))
 
         await expect(page).toHaveURL('')
         await testUserIsLoggedOut(page)
@@ -92,7 +103,7 @@ test.describe.serial( "User can log out", () => {
 
             page2.once('dialog', dialog => dialog.accept());
             await page2.getByRole('button', { name: 'Profilmeny' }).click();
-            await page2.getByRole('menuitem', { name: 'Logg ut alle enheter' }).click();
+            await navClick(page2.getByRole('menuitem', { name: 'Logg ut alle enheter' }))
             
             await expect(page2).toHaveURL('')
             await testUserIsLoggedOut(page2)
