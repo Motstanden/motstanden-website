@@ -7,18 +7,19 @@ import { AppLayout } from './layout/AppLayout';
 
 // URL routes
 // -- Events --
-import { EventContext, EventItemContext } from './routes/event/Context'
+import { EventContext, EventItemContext } from './routes/event/Context';
 const EditEventPage = lazy(() => import("./routes/event/EditPage"))
 const ItemPage = lazy(() => import("./routes/event/ItemPage"))
 const EventListPage = lazy(() => import('./routes/event/ListPage'))
 const NewEventPage = lazy(() => import('./routes/event/NewPage'))
 
 // -- User pages --
-import { UserContext } from './routes/user/Context';
-import { EditUserPage } from './routes/user/EditPage';
-import { UserListPage } from './routes/user/ListPage';
-import { NewUserPage } from './routes/user/NewPage';
-import { UserPage, UserProfileContext } from './routes/user/UserPage';
+import { UserContext, UserProfileContext } from './routes/user/Context';
+const EditUserPage = lazy(() => import('./routes/user/EditPage'))
+const UserListPage = lazy(() => import('./routes/user/ListPage'))
+const NewUserPage = lazy(() => import('./routes/user/NewPage'))
+const UserPage = lazy(() => import('./routes/user/UserPage'))
+
 // -- Other --
 import { LyricItemPage, LyricListPage, LyricPageContainer } from './routes/lyric/Lyric';
 import { QuotesContext } from './routes/quotes/Context';

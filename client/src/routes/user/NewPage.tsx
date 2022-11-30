@@ -15,7 +15,7 @@ import { datePickerStyle } from 'src/assets/style/timePickerStyles';
 import { useTitle } from 'src/hooks/useTitle';
 import { profilePictureTVPair } from './Components';
 
-export function NewUserPage() {
+export default function NewUserPage() {
     useTitle("Ny bruker")
     return (
         <Paper elevation={6}

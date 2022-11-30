@@ -13,40 +13,28 @@ import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
 import { Card, CardTextItem } from "./Components";
 
-export function UserProfileContext() {
-    const users = useOutletContext<User[]>()
+export default function UserPage() {
+    const user = useOutletContext<User>()
+    useTitle(user.firstName)
+    return (
+        <>
+            <UserPageHeader user={user}/>
+            <Grid container alignItems="top" spacing={4}>
+                <PersonCard user={user} />
+                <MemberCard user={user} />
+                <AccountDetailsCard user={user} />
+            </Grid>
+        </>
+    )
+}
 
-    const params = useParams();
-    const userId = strToNumber(params.userId)
-    if (!userId) {
-        return <Navigate to="/medlem/liste" />
-    }
-
-    const user = users.find(item => item.userId === userId)
-
-    if (!user) {
-        return <Navigate to="/medlem/liste" />
-    }
-
+export function UserPageHeader( {user}: {user: User}) {
     return (
         <>
             <ProfileBanner user={user} />
             <EditButton user={user} />
             <Divider sx={{ mt: 2, mb: 2 }} />
-            <Outlet context={user} />
         </>
-    )
-}
-
-export function UserPage() {
-    const user = useOutletContext<User>()
-    useTitle(user.firstName)
-    return (
-        <Grid container alignItems="top" spacing={4}>
-            <PersonCard user={user} />
-            <MemberCard user={user} />
-            <AccountDetailsCard user={user} />
-        </Grid>
     )
 }
 

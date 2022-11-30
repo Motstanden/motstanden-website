@@ -22,7 +22,7 @@ import { Link as RouterLink, useOutletContext } from 'react-router-dom';
 import { TitleCard } from 'src/components/TitleCard';
 import { useTitle } from 'src/hooks/useTitle';
 
-export function UserListPage() {
+export default function UserListPage() {
     useTitle("Medlemsliste")
 
     const [showName, setShowName] = useState(true)

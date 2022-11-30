@@ -13,9 +13,9 @@ import { HelpButton } from "src/components/HelpButton";
 import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
 import { Card, CardTextItem, groupTVPair, rankTVPair, statusTVPair } from "./Components";
-import { AccountDetailsCard, formatExactDate, PersonCard } from "./UserPage";
+import { AccountDetailsCard, formatExactDate, PersonCard, UserPageHeader } from "./UserPage";
 
-export function EditUserPage() {
+export default function EditUserPage() {
     const currentUser = useAuth().user!
     const viewedUser = useOutletContext<User>()
 
@@ -59,20 +59,23 @@ function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
     const preventSubmit = () => false // TODO: Validate user here. Return true if user is invalid
 
     return (
-        <Form
-            value={newUser}
-            postUrl={getPostUrl(editMode)}
-            disabled={isUserEqual(user, newUser) || disableSubmit}
-            preventSubmit={preventSubmit}
-            onAbortClick={onAbort}
-            onPostSuccess={onPostSuccess}
-        >
-            <Grid container alignItems="top" spacing={4}>
-                <PersonForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode} />
-                <MemberForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode} />
-                <AccountDetailsForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode} />
-            </Grid>
-        </Form>
+        <>
+            <UserPageHeader user={user}/>
+            <Form
+                value={newUser}
+                postUrl={getPostUrl(editMode)}
+                disabled={isUserEqual(user, newUser) || disableSubmit}
+                preventSubmit={preventSubmit}
+                onAbortClick={onAbort}
+                onPostSuccess={onPostSuccess}
+            >
+                <Grid container alignItems="top" spacing={4}>
+                    <PersonForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode} />
+                    <MemberForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode} />
+                    <AccountDetailsForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode} />
+                </Grid>
+            </Form>
+        </>
     )
 }
 
