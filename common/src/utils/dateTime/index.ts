@@ -1,1 +1,1 @@
-export * from "./formatDateTimeInterval"
+export * from "./formatDateTimeInterval.js"

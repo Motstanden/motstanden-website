@@ -1,5 +1,5 @@
 import { Dayjs } from "dayjs"
-import dayjs from "../../lib/dayjs"
+import dayjs from "../../lib/dayjs.js"
 
 function getDateStr(date: Dayjs): string {
     const isCurrentYear = date.year() === dayjs().year() 
