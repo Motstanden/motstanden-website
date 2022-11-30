@@ -6,6 +6,7 @@ import { fetchAsync } from "src/utils/fetchAsync"
 import { EventData } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { matchUrl } from "src/utils/matchUrl"
+import { Suspense } from "react"
 
 export function EventContext() {
 
@@ -28,7 +29,9 @@ export function EventContext() {
             ]}
             matchChildPath={true}
         >
-            <Outlet context={data} />
+            <Suspense>
+                <Outlet context={data} />
+            </Suspense>
         </TabbedPageContainer>
     )
 }
@@ -59,7 +62,9 @@ export function EventItemContext() {
     }
 
     return (
-        <Outlet context={event} />
+        <Suspense>
+            <Outlet context={event} />
+        </Suspense>
     )
 }
 

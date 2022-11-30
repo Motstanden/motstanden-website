@@ -8,7 +8,7 @@ import { ItemMenu } from "./components/ItemMenu"
 import { KeyInfo } from "./components/KeyInfo"
 import { buildEventItemUrl } from "./Context"
 
-export function EventListPage({ mode }: { mode?: "upcoming" | "previous" | "all" }) {
+export default function EventListPage({ mode }: { mode?: "upcoming" | "previous" | "all" }) {
     useTitle("Arrangement")
 
     let events = useOutletContext<EventData[]>()
@@ -47,16 +47,5 @@ function EventItem({ event }: { event: EventData }) {
             </Stack>
             <KeyInfo keyInfo={event.keyInfo} startTime={event.startDateTime} endTime={event.endDateTime} />
         </Paper>
-    )
-}
-
-export async function deleteEvent(event: EventData) {
-    const response = await postJson(
-        "/api/events/delete",
-        { eventId: event.eventId },
-        {
-            confirmText: `Vil du permanent slette:\n«${event.title}»`,
-            alertOnFailure: true
-        }
     )
 }

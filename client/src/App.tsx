@@ -7,11 +7,12 @@ import { AppLayout } from './layout/AppLayout';
 
 // URL routes
 // -- Events --
-import { EventContext, EventItemContext } from './routes/event/Context';
-import { EditEventPage } from "./routes/event/EditPage";
-import { ItemPage } from "./routes/event/ItemPage";
-import { EventListPage } from './routes/event/ListPage';
-import { NewEventPage } from './routes/event/NewPage';
+import { EventContext, EventItemContext } from './routes/event/Context'
+const EditEventPage = lazy(() => import("./routes/event/EditPage"))
+const ItemPage = lazy(() => import("./routes/event/ItemPage"))
+const EventListPage = lazy(() => import('./routes/event/ListPage'))
+const NewEventPage = lazy(() => import('./routes/event/NewPage'))
+
 // -- User pages --
 import { UserContext } from './routes/user/Context';
 import { EditUserPage } from './routes/user/EditPage';

@@ -15,7 +15,7 @@ import { postJson } from "src/utils/postJson";
 import { ItemMenu } from "./components/ItemMenu";
 import { KeyInfo } from "./components/KeyInfo";
 
-export function ItemPage() {
+export default function ItemPage() {
     const event = useOutletContext<EventData>();
     useTitle(event.title)
     return (
