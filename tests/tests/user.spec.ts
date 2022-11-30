@@ -10,9 +10,9 @@ import {
     userStatusToPrettyStr
 } from "common/utils"
 import { randomInt, randomUUID } from 'crypto'
-import { disposeStorageLogIn, emailLogIn, getUser, storageLogIn } from '../utils/auth'
-import { selectDate } from '../utils/datePicker'
-import { navClick } from '../utils/navClick'
+import { disposeStorageLogIn, emailLogIn, getUser, storageLogIn } from '../utils/auth.js'
+import { selectDate } from '../utils/datePicker.js'
+import { navClick } from '../utils/navClick.js'
 
 test("New users can only be created by super admin", async ({browser}) => {
     const adminPage = await storageLogIn(browser, UserGroup.Administrator)

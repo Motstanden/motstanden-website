@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { navClick } from '../utils/navClick';
+import { navClick } from '../utils/navClick.js';
 
 
 export abstract class EditListPage<T> {

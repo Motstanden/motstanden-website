@@ -3,7 +3,7 @@ import { UserGroup } from "common/enums";
 import dayjs from "dayjs";
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
-import { getStoragePath, logIn } from "./utils/auth";
+import { getStoragePath, logIn } from "./utils/auth.js";
 
 
 export default async function globalSetup(config: FullConfig) {

@@ -5,9 +5,9 @@ import dayjs from "common/lib/dayjs";
 import { getFullName } from 'common/utils';
 import { formatDateTimeInterval } from "common/utils/dateTime";
 import { randomInt, randomUUID } from 'crypto';
-import { disposeStorageLogIn, getUser, storageLogIn } from '../utils/auth';
-import { selectDate } from '../utils/datePicker';
-import { navClick } from '../utils/navClick';
+import { disposeStorageLogIn, getUser, storageLogIn } from '../utils/auth.js';
+import { selectDate } from '../utils/datePicker.js';
+import { navClick } from '../utils/navClick.js';
 
 test.describe("Contributor can update and delete events they have created", async () => {
     await testCrud({

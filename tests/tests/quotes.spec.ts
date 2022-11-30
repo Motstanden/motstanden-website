@@ -2,8 +2,8 @@ import { expect, Page, test } from '@playwright/test';
 import { UserGroup } from 'common/enums';
 import { NewQuote } from "common/interfaces";
 import { randomUUID } from "crypto";
-import { EditListPage } from "../pages/EditListPage";
-import { disposeStorageLogIn, storageLogIn } from '../utils/auth';
+import { EditListPage } from "../pages/EditListPage.js";
+import { disposeStorageLogIn, storageLogIn } from '../utils/auth.js';
 
 test.describe.serial("Users can update and delete quotes created by themselves",  async () => {
     await testCrud({

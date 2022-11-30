@@ -1,6 +1,6 @@
 import test, { Browser, chromium, Cookie, expect, firefox, webkit, type Page } from '@playwright/test';
-import { emailLogIn } from '../utils/auth';
-import { navClick } from '../utils/navClick';
+import { emailLogIn } from '../utils/auth.js';
+import { navClick } from '../utils/navClick.js';
 
 test("Login tokens are created and persisted", async ({page}) => {
 

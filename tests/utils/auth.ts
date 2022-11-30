@@ -1,7 +1,7 @@
 import { Browser, Page } from "@playwright/test"
 import { UserGroup, UserRank, UserStatus } from "common/enums"
 import { NewUser } from "common/interfaces"
-import { navClick } from "./navClick"
+import { navClick } from "./navClick.js"
 
 export function getStoragePath(group: UserGroup): string {
     switch(group) {
