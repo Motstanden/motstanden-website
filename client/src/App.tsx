@@ -27,7 +27,9 @@ import { NewQuotePage, QuotesPage } from './routes/quotes/QuotesPage';
 import { RumourContext } from './routes/rumour/Context';
 import { NewRumourPage, RumourPage } from './routes/rumour/RumourPage';
 import { SheetArchiveContext } from "./routes/sheetArchive/Context";
-import { InstrumentListPage, SongListPage } from './routes/sheetArchive/SheetArchive';
+
+const InstrumentPage = lazy(() => import("./routes/sheetArchive/InstrumentPage"))
+const SongPage = lazy(() => import('./routes/sheetArchive/SongPage'))
 
 // Lazy loaded pages
 const FrontPage = lazy(() => import('./routes/frontPage/FrontPage'));
@@ -68,10 +70,10 @@ function App() {
 						<Route path="/hjem" element={<Home />} />
 						<Route path="/notearkiv" element={<SheetArchiveContext />}>
 							<Route path="" element={<Navigate to="repertoar" />} />
-							<Route path="repertoar" element={<SongListPage mode='repertoire' />} />
-							<Route path="repertoar/:title" element={<InstrumentListPage />} />
-							<Route path="alle" element={<SongListPage />} />
-							<Route path="alle/:title" element={<InstrumentListPage />} />
+							<Route path="repertoar" element={<SongPage mode='repertoire' />} />
+							<Route path="repertoar/:title" element={<InstrumentPage />} />
+							<Route path="alle" element={<SongPage />} />
+							<Route path="alle/:title" element={<InstrumentPage />} />
 						</Route>
 						<Route path="/sitater" element={<QuotesContext />}>
 							<Route index element={<QuotesPage />} />

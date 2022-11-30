@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import React from "react";
+import React, { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import { TabbedPageContainer } from "src/layout/PageContainer";
 import { fetchAsync } from "../../utils/fetchAsync";
 import { strToPrettyUrl } from "../../utils/strToPrettyUrl";
-import { ISongInfo } from "./SheetArchive";
+import { ISongInfo } from './Components';
 
 
 export function SheetArchiveContext() {
@@ -37,7 +37,9 @@ export function SheetArchiveContext() {
 
     return (
         <PageContainer>
-            <Outlet context={newData} />
+            <Suspense>
+                <Outlet context={newData} />
+            </Suspense>
         </PageContainer>
     );
 }
