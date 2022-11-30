@@ -1,5 +1,5 @@
-import { lazy } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { RequireAuthRouter, useAuth } from "./context/Authentication";
 
 import { UserGroup } from 'common/enums';
@@ -54,23 +54,25 @@ function App() {
 			<Routes>
 				<Route element={<AppLayout />}>
 
-					<Route path="/" element={auth.user ? <Home /> : <FrontPage/>} />
+					<Route path="/" element={auth.user ? <Suspense><Home /></Suspense> : <Suspense><FrontPage/></Suspense>} />
 
 					{/* Routes that are publicly available */}
-					<Route path="/framside" element={<FrontPage />} />
-					<Route path="/logg-inn" element={<LoginPage />} />
-					<Route path="/studenttraller" element={<LyricPageContainer />}>
-						<Route index element={<LyricListPage />} />
-						<Route path=":title" element={<LyricItemPage />} />
+					<Route element={<Suspense><Outlet/></Suspense>}>
+						<Route path="/framside" element={<FrontPage />} />
+						<Route path="/logg-inn" element={<LoginPage />} />
+						<Route path="/studenttraller" element={<LyricPageContainer />}>
+							<Route index element={<LyricListPage />} />
+							<Route path=":title" element={<LyricItemPage />} />
+						</Route>
+						<Route path="/dokumenter" element={<DocumentsPage />} />
+						<Route path="/bli-medlem" element={<BecomeMemberPage />} />
+						<Route path="/lisens" element={<LicensePage />} />
+						<Route path="/maakesodd" element={<LicenseOnlyPage />} />
 					</Route>
-					<Route path="/dokumenter" element={<DocumentsPage />} />
-					<Route path="/bli-medlem" element={<BecomeMemberPage />} />
-					<Route path="/lisens" element={<LicensePage />} />
-					<Route path="/maakesodd" element={<LicenseOnlyPage />} />
 
 					{/* Routes that requires the user to be logged in */}
 					<Route element={<RequireAuthRouter requiredGroup={UserGroup.Contributor} />}>
-						<Route path="/hjem" element={<Home />} />
+						<Route path="/hjem" element={<Suspense><Home /></Suspense>} />
 						<Route path="/notearkiv" element={<SheetArchiveContext />}>
 							<Route path="" element={<Navigate to="repertoar" />} />
 							<Route path="repertoar" element={<SongPage mode='repertoire' />} />
