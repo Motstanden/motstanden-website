@@ -12,7 +12,8 @@ import { useAuth } from "../../context/Authentication"
 import { useTitle } from "../../hooks/useTitle"
 import { PageContainer } from "../../layout/PageContainer"
 import { buildEventItemUrl } from "../event/Context"
-import { ListSkeleton as QuotesListSkeleton, QuoteList } from "../quotes/QuotesPage"
+import { QuoteList } from "../quotes/ListPage"
+import { ListPageSkeleton as QuotesListSkeleton } from "../quotes/ListPageSkeleton"
 import { ListSkeleton as RumourListSkeleton, RumourList } from "../rumour/RumourPage"
 
 

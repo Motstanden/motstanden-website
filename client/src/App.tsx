@@ -22,12 +22,15 @@ const UserPage = lazy(() => import('./routes/user/UserPage'))
 
 // -- Other --
 import { LyricItemPage, LyricListPage, LyricPageContainer } from './routes/lyric/Lyric';
-import { QuotesContext } from './routes/quotes/Context';
-import { NewQuotePage, QuotesPage } from './routes/quotes/QuotesPage';
+
 import { RumourContext } from './routes/rumour/Context';
 import { NewRumourPage, RumourPage } from './routes/rumour/RumourPage';
-import { SheetArchiveContext } from "./routes/sheetArchive/Context";
 
+import { QuotesContext } from './routes/quotes/Context';
+const QuoteListPage = lazy(() => import('./routes/quotes/ListPage'))
+const NewQuotePage = lazy(() => import("./routes/quotes/NewPage"))
+
+import { SheetArchiveContext } from "./routes/sheetArchive/Context";
 const InstrumentPage = lazy(() => import("./routes/sheetArchive/InstrumentPage"))
 const SongPage = lazy(() => import('./routes/sheetArchive/SongPage'))
 
@@ -76,7 +79,7 @@ function App() {
 							<Route path="alle/:title" element={<InstrumentPage />} />
 						</Route>
 						<Route path="/sitater" element={<QuotesContext />}>
-							<Route index element={<QuotesPage />} />
+							<Route index element={<QuoteListPage />} />
 							<Route path='ny' element={<NewQuotePage />} />
 						</Route>
 						<Route path="/rykter" element={<RumourContext />}>

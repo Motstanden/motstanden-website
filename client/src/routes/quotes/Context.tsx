@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query"
 import { Quote as QuoteData } from "common/interfaces"
-import React from "react"
+import React, { Suspense } from "react"
 import { Outlet, useLocation } from "react-router-dom"
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
 import { TabbedPageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
 import { matchUrl } from "src/utils/matchUrl"
-import { PageSkeleton } from "./QuotesPage"
+import { ListPageSkeleton } from "./ListPageSkeleton"
 
 const quotesQueryKey = ["FetchAllQuotes"]
 
@@ -22,12 +22,10 @@ export function QuotesContext() {
         if (matchUrl("/sitater", location)) {
             return (
                 <PageContainer>
-                    <PageSkeleton />
+                    <ListPageSkeleton />
                 </PageContainer>
             )
         }
-
-        return <PageContainer />
     }
 
     if (isError) {
@@ -36,7 +34,9 @@ export function QuotesContext() {
 
     return (
         <PageContainer>
-            <Outlet context={data} />
+            <Suspense fallback={<ListPageSkeleton/>}>
+                <Outlet context={data} />
+            </Suspense>
         </PageContainer>
     )
 }
