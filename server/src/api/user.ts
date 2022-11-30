@@ -1,10 +1,10 @@
 import { UserEditMode, UserGroup } from "common/enums"
 import { NewUser, User } from "common/interfaces"
 import express, { NextFunction, Request, Response } from "express"
-import { AuthenticateUser, updateAccessToken } from "../middleware/jwtAuthenticate"
-import { requiresGroup } from "../middleware/requiresGroup"
-import * as userService from "../services/user"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData"
+import { AuthenticateUser, updateAccessToken } from "../middleware/jwtAuthenticate.js"
+import { requiresGroup } from "../middleware/requiresGroup.js"
+import * as userService from "../services/user.js"
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
 const router = express.Router()
 

@@ -51,7 +51,7 @@ After completing this guide, you will have learned everything you need to know t
   1. Copy and then rename the example environment files.
       ```bash
       cp server/.env.example server/.env
-      cp server/src/info-mail-key.json.example server/src/info-mail-key.json
+      cp server/info-mail-key.json.example server/info-mail-key.json
       ```
       **Note:** Mail functionality does not work with this example file. If you want to use mail functionality, you must either request a secret OAuth2 from Motstanden, or generate a secret OAuth2 key for your own mail. 
 

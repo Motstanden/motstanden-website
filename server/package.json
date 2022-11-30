@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Motstanden web page",
   "main": "src/server.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "serverdeploy": "cd ../common && npm install && tsc && cd ../client && npm install && npm run build && cd ../server && npm install && tsc",

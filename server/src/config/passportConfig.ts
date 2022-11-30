@@ -4,9 +4,8 @@ import fs from "fs/promises";
 import passport, { PassportStatic } from 'passport';
 import { Strategy as JWTStrategy } from 'passport-jwt';
 import MagicLoginStrategy from 'passport-magic-login';
-import path from "path";
 import * as user from "../services/user.js";
-import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload";
+import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload.js";
 import * as Mail from './mailConfig.js';
 
 // Ensure .env is loaded
@@ -51,7 +50,7 @@ async function onSendMagicLinkRequest(email: string, href: string, code: string)
 
 async function createMagicLinkHtml(email: string, href: string, code: string) {
 
-    const filePath = path.join(__dirname, "..", "..", "assets", "mail-templates", "MagicLink.html")
+    const filePath = new URL(`../../assets/mail-templates/MagicLink.htm`, import.meta.url)
     const html = await fs.readFile(filePath, "utf-8")
 
     const date = new Date().toLocaleString("no-no", { timeZone: "cet" })
@@ -72,7 +71,7 @@ function onVerifyLinkClick(
     callback( /*Error*/ undefined, accessTokenData)
 }
 
-export const magicLogin = new MagicLoginStrategy({
+export const magicLogin = new MagicLoginStrategy.default({
     secret: process.env.ACCESS_TOKEN_SECRET,
     callbackUrl: `api${MagicLinkCallbackPath}`,
     sendMagicLink: onSendMagicLinkRequest,

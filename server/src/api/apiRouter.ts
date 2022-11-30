@@ -1,12 +1,12 @@
 import express from "express";
-import documents from "./documents";
-import events from "./events";
-import login from "./login";
-import quotes from "./quotes";
-import rumours from "./rumours";
-import sheetArchive from "./sheetArchive";
-import songLyric from "./songLyric";
-import user from "./user";
+import documents from "./documents.js"
+import events from "./events.js"
+import login from "./login.js"
+import quotes from "./quotes.js"
+import rumours from "./rumours.js"
+import sheetArchive from "./sheetArchive.js"
+import songLyric from "./songLyric.js"
+import user from "./user.js"
 
 const router = express.Router()
 
