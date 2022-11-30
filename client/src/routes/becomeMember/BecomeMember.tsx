@@ -2,7 +2,7 @@ import { ThemeName, useAppTheme } from "../../context/Themes";
 import { useTitle } from "../../hooks/useTitle";
 import { PageContainer } from "../../layout/PageContainer";
 
-export default function BecomeMember() {
+export default function BecomeMemberPage() {
 
     useTitle("Bli medlem!")
     return (

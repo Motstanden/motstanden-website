@@ -1,35 +1,43 @@
+import { lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { RequireAuthRouter, useAuth } from "./context/Authentication";
 
-// URL routes
 import { UserGroup } from 'common/enums';
 import { AppLayout } from './layout/AppLayout';
-import { AdminPage } from './routes/admin/Admin';
-import { SuperAdminPage } from './routes/admin/SuperAdmin';
-import BecomeMember from './routes/becomeMember/BecomeMember';
-import DocumentsPage from './routes/documents/DocumentsPage';
+
+// URL routes
+// -- Events --
 import { EventContext, EventItemContext } from './routes/event/Context';
 import { EditEventPage } from "./routes/event/EditPage";
 import { ItemPage } from "./routes/event/ItemPage";
 import { EventListPage } from './routes/event/ListPage';
 import { NewEventPage } from './routes/event/NewPage';
-import FrontPage from './routes/frontPage/FrontPage';
-import Home from './routes/home/Home';
-import { LicenseOnlyPage, LicensePage } from './routes/license/LicensePage';
-import { LoginPage } from './routes/login/Login';
+// -- User pages --
+import { UserContext } from './routes/user/Context';
+import { EditUserPage } from './routes/user/EditPage';
+import { UserListPage } from './routes/user/ListPage';
+import { NewUserPage } from './routes/user/NewPage';
+import { UserPage, UserProfileContext } from './routes/user/UserPage';
+// -- Other --
 import { LyricItemPage, LyricListPage, LyricPageContainer } from './routes/lyric/Lyric';
-import NotFound from './routes/notFound/NotFound';
 import { QuotesContext } from './routes/quotes/Context';
 import { NewQuotePage, QuotesPage } from './routes/quotes/QuotesPage';
 import { RumourContext } from './routes/rumour/Context';
 import { NewRumourPage, RumourPage } from './routes/rumour/RumourPage';
 import { SheetArchiveContext } from "./routes/sheetArchive/Context";
 import { InstrumentListPage, SongListPage } from './routes/sheetArchive/SheetArchive';
-import { UserContext } from './routes/user/Context';
-import { EditUserPage } from './routes/user/EditPage';
-import { UserListPage } from './routes/user/ListPage';
-import { NewUserPage } from './routes/user/NewPage';
-import { UserPage, UserProfileContext } from './routes/user/UserPage';
+
+// Lazy loaded pages
+const FrontPage = lazy(() => import('./routes/frontPage/FrontPage'));
+const LoginPage = lazy(() => import('./routes/login/Login'))
+const BecomeMemberPage = lazy(() => import('./routes/becomeMember/BecomeMember'))
+const AdminPage = lazy(() => import('./routes/admin/Admin'))
+const SuperAdminPage = lazy(() => import('./routes/admin/SuperAdmin'))
+const DocumentsPage = lazy(() => import('./routes/documents/DocumentsPage'))
+const Home = lazy(() => import('./routes/home/Home'))
+const NotFound = lazy(() => import( './routes/notFound/NotFound'))
+const LicenseOnlyPage = lazy(() => import("./routes/license/LicensePage").then( module => ({default: module.LicenseOnlyPage})))
+const LicensePage = lazy(() => import('./routes/license/LicensePage').then( module => ({default: module.LicensePage})))
 
 function App() {
 	const auth = useAuth()
@@ -39,7 +47,7 @@ function App() {
 			<Routes>
 				<Route element={<AppLayout />}>
 
-					<Route path="/" element={auth.user ? <Home /> : <FrontPage />} />
+					<Route path="/" element={auth.user ? <Home /> : <FrontPage/>} />
 
 					{/* Routes that are publicly available */}
 					<Route path="/framside" element={<FrontPage />} />
@@ -49,7 +57,7 @@ function App() {
 						<Route path=":title" element={<LyricItemPage />} />
 					</Route>
 					<Route path="/dokumenter" element={<DocumentsPage />} />
-					<Route path="/bli-medlem" element={<BecomeMember />} />
+					<Route path="/bli-medlem" element={<BecomeMemberPage />} />
 					<Route path="/lisens" element={<LicensePage />} />
 					<Route path="/maakesodd" element={<LicenseOnlyPage />} />
 

@@ -7,7 +7,7 @@ import { PageContainer } from '../../layout/PageContainer';
 import { AnimationAvatar } from './AnimationAvatar';
 import { EmailInfo, EmailLogin } from './EmailLogin';
 
-export function LoginPage() {
+export default function LoginPage() {
 	const [mailInfo, setMailInfo] = useState<EmailInfo | undefined>(undefined)
 
 	useTitle("Logg inn")

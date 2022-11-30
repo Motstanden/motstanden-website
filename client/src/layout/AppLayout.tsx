@@ -1,4 +1,5 @@
 import Stack from "@mui/material/Stack"
+import { Suspense } from "react"
 import { Outlet } from "react-router-dom"
 
 import { useTheme } from "@mui/material"
@@ -13,7 +14,9 @@ export function AppLayout() {
                 <ResponsiveAppBar />
             </header>
             <main style={{ minHeight: "100vh", color: theme.palette.text.secondary }}>
-                <Outlet />
+                <Suspense>
+                    <Outlet />
+                </Suspense>
             </main>
             <footer>
                 <FooterContent />
