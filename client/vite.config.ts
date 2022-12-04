@@ -7,6 +7,7 @@ export default defineConfig({
     plugins: [react()],
     server: {
         port: 3000,
+        host: true,             // I have no idea why, but this option is necessary for playwright (v1.28.1) to run tests with firefox and webkit
         strictPort: true,
         open: true,
         proxy: {
