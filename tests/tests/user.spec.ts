@@ -1,4 +1,4 @@
-import test, { expect, Page } from '@playwright/test'
+import { test, expect, Page } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
 import { NewUser } from 'common/interfaces'
 import dayjs from 'common/lib/dayjs'
