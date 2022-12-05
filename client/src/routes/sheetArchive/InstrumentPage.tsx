@@ -25,7 +25,7 @@ export default function InstrumentPage() {
 
     useTitle(song?.title);
 
-    const { isLoading, isError, data, error } = useQuery<ISongFile[]>(["FetchSheetArchiveFile", song!.url], () => {
+    const { isLoading, isError, data } = useQuery<ISongFile[]>(["FetchSheetArchiveFile", song!.url], () => {
         if (song) {
             return fetchAsync<ISongFile[]>(`/api/sheet_archive/song_files?titleId=${song.titleId}`);
         }

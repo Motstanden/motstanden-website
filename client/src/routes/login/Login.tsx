@@ -12,7 +12,7 @@ export default function LoginPage() {
 
 	useTitle("Logg inn")
 	const auth = useAuth()
-	let location = useLocation()
+	const location = useLocation()
 
 	if (auth.user) {
 		const to: string = location.state?.from?.pathname ?? "/hjem"

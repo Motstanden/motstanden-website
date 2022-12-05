@@ -96,15 +96,15 @@ function BlockElementButtons() {
     const editor = useSlate()
 
     const isMatch = (type: ElementType): boolean => {
-        const [match]: any = Editor.nodes(editor, {
-            match: (n: any) => n.type === type
+        const [match] = Editor.nodes(editor, {              
+            match: (n: any) => n.type === type          // eslint-disable-line @typescript-eslint/no-explicit-any    
         })
         return !!match
     }
 
     const onChange = (event: React.MouseEvent<HTMLElement>, newType?: ElementType) => {
         Transforms.unwrapNodes(editor, {
-            match: (n: any) => n.type === ElementType.BulletedList || n.type === ElementType.NumberedList,
+            match: (n: any) => n.type === ElementType.BulletedList || n.type === ElementType.NumberedList,  // eslint-disable-line @typescript-eslint/no-explicit-any
             split: true
         })
 

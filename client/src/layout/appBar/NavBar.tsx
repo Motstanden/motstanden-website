@@ -21,7 +21,7 @@ import * as MenuIcons from './MenuIcons';
 
 
 export function NavBar() {
-    let auth = useAuth()
+    const auth = useAuth()
     return auth.user
         ? <PrivateNavBar />
         : <PublicNavBar />

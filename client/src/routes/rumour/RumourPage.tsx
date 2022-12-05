@@ -172,8 +172,8 @@ function UpsertRumourForm({
                 value={getSubmitData}
                 postUrl={postUrl}
                 disabled={disabled}
-                onAbortClick={(e) => onAbortClick()}
-                onPostSuccess={(e) => onPostSuccess()}
+                onAbortClick={_ => onAbortClick()}
+                onPostSuccess={_ => onPostSuccess()}
             >
                 <div style={{ marginBottom: "-1em" }}>
                     <TextField

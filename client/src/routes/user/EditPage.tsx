@@ -55,7 +55,7 @@ function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
     const onIsValidChange = (isValid: boolean) => setDisableSubmit(!isValid)
 
     const onAbort = () => canExitPage(user, newUser) && navigate(`/medlem/${user.userId}`)
-    const onPostSuccess = (res: Response) => window.location.href = `${window.location.origin}/medlem/${user.userId}`    // Will trigger a reload of the page
+    const onPostSuccess = (_: Response) => window.location.href = `${window.location.origin}/medlem/${user.userId}`    // Will trigger a reload of the page
     const preventSubmit = () => false // TODO: Validate user here. Return true if user is invalid
 
     return (
@@ -258,7 +258,7 @@ function MemberForm({ value, onChange, editMode }: FormParams) {
     )
 }
 
-function AccountDetailsForm({ value, onChange, onIsValidChange, editMode }: FormParams) {
+function AccountDetailsForm({ value, onChange, editMode }: FormParams) {
 
     if (!hasAdminAccess(editMode)) {
         return <AccountDetailsCard user={value} />

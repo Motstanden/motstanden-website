@@ -1,4 +1,4 @@
-function simplePostJson(postUrl: string, jsonValue: {}) {
+function simplePostJson(postUrl: string, jsonValue: object) {
     return fetch(postUrl, {
         method: "POST",
         body: JSON.stringify(jsonValue),
@@ -8,7 +8,7 @@ function simplePostJson(postUrl: string, jsonValue: {}) {
     })
 }
 
-export async function postJson(postUrl: string, jsonValue: {}, opts?: postJsonOpts) {
+export async function postJson(postUrl: string, jsonValue: object, opts?: postJsonOpts) {
 
     if (opts?.confirmText && !window.confirm(opts.confirmText)) {
         return undefined

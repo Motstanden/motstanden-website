@@ -6,7 +6,7 @@ import { EventEditorForm, EventEditorState } from "./components/EventEditorForm"
 
 export default function EditEventPage() {
     const event = useOutletContext<EventData>();
-    let initialValue: EventEditorState = {
+    const initialValue: EventEditorState = {
         title: event.title,
         startTime: dayjs(event.startDateTime),
         endTime: event.endDateTime ? dayjs(event.endDateTime) : null,

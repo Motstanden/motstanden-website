@@ -1,5 +1,5 @@
 import { Avatar, Divider, Link, MenuItem, Paper, Stack, TextField } from "@mui/material";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ParticipationStatus } from "common/enums";
 import { EventData, Participant, ParticipationList, UpsertParticipant } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
@@ -128,14 +128,17 @@ function ParticipationContainer({ eventId }: { eventId: number }) {
     )
 }
 
-function AttendingForm({ eventId, queryKey, user }: { eventId: number, queryKey: any[], user?: Participant }) {
+function AttendingForm({ eventId, queryKey, user }: { eventId: number, queryKey: QueryKey, user?: Participant }) {
     const attendingStatus = user?.participationStatus ?? ParticipationStatus.Unknown
     const [isSubmitting, setIsSubmitting] = useState(false)
     const queryClient = useQueryClient()
 
-    const changeHandler = async (e: any) => {
+    const changeHandler = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setIsSubmitting(true)
-        const newVal: UpsertParticipant = { eventId: eventId, participationStatus: e.target.value }
+        const newVal: UpsertParticipant = {
+            eventId: eventId, 
+            participationStatus: e.target.value as ParticipationStatus 
+        }
         const response = await postJson("/api/event-participants/upsert", newVal, { alertOnFailure: true })
 
         if (response && response.ok) {

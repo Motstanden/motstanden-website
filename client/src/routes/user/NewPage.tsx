@@ -45,7 +45,7 @@ function NewUserForm() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isValidEmail, setIsValidEmail] = useState(true)
 
-    const onEmailBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
+    const onEmailBlur = (_: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
         if(!validateEmail(email) || isNtnuMail(email)) {
             setIsValidEmail(false)
         }
@@ -81,7 +81,7 @@ function NewUserForm() {
         event.preventDefault()
         setIsSubmitting(true)
         const user = buildUser()
-        let response = await fetch("/api/create-user", {
+        const response = await fetch("/api/create-user", {
             method: "POST",
             body: JSON.stringify(user),
             headers: {

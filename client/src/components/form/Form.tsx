@@ -13,7 +13,7 @@ export function Form({
     onPostFailure,
     onAbortClick
 }: {
-    value: {} | (() => {})    // Either any object, or a callback function that returns the object
+    value: object | (() => object)    // Either any object, or a callback function that returns the object
     children: React.ReactNode
     postUrl: string
     disabled?: boolean

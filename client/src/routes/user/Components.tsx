@@ -39,7 +39,7 @@ type TextValuePair<T> = {
 }
 
 function enumToTextValuePair<T>(
-    enumObj: {},
+    enumObj: object,                                                //TODO: Figure out the correct type of this argument
     toStrCallback: (enumItem: T) => string): TextValuePair<T>[] {
     return Object.keys(enumObj).map((itemStr) => {
         const item = enumObj[itemStr as keyof typeof enumObj] as T

@@ -19,7 +19,7 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
-    let [user, setUser] = useState<User | null>(null)
+    const [user, setUser] = useState<User | null>(null)
 
     const signOutRequest = async (url: string): Promise<boolean> => {
         const response = await fetch(url, { method: "POST" })
@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const signOutAllUnits = async (): Promise<boolean> => await signOutRequest("/api/logout-all-units")
 
     const fetchUserData = async (): Promise<User | null> => {
-        let res = await fetch("/api/userMetaData")
+        const res = await fetch("/api/userMetaData")
         if (!res.ok) {
             throw new Error(res.statusText)
         }
@@ -56,7 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return <></>
     }
 
-    let contextValue = { user, signOut, signOutAllUnits }
+    const contextValue = { user, signOut, signOutAllUnits }
     return (
         <AuthContext.Provider value={contextValue}>
             {children}
@@ -65,8 +65,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function RequireAuth({ requiredGroup, children }: { requiredGroup: UserGroup, children: JSX.Element }) {
-    let auth = useAuth();
-    let location = useLocation()
+    const auth = useAuth();
+    const location = useLocation()
 
     if (!auth.user) {
         // Redirect them to the /logg-inn page, but save the current location they were

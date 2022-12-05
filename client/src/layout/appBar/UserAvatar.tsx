@@ -18,11 +18,11 @@ import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 
 
 export default function UserAvatar() {
-    let auth = useAuth()
+    const auth = useAuth()
 
-    let navigate = useNavigate()
+    const navigate = useNavigate()
     const onSignOutClick = async () => {
-        let success = await auth.signOut();
+        const success = await auth.signOut();
         if (success) {
             navigate("/")
         }

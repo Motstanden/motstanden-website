@@ -51,7 +51,7 @@ function GoogleForm() {
                     overflow: "hidden",
                     ...invertProps
                 }}>
-                Laster inn …
+                Laster inn…
             </iframe>
         </div>
     )

@@ -37,7 +37,7 @@ export function ItemMenu({ event, iconOrientation }: { event: EventData; iconOri
 }
 
 async function deleteEvent(event: EventData) {
-    const response = await postJson(
+    await postJson(
         "/api/events/delete",
         { eventId: event.eventId },
         {

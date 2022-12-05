@@ -6,7 +6,7 @@ import { EditOrDeleteMenu } from "src/components/menu/EditOrDeleteMenu"
 import { useAuth } from "src/context/Authentication"
 import { postJson } from "src/utils/postJson"
 
-type EditListProps<T> = {
+interface EditListProps<T> {
     items: T[],
     onItemChanged: VoidFunction,
     renderItem: (item: T) => React.ReactElement,
@@ -120,11 +120,11 @@ function DefaultItem<T extends ItemBase>({
     const [isHighlighted, setIsHighlighted] = useState(false)
     const [isDisabled, setIsDisabled] = useState(false)
 
-    const onMouseEnter = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const onMouseEnter = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setIsHighlighted(true)
     }
 
-    const onMouseLeave = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const onMouseLeave = (_: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         setIsHighlighted(false)
     }
 
@@ -136,7 +136,7 @@ function DefaultItem<T extends ItemBase>({
         setIsHighlighted(false)
     }
 
-    const onDeleteClick = async (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    const onDeleteClick = async (_: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
         setIsDisabled(true)
         const response = await postJson(
             deleteItemUrl,

@@ -1,7 +1,7 @@
 import Grid from "@mui/material/Grid"
 import Link from "@mui/material/Link"
 import Skeleton from "@mui/material/Skeleton"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query"
 import { EventData, Quote, Rumour } from "common/interfaces"
 import dayjs from "dayjs"
 import React from "react"
@@ -216,7 +216,7 @@ function InfoCard({
                 sx={{ maxWidth: "600px", height: "100%" }}
             >
                 <ul style={{ listStyle: "none", paddingLeft: "10px" }}>
-                    {items.map((info, index) => (
+                    {items.map((info) => (
                         <li key={info.link} style={{ marginBottom: "20px" }}>
                             <Link
                                 color="secondary"
@@ -274,7 +274,7 @@ function ItemLoader<T>({
     renderSkeleton,
     renderItems
 }: {
-    queryKey: any[],
+    queryKey: QueryKey,
     fetchUrl: string,
     renderSkeleton: React.ReactElement,
     renderItems: (props: RenderItemProps<T>) => React.ReactElement

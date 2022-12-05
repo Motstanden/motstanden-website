@@ -8,7 +8,7 @@ import { KeyValuePair, UpsertEventData } from "common/interfaces"
 import { isValidRichText } from "common/richTextSchema"
 import { isNullOrWhitespace } from "common/utils"
 import dayjs, { Dayjs } from "dayjs"
-import React, { Reducer, useCallback, useContext, useEffect, useMemo, useReducer, useState } from "react"
+import React, { Reducer, useCallback, useContext, useEffect, useMemo, useReducer } from "react"
 import { useNavigate } from "react-router-dom"
 import { createEditor, Descendant, Text } from "slate"
 import { withHistory } from "slate-history"
@@ -32,7 +32,7 @@ export interface EventEditorState {
 }
 
 function createValidState(initialValue: EventEditorState): EventEditorState {
-    let newValue = { ...initialValue };
+    const newValue = { ...initialValue };
     if (!isValidRichText(initialValue.description)) {
         console.group("Feil")
         console.error("Klarte ikke tolke arrangementbeskrivelsen")
@@ -112,7 +112,7 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
         <Form
             value={() => serializeState()}
             postUrl={postUrl}
-            onAbortClick={e => navigate(backUrl)}
+            onAbortClick={_ => navigate(backUrl)}
             onPostSuccess={onPostSuccess}
             disabled={!isStateValid}
         >
@@ -244,19 +244,19 @@ function TimeForm({ sx }: { sx?: SxProps }) {
 function KeyInfoForm() {
     const [event, dispatch] = useEvent()
 
-    const onAddClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        let newItems = [...event.keyInfo, { key: "", value: "" }]
+    const onAddClick = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        const newItems = [...event.keyInfo, { key: "", value: "" }]
         dispatch({ keyInfo: newItems })
     }
 
     const onDeleteClick = (i: number) => {
-        let newItems = [...event.keyInfo]
+        const newItems = [...event.keyInfo]
         newItems.splice(i, 1)
         dispatch({ keyInfo: newItems })
     }
 
     const onValueChange = (i: number, newVal: KeyValuePair<string, string>) => {
-        let newItems = [...event.keyInfo]
+        const newItems = [...event.keyInfo]
         newItems[i] = newVal
         dispatch({ keyInfo: newItems })
     }
@@ -294,7 +294,7 @@ function KeyInfoItem({
     onDeleteClick?: React.MouseEventHandler<HTMLButtonElement>
 }
 ) {
-    const [randomExample, setRandomExample] = useState(keyValueExample[Math.floor(Math.random() * keyValueExample.length)])
+    const randomExample = useMemo(() => keyValueExample[Math.floor(Math.random() * keyValueExample.length)], [])
     const maxKeyChars = 16
     const maxValueChars = 100
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));

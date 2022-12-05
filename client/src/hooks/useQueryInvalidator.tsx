@@ -1,6 +1,6 @@
-import { useQueryClient } from "@tanstack/react-query"
+import { QueryKey, useQueryClient } from "@tanstack/react-query"
 
-export function useQueryInvalidator(queryKey: any[]) {
+export function useQueryInvalidator(queryKey: QueryKey) {  // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const queryClient = useQueryClient()
 
     const invalidateQuery = () => {

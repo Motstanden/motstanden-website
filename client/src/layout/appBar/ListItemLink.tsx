@@ -29,7 +29,7 @@ export default function ListItemLink(props: ListItemLinkProps) {
         onLinkClick
     } = props
 
-    let urlAttribute = externalRoute ? { href: to } : { to: to }
+    const urlAttribute = externalRoute ? { href: to } : { to: to }
     return (
         <ListItem
             button

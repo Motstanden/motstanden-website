@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import boy1 from "../../assets/pictures/loginAvatar/boy1.png";
 import boy2 from "../../assets/pictures/loginAvatar/boy2.png";
@@ -33,7 +33,7 @@ const GirlImg = {
 
 export function AnimationAvatar({ isAnimating }: { isAnimating: boolean; }) {
 
-	const [gender, setGender] = useState<ILoadingImage>(GetRandomImage());
+	const gender = useMemo(GetRandomImage, [])
 	const [index, setIndex] = useState(0)
 
 	if (isAnimating) {
