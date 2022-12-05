@@ -10,8 +10,8 @@ import Link from '@mui/material/Link';
 import List from '@mui/material/List';
 import Menu from '@mui/material/Menu';
 import Stack from '@mui/material/Stack';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { SxProps } from '@mui/system';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import ListItemLink from './ListItemLink';
 

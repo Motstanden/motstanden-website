@@ -4,9 +4,9 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
+import { SxProps } from "@mui/material/styles";
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { SxProps } from '@mui/system';
 
 import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../../context/Authentication';

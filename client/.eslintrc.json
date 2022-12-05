@@ -32,7 +32,14 @@
             }
         ],
         "@typescript-eslint/no-non-null-assertion": "off",
-        "react/prop-types": 0
+        "react/prop-types": 0,
+        "no-restricted-imports": [
+            "error",
+            {
+              "patterns": ["@mui/*/*/*", "!@mui/material/test-utils/*"],
+              "paths": ["@mui/material", "@mui/system", "@mui/x-date-pickers"]
+            }
+        ]
 
         // TODO
         // "indent": [

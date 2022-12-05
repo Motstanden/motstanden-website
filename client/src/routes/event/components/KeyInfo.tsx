@@ -1,4 +1,5 @@
-import { Theme, useMediaQuery } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { KeyValuePair } from "common/interfaces";
 import { formatDateTimeInterval } from "common/utils/dateTime";
 import dayjs from "dayjs";

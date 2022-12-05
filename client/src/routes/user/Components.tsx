@@ -1,7 +1,8 @@
-import { Grid, Stack } from "@mui/material"
-import { UserGroup, UserRank, UserStatus } from "common/enums"
-import { userGroupToPrettyStr, userRankToPrettyStr, userStatusToPrettyStr } from "common/utils"
-import { ResponsiveTitleCard, TitleCardProps } from "src/components/TitleCard"
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import { UserGroup, UserRank, UserStatus } from "common/enums";
+import { userGroupToPrettyStr, userRankToPrettyStr, userStatusToPrettyStr } from "common/utils";
+import { ResponsiveTitleCard, TitleCardProps } from "src/components/TitleCard";
 
 export function Card({
     title,

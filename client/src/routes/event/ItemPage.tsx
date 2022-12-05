@@ -1,4 +1,10 @@
-import { Avatar, Divider, Link, MenuItem, Paper, Stack, TextField } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Divider from "@mui/material/Divider";
+import Link from "@mui/material/Link";
+import MenuItem from "@mui/material/MenuItem";
+import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ParticipationStatus } from "common/enums";
 import { EventData, Participant, ParticipationList, UpsertParticipant } from "common/interfaces";

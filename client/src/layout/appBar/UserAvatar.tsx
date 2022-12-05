@@ -3,16 +3,15 @@
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import Avatar from '@mui/material/Avatar';
+import Divider from "@mui/material/Divider";
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 
-
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/Authentication';
 
-import { Divider } from '@mui/material';
 import { getFullName } from 'common/utils';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 

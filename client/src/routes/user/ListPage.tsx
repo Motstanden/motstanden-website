@@ -7,12 +7,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { headerStyle, noVisitedLinkStyle, rowStyle } from 'src/assets/style/tableStyle';
 
-import { Button, Snackbar } from '@mui/material';
+import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
+import Snackbar from '@mui/material/Snackbar';
 import { UserStatus } from 'common/enums';
 import { User } from "common/interfaces";
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";

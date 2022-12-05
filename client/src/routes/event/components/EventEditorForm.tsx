@@ -1,27 +1,32 @@
-import AddIcon from '@mui/icons-material/Add'
-import DeleteIcon from '@mui/icons-material/Delete'
-import { Box, Button, IconButton, Paper, SxProps, TextField, Theme, useMediaQuery } from "@mui/material"
-import { TextFieldProps } from "@mui/material/TextField"
-import Stack from "@mui/system/Stack"
-import { DateTimePicker } from "@mui/x-date-pickers"
-import { KeyValuePair, UpsertEventData } from "common/interfaces"
-import { isValidRichText } from "common/richTextSchema"
-import { isNullOrWhitespace } from "common/utils"
-import dayjs, { Dayjs } from "dayjs"
-import React, { Reducer, useCallback, useContext, useEffect, useMemo, useReducer } from "react"
-import { useNavigate } from "react-router-dom"
-import { createEditor, Descendant, Text } from "slate"
-import { withHistory } from "slate-history"
-import { Editable, RenderElementProps, RenderLeafProps, Slate, withReact } from "slate-react"
-import { dateTimePickerStyle } from 'src/assets/style/timePickerStyles'
-import { Form } from "src/components/form/Form"
-import { emptyRichText } from "src/components/TextEditor/Assets"
-import { Element } from "src/components/TextEditor/Element"
-import { handleAllFormatHotkeys } from "src/components/TextEditor/Hotkey"
-import { serialize } from "src/components/TextEditor/HtmlSerialize"
-import { Leaf } from "src/components/TextEditor/Leaf"
-import { useTitle } from "src/hooks/useTitle"
-import { EditorToolbar } from "./EditorToolbar"
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
+import { SxProps, Theme } from "@mui/material/styles";
+import TextField, { TextFieldProps } from "@mui/material/TextField";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import Stack from "@mui/system/Stack";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { KeyValuePair, UpsertEventData } from "common/interfaces";
+import { isValidRichText } from "common/richTextSchema";
+import { isNullOrWhitespace } from "common/utils";
+import dayjs, { Dayjs } from "dayjs";
+import React, { Reducer, useCallback, useContext, useEffect, useMemo, useReducer } from "react";
+import { useNavigate } from "react-router-dom";
+import { createEditor, Descendant, Text } from "slate";
+import { withHistory } from "slate-history";
+import { Editable, RenderElementProps, RenderLeafProps, Slate, withReact } from "slate-react";
+import { dateTimePickerStyle } from 'src/assets/style/timePickerStyles';
+import { Form } from "src/components/form/Form";
+import { emptyRichText } from "src/components/TextEditor/Assets";
+import { Element } from "src/components/TextEditor/Element";
+import { handleAllFormatHotkeys } from "src/components/TextEditor/Hotkey";
+import { serialize } from "src/components/TextEditor/HtmlSerialize";
+import { Leaf } from "src/components/TextEditor/Leaf";
+import { useTitle } from "src/hooks/useTitle";
+import { EditorToolbar } from "./EditorToolbar";
 
 export interface EventEditorState {
     title: string

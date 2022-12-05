@@ -4,7 +4,7 @@ import React from 'react';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { SxProps } from '@mui/system';
+import { SxProps } from '@mui/material/styles';
 import { Link as RouterLink } from 'react-router-dom';
 
 

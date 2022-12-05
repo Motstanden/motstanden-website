@@ -1,4 +1,4 @@
-import { SxProps } from "@mui/material"
+import { SxProps } from "@mui/material/styles"
 import Divider from "@mui/material/Divider"
 import Grid from "@mui/material/Grid"
 import Paper from "@mui/material/Paper"

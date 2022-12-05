@@ -1,11 +1,12 @@
-import { Paper, Stack } from "@mui/material"
-import Link from "@mui/material/Link"
-import { EventData } from "common/interfaces"
-import { Link as RouterLink, useOutletContext } from "react-router-dom"
-import { useTitle } from "src/hooks/useTitle"
-import { ItemMenu } from "./components/ItemMenu"
-import { KeyInfo } from "./components/KeyInfo"
-import { buildEventItemUrl } from "./Context"
+import Link from "@mui/material/Link";
+import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
+import { EventData } from "common/interfaces";
+import { Link as RouterLink, useOutletContext } from "react-router-dom";
+import { useTitle } from "src/hooks/useTitle";
+import { ItemMenu } from "./components/ItemMenu";
+import { KeyInfo } from "./components/KeyInfo";
+import { buildEventItemUrl } from "./Context";
 
 export default function EventListPage({ mode }: { mode?: "upcoming" | "previous" | "all" }) {
     useTitle("Arrangement")
