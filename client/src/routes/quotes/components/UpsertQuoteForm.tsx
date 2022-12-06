@@ -1,4 +1,4 @@
-import TextField from "@mui/material/TextField";
+import { TextField } from "@mui/material";
 import { NewQuote, Quote, Quote as QuoteData } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
 import { useState } from "react";

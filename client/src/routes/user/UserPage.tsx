@@ -1,9 +1,11 @@
 import EditIcon from '@mui/icons-material/Edit';
-import Divider from "@mui/material/Divider";
-import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
-import Paper from "@mui/material/Paper";
-import Tooltip from "@mui/material/Tooltip";
+import {
+    Divider,
+    Grid,
+    IconButton,
+    Paper,
+    Tooltip
+} from "@mui/material";
 import { UserGroup } from "common/enums";
 import { User } from "common/interfaces";
 import { getFullName, hasGroupAccess, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";

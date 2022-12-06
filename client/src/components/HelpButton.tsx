@@ -1,6 +1,5 @@
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import IconButton from "@mui/material/IconButton";
-import Menu from '@mui/material/Menu';
+import { IconButton, Menu } from "@mui/material";
 import { useRef, useState } from 'react';
 
 export function HelpButton({ text }: { text: string }) {

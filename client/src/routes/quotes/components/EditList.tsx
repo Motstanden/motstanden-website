@@ -1,10 +1,10 @@
-import Stack from "@mui/material/Stack"
-import { UserGroup } from "common/enums"
-import { hasGroupAccess } from "common/utils"
-import { useState } from "react"
-import { EditOrDeleteMenu } from "src/components/menu/EditOrDeleteMenu"
-import { useAuth } from "src/context/Authentication"
-import { postJson } from "src/utils/postJson"
+import { Stack } from "@mui/material";
+import { UserGroup } from "common/enums";
+import { hasGroupAccess } from "common/utils";
+import { useState } from "react";
+import { EditOrDeleteMenu } from "src/components/menu/EditOrDeleteMenu";
+import { useAuth } from "src/context/Authentication";
+import { postJson } from "src/utils/postJson";
 
 interface EditListProps<T> {
     items: T[],

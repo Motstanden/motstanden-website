@@ -2,9 +2,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import MenuItem from "@mui/material/MenuItem";
+import { ListItemIcon, ListItemText, MenuItem } from "@mui/material";
 
 import React from "react";
 import { IconPopupMenu } from "src/components/menu/IconPopupMenu";

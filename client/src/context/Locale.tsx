@@ -1,6 +1,5 @@
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import type { } from '@mui/x-date-pickers/themeAugmentation';
+import { LocalizationProvider } from "@mui/x-date-pickers"
 import dayjs from 'dayjs';
 import "dayjs/locale/nb";
 import CustomParseFormat from "dayjs/plugin/customParseFormat";

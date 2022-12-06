@@ -1,6 +1,6 @@
 
 // Material UI
-import Switch from '@mui/material/Switch';
+import { Switch } from "@mui/material";
 
 import LightModeIcon from '@mui/icons-material/LightMode';
 import ModeNightSharpIcon from '@mui/icons-material/ModeNightSharp';

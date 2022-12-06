@@ -1,7 +1,5 @@
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
-import Button from '@mui/material/Button';
-import FormHelperText from '@mui/material/FormHelperText';
-import TextField from '@mui/material/TextField';
+import { Button, FormHelperText, TextField } from "@mui/material";
 import { MagicLinkResponse } from 'common/interfaces';
 import { validateEmail } from 'common/utils';
 import React, { useState } from "react";

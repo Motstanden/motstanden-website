@@ -1,14 +1,18 @@
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import Paper from "@mui/material/Paper";
-import { SxProps, Theme } from "@mui/material/styles";
-import TextField, { TextFieldProps } from "@mui/material/TextField";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import Stack from "@mui/system/Stack";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import {
+    Box,
+    Button,
+    IconButton,
+    Paper,
+    Stack,
+    SxProps,
+    TextField,
+    TextFieldProps,
+    Theme,
+    useMediaQuery
+} from "@mui/material";
+import { DateTimePicker } from "@mui/x-date-pickers";
 import { KeyValuePair, UpsertEventData } from "common/interfaces";
 import { isValidRichText } from "common/richTextSchema";
 import { isNullOrWhitespace } from "common/utils";

@@ -1,4 +1,4 @@
-import { createTheme, Theme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, Theme, ThemeProvider } from "@mui/material";
 import React, { createContext, useContext, useState } from 'react';
 
 // This must be imported here to provide default styling for date pickers and components in mui lab. 

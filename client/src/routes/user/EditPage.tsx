@@ -1,9 +1,11 @@
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import MenuItem from "@mui/material/MenuItem";
-import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import {
+    Box,
+    Grid,
+    MenuItem,
+    Stack,
+    TextField
+} from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
 import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
 import { User } from "common/interfaces";
 import { hasGroupAccess, isNtnuMail as checkIsNtnuMail, isNullOrWhitespace, strToNumber, userRankToPrettyStr, validateEmail } from "common/utils";

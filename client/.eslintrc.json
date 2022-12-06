@@ -36,12 +36,21 @@
         "no-restricted-imports": [
             "error",
             {
-              "patterns": ["@mui/*/*/*", "!@mui/material/test-utils/*"],
-              "paths": ["@mui/material", "@mui/system", "@mui/x-date-pickers"]
+                "patterns": [
+                    "@mui/*/*/*", 
+                    "!@mui/material/test-utils/*", 
+                    "@mui/material/*", 
+                    "@mui/x-date-pickers/*",
+                    "!@mui/x-date-pickers/AdapterDayjs",
+                    "!@mui/x-date-pickers/themeAugmentation",
+                    "@mui/system/*",
+                    "@mui/lab/*",
+                    "!@mui/lab/themeAugmentation"
+                ]
             }
         ]
 
-        // TODO
+        // TODO:
         // "indent": [
         //     "error",
         //     "tab"

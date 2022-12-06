@@ -1,6 +1,8 @@
-import Link from "@mui/material/Link";
-import Paper from "@mui/material/Paper";
-import Stack from "@mui/material/Stack";
+import {
+    Link,
+    Paper, 
+    Stack
+} from "@mui/material";
 import { EventData } from "common/interfaces";
 import { Link as RouterLink, useOutletContext } from "react-router-dom";
 import { useTitle } from "src/hooks/useTitle";

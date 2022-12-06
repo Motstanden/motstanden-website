@@ -1,4 +1,4 @@
-import Link from '@mui/material/Link';
+import { Link } from "@mui/material";
 import May17Img from "../../assets/pictures/17mai2021.jpg";
 import { useTitle } from "../../hooks/useTitle";
 import { PageContainer } from "../../layout/PageContainer";

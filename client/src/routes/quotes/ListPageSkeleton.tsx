@@ -1,4 +1,5 @@
-import Skeleton from "@mui/material/Skeleton";
+import { Skeleton } from "@mui/material";
+
 
 export function ListPageSkeleton() {
     return (

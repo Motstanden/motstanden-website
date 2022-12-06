@@ -1,5 +1,4 @@
-import Divider from "@mui/material/Divider";
-import Link from "@mui/material/Link";
+import { Divider, Link } from "@mui/material";
 import LicenseLogo from "src/assets/logos/license.png";
 import { linkStyle } from "src/assets/style/tableStyle";
 import { useTitle } from "src/hooks/useTitle";

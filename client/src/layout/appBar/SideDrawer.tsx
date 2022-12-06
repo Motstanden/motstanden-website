@@ -2,15 +2,17 @@ import { useState } from 'react';
 
 // Material UI 
 import MenuIcon from '@mui/icons-material/Menu';
-import Collapse from '@mui/material/Collapse';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import {
+    Collapse,
+    Divider,
+    IconButton,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    SwipeableDrawer
+} from "@mui/material";
 import ListItemLink from './ListItemLink';
 
 import MotstandenImg from "../../assets/logos/motstanden.png";

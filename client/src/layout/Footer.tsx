@@ -1,14 +1,16 @@
 import React from 'react';
 
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+import {
+    Divider,
+    Grid,
+    Link,
+    Paper,
+    Stack,
+    SxProps,
+    Typography
+} from "@mui/material";
 import SitImg from '../assets/logos/sit.svg';
 
-import Link from '@mui/material/Link';
-import { SxProps } from '@mui/material/styles';
 import { Link as RouterLink } from "react-router-dom";
 import ElektraImg from '../assets/logos/elektra.svg';
 import MotstandenImg from '../assets/logos/motstanden.png';

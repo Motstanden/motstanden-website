@@ -1,19 +1,22 @@
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import {
+    Button,
+    Checkbox,
+    Divider,
+    FormControlLabel,
+    Grid,
+    Link,
+    Paper,
+    Snackbar,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow
+} from "@mui/material";
+
 import { headerStyle, noVisitedLinkStyle, rowStyle } from 'src/assets/style/tableStyle';
 
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import Divider from '@mui/material/Divider';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
-import Snackbar from '@mui/material/Snackbar';
 import { UserStatus } from 'common/enums';
 import { User } from "common/interfaces";
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";

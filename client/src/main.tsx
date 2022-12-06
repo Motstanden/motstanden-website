@@ -7,7 +7,7 @@ import App from './App';
 import { AuthProvider } from "./context/Authentication";
 import './index.css';
 
-import CssBaseline from '@mui/material/CssBaseline';
+import { CssBaseline } from '@mui/material';
 import { LocaleProvider } from './context/Locale';
 import { AppThemeProvider } from './context/Themes';
 

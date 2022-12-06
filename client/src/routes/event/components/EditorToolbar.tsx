@@ -8,12 +8,14 @@ import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
-import Divider from "@mui/material/Divider";
-import Stack from '@mui/material/Stack';
-import { SxProps } from "@mui/material/styles";
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import Tooltip from "@mui/material/Tooltip";
+import {
+    Divider,
+    Stack,
+    SxProps,
+    ToggleButton,
+    ToggleButtonGroup,
+    Tooltip
+} from "@mui/material";
 import { ElementType, TextFormat } from "common/richTextSchema";
 
 

@@ -1,6 +1,4 @@
-import { DatePickerProps } from "@mui/x-date-pickers/DatePicker";
-import { DateTimePickerProps } from "@mui/x-date-pickers/DateTimePicker";
-import { TimePickerProps } from "@mui/x-date-pickers/TimePicker";
+import { DatePickerProps, DateTimePickerProps, TimePickerProps } from "@mui/x-date-pickers";
 
 interface BaseProps {
     desktopModeMediaQuery?: string

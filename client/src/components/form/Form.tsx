@@ -1,7 +1,7 @@
-import Divider from "@mui/material/Divider"
-import { useState } from "react"
-import { postJson } from "src/utils/postJson"
-import SubmitFormButtons from "./SubmitButtons"
+import { Divider } from "@mui/material";
+import { useState } from "react";
+import { postJson } from "src/utils/postJson";
+import SubmitFormButtons from "./SubmitButtons";
 
 export function Form({
     value,

@@ -1,6 +1,5 @@
 import EditIcon from '@mui/icons-material/Edit';
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
+import { IconButton, Tooltip } from "@mui/material";
 import { UserGroup } from "common/enums";
 import { EventData } from "common/interfaces";
 import { hasGroupAccess } from "common/utils";

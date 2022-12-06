@@ -1,4 +1,4 @@
-import Button from "@mui/material/Button";
+import { Button } from "@mui/material";
 
 export default function DevLogin(props: DevLoginProps) {
     return import.meta.env.VITE_ENABLE_DEV_LOGIN === "true" ? <DevLoginBtn props={props} /> : <></>

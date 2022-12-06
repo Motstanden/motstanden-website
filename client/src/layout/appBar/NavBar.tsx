@@ -4,14 +4,16 @@ import { useAuth } from '../../context/Authentication';
 // Material UI 
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import Link from '@mui/material/Link';
-import List from '@mui/material/List';
-import Menu from '@mui/material/Menu';
-import Stack from '@mui/material/Stack';
-import { SxProps } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
+import {
+    Button,
+    Divider,
+    Link,
+    List,
+    Menu,
+    Stack,
+    SxProps,
+    Typography
+} from "@mui/material";
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import ListItemLink from './ListItemLink';
 

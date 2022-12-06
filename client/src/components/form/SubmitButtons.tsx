@@ -1,6 +1,5 @@
-import LoadingButton from "@mui/lab/LoadingButton";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
+import { LoadingButton } from "@mui/lab";
+import { Button, Stack } from "@mui/material";
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SaveIcon from '@mui/icons-material/Save';

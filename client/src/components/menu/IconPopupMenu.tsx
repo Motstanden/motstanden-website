@@ -1,6 +1,4 @@
-import ClickAwayListener from "@mui/material/ClickAwayListener";
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
+import { ClickAwayListener, IconButton, Menu } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 
 export function IconPopupMenu({

@@ -1,11 +1,12 @@
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
-import Paper from '@mui/material/Paper';
-import TextField from '@mui/material/TextField';
-
-import Stack from '@mui/material/Stack';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import {
+    Button,
+    MenuItem,
+    Paper,
+    Stack,
+    TextField
+} from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
 import { UserGroup, UserRank, UserStatus } from 'common/enums';
 import { NewUser } from 'common/interfaces';
 import { isNullOrWhitespace, validateEmail } from 'common/utils';

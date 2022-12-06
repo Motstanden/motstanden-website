@@ -1,5 +1,4 @@
-import { Theme, useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import { Theme, useMediaQuery, useTheme } from "@mui/material";
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { PageTab, PageTabItem } from "src/components/PageTab";

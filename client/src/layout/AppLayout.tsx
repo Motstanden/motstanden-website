@@ -1,9 +1,7 @@
-import Stack from "@mui/material/Stack"
-import { Outlet } from "react-router-dom"
-
-import { useTheme } from "@mui/material/styles"
-import ResponsiveAppBar from "./appBar/ResponsiveAppBar"
-import { FooterContent } from "./Footer"
+import { Stack, useTheme } from "@mui/material";
+import { Outlet } from "react-router-dom";
+import ResponsiveAppBar from "./appBar/ResponsiveAppBar";
+import { FooterContent } from "./Footer";
 
 export function AppLayout() {
     const theme = useTheme()
