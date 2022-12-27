@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import React, { Suspense } from "react";
+import React from "react";
 import { Outlet } from "react-router-dom";
 import { TabbedPageContainer } from "src/layout/PageContainer";
 import { fetchAsync } from "../../utils/fetchAsync";
@@ -37,9 +37,7 @@ export function SheetArchiveContext() {
 
     return (
         <PageContainer>
-            <Suspense>
-                <Outlet context={newData} />
-            </Suspense>
+            <Outlet context={newData} />
         </PageContainer>
     );
 }

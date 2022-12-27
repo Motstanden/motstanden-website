@@ -1,50 +1,44 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
-import { RequireAuthRouter, useAuth } from "./context/Authentication";
+import { RequireAuthRouter, useAuth } from "src/context/Authentication";
 
 import { UserGroup } from 'common/enums';
-import { AppLayout } from './layout/AppLayout';
+import { AppLayout } from 'src/layout/AppLayout';
 
 // URL routes
-// -- Events --
-import { EventContext, EventItemContext } from './routes/event/Context';
-const EditEventPage = lazy(() => import("./routes/event/EditPage"))
-const ItemPage = lazy(() => import("./routes/event/ItemPage"))
-const EventListPage = lazy(() => import('./routes/event/ListPage'))
-const NewEventPage = lazy(() => import('./routes/event/NewPage'))
+// -- Event pages --
+import { EventContext, EventItemContext } from 'src/routes/event/Context';
+import EventListPage from "src/routes/event/ListPage";
+const EditEventPage = lazy(() => import("src/routes/event/EditPage"))
+const NewEventPage = lazy(() => import('src/routes/event/NewPage'))
+const EventItemPage = lazy(() => import("src/routes/event/ItemPage"))
 
 // -- User pages --
-import { UserContext, UserProfileContext } from './routes/user/Context';
-const EditUserPage = lazy(() => import('./routes/user/EditPage'))
-const UserListPage = lazy(() => import('./routes/user/ListPage'))
-const NewUserPage = lazy(() => import('./routes/user/NewPage'))
-const UserPage = lazy(() => import('./routes/user/UserPage'))
+import { UserContext, UserProfileContext } from 'src/routes/user/Context';
+import UserListPage from "src/routes/user/ListPage";
+import UserPage from "src/routes/user/UserPage";
+const NewUserPage = lazy(() => import('src/routes/user/NewPage'))
+const EditUserPage = lazy(() => import('src/routes/user/EditPage'))
 
-// -- Other --
-import { LyricItemPage, LyricListPage, LyricPageContainer } from './routes/lyric/Lyric';
-
-import { RumourContext } from './routes/rumour/Context';
-import { NewRumourPage, RumourPage } from './routes/rumour/RumourPage';
-
-import { QuotesContext } from './routes/quotes/Context';
-const QuoteListPage = lazy(() => import('./routes/quotes/ListPage'))
-const NewQuotePage = lazy(() => import("./routes/quotes/NewPage"))
-
-import { SheetArchiveContext } from "./routes/sheetArchive/Context";
-const InstrumentPage = lazy(() => import("./routes/sheetArchive/InstrumentPage"))
-const SongPage = lazy(() => import('./routes/sheetArchive/SongPage'))
-
-// Lazy loaded pages
-const FrontPage = lazy(() => import('./routes/frontPage/FrontPage'));
-const LoginPage = lazy(() => import('./routes/login/Login'))
-const BecomeMemberPage = lazy(() => import('./routes/becomeMember/BecomeMember'))
-const AdminPage = lazy(() => import('./routes/admin/Admin'))
-const SuperAdminPage = lazy(() => import('./routes/admin/SuperAdmin'))
-const DocumentsPage = lazy(() => import('./routes/documents/DocumentsPage'))
-const Home = lazy(() => import('./routes/home/Home'))
-const NotFound = lazy(() => import( './routes/notFound/NotFound'))
-const LicenseOnlyPage = lazy(() => import("./routes/license/LicensePage").then( module => ({default: module.LicenseOnlyPage})))
-const LicensePage = lazy(() => import('./routes/license/LicensePage').then( module => ({default: module.LicensePage})))
+// -- Other pages --
+import AdminPage from "src/routes/admin/Admin";
+import SuperAdminPage from "src/routes/admin/SuperAdmin";
+import BecomeMemberPage from "src/routes/becomeMember/BecomeMember";
+import DocumentsPage from "src/routes/documents/DocumentsPage";
+import FrontPage from "src/routes/frontPage/FrontPage";
+import HomePage from "src/routes/home/Home";
+import { LicenseOnlyPage, LicensePage } from "src/routes/license/LicensePage";
+import LoginPage from "src/routes/login/Login";
+import { LyricItemPage, LyricListPage, LyricPageContainer } from 'src/routes/lyric/Lyric';
+import NotFound from "src/routes/notFound/NotFound";
+import { QuotesContext } from 'src/routes/quotes/Context';
+import QuoteListPage from "src/routes/quotes/ListPage";
+import NewQuotePage from "src/routes/quotes/NewPage";
+import { RumourContext } from 'src/routes/rumour/Context';
+import { NewRumourPage, RumourPage } from 'src/routes/rumour/RumourPage';
+import { SheetArchiveContext } from "src/routes/sheetArchive/Context";
+import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
+import SongPage from "src/routes/sheetArchive/SongPage";
 
 function App() {
 	const auth = useAuth()
@@ -54,10 +48,10 @@ function App() {
 			<Routes>
 				<Route element={<AppLayout />}>
 
-					<Route path="/" element={auth.user ? <Suspense><Home /></Suspense> : <Suspense><FrontPage/></Suspense>} />
+					<Route path="/" element={auth.user ? <HomePage /> : <FrontPage/>} />
 
 					{/* Routes that are publicly available */}
-					<Route element={<Suspense><Outlet/></Suspense>}>
+					<Route element={<Outlet/>}>
 						<Route path="/framside" element={<FrontPage />} />
 						<Route path="/logg-inn" element={<LoginPage />} />
 						<Route path="/studenttraller" element={<LyricPageContainer />}>
@@ -72,7 +66,7 @@ function App() {
 
 					{/* Routes that requires the user to be logged in */}
 					<Route element={<RequireAuthRouter requiredGroup={UserGroup.Contributor} />}>
-						<Route path="/hjem" element={<Suspense><Home /></Suspense>} />
+						<Route path="/hjem" element={<HomePage />} />
 						<Route path="/notearkiv" element={<SheetArchiveContext />}>
 							<Route path="" element={<Navigate to="repertoar" />} />
 							<Route path="repertoar" element={<SongPage mode='repertoire' />} />
@@ -93,10 +87,10 @@ function App() {
 							<Route path="liste" element={<UserListPage />} />
 							<Route path=":userId" element={<UserProfileContext />}>
 								<Route index element={<UserPage />} />
-								<Route path="rediger" element={<EditUserPage />} /> {/* Authorization to this path is handled internally by EditUserPage. */}
+								<Route path="rediger" element={<Suspense><EditUserPage/></Suspense>} /> {/* Authorization to this path is handled internally by EditUserPage. */}
 							</Route>
 							<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator} />}>
-								<Route path="ny" element={<NewUserPage />} />
+								<Route path="ny" element={<Suspense><NewUserPage/></Suspense>} />
 							</Route>
 						</Route>
 						<Route path="/arrangement" element={<EventContext />}>
@@ -104,15 +98,15 @@ function App() {
 							<Route path=':eventId' element={<EventItemContext />} /> 	{/* Will redirect to correct path */}
 							<Route path="kommende" element={<EventListPage mode='upcoming' />} />
 							<Route path="kommende/:eventId" element={<EventItemContext />}>
-								<Route index element={<ItemPage />} />
-								<Route path="rediger" element={<EditEventPage />} />
+								<Route index element={<Suspense><EventItemPage/></Suspense>} />
+								<Route path="rediger" element={<Suspense><EditEventPage /></Suspense>} />
 							</Route>
 							<Route path="tidligere" element={<EventListPage mode='previous' />} />
 							<Route path="tidligere/:eventId" element={<EventItemContext />}>
-								<Route index element={<ItemPage />} />
-								<Route path="rediger" element={<EditEventPage />} />
+								<Route index element={<Suspense><EventItemPage /></Suspense>} />
+								<Route path="rediger" element={<Suspense><EditEventPage /></Suspense>} />
 							</Route>
-							<Route path="ny" element={<NewEventPage />} />
+							<Route path="ny" element={<Suspense><NewEventPage/></Suspense>} />
 						</Route>
 					</Route>
 

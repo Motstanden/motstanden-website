@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { Quote as QuoteData } from "common/interfaces"
-import React, { Suspense } from "react"
+import React from "react"
 import { Outlet, useLocation } from "react-router-dom"
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
 import { TabbedPageContainer } from "src/layout/PageContainer"
@@ -34,9 +34,7 @@ export function QuotesContext() {
 
     return (
         <PageContainer>
-            <Suspense fallback={<ListPageSkeleton/>}>
-                <Outlet context={data} />
-            </Suspense>
+            <Outlet context={data} />
         </PageContainer>
     )
 }

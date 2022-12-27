@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query"
 import { User } from "common/interfaces"
 import { strToNumber } from "common/utils"
-import { Suspense } from "react"
 import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
 import { PageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
+import { UserPageHeader } from "./UserPage"
 
 export function UserContext() {
     const { isLoading, isError, data, error } = useQuery<User[]>(["FetchAllUsers"], () => fetchAsync<User[]>("/api/member-list"))
@@ -19,9 +19,7 @@ export function UserContext() {
 
     return (
         <PageContainer>
-            <Suspense>
-                <Outlet context={data} />
-            </Suspense>
+            <Outlet context={data} />
         </PageContainer>
     )
 }
@@ -42,8 +40,9 @@ export function UserProfileContext() {
     }
 
     return (
-        <Suspense>
+        <>
+            <UserPageHeader user={user}/>
             <Outlet context={user} />
-        </Suspense>
+        </>
     )
 }

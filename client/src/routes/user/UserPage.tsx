@@ -19,14 +19,11 @@ export default function UserPage() {
     const user = useOutletContext<User>()
     useTitle(user.firstName)
     return (
-        <>
-            <UserPageHeader user={user}/>
-            <Grid container alignItems="top" spacing={4}>
-                <PersonCard user={user} />
-                <MemberCard user={user} />
-                <AccountDetailsCard user={user} />
-            </Grid>
-        </>
+        <Grid container alignItems="top" spacing={4}>
+            <PersonCard user={user} />
+            <MemberCard user={user} />
+            <AccountDetailsCard user={user} />
+        </Grid>
     )
 }
 
