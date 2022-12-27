@@ -33,7 +33,6 @@ function handleUserUpdate(updateMode: UserEditMode) {
         try {
             userService.updateUser(payload, updateMode)
             changeSuccess = true
-            console.log("user updated")
         } catch (err) {
             console.log(err)
             res.status(400).send("Failed to update user")

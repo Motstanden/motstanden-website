@@ -3,9 +3,9 @@ import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
 import { NewUser, User } from "common/interfaces";
 import { isNtnuMail, isNullOrWhitespace, validateEmail } from "common/utils";
 import jwt from 'jsonwebtoken';
-import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
-import { JwtTokenData } from "../middleware/jwtAuthenticate.js"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
+import { JwtTokenData } from "../middleware/jwtAuthenticate.js";
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 
 export function userExists(unsafeEmail: string | undefined): boolean {
     const email = unsafeEmail?.trim().toLowerCase();
@@ -250,7 +250,6 @@ export function createUser(user: NewUser): number | bigint {
     startTransaction()
     dbWr.close()
 
-    console.log("Result", result, result?.lastInsertRowid)
     if (result && result.changes > 0)
         return result.lastInsertRowid
     else
