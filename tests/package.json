@@ -9,13 +9,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.28.1"
+    "@playwright/test": "^1.29.1"
   },
   "dependencies": {
     "@types/crypto-js": "^4.1.1",
     "common": "file:../common",
     "crypto-js": "^4.1.1",
-    "dayjs": "^1.11.6",
+    "dayjs": "^1.11.7",
     "dotenv": "^16.0.3"
   }
 }
