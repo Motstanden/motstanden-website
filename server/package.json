@@ -5,13 +5,18 @@
   "main": "src/server.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "serverdeploy": "cd ../common && npm install && tsc && cd ../client && npm install && npm run build && cd ../server && npm install && tsc",
-    "server-dev": "npm install && npm install ../common && nodemon build/server.js",
-    "common-dev": "cd ../common && tsc && cd ../server && npm install ../common && cd ../client && npm install",
-    "client-dev": "cd ../client && npm install && npm start",
-    "tsc-watch": "concurrently \"tsc --watch\" \"cd ../common && tsc --watch\"",
-    "dev": "concurrently \"npm run common-dev\" \"npm run server-dev\" \"npm run client-dev\""
+    "serverdeploy": "npm run setup-common && npm run setup-server && npm run setup-client && cd ../client && npm run build",
+    
+    "setup-common": "echo ------- Setting up common ------- && cd ../common && npm install && npx tsc",
+    "setup-client": "echo ------- Setting up client ------- && cd ../client && npm install",
+    "setup-server": "echo ------- Setting up server ------- && npm install && npx tsc",
+    "setup-tests": "echo ------- Setting up tests -------  && cd ../tests && npm install",
+    "setup": "npm run setup-common && npm run setup-client && npm run setup-server && npm run setup-tests",
+    
+    "client-dev": "cd ../client && npm run dev",
+    "common-dev": "cd ../common && tsc --watch --preserveWatchOutput",
+    "server-dev": "concurrently --prefix-colors \"auto\" --names \"typescript,console\" \"tsc --watch --preserveWatchOutput\" \"nodemon --delay 1 build/server.js\"",
+    "dev": "concurrently --prefix-colors \"auto\" --names  \"common,server,client\" npm:common-dev npm:server-dev npm:client-dev"
   },
   "repository": {
     "type": "git",

@@ -7,8 +7,8 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import serveIndex from "serve-index";
+import { fileURLToPath } from 'url';
 import * as passportConfig from "./config/passportConfig.js";
-import { fileURLToPath } from 'url'
 
 import router from "./api/apiRouter.js";
 import { AuthenticateUser } from "./middleware/jwtAuthenticate.js";
@@ -65,11 +65,10 @@ app.use("/files",
 app.use("/api", router)
 
 // Allows us to use files from './client/build'
-
 app.use(express.static(fileURLToPath(new URL("../../client/build", import.meta.url))))
 
 app.get("*", (req, res) => {
     res.sendFile(fileURLToPath(new URL("../../client/build/index.html", import.meta.url)))
 })
 
-app.listen(PORT, () => console.log("The server is listening on port " + PORT.toString()))
+app.listen(PORT, () => console.log(process.env.IS_DEV_ENV ? `Back-end server running on http://localhost:${PORT}` : `Server running on port ${PORT}` ))

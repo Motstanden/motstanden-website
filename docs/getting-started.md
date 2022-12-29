@@ -48,44 +48,30 @@ After completing this guide, you will have learned everything you need to know t
   You should now see two new SQLite db files that are fully populated with data: `database/motstanden_dev.db` and `database/sheet_archive_dev.db`
 
   ## Create server environment
-  1. Copy and then rename the example environment files.
-      ```bash
-      cp server/.env.example server/.env
-      cp server/info-mail-key.json.example server/info-mail-key.json
-      ```
-      **Note:** Mail functionality does not work with this example file. If you want to use mail functionality, you must either request a secret OAuth2 from Motstanden, or generate a secret OAuth2 key for your own mail. 
+  Copy the example environment files.
+  ```bash
+  cp server/.env.example server/.env
+  cp server/info-mail-key.json.example server/info-mail-key.json
+  ```
 
-  2. Install dependencies
-      ```bash
-      cd common
-      npm install
-      cd ../server
-      npm install
-      cd ..
-      ```
+  **Note:** Mail functionality does not work with this example file. If you want to use mail
+  functionality, you must either request a secret OAuth2 from Motstanden, or generate a secret OAuth2 k
+  for your own mail. 
 
 # Start project
-   You will have to dedicate two terminals to run this project:
-
-  ### Terminal 1
-  This terminal is dedicated to compile TypeScript to JavaScript. The following script will start a file watcher that automatically compiles TS to JS. It will also print out **very useful error message** if you write bad TS.
-  ```bash
-  cd server
-  npm run tsc-watch 
-  ```
-  You will now see two new directories: `server/build` and `common/build`
-
-  ### Terminal 2
-  Run start-up script.
-  ```bash
-  cd server
-  npm run dev
-  ```
-  **Note:** There is a bug somewhere (probably in npm or react) that sometimes causes the startup script to fail. This issue often solved by rerunning the start-up script a few times.   
+  1. Install all dependencies   
+     ```bash
+     cd server
+     npm run setup
+     ```
+  2. Run the project
+     ```bash
+     npm run dev
+     ```
 
   The terminal is now running two servers:
   1. http://localhost:3000/ – A front end server, responsible for compiling react and provide front end dev tools. This server is only used in development.
-  2. http://localhost:5000/ - A back end server, responsible for handling API calls and serving content. This server will be the actual server running in production.
+  2. http://localhost:5000/ - A back end server, responsible for handling API calls and serving files. This will be the actual server that is running in production.
 
 You can now go to [http://localhost:3000/](http://localhost:3000/) and start developing.<br/>
 To log in, enter one of the following email addresses and click the `DEV LOGG INN`-button. 
@@ -96,14 +82,13 @@ To log in, enter one of the following email addresses and click the `DEV LOGG IN
 
 # Testing
 
-Run the end-to-end tests by following these steps:
+Run the end-to-end tests with these steps:
 1. Ensure that the website is running on [http://localhost:3000/](http://localhost:3000/)
-2. Install test dependencies
+3. Copy the example environment files
     ```bash
-    cd tests
-    npm install
+    cp tests/.env.example tests/.env
     ```
-3. Run tests
+4. Run tests
     ```bash
     # [Very slow] Run all tests in all browsers
     npx playwright test
@@ -120,8 +105,9 @@ Run the end-to-end tests by following these steps:
     # [Pretty] Run and render smoke test in firefox
     npx playwright test --grep "@smoke" --project firefox --headed --workers 1
     ```
-Read more about testing in our [test documentation](./testing.md)
+    Read more about testing in our [test documentation](./testing.md)
 <br/>
 <br/>
-Now you have all the tools you need to start developing<br/>
+
+Now you have all the tools you need to start developing.<br/>
 **Happy coding!**
