@@ -1,44 +1,21 @@
 import EditIcon from '@mui/icons-material/Edit';
-import { Tooltip } from "@mui/material";
-import Divider from "@mui/material/Divider";
-import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
-import Paper from "@mui/material/Paper";
+import {
+    Divider,
+    Grid,
+    IconButton,
+    Paper,
+    Tooltip
+} from "@mui/material";
 import { UserGroup } from "common/enums";
 import { User } from "common/interfaces";
-import { getFullName, hasGroupAccess, strToNumber, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";
+import { getFullName, hasGroupAccess, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";
 import dayjs from "dayjs";
-import { Link as RouterLink, Navigate, Outlet, useOutletContext, useParams } from "react-router-dom";
+import { Link as RouterLink, useOutletContext } from "react-router-dom";
 import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
 import { Card, CardTextItem } from "./Components";
 
-export function UserProfileContext() {
-    const users = useOutletContext<User[]>()
-
-    const params = useParams();
-    const userId = strToNumber(params.userId)
-    if (!userId) {
-        return <Navigate to="/medlem/liste" />
-    }
-
-    const user = users.find(item => item.userId === userId)
-
-    if (!user) {
-        return <Navigate to="/medlem/liste" />
-    }
-
-    return (
-        <>
-            <ProfileBanner user={user} />
-            <EditButton user={user} />
-            <Divider sx={{ mt: 2, mb: 2 }} />
-            <Outlet context={user} />
-        </>
-    )
-}
-
-export function UserPage() {
+export default function UserPage() {
     const user = useOutletContext<User>()
     useTitle(user.firstName)
     return (
@@ -47,6 +24,16 @@ export function UserPage() {
             <MemberCard user={user} />
             <AccountDetailsCard user={user} />
         </Grid>
+    )
+}
+
+export function UserPageHeader( {user}: {user: User}) {
+    return (
+        <>
+            <ProfileBanner user={user} />
+            <EditButton user={user} />
+            <Divider sx={{ mt: 2, mb: 2 }} />
+        </>
     )
 }
 

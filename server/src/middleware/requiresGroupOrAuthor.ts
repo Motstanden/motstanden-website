@@ -1,7 +1,7 @@
 import { UserGroup } from "common/enums"
 import { NextFunction, Request, Response } from "express"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData"
-import { hasGroupAccess } from "../utils/accessTokenUtils"
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { hasGroupAccess } from "../utils/accessTokenUtils.js"
 
 export function requiresGroupOrAuthor({
     requiredGroup,

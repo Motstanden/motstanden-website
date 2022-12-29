@@ -1,35 +1,44 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-import { RequireAuthRouter, useAuth } from "./context/Authentication";
+import { lazy, Suspense } from "react";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { RequireAuthRouter, useAuth } from "src/context/Authentication";
+
+import { UserGroup } from 'common/enums';
+import { AppLayout } from 'src/layout/AppLayout';
 
 // URL routes
-import { UserGroup } from 'common/enums';
-import { AppLayout } from './layout/AppLayout';
-import { AdminPage } from './routes/admin/Admin';
-import { SuperAdminPage } from './routes/admin/SuperAdmin';
-import BecomeMember from './routes/becomeMember/BecomeMember';
-import DocumentsPage from './routes/documents/DocumentsPage';
-import { EventContext, EventItemContext } from './routes/event/Context';
-import { EditEventPage } from "./routes/event/EditPage";
-import { ItemPage } from "./routes/event/ItemPage";
-import { EventListPage } from './routes/event/ListPage';
-import { NewEventPage } from './routes/event/NewPage';
-import FrontPage from './routes/frontPage/FrontPage';
-import Home from './routes/home/Home';
-import { LicenseOnlyPage, LicensePage } from './routes/license/LicensePage';
-import { LoginPage } from './routes/login/Login';
-import { LyricItemPage, LyricListPage, LyricPageContainer } from './routes/lyric/Lyric';
-import NotFound from './routes/notFound/NotFound';
-import { QuotesContext } from './routes/quotes/Context';
-import { NewQuotePage, QuotesPage } from './routes/quotes/QuotesPage';
-import { RumourContext } from './routes/rumour/Context';
-import { NewRumourPage, RumourPage } from './routes/rumour/RumourPage';
-import { SheetArchiveContext } from "./routes/sheetArchive/Context";
-import { InstrumentListPage, SongListPage } from './routes/sheetArchive/SheetArchive';
-import { UserContext } from './routes/user/Context';
-import { EditUserPage } from './routes/user/EditPage';
-import { UserListPage } from './routes/user/ListPage';
-import { NewUserPage } from './routes/user/NewPage';
-import { UserPage, UserProfileContext } from './routes/user/UserPage';
+// -- Event pages --
+import { EventContext, EventItemContext } from 'src/routes/event/Context';
+import EventListPage from "src/routes/event/ListPage";
+const EditEventPage = lazy(() => import("src/routes/event/EditPage"))
+const NewEventPage = lazy(() => import('src/routes/event/NewPage'))
+const EventItemPage = lazy(() => import("src/routes/event/ItemPage"))
+
+// -- User pages --
+import { UserContext, UserProfileContext } from 'src/routes/user/Context';
+import UserListPage from "src/routes/user/ListPage";
+import UserPage from "src/routes/user/UserPage";
+const NewUserPage = lazy(() => import('src/routes/user/NewPage'))
+const EditUserPage = lazy(() => import('src/routes/user/EditPage'))
+
+// -- Other pages --
+import AdminPage from "src/routes/admin/Admin";
+import SuperAdminPage from "src/routes/admin/SuperAdmin";
+import BecomeMemberPage from "src/routes/becomeMember/BecomeMember";
+import DocumentsPage from "src/routes/documents/DocumentsPage";
+import FrontPage from "src/routes/frontPage/FrontPage";
+import HomePage from "src/routes/home/Home";
+import { LicenseOnlyPage, LicensePage } from "src/routes/license/LicensePage";
+import LoginPage from "src/routes/login/Login";
+import { LyricItemPage, LyricListPage, LyricPageContainer } from 'src/routes/lyric/Lyric';
+import NotFound from "src/routes/notFound/NotFound";
+import { QuotesContext } from 'src/routes/quotes/Context';
+import QuoteListPage from "src/routes/quotes/ListPage";
+import NewQuotePage from "src/routes/quotes/NewPage";
+import { RumourContext } from 'src/routes/rumour/Context';
+import { NewRumourPage, RumourPage } from 'src/routes/rumour/RumourPage';
+import { SheetArchiveContext } from "src/routes/sheetArchive/Context";
+import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
+import SongPage from "src/routes/sheetArchive/SongPage";
 
 function App() {
 	const auth = useAuth()
@@ -39,32 +48,34 @@ function App() {
 			<Routes>
 				<Route element={<AppLayout />}>
 
-					<Route path="/" element={auth.user ? <Home /> : <FrontPage />} />
+					<Route path="/" element={auth.user ? <HomePage /> : <FrontPage/>} />
 
 					{/* Routes that are publicly available */}
-					<Route path="/framside" element={<FrontPage />} />
-					<Route path="/logg-inn" element={<LoginPage />} />
-					<Route path="/studenttraller" element={<LyricPageContainer />}>
-						<Route index element={<LyricListPage />} />
-						<Route path=":title" element={<LyricItemPage />} />
+					<Route element={<Outlet/>}>
+						<Route path="/framside" element={<FrontPage />} />
+						<Route path="/logg-inn" element={<LoginPage />} />
+						<Route path="/studenttraller" element={<LyricPageContainer />}>
+							<Route index element={<LyricListPage />} />
+							<Route path=":title" element={<LyricItemPage />} />
+						</Route>
+						<Route path="/dokumenter" element={<DocumentsPage />} />
+						<Route path="/bli-medlem" element={<BecomeMemberPage />} />
+						<Route path="/lisens" element={<LicensePage />} />
+						<Route path="/maakesodd" element={<LicenseOnlyPage />} />
 					</Route>
-					<Route path="/dokumenter" element={<DocumentsPage />} />
-					<Route path="/bli-medlem" element={<BecomeMember />} />
-					<Route path="/lisens" element={<LicensePage />} />
-					<Route path="/maakesodd" element={<LicenseOnlyPage />} />
 
 					{/* Routes that requires the user to be logged in */}
 					<Route element={<RequireAuthRouter requiredGroup={UserGroup.Contributor} />}>
-						<Route path="/hjem" element={<Home />} />
+						<Route path="/hjem" element={<HomePage />} />
 						<Route path="/notearkiv" element={<SheetArchiveContext />}>
 							<Route path="" element={<Navigate to="repertoar" />} />
-							<Route path="repertoar" element={<SongListPage mode='repertoire' />} />
-							<Route path="repertoar/:title" element={<InstrumentListPage />} />
-							<Route path="alle" element={<SongListPage />} />
-							<Route path="alle/:title" element={<InstrumentListPage />} />
+							<Route path="repertoar" element={<SongPage mode='repertoire' />} />
+							<Route path="repertoar/:title" element={<InstrumentPage />} />
+							<Route path="alle" element={<SongPage />} />
+							<Route path="alle/:title" element={<InstrumentPage />} />
 						</Route>
 						<Route path="/sitater" element={<QuotesContext />}>
-							<Route index element={<QuotesPage />} />
+							<Route index element={<QuoteListPage />} />
 							<Route path='ny' element={<NewQuotePage />} />
 						</Route>
 						<Route path="/rykter" element={<RumourContext />}>
@@ -76,10 +87,10 @@ function App() {
 							<Route path="liste" element={<UserListPage />} />
 							<Route path=":userId" element={<UserProfileContext />}>
 								<Route index element={<UserPage />} />
-								<Route path="rediger" element={<EditUserPage />} /> {/* Authorization to this path is handled internally by EditUserPage. */}
+								<Route path="rediger" element={<Suspense><EditUserPage/></Suspense>} /> {/* Authorization to this path is handled internally by EditUserPage. */}
 							</Route>
 							<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator} />}>
-								<Route path="ny" element={<NewUserPage />} />
+								<Route path="ny" element={<Suspense><NewUserPage/></Suspense>} />
 							</Route>
 						</Route>
 						<Route path="/arrangement" element={<EventContext />}>
@@ -87,15 +98,15 @@ function App() {
 							<Route path=':eventId' element={<EventItemContext />} /> 	{/* Will redirect to correct path */}
 							<Route path="kommende" element={<EventListPage mode='upcoming' />} />
 							<Route path="kommende/:eventId" element={<EventItemContext />}>
-								<Route index element={<ItemPage />} />
-								<Route path="rediger" element={<EditEventPage />} />
+								<Route index element={<Suspense><EventItemPage/></Suspense>} />
+								<Route path="rediger" element={<Suspense><EditEventPage /></Suspense>} />
 							</Route>
 							<Route path="tidligere" element={<EventListPage mode='previous' />} />
 							<Route path="tidligere/:eventId" element={<EventItemContext />}>
-								<Route index element={<ItemPage />} />
-								<Route path="rediger" element={<EditEventPage />} />
+								<Route index element={<Suspense><EventItemPage /></Suspense>} />
+								<Route path="rediger" element={<Suspense><EditEventPage /></Suspense>} />
 							</Route>
-							<Route path="ny" element={<NewEventPage />} />
+							<Route path="ny" element={<Suspense><NewEventPage/></Suspense>} />
 						</Route>
 					</Route>
 

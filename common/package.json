@@ -2,6 +2,7 @@
   "name": "common",
   "version": "1.0.0",
   "description": "Code that is shared between client, server and database",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc"
@@ -46,6 +47,9 @@
   "author": "Studentorchesteret den Ohmske Motstanden",
   "license": "MÅKESODD v1",
   "dependencies": {
-    "dayjs": "^1.11.6"
+    "dayjs": "^1.11.7"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.4"
   }
 }

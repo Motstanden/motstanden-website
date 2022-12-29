@@ -1,7 +1,4 @@
-import { SxProps } from "@mui/material"
-import Divider from "@mui/material/Divider"
-import Grid from "@mui/material/Grid"
-import Paper from "@mui/material/Paper"
+import { Divider, Grid, Paper, SxProps } from "@mui/material";
 
 export type TitleCardProps = {
     title: string,

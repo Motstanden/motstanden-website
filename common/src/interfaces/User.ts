@@ -1,6 +1,8 @@
-import { UserStatus } from "../enums";
-import { UserGroup } from "../enums/UserGroup";
-import { UserRank } from "../enums/UserRank";
+import { 
+    UserStatus, 
+    UserGroup, 
+    UserRank 
+} from "../enums/index.js"
 
 export interface NewUser {
     email: string;

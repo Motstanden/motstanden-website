@@ -8,10 +8,14 @@ import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
-import { Divider, SxProps, Tooltip } from '@mui/material';
-import Stack from '@mui/material/Stack';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import {
+    Divider,
+    Stack,
+    SxProps,
+    ToggleButton,
+    ToggleButtonGroup,
+    Tooltip
+} from "@mui/material";
 import { ElementType, TextFormat } from "common/richTextSchema";
 
 
@@ -96,15 +100,15 @@ function BlockElementButtons() {
     const editor = useSlate()
 
     const isMatch = (type: ElementType): boolean => {
-        const [match]: any = Editor.nodes(editor, {
-            match: (n: any) => n.type === type
+        const [match] = Editor.nodes(editor, {              
+            match: (n: any) => n.type === type          // eslint-disable-line @typescript-eslint/no-explicit-any    
         })
         return !!match
     }
 
     const onChange = (event: React.MouseEvent<HTMLElement>, newType?: ElementType) => {
         Transforms.unwrapNodes(editor, {
-            match: (n: any) => n.type === ElementType.BulletedList || n.type === ElementType.NumberedList,
+            match: (n: any) => n.type === ElementType.BulletedList || n.type === ElementType.NumberedList,  // eslint-disable-line @typescript-eslint/no-explicit-any
             split: true
         })
 

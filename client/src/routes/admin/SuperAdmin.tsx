@@ -1,6 +1,6 @@
 import { PageContainer } from "src/layout/PageContainer";
 
-export function SuperAdminPage() {
+export default function SuperAdminPage() {
     return (
         <PageContainer>
             <h1>Super Administrator</h1>

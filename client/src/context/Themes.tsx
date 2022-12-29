@@ -1,4 +1,4 @@
-import { createTheme, Theme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, Theme, ThemeProvider } from "@mui/material";
 import React, { createContext, useContext, useState } from 'react';
 
 // This must be imported here to provide default styling for date pickers and components in mui lab. 
@@ -164,8 +164,8 @@ const objectToTheme = (name: string | ThemeName | null | undefined): AppThemeTyp
 const themeStorageKey = "AppTheme"
 
 const getDefaultTheme = (): AppThemeType => {
-    let storedData = localStorage.getItem(themeStorageKey)
-    let theme = objectToTheme(storedData)
+    const storedData = localStorage.getItem(themeStorageKey)
+    const theme = objectToTheme(storedData)
     return theme;
 }
 
@@ -187,14 +187,14 @@ export function AppThemeProvider({ children }: { children: React.ReactNode }) {
     const changeTheme = (newThemeName: ThemeName, callback?: VoidFunction) => {
         if (newThemeName === themeInfo.name) return;
 
-        let newThemeInfo: AppThemeType = objectToTheme(newThemeName)
+        const newThemeInfo: AppThemeType = objectToTheme(newThemeName)
 
         setTheme(newThemeInfo)
         setDefaultTheme(newThemeInfo)
         if (callback) callback();
     }
 
-    let contextValue = { ...themeInfo, changeTheme }
+    const contextValue = { ...themeInfo, changeTheme }
 
     return (
         <AppThemeContext.Provider value={contextValue}>

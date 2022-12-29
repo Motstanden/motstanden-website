@@ -1,5 +1,5 @@
-import { ParticipationStatus } from "../enums";
-import { User } from "./User";
+import { ParticipationStatus } from "../enums/index.js";
+import { User } from "./index.js";
 
 export interface ParticipationList {
     eventId: number,

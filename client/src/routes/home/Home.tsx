@@ -1,19 +1,18 @@
-import Grid from "@mui/material/Grid"
-import Link from "@mui/material/Link"
-import Skeleton from "@mui/material/Skeleton"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { EventData, Quote, Rumour } from "common/interfaces"
-import dayjs from "dayjs"
-import React from "react"
-import { Link as RouterLink } from "react-router-dom"
-import { TitleCard } from "src/components/TitleCard"
-import { fetchAsync } from "src/utils/fetchAsync"
-import { useAuth } from "../../context/Authentication"
-import { useTitle } from "../../hooks/useTitle"
-import { PageContainer } from "../../layout/PageContainer"
-import { buildEventItemUrl } from "../event/Context"
-import { ListSkeleton as QuotesListSkeleton, QuoteList } from "../quotes/QuotesPage"
-import { ListSkeleton as RumourListSkeleton, RumourList } from "../rumour/RumourPage"
+import { Grid, Link, Skeleton } from "@mui/material";
+import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
+import { EventData, Quote, Rumour } from "common/interfaces";
+import dayjs from "dayjs";
+import React from "react";
+import { Link as RouterLink } from "react-router-dom";
+import { TitleCard } from "src/components/TitleCard";
+import { useAuth } from "src/context/Authentication";
+import { useTitle } from "src/hooks/useTitle";
+import { PageContainer } from "src/layout/PageContainer";
+import { buildEventItemUrl } from "src/routes/event/Context";
+import { QuoteList } from "src/routes/quotes/ListPage";
+import { ListSkeleton as QuotesListSkeleton } from "src/routes/quotes/ListPageSkeleton";
+import { ListSkeleton as RumourListSkeleton, RumourList } from "src/routes/rumour/RumourPage";
+import { fetchAsync } from "src/utils/fetchAsync";
 
 
 export default function Home() {
@@ -215,7 +214,7 @@ function InfoCard({
                 sx={{ maxWidth: "600px", height: "100%" }}
             >
                 <ul style={{ listStyle: "none", paddingLeft: "10px" }}>
-                    {items.map((info, index) => (
+                    {items.map((info) => (
                         <li key={info.link} style={{ marginBottom: "20px" }}>
                             <Link
                                 color="secondary"
@@ -273,7 +272,7 @@ function ItemLoader<T>({
     renderSkeleton,
     renderItems
 }: {
-    queryKey: any[],
+    queryKey: QueryKey,
     fetchUrl: string,
     renderSkeleton: React.ReactElement,
     renderItems: (props: RenderItemProps<T>) => React.ReactElement

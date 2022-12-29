@@ -1,7 +1,7 @@
 import { emptyRichText } from "src/components/TextEditor/Assets"
 import { EventEditorForm, EventEditorState } from "./components/EventEditorForm"
 
-export function NewEventPage() {
+export default function NewEventPage() {
 
     return (
         <div style={{ maxWidth: "900px" }}>

@@ -1,12 +1,11 @@
 import Database, { Database as DatabaseType } from "better-sqlite3";
 import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
 import { NewUser, User } from "common/interfaces";
-import { isNtnuMail, validateEmail } from "common/utils";
+import { isNtnuMail, isNullOrWhitespace, validateEmail } from "common/utils";
 import jwt from 'jsonwebtoken';
-import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
-import { JwtTokenData } from "../middleware/jwtAuthenticate";
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
-import { isNullOrWhitespace } from "common/utils";
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
+import { JwtTokenData } from "../middleware/jwtAuthenticate.js";
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 
 export function userExists(unsafeEmail: string | undefined): boolean {
     const email = unsafeEmail?.trim().toLowerCase();
@@ -197,7 +196,7 @@ export function getAllUsers(): User[] {
     return user
 }
 
-export function createUser(user: NewUser) {
+export function createUser(user: NewUser): number | bigint {
     const dbRd = new Database(motstandenDB, dbReadOnlyConfig)   // Read only instance of db
 
     // Throws exceptions if not found
@@ -209,6 +208,7 @@ export function createUser(user: NewUser) {
     const dbWr = new Database(motstandenDB, dbReadWriteConfig)  // Read/Write instance of db
 
     // Define transaction
+    let result: Database.RunResult | undefined
     const startTransaction = dbWr.transaction(() => {
         const stmt = dbWr.prepare(`
             INSERT INTO user(
@@ -229,7 +229,7 @@ export function createUser(user: NewUser) {
             VALUES
                 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `)
-        const info = stmt.run(
+        result = stmt.run(
             groupId,
             rankId,
             user.email,
@@ -249,6 +249,12 @@ export function createUser(user: NewUser) {
     // Run transaction
     startTransaction()
     dbWr.close()
+
+    if (result && result.changes > 0)
+        return result.lastInsertRowid
+    else
+        throw "something went wrong"
+
 }
 
 function isValidDate(dateStr: string): boolean {

@@ -1,8 +1,4 @@
-import {
-    DatePickerProps,
-    DateTimePickerProps,
-    TimePickerProps
-} from '@mui/x-date-pickers';
+import { DatePickerProps, DateTimePickerProps, TimePickerProps } from "@mui/x-date-pickers";
 
 interface BaseProps {
     desktopModeMediaQuery?: string
@@ -16,6 +12,7 @@ function isWebKit(): boolean {
     return navigator.userAgent.indexOf('AppleWebKit') != -1
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const dateTimePickerStyle: Partial<DateTimePickerProps<any, any>> = {
     ...baseStyle,
 }

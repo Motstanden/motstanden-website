@@ -4,7 +4,7 @@ import { strToNumber } from "common/utils";
 import express, { Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
-import * as quoteService from "../services/quotes";
+import * as quoteService from "../services/quotes.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 import dailyRandomInt from "../utils/dailyRandomInt.js";
 

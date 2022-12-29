@@ -6,7 +6,7 @@ import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
 import { TabbedPageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
 import { matchUrl } from "src/utils/matchUrl"
-import { PageSkeleton } from "./QuotesPage"
+import { ListPageSkeleton } from "./ListPageSkeleton"
 
 const quotesQueryKey = ["FetchAllQuotes"]
 
@@ -22,12 +22,10 @@ export function QuotesContext() {
         if (matchUrl("/sitater", location)) {
             return (
                 <PageContainer>
-                    <PageSkeleton />
+                    <ListPageSkeleton />
                 </PageContainer>
             )
         }
-
-        return <PageContainer />
     }
 
     if (isError) {

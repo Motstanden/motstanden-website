@@ -41,7 +41,7 @@ export function LyricItemPage() {
 
     useTitle(title)
 
-    const { isLoading, isError, data, error } = useQuery<ILyricHtml>(["LyricItem", title], () => {
+    const { isLoading, isError, data } = useQuery<ILyricHtml>(["LyricItem", title], () => {
         if (title) {
             return fetchAsync<ILyricHtml>(`/api/song_lyric_data?title=${title}`)
         }

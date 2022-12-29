@@ -1,6 +1,8 @@
 #!/bin/bash
+echo Deleting old db data
 rm -fv motstanden_dev.db;
-
+rm -frv ../tests/storage-state   # Deleting the database will invalidate test accesstokens
+echo 
 # Create the first implementations of the db
 echo "Running: 01_initial.sql";
 sqlite3 motstanden_dev.db < migrations/motstanden_db/01_initial.sql;

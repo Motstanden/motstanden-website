@@ -1,6 +1,11 @@
-import { Box, Grid, MenuItem, TextField } from "@mui/material";
-import { Stack } from "@mui/system";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import {
+    Box,
+    Grid,
+    MenuItem,
+    Stack,
+    TextField
+} from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
 import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
 import { User } from "common/interfaces";
 import { hasGroupAccess, isNtnuMail as checkIsNtnuMail, isNullOrWhitespace, strToNumber, userRankToPrettyStr, validateEmail } from "common/utils";
@@ -15,7 +20,7 @@ import { useTitle } from "src/hooks/useTitle";
 import { Card, CardTextItem, groupTVPair, rankTVPair, statusTVPair } from "./Components";
 import { AccountDetailsCard, formatExactDate, PersonCard } from "./UserPage";
 
-export function EditUserPage() {
+export default function EditUserPage() {
     const currentUser = useAuth().user!
     const viewedUser = useOutletContext<User>()
 
@@ -55,7 +60,7 @@ function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
     const onIsValidChange = (isValid: boolean) => setDisableSubmit(!isValid)
 
     const onAbort = () => canExitPage(user, newUser) && navigate(`/medlem/${user.userId}`)
-    const onPostSuccess = (res: Response) => window.location.href = `${window.location.origin}/medlem/${user.userId}`    // Will trigger a reload of the page
+    const onPostSuccess = (_: Response) => window.location.href = `${window.location.origin}/medlem/${user.userId}`    // Will trigger a reload of the page
     const preventSubmit = () => false // TODO: Validate user here. Return true if user is invalid
 
     return (
@@ -255,7 +260,7 @@ function MemberForm({ value, onChange, editMode }: FormParams) {
     )
 }
 
-function AccountDetailsForm({ value, onChange, onIsValidChange, editMode }: FormParams) {
+function AccountDetailsForm({ value, onChange, editMode }: FormParams) {
 
     if (!hasAdminAccess(editMode)) {
         return <AccountDetailsCard user={value} />

@@ -1,11 +1,11 @@
 import Database from "better-sqlite3";
 import { EventData, NewEventData, UpsertEventData } from "common/interfaces";
 import { isValidRichText } from "common/richTextSchema";
-import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
-import domPurify from "../lib/DOMPurify";
-import { DbWriteAction } from "../ts/enums/DbWriteAction";
-import { UpsertDb } from "../ts/types/UpsertDb";
-import { isNullOrWhitespace } from "common/utils";
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
+import domPurify from "../lib/DOMPurify.js"
+import { DbWriteAction } from "../ts/enums/DbWriteAction.js"
+import { UpsertDb } from "../ts/types/UpsertDb.js"
+import { isNullOrWhitespace } from "common/utils"
 
 const allEventColumns = `
     event_id as eventId, 

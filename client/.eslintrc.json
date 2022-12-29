@@ -1,0 +1,71 @@
+{
+    "env": {
+        "browser": true,
+        "es2022": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react/jsx-runtime"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "@typescript-eslint"
+    ],
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    },
+    "rules": {
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": [
+            "warn", 
+            { 
+                "argsIgnorePattern": "_"
+            }
+        ],
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "react/prop-types": 0,
+        "no-restricted-imports": [
+            "error",
+            {
+                "patterns": [
+                    "@mui/*/*/*", 
+                    "!@mui/material/test-utils/*", 
+                    "@mui/material/*", 
+                    "@mui/x-date-pickers/*",
+                    "!@mui/x-date-pickers/AdapterDayjs",
+                    "!@mui/x-date-pickers/themeAugmentation",
+                    "@mui/system/*",
+                    "@mui/lab/*",
+                    "!@mui/lab/themeAugmentation"
+                ]
+            }
+        ]
+
+        // TODO:
+        // "indent": [
+        //     "error",
+        //     "tab"
+        // ],
+        // "linebreak-style": [
+        //     "error",
+        //     "unix"
+        // ],
+        // "quotes": [
+        //     "error",
+        //     "double"
+        // ],
+        // "semi": [
+        //     "error",
+        //     "never"
+        // ]
+    }
+}

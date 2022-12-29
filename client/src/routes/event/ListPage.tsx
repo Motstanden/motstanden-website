@@ -1,14 +1,16 @@
-import { Paper, Stack } from "@mui/material"
-import Link from "@mui/material/Link"
-import { EventData } from "common/interfaces"
-import { Link as RouterLink, useOutletContext } from "react-router-dom"
-import { useTitle } from "src/hooks/useTitle"
-import { postJson } from "src/utils/postJson"
-import { ItemMenu } from "./components/ItemMenu"
-import { KeyInfo } from "./components/KeyInfo"
-import { buildEventItemUrl } from "./Context"
+import {
+    Link,
+    Paper, 
+    Stack
+} from "@mui/material";
+import { EventData } from "common/interfaces";
+import { Link as RouterLink, useOutletContext } from "react-router-dom";
+import { useTitle } from "src/hooks/useTitle";
+import { ItemMenu } from "./components/ItemMenu";
+import { KeyInfo } from "./components/KeyInfo";
+import { buildEventItemUrl } from "./Context";
 
-export function EventListPage({ mode }: { mode?: "upcoming" | "previous" | "all" }) {
+export default function EventListPage({ mode }: { mode?: "upcoming" | "previous" | "all" }) {
     useTitle("Arrangement")
 
     let events = useOutletContext<EventData[]>()
@@ -47,16 +49,5 @@ function EventItem({ event }: { event: EventData }) {
             </Stack>
             <KeyInfo keyInfo={event.keyInfo} startTime={event.startDateTime} endTime={event.endDateTime} />
         </Paper>
-    )
-}
-
-export async function deleteEvent(event: EventData) {
-    const response = await postJson(
-        "/api/events/delete",
-        { eventId: event.eventId },
-        {
-            confirmText: `Vil du permanent slette:\n«${event.title}»`,
-            alertOnFailure: true
-        }
     )
 }

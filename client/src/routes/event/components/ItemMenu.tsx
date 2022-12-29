@@ -6,8 +6,8 @@ import { hasGroupAccess } from "common/utils";
 import { useNavigate } from "react-router-dom";
 import { EditOrDeleteMenu } from "src/components/menu/EditOrDeleteMenu";
 import { useAuth } from "src/context/Authentication";
+import { postJson } from 'src/utils/postJson';
 import { buildEventItemUrl } from "../Context";
-import { deleteEvent } from "../ListPage";
 
 
 export function ItemMenu({ event, iconOrientation }: { event: EventData; iconOrientation?: "horizontal" | "vertical"; }) {
@@ -36,4 +36,13 @@ export function ItemMenu({ event, iconOrientation }: { event: EventData; iconOri
     )
 }
 
-
+async function deleteEvent(event: EventData) {
+    await postJson(
+        "/api/events/delete",
+        { eventId: event.eventId },
+        {
+            confirmText: `Vil du permanent slette:\n«${event.title}»`,
+            alertOnFailure: true
+        }
+    )
+}

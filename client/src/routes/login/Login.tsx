@@ -7,12 +7,12 @@ import { PageContainer } from '../../layout/PageContainer';
 import { AnimationAvatar } from './AnimationAvatar';
 import { EmailInfo, EmailLogin } from './EmailLogin';
 
-export function LoginPage() {
+export default function LoginPage() {
 	const [mailInfo, setMailInfo] = useState<EmailInfo | undefined>(undefined)
 
 	useTitle("Logg inn")
 	const auth = useAuth()
-	let location = useLocation()
+	const location = useLocation()
 
 	if (auth.user) {
 		const to: string = location.state?.from?.pathname ?? "/hjem"

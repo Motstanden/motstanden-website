@@ -1,11 +1,12 @@
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
-import Paper from '@mui/material/Paper';
-import TextField from '@mui/material/TextField';
-
-import Stack from '@mui/material/Stack';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import {
+    Button,
+    MenuItem,
+    Paper,
+    Stack,
+    TextField
+} from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
 import { UserGroup, UserRank, UserStatus } from 'common/enums';
 import { NewUser } from 'common/interfaces';
 import { isNullOrWhitespace, validateEmail } from 'common/utils';
@@ -15,7 +16,7 @@ import { datePickerStyle } from 'src/assets/style/timePickerStyles';
 import { useTitle } from 'src/hooks/useTitle';
 import { profilePictureTVPair } from './Components';
 
-export function NewUserPage() {
+export default function NewUserPage() {
     useTitle("Ny bruker")
     return (
         <Paper elevation={6}
@@ -45,7 +46,7 @@ function NewUserForm() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isValidEmail, setIsValidEmail] = useState(true)
 
-    const onEmailBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
+    const onEmailBlur = (_: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
         if(!validateEmail(email) || isNtnuMail(email)) {
             setIsValidEmail(false)
         }
@@ -81,7 +82,7 @@ function NewUserForm() {
         event.preventDefault()
         setIsSubmitting(true)
         const user = buildUser()
-        let response = await fetch("/api/create-user", {
+        const response = await fetch("/api/create-user", {
             method: "POST",
             body: JSON.stringify(user),
             headers: {
@@ -91,7 +92,8 @@ function NewUserForm() {
 
         setIsSubmitting(false)
         if (response.ok) {
-            window.location.reload() // TODO: Do something more than just refreshing the page
+            const data = await response.json()
+            window.location.href = `${window.location.origin}/medlem/${data.userId}`;   // Redirect to the profile page of the new user
         }
     }
 

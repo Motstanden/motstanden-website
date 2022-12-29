@@ -1,7 +1,7 @@
-import Divider from "@mui/material/Divider"
-import { useState } from "react"
-import { postJson } from "src/utils/postJson"
-import SubmitFormButtons from "./SubmitButtons"
+import { Divider } from "@mui/material";
+import { useState } from "react";
+import { postJson } from "src/utils/postJson";
+import SubmitFormButtons from "./SubmitButtons";
 
 export function Form({
     value,
@@ -13,7 +13,7 @@ export function Form({
     onPostFailure,
     onAbortClick
 }: {
-    value: {} | (() => {})    // Either any object, or a callback function that returns the object
+    value: object | (() => object)    // Either any object, or a callback function that returns the object
     children: React.ReactNode
     postUrl: string
     disabled?: boolean

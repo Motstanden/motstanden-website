@@ -1,12 +1,14 @@
 
 // Material UI
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
-import Stack from '@mui/material/Stack';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import { SxProps } from '@mui/system';
+import {
+    AppBar,
+    Box,
+    Divider,
+    Stack,
+    SxProps,
+    Toolbar,
+    Typography
+} from "@mui/material";
 
 import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../../context/Authentication';
@@ -27,11 +29,12 @@ export default function ResponsiveAppBar() {
                 <MobileToolBar display={{ xs: "flex", md: "none" }} />
             </Toolbar>
         </AppBar>
-    );
-};
+    )
+}
 
-function DesktopToolbar({ display }: { display: any }) { // TODO: Find the correct type for display
-    const isTightFit = useAuth().user ? true : false // It is a tight fit on the navbar if the user is logged in
+type DisplayProp = { xs: string, md: string}
+
+function DesktopToolbar({ display }: { display: DisplayProp}) { // TODO: Find the correct type for display
     return (
         <Stack
             display={display}
@@ -74,7 +77,7 @@ function DesktopToolbar({ display }: { display: any }) { // TODO: Find the corre
     )
 }
 
-function MobileToolBar({ display }: { display: any }) {
+function MobileToolBar({ display }: { display: DisplayProp }) {
     return (
         <Stack
             display={display}
@@ -138,7 +141,7 @@ function HeaderTitle({ variant, sx }: { variant?: VariantType, sx?: SxProps }) {
 }
 
 function UserInfo() {
-    let auth = useAuth()
+    const auth = useAuth()
     return auth.user
         ? <UserAvatar />
         : <NavLink text="Logg Inn" to="/logg-inn" sx={{ fontWeight: 600 }} />

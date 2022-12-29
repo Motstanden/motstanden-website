@@ -2,27 +2,28 @@
 // Material UI
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
-import Avatar from '@mui/material/Avatar';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import MenuItem from '@mui/material/MenuItem';
-import Tooltip from '@mui/material/Tooltip';
-
+import {
+    Avatar,
+    Divider,
+    ListItemIcon,
+    ListItemText,
+    MenuItem,
+    Tooltip
+} from "@mui/material";
 
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/Authentication';
 
-import { Divider } from '@mui/material';
 import { getFullName } from 'common/utils';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 
 
 export default function UserAvatar() {
-    let auth = useAuth()
+    const auth = useAuth()
 
-    let navigate = useNavigate()
+    const navigate = useNavigate()
     const onSignOutClick = async () => {
-        let success = await auth.signOut();
+        const success = await auth.signOut();
         if (success) {
             navigate("/")
         }

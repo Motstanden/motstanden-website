@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 import { TabbedPageContainer } from "src/layout/PageContainer";
 import { fetchAsync } from "../../utils/fetchAsync";
 import { strToPrettyUrl } from "../../utils/strToPrettyUrl";
-import { ISongInfo } from "./SheetArchive";
+import { ISongInfo } from './Components';
 
 
 export function SheetArchiveContext() {

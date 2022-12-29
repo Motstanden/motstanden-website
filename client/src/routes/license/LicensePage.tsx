@@ -1,5 +1,4 @@
-import Divider from "@mui/material/Divider";
-import Link from "@mui/material/Link";
+import { Divider, Link } from "@mui/material";
 import LicenseLogo from "src/assets/logos/license.png";
 import { linkStyle } from "src/assets/style/tableStyle";
 import { useTitle } from "src/hooks/useTitle";
@@ -118,7 +117,7 @@ function License() {
             </ul>
             {/* <Divider sx={{my: 4}} light/> */}
             <p style={{ marginTop: "60px" }}>
-                THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+                THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; 
                 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
                 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
                 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE

@@ -1,7 +1,7 @@
-import Button from "@mui/material/Button";
+import { Button } from "@mui/material";
 
 export default function DevLogin(props: DevLoginProps) {
-    return process.env.NODE_ENV === "development" ? <DevLoginBtn props={props} /> : <></>
+    return import.meta.env.VITE_ENABLE_DEV_LOGIN === "true" ? <DevLoginBtn props={props} /> : <></>
 }
 
 function DevLoginBtn({ props }: { props: DevLoginProps }) {

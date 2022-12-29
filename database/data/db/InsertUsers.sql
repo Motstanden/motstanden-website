@@ -1,6 +1,27 @@
 INSERT INTO 
     user(user_group_id, user_rank_id, start_date, first_name, middle_name, last_name, email)
 VALUES
+
+    -- Accounts reserved for testing 
+    (1,     3,     '2018-09-01',        '__Test User',      '',                 'Contributor',      'test-contributor@motstanden.no'            ),
+    (2,     4,     '2018-09-01',        '__Test User',      '',                 'Editor',           'test-editor@motstanden.no'                 ),
+    (3,     5,     '2018-09-01',        '__Test User',      '',                 'Admin',            'test-admin@motstanden.no'                  ),
+    (4,     6,     '2018-09-01',        '__Test User',      '',                 'Super Admin',      'test-superadmin@motstanden.no'             ),
+
+    -- Accounts reserved for debuging by developers
+    (1,     3,     '2018-09-01',        'Bidragsyter',      '',                 'Euler',            'contributor@motstanden.no'                 ),
+    (2,     4,     '2018-09-01',        'Redaktør',         '',                 'Turing',           'editor@motstanden.no'                      ),
+    (3,     5,     '2018-09-01',        'Admin',            '',                 'Kirchhoff',        'admin@motstanden.no'                       ),
+    (4,     6,     '2018-09-01',        'Super Admin',      '',                 'Ohm',              'superadmin@motstanden.no'                  ),
+
+    -- Board member accounts
+    (4,     4,      "2018-09-01",       "Web",              "",                 "Ω",                'web@motstanden.no'                         ),
+    (3,     5,      "2018-09-01",       "Leder",            "",                 "Ω",                'leder@motstanden.no'                       ),
+    (3,     4,      "2018-09-01",       "Okonomi",          "",                 "Ω",                'okonomi@motstanden.no'                     ),
+    (3,     4,      "2018-09-01",       "Dirigent",         "",                 "Ω",                'dirigent@motstanden.no'                    ),
+    (3,     4,      "2018-09-01",       "PR",               "",                 "Ω",                'pr@motstanden.no'                          ),
+
+    -- All other accounts
     (3,     6,      '2018-09-01',       'Gustav',           '',                 'Kirchhoff',        'gustav.kirchhoff@gmail.com'                ),                  
     (4,     6,      '2018-09-01',       'Georg',            'Simon',            'Ohm',              'georg.simon.ohm@gmail.com'                 ),                  
     (1,     5,      '2018-09-01',       'Nikola',           '',                 'Tesla',            'nikola.tesla@live.com'                     ),      
@@ -27,12 +48,4 @@ VALUES
     (1,     4,      '2019-03-01',       'Leonardo',         'di ser Piero',     'da Vinci',         'leonardo.di.ser.piero.da.vinci@gmail.com'  ),                        
     (4,     4,      '2020-01-01',       'Linus',            '',                 'Torvalds',         'linus.torvalds@gmail.com'                  ),               
     (1,     4,      '2018-09-01',       'Joseph',           '',                 'Fourier',          'joseph.fourier@hotmail.com'                ),               
-    (2,     6,      '2019-02-01',       'Alan',             '',                 'Turing',           'alan.turing@gmail.com'                     ),
-
-
-    (1,     3,     '2018-09-01',        'Bidragsyter',      '',                 'Euler',            'contributor@motstanden.no'               ),
-    (2,     4,     '2018-09-01',        'Redaktør',         '',                 'Turing',           'editor@motstanden.no'                    ),
-    (3,     5,     '2018-09-01',        'Admin',            '',                 'Kirchhoff',        'admin@motstanden.no'                     ),
-    (4,     6,     '2018-09-01',        'Super Admin',      '',                 'Ohm',              'superadmin@motstanden.no'                );
-    
-    ;         
+    (2,     6,      '2019-02-01',       'Alan',             '',                 'Turing',           'alan.turing@gmail.com'                     );

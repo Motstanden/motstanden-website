@@ -1,17 +1,18 @@
-import test, { expect, Page } from '@playwright/test'
+import { test, expect, Page } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
 import { NewUser } from 'common/interfaces'
 import dayjs from 'common/lib/dayjs'
 import {
+    getFullName,
     isNullOrWhitespace,
     userGroupToPrettyStr,
     userRankToPrettyStr,
     userStatusToPrettyStr
 } from "common/utils"
 import { randomInt, randomUUID } from 'crypto'
-import { disposeStorageLogIn, emailLogIn, storageLogIn } from '../utils/auth'
-import { selectDate } from '../utils/datePicker'
-import { navClick } from '../utils/navClick'
+import { disposeStorageLogIn, emailLogIn, getUser, storageLogIn } from '../utils/auth.js'
+import { selectDate } from '../utils/datePicker.js'
+import { navClick } from '../utils/navClick.js'
 
 test("New users can only be created by super admin", async ({browser}) => {
     const adminPage = await storageLogIn(browser, UserGroup.Administrator)
@@ -23,15 +24,13 @@ test("New users can only be created by super admin", async ({browser}) => {
     await expect(adminPage).toHaveURL("/hjem")
     await expect(superAdminPage).toHaveURL("/medlem/ny")
 
-    await adminPage.context().close()
-    await superAdminPage.context().close()
+    await disposeStorageLogIn(adminPage)
+    await disposeStorageLogIn(superAdminPage)
 })
 
 test("Admin can not promote self to super admin", async ({browser}) => {
     const page = await storageLogIn(browser, UserGroup.Administrator)
-
-    await gotoCurrentUser(page)
-    await editCurrentUser(page)
+    await gotoUser(page, UserGroup.Administrator, { editUser: true})
 
     await page.getByRole('button', { name: /Rolle/ }).click()
 
@@ -43,24 +42,25 @@ test("Admin can not promote self to super admin", async ({browser}) => {
 
 test.describe("Set inactive status", async () => {
     
-    test.afterEach(async ({page}) => {
-        await disposeStorageLogIn(page)
-    })
-
     test("Contributor can not update self to be inactive", async ({browser}) => {
         const page = await storageLogIn(browser, UserGroup.Contributor)
+        await gotoUser(page, UserGroup.Contributor, {editUser: true})
+
         expect(await canUpdateInactive(page)).not.toBeTruthy()
+
+        await disposeStorageLogIn(page)
     })
 
     test("Admin can update self to be inactive", async ({browser}) => {
         const page = await storageLogIn(browser, UserGroup.Administrator)
+        await gotoUser(page, UserGroup.Administrator, {editUser: true})
+
         expect(await canUpdateInactive(page)).toBeTruthy()
+
+        await disposeStorageLogIn(page)
     })
-
+        
     async function canUpdateInactive(page: Page): Promise<boolean> {
-        await gotoCurrentUser(page)
-        await editCurrentUser(page)
-
         await page.getByRole('button', { name: /Status/ }).click()
         const inactiveCount = await page.getByRole('option', { name: userStatusToPrettyStr(UserStatus.Inactive) }).count()
         return inactiveCount === 1
@@ -70,6 +70,7 @@ test.describe("Set inactive status", async () => {
 test.describe.serial("Create and update user data", async () => {
     test.slow()
     let user: NewUser
+    let userUrl: string
     let page: undefined | Page
 
     test("Should create new user @smoke", async ({browser}) => {
@@ -79,38 +80,33 @@ test.describe.serial("Create and update user data", async () => {
             birthDate: null,
             endDate: null
         })
-        page = await storageLogIn(browser, UserGroup.SuperAdministrator)
 
+        page = await storageLogIn(browser, UserGroup.SuperAdministrator)
         await page.goto("/medlem/ny")
 
-        await test.step("Post new user", async () => {
 
-            await fillPersonalForm(page, user)
-
-            await selectDate(page, "Startet *", user.startDate, "MonthYear")
+        await fillPersonalForm(page, user)
+        await selectDate(page, "Startet *", user.startDate, "MonthYear")
+    
+        await page.getByRole('button', { name: 'Profilbilde Gutt' }).click()
+        await page.getByRole('option', { name: 'Jente' }).click()
         
-            await page.getByRole('button', { name: 'Profilbilde Gutt' }).click()
-            await page.getByRole('option', { name: 'Jente' }).click()
-          
-            await page.getByRole('button', { name: 'Legg til bruker' }).click()
-        })
+        await navClick(page.getByRole('button', { name: 'Legg til bruker' }))
+        await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
+        userUrl = page.url()
 
-        await test.step("Test user exists", async () => {
-            await gotoUser(page, user)
-            await validateUserProfile(page, user)
-        })
+        await validateUserProfile(page, user)
     })
 
     test("Super admin can update all info @smoke", async () => {
-        
+        await clickEditButton(page)   // Reuse the page from the previous test to reduce test time
+
         user = createNewUser({
             groupName: UserGroup.Editor,
             rank: UserRank.Ohm,
             status: UserStatus.Active
         })
 
-        await editCurrentUser(page)
-        
         await fillPersonalForm(page, user)
         await fillMembershipForm(page, user)
         await select(page, "UserGroup", user.groupName)
@@ -122,6 +118,8 @@ test.describe.serial("Create and update user data", async () => {
 
     test("Admin can update membership info", async ({browser}) => {
         page = await storageLogIn(browser, UserGroup.Administrator)
+        await page.goto(`${userUrl}/rediger`)
+
         const newData = createNewUser()
         user = {
             ...user,
@@ -133,9 +131,6 @@ test.describe.serial("Create and update user data", async () => {
             endDate: newData.endDate,
             groupName: UserGroup.Administrator
         }
-        
-        await gotoUser(page, user)
-        await editCurrentUser(page)
         
         // Expect personal details to be read only
         expect(await page.getByLabel('Fornavn *').count()).toBe(0)
@@ -153,43 +148,47 @@ test.describe.serial("Create and update user data", async () => {
         await disposeStorageLogIn(page)
     })
 
-    test("Admin can update all info about themselves", async ({page}) => {
-        await emailLogIn(page, user.email)
-        await gotoCurrentUser(page)
-        await editCurrentUser(page)
-        
-        user = createNewUser({ 
-            groupName: UserGroup.Contributor, 
-            rank: UserRank.KiloOhm,
-            status: UserStatus.Veteran 
-        })
-        await fillPersonalForm(page, user)
-        await fillMembershipForm(page, user)
-        await select(page, "UserGroup", user.groupName)
-        await saveChanges(page)
-        await validateUserProfile(page, user)
-    })
+    test("User can update info about themselves", async ({page}) => {
 
-    test("Contributor can update all info about themselves except rank and group", async ({page}) => {
+        await page.goto(`${userUrl}/rediger`)
+        await expect(page).toHaveURL("/logg-inn")
+
         await emailLogIn(page, user.email)
-        await gotoCurrentUser(page)
-        await editCurrentUser(page)
-        
-        // Expect the user not to be able to edit rank or group
-        expect(await page.getByRole('button', { name: /Rang/ }).count()).toBe(0)
-        expect(await page.getByRole('button', { name: /Rolle/ }).count()).toBe(0)
-        
-        user = createNewUser({
-            rank: user.rank,
-            groupName: user.groupName,
-            status: UserStatus.Retired
+        await expect(page).toHaveURL(`${userUrl}/rediger`)
+
+        await test.step("Admin can update all", async () => {
+            user = createNewUser({ 
+                groupName: UserGroup.Contributor, 
+                rank: UserRank.KiloOhm,
+                status: UserStatus.Veteran 
+            })
+    
+            await fillPersonalForm(page, user)
+            await fillMembershipForm(page, user)
+            await select(page, "UserGroup", user.groupName)
+            await saveChanges(page)
+            await validateUserProfile(page, user)
         })
 
-        await fillPersonalForm(page, user)
-        await fillMembershipForm(page, user, {skipRank: true})
+        await test.step("Contributor can update all except rank and group",  async () => {
+            await clickEditButton(page)
+            
+            // Expect the user not to be able to edit rank or group
+            expect(await page.getByRole('button', { name: /Rang/ }).count()).toBe(0)
+            expect(await page.getByRole('button', { name: /Rolle/ }).count()).toBe(0)
+            
+            user = createNewUser({
+                rank: user.rank,
+                groupName: user.groupName,
+                status: UserStatus.Retired
+            })
         
-        await saveChanges(page)
-        await validateUserProfile(page, user)
+            await fillPersonalForm(page, user)
+            await fillMembershipForm(page, user, {skipRank: true})
+            
+            await saveChanges(page)
+            await validateUserProfile(page, user)
+        })
     })
 })
 
@@ -271,47 +270,7 @@ function createNewUser(userData?: Partial<NewUser>): NewUser {
     return newUser
 }
 
-interface UserName {
-    firstName: string, 
-    middleName: string, 
-    lastName: string
-}
-
-function getFullName(user: UserName): string {
-    const lastName = isNullOrWhitespace(user.middleName) 
-                   ? user.lastName 
-                   : user.middleName + " " + user.lastName
-    return user.firstName + " " + lastName
-}
-
-function monthFormat(date: string): string {
-    return dayjs(date).locale("nb").format("MMMM YYYY").toLowerCase()
-}
-
-function birthFormat(date: string): string {
-    return dayjs(date).format("DD.MM.YYYY")
-}
-
-async function gotoCurrentUser(page: Page) {
-    await page.getByRole('button', { name: 'Profilmeny' }).click()
-    await navClick(page.getByRole('menuitem', { name: 'Profil' }))
-    await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
-}
-
-async function gotoUser(page: Page, user: UserName) {
-    await page.goto("/medlem/liste")
-    await page.getByLabel('Styret').check()
-
-    const fullName = getFullName(user)
-    const userLink = page.getByRole('link', { name: fullName })   
-    await expect(userLink).toBeVisible()
-    await userLink.click()
-
-    await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
-    await expect(page.getByText(fullName).first()).toBeVisible()
-}
-
-async function editCurrentUser(page: Page) {
+async function clickEditButton(page: Page) {
     await page.getByRole('link', { name: 'Rediger Profil' }).click()
     await expect(page).toHaveURL(/\/medlem\/[0-9]+\/rediger/)
 }
@@ -326,11 +285,13 @@ async function validateUserProfile(page: Page, user: NewUser) {
     const fullName = getFullName(user)
     await expect(page.getByText(fullName).first()).toBeVisible()
 
+    const formatStartDate = (date: string) => dayjs(date).locale("nb").format("MMMM YYYY").toLowerCase()
+
     // We expect all items in this array to be visible on the user profile page (exactly once)
     const uniqueData: string[] = [
         user.email, 
         userRankToPrettyStr(user.rank),
-        monthFormat(user.startDate),
+        formatStartDate(user.startDate),
     ]
 
     // The group is not unique on the page if it is contributor
@@ -351,7 +312,7 @@ async function validateUserProfile(page: Page, user: NewUser) {
         uniqueData.push(dayjs(user.birthDate).format("DD MMMM YYYY"))
     
     if(user.endDate)
-        uniqueData.push(monthFormat(user.endDate))
+        uniqueData.push(formatStartDate(user.endDate))
 
     for(let i = 0; i < uniqueData.length; i++) {
         await expect(page.getByText(uniqueData[i])).toBeVisible()
@@ -381,4 +342,17 @@ async function validateUserProfile(page: Page, user: NewUser) {
 function getEnums<T>(enumObj: {}): T[] {
     return Object.keys(enumObj)
                  .map(itemStr => enumObj[itemStr as keyof typeof enumObj] as T)
+}
+
+async function gotoUser(page: Page, group: UserGroup, opts?: {editUser?: boolean}) {
+    const url = getUserUrl(group, opts)
+    await page.goto(url)
+} 
+
+function getUserUrl( group: UserGroup, opts?: {editUser?: boolean}): string {
+    const id = getUser(group).userId
+    let url = `/medlem/${id}`
+    if(opts?.editUser) 
+        url += "/rediger"
+    return url;
 }

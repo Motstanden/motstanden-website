@@ -1,23 +1,16 @@
 
 // Material UI
-import Switch from '@mui/material/Switch';
-import { SxProps } from '@mui/system';
+import { Switch } from "@mui/material";
 
 import LightModeIcon from '@mui/icons-material/LightMode';
 import ModeNightSharpIcon from '@mui/icons-material/ModeNightSharp';
 import { ThemeName, useAppTheme } from '../../context/Themes';
-import { LabelPlacementType } from '../../utils/tsTypes/MaterialUiTypes';
 
-interface ThemeSwitcherProps {
-    labelPlacement?: LabelPlacementType
-    sx?: SxProps
-}
-
-export default function ThemeSwitcher(props: ThemeSwitcherProps) {
-    let theme = useAppTheme()
+export default function ThemeSwitcher() {
+    const theme = useAppTheme()
 
     const onSwitchClick = () => {
-        let newTheme = theme.name === ThemeName.Dark ? ThemeName.Light : ThemeName.Dark
+        const newTheme = theme.name === ThemeName.Dark ? ThemeName.Light : ThemeName.Dark
         theme.changeTheme(newTheme)
     }
 

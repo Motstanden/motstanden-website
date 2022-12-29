@@ -1,6 +1,6 @@
-import { Descendant } from "../richTextSchema";
-import { Optional } from "../types";
-import { KeyValuePair } from "./KeyValuePair";
+import { Descendant } from "../richTextSchema/index.js"
+import { Optional } from "../types/index.js"
+import { KeyValuePair } from "./index.js"
 
 export interface NewEventData {
     title: string

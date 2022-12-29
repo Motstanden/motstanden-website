@@ -3,6 +3,7 @@
 // https://github.com/microsoft/playwright/issues/17932
 {
     "compilerOptions": {
+        "module": "NodeNext",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
     }

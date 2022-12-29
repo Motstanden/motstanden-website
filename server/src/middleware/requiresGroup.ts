@@ -1,8 +1,8 @@
 import { UserGroup } from "common/enums";
 import { userGroupToNum } from "common/utils";
 import { NextFunction, Request, Response } from 'express';
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData";
-import { AuthenticateUser } from "./jwtAuthenticate";
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { AuthenticateUser } from "./jwtAuthenticate.js"
 
 export function requiresGroup(requiredGroup: UserGroup) {
     return [

@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { ParticipationStatus } from "common/enums";
 import { ParticipationList } from "common/interfaces";
-import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig";
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
 
 
 export function getAll(eventId: number): ParticipationList {

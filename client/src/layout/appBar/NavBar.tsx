@@ -4,14 +4,16 @@ import { useAuth } from '../../context/Authentication';
 // Material UI 
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import Link from '@mui/material/Link';
-import List from '@mui/material/List';
-import Menu from '@mui/material/Menu';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { SxProps } from '@mui/system';
+import {
+    Button,
+    Divider,
+    Link,
+    List,
+    Menu,
+    Stack,
+    SxProps,
+    Typography
+} from "@mui/material";
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import ListItemLink from './ListItemLink';
 
@@ -21,7 +23,7 @@ import * as MenuIcons from './MenuIcons';
 
 
 export function NavBar() {
-    let auth = useAuth()
+    const auth = useAuth()
     return auth.user
         ? <PrivateNavBar />
         : <PublicNavBar />

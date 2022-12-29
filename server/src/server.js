@@ -6,8 +6,8 @@ import cookieParser from 'cookie-parser';
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
-import path from "path";
 import serveIndex from "serve-index";
+import { fileURLToPath } from 'url';
 import * as passportConfig from "./config/passportConfig.js";
 
 import router from "./api/apiRouter.js";
@@ -44,27 +44,31 @@ app.use(express.json());                            // support json encoded bodi
 const passport = passportConfig.createPassport()
 app.use(passport.initialize());
 
+const allFilesPath     = fileURLToPath(new URL("../files",  import.meta.url))
+const privateFilesPath = fileURLToPath(new URL("../files/private", import.meta.url))
+const publicFilesPath  = fileURLToPath(new URL("../files/public",  import.meta.url))
+
 app.use("/files/private",
     AuthenticateUser({ failureRedirect: "/files/public" }),
-    express.static(path.join(__dirname, "..", "files", "private")),
-    serveIndex(path.join(__dirname, "..", "files", "private"), { icons: true }))
+    express.static(privateFilesPath),
+    serveIndex(privateFilesPath, { icons: true }))
 
 app.use("/files/public",
-    express.static(path.join(__dirname, "..", "files", "public")),
-    serveIndex(path.join(__dirname, "..", "files", "public"), { icons: true }))
+    express.static(publicFilesPath),
+    serveIndex(publicFilesPath, { icons: true }))
 
 app.use("/files",
     AuthenticateUser({ failureRedirect: "/files/public" }),
-    express.static(path.join(__dirname, "..", "files")),
-    serveIndex(path.join(__dirname, "..", "files"), { icons: true }))
+    express.static(allFilesPath),
+    serveIndex(allFilesPath, { icons: true }))
 
 app.use("/api", router)
 
 // Allows us to use files from './client/build'
-app.use(express.static(path.join(__dirname, "..", "..", "client", "build")))
+app.use(express.static(fileURLToPath(new URL("../../client/build", import.meta.url))))
 
 app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "..", "client", "build", "index.html"))
+    res.sendFile(fileURLToPath(new URL("../../client/build/index.html", import.meta.url)))
 })
 
-app.listen(PORT, () => console.log("The server is listening on port " + PORT.toString()))
+app.listen(PORT, () => console.log(process.env.IS_DEV_ENV ? `Back-end server running on http://localhost:${PORT}` : `Server running on port ${PORT}` ))

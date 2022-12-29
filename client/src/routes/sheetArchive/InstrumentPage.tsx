@@ -1,20 +1,63 @@
-
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import {
+    Link,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow
+} from "@mui/material";
+import { useQuery } from '@tanstack/react-query';
+import {
+    Link as RouterLink,
+    Navigate,
+    useOutletContext,
+    useParams
+} from "react-router-dom";
 import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
+import { useTitle } from "../../hooks/useTitle";
+import { fetchAsync } from "../../utils/fetchAsync";
+import { ISongFile, ISongInfo } from './Components';
 
-import { ISongFile } from './SheetArchive';
+export default function InstrumentPage() {
+    const params = useParams();
+    const songData = useOutletContext<ISongInfo[]>();
+    const song = songData.find(item => item.url === params.title);
 
-import Link from '@mui/material/Link';
-import { Link as RouterLink } from 'react-router-dom';
+    useTitle(song?.title);
 
+    const { isLoading, isError, data } = useQuery<ISongFile[]>(["FetchSheetArchiveFile", song!.url], () => {
+        if (song) {
+            return fetchAsync<ISongFile[]>(`/api/sheet_archive/song_files?titleId=${song.titleId}`);
+        }
+        else {
+            throw new Error("Title is null");
+        }
+    }, {
+        retry: false
+    });
 
-export function FileTable({ files }: { files: ISongFile[]; }) {
+    if (isLoading) {
+        return <>Loading...</>;
+    }
+
+    if (isError) {
+        return <Navigate to="/notearkiv" replace={true} />;
+    }
+
+    return (
+        <>
+            <h3>{song!.title}</h3>
+            <div style={{ marginBottom: "150px", marginTop: "30px" }}>
+                <FileTable files={data} />
+            </div>
+
+        </>
+    );
+}
+
+function FileTable({ files }: { files: ISongFile[]; }) {
     return (
         <TableContainer component={Paper}>
             <Table>

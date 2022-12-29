@@ -1,4 +1,4 @@
-import { CustomElement, Descendant, ElementType, FormattedText } from "./schema";
+import { CustomElement, Descendant, ElementType, FormattedText } from "./index.js"
 
 export function isValidRichText(children: Descendant[]) {
     for (let i = 0; i < children.length; i++) {

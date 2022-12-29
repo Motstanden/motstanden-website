@@ -1,10 +1,12 @@
 import React from 'react';
 
 // Material UI 
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import { SxProps } from '@mui/system';
+import {
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    SxProps
+} from "@mui/material";
 import { Link as RouterLink } from 'react-router-dom';
 
 
@@ -29,7 +31,7 @@ export default function ListItemLink(props: ListItemLinkProps) {
         onLinkClick
     } = props
 
-    let urlAttribute = externalRoute ? { href: to } : { to: to }
+    const urlAttribute = externalRoute ? { href: to } : { to: to }
     return (
         <ListItem
             button

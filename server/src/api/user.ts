@@ -1,10 +1,10 @@
 import { UserEditMode, UserGroup } from "common/enums"
 import { NewUser, User } from "common/interfaces"
 import express, { NextFunction, Request, Response } from "express"
-import { AuthenticateUser, updateAccessToken } from "../middleware/jwtAuthenticate"
-import { requiresGroup } from "../middleware/requiresGroup"
-import * as userService from "../services/user"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData"
+import { AuthenticateUser, updateAccessToken } from "../middleware/jwtAuthenticate.js"
+import { requiresGroup } from "../middleware/requiresGroup.js"
+import * as userService from "../services/user.js"
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
 const router = express.Router()
 
@@ -33,7 +33,6 @@ function handleUserUpdate(updateMode: UserEditMode) {
         try {
             userService.updateUser(payload, updateMode)
             changeSuccess = true
-            console.log("user updated")
         } catch (err) {
             console.log(err)
             res.status(400).send("Failed to update user")
@@ -67,7 +66,8 @@ router.post("/create-user", requiresGroup(UserGroup.SuperAdministrator), (req: R
     // TODO: validate user
 
     try {
-        userService.createUser(user)
+        const userId = userService.createUser(user)
+        res.json({userId: userId})
     } catch {
         res.status(400).send("Bad data")
     }

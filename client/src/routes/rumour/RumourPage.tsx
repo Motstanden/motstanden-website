@@ -1,17 +1,14 @@
-import Divider from "@mui/material/Divider"
-import Skeleton from "@mui/material/Skeleton"
-import Stack from "@mui/material/Stack"
-import TextField from "@mui/material/TextField"
-import { NewRumour, Rumour } from "common/interfaces"
-import { isNullOrWhitespace } from "common/utils"
-import dayjs from "dayjs"
-import { useState } from "react"
-import { useNavigate, useOutletContext } from "react-router-dom"
-import { Form } from "src/components/form/Form"
-import { useTitle } from "src/hooks/useTitle"
-import { EditList, RenderEditFormProps } from "../quotes/components/EditList"
-import { NewlineText } from "../quotes/components/NewlineText"
-import { useContextInvalidator } from "./Context"
+import { Divider, Skeleton, Stack, TextField } from "@mui/material";
+import { NewRumour, Rumour } from "common/interfaces";
+import { isNullOrWhitespace } from "common/utils";
+import dayjs from "dayjs";
+import { useState } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { Form } from "src/components/form/Form";
+import { useTitle } from "src/hooks/useTitle";
+import { EditList, RenderEditFormProps } from "../quotes/components/EditList";
+import { NewlineText } from "../quotes/components/NewlineText";
+import { useContextInvalidator } from "./Context";
 
 export function RumourPage() {
     useTitle("Ryktebørsen")
@@ -172,8 +169,8 @@ function UpsertRumourForm({
                 value={getSubmitData}
                 postUrl={postUrl}
                 disabled={disabled}
-                onAbortClick={(e) => onAbortClick()}
-                onPostSuccess={(e) => onPostSuccess()}
+                onAbortClick={_ => onAbortClick()}
+                onPostSuccess={_ => onPostSuccess()}
             >
                 <div style={{ marginBottom: "-1em" }}>
                     <TextField

@@ -1,7 +1,7 @@
 import { Page } from "@playwright/test";
 import dayjs from "common/lib/dayjs";
 import { Dayjs } from "dayjs";
-import { isMobile } from "./mediaQueries";
+import { isMobile } from "./mediaQueries.js";
 
 type dateFormat = "MonthYear" | "DayMonthYear" | "TimeDayMonthYear"
 
