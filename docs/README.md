@@ -16,7 +16,7 @@ After completing the guide, you will have learned everything you need to know to
 ## [client](./../client)
   - Contains the web page that is rendered on the users computer.
   - The web page is a single page react app.
-  - The project is generated using [Create React App](https://github.com/facebook/create-react-app). See [create-react-app.md](./create-react-app.md)
+  - The project is generated using [vite](https://vitejs.dev/).
 
 ## [common](./../common)
   - Contains code that is shared between the [server](/server) and the [client](/client).
