@@ -1,7 +1,7 @@
 {
   "name": "common",
   "version": "1.0.0",
-  "description": "Code that is shared between client, server and database",
+  "description": "Code that is shared between all projects in Motstanden Website repository",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
