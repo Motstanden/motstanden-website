@@ -2,6 +2,11 @@ import Database from "better-sqlite3";
 import { SheetArchiveFile, SheetArchiveTitle } from "common/interfaces";
 import { dbReadOnlyConfig, sheetArchiveDB } from "../config/databaseConfig.js";
 
+interface DbSheetArchiveTitle extends Omit<SheetArchiveTitle, "isPublic" | "isRepertoire"> {
+    isPublic: number,
+    isRepertoire: number
+}
+
 export function getTitles(): SheetArchiveTitle[] {
     const db = new Database(sheetArchiveDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
@@ -15,12 +20,18 @@ export function getTitles(): SheetArchiveTitle[] {
         FROM 
             song_title 
         ORDER BY title ASC`)
-    const sheets: SheetArchiveTitle[] | undefined = stmt.all()
+    const dbResult: DbSheetArchiveTitle[] | undefined = stmt.all()
     db.close();
 
-    if(!sheets)
+    if(!dbResult)
         throw "Bad data"
         
+    const sheets = dbResult.map( item => ({
+        ...item, 
+        isPublic: item.isPublic === 1, 
+        isRepertoire: item.isRepertoire === 1
+    })) 
+    
     return sheets
 }
 
