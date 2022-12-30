@@ -1,7 +1,7 @@
-import { useOutletContext } from "react-router-dom"
-import { UrlList, UrlListItem } from "../../components/UrlList"
-import { useTitle } from "../../hooks/useTitle"
-import { ISongInfo } from './Components'
+import { SheetArchiveTitle } from "common/interfaces";
+import { useOutletContext } from "react-router-dom";
+import { UrlList, UrlListItem } from "../../components/UrlList";
+import { useTitle } from "../../hooks/useTitle";
 
 export default function SongPage({ mode }: { mode?: "repertoire" }) {
 
@@ -9,7 +9,7 @@ export default function SongPage({ mode }: { mode?: "repertoire" }) {
 
     useTitle(isRepertoire ? "Repertoar" : "Alle noter");
 
-    let data = useOutletContext<ISongInfo[]>()
+    let data = useOutletContext<SheetArchiveTitle[]>()
     if (isRepertoire)
         data = data.filter(item => !!item.isRepertoire)
 

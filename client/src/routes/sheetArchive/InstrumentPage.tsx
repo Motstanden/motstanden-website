@@ -9,34 +9,29 @@ import {
     TableRow
 } from "@mui/material";
 import { useQuery } from '@tanstack/react-query';
+import { SheetArchiveFile, SheetArchiveTitle } from "common/interfaces";
 import {
     Link as RouterLink,
     Navigate,
+    useNavigate,
     useOutletContext,
     useParams
 } from "react-router-dom";
 import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
 import { useTitle } from "../../hooks/useTitle";
 import { fetchAsync } from "../../utils/fetchAsync";
-import { ISongFile, ISongInfo } from './Components';
 
 export default function InstrumentPage() {
     const params = useParams();
-    const songData = useOutletContext<ISongInfo[]>();
-    const song = songData.find(item => item.url === params.title);
-
+    const navigate = useNavigate()
+    const songData = useOutletContext<SheetArchiveTitle[]>();
+    const song = songData.find(item => item.url === params.title)
     useTitle(song?.title);
+    
+    if(!song)
+        return navigate("/notearkiv")
 
-    const { isLoading, isError, data } = useQuery<ISongFile[]>(["FetchSheetArchiveFile", song!.url], () => {
-        if (song) {
-            return fetchAsync<ISongFile[]>(`/api/sheet_archive/song_files?titleId=${song.titleId}`);
-        }
-        else {
-            throw new Error("Title is null");
-        }
-    }, {
-        retry: false
-    });
+    const { isLoading, isError, data } = useQuery<SheetArchiveFile[]>(["FetchSheetArchiveFile", song.url], () => fetchAsync<SheetArchiveFile[]>(`/api/sheet_archive/song_files?id=${song.id}`))
 
     if (isLoading) {
         return <>Loading...</>;
@@ -57,7 +52,7 @@ export default function InstrumentPage() {
     );
 }
 
-function FileTable({ files }: { files: ISongFile[]; }) {
+function FileTable({ files }: { files: SheetArchiveFile[]; }) {
     return (
         <TableContainer component={Paper}>
             <Table>

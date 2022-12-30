@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
+import { SheetArchiveTitle } from 'common/interfaces';
 import React from "react";
 import { Outlet } from "react-router-dom";
 import { TabbedPageContainer } from "src/layout/PageContainer";
 import { fetchAsync } from "../../utils/fetchAsync";
 import { strToPrettyUrl } from "../../utils/strToPrettyUrl";
-import { ISongInfo } from './Components';
 
 
 export function SheetArchiveContext() {
 
-    const { isLoading, isError, data, error } = useQuery<ISongInfo[]>(["FetchSheetArchiveTitles"], () => fetchAsync<ISongInfo[]>("/api/sheet_archive/song_title"));
+    const { isLoading, isError, data, error } = useQuery<SheetArchiveTitle[]>(["FetchSheetArchiveTitles"], () => fetchAsync<SheetArchiveTitle[]>("/api/sheet_archive/song_title"));
 
     if (isLoading) {
         return <PageContainer><div /></PageContainer>;
@@ -19,7 +19,7 @@ export function SheetArchiveContext() {
         return <PageContainer><span>{`${error}`}</span></PageContainer>;
     }
 
-    const newData = data.map(item => {
+    const newData: SheetArchiveTitle[] = data.map(item => {
         let url = item.url;
         let title = item.title;
         if (item.extraInfo) {
@@ -27,11 +27,9 @@ export function SheetArchiveContext() {
             title = `${title} (${item.extraInfo})`;
         }
         return {
+            ...item,
             url: url,
             title: title,
-            extraInfo: item.extraInfo,
-            titleId: item.titleId,
-            isRepertoire: item.isRepertoire
         };
     });
 
