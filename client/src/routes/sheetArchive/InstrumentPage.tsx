@@ -12,9 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import { SheetArchiveFile, SheetArchiveTitle } from "common/interfaces";
 import {
     Link as RouterLink,
-    Navigate,
-    useNavigate,
-    useOutletContext,
+    Navigate, useOutletContext,
     useParams
 } from "react-router-dom";
 import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
@@ -22,16 +20,28 @@ import { useTitle } from "../../hooks/useTitle";
 import { fetchAsync } from "../../utils/fetchAsync";
 
 export default function InstrumentPage() {
-    const params = useParams();
-    const navigate = useNavigate()
+    const { title } = useParams();
     const songData = useOutletContext<SheetArchiveTitle[]>();
-    const song = songData.find(item => item.url === params.title)
+    const song = songData.find(item => title && item.url.endsWith(title))
     useTitle(song?.title);
     
     if(!song)
-        return navigate("/notearkiv")
+        return <Navigate to="/notearkiv" replace={true}  />
+    
+    return (
+        <>
+            <h2>{song.title}</h2>
+            <div style={{ marginBottom: "150px", marginTop: "30px" }}>
+                <FileFetcher songTitle={song}/>
+            </div>
 
-    const { isLoading, isError, data } = useQuery<SheetArchiveFile[]>(["FetchSheetArchiveFile", song.url], () => fetchAsync<SheetArchiveFile[]>(`/api/sheet_archive/song_files?id=${song.id}`))
+        </>
+    );
+}
+
+function FileFetcher( {songTitle}: {songTitle: SheetArchiveTitle}) {
+
+    const { isLoading, isError, data } = useQuery<SheetArchiveFile[]>(["FetchSheetArchiveFile", songTitle.url], () => fetchAsync<SheetArchiveFile[]>(`/api/sheet_archive/song_files?id=${songTitle.id}`))
 
     if (isLoading) {
         return <>Loading...</>;
@@ -41,15 +51,7 @@ export default function InstrumentPage() {
         return <Navigate to="/notearkiv" replace={true} />;
     }
 
-    return (
-        <>
-            <h3>{song!.title}</h3>
-            <div style={{ marginBottom: "150px", marginTop: "30px" }}>
-                <FileTable files={data} />
-            </div>
-
-        </>
-    );
+    return <FileTable files={data}/>
 }
 
 function FileTable({ files }: { files: SheetArchiveFile[]; }) {

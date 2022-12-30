@@ -4,7 +4,6 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import { TabbedPageContainer } from "src/layout/PageContainer";
 import { fetchAsync } from "../../utils/fetchAsync";
-import { strToPrettyUrl } from "../../utils/strToPrettyUrl";
 
 
 export function SheetArchiveContext() {
@@ -19,19 +18,7 @@ export function SheetArchiveContext() {
         return <PageContainer><span>{`${error}`}</span></PageContainer>;
     }
 
-    const newData: SheetArchiveTitle[] = data.map(item => {
-        let url = item.url;
-        let title = item.title;
-        if (item.extraInfo) {
-            url = strToPrettyUrl(`${url} (${item.extraInfo})`);
-            title = `${title} (${item.extraInfo})`;
-        }
-        return {
-            ...item,
-            url: url,
-            title: title,
-        };
-    });
+    const newData = data.map( item => { return { ...item, url: buildSongUrl(item) } })
 
     return (
         <PageContainer>
@@ -53,4 +40,8 @@ function PageContainer({ children }: { children?: React.ReactNode }) {
             {children}
         </TabbedPageContainer>
     )
+}
+
+function buildSongUrl(song: SheetArchiveTitle){
+    return `/notearkiv/${song.isRepertoire ? "repertoar" : "alle"}/${song.url}`
 }
