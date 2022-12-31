@@ -1,81 +1,96 @@
-import { expect, Page, test } from '@playwright/test';
+import { Browser, expect, Page, test, TestInfo } from '@playwright/test';
 import { UserGroup } from 'common/enums';
 import { SheetArchiveTitle } from 'common/interfaces';
-import { userGroupToPrettyStr } from 'common/utils';
-import { getStoragePath } from '../utils/auth.js';
+import { randomUUID } from "crypto";
+import { disposeStorageLogIn, storageLogIn } from '../utils/auth.js';
 import { navClick } from '../utils/navClick.js';
 
-test.describe("Admin can update song title data", async () => {
-    await testUpdateSongTitle({ updater: UserGroup.Administrator, song: "ice cream" })
+test.describe("Update song title info", async () => {
+    test("Admin can update data @smoke", async ({browser}, workerInfo) => await runTest(browser, UserGroup.Administrator, workerInfo))
+
+    test("Super admin can update data", async ({browser}, workerInfo) => await runTest(browser, UserGroup.SuperAdministrator, workerInfo))
+
+    async function runTest(browser: Browser, userGroup: UserGroup, workerInfo: TestInfo) {
+        const page = await storageLogIn(browser, userGroup)
+
+        const song = getSong(workerInfo)   // We must get a different song per individual worker to avoid race conditions
+       
+        await testUpdateSongTitle({page: page, song: song})
+        await disposeStorageLogIn(page)
+    }
 })
 
-test.describe("Super admin can update song title data", async () => {
-    await testUpdateSongTitle({ updater: UserGroup.SuperAdministrator, song: "killing in the name" })
-})
+function getSong(workerInfo: TestInfo): string {
+    switch(workerInfo.parallelIndex) {
+        case 0: return "nu klinger"
+        case 1: return "killing in the name"
+        case 2: return "ice cream"
+        case 3: return "another brick in the wall"
+        case 4: return "can can"
+        case 5: return "through the fire and flames"
+        default: throw `Maximum worker count reached. ` +
+                       `\nRace condition will occur in this tests if there exists more than 6 concurrent workers. ` +
+                       `\nIndex of current worker: ${workerInfo.parallelIndex}. ` +
+                       `\nThe issue can be resolved by adding more sheet archive titles to version control.`
+    }
+}
 
 interface TitleData extends Pick<SheetArchiveTitle, "title" | "isRepertoire" | "extraInfo"> {}
 
-async function testUpdateSongTitle( {song, updater}: { song: string | RegExp, updater: UserGroup }) {
-    test.use({ storageState: getStoragePath(updater) })
+async function testUpdateSongTitle( {page, song}: {page: Page, song: string | RegExp}) {
+    await page.goto("/notearkiv/repertoar")
+    await page.getByRole('row', { name: song }).getByRole('button').click();
+    const saveButton = page.getByRole('button', { name: 'Lagre' })
+    
+    const titleBox = page.getByLabel('Tittel *')
+    const extraInfoBox = page.getByLabel('Laget av')
+    const repertoireCheckbox = page.getByLabel('Repertoar')
 
-    test(`Updating ${song} as ${userGroupToPrettyStr(updater)}`, async ({page}) => {
-        await page.goto("/notearkiv/repertoar")
+    const data1: TitleData = {
+        title: await titleBox.inputValue(),
+        extraInfo: await extraInfoBox.inputValue(),
+        isRepertoire: true
+    } 
 
-        const editButton = page.getByRole('row', { name: song }).getByRole('button') 
-        await editButton.click();
-        const saveButton = page.getByRole('button', { name: 'Lagre' })
-        
-        const titleBox = page.getByLabel('Tittel *')
-        const extraInfoBox = page.getByLabel('Laget av')
-        const repertoireCheckbox = page.getByLabel('Repertoar')
+    const data2: TitleData = {
+        title: `00__test-title__${randomUUID()}`,
+        extraInfo: `00__test-extra-info__${randomUUID()}`,
+        isRepertoire: false
+    }
 
-        const oldData: TitleData = {
-            title: await titleBox.textContent(),
-            extraInfo: await extraInfoBox.textContent(),
-            isRepertoire: true
-        } 
+    const fillForm = async (data: TitleData) => {
+        await titleBox.fill(data.title)
+        await extraInfoBox.fill(data.extraInfo)
+        await repertoireCheckbox.setChecked(data.isRepertoire)
+        await Promise.all([
+            saveButton.click(),
+            saveButton.waitFor({state: "detached"})
+        ])
+        await page.waitForLoadState('networkidle')
+    }
+    
+    await fillForm(data2)
+    
+    const titleLocator1 = page.getByRole('row', { name: data1.title })
+    const titleLocator2 = page.getByRole('row', { name: data2.title })
+     
+    await expect(titleLocator1).not.toBeVisible()
+    await expect(titleLocator2).not.toBeVisible()
 
-        const newData: TitleData = {
-            title: `__test__${oldData.title}`,
-            extraInfo: `__test__${oldData.extraInfo}`,
-            isRepertoire: false
-        }
+    await navClick(page.getByRole('tab', { name: 'Alle' }))
 
-        const fillForm = async (data: TitleData) => {
-            await titleBox.fill(data.title)
-            await extraInfoBox.fill(data.extraInfo)
-            await repertoireCheckbox.setChecked(data.isRepertoire)
-            await saveButton.click()
-        }
-        
-        fillForm(newData)
+    await expect(titleLocator1).not.toBeVisible()
+    await expect(titleLocator2).toBeVisible()
+    await expect(titleLocator2.getByText(data2.extraInfo)).toBeVisible()
+    
+    await page.getByRole('row', { name: data2.title }).getByRole('button').click()
+    await fillForm(data1)
 
-        testVisibility({page: page, data: oldData, isVisible: false})
-        testVisibility({page: page, data: newData, isVisible: false})
-        await navClick(page.getByRole('tab', { name: 'Alle' }))
-        testVisibility({page: page, data: oldData, isVisible: false})
-        testVisibility({page: page, data: newData, isVisible: true})
-        
-        await editButton.click()
-        fillForm(oldData)
+    await expect(titleLocator1).toBeVisible()
+    await expect(titleLocator2).not.toBeVisible()
+    
+    await navClick(page.getByRole('tab', { name: 'Repertoar' }))
 
-        testVisibility({page: page, data: oldData, isVisible: true})
-        testVisibility({page: page, data: newData, isVisible: false})
-        await navClick(page.getByRole('tab', { name: 'Repertoar' }))
-        testVisibility({page: page, data: oldData, isVisible: true})
-        testVisibility({page: page, data: newData, isVisible: false})
-    })
-
-   async function testVisibility({page, data, isVisible}: { page: Page, data: TitleData, isVisible: boolean}) {
-        if (isVisible) {
-            await expect(page.getByText(data.title)).toBeVisible()
-            await expect(page.getByText(data.extraInfo)).toBeVisible()
-        } else {
-            await expect(page.getByText(data.title)).not.toBeVisible()
-            await expect(page.getByText(data.extraInfo)).not.toBeVisible()
-        }
-   }
-    // async function FillForm(data: ) {
-        
-    // }
+    await expect(titleLocator1).toBeVisible()
+    await expect(titleLocator2).not.toBeVisible()
 }
