@@ -151,6 +151,18 @@ function SkeletonRow( {canEdit}: {canEdit: boolean}) {
 function EditRow( {song, onAbort, onSuccess}: {song: SheetArchiveTitle, onAbort: VoidFunction, onSuccess: VoidFunction} ) {
     const [newSong, setNewSong] = useState(song)
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+
+    const getSubmitData = (): SheetArchiveTitle => ({
+        ...newSong, 
+        extraInfo: newSong.extraInfo.trim().replace(/\s+/g, ' '), 
+        title: newSong.title.trim().replace(/\s+/g, ' ')
+    })
+
+    const submitData = getSubmitData()
+    const isDisabled = song.title.trim() === submitData.title.trim() && 
+                       song.extraInfo.trim() === submitData.extraInfo.trim() &&
+                       song.isRepertoire === submitData.isRepertoire  
+
     return (
         <TableRow sx={rowStyle}>
             <TableCell colSpan={3} style={{
@@ -158,10 +170,11 @@ function EditRow( {song, onAbort, onSuccess}: {song: SheetArchiveTitle, onAbort:
                 paddingBottom: isSmallScreen ? "30px" : "35px"
                 }}>
                 <Form 
-                    value={newSong} 
+                    value={getSubmitData} 
                     postUrl={`/api/sheet-archive/titles/update`}
                     onAbortClick={ _ => onAbort()}
                     onPostSuccess={_ => onSuccess()}
+                    disabled={isDisabled}
                     noDivider={true}
                     noPadding={true}>
                     <Grid 
