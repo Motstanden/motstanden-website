@@ -1,6 +1,9 @@
+import { UserGroup } from "common/enums";
+import { SheetArchiveTitle } from "common/interfaces";
 import { strToNumber } from "common/utils";
-import express from "express";
+import express, { Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
+import { requiresGroup } from "../middleware/requiresGroup.js";
 import * as SheetArchive from "../services/sheetArchive.js";
 
 let router = express.Router()
@@ -15,7 +18,8 @@ router.get("/sheet_archive/song_title",
             console.log(err)
             return res.status(400).send("Bad data");
         }
-    })
+    }
+)
 
 router.get("/sheet_archive/song_files",
     AuthenticateUser(),
@@ -40,6 +44,22 @@ router.get("/sheet_archive/song_files",
             console.log(err)
             return res.status(400).send("Bad data");
         }
-    })
+    }
+)
+
+
+router.post("/sheet-archive/titles/update", 
+    requiresGroup(UserGroup.Administrator),
+    (req: Request, res: Response) => {
+        const title: SheetArchiveTitle = req.body
+        try {
+            SheetArchive.updateTitle(title)
+        } catch(err) {
+            console.log(err)
+            return res.status(400).send("bad data")
+        }
+        res.end()
+    } 
+)
 
 export default router;

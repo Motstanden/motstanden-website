@@ -35,6 +35,10 @@ export function getTitles(): SheetArchiveTitle[] {
     return sheets
 }
 
+export function updateTitle(title: SheetArchiveTitle) {
+    throw "Not implemented"
+}
+
 export function getFiles(titleId: number): SheetArchiveFile[] {
     const db = new Database(sheetArchiveDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
