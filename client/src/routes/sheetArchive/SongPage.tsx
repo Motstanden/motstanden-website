@@ -105,9 +105,23 @@ function EditFileRow( {song, onAbort, onSuccess}: {song: SheetArchiveTitle, onAb
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     return (
         <TableRow sx={rowStyle}>
-            <TableCell colSpan={3} style={{paddingTop: "50px"}}>
-                <Form value={newSong} postUrl="todo" onAbortClick={ _ => onAbort()} onPostSuccess={_ => onSuccess()}>
-                    <Grid container columnSpacing={3} rowSpacing={4} alignItems="center">
+            <TableCell colSpan={3} style={{
+                paddingTop: isSmallScreen ? "50px" : "40px",
+                paddingBottom: isSmallScreen ? "30px" : "35px"
+                }}>
+                <Form 
+                    value={newSong} 
+                    postUrl="todo" 
+                    onAbortClick={ _ => onAbort()} 
+                    onPostSuccess={_ => onSuccess()}
+                    noDivider={true}
+                    noPadding={true}>
+                    <Grid 
+                        container 
+                        columnSpacing={3} 
+                        rowSpacing={4} 
+                        alignItems="center"
+                        style={{marginBottom: isSmallScreen ? "30px" : "35px"}}>
                         <Grid item xs={12} sm={4.5} md={5.1} >
                             <TextField 
                                 label="Tittel"

@@ -11,7 +11,9 @@ export function Form({
     preventSubmit,
     onPostSuccess,
     onPostFailure,
-    onAbortClick
+    onAbortClick,
+    noDivider,
+    noPadding
 }: {
     value: object | (() => object)    // Either any object, or a callback function that returns the object
     children: React.ReactNode
@@ -21,6 +23,8 @@ export function Form({
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
     onPostFailure?: () => void
     onAbortClick?: React.MouseEventHandler<HTMLButtonElement>
+    noDivider?: boolean
+    noPadding?: boolean
 }) {
     const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -49,11 +53,11 @@ export function Form({
         <>
             <form onSubmit={onSubmit}>
                 {children}
-                <div style={{ marginTop: "4em" }}>
+                <div style={{ marginTop: noPadding ? undefined : "4em" }}>
                     <SubmitFormButtons loading={isSubmitting} onAbort={onAbortClick} disabled={disabled} />
                 </div>
             </form>
-            <Divider sx={{ my: 3 }} />
+            { !noDivider && <Divider sx={{ my: 3 }} /> }
         </>
     )
 }
