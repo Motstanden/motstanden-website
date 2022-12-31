@@ -60,7 +60,7 @@ function TitleTable( { items }: { items: SheetArchiveTitle[]}) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {items.map( song => <TitleTableRow key={song.url} song={song} canEdit={isAdmin} /> )}
+                    {items.map( song => <TitleTableRow key={song.id} song={song} canEdit={isAdmin} /> )}
                 </TableBody>
             </Table>
         </TableContainer>
@@ -72,8 +72,10 @@ type TableRowState = "read" | "edit" | "changing"
 function TitleTableRow( {song, canEdit }: {song: SheetArchiveTitle, canEdit: boolean }) {
     
     const [mode, setMode] = useState<TableRowState>("read")
-    useEffect(() => setMode("read"), [song.title, song.extraInfo, song.isRepertoire])
+    const [justPosted, setJustPosted ] = useState(false)
     const contextInvalidator = useContextInvalidator()
+
+    useEffect(() => setMode("read"), [song.title, song.extraInfo, song.isRepertoire])
 
     const onEditClick = () => setMode("edit")
 
@@ -81,6 +83,8 @@ function TitleTableRow( {song, canEdit }: {song: SheetArchiveTitle, canEdit: boo
 
     const onPostSuccess = () => {
         setMode("changing")
+        setJustPosted(true)
+        setTimeout( () => setJustPosted(() => false), 700)
         contextInvalidator()
     }
 
@@ -90,11 +94,10 @@ function TitleTableRow( {song, canEdit }: {song: SheetArchiveTitle, canEdit: boo
             onAbort={onAbortEditClick} 
             onSuccess={onPostSuccess}/>
 
-    if(mode === "changing")
+    if(mode === "changing" || justPosted)
         return <SkeletonRow canEdit={canEdit}/>
 
     return <ReadOnlyRow song={song} canEdit={canEdit} onEditClick={onEditClick}/>
-
 }
 
 function ReadOnlyRow( {song, canEdit, onEditClick}: {song: SheetArchiveTitle, canEdit: boolean, onEditClick: VoidFunction} ){
