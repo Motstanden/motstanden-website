@@ -4,6 +4,7 @@ import {
     FormControlLabel, Grid, IconButton,
     Link,
     Paper,
+    Skeleton,
     Table,
     TableBody,
     TableCell,
@@ -17,12 +18,13 @@ import {
 import { UserGroup } from "common/enums";
 import { SheetArchiveTitle } from "common/interfaces";
 import { hasGroupAccess } from "common/utils";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link as RouterLink, useOutletContext } from "react-router-dom";
 import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
 import { Form } from 'src/components/form/Form';
 import { useAuth } from "src/context/Authentication";
 import { useTitle } from "../../hooks/useTitle";
+import { useContextInvalidator } from './Context';
 
 export default function SongPage({ mode }: { mode?: "repertoire" }) {
 
@@ -65,21 +67,40 @@ function TitleTable( { items }: { items: SheetArchiveTitle[]}) {
     )
 }
 
+type TableRowState = "read" | "edit" | "changing"
+
 function TitleTableRow( {song, canEdit }: {song: SheetArchiveTitle, canEdit: boolean }) {
     
-    const [isEditing, setIsEditing] = useState(false)
+    const [mode, setMode] = useState<TableRowState>("read")
+    useEffect(() => setMode("read"), [song.title, song.extraInfo, song.isRepertoire])
+    const contextInvalidator = useContextInvalidator()
 
-    if(isEditing) 
-        return <EditFileRow song={song} onAbort={() => setIsEditing(false)} onSuccess={() => setIsEditing(false)}/>
+    const onEditClick = () => setMode("edit")
 
-    return <ReadOnlyFileRow song={song} canEdit={canEdit} onEditClick={ () => setIsEditing(true)}/>
+    const onAbortEditClick = () => setMode("read")
+
+    const onPostSuccess = () => {
+        setMode("changing")
+        contextInvalidator()
+    }
+
+    if(mode === "edit") 
+        return <EditRow 
+            song={song} 
+            onAbort={onAbortEditClick} 
+            onSuccess={onPostSuccess}/>
+
+    if(mode === "changing")
+        return <SkeletonRow canEdit={canEdit}/>
+
+    return <ReadOnlyRow song={song} canEdit={canEdit} onEditClick={onEditClick}/>
 
 }
 
-function ReadOnlyFileRow( {song, canEdit, onEditClick}: {song: SheetArchiveTitle, canEdit: boolean, onEditClick: VoidFunction} ){
+function ReadOnlyRow( {song, canEdit, onEditClick}: {song: SheetArchiveTitle, canEdit: boolean, onEditClick: VoidFunction} ){
     return (
         <TableRow sx={rowStyle}>
-            <TableCell>
+            <TableCell >
                 <Link
                     component={RouterLink}
                     to={song.url}
@@ -89,9 +110,8 @@ function ReadOnlyFileRow( {song, canEdit, onEditClick}: {song: SheetArchiveTitle
                 </Link>
             </TableCell>
             <TableCell >{song.extraInfo}</TableCell>
-            {/* <MenuButton song={song}/> */}
             {canEdit && 
-                <TableCell align="right" size="small" width="1px">
+                <TableCell align="right" width="1px" size="small">
                     <IconButton onClick={_ => onEditClick()} >
                         <EditIcon fontSize='small'/>
                     </IconButton>
@@ -100,7 +120,32 @@ function ReadOnlyFileRow( {song, canEdit, onEditClick}: {song: SheetArchiveTitle
     )
 }
 
-function EditFileRow( {song, onAbort, onSuccess}: {song: SheetArchiveTitle, onAbort: VoidFunction, onSuccess: VoidFunction} ) {
+function SkeletonRow( {canEdit}: {canEdit: boolean}) {
+
+    return (
+        <TableRow sx={rowStyle}>
+            <TableCell>
+                <Skeleton style={{maxWidth: "130px"}}/>
+            </TableCell>
+            <TableCell>
+                <Skeleton style={{maxWidth: "85px"}}/>
+            </TableCell>
+            {canEdit && 
+                <TableCell align="right" size="small">
+                    <Skeleton style={{
+                        // This is bad css. We do it like this because the time is 0400 and thus idgaf
+                        width: "25px",  
+                        height: "40px", 
+                        borderRadius: "50%",
+                        marginLeft: "5px"
+                        }} />
+                </TableCell>
+            }
+        </TableRow>
+    )
+}
+
+function EditRow( {song, onAbort, onSuccess}: {song: SheetArchiveTitle, onAbort: VoidFunction, onSuccess: VoidFunction} ) {
     const [newSong, setNewSong] = useState(song)
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     return (
@@ -112,7 +157,7 @@ function EditFileRow( {song, onAbort, onSuccess}: {song: SheetArchiveTitle, onAb
                 <Form 
                     value={newSong} 
                     postUrl={`/api/sheet-archive/titles/update`}
-                    onAbortClick={ _ => onAbort()} 
+                    onAbortClick={ _ => onAbort()}
                     onPostSuccess={_ => onSuccess()}
                     noDivider={true}
                     noPadding={true}>

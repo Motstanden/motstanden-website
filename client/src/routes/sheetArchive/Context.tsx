@@ -2,13 +2,17 @@ import { useQuery } from '@tanstack/react-query';
 import { SheetArchiveTitle } from 'common/interfaces';
 import React from "react";
 import { Outlet } from "react-router-dom";
+import { useQueryInvalidator } from 'src/hooks/useQueryInvalidator';
 import { TabbedPageContainer } from "src/layout/PageContainer";
 import { fetchAsync } from "../../utils/fetchAsync";
 
+const sheetArchiveQueryKey = ["FetchSheetArchiveTitles"]
+
+export const useContextInvalidator = () => useQueryInvalidator(sheetArchiveQueryKey)
 
 export function SheetArchiveContext() {
 
-    const { isLoading, isError, data, error } = useQuery<SheetArchiveTitle[]>(["FetchSheetArchiveTitles"], () => fetchAsync<SheetArchiveTitle[]>("/api/sheet_archive/song_title"));
+    const { isLoading, isError, data, error } = useQuery<SheetArchiveTitle[]>(sheetArchiveQueryKey, () => fetchAsync<SheetArchiveTitle[]>("/api/sheet_archive/song_title"));
 
     if (isLoading) {
         return <PageContainer><div /></PageContainer>;
