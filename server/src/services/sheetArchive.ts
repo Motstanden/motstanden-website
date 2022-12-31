@@ -1,6 +1,7 @@
 import Database from "better-sqlite3";
 import { SheetArchiveFile, SheetArchiveTitle } from "common/interfaces";
-import { dbReadOnlyConfig, sheetArchiveDB } from "../config/databaseConfig.js";
+import { isNullOrWhitespace } from "common/utils";
+import { dbReadOnlyConfig, dbReadWriteConfig, sheetArchiveDB } from "../config/databaseConfig.js";
 
 interface DbSheetArchiveTitle extends Omit<SheetArchiveTitle, "isPublic" | "isRepertoire"> {
     isPublic: number,
@@ -35,8 +36,33 @@ export function getTitles(): SheetArchiveTitle[] {
     return sheets
 }
 
-export function updateTitle(title: SheetArchiveTitle) {
-    throw "Not implemented"
+export function updateTitle(song: SheetArchiveTitle) {
+    const isInvalid = isNullOrWhitespace(song.title) ||
+                      typeof song.id !== "number" ||
+                      typeof song.isRepertoire !== "boolean";
+    if(isInvalid)
+        throw "Invalid data"
+
+    const db = new Database(sheetArchiveDB, dbReadWriteConfig)
+    const startTransaction = db.transaction(() => {
+        const stmt = db.prepare(`
+            UPDATE 
+                song_title
+            SET
+                title = ?,
+                extra_info = ?,
+                is_repertoire = ?
+            WHERE song_title_id = ?`
+        )
+        stmt.run([
+            song.title, 
+            song.extraInfo ?? "", 
+            song.isRepertoire ? 1 : 0, 
+            song.id
+        ])
+    })
+    startTransaction()
+    db.close()
 }
 
 export function getFiles(titleId: number): SheetArchiveFile[] {
