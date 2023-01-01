@@ -39,6 +39,9 @@ import { NewRumourPage, RumourPage } from 'src/routes/rumour/RumourPage';
 import { SheetArchiveContext } from "src/routes/sheetArchive/Context";
 import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
+import { AlbumContext, AlbumListContext } from "./routes/images/Context";
+import AlbumPage from "./routes/images/AlbumPage";
+import AlbumListPage from "./routes/images/AlbumListPage";
 
 function App() {
 	const auth = useAuth()
@@ -107,6 +110,13 @@ function App() {
 								<Route path="rediger" element={<Suspense><EditEventPage /></Suspense>} />
 							</Route>
 							<Route path="ny" element={<Suspense><NewEventPage/></Suspense>} />
+						</Route>
+
+						<Route path="/bilder" element={<AlbumListContext/>}>
+							<Route index element={<AlbumListPage/>}/>
+							<Route path=":title" element={<AlbumContext/>}>
+								<Route index element={<AlbumPage/>}/>
+							</Route>
 						</Route>
 					</Route>
 
