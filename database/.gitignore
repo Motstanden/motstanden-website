@@ -4,6 +4,7 @@
 # Ignore all debug files
 data/files/private/dokumenter/**/*
 data/files/private/notearkiv/**/*
+data/files/private/bildealbum/**/*
 
 # ...except some samples
 !data/files/private/dokumenter/bulleltin-2019-2020.pdf

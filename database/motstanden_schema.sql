@@ -244,7 +244,7 @@ ON  created_by.user_id = e.created_by
 LEFT JOIN user updated_by
 ON  updated_by.user_id = e.updated_by
 /* vw_event(event_id,title,start_date_time,end_date_time,key_info,description_html,description_json,created_by_user_id,created_by_full_name,created_at,updated_by_user_id,updated_by_full_name,updated_at,is_upcoming) */;
-CREATE TABLE image_album (
+CREATE TABLE image_album(
     image_album_id INTEGER PRIMARY KEY NOT NULL,
     title TEXT NOT NULL,
     is_public BOOLEAN NOT NULL DEFAULT 0 CHECK(is_public = 0 OR is_public = 1),
