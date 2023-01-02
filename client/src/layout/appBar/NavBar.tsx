@@ -47,7 +47,7 @@ function PrivateNavBar() {
             <NavLink text="Traller" to="/studenttraller" />
             <NavLink text="Noter" to="/notearkiv" />
             <NavLink text="Dokumenter" to="/dokumenter" />
-            <AdminDropDown />
+            <MemberNavLink />
             <NavDropDown text="Om oss">
                 <List component="nav" disablePadding sx={{ minWidth: 200 }}>
                     <ListItemLink text="Framside" to="/framside" icon={<MenuIcons.FrontPage />} />
@@ -91,24 +91,23 @@ function PublicNavBar() {
     )
 }
 
-function AdminDropDown() {
+function MemberNavLink() {
     const user = useAuth().user!
-    if (hasGroupAccess(user, UserGroup.SuperAdministrator)) {
+    
+    if(!hasGroupAccess(user, UserGroup.SuperAdministrator))
         return (
-            <NavDropDown text="Medlem" sx={{ pr: 0 }}>
-                <List component="nav" disablePadding sx={{ minWidth: 200 }}>
-                    <ListItemLink text="Ny" to="/medlem/ny" icon={<MenuIcons.MemberAdd />} />
-                    <Divider />
-                    <ListItemLink text="Liste" to="/medlem/liste" icon={<MenuIcons.MemberList />} />
-                </List>
-            </NavDropDown>
+            <NavLink text="Medlemmer" to="/medlem/liste" />
         )
-    }
 
     return (
-        <NavLink text="Medlemmer" to="/medlem/liste" />
+        <NavDropDown text="Medlem" sx={{ pr: 0 }}>
+            <List component="nav" disablePadding sx={{ minWidth: 200 }}>
+                <ListItemLink text="Ny" to="/medlem/ny" icon={<MenuIcons.MemberAdd />} />
+                <Divider />
+                <ListItemLink text="Liste" to="/medlem/liste" icon={<MenuIcons.MemberList />} />
+            </List>
+        </NavDropDown>
     )
-
 }
 
 export function NavLink({ to, text, sx }: { to: string, text: string, sx?: SxProps }) {
