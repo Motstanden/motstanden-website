@@ -244,3 +244,45 @@ ON  created_by.user_id = e.created_by
 LEFT JOIN user updated_by
 ON  updated_by.user_id = e.updated_by
 /* vw_event(event_id,title,start_date_time,end_date_time,key_info,description_html,description_json,created_by_user_id,created_by_full_name,created_at,updated_by_user_id,updated_by_full_name,updated_at,is_upcoming) */;
+CREATE TABLE image_album (
+    image_album_id INTEGER PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL,
+    is_public BOOLEAN NOT NULL DEFAULT 0 CHECK(is_public = 0 OR is_public = 1),
+    created_by INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by)
+        REFERENCES user (user_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+CREATE TRIGGER trig_image_album_updated_at
+    AFTER UPDATE ON image_album FOR EACH ROW
+BEGIN
+    UPDATE image_album SET updated_at = current_timestamp
+        WHERE image_album_id = old.image_album_id;
+END;
+CREATE TABLE image(
+    image_id INTEGER PRIMARY KEY NOT NULL,
+    image_album_id INTEGER NOT NULL,
+    caption TEXT NOT NULL DEFAULT "",
+    filename TEXT NOT NULL CHECK(like('files/%/bildealbum/%/%_._%', filename)),
+    is_public BOOLEAN NOT NULL GENERATED ALWAYS AS (like('files/public/%', filename)) STORED,
+    created_by INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (image_album_id)
+        REFERENCES image_album (image_album_id)
+            ON UPDATE CASCADE
+            ON DELETE RESTRICT,
+    FOREIGN KEY (created_by)
+        REFERENCES user (user_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+CREATE TRIGGER trig_image_updated_at
+    AFTER UPDATE ON image FOR EACH ROW
+BEGIN
+    UPDATE image SET updated_at = current_timestamp
+        WHERE image_id = old.image_id;
+END;

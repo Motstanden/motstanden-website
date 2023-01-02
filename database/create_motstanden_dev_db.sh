@@ -39,6 +39,10 @@ sqlite3 motstanden_dev.db < migrations/motstanden_db/08_rumours.sql;
 echo "Running: 09_vw_event_refactor.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/09_vw_event_refactor.sql;
 
+# Create image tables
+echo "Running: 10_image_album.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/10_image_album.sql;
+
 # Insert data that is representative for the current data in the database
 cd data/db
 sh motstanden-db-data.sh 
