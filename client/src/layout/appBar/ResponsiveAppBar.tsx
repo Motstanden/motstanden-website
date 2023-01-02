@@ -55,8 +55,7 @@ function DesktopToolbar({ display }: { display: DisplayProp}) { // TODO: Find th
                 sx={{
                     width: "max(135px)",
                     marginLeft: "auto",
-                    flex: 1
-
+                    flex: 1,
                 }}
             >
                 <ThemeSwitcher />
@@ -66,8 +65,9 @@ function DesktopToolbar({ display }: { display: DisplayProp}) { // TODO: Find th
                     flexItem
                     variant="middle"
                     sx={{
-                        mr: 1,
-                        ml: 2,
+                        mr: { md: 0, lg: 1, xl: 1.5},
+                        ml: { md: 0, lg: 1, xl: 1.5},
+                        display: {md: "none", lg: "block"},
                         my: 1
                     }}
                 />
@@ -102,7 +102,7 @@ function HeaderTitle({ variant, sx }: { variant?: VariantType, sx?: SxProps }) {
             direction="row"
             alignItems="center"
             spacing={2}
-            sx={{ pr: 4 }}
+            pr={{ lg: 2, xl: 4}}
             display={isLoggedIn
                 ? { xs: "flex", md: "none", lg: "flex" }
                 : { xs: "flex" }
@@ -113,7 +113,7 @@ function HeaderTitle({ variant, sx }: { variant?: VariantType, sx?: SxProps }) {
                     : { xs: "none", md: "inline" }}
             >
                 <RouterLink to={isLoggedIn ? "/hjem" : "/"} >
-                    <img src={MotstandenImg} style={{ height: "45px", marginTop: "3px" }} loading="lazy" />
+                    <img src={MotstandenImg} style={{ height: "45px", marginTop: "3px"}} loading="lazy" />
                 </RouterLink>
             </Box>
 

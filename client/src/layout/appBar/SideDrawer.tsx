@@ -89,7 +89,9 @@ function PrivateContent(props: SideDrawerContentProps) {
         <List sx={{ minWidth: 230 }} >
             <ListItemHeader />
             <ListItemLink text="Hjem" to="/hjem" onLinkClick={onRequestedExit} icon={<MenuIcons.Home />} />
-            <ListItemLink text="Arrangement" to="/Arrangement" onLinkClick={onRequestedExit} icon={<MenuIcons.Event />} />
+            <ListItemLink text="Arrangement" to="/arrangement" onLinkClick={onRequestedExit} icon={<MenuIcons.Event />} />
+            <ListItemLink text="Bilder" to="/bilder" onLinkClick={onRequestedExit} icon={<MenuIcons.PhotoAlbum/>} />
+            <Divider light sx={{ ml: 2, mr: 4, opacity: 0.7 }} />
             <ListItemLink text="Sitater" to="/sitater" onLinkClick={onRequestedExit} icon={<MenuIcons.Quotes />} />
             <ListItemLink text="Rykter" to="/rykter" onLinkClick={onRequestedExit} icon={<MenuIcons.Rumour />} />
             <Divider light sx={{ ml: 2, mr: 4, opacity: 0.7 }} />

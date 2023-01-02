@@ -35,12 +35,13 @@ function PrivateNavBar() {
             component="nav"
             direction="row"
             alignItems="center"
-            justifyContent={{ lg: "flex-start", xl: "center" }}
+            justifyContent={{  md: "space-evenly", lg: "flex-start", xl: "space-evenly" }}
             sx={{ width: "100%", maxWidth: "1200px" }}
-            spacing={{ sm: 1, md: 1, lg: 4, xl: 7 }}
+            spacing={{ md: 0.5, lg: 3.5, xl: 6 }}
         >
             <NavLink text="Hjem" to="/hjem" />
             <NavLink text="Arrangementer" to="/arrangement" />
+            <NavLink text="Bilder" to="/bilder"/>
             <NavLink text="Sitater" to="/sitater" />
             <NavLink text="Rykter" to="/rykter" />
             <NavLink text="Traller" to="/studenttraller" />

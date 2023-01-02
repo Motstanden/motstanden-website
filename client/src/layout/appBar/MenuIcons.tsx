@@ -13,6 +13,7 @@ import LocalPoliceIcon from '@mui/icons-material/LocalPolice';
 import MusicVideoIcon from '@mui/icons-material/MusicVideo';
 import NightlifeIcon from '@mui/icons-material/Nightlife';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 
 export {
     ExpandLess as ExpandLess,
@@ -30,4 +31,6 @@ export {
     MusicVideoIcon as SheetArchive,
     PersonAddIcon as MemberAdd,
     GroupsIcon as MemberList,
+    PhotoLibraryIcon as PhotoAlbum
 };
+
