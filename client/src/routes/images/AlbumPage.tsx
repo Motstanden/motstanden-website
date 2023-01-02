@@ -1,6 +1,6 @@
 import { ImageList, ImageListItem, Modal, Theme, useMediaQuery } from "@mui/material";
 import { Image, ImageAlbum } from "common/interfaces";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
 export default function AlbumPage() {
@@ -16,6 +16,8 @@ export default function AlbumPage() {
 
 function AlbumViewer( { album }: { album: ImageAlbum }  ) {
 
+    const [openState, setOpenState] = useState<{isOpen: boolean, index: number}>({isOpen: false, index: 0})
+
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const isLargeScreen = useMediaQuery((theme: Theme) => theme.breakpoints.up("lg"))
 
@@ -24,55 +26,68 @@ function AlbumViewer( { album }: { album: ImageAlbum }  ) {
     if( isLargeScreen ) listProps = { cols: 4, gap: 30}
 
     return (
-        <ImageList {...listProps} >
-            {album.images.map( image => (
-                <ImageViewer image={image} key={image.url} />
-            ))}
-        </ImageList>
+        <>
+            <ImageList {...listProps} >
+                {album.images.map( (image, index ) => (
+                    <ImageListItem key={image.url}>
+                        <img 
+                            src={`/${image.url}`} 
+                            loading="lazy"
+                            onClick={() => setOpenState({isOpen: true, index: index})}
+                            />
+                    </ImageListItem>
+                ))}
+            </ImageList>
+            <ImageLightBox 
+                images={album.images}
+                open={openState.isOpen} 
+                openIndex={openState.index} 
+                onClose={() => setOpenState({isOpen: false, index: 0})} />
+        </>
     )
 }
 
-
-
-function ImageViewer( {image}: {image: Image}) {
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+function ImageLightBox( {
+    images, 
+    onClose,
+    open,
+    openIndex, 
+}: {
+    images: Image[], 
+    onClose: VoidFunction
+    open: boolean
+    openIndex: number, 
+} ) {
+    
+    const [index, setIndex] = useState<number | undefined>(undefined)
+    useEffect( () => {
+        if(!open) {
+            setIndex(undefined)
+        }
+    }, [ open ])
 
     return (
-        <ImageListItem>
-            <img 
-                src={`/${image.url}`} 
-                loading="lazy"
-                onClick={handleOpen}
-                />
-            <Modal 
-                open={open} 
-                onClose={handleClose} 
-                slotProps={{
-                    backdrop: { 
-                        style: {
-                            backgroundColor: "rgba(0, 0, 0, 0.9)"
-                        }
+        <Modal 
+            open={open} 
+            onClose={onClose} 
+            slotProps={{
+                backdrop: { 
+                    style: {
+                        backgroundColor: "rgba(0, 0, 0, 0.9)"
                     }
-                }}  >
-                <ImageModalPage image={image} />
-            </Modal>
-        </ImageListItem>
-    )
-}
-
-function ImageModalPage( {image}: {image: Image}) {
-    return (
-        <img 
-            src={`/${image.url}`} 
-            style={{
-                maxWidth: "100vw", 
-                maxHeight: "100vh",
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: 'translate(-50%, -50%)',
-            }}/>
+                }
+            }}
+        >
+            <img 
+                src={`/${images[index ?? openIndex].url}`} 
+                style={{
+                    maxWidth: "99vw", 
+                    maxHeight: "99vh",
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: 'translate(-50%, -50%)',
+                }}/>
+        </Modal>
     )
 }
