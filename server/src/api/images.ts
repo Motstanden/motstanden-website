@@ -19,7 +19,7 @@ router.get("/image-album/all",
         }
 )
     
-router.get("/image-album/:id",
+router.get("/image-album/:id/images",
     AuthenticateUser(),
     (req, res) => {
     

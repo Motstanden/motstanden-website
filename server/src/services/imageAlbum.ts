@@ -34,7 +34,8 @@ export function getAll(limit?: number): ImageAlbum[] {
         
     const albums = dbAlbums.map( item => ({
         ...item, 
-        isPublic: item.isPublic === 1 
+        isPublic: item.isPublic === 1,
+        images: []
     }))
 
     return albums 

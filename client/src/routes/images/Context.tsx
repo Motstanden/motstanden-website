@@ -28,7 +28,7 @@ export function AlbumListContext() {
 
 export function AlbumContext() {
 
-    const allAlbums = useOutletContext<ImageAlbum[]>()
+    const allAlbums: ImageAlbum[] = useOutletContext<ImageAlbum[]>()
     const params = useParams();
 
     const title = params.title
@@ -45,7 +45,7 @@ export function AlbumContext() {
 }
 
 function FetchAlbumContext( {album}: { album: ImageAlbum}) {
-    const {isLoading, isError, data, error} = useQuery<Image[]>([albumListQueryKey, album.id], () => fetchAsync<Image[]>(`/api/image-album/${album.id}`))
+    const {isLoading, isError, data, error} = useQuery<Image[]>([albumListQueryKey, album.id], () => fetchAsync<Image[]>(`/api/image-album/${album.id}/images`))
 
     if (isLoading) 
         return <>Loading...</> // TODO: Render a page skeleton here
@@ -53,8 +53,9 @@ function FetchAlbumContext( {album}: { album: ImageAlbum}) {
     if(isError)
         return <>{`Error: ${error}`}</>
 
-    console.log(data)
+    const dataContext: ImageAlbum = {...album, images: data }
+    
     return (
-        <Outlet context={data}/>
+        <Outlet context={dataContext}/>
     )
-}
+} 
