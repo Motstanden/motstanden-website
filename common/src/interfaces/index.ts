@@ -1,5 +1,6 @@
 export * from "./EventData.js"
 export * from "./EventParticipation.js"
+export * from "./Image.js"
 export * from "./ImageAlbum.js"
 export * from "./KeyValuePair.js"
 export * from "./MagicLinkResponse.js"
