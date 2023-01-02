@@ -5,6 +5,7 @@ INSERT INTO version(migration) VALUES
 CREATE TABLE image_album(
     image_album_id INTEGER PRIMARY KEY NOT NULL,
     title TEXT NOT NULL,
+    url TEXT NOT NULL GENERATED ALWAYS AS (REPLACE(REPLACE(REPLACE(REPLACE(lower(title), 'æ', 'ae'), 'ø', 'oe' ), 'å', 'aa'), ' ', '-')) STORED,
     is_public BOOLEAN NOT NULL DEFAULT 0 CHECK(is_public = 0 OR is_public = 1),
     created_by INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
