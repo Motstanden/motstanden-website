@@ -47,4 +47,6 @@ CREATE TRIGGER trig_image_updated_at
 BEGIN
     UPDATE image SET updated_at = current_timestamp
         WHERE image_id = old.image_id;
+    UPDATE image_album SET updated_at = current_timestamp
+        WHERE image_album_id = old.image_album_id;
 END;
