@@ -48,6 +48,9 @@ function AlbumViewer( { album }: { album: ImageAlbum }  ) {
                             src={`/${image.url}`} 
                             loading="lazy"
                             onClick={() => setOpenState({isOpen: true, index: index})}
+                            style={{
+                                borderRadius: "10px"
+                            }}
                             />
                     </ImageListItem>
                 ))}
