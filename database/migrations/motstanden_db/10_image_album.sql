@@ -34,8 +34,8 @@ CREATE TABLE image(
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (image_album_id)
         REFERENCES image_album (image_album_id)
-            ON UPDATE CASCADE
-            ON DELETE RESTRICT,
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
     FOREIGN KEY (created_by)
         REFERENCES user (user_id)
         ON UPDATE CASCADE
@@ -50,3 +50,27 @@ BEGIN
     UPDATE image_album SET updated_at = current_timestamp
         WHERE image_album_id = old.image_album_id;
 END;
+
+
+CREATE VIEW vw_image_album
+AS
+SELECT
+    image_album_id,
+    title,
+    url,
+    is_public,
+    created_at,
+    updated_at,
+	cover_image_url,
+    image_count
+FROM
+    image_album
+LEFT JOIN (
+	SELECT 
+		filename as cover_image_url,
+		image_album_id,
+        COUNT() as image_count
+	FROM 
+		image
+	GROUP BY image_album_id
+) USING(image_album_id)

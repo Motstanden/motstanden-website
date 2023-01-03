@@ -6,6 +6,8 @@ export interface ImageAlbum {
     createdAt: string       // Format: 'YYYY-MM-DD HH-MM-SS'
     updatedAt: string       // Format: 'YYYY-MM-DD HH-MM-SS'
     images: Image[]
+    coverImageUrl: string
+    imageCount: number
 }
 
 export interface Image {

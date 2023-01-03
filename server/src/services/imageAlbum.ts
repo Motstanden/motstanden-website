@@ -19,9 +19,11 @@ export function getAll(limit?: number): ImageAlbum[] {
             url,
             is_public as isPublic,
             created_at as createdAt,
-            updated_at as updatedAt 
+            updated_at as updatedAt,
+            cover_image_url as coverImageUrl,
+            image_count as imageCount
         FROM 
-            image_album 
+            vw_image_album 
         ORDER BY 
             created_at DESC
         ${!!limit ? "LIMIT ?" : ""}
