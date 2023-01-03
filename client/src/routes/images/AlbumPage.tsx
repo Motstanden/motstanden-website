@@ -69,12 +69,14 @@ function AlbumViewer( { album }: { album: ImageAlbum }  ) {
 
     const [openState, setOpenState] = useState<{isOpen: boolean, index: number}>({isOpen: false, index: 0})
 
-    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
-    const isLargeScreen = useMediaQuery((theme: Theme) => theme.breakpoints.up("lg"))
+    const isSmallScreen = useMediaQuery((theme: Theme)  => theme.breakpoints.between(410, "md"))
+    const isMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.only("md"))
+    const isLargeScreen = useMediaQuery((theme: Theme)  => theme.breakpoints.up("lg"))
 
-    let listProps = {cols: 3, gap: 20}
-    if( isSmallScreen ) listProps = { cols: 2, gap: 10 };
-    if( isLargeScreen ) listProps = { cols: 4, gap: 30}
+    let listProps = {cols: 1, gap: 10}
+    if(isSmallScreen) listProps  = {cols: 2, gap: 10};
+    if(isMediumScreen) listProps = {cols: 3, gap: 20};
+    if(isLargeScreen) listProps  = {cols: 4, gap: 30};
 
     const onMouseEnterImage = (_: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
         document.body.style.cursor = "pointer"   
@@ -86,7 +88,7 @@ function AlbumViewer( { album }: { album: ImageAlbum }  ) {
 
     return (
         <>
-            <ImageList {...listProps} >
+            <ImageList {...listProps} rowHeight={250} variant="standard">
                 {album.images.map( (image, index ) => (
                     <ImageListItem key={image.url}>
                         <img 
@@ -96,6 +98,7 @@ function AlbumViewer( { album }: { album: ImageAlbum }  ) {
                             loading="lazy"
                             onClick={() => setOpenState({isOpen: true, index: index})}
                             style={{
+                                maxHeight: "250px",
                                 borderRadius: "10px"
                             }}
                             />
