@@ -116,6 +116,15 @@ function ImageLightBox( {
                     onBackClick={navigateBack}
                     onForwardClick={navigateNext}
                 />
+                <span style={{
+                    position: "absolute",
+                    top:"17px",
+                    left: "15px",
+                    fontSize: "x-large",
+                    opacity: 0.5
+                }}>
+                    {(index ?? openIndex) + 1}/{images.length}
+                </span>
             </div>
         </Modal>
     )
