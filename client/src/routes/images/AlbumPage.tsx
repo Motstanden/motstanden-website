@@ -1,4 +1,5 @@
-import { ImageList, ImageListItem, Modal, Theme, useMediaQuery } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+import { IconButton, ImageList, ImageListItem, Modal, Theme, Tooltip, useMediaQuery } from "@mui/material";
 import { Image, ImageAlbum } from "common/interfaces";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
@@ -69,7 +70,7 @@ function ImageLightBox( {
     return (
         <Modal 
             open={open} 
-            onClose={onClose} 
+            onClose={onClose}
             slotProps={{
                 backdrop: { 
                     style: {
@@ -78,16 +79,31 @@ function ImageLightBox( {
                 }
             }}
         >
-            <img 
-                src={`/${images[index ?? openIndex].url}`} 
-                style={{
-                    maxWidth: "99vw", 
-                    maxHeight: "99vh",
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: 'translate(-50%, -50%)',
-                }}/>
+            <div>
+                <img 
+                    src={`/${images[index ?? openIndex].url}`} 
+                    style={{
+                        maxWidth: "99vw", 
+                        maxHeight: "99vh",
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: 'translate(-50%, -50%)',
+                    }}/>
+                <Tooltip title="Lukk bildevisning">
+                    <IconButton 
+                        size='large'
+                        onClick={onClose}
+                        aria-label="Lukk bildevisning"
+                        style={{
+                            position: "absolute",
+                            top: "5px",
+                            right: "5px"
+                        }}>
+                        <CloseIcon fontSize='large' />
+                    </IconButton>
+                </Tooltip>
+            </div>
         </Modal>
     )
 }
