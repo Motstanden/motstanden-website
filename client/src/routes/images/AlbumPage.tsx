@@ -5,6 +5,7 @@ import { IconButton, ImageList, ImageListItem, Modal, Theme, Tooltip, useMediaQu
 import { Image, ImageAlbum } from "common/interfaces";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import { useSwipeable } from 'react-swipeable';
 
 export default function AlbumPage() {
     const album: ImageAlbum = useOutletContext<ImageAlbum>()
@@ -86,11 +87,21 @@ function ImageLightBox( {
         }
     }
 
+    const swipeHandlers = useSwipeable({
+        onSwipedLeft: navigateNext,
+        onSwipedRight: navigateBack,
+        onSwipedUp: onClose,
+        onSwipedDown: onClose,
+        preventScrollOnSwipe: true
+    })
+
     return (
         <Modal 
             open={open} 
             onKeyDown={onKeyDown}
             onClose={onClose}
+            {...swipeHandlers}
+            closeAfterTransition={true}
             slotProps={{
                 backdrop: { 
                     style: {
@@ -144,7 +155,9 @@ function ImageLightBox( {
 
 function NavigationButtons( {hide, onBackClick, onForwardClick}: {hide: boolean, onBackClick: VoidFunction, onForwardClick: VoidFunction}) {
 
-    if(hide)
+    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+
+    if(hide || isSmallScreen)
         return <></>
 
     return (
