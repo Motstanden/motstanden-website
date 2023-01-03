@@ -75,9 +75,21 @@ function ImageLightBox( {
         setIndex( currentIndex => calcPrev(currentIndex ?? openIndex))
     }
 
+    const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        const { key } = e;
+        if(key === "ArrowRight") {
+            e.preventDefault()
+            navigateNext()
+        } else if(key === "ArrowLeft") {
+            e.preventDefault()
+            navigateBack()
+        }
+    }
+
     return (
         <Modal 
             open={open} 
+            onKeyDown={onKeyDown}
             onClose={onClose}
             slotProps={{
                 backdrop: { 
