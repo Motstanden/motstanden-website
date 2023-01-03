@@ -1,10 +1,11 @@
 import CloseIcon from '@mui/icons-material/Close';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { IconButton, ImageList, ImageListItem, Modal, Theme, Tooltip, useMediaQuery } from "@mui/material";
+import { Breadcrumbs, IconButton, ImageList, ImageListItem, Link, Modal, Theme, Tooltip, Typography, useMediaQuery } from "@mui/material";
 import { Image, ImageAlbum } from "common/interfaces";
+import dayjs from 'dayjs';
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { Link as RouterLink, useOutletContext } from "react-router-dom";
 import { useSwipeable } from 'react-swipeable';
 
 export default function AlbumPage() {
@@ -12,9 +13,55 @@ export default function AlbumPage() {
 
     return (
         <>
-            <h1>{album.title}</h1>
+            <Breadcrumbs 
+                separator={<NavigateNextIcon fontSize="small" opacity={0.7} />} 
+                style={{marginBottom: "5px"}}
+                >
+                <Link 
+                    underline='hover' 
+                    color="inherit" 
+                    component={RouterLink} 
+                    to={"/bilder"}
+                    style={{opacity: 0.7}}
+                    variant="h5"
+                >
+                    Bilder
+                </Link>
+                <Typography variant='h5'>
+                    {album.title}
+                </Typography>
+            </Breadcrumbs>
+            <CreationInfo created={album.createdAt} updated={album.updatedAt}/>
             <AlbumViewer album={album}/>
         </>
+    )
+}
+
+function CreationInfo( { created, updated}: {created: string, updated: string}) {
+
+    const prettyCreated = dayjs(created).utc(true).local().format("DD. MMM YYYY HH:mm")
+    const prettyUpdated = dayjs(updated).utc(true).local().format("DD. MMM YYYY HH:mm")
+
+    return (
+        <div style={{
+                fontSize: "xx-small",
+                opacity: 0.75,
+                paddingBlock: "10px",
+                display: "grid",
+                gridTemplateColumns: "min-content auto",
+                columnGap: "5px",
+                rowGap: "4px"
+            }}
+        >
+            <div>Opprettet:</div>
+            <div>{prettyCreated}</div>
+            {prettyCreated !== prettyUpdated && (
+                <>
+                    <div>Redigert:</div>
+                    <div>{prettyUpdated}</div>
+                </>
+            )}
+        </div>
     )
 }
 
