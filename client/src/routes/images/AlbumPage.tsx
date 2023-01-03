@@ -29,12 +29,22 @@ function AlbumViewer( { album }: { album: ImageAlbum }  ) {
     if( isSmallScreen ) listProps = { cols: 2, gap: 10 };
     if( isLargeScreen ) listProps = { cols: 4, gap: 30}
 
+    const onMouseEnterImage = (_: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+        document.body.style.cursor = "pointer"   
+    }
+
+    const onMouseLeaveImage = (_: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+        document.body.style.cursor = "auto"   
+    }
+
     return (
         <>
             <ImageList {...listProps} >
                 {album.images.map( (image, index ) => (
                     <ImageListItem key={image.url}>
                         <img 
+                            onMouseEnter={onMouseEnterImage}
+                            onMouseLeave={onMouseLeaveImage}
                             src={`/${image.url}`} 
                             loading="lazy"
                             onClick={() => setOpenState({isOpen: true, index: index})}
