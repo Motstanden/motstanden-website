@@ -1,9 +1,9 @@
+import { ImageList, ImageListItem, ImageListItemBar, Theme, useMediaQuery } from "@mui/material"
 import { ImageAlbum } from "common/interfaces"
-import { useOutletContext } from "react-router-dom"
-import { UrlList, UrlListItem } from "src/components/UrlList"
+import { Link, useOutletContext } from "react-router-dom"
     
 export default function AlbumListPage() {
-    const data = useOutletContext<ImageAlbum[]>()
+    const data: ImageAlbum[] = useOutletContext<ImageAlbum[]>()
     return (
         <>
             <h1>Bildealbum</h1>
@@ -14,15 +14,34 @@ export default function AlbumListPage() {
 
 function Albums({items}: {items: ImageAlbum[]}) {
 
+    const isSmallScreen = useMediaQuery((theme: Theme)  => theme.breakpoints.between(410, "md"))
+    const isMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.only("md"))
+    const isLargeScreen = useMediaQuery((theme: Theme)  => theme.breakpoints.up("lg"))
+
+    let listProps = {cols: 1, gap: 10}
+    if(isSmallScreen) listProps  = {cols: 2, gap: 10};
+    if(isMediumScreen) listProps = {cols: 3, gap: 20};
+    if(isLargeScreen) listProps  = {cols: 4, gap: 30};
+
     return (
-        <UrlList>
+        <ImageList {...listProps} rowHeight={250} variant="standard">
             {items.map(album => (
-                <UrlListItem 
-                    key={album.id} 
-                    text={album.title} 
-                    to={`/bilder/${album.url}`}/>
+                <Link to={`/bilder/${album.url}`} key={album.id}>
+                    <ImageListItem>
+                        <img 
+                            src={`/${album.coverImageUrl}`} 
+                            style={{
+                                maxHeight: "250px",
+                                borderRadius: "10px"
+                            }}
+                        />
+                        <ImageListItemBar
+                            title={album.title}
+                            subtitle={`${album.imageCount} bilder`}
+                        />
+                    </ImageListItem>
+                </Link>
             ))}
-            
-        </UrlList>
+        </ImageList>
     )
 }
