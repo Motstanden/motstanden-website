@@ -1,4 +1,6 @@
 import CloseIcon from '@mui/icons-material/Close';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { IconButton, ImageList, ImageListItem, Modal, Theme, Tooltip, useMediaQuery } from "@mui/material";
 import { Image, ImageAlbum } from "common/interfaces";
 import { useEffect, useState } from "react";
@@ -61,11 +63,17 @@ function ImageLightBox( {
 } ) {
     
     const [index, setIndex] = useState<number | undefined>(undefined)
-    useEffect( () => {
-        if(!open) {
-            setIndex(undefined)
-        }
-    }, [ open ])
+    useEffect( () => open ? setIndex(openIndex) : setIndex(undefined), [ open ])
+
+    const navigateNext = () => {
+        const calcNext = (index: number) => (index + 1) % images.length 
+        setIndex( currentIndex => calcNext(currentIndex ?? openIndex))
+    }
+
+    const navigateBack = () => {
+        const calcPrev = (index: number) => (index - 1 + images.length) % images.length 
+        setIndex( currentIndex => calcPrev(currentIndex ?? openIndex))
+    }
 
     return (
         <Modal 
@@ -103,7 +111,49 @@ function ImageLightBox( {
                         <CloseIcon fontSize='large' />
                     </IconButton>
                 </Tooltip>
+                <NavigationButtons 
+                    hide={images.length <= 1} 
+                    onBackClick={navigateBack}
+                    onForwardClick={navigateNext}
+                />
             </div>
         </Modal>
+    )
+}
+
+function NavigationButtons( {hide, onBackClick, onForwardClick}: {hide: boolean, onBackClick: VoidFunction, onForwardClick: VoidFunction}) {
+
+    if(hide)
+        return <></>
+
+    return (
+        <>
+            <Tooltip title="Forrige">
+                <IconButton 
+                    size="large"
+                    onClick={onBackClick}
+                    style={{
+                        position: "absolute",
+                        top: "50%",
+                        transform: 'translate(0, -50%)',
+                        left: "5px",
+                    }}>
+                    <NavigateBeforeIcon fontSize='large'/>
+                </IconButton>
+            </Tooltip>
+            <Tooltip title="Neste">
+                <IconButton 
+                    size="large"
+                    onClick={onForwardClick}
+                    style={{
+                        position: "absolute",
+                        top: "50%",
+                        transform: 'translate(0, -50%)',
+                        right: "5px",
+                    }}>
+                    <NavigateNextIcon fontSize='large'/>
+                </IconButton>
+            </Tooltip>
+        </>
     )
 }
