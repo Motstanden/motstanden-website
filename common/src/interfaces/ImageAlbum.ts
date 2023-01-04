@@ -10,6 +10,10 @@ export interface ImageAlbum {
     imageCount: number
 }
 
+export interface NewImageAlbum extends Omit<ImageAlbum, "id" | "url" | "createdAt" | "updatedAt" | "images" | "imageCount" | "coverImageUrl"> {
+    images: NewImage[]
+}
+
 export interface Image {
     id: number
     albumId: number
@@ -19,3 +23,5 @@ export interface Image {
     createdAt: string       // Format: 'YYYY-MM-DD HH-MM-SS'
     updatedAt: string       // Format: 'YYYY-MM-DD HH-MM-SS'
 }
+
+export interface NewImage extends Omit<Image, "id" | "albumId" | "url" | "createdAt" | "updatedAt"> {}
