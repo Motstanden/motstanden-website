@@ -13,27 +13,33 @@ export default function AlbumPage() {
 
     return (
         <>
-            <Breadcrumbs 
-                separator={<NavigateNextIcon fontSize="small" opacity={0.7} />} 
-                style={{marginBottom: "5px"}}
-                >
-                <Link 
-                    underline='hover' 
-                    color="inherit" 
-                    component={RouterLink} 
-                    to={"/bilder"}
-                    style={{opacity: 0.7}}
-                    variant="h5"
-                >
-                    Bilder
-                </Link>
-                <Typography variant='h5'>
-                    {album.title}
-                </Typography>
-            </Breadcrumbs>
+            <Crumbs  title={album.title}/>
             <CreationInfo created={album.createdAt} updated={album.updatedAt}/>
             <AlbumViewer album={album}/>
         </>
+    )
+}
+
+function Crumbs( { title }: { title: string}) {
+    return (
+        <Breadcrumbs 
+            separator={<NavigateNextIcon fontSize="small" opacity={0.7} />} 
+            style={{marginBottom: "5px"}}
+            >
+            <Link 
+                underline='hover' 
+                color="inherit" 
+                component={RouterLink} 
+                to={"/bilder"}
+                style={{opacity: 0.7}}
+                variant="h5"
+            >
+                Bilder
+            </Link>
+            <Typography variant='h5'>
+                {title}
+            </Typography>
+        </Breadcrumbs>
     )
 }
 
