@@ -1,8 +1,8 @@
-import { Grid, MenuItem, TextField } from "@mui/material"
-import { NewImageAlbum } from "common/interfaces"
-import { useState } from "react"
+import { Grid, MenuItem, Stack, TextField } from "@mui/material"
+import { NewImage, NewImageAlbum } from "common/interfaces"
+import React, { useState } from "react"
+import FileDropZone from "src/components/FileDropZone"
 import { Form } from "src/components/form/Form"
-
 export default function NewPage() {
     return (
         <>
@@ -20,6 +20,20 @@ const emptyAlbum: NewImageAlbum = {
 
 function NewAlbumForm() {
     const [album, setAlbum] = useState<NewImageAlbum>(emptyAlbum)
+
+    const handleFileDrop = (files: File[]) => {
+        const newImages: NewImage[] = files.map( file => ({ 
+            caption: "", 
+            isPublic: 
+            album.isPublic, 
+            file: file
+        }))
+        setAlbum(prev => ({
+            ...prev, 
+            images: prev.images.concat(newImages)
+        }))
+    }
+
     return (
         <Form value={album} postUrl="todo">
             <Grid 
@@ -44,6 +58,37 @@ function NewAlbumForm() {
                         onChange={newVal => setAlbum(prev => ({...prev, isPublic: newVal}))} 
                     />
                 </Grid>
+                <Grid item xs={12} my={4}>
+                    <FileDropZone accept="image/*" onChange={handleFileDrop} />                    
+                </Grid>
+                {album.images.map( image => {
+                    const url = URL.createObjectURL(image.file)
+                    return (
+                        <React.Fragment key={url}>
+                            <Grid item xs={12} sm={6}>
+                                <Stack 
+                                    spacing={{xs: 2, sm: 6}} 
+                                    >
+                                    <TextField 
+                                        label="Bildetekst"
+                                        name="caption"
+                                        fullWidth
+                                    />
+                                    <SelectIsPublic value={image.isPublic} onChange={(newValue) => {}}/>
+                                </Stack>
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <img 
+                                    src={url} 
+                                    style={{
+                                        width: "100%",
+                                        maxHeight: "300px",
+                                        objectFit: "cover"
+                                    }} />
+                            </Grid>
+                        </React.Fragment>
+                    )
+                })}
             </Grid>
         </Form>
     )
