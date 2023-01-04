@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { Image, ImageAlbum } from "common/interfaces"
 import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
-import { PageContainer } from "src/layout/PageContainer"
+import { TabbedPageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
 
 const albumListQueryKey = ["FetchAllAlbums"]
@@ -14,15 +14,28 @@ export function AlbumListContext() {
     const {isLoading, isError, data, error} = useQuery<ImageAlbum[]>(albumListQueryKey, () => fetchAsync<ImageAlbum[]>("/api/image-album/all"))
 
     if (isLoading) 
-        return <PageContainer>Loading...</PageContainer> // TODO: Render a page skeleton here
+        return <AlbumPageContainer>Loading...</AlbumPageContainer> // TODO: Render a page skeleton here
 
     if(isError)
-        return <PageContainer>{`Error: ${error}`}</PageContainer>
+        return <AlbumPageContainer>{`Error: ${error}`}</AlbumPageContainer>
 
     return (
-        <PageContainer>
+        <AlbumPageContainer>
             <Outlet context={data}/>
-        </PageContainer>
+        </AlbumPageContainer>
+    )
+}
+
+function AlbumPageContainer({ children }: { children?: React.ReactNode }) {
+    return (
+        <TabbedPageContainer
+            tabItems={[
+                { to: "/bilder", label: "Album" },
+                { to: "/bilder/ny", label: "ny" },
+            ]}
+        >
+            {children}
+        </TabbedPageContainer>
     )
 }
 

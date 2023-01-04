@@ -39,9 +39,13 @@ import { NewRumourPage, RumourPage } from 'src/routes/rumour/RumourPage';
 import { SheetArchiveContext } from "src/routes/sheetArchive/Context";
 import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
-import { AlbumContext, AlbumListContext } from "./routes/images/Context";
-import AlbumPage from "./routes/images/AlbumPage";
-import AlbumListPage from "./routes/images/AlbumListPage";
+import { 
+	AlbumContext as ImageAlbumItemContext, 
+	AlbumListContext as ImageAlbumListContext 
+} from "./routes/images/Context";
+import ImageAlbumItemPage from "./routes/images/AlbumPage";
+import ImageAlbumListPage from "./routes/images/AlbumListPage";
+import NewImageAlbumPage from "src/routes/images/NewPage"
 
 function App() {
 	const auth = useAuth()
@@ -112,10 +116,11 @@ function App() {
 							<Route path="ny" element={<Suspense><NewEventPage/></Suspense>} />
 						</Route>
 
-						<Route path="/bilder" element={<AlbumListContext/>}>
-							<Route index element={<AlbumListPage/>}/>
-							<Route path=":title" element={<AlbumContext/>}>
-								<Route index element={<AlbumPage/>}/>
+						<Route path="/bilder" element={<ImageAlbumListContext/>}>
+							<Route index element={<ImageAlbumListPage/>}/>
+							<Route path="ny" element={<NewImageAlbumPage/>} />
+							<Route path=":title" element={<ImageAlbumItemContext/>}>
+								<Route index element={<ImageAlbumItemPage/>}/>
 							</Route>
 						</Route>
 					</Route>

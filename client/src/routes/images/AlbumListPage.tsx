@@ -6,7 +6,7 @@ export default function AlbumListPage() {
     const data: ImageAlbum[] = useOutletContext<ImageAlbum[]>()
     return (
         <>
-            <h1>Bildealbum</h1>
+            <h2>Bilder</h2>
             <Albums items={data}/>
         </>
     )

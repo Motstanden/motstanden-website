@@ -24,7 +24,7 @@ function Crumbs( { title }: { title: string}) {
     return (
         <Breadcrumbs 
             separator={<NavigateNextIcon fontSize="small" opacity={0.7} />} 
-            style={{marginBottom: "5px"}}
+            style={{marginBottom: "5px", marginTop: "20px"}}
             >
             <Link 
                 underline='hover' 
@@ -50,7 +50,7 @@ function CreationInfo( { created, updated}: {created: string, updated: string}) 
 
     return (
         <div style={{
-                fontSize: "xx-small",
+                fontSize: "small",
                 opacity: 0.75,
                 paddingBlock: "10px",
                 display: "grid",
