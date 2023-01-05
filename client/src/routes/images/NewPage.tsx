@@ -1,8 +1,13 @@
-import { Grid, MenuItem, Stack, TextField } from "@mui/material"
-import { NewImage, NewImageAlbum } from "common/interfaces"
-import React, { useState } from "react"
-import FileDropZone from "src/components/FileDropZone"
-import { Form } from "src/components/form/Form"
+import { DevTool } from "@hookform/devtools";
+import { Grid, MenuItem, Stack, TextField } from "@mui/material";
+import { NewImageAlbum } from "common/interfaces";
+import React, { useState } from "react";
+import {
+    Controller, SubmitHandler, useForm
+} from "react-hook-form";
+import FileDropZone from "src/components/FileDropZone";
+import { ImageLightBox } from 'src/components/ImageLightBox';
+
 export default function NewPage() {
     return (
         <>
@@ -11,102 +16,128 @@ export default function NewPage() {
         </>
     )
 }
-
-const emptyAlbum: NewImageAlbum = {
-    isPublic: false,
-    title: "",
-    images: []
-}
-
 function NewAlbumForm() {
-    const [album, setAlbum] = useState<NewImageAlbum>(emptyAlbum)
 
-    const handleFileDrop = (files: File[]) => {
-        const newImages: NewImage[] = files.map( file => ({ 
-            caption: "", 
-            isPublic: 
-            album.isPublic, 
-            file: file
-        }))
-        setAlbum(prev => ({
-            ...prev, 
-            images: prev.images.concat(newImages)
-        }))
+    const formMethods = useForm<NewImageAlbum>({
+        defaultValues: {
+            title: "",
+            isPublic: false,
+            images: []
+    }})
+    const { register, handleSubmit, control, getValues } = formMethods
+
+    const [files, setFiles] = useState<File[]>([])
+    const [openState, setOpenState] = useState<{isOpen: boolean, index: number}>({isOpen: false, index: 0})
+
+    const onSubmit: SubmitHandler<NewImageAlbum> = album => {
+        // todo
     }
 
+    const handleFileDrop = (files: File[]) => {
+        setFiles(prev => prev.concat(files))
+    }
+
+    const fileUrls: string[] = files.map( file => URL.createObjectURL(file))
+
     return (
-        <Form value={album} postUrl="todo">
-            <Grid 
-                container 
-                columnSpacing={4} 
-                rowSpacing={4}
-            >
-                <Grid item xs={12} md={8}>
-                    <TextField
-                        label="Tittel"
-                        name="title"
-                        required
-                        fullWidth
-                        autoComplete="off"
-                        value={album.title}
-                        onChange={(e) => setAlbum( prev => ({...prev, title: e.target.value}))}
-                    />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                    <SelectIsPublic 
-                        value={album.isPublic} 
-                        onChange={newVal => setAlbum(prev => ({...prev, isPublic: newVal}))} 
-                    />
-                </Grid>
-                <Grid item xs={12} my={4}>
-                    <FileDropZone accept="image/*" onChange={handleFileDrop} />                    
-                </Grid>
-                {album.images.map( image => {
-                    const url = URL.createObjectURL(image.file)
-                    return (
+        <>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <Grid 
+                    container 
+                    columnSpacing={4} 
+                    rowSpacing={4}
+                >
+                    <Grid item xs={12} md={8}>
+                        <TextField
+                            label="Tittel"
+                            fullWidth
+                            autoComplete="off"
+                            required
+                            {...register("title")}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                        <Controller 
+                            control={control} 
+                            name="isPublic" 
+                            render={ ({ field }) => <SelectIsPublic value={field.value} onChange={field.onChange} name={field.name} />}
+                        />
+                    </Grid>
+                    <Grid item xs={12} my={4    }>
+                        <FileDropZone accept="image/*" onChange={handleFileDrop} /> 
+                    </Grid>
+                    {fileUrls.map( (url, index) => (
                         <React.Fragment key={url}>
                             <Grid item xs={12} sm={6}>
-                                <Stack 
-                                    spacing={{xs: 2, sm: 6}} 
-                                    >
+                                <Stack spacing={{xs: 2, sm: 6}}>
                                     <TextField 
                                         label="Bildetekst"
-                                        name="caption"
                                         fullWidth
+                                        {...register(`images.${index}.caption`)}
                                     />
-                                    <SelectIsPublic value={image.isPublic} onChange={(newValue) => {}}/>
+                                    <Controller 
+                                        control={control} 
+                                        name={`images.${index}.isPublic`} 
+                                        render={ ({ field }) => 
+                                            <SelectIsPublic 
+                                                value={field.value} 
+                                                onChange={field.onChange} 
+                                                name={field.name} 
+                                            />}
+                                    />
                                 </Stack>
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12} sm={6} height="330px">
                                 <img 
                                     src={url} 
+                                    onClick={() => setOpenState({isOpen: true, index: index})}
+                                    onMouseEnter={() => document.body.style.cursor = "pointer"}
+                                    onMouseLeave={() => document.body.style.cursor = "auto"}
                                     style={{
                                         width: "100%",
-                                        maxHeight: "300px",
+                                            maxHeight: "300px",
                                         objectFit: "cover"
                                     }} />
                             </Grid>
                         </React.Fragment>
-                    )
-                })}
-            </Grid>
-        </Form>
+                    ))}
+                </Grid>
+            </form>
+
+            {fileUrls.length > 0  &&
+                <ImageLightBox 
+                    images={fileUrls}
+                    open={openState.isOpen}
+                    openIndex={openState.index}
+                    onClose={() => setOpenState({isOpen: false, index: 0})} />
+            }
+            <DevTool control={control} /> {/* set up the dev tool */}
+        </>
     )
 }
 
-function SelectIsPublic({value, onChange}: {value: boolean, onChange: (newValue: boolean) => void}) {
+function SelectIsPublic({
+    onChange, 
+    value, 
+    name, 
+}: {
+    onChange: (value: boolean) => void, 
+    value: boolean,
+    name: string,
+}){
     return (
         <TextField 
             select
+            name={name}
             label="Synlighet"
             fullWidth
-            value={value}
-            onChange={(e) => onChange(e.target.value === "true")}
+            value={value ? "true" : "false"}
+            onChange={ (e) => onChange(e.target.value === "true") }
             helperText={value ? "Synlig for alle i offentligheten..." : "Synlig for innloggede brukere..."}
             FormHelperTextProps={{ style: { opacity: 0.7 } }}
         >
-            <MenuItem value={"false"} >Privat</MenuItem>
-            <MenuItem value={"true"} >Offentlig</MenuItem>
+            <MenuItem value={"false"}>Privat</MenuItem>
+            <MenuItem value={"true"}>Offentlig</MenuItem>
         </TextField>
     )
 }

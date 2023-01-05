@@ -20,6 +20,7 @@
 		"is-hotkey": "^0.2.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
+		"react-hook-form": "^7.41.5",
 		"react-router-dom": "^6.6.1",
 		"react-swipeable": "^7.0.0",
 		"slate": "^0.87.0",
@@ -27,6 +28,7 @@
 		"slate-react": "^0.88.0"
 	},
 	"devDependencies": {
+		"@hookform/devtools": "^4.3.0",
 		"@tanstack/react-query-devtools": "^4.20.4",
 		"@types/dompurify": "^2.4.0",
 		"@types/is-hotkey": "^0.1.7",
