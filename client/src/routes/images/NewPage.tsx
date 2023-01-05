@@ -1,9 +1,10 @@
 import { DevTool } from "@hookform/devtools";
-import { Grid, MenuItem, Stack, TextField } from "@mui/material";
-import { NewImageAlbum } from "common/interfaces";
+import CloseIcon from '@mui/icons-material/Close';
+import { Grid, IconButton, MenuItem, Stack, TextField } from "@mui/material";
+import { NewImage, NewImageAlbum } from "common/interfaces";
 import React, { useState } from "react";
 import {
-    Controller, SubmitHandler, useForm
+    Controller, SubmitHandler, useFieldArray, useForm
 } from "react-hook-form";
 import FileDropZone from "src/components/FileDropZone";
 import { ImageLightBox } from 'src/components/ImageLightBox';
@@ -16,17 +17,28 @@ export default function NewPage() {
         </>
     )
 }
+
+
+interface NewImageAlbum2 extends Omit<NewImageAlbum, "images"> {
+    images: NewImage2[]
+} 
+
+interface NewImage2 extends NewImage {
+    file: File,
+    url: string
+}
+
+const emptyAlbum: NewImageAlbum2 = {
+    title: "",
+    isPublic: false,
+    images: []
+}
+
 function NewAlbumForm() {
 
-    const formMethods = useForm<NewImageAlbum>({
-        defaultValues: {
-            title: "",
-            isPublic: false,
-            images: []
-    }})
-    const { register, handleSubmit, control, getValues } = formMethods
+    const { register, handleSubmit, control, getValues } = useForm<NewImageAlbum2>({ defaultValues: emptyAlbum })
+    const { fields, append, remove } = useFieldArray( { name: "images", control: control } )
 
-    const [files, setFiles] = useState<File[]>([])
     const [openState, setOpenState] = useState<{isOpen: boolean, index: number}>({isOpen: false, index: 0})
 
     const onSubmit: SubmitHandler<NewImageAlbum> = album => {
@@ -34,18 +46,23 @@ function NewAlbumForm() {
     }
 
     const handleFileDrop = (files: File[]) => {
-        setFiles(prev => prev.concat(files))
+        const newImages: NewImage2[] = files.map( (file) => ({ 
+            caption: "", 
+            title: "", 
+            file: file, 
+            url: URL.createObjectURL(file),
+            isPublic: getValues("isPublic") 
+        }))
+        append(newImages)
     }
-
-    const fileUrls: string[] = files.map( file => URL.createObjectURL(file))
 
     return (
         <>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid 
                     container 
-                    columnSpacing={4} 
-                    rowSpacing={4}
+                    columnSpacing={4}
+                    rowGap={4}
                 >
                     <Grid item xs={12} md={8}>
                         <TextField
@@ -66,14 +83,14 @@ function NewAlbumForm() {
                     <Grid item xs={12} my={4    }>
                         <FileDropZone accept="image/*" onChange={handleFileDrop} /> 
                     </Grid>
-                    {fileUrls.map( (url, index) => (
-                        <React.Fragment key={url}>
+                    {fields.map( (image, index) => (
+                        <React.Fragment key={image.id}>
                             <Grid item xs={12} sm={6}>
                                 <Stack spacing={{xs: 2, sm: 6}}>
                                     <TextField 
                                         label="Bildetekst"
                                         fullWidth
-                                        {...register(`images.${index}.caption`)}
+                                        {...register(`images.${index}.caption`, {  })}
                                     />
                                     <Controller 
                                         control={control} 
@@ -87,31 +104,50 @@ function NewAlbumForm() {
                                     />
                                 </Stack>
                             </Grid>
-                            <Grid item xs={12} sm={6} height="330px">
-                                <img 
-                                    src={url} 
-                                    onClick={() => setOpenState({isOpen: true, index: index})}
-                                    onMouseEnter={() => document.body.style.cursor = "pointer"}
-                                    onMouseLeave={() => document.body.style.cursor = "auto"}
-                                    style={{
-                                        width: "100%",
-                                            maxHeight: "300px",
-                                        objectFit: "cover"
-                                    }} />
+                            <Grid item xs={12} sm={6} height="300px">
+                                    <div style={{
+                                        height: "100%",
+                                        backgroundColor: "black",
+                                        textAlign: "center",
+                                        position: "relative",
+                                    }}>
+                                        <img 
+                                            src={image.url} 
+                                            onClick={() => setOpenState({isOpen: true, index: index})}
+                                            onMouseEnter={() => document.body.style.cursor = "pointer"}
+                                            onMouseLeave={() => document.body.style.cursor = "auto"}
+                                            style={{
+                                                maxWidth: "100%",
+                                                height: "100%",
+                                                objectFit: "cover",
+                                                marginBlock: "auto"
+                                            }} />
+                                        <IconButton 
+                                            aria-label="Fjern bilde"
+                                            onClick={ _ => remove(index)}
+                                            style={{
+                                                position: "absolute",
+                                                top: "0px",
+                                                right: "0px",
+                                            }}>
+                                            <CloseIcon />
+                                        </IconButton>
+                                    </div>
                             </Grid>
                         </React.Fragment>
                     ))}
                 </Grid>
             </form>
 
-            {fileUrls.length > 0  &&
+            {fields.length > 0  &&
                 <ImageLightBox 
-                    images={fileUrls}
+                    images={fields.map(image => image.url)}
                     open={openState.isOpen}
                     openIndex={openState.index}
                     onClose={() => setOpenState({isOpen: false, index: 0})} />
             }
-            <DevTool control={control} /> {/* set up the dev tool */}
+
+            <DevTool control={control} /> {/* set up dev tool for react hook form */}
         </>
     )
 }
