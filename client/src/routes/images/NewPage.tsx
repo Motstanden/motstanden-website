@@ -61,7 +61,7 @@ function NewAlbumForm() {
             url: URL.createObjectURL(file),
             isPublic: getValues("isPublic") 
         }))
-        append(newImages)
+        append(newImages, { shouldFocus: fields.length > 0, focusIndex: fields.length })
     }
 
     return (
