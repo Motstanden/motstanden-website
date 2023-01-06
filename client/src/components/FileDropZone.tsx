@@ -6,10 +6,46 @@ import { SvgIconProps } from "@mui/material";
 import { useState } from "react";
 import styles from "./FileDropZone.module.css";
 
-export default function FileDropZone({ onChange, accept }: {onChange: (newFiles: File[]) => void, accept: string}) {
+// -------------------------------------------------------------------
+//  File types
+//      - Add more here if necessary
+// -------------------------------------------------------------------
+type ImageFileType =
+    "image/*"       |
+    "image/avif"    |
+    "image/jpeg"    |
+    "image/png"     |
+    "image/webp"
+
+type AudioFileType =
+    "audio/*"       |
+    "audio/flac"    |
+    "uadio/mp3"     |
+    "audio/mp4"     |
+    "audio/mpeg"    |
+    "audio/webm"
+
+type VideoFileType =
+    "video/*"       |
+    "video/mpeg"    |
+    "video/mp4"     |
+    "video/webm"
+
+type AppFileType =
+    "application/pdf"   |
+    "application/zip"
+
+
+type FileType = ImageFileType & AudioFileType & VideoFileType & AppFileType
+// -------------------------------------------------------------------
+
+
+export default function FileDropZone({ onChange, accept }: {onChange: (newFiles: File[]) => void, accept: FileType | FileType[]}) {
 
     const [isDragOver, setIsDragOver] = useState(false)
     const [errorMsg, setErrorMsg] = useState<string | undefined>()
+
+    const acceptStr = Array.isArray(accept) ? accept.join(",") : accept
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault()
@@ -68,7 +104,7 @@ export default function FileDropZone({ onChange, accept }: {onChange: (newFiles:
                 <input 
                     type="file" 
                     multiple
-                    accept={accept} 
+                    accept={acceptStr} 
                     style={{opacity: 0}} 
                     onChange={handleInputChange} 
                 />
