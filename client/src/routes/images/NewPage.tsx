@@ -6,7 +6,9 @@ import React, { useState } from "react";
 import {
     Controller, SubmitHandler, useFieldArray, useForm
 } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import FileDropZone from "src/components/FileDropZone";
+import SubmitFormButtons from "src/components/form/SubmitButtons";
 import { ImageLightBox } from 'src/components/ImageLightBox';
 
 export default function NewPage() {
@@ -41,8 +43,14 @@ function NewAlbumForm() {
 
     const [openState, setOpenState] = useState<{isOpen: boolean, index: number}>({isOpen: false, index: 0})
 
+    const navigate = useNavigate()
+    const onAbortClick = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        navigate("/bilder")
+    }
+
     const onSubmit: SubmitHandler<NewImageAlbum> = album => {
         // todo
+        console.log(album)
     }
 
     const handleFileDrop = (files: File[]) => {
@@ -136,6 +144,11 @@ function NewAlbumForm() {
                             </Grid>
                         </React.Fragment>
                     ))}
+                    <Grid item xs={12}>
+                        <SubmitFormButtons 
+                            onAbort={onAbortClick}
+                        />
+                    </Grid>
                 </Grid>
             </form>
 
