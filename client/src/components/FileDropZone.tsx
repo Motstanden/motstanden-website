@@ -2,9 +2,8 @@ import BlockIcon from '@mui/icons-material/Block';
 import CheckIcon from '@mui/icons-material/Check';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import { SvgIconProps } from "@mui/material";
+import { SvgIconProps, useTheme, alpha } from "@mui/material";
 import { useState } from "react";
-import styles from "./FileDropZone.module.css";
 
 // -------------------------------------------------------------------
 //  File types
@@ -41,11 +40,21 @@ type FileType = ImageFileType & AudioFileType & VideoFileType & AppFileType
 
 
 export default function FileDropZone({ onChange, accept }: {onChange: (newFiles: File[]) => void, accept: FileType | FileType[]}) {
-
+    const theme = useTheme()
+    
     const [isDragOver, setIsDragOver] = useState(false)
+    const [isMouseOver, setIsMouseOver] = useState(false)
     const [errorMsg, setErrorMsg] = useState<string | undefined>()
 
     const acceptStr = Array.isArray(accept) ? accept.join(",") : accept
+
+    const handleMouseEnter = () => {
+        setIsMouseOver(true)
+    }
+
+    const handleMouseLeave = () => {
+        setIsMouseOver(false)
+    }
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault()
@@ -68,8 +77,10 @@ export default function FileDropZone({ onChange, accept }: {onChange: (newFiles:
 
         for(let i = 0; i < items.length; i++) {
             const item = items[i]
+
             if(item.kind !== "file")
                 return setErrorMsg("Ikke en fil")
+
         }
 
     }
@@ -77,6 +88,7 @@ export default function FileDropZone({ onChange, accept }: {onChange: (newFiles:
     const handleDragLeave = (_: React.DragEvent<HTMLDivElement>) => {
         setIsDragOver(false)
         setErrorMsg(undefined)
+        setIsMouseOver(false)
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,39 +110,69 @@ export default function FileDropZone({ onChange, accept }: {onChange: (newFiles:
     }
 
     const dropState: DropState = isDragOver ? ( errorMsg ? "dragError" : "dragAccept" ) : "idle"
+    let zoneStyle: React.CSSProperties = {}
+
+    if(dropState === "idle") {
+        zoneStyle = isMouseOver ? {
+            color: theme.palette.secondary.main,
+            backgroundColor: alpha(theme.palette.secondary.main, 0.05)
+
+        } : {
+            borderStyle: "dashed",
+            opacity: 0.5  
+        }
+    }
+
+    if(dropState === "dragAccept") zoneStyle = {
+        color: theme.palette.success.main,
+        backgroundColor: alpha(theme.palette.success.main, 0.05)
+    }
+
+    if(dropState === "dragError") zoneStyle = {
+        color: theme.palette.error.main,
+        backgroundColor: alpha(theme.palette.error.main, 0.05)
+    }
 
     return (
-            <label>
-                <input 
-                    type="file" 
-                    multiple
-                    accept={acceptStr} 
-                    style={{opacity: 0}} 
-                    onChange={handleInputChange} 
+        <label>
+            <input 
+                type="file" 
+                multiple
+                accept={acceptStr} 
+                style={{opacity: 0}} 
+                onChange={handleInputChange}
+            />
+            <div 
+                onDrop={handleDrop} 
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                onDragOver={handleDragOver}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                style={{
+                    height: "150px",
+                    borderRadius: "15px",
+                    cursor: "pointer",
+                    borderWidth: "1.4px",
+                    borderStyle: "solid",
+
+                    ...zoneStyle,
+
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+                >
+                <DropFeedback 
+                    dropState={dropState}
+                    idleMsg="Dra og slipp, eller klikk"
+                    phoneIdleMsg="Klikk for å laste opp"
+                    errorMsg={errorMsg ?? ""}
+                    acceptMsg={"Slipp"}
                 />
-                <div 
-                    className={styles.dropZone} 
-                    onDrop={handleDrop} 
-                    onDragEnter={handleDragEnter}
-                    onDragLeave={handleDragLeave}
-                    onDragOver={handleDragOver}
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center"
-                    }}
-                    >
-                    <DropFeedback 
-                        dropState={dropState}
-                        idleMsg="Dra og slipp, eller klikk"
-                        phoneIdleMsg="Klikk for å laste opp"
-                        errorMsg={errorMsg ?? ""}
-                        acceptMsg={"Slipp"}
-                    />
-                </div>
-            </label>
-            
+            </div>
+        </label>
     )
 }
 
@@ -179,7 +221,7 @@ function DropFeedback( {
     return (
         <>
             <div style={{
-                pointerEvents: "none"
+                pointerEvents: "none",
             }}>
                 {icon}
             </div>
@@ -187,7 +229,7 @@ function DropFeedback( {
                 style={{
                     fontSize: "small",
                     opacity: 0.7,
-                    pointerEvents: "none"
+                    pointerEvents: "none",
                 }}
             >
                 {msg}
