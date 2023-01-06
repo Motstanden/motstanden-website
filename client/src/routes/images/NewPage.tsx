@@ -3,9 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Grid, IconButton, MenuItem, Stack, TextField } from "@mui/material";
 import { NewImage, NewImageAlbum } from "common/interfaces";
 import React, { useState } from "react";
-import {
-    Controller, SubmitHandler, useFieldArray, useForm
-} from "react-hook-form";
+import { Control, SubmitHandler, useController, UseControllerProps, useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import FileDropZone from "src/components/FileDropZone";
 import SubmitFormButtons from "src/components/form/SubmitButtons";
@@ -82,10 +80,9 @@ function NewAlbumForm() {
                         />
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <Controller 
+                        <SelectIsPublic 
                             control={control} 
                             name="isPublic" 
-                            render={ ({ field }) => <SelectIsPublic value={field.value} onChange={field.onChange} name={field.name} />}
                         />
                     </Grid>
                     <Grid item xs={12} my={4    }>
@@ -100,15 +97,9 @@ function NewAlbumForm() {
                                         fullWidth
                                         {...register(`images.${index}.caption`, {  })}
                                     />
-                                    <Controller 
+                                    <SelectIsPublic 
                                         control={control} 
                                         name={`images.${index}.isPublic`} 
-                                        render={ ({ field }) => 
-                                            <SelectIsPublic 
-                                                value={field.value} 
-                                                onChange={field.onChange} 
-                                                name={field.name} 
-                                            />}
                                     />
                                 </Stack>
                             </Grid>
@@ -165,24 +156,23 @@ function NewAlbumForm() {
     )
 }
 
-function SelectIsPublic({
-    onChange, 
-    value, 
-    name, 
-}: {
-    onChange: (value: boolean) => void, 
-    value: boolean,
-    name: string,
-}){
+// Same as UseControllerProps, but make control mandatory
+interface SelectIsPublicProps extends UseControllerProps<NewImageAlbum2> {
+    control: Control<NewImageAlbum2>
+}
+
+function SelectIsPublic(props:  SelectIsPublicProps){
+    const { field } = useController(props)
     return (
         <TextField 
             select
-            name={name}
             label="Synlighet"
             fullWidth
-            value={value ? "true" : "false"}
-            onChange={ (e) => onChange(e.target.value === "true") }
-            helperText={value ? "Synlig for alle i offentligheten..." : "Synlig for innloggede brukere..."}
+            name={field.name}
+            value={field.value ? "true" : "false"}
+            onBlur={field.onBlur}
+            onChange={ (e) => field.onChange(e.target.value === "true") }
+            helperText={field.value ? "Synlig for alle i offentligheten..." : "Synlig for innloggede brukere..."}
             FormHelperTextProps={{ style: { opacity: 0.7 } }}
         >
             <MenuItem value={"false"}>Privat</MenuItem>
