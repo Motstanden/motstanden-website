@@ -39,11 +39,18 @@ function NewAlbumForm() {
     const { register, handleSubmit, control, getValues } = useForm<NewImageAlbum2>({ defaultValues: emptyAlbum })
     const { fields, append, remove } = useFieldArray( { name: "images", control: control } )
 
-    const [openState, setOpenState] = useState<{isOpen: boolean, index: number}>({isOpen: false, index: 0})
-
     const navigate = useNavigate()
-    const onAbortClick = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const onAbortClick = () => {
         navigate("/bilder")
+    }
+    
+    const [openState, setOpenState] = useState<{isOpen: boolean, index: number}>({isOpen: false, index: 0})
+    const onImageClick = (index: number) => {
+        setOpenState({isOpen: true, index: index})
+    }
+
+    const onRemoveImageClick = (index: number) => {
+        remove(index)
     }
 
     const onSubmit: SubmitHandler<NewImageAlbum> = album => {
@@ -88,6 +95,7 @@ function NewAlbumForm() {
                     <Grid item xs={12} my={4    }>
                         <FileDropZone accept="image/*" onChange={handleFileDrop} /> 
                     </Grid>
+
                     {fields.map( (image, index) => (
                         <React.Fragment key={image.id}>
                             <Grid item xs={12} sm={6}>
@@ -104,37 +112,15 @@ function NewAlbumForm() {
                                 </Stack>
                             </Grid>
                             <Grid item xs={12} sm={6} height="300px">
-                                    <div style={{
-                                        height: "100%",
-                                        backgroundColor: "black",
-                                        textAlign: "center",
-                                        position: "relative",
-                                    }}>
-                                        <img 
-                                            src={image.url} 
-                                            onClick={() => setOpenState({isOpen: true, index: index})}
-                                            onMouseEnter={() => document.body.style.cursor = "pointer"}
-                                            onMouseLeave={() => document.body.style.cursor = "auto"}
-                                            style={{
-                                                maxWidth: "100%",
-                                                height: "100%",
-                                                objectFit: "cover",
-                                                marginBlock: "auto"
-                                            }} />
-                                        <IconButton 
-                                            aria-label="Fjern bilde"
-                                            onClick={ _ => remove(index)}
-                                            style={{
-                                                position: "absolute",
-                                                top: "0px",
-                                                right: "0px",
-                                            }}>
-                                            <CloseIcon />
-                                        </IconButton>
-                                    </div>
+                                <Img
+                                    onRemoveClick={_ => onRemoveImageClick(index)} 
+                                    src={image.url} 
+                                    onClick={ _ => onImageClick(index)}
+                                /> 
                             </Grid>
                         </React.Fragment>
                     ))}
+
                     <Grid item xs={12}>
                         <SubmitFormButtons 
                             onAbort={onAbortClick}
@@ -178,5 +164,55 @@ function SelectIsPublic(props:  SelectIsPublicProps){
             <MenuItem value={"false"}>Privat</MenuItem>
             <MenuItem value={"true"}>Offentlig</MenuItem>
         </TextField>
+    )
+}
+
+function Img({
+    src, 
+    onClick,
+    onRemoveClick
+}: {
+    src: string, 
+    onRemoveClick?: React.MouseEventHandler<HTMLButtonElement>,
+    onClick?: React.MouseEventHandler<HTMLImageElement>,
+}) {
+
+    const onMouseEnter = () => {
+        document.body.style.cursor = "pointer"
+    }
+
+    const onMouseLeave = () => {
+        document.body.style.cursor = "auto"
+    }
+
+    return (
+        <div style={{
+            height: "100%",
+            backgroundColor: "black",
+            textAlign: "center",
+            position: "relative",
+        }}>
+            <img 
+                src={src} 
+                onClick={onClick}
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
+                style={{
+                    maxWidth: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    marginBlock: "auto"
+                }} />
+            <IconButton
+                aria-label="Fjern bilde"
+                onClick={onRemoveClick}
+                style={{
+                    position: "absolute",
+                    top: "0px",
+                    right: "0px",
+                }}>
+                <CloseIcon />
+            </IconButton>
+        </div>
     )
 }
