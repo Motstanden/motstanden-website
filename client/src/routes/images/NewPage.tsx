@@ -93,7 +93,7 @@ function NewAlbumForm() {
                         />
                     </Grid>
                     <Grid item xs={12} my={4    }>
-                        <FileDropZone accept="image/*" onChange={handleFileDrop} /> 
+                        <FileDropZone accept={["image/avif", "image/jpeg", "image/png", "image/webp"]} onChange={handleFileDrop} /> 
                     </Grid>
 
                     {fields.map( (image, index) => (
