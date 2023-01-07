@@ -2,7 +2,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import CheckIcon from '@mui/icons-material/Check';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import { SvgIconProps, useTheme, alpha, Theme, useMediaQuery } from "@mui/material";
+import { alpha, SvgIconProps, Theme, useMediaQuery, useTheme } from "@mui/material";
 import { useState } from "react";
 
 // -------------------------------------------------------------------
@@ -35,7 +35,7 @@ type AppFileType =
     "application/zip"
 
 
-type FileType = ImageFileType & AudioFileType & VideoFileType & AppFileType
+type FileType = ImageFileType | AudioFileType | VideoFileType | AppFileType
 // -------------------------------------------------------------------
 
 
@@ -63,7 +63,7 @@ export default function FileDropZone({ onChange, accept }: {onChange: (newFiles:
     }
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault()  // Prevent browser from handling
+        e.preventDefault()    // Prevent default behavior (Prevent file from being opened)
     }
 
     const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
@@ -75,14 +75,26 @@ export default function FileDropZone({ onChange, accept }: {onChange: (newFiles:
         if(!items)
             return setErrorMsg("");
 
+
+        const invalidTypes: string[] = []
         for(let i = 0; i < items.length; i++) {
             const item = items[i]
 
-            if(item.kind !== "file")
-                return setErrorMsg("Ikke en fil")
+            if(item.kind !== "file") 
+                return setErrorMsg(items.length === 1 ? "Ikke en fil" : "En eller flere elementer er ikke en fil")
 
+                
+            if(!typeMatches(item.type, accept)) {
+                const prettyTypeStr = typeToStr(item.type)
+                if(!invalidTypes.includes(prettyTypeStr)) {
+                    invalidTypes.push(prettyTypeStr);
+                }
+                continue;
+            }
         }
-
+    
+        if(invalidTypes.length > 0) 
+            return setErrorMsg(invalidTypes.length === 1 ? `${invalidTypes[0]} er ikke en gyldig filtype` : `Ugyldige filtyper: ${invalidTypes.join(", ")} `)
     }
 
     const handleDragLeave = (_: React.DragEvent<HTMLDivElement>) => {
@@ -238,4 +250,47 @@ function DropFeedback( {
             </div>
         </>
     )
+}
+
+function typeMatches(type: string, accept: FileType | FileType[]): boolean {
+
+    const isMatch = (b: string, a: FileType) => {
+        const [baseA, subTypeA] = a.split("/")
+        const [baseB, subTypeB] = b.split("/")
+    
+        if(a.endsWith("*"))
+            return baseA === baseB
+    
+        return baseA === baseB && subTypeA === subTypeB      
+    }
+
+    if(typeof accept === "string") {
+        return isMatch(type, accept)
+    }
+
+    for(let i = 0; i < accept.length; i++) {
+        if(isMatch(type, accept[i])) {
+            return true;
+        }
+    }
+    return false
+}
+
+function typeToStr(type: string) {
+
+    if(type === "text/plain")
+        return "tekst"
+
+    if(type.startsWith("image") || type.startsWith("audio") || type.startsWith("video"))
+        return type.split("/")[1]
+
+    if(type.startsWith("application")){
+        if(type.endsWith("pdf"))
+            return "pdf"
+
+        if(type.endsWith("zip"))
+            return "zip"
+    }
+
+    return type
 }
