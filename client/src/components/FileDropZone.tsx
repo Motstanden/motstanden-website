@@ -2,7 +2,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import CheckIcon from '@mui/icons-material/Check';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import { SvgIconProps, useTheme, alpha } from "@mui/material";
+import { SvgIconProps, useTheme, alpha, Theme, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 
 // -------------------------------------------------------------------
@@ -167,7 +167,7 @@ export default function FileDropZone({ onChange, accept }: {onChange: (newFiles:
                 <DropFeedback 
                     dropState={dropState}
                     idleMsg="Dra og slipp, eller klikk"
-                    phoneIdleMsg="Klikk for å laste opp"
+                    phoneIdleMsg="Trykk for å laste opp"
                     errorMsg={errorMsg ?? ""}
                     acceptMsg={"Slipp"}
                 />
@@ -192,7 +192,9 @@ function DropFeedback( {
     acceptMsg: string
 }) {
 
-    const isMobile = false // TODO
+    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+    const isTouch = useMediaQuery("(pointer: coarse)")
+    const isMobile = isSmallScreen && isTouch   // This check is not always correct, but it is good enough for now...
 
     const iconProps: SvgIconProps = {
         fontSize: "large"
