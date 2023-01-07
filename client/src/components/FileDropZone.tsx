@@ -38,6 +38,7 @@ type AppFileType =
 type FileType = ImageFileType | AudioFileType | VideoFileType | AppFileType
 // -------------------------------------------------------------------
 
+type DropState = "idle" | "dragError" | "dragAccept"
 
 export default function FileDropZone({ onChange, accept }: {onChange: (newFiles: File[]) => void, accept: FileType | FileType[]}) {
     const theme = useTheme()
@@ -46,34 +47,12 @@ export default function FileDropZone({ onChange, accept }: {onChange: (newFiles:
     const [isMouseOver, setIsMouseOver] = useState(false)
     const [errorMsg, setErrorMsg] = useState<string | undefined>()
 
-    const acceptStr = Array.isArray(accept) ? accept.join(",") : accept
-
     const handleMouseEnter = () => {
         setIsMouseOver(true)
     }
 
     const handleMouseLeave = () => {
         setIsMouseOver(false)
-    }
-
-    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault()
-        setIsDragOver(false)
-        setErrorMsg(undefined)
-
-        if(errorMsg || !onChange)
-            return;
-        
-        const files  = e.dataTransfer.files 
-
-        if(files === null)
-            return;
-
-        const newFiles: File[] = [];
-        for(const file of files) {
-            newFiles.push(file)
-        }
-        onChange(newFiles)
     }
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -89,51 +68,57 @@ export default function FileDropZone({ onChange, accept }: {onChange: (newFiles:
         if(!items)
             return setErrorMsg("");
 
-
-        const invalidTypes: string[] = []
         for(let i = 0; i < items.length; i++) {
             const item = items[i]
 
             if(item.kind !== "file") 
                 return setErrorMsg(items.length === 1 ? "Ikke en fil" : "En eller flere elementer er ikke en fil")
 
-                
-            if(!typeMatches(item.type, accept)) {
-                const prettyTypeStr = typeToStr(item.type)
-                if(!invalidTypes.includes(prettyTypeStr)) {
-                    invalidTypes.push(prettyTypeStr);
-                }
-                continue;
-            }
+            if(!typeMatches(item.type, accept)) 
+                return setErrorMsg(`Ugyldig filtype: ${typeToStr(item.type)}`)
         }
-    
-        if(invalidTypes.length > 0) 
-            return setErrorMsg(invalidTypes.length === 1 ? `${invalidTypes[0]} er ikke en gyldig filtype` : `Ugyldige filtyper: ${invalidTypes.join(", ")} `)
     }
-
+    
     const handleDragLeave = (_: React.DragEvent<HTMLDivElement>) => {
         setIsDragOver(false)
         setErrorMsg(undefined)
         setIsMouseOver(false)
     }
+    
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault()
+        setIsDragOver(false)
+        setErrorMsg(undefined)
+
+        if(errorMsg)
+            return;
+        
+        invokeOnChange(e.dataTransfer.files)
+    }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        invokeOnChange(e.target.files)
+        e.target.value = ""
+        setIsMouseOver(false)
+    }
+
+    const invokeOnChange = ( fileList: FileList | null ) => {
         if(!onChange)
             return;
 
-        const files  = e.target.files 
-
-        if(files === null)
+        if(fileList === null)
             return;
 
-        const newFiles: File[] = [];
-        for(const file of files) {
-            // TODO: Validate file here
-            newFiles.push(file)
-        }
-        onChange(newFiles)
-    }
+        const files: File[] = [...fileList]
 
+        for(let i = 0; i < files.length; i++) {
+            if(!typeMatches(files[i].type, accept)) {
+                return;
+            }
+        }
+
+        onChange(files)
+    }
 
     const dropState: DropState = isDragOver ? ( errorMsg ? "dragError" : "dragAccept" ) : "idle"
     let zoneStyle: React.CSSProperties = {}
@@ -160,13 +145,19 @@ export default function FileDropZone({ onChange, accept }: {onChange: (newFiles:
     }
 
     return (
-        <label>
+        <label style={{position: "relative"}}>
             <input 
                 type="file" 
                 multiple
-                accept={acceptStr} 
-                style={{opacity: 0}} 
-                onChange={handleInputChange}
+                accept={Array.isArray(accept) ? accept.join(",") : accept} 
+                style={{
+                    opacity: 0,     // Note: opacity is used to hide the file input instead of 'visibility: hidden' or 'display: none', because assistive technology interprets the latter two styles to mean the file input isn't interactive.
+                    top: 15,
+                    left: 15,
+                    position: "absolute",
+                    pointerEvents: "none"
+                }} 
+                onInput={handleInputChange}
             />
             <div 
                 onDrop={handleDrop} 
@@ -202,8 +193,6 @@ export default function FileDropZone({ onChange, accept }: {onChange: (newFiles:
     )
 }
 
-type DropState = "idle" | "dragError" | "dragAccept"
-
 function DropFeedback( { 
     dropState, 
     idleMsg,
@@ -236,7 +225,7 @@ function DropFeedback( {
         case 'dragError': {
             msg = errorMsg
             icon = <BlockIcon {...iconProps}/>
-            break;
+            break
         }
         case 'dragAccept': {
             msg = acceptMsg
@@ -293,7 +282,7 @@ function typeMatches(type: string, accept: FileType | FileType[]): boolean {
 function typeToStr(type: string) {
 
     if(type === "text/plain")
-        return "tekst"
+        return "tekstfil"
 
     if(type.startsWith("image") || type.startsWith("audio") || type.startsWith("video"))
         return type.split("/")[1]
