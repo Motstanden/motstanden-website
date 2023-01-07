@@ -60,6 +60,20 @@ export default function FileDropZone({ onChange, accept }: {onChange: (newFiles:
         e.preventDefault()
         setIsDragOver(false)
         setErrorMsg(undefined)
+
+        if(errorMsg || !onChange)
+            return;
+        
+        const files  = e.dataTransfer.files 
+
+        if(files === null)
+            return;
+
+        const newFiles: File[] = [];
+        for(const file of files) {
+            newFiles.push(file)
+        }
+        onChange(newFiles)
     }
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -110,16 +124,16 @@ export default function FileDropZone({ onChange, accept }: {onChange: (newFiles:
         const files  = e.target.files 
 
         if(files === null)
-            return onChange([]);
+            return;
 
         const newFiles: File[] = [];
         for(const file of files) {
-
             // TODO: Validate file here
             newFiles.push(file)
         }
         onChange(newFiles)
     }
+
 
     const dropState: DropState = isDragOver ? ( errorMsg ? "dragError" : "dragAccept" ) : "idle"
     let zoneStyle: React.CSSProperties = {}
