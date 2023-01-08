@@ -2,9 +2,8 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Breadcrumbs, ImageList, ImageListItem, Link, Theme, Typography, useMediaQuery } from "@mui/material";
 import { ImageAlbum } from "common/interfaces";
 import dayjs from 'dayjs';
-import { useState } from "react";
 import { Link as RouterLink, useOutletContext } from "react-router-dom";
-import { ImageLightBox } from 'src/components/ImageLightBox';
+import { ImageLightBox, useIndexParam } from 'src/components/ImageLightBox';
 
 export default function AlbumPage() {
     const album: ImageAlbum = useOutletContext<ImageAlbum>()
@@ -71,7 +70,19 @@ function CreationInfo( { created, updated}: {created: string, updated: string}) 
 
 function AlbumViewer( { album }: { album: ImageAlbum }  ) {
 
-    const [openState, setOpenState] = useState<{isOpen: boolean, index: number}>({isOpen: false, index: 0})
+    const [indexParam, setIndexParam] = useIndexParam()     // eslint-disable-line @typescript-eslint/no-unused-vars
+
+    const onImageClick = (index: number) => {
+        setIndexParam(index + 1)
+    }
+
+    const onMouseEnterImage = () => {
+        document.body.style.cursor = "pointer"   
+    }
+
+    const onMouseLeaveImage = () => {
+        document.body.style.cursor = "auto"   
+    }
 
     const isSmallScreen = useMediaQuery((theme: Theme)  => theme.breakpoints.between(410, "md"))
     const isMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.only("md"))
@@ -81,14 +92,6 @@ function AlbumViewer( { album }: { album: ImageAlbum }  ) {
     if(isSmallScreen) listProps  = {cols: 2, gap: 10};
     if(isMediumScreen) listProps = {cols: 3, gap: 20};
     if(isLargeScreen) listProps  = {cols: 4, gap: 30};
-
-    const onMouseEnterImage = (_: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
-        document.body.style.cursor = "pointer"   
-    }
-
-    const onMouseLeaveImage = (_: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
-        document.body.style.cursor = "auto"   
-    }
 
     return (
         <>
@@ -100,7 +103,7 @@ function AlbumViewer( { album }: { album: ImageAlbum }  ) {
                             onMouseLeave={onMouseLeaveImage}
                             src={`/${image.url}`} 
                             loading="lazy"
-                            onClick={() => setOpenState({isOpen: true, index: index})}
+                            onClick={() => onImageClick(index)}
                             style={{
                                 maxHeight: "250px",
                                 borderRadius: "10px"
@@ -109,11 +112,7 @@ function AlbumViewer( { album }: { album: ImageAlbum }  ) {
                     </ImageListItem>
                 ))}
             </ImageList>
-            <ImageLightBox 
-                images={album.images.map( img => `/${img.url}`)}
-                open={openState.isOpen} 
-                openIndex={openState.index} 
-                onClose={() => setOpenState({isOpen: false, index: 0})} />
+            <ImageLightBox images={album.images.map( img => `/${img.url}`)} />
         </>
     )
 }

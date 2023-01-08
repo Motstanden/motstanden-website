@@ -2,12 +2,12 @@ import { DevTool } from "@hookform/devtools";
 import CloseIcon from '@mui/icons-material/Close';
 import { Grid, IconButton, MenuItem, Stack, TextField } from "@mui/material";
 import { NewImage, NewImageAlbum } from "common/interfaces";
-import React, { useState } from "react";
+import React from "react";
 import { Control, SubmitHandler, useController, UseControllerProps, useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import FileDropZone from "src/components/FileDropZone";
 import SubmitFormButtons from "src/components/form/SubmitButtons";
-import { ImageLightBox } from 'src/components/ImageLightBox';
+import { ImageLightBox, useIndexParam } from 'src/components/ImageLightBox';
 
 export default function NewPage() {
     return (
@@ -44,9 +44,9 @@ function NewAlbumForm() {
         navigate("/bilder")
     }
     
-    const [openState, setOpenState] = useState<{isOpen: boolean, index: number}>({isOpen: false, index: 0})
+    const [indexParam, setIndexParam] = useIndexParam()     // eslint-disable-line @typescript-eslint/no-unused-vars
     const onImageClick = (index: number) => {
-        setOpenState({isOpen: true, index: index})
+        setIndexParam(index + 1)
     }
 
     const onRemoveImageClick = (index: number) => {
@@ -129,13 +129,7 @@ function NewAlbumForm() {
                 </Grid>
             </form>
 
-            {fields.length > 0  &&
-                <ImageLightBox 
-                    images={fields.map(image => image.url)}
-                    open={openState.isOpen}
-                    openIndex={openState.index}
-                    onClose={() => setOpenState({isOpen: false, index: 0})} />
-            }
+            <ImageLightBox images={fields.map(image => image.url)} />
 
             <DevTool control={control} /> {/* set up dev tool for react hook form */}
         </>

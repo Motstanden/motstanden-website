@@ -2,48 +2,100 @@ import CloseIcon from '@mui/icons-material/Close';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { IconButton, Modal, Theme, Tooltip, useMediaQuery } from "@mui/material";
-import { useEffect, useState } from "react";
+import { strToNumber } from 'common/utils';
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useSwipeable } from 'react-swipeable';
 
-export function ImageLightBox( {
-    images, 
-    onClose,
-    open,
-    openIndex, 
-}: {
-    images: string[], 
-    onClose: VoidFunction
-    open: boolean
-    openIndex: number, 
-} ) {
-    
-    const [index, setIndex] = useState<number | undefined>(undefined)
-    useEffect( () => open ? setIndex(openIndex) : setIndex(undefined), [ open ])
+
+export function useIndexParam(): [
+    number | undefined, 
+    (newValue: number | undefined) => void
+] {
+
+    const [searchParams, setSearchParams] = useSearchParams()
+    const index = strToNumber(searchParams.get("bildenummer") ?? undefined)
+
+    const setIndex = (newValue: number | undefined) => {
+        if(newValue === undefined) {
+            searchParams.delete("bildenummer")
+        } else {
+            searchParams.set("bildenummer", `${newValue}`)
+        }
+
+        setSearchParams(searchParams, {replace: index !== undefined})
+    }
+
+    return [index, setIndex]
+}
+
+export function ImageLightBox( { images }: { images: string[]} ) {
+    const [index, setIndex] = useIndexParam()
+
+    useEffect( () => {
+        if(images.length <= 0){
+            setIndex(undefined)
+        }
+    }, [images.length])
+
+
+    if(index === undefined)
+        return <></>
+
+    const onClose = () => setIndex(undefined)
+
+    const actualIndex = (index + images.length - 1) % images.length
 
     const navigateNext = () => {
-        const calcNext = (index: number) => (index + 1) % images.length 
-        setIndex( currentIndex => calcNext(currentIndex ?? openIndex))
+        const nextIndex =  (actualIndex + 1 % images.length) + 1
+        setIndex(nextIndex)
     }
 
     const navigateBack = () => {
-        const calcPrev = (index: number) => (index - 1 + images.length) % images.length 
-        setIndex( currentIndex => calcPrev(currentIndex ?? openIndex))
+        const prevIndex = ((actualIndex + images.length - 1 ) % images.length) + 1 
+        setIndex(prevIndex)
     }
+
+    return (
+        <ImageViewer 
+            images={images}
+            index={actualIndex}
+            onClose={onClose}
+            onNavigateNext={navigateNext}
+            onNavigateBack={navigateBack}
+        />
+    )
+
+}
+
+function ImageViewer( { 
+    images, 
+    index, 
+    onClose, 
+    onNavigateNext, 
+    onNavigateBack 
+}: { 
+    images: string[]
+    index: number,
+    onClose: VoidFunction
+    onNavigateNext: VoidFunction,
+    onNavigateBack: VoidFunction
+} ) {
 
     const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         const { key } = e;
         if(key === "ArrowRight") {
             e.preventDefault()
-            navigateNext()
+            onNavigateNext()
         } else if(key === "ArrowLeft") {
             e.preventDefault()
-            navigateBack()
+            onNavigateBack()
         }
     }
 
     const swipeHandlers = useSwipeable({
-        onSwipedLeft: navigateNext,
-        onSwipedRight: navigateBack,
+        onSwipedLeft: onNavigateNext,
+        onSwipedRight: onNavigateBack,
         onSwipedUp: onClose,
         onSwipedDown: onClose,
         preventScrollOnSwipe: true
@@ -51,7 +103,7 @@ export function ImageLightBox( {
 
     return (
         <Modal 
-            open={open} 
+            open={true} 
             onKeyDown={onKeyDown}
             onClose={onClose}
             {...swipeHandlers}
@@ -66,7 +118,7 @@ export function ImageLightBox( {
         >
             <div>
                 <img 
-                    src={`${images[index ?? openIndex]}`} 
+                    src={`${images[index]}`} 
                     style={{
                         maxWidth: "99vw", 
                         maxHeight: "99vh",
@@ -90,8 +142,8 @@ export function ImageLightBox( {
                 </Tooltip>
                 <NavigationButtons 
                     hide={images.length <= 1} 
-                    onBackClick={navigateBack}
-                    onForwardClick={navigateNext}
+                    onBackClick={onNavigateBack}
+                    onForwardClick={onNavigateNext}
                 />
                 <span style={{
                     position: "absolute",
@@ -100,7 +152,7 @@ export function ImageLightBox( {
                     fontSize: "x-large",
                     opacity: 0.5
                 }}>
-                    {(index ?? openIndex) + 1}/{images.length}
+                    {index + 1}/{images.length}
                 </span>
             </div>
         </Modal>
