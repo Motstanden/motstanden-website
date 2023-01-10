@@ -50,7 +50,7 @@ async function onSendMagicLinkRequest(email: string, href: string, code: string)
 
 async function createMagicLinkHtml(email: string, href: string, code: string) {
 
-    const filePath = new URL(`../../assets/mail-templates/MagicLink.htm`, import.meta.url)
+    const filePath = new URL(`../../assets/mail-templates/MagicLink.html`, import.meta.url)
     const html = await fs.readFile(filePath, "utf-8")
 
     const date = new Date().toLocaleString("no-no", { timeZone: "cet" })
