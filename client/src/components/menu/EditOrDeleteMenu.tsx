@@ -5,7 +5,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ListItemIcon, ListItemText, MenuItem } from "@mui/material";
 
 import React from "react";
-import { IconPopupMenu } from "src/components/menu/IconPopupMenu";
+import { IconPopupMenu, IconSize } from "src/components/menu/IconPopupMenu";
 
 export function EditOrDeleteMenu({
     onEditClick,
@@ -16,7 +16,9 @@ export function EditOrDeleteMenu({
     onMouseLeave,
     onMenuOpen,
     onMenuClose,
-    ariaLabel
+    ariaLabel,
+    style,
+    size
 }: {
     onEditClick: React.MouseEventHandler<HTMLLIElement>,
     onDeleteClick: React.MouseEventHandler<HTMLLIElement>,
@@ -26,17 +28,21 @@ export function EditOrDeleteMenu({
     onMouseLeave?: React.MouseEventHandler<HTMLButtonElement> | undefined,
     onMenuOpen?: VoidFunction,
     onMenuClose?: VoidFunction,
-    ariaLabel?: string
+    ariaLabel?: string,
+    style?: React.CSSProperties,
+    size?: IconSize,    
 }) {
     return (
         <IconPopupMenu
-            icon={iconOrientation === "vertical" ? <MoreVertIcon/> : <MoreHorizIcon/>}
+            style={style}
+            icon={iconOrientation === "vertical" ? <MoreVertIcon /> : <MoreHorizIcon fontSize={size}/>}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
             onMenuOpen={onMenuOpen}
             onMenuClose={onMenuClose}
             disabled={disabled}
             ariaLabel={ariaLabel}
+            size={size}
         >
             <MenuItem style={{ minHeight: "50px", minWidth: "180px" }} divider={true} onClick={onEditClick} >
                 <ListItemIcon>

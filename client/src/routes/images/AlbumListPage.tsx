@@ -1,20 +1,21 @@
 import AddIcon from '@mui/icons-material/Add';
-import { alpha, Theme, useMediaQuery, useTheme } from "@mui/material";
+import { Alert, alpha, Snackbar, Theme, useMediaQuery, useTheme } from "@mui/material";
 import { ImageAlbum } from "common/interfaces";
 import { useState } from 'react';
 import { Link, LinkProps, useOutletContext } from "react-router-dom";
+import { EditOrDeleteMenu } from 'src/components/menu/EditOrDeleteMenu';
     
 export default function AlbumListPage() {
     const data: ImageAlbum[] = useOutletContext<ImageAlbum[]>()
     return (
         <>
             <h2>Bilder</h2>
-            <Albums items={data}/>
+            <AlbumGrid items={data}/>
         </>
     )
 }
 
-function Albums({items}: {items: ImageAlbum[]}) {
+function AlbumGrid({items}: {items: ImageAlbum[]}) {
     const isSmallScreen = useMediaQuery((theme: Theme)  => theme.breakpoints.between(400, 800))
     const isMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.between(800, 1000))
     const isLargeScreen = useMediaQuery((theme: Theme)  => theme.breakpoints.up(1000))
@@ -33,13 +34,54 @@ function Albums({items}: {items: ImageAlbum[]}) {
         }}>
             <AddNewAlbum/>
             {items.map( album => (
-                <AlbumItem key={album.id} album={album}/>
+                <Album key={album.id} album={album}/>
             ))}
         </div>
     )
 }
 
-function AlbumItem( {album}: {album: ImageAlbum}) {
+function Album({album}: {album: ImageAlbum}) {
+    const [isEditing, setIsEditing] = useState(false)
+    const [errorMsg, setErrorMsg] = useState<string | undefined>()
+    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+    
+    const onEditClick = () => setIsEditing(true)
+
+    const onDeleteClick = () => {
+        if(album.imageCount > 0) 
+            return setErrorMsg("Kan bare slette tomme album")
+        
+        // TODO: Post delete message to server
+    }
+
+    const onSnackBarClose = () => setErrorMsg(undefined)
+
+    if(isEditing)
+        return (
+            <EditForm/>
+        )
+
+    return (
+        <>
+            <AlbumReadOnly 
+                album={album} 
+                onEditClick={onEditClick} 
+                onDeleteClick={onDeleteClick}/>
+            <Snackbar 
+                open={!!errorMsg} 
+                autoHideDuration={6000}
+                onClose={onSnackBarClose}
+                anchorOrigin={isSmallScreen ? {vertical: "bottom", horizontal: "center"} : undefined}
+            >
+                <Alert severity='error' onClose={onSnackBarClose}>
+                    {errorMsg}
+                </Alert>
+            </Snackbar>
+        </>
+    )
+}
+
+function AlbumReadOnly( {album, onEditClick, onDeleteClick}: {album: ImageAlbum, onEditClick: VoidFunction, onDeleteClick: VoidFunction}) {
 
     const linkProps: LinkProps = {
         to:`/bilder/${album.url}`, 
@@ -50,7 +92,10 @@ function AlbumItem( {album}: {album: ImageAlbum}) {
     }
  
     return (
-        <div>
+        <div style={{
+                position: "relative"
+            }}
+        >
             <Link {...linkProps}>
                 <img
                     src={`/${album.coverImageUrl}`} 
@@ -64,6 +109,16 @@ function AlbumItem( {album}: {album: ImageAlbum}) {
                     }}
                 />
             </Link>
+            <EditOrDeleteMenu 
+                onDeleteClick={onDeleteClick}
+                onEditClick={onEditClick}
+                iconOrientation="vertical"
+                style={{
+                    position: "absolute",
+                    top: "5px",
+                    right: "5px",
+                }}
+            />
             <Link {...linkProps} 
                 style={{
                     ...linkProps.style,
