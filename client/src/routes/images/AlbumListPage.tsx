@@ -1,6 +1,7 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Theme, useMediaQuery, useTheme } from "@mui/material";
+import { alpha, Theme, useMediaQuery, useTheme } from "@mui/material";
 import { ImageAlbum } from "common/interfaces";
+import { useState } from 'react';
 import { Link, LinkProps, useOutletContext } from "react-router-dom";
     
 export default function AlbumListPage() {
@@ -30,7 +31,7 @@ function Albums({items}: {items: ImageAlbum[]}) {
             rowGap: "20px",
             columnGap: "30px"
         }}>
-            <NewAlbumItem/>
+            <AddNewAlbum/>
             {items.map( album => (
                 <AlbumItem key={album.id} album={album}/>
             ))}
@@ -86,35 +87,86 @@ function AlbumItem( {album}: {album: ImageAlbum}) {
     )
 }
 
-function NewAlbumItem() {
+function AddNewAlbum() {
+
+    const [isForm, setIsForm] = useState(false)
+
+    if(isForm) 
+        return <EditForm/>
+
+    return <AddNewButton onClick={() => setIsForm(true)}/>
+}
+
+function EditForm() {
+    return (
+        <>
+            Redigerer
+        </>
+    )
+}
+
+function AddNewButton( {onClick}: {onClick: VoidFunction}) {
     const theme = useTheme()
+
+    const [isMouseOver, setIsMouseOver] = useState(false)
+
+    const onMouseEnter = () => setIsMouseOver(true)
+    const onMouseLeave = () => setIsMouseOver(false)
+
+    let boxStyle: React.CSSProperties = {}
+    let textStyle: React.CSSProperties = {}
+    if(isMouseOver) {
+        boxStyle = {
+            borderColor: theme.palette.secondary.main,
+            color: theme.palette.secondary.main,
+            opacity: 1,
+            backgroundColor: alpha(theme.palette.secondary.main, 0.05),
+            borderWidth: "1.5px",   
+        }
+        textStyle = {
+            textDecoration: "underline"
+        }
+    } 
+
     return (
         <div>
-            <div style={{
-                aspectRatio: 1,
-                borderRadius: "10px",
-                borderWidth: "1px",
-                borderStyle: "solid",
-                opacity: 0.5,
-                backgroundColor: theme.palette.action.hover,
-                cursor: "pointer",
-                
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column"
-            }}>
+            <div 
+                onClick={onClick}
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
+                style={{
+                    aspectRatio: 1,
+                    borderRadius: "10px",
+                    borderWidth: "1px",
+                    borderStyle: "solid",
+                    opacity: 0.5,
+                    backgroundColor: theme.palette.action.hover,
+                    cursor: "pointer",
+                    
+                    ...boxStyle,
+
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column"
+                }}
+            >
                 <AddIcon style={{fontSize: `50px`}}/>
             </div>
-            <div style={{
+            <span
+                onClick={onClick} 
+                style={{
                     cursor: "pointer",
                     fontSize: "large",
-                    marginTop: "15px",
-                    fontWeight: "bold"
-             }}
+                    marginTop: "8px",
+                    fontWeight: "bold",
+                    display: "inline-block",
+
+                    ...textStyle
+                }}
             >
                 Nytt album
-            </div>
+            </span>
         </div>
     )
 }
