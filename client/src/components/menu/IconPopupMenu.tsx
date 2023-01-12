@@ -1,4 +1,4 @@
-import { ClickAwayListener, IconButton, Menu } from "@mui/material";
+import { ClickAwayListener, IconButton, Menu, SxProps, Theme } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 
 export type IconSize = "small" | "medium" | "large"
@@ -13,7 +13,8 @@ export function IconPopupMenu({
     onMenuClose,
     ariaLabel,
     style,
-    size
+    size,
+    sx
 }: {
     children: React.ReactNode,
     icon: React.ReactNode,
@@ -24,7 +25,8 @@ export function IconPopupMenu({
     onMenuClose?: VoidFunction,
     ariaLabel?: string
     style?: React.CSSProperties,
-    size?: IconSize
+    size?: IconSize,
+    sx?: SxProps<Theme>,
 }) {
     const [isOpen, setIsOpen] = useState(false)
     const anchorEl = useRef(null)
@@ -49,6 +51,7 @@ export function IconPopupMenu({
                     aria-label={ariaLabel}
                     style={style}
                     size={size}
+                    sx={sx}
                 >
                     {icon}
                 </IconButton>

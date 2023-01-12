@@ -6,6 +6,7 @@ import { strToNumber } from 'common/utils';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSwipeable } from 'react-swipeable';
+import { iconButtonStaticStyle } from 'src/assets/style/buttonStyle';
 
 
 export function useIndexParam(): [
@@ -136,7 +137,9 @@ function ImageViewer( {
                             position: "absolute",
                             top: "5px",
                             right: "5px"
-                        }}>
+                        }}
+                        sx={iconButtonStaticStyle}
+                    >
                         <CloseIcon fontSize='large' />
                     </IconButton>
                 </Tooltip>
@@ -185,7 +188,9 @@ function NavigationButtons( {
                         top: "50%",
                         transform: 'translate(0, -50%)',
                         left: "5px",
-                    }}>
+                    }}
+                    sx={iconButtonStaticStyle}
+                >
                     <NavigateBeforeIcon fontSize='large'/>
                 </IconButton>
             </Tooltip>
@@ -198,7 +203,9 @@ function NavigationButtons( {
                         top: "50%",
                         transform: 'translate(0, -50%)',
                         right: "5px",
-                    }}>
+                    }}
+                    sx={iconButtonStaticStyle}
+                >
                     <NavigateNextIcon fontSize='large'/>
                 </IconButton>
             </Tooltip>

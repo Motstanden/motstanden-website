@@ -2,7 +2,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { ListItemIcon, ListItemText, MenuItem } from "@mui/material";
+import { ListItemIcon, ListItemText, MenuItem, SxProps, Theme } from "@mui/material";
 
 import React from "react";
 import { IconPopupMenu, IconSize } from "src/components/menu/IconPopupMenu";
@@ -18,7 +18,8 @@ export function EditOrDeleteMenu({
     onMenuClose,
     ariaLabel,
     style,
-    size
+    size,
+    sx
 }: {
     onEditClick: React.MouseEventHandler<HTMLLIElement>,
     onDeleteClick: React.MouseEventHandler<HTMLLIElement>,
@@ -30,7 +31,8 @@ export function EditOrDeleteMenu({
     onMenuClose?: VoidFunction,
     ariaLabel?: string,
     style?: React.CSSProperties,
-    size?: IconSize,    
+    size?: IconSize,   
+    sx?: SxProps<Theme> 
 }) {
     return (
         <IconPopupMenu
@@ -43,6 +45,7 @@ export function EditOrDeleteMenu({
             disabled={disabled}
             ariaLabel={ariaLabel}
             size={size}
+            sx={sx}
         >
             <MenuItem style={{ minHeight: "50px", minWidth: "180px" }} divider={true} onClick={onEditClick} >
                 <ListItemIcon>

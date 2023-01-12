@@ -3,6 +3,7 @@ import { Alert, alpha, Snackbar, Theme, useMediaQuery, useTheme } from "@mui/mat
 import { ImageAlbum } from "common/interfaces";
 import { useState } from 'react';
 import { Link, LinkProps, useOutletContext } from "react-router-dom";
+import { iconButtonStaticStyle } from 'src/assets/style/buttonStyle';
 import { EditOrDeleteMenu } from 'src/components/menu/EditOrDeleteMenu';
     
 export default function AlbumListPage() {
@@ -118,6 +119,7 @@ function AlbumReadOnly( {album, onEditClick, onDeleteClick}: {album: ImageAlbum,
                     top: "5px",
                     right: "5px",
                 }}
+                sx={iconButtonStaticStyle}
             />
             <Link {...linkProps} 
                 style={{
