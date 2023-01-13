@@ -29,7 +29,7 @@ router.get("/image-album/:id/images",
         }
         
         try {
-            const image = imageAlbumService.get(id)
+            const image = imageAlbumService.getImages(id)
             res.send(image)
         } catch (err) {
             console.log(err)

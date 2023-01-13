@@ -10,7 +10,7 @@ interface DbImage extends Omit<Image, "isPublic"> {
     isPublic: number
 }
 
-export function getAll(limit?: number): ImageAlbum[] {
+function getAll(limit?: number): ImageAlbum[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT 
@@ -18,10 +18,17 @@ export function getAll(limit?: number): ImageAlbum[] {
             title, 
             url,
             is_public as isPublic,
-            created_at as createdAt,
-            updated_at as updatedAt,
             cover_image_url as coverImageUrl,
-            image_count as imageCount
+            image_count as imageCount,
+
+            created_by_user_id as createdByUserId,
+            created_by_full_name as createdByName,
+            created_at as createdAt,
+
+            updated_by_user_id as updatedByUserId,
+            updated_by_full_name as updatedByName,
+            updated_at as updatedAt
+
         FROM 
             vw_image_album 
         ORDER BY 
@@ -43,7 +50,44 @@ export function getAll(limit?: number): ImageAlbum[] {
     return albums 
 }
 
-function get( id: number): Image[] {
+function get(albumId: number): ImageAlbum {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(`
+        SELECT 
+            image_album_id as id, 
+            title, 
+            url,
+            is_public as isPublic,
+            cover_image_url as coverImageUrl,
+            image_count as imageCount,
+
+            created_by_user_id as createdByUserId,
+            created_by_full_name as createdByName,
+            created_at as createdAt,
+
+            updated_by_user_id as updatedByUserId,
+            updated_by_full_name as updatedByName,
+            updated_at as updatedAt
+        FROM 
+            vw_image_album 
+        WHERE image_album_id = ?
+    `)
+    const dbAlbum: DbImageAlbum | undefined = stmt.get(albumId)
+    db.close()
+    
+    if(!dbAlbum)
+        throw "Bad data"
+        
+    const album = {
+        ...dbAlbum, 
+        isPublic: dbAlbum.isPublic === 1,
+        images: []
+    }
+
+    return album 
+}
+
+function getImages( albumId: number): Image[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT 
@@ -58,7 +102,7 @@ function get( id: number): Image[] {
             image
         WHERE image_album_id = ?
     `)
-    const dbResult: DbImage[] = stmt.all(id)
+    const dbResult: DbImage[] = stmt.all(albumId)
     db.close()
 
     if (!dbResult)
@@ -73,6 +117,7 @@ function get( id: number): Image[] {
 }
 
 export const imageAlbumService = {
+    get: get,
     getAll: getAll,
-    get: get
+    getImages: getImages
 }
