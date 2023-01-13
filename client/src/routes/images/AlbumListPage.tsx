@@ -1,11 +1,15 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Alert, alpha, Snackbar, Theme, useMediaQuery, useTheme } from "@mui/material";
+import BackspaceIcon from '@mui/icons-material/Backspace';
+import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
+import SaveIcon from '@mui/icons-material/Save';
+import { Alert, alpha, IconButton, MenuItem, Paper, Snackbar, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material";
 import { ImageAlbum } from "common/interfaces";
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { Link, LinkProps, useOutletContext } from "react-router-dom";
 import { iconButtonStaticStyle } from 'src/assets/style/buttonStyle';
 import { EditOrDeleteMenu } from 'src/components/menu/EditOrDeleteMenu';
-    
+
 export default function AlbumListPage() {
     const data: ImageAlbum[] = useOutletContext<ImageAlbum[]>()
     return (
@@ -59,7 +63,7 @@ function Album({album}: {album: ImageAlbum}) {
 
     if(isEditing)
         return (
-            <EditForm/>
+            <EditForm initialValue={album} imgSrc={`/${album.coverImageUrl}`} onAbortEdit={() => setIsEditing(false)}/>
         )
 
     return (
@@ -98,22 +102,14 @@ function AlbumReadOnly( {album, onEditClick, onDeleteClick}: {album: ImageAlbum,
             }}
         >
             <Link {...linkProps}>
-                <img
+                <Image 
                     src={`/${album.coverImageUrl}`} 
                     alt={album.title}
-                    loading="lazy"
-                    style={{
-                        width: `100%`,
-                        aspectRatio: 1,
-                        objectFit: "cover",
-                        borderRadius: "10px"
-                    }}
                 />
             </Link>
             <EditOrDeleteMenu 
                 onDeleteClick={onDeleteClick}
                 onEditClick={onEditClick}
-                iconOrientation="vertical"
                 style={{
                     position: "absolute",
                     top: "5px",
@@ -149,17 +145,146 @@ function AddNewAlbum() {
     const [isForm, setIsForm] = useState(false)
 
     if(isForm) 
-        return <EditForm/>
+        return <EditForm initialValue={{isPublic: false, title: ""}} onAbortEdit={() => setIsForm(false)}/>
 
     return <AddNewButton onClick={() => setIsForm(true)}/>
 }
 
-function EditForm() {
+interface NewAlbumData {
+    title: string,
+    isPublic: boolean
+}
+
+
+function EditForm( {
+    initialValue, 
+    id, 
+    imgSrc, 
+    onAbortEdit
+}: {
+    initialValue: NewAlbumData, 
+    id?: number, 
+    imgSrc?: string,
+    onAbortEdit: VoidFunction
+}) {
+    const theme = useTheme()
+    const { register, getValues, watch } = useForm<NewAlbumData>({ defaultValues: initialValue })
+    
     return (
-        <>
-            Redigerer
-        </>
+        <Paper style={{
+            borderTopLeftRadius: "10px", 
+            borderTopRightRadius: "10px", 
+        }}>
+            <form>
+                <Image src={imgSrc}/>
+                <div 
+                    style={{
+                        padding: "10px",
+                        paddingBottom: "0px"
+                    }}
+                >
+                    <TextField
+                        label="Tittel"
+                        fullWidth
+                        autoComplete="off"
+                        required
+                        variant='standard'
+                        sx={{mt: 1}}
+                        {...register("title")}
+                    />
+                    <TextField 
+                        select
+                        label="Synlighet"
+                        fullWidth
+                        required
+                        variant='standard'
+                        sx={{mt: 5, mb: 3}}
+                        defaultValue={ getValues("isPublic") ? "true" : "false"}
+                        {...register("isPublic", {
+                            setValueAs: (value) => value ? "true" : "false",
+                        })}
+                        helperText={watch("isPublic") ? "Synlig for alle i offentligheten..." : "Synlig for innloggede brukere..."}
+                        FormHelperTextProps={{ style: { opacity: 0.7 } }}
+                    >
+                        <MenuItem value={"false"}>Privat</MenuItem>
+                        <MenuItem value={"true"}>Offentlig</MenuItem>
+                    </TextField>
+                    <SubmitButtons onAbortClick={onAbortEdit}/>
+                </div>
+            </form>
+        </Paper>
     )
+}
+
+function SubmitButtons( {onAbortClick}: {onAbortClick: VoidFunction}) {
+    return (
+        <Stack direction="row" justifyContent="space-between" >
+            <IconButton 
+                color="error" 
+                size="large" 
+                edge="start" 
+                onClick={onAbortClick} 
+                >
+                <BackspaceIcon/>
+            </IconButton>
+            <IconButton 
+                type="submit"
+                color="primary" 
+                size="large" 
+                edge="end"
+            >
+                <SaveIcon/>
+            </IconButton>
+        </Stack>
+    )
+}
+
+function Image( {src, alt}: {src?: string, alt?: string}) {
+    const theme = useTheme()
+    const [isError, setIsError] = useState(false)
+
+    const onError = () => setIsError(true)
+
+    if(src === undefined || isError) {
+        return (
+            <div
+                style={{
+                    width: "100%",
+                    aspectRatio: 1,
+                    borderRadius: "10px",
+                    borderWidth: "1px",
+                    borderStyle: "solid",
+                    opacity: 0.5,
+                    marginBottom: "6px",
+                    backgroundColor: theme.palette.action.hover,
+
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column"
+                }}
+            >
+                <PhotoLibraryIcon style={{fontSize: "50px"}} />
+            </div>
+            
+        )
+    }
+
+    return (
+        <img
+            src={src} 
+            alt={alt}
+            onError={onError}
+            loading="lazy"
+            style={{
+                width: `100%`,
+                aspectRatio: 1,
+                objectFit: "cover",
+                borderRadius: "10px"
+            }}
+        />
+    )
+
 }
 
 function AddNewButton( {onClick}: {onClick: VoidFunction}) {
