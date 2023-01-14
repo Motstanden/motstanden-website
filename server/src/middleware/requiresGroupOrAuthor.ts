@@ -48,6 +48,5 @@ function authenticatePermission(
 }
 
 interface AuthoredItem {
-    id: number,
     createdBy: number
 }

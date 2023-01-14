@@ -16,8 +16,23 @@ export interface ImageAlbum {
     updatedAt: string          // Format: 'YYYY-MM-DD HH-MM-SS'
 }
 
-export interface NewImageAlbum extends Omit<ImageAlbum, "id" | "url" | "createdAt" | "updatedAt" | "images" | "imageCount" | "coverImageUrl"> {
-    images: NewImage[]
+export interface NewImageAlbum 
+extends Omit<ImageAlbum, 
+    "id"                | 
+    "url"               | 
+    "images"            | 
+    "imageCount"        | 
+    "coverImageUrl"     |
+    
+    "createdByUserId"   |
+    "createdByName"     |
+    "createdAt"         |
+
+    "updatedByUserId"   |
+    "updatedByName"     |
+    "updatedAt"         
+    > {
+
 }
 
 export interface Image {

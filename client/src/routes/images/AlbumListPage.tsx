@@ -3,12 +3,13 @@ import BackspaceIcon from '@mui/icons-material/Backspace';
 import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 import SaveIcon from '@mui/icons-material/Save';
 import { Alert, alpha, IconButton, MenuItem, Paper, Snackbar, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material";
-import { ImageAlbum } from "common/interfaces";
+import { ImageAlbum, NewImageAlbum } from "common/interfaces";
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, LinkProps, useOutletContext } from "react-router-dom";
 import { iconButtonStaticStyle } from 'src/assets/style/buttonStyle';
 import { EditOrDeleteMenu } from 'src/components/menu/EditOrDeleteMenu';
+import { postJson } from 'src/utils/postJson';
 
 export default function AlbumListPage() {
     const data: ImageAlbum[] = useOutletContext<ImageAlbum[]>()
@@ -63,7 +64,12 @@ function Album({album}: {album: ImageAlbum}) {
 
     if(isEditing)
         return (
-            <EditForm initialValue={album} imgSrc={`/${album.coverImageUrl}`} onAbortEdit={() => setIsEditing(false)}/>
+            <EditForm 
+                initialValue={album}  
+                id={album.id}
+                imgSrc={`/${album.coverImageUrl}`} 
+                onAbortEdit={() => setIsEditing(false)}
+            />
         )
 
     return (
@@ -150,11 +156,9 @@ function AddNewAlbum() {
     return <AddNewButton onClick={() => setIsForm(true)}/>
 }
 
-interface NewAlbumData {
-    title: string,
-    isPublic: boolean
-}
-
+interface ImageAlbumFormData extends Omit<NewImageAlbum, "isPublic"> {
+    isPublic: "true" | "false"
+} 
 
 function EditForm( {
     initialValue, 
@@ -162,20 +166,40 @@ function EditForm( {
     imgSrc, 
     onAbortEdit
 }: {
-    initialValue: NewAlbumData, 
+    initialValue: NewImageAlbum, 
     id?: number, 
     imgSrc?: string,
     onAbortEdit: VoidFunction
 }) {
-    const theme = useTheme()
-    const { register, getValues, watch } = useForm<NewAlbumData>({ defaultValues: initialValue })
-    
+    const { register, watch, handleSubmit } = useForm<ImageAlbumFormData>({ 
+        defaultValues: {
+            title: initialValue.title,
+            isPublic: initialValue.isPublic ? "true" : "false"
+        } 
+    })
+
+    const onSubmit: SubmitHandler<ImageAlbumFormData> = async album => {
+        const formData: NewImageAlbum = { 
+            title: album.title.trim(), 
+            isPublic: album.isPublic === "true" 
+        }
+
+        const data = id !== undefined && id >= 0 
+                   ? {...formData, id: id}
+                   : formData
+
+        const url  = id ? "/api/image-album/update" 
+                        : "/api/image-album/new";
+
+        const response = await postJson(url, data)
+        console.log(response)
+    }
     return (
         <Paper style={{
             borderTopLeftRadius: "10px", 
             borderTopRightRadius: "10px", 
         }}>
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <Image src={imgSrc}/>
                 <div 
                     style={{
@@ -199,10 +223,8 @@ function EditForm( {
                         required
                         variant='standard'
                         sx={{mt: 5, mb: 3}}
-                        defaultValue={ getValues("isPublic") ? "true" : "false"}
-                        {...register("isPublic", {
-                            setValueAs: (value) => value ? "true" : "false",
-                        })}
+                        {...register("isPublic")}
+                        value={watch("isPublic")}
                         helperText={watch("isPublic") ? "Synlig for alle i offentligheten..." : "Synlig for innloggede brukere..."}
                         FormHelperTextProps={{ style: { opacity: 0.7 } }}
                     >
