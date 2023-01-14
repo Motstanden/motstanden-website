@@ -32,7 +32,10 @@ extends Omit<ImageAlbum,
     "updatedByName"     |
     "updatedAt"         
     > {
+}
 
+export interface UpdateImageAlbum extends NewImageAlbum {
+    id: number
 }
 
 export interface Image {

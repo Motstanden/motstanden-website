@@ -1,5 +1,5 @@
 import Database from "better-sqlite3"
-import { Image, ImageAlbum, NewImageAlbum } from "common/interfaces"
+import { Image, ImageAlbum, NewImageAlbum, UpdateImageAlbum } from "common/interfaces"
 import { isNullOrWhitespace } from "common/utils"
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
 
@@ -122,10 +122,9 @@ function insert(album: NewImageAlbum, userId: number) {
     let isBad: boolean = isNullOrWhitespace(album.title)          || 
                          typeof album.isPublic !== "boolean"      || 
                          typeof userId !== "number" && userId < 0 
-    console.log(isBad, album)
+
     if(isBad)
         throw `Invalid data`
-
 
     const db = new Database(motstandenDB, dbReadWriteConfig)
     const stmt = db.prepare(`
@@ -137,9 +136,32 @@ function insert(album: NewImageAlbum, userId: number) {
     db.close();
 }
 
+function update(album: UpdateImageAlbum, userId: number) {
+    let isBad: boolean = isNullOrWhitespace(album.title)            ||
+                         typeof album.isPublic !== "boolean"        ||
+                         typeof userId !== "number" && userId < 0 
+
+    if(isBad)
+        throw `Invalid data`
+    
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(`
+        UPDATE 
+            image_album
+        SET
+            title = ?,
+            is_public = ?,
+            updated_by = ?
+        WHERE image_album_id = ?  
+    `)
+    stmt.run(album.title, album.isPublic ? 1 : 0, userId, album.id)
+    db.close();
+}
+
 export const imageAlbumService = {
     get: get,
     getAll: getAll,
     getImages: getImages,
     insert: insert,
+    update: update
 }

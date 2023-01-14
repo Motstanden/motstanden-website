@@ -1,5 +1,5 @@
 import { UserGroup } from "common/enums";
-import { NewImageAlbum } from "common/interfaces";
+import { NewImageAlbum, UpdateImageAlbum } from "common/interfaces";
 import { strToNumber } from "common/utils";
 import express from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
@@ -66,8 +66,14 @@ router.post("/image-album/update",
         }
     }),
     (req, res) => {
-        console.log("Updating album")
-        console.log(req.body)
+        const user = req.user as AccessTokenData
+        try {
+            imageAlbumService.update(req.body as UpdateImageAlbum, user.userId)
+        } catch (err) {
+            console.log(err)
+            res.status(400).send("Bad data")
+        }
+        res.end()
     }
 )
     
