@@ -4,7 +4,7 @@ export interface ImageAlbum {
     url: string
     isPublic: boolean
     images: Image[]
-    coverImageUrl: string
+    coverImageUrl: string | null
     imageCount: number
  
     createdByUserId: number

@@ -73,7 +73,7 @@ SELECT
     url,
     is_public,
 	cover_image_url,
-    image_count,
+    IFNULL(image_count, 0) as image_count,
 
     album.created_by as created_by_user_id,
     created_by.first_name || ' '
