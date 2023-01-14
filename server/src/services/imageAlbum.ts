@@ -158,10 +158,26 @@ function update(album: UpdateImageAlbum, userId: number) {
     db.close();
 }
 
+function deleteAlbum(albumId: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const startTransaction = db.transaction(() => {
+        const stmt = db.prepare(`
+            DELETE FROM 
+                image_album
+            WHERE image_album_id = ?;`
+        )
+        stmt.run(albumId)
+    })
+    startTransaction()
+    db.close()   
+}
+
+
 export const imageAlbumService = {
     get: get,
     getAll: getAll,
     getImages: getImages,
     insert: insert,
-    update: update
+    update: update,
+    delete: deleteAlbum
 }

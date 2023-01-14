@@ -1,9 +1,9 @@
 import { UserGroup } from "common/enums";
-import { NewImageAlbum, UpdateImageAlbum } from "common/interfaces";
+import { ImageAlbum, NewImageAlbum, UpdateImageAlbum } from "common/interfaces";
 import { strToNumber } from "common/utils";
 import express from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
-import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
+import { AuthoredItem, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
 import { imageAlbumService } from "../services/imageAlbum.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 
@@ -60,10 +60,7 @@ router.post("/image-album/update",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
-        getAuthorInfo: id => {
-            const album = imageAlbumService.get(id)
-            return { createdBy: album.createdByUserId }
-        }
+        getAuthorInfo: getAlbumAuthor
     }),
     (req, res) => {
         const user = req.user as AccessTokenData
@@ -77,5 +74,39 @@ router.post("/image-album/update",
     }
 )
     
+router.post("/image-album/delete",
+    AuthenticateUser(),
+    requiresGroupOrAuthor({
+        requiredGroup: UserGroup.Administrator,
+        getAuthorInfo: getAlbumAuthor
+    }),
+    (req, res) => {
+    
+        const id: number = req.body.id
+        if (!id) {
+            return res.status(400).send("bad data")
+        }
+        
+        try {
+            imageAlbumService.delete(id)
+        } catch (err) {
+            console.log(err)
+            res.status(400).send("Bad data")
+        }
+        res.end()
+    }
+)
+
+function getAlbumAuthor(id: number): AuthoredItem | undefined {
+    let album: ImageAlbum | undefined
+    try {
+        album = imageAlbumService.get(id)
+    } catch { }
+
+    if(!album)
+        return undefined
+
+    return { createdBy: album?.createdByUserId }
+}
 
 export default router;

@@ -53,11 +53,11 @@ function Album({album}: {album: ImageAlbum}) {
     
     const onEditClick = () => setIsEditing(true)
 
-    const onDeleteClick = () => {
+    const onDeleteClick = async () => {
         if(album.imageCount > 0) 
             return setErrorMsg("Kan bare slette tomme album")
-        
-        // TODO: Post delete message to server
+     
+        await postJson("api/image-album/delete", {id: album.id})
     }
 
     const onSnackBarClose = () => setErrorMsg(undefined)
