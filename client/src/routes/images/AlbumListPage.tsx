@@ -2,14 +2,15 @@ import AddIcon from '@mui/icons-material/Add';
 import BackspaceIcon from '@mui/icons-material/Backspace';
 import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 import SaveIcon from '@mui/icons-material/Save';
-import { Alert, alpha, IconButton, MenuItem, Paper, Snackbar, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material";
+import { Alert, alpha, IconButton, MenuItem, Paper, Skeleton, Snackbar, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material";
 import { ImageAlbum, NewImageAlbum } from "common/interfaces";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, LinkProps, useOutletContext } from "react-router-dom";
 import { iconButtonStaticStyle } from 'src/assets/style/buttonStyle';
 import { EditOrDeleteMenu } from 'src/components/menu/EditOrDeleteMenu';
 import { postJson } from 'src/utils/postJson';
+import { useAlbumListInvalidator } from './Context';
 
 export default function AlbumListPage() {
     const data: ImageAlbum[] = useOutletContext<ImageAlbum[]>()
@@ -46,31 +47,53 @@ function AlbumGrid({items}: {items: ImageAlbum[]}) {
     )
 }
 
+type AlbumState = "read" | "edit" | "changing"
+
 function Album({album}: {album: ImageAlbum}) {
-    const [isEditing, setIsEditing] = useState(false)
+    const [mode, setMode] = useState<AlbumState>("read")
     const [errorMsg, setErrorMsg] = useState<string | undefined>()
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
-    
-    const onEditClick = () => setIsEditing(true)
+    const contextInvalidator = useAlbumListInvalidator()
+
+    useEffect(() => setMode("read"), [album.title, album.isPublic])
+
+    const onEditClick = () => setMode("edit")
+
+    const onAbortClick = () => setMode("read")
+
+    const onPostSuccess = () => {
+        setMode("changing")
+        contextInvalidator()
+    }
 
     const onDeleteClick = async () => {
         if(album.imageCount > 0) 
             return setErrorMsg("Kan bare slette tomme album")
      
-        await postJson("api/image-album/delete", {id: album.id})
+        const response = await postJson("api/image-album/delete", {id: album.id})
+        if(response?.ok){
+            contextInvalidator()
+        }
     }
 
     const onSnackBarClose = () => setErrorMsg(undefined)
 
-    if(isEditing)
+    if(mode === "edit")
         return (
             <EditForm 
                 initialValue={album}  
                 id={album.id}
                 imgSrc={`/${album.coverImageUrl}`} 
-                onAbortEdit={() => setIsEditing(false)}
+                onAbortEdit={onAbortClick}
+                onPostSuccess={onPostSuccess}
             />
         )
+
+    if(mode === "changing") {
+        return (
+            <ImageSkeleton />
+        )
+    }
 
     return (
         <>
@@ -146,14 +169,25 @@ function AlbumReadOnly( {album, onEditClick, onDeleteClick}: {album: ImageAlbum,
     )
 }
 
-function AddNewAlbum() {
+function AddNewAlbum( {onAdded}: {onAdded?: VoidFunction}) {
 
-    const [isForm, setIsForm] = useState(false)
+    const [isEditing, setIsEditing] = useState(false)
+    const contextInvalidator = useAlbumListInvalidator()
 
-    if(isForm) 
-        return <EditForm initialValue={{isPublic: false, title: ""}} onAbortEdit={() => setIsForm(false)}/>
+    const onPostSuccess = () => {
+        setIsEditing(false)
+        contextInvalidator()
+        onAdded && onAdded()
+    }
 
-    return <AddNewButton onClick={() => setIsForm(true)}/>
+    const onAbortClick = () => {
+        setIsEditing(false)
+    }
+
+    if(isEditing) 
+        return <EditForm onPostSuccess={onPostSuccess}  initialValue={{isPublic: false, title: ""}} onAbortEdit={onAbortClick}/>
+
+    return <AddNewButton onClick={() => setIsEditing(true)}/>
 }
 
 interface ImageAlbumFormData extends Omit<NewImageAlbum, "isPublic"> {
@@ -164,12 +198,14 @@ function EditForm( {
     initialValue, 
     id, 
     imgSrc, 
-    onAbortEdit
+    onAbortEdit,
+    onPostSuccess
 }: {
     initialValue: NewImageAlbum, 
     id?: number, 
     imgSrc?: string,
-    onAbortEdit: VoidFunction
+    onAbortEdit: VoidFunction,
+    onPostSuccess: VoidFunction
 }) {
     const { register, watch, handleSubmit } = useForm<ImageAlbumFormData>({ 
         defaultValues: {
@@ -192,7 +228,9 @@ function EditForm( {
                         : "/api/image-album/new";
 
         const response = await postJson(url, data)
-        console.log(response)
+        if(response?.ok) {
+            onPostSuccess()
+        }
     }
     return (
         <Paper style={{
@@ -306,7 +344,43 @@ function Image( {src, alt}: {src?: string, alt?: string}) {
             }}
         />
     )
+}
 
+function ImageSkeleton() {
+    return (
+        <div>
+            <div
+                style={{
+                    width: "100%",
+                    aspectRatio: 1,
+                }} 
+            >
+                <Skeleton  
+                    variant='rectangular'  
+                    style={{
+                    borderRadius: "10px",
+                    height: "100%",
+
+                }}/>
+            </div>
+            <div>
+                <Skeleton 
+                    style={{
+                        marginTop: "5px",
+                        fontSize: "large",
+                        maxWidth: "160px"
+                    }}
+                />
+            </div>
+            <div>
+                <Skeleton 
+                    style={{
+                        width: "5em"
+                    }}
+                />
+            </div>
+        </div>
+    )
 }
 
 function AddNewButton( {onClick}: {onClick: VoidFunction}) {
