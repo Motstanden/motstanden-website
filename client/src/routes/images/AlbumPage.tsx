@@ -1,9 +1,10 @@
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { Breadcrumbs, ImageList, ImageListItem, Link, Theme, Typography, useMediaQuery } from "@mui/material";
+import { Breadcrumbs, ImageList, ImageListItem, Link, Typography } from "@mui/material";
 import { ImageAlbum } from "common/interfaces";
 import dayjs from 'dayjs';
 import { Link as RouterLink, useOutletContext } from "react-router-dom";
 import { ImageLightBox, useIndexParam } from 'src/components/ImageLightBox';
+import { ImageGrid } from './components/ImageGrid';
 
 export default function AlbumPage() {
     const album: ImageAlbum = useOutletContext<ImageAlbum>()
@@ -84,18 +85,9 @@ function AlbumViewer( { album }: { album: ImageAlbum }  ) {
         document.body.style.cursor = "auto"   
     }
 
-    const isSmallScreen = useMediaQuery((theme: Theme)  => theme.breakpoints.between(410, "md"))
-    const isMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.only("md"))
-    const isLargeScreen = useMediaQuery((theme: Theme)  => theme.breakpoints.up("lg"))
-
-    let listProps = {cols: 1, gap: 10}
-    if(isSmallScreen) listProps  = {cols: 2, gap: 10};
-    if(isMediumScreen) listProps = {cols: 3, gap: 20};
-    if(isLargeScreen) listProps  = {cols: 4, gap: 30};
-
     return (
         <>
-            <ImageList {...listProps} rowHeight={250} variant="standard">
+            <ImageGrid>
                 {album.images.map( (image, index ) => (
                     <ImageListItem key={image.url}>
                         <img 
@@ -111,7 +103,7 @@ function AlbumViewer( { album }: { album: ImageAlbum }  ) {
                             />
                     </ImageListItem>
                 ))}
-            </ImageList>
+            </ImageGrid>
             <ImageLightBox images={album.images.map( img => `/${img.url}`)} />
         </>
     )

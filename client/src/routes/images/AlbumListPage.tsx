@@ -10,6 +10,7 @@ import { Link, LinkProps, useOutletContext } from "react-router-dom";
 import { iconButtonStaticStyle } from 'src/assets/style/buttonStyle';
 import { EditOrDeleteMenu } from 'src/components/menu/EditOrDeleteMenu';
 import { postJson } from 'src/utils/postJson';
+import { ImageGrid } from './components/ImageGrid';
 import { useAlbumListInvalidator } from './Context';
 
 export default function AlbumListPage() {
@@ -23,27 +24,13 @@ export default function AlbumListPage() {
 }
 
 function AlbumGrid({items}: {items: ImageAlbum[]}) {
-    const isSmallScreen = useMediaQuery((theme: Theme)  => theme.breakpoints.between(400, 800))
-    const isMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.between(800, 1000))
-    const isLargeScreen = useMediaQuery((theme: Theme)  => theme.breakpoints.up(1000))
-
-    let colCount = 1
-    if(isSmallScreen)  colCount = 2;
-    if(isMediumScreen) colCount = 3;
-    if(isLargeScreen)  colCount = 4;
-
     return (
-        <div style={{
-            display: "grid",
-            gridTemplateColumns: `repeat(${colCount}, 1fr)`,
-            rowGap: "20px",
-            columnGap: "30px"
-        }}>
+        <ImageGrid>
             <AddNewAlbum/>
             {items.map( album => (
                 <Album key={album.id} album={album}/>
             ))}
-        </div>
+        </ImageGrid>        
     )
 }
 
