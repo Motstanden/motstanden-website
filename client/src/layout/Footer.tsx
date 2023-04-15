@@ -69,7 +69,7 @@ function MotstandenInfo() {
                 <Typography>
                     Studentorchesteret <wbr />
                     <NoBr>den Ohmske</NoBr> <wbr />
-                    Motstanden
+                    Motstanden - Jeg hater at jeg må skrive dette i et tre 😞
                 </Typography>
             </Grid>
             <Grid item xs={12} sm={4} md={3}>
