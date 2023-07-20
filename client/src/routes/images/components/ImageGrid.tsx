@@ -1,6 +1,7 @@
 import { Theme, useMediaQuery } from "@mui/material";
+import { EditOrDeleteMenu } from 'src/components/menu/EditOrDeleteMenu';
 
-export type ComponentState = "read" | "edit" | "refetch"
+export type ComponentState = "read" | "edit" | "fetching"
 
 export function ImageGrid({children}: {children?: React.ReactNode}) {
     const isSmallScreen = useMediaQuery((theme: Theme)  => theme.breakpoints.between(400, 800))
@@ -23,3 +24,51 @@ export function ImageGrid({children}: {children?: React.ReactNode}) {
         </div>
     )
 }
+
+export function ImageGridItem( {
+    canEdit,
+    readOnlyItem,
+    editItem,
+    placeholderItem,
+    state
+}: {
+    canEdit?: boolean,
+    readOnlyItem: React.ReactNode,
+    editItem: React.ReactNode,
+    placeholderItem: React.ReactNode,
+    state: ComponentState
+}) {
+
+    if(state === "read" && canEdit) {
+        return (
+           <div style={{
+                position: "relative",
+           }}>
+                <EditOrDeleteMenu
+                    onDeleteClick={onDeleteClick}
+                    onEditClick={onEditClick}
+                    style={{
+                        position: "absolute",
+                        top: "5px",
+                        right: "5px",
+                    }}
+                    sx={iconButtonStaticStyle}/>
+                {readOnlyItem}
+           </div> 
+        )
+    }
+
+    if(state === "read")
+        return readOnlyItem
+
+    if(state === "edit") {
+        return editItem
+    }
+    
+    if(state === "fetching")
+        return placeholderItem
+
+    return null
+}
+
+function  
