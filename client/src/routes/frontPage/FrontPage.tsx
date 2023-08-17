@@ -41,7 +41,7 @@ export default function FrontPage() {
                 <br />
                 <h2>Øvelse</h2>
                 <p>
-                    <b>Motstanden har øvelse på Elektrakontoret hver tirsdag fra 19:00 til 21:00.</b>
+                    <b>Motstanden har øvelse på Elektrakontoret hver torsdag fra 19:00 til 21:00.</b>
                     <br />
                     <br />
                     Etter øvelsen pleier vi å dra på Samfundet eller finne på noe sosialt på kontoret.
