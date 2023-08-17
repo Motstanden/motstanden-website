@@ -3,177 +3,177 @@ INSERT INTO
 VALUES
     (
         1, 
-        "Fadderuke: Rebusløp",          
-        "2022-08-16 12:00:00", 
-        "2022-08-16 16:00:00",                
+        'Fadderuke: Rebusløp',          
+        '2022-08-16 12:00:00', 
+        '2022-08-16 16:00:00',                
         1, 
         1, 
         json_array(
-            json_object("key", "Kategori:", "value", "Fadderuke"), 
-            json_object("key", "Sted:",     "value", "Høgskoleparken"), 
-            json_object("key", "Antrekk:",  "value", "Full uniform")
+            json_object('key', 'Kategori:', 'value', 'Fadderuke'), 
+            json_object('key', 'Sted:',     'value', 'Høgskoleparken'), 
+            json_object('key', 'Antrekk:',  'value', 'Full uniform')
         ),
-        "<div>Beskrivelse av rebusløpet</div>",
+        '<div>Beskrivelse av rebusløpet</div>',
         json_array(
             json_object(
-                "type", "DIV", 
-                "children", json_array (
+                'type', 'DIV', 
+                'children', json_array (
                     json_object(
-                        "text", "Beskrivelse av rebusløpet"
+                        'text', 'Beskrivelse av rebusløpet'
                     )
                 )
             )
         )
     ), (
         2, 
-        "Hybel til hybel",   
-        "2022-08-23 13:00:00", 
+        'Hybel til hybel',   
+        '2022-08-23 13:00:00', 
         null,                
         2, 
         2, 
         json_array(
-            json_object("key", "Kategori:", "value", "Fadderuke"), 
-            json_object("key", "Sted:",     "value", "Bergstua"), 
-            json_object("key", "Antrekk:",  "value", "Full uniform")
+            json_object('key', 'Kategori:', 'value', 'Fadderuke'), 
+            json_object('key', 'Sted:',     'value', 'Bergstua'), 
+            json_object('key', 'Antrekk:',  'value', 'Full uniform')
         ),
-        "Beskrivelse av hybel til hybel",
+        'Beskrivelse av hybel til hybel',
         json_array(
             json_object(
-                "type", "DIV", 
-                "children", json_array (
+                'type', 'DIV', 
+                'children', json_array (
                     json_object(
-                        "text", "Beskrivelse av hybel til hybel"
+                        'text', 'Beskrivelse av hybel til hybel'
                     )
                 )
             )
         )
     ), (
         3, 
-        "Åpen øvelse",                  
-        "2022-08-30 17:00:00", 
-        "2022-08-31 00:00:00",  
+        'Åpen øvelse',                  
+        '2022-08-30 17:00:00', 
+        '2022-08-31 00:00:00',  
         3, 
         1, 
         json_array(),             
-        "Beskrivelse av åpen øvelse",
+        'Beskrivelse av åpen øvelse',
         json_array(
             json_object(
-                "type", "DIV", 
-                "children", json_array (
+                'type', 'DIV', 
+                'children', json_array (
                     json_object(
-                        "text", "Beskrivelse av åpen øvelse"
+                        'text', 'Beskrivelse av åpen øvelse'
                     )
                 )
             )
         )
     ), (
         4, 
-        "SMASH",                        
-        "2022-09-16 07:00:00", 
-        "2022-09-18 14:00",  
+        'SMASH',                        
+        '2022-09-16 07:00:00', 
+        '2022-09-18 14:00',  
         4, 
         4, 
         json_array(
-            json_object("key", "Sted:",             "value", "Ås"), 
-            json_object("key", "Påmeldingsfrist:",  "value", "1. September"), 
-            json_object("key", "Antrekk:",          "value", "Full uniform")
+            json_object('key', 'Sted:',             'value', 'Ås'), 
+            json_object('key', 'Påmeldingsfrist:',  'value', '1. September'), 
+            json_object('key', 'Antrekk:',          'value', 'Full uniform')
         ),          
-        "Beskrivelse av smash",
+        'Beskrivelse av smash',
         json_array(
             json_object(
-                "type", "DIV", 
-                "children", json_array (
+                'type', 'DIV', 
+                'children', json_array (
                     json_object(
-                        "text", "Beskrivelse av smash"
+                        'text', 'Beskrivelse av smash'
                     )
                 )
             )
         )
     ), (
         5, 
-        "Rebusløp",          
-        "2099-08-16 12:00:00", 
-        "2099-08-16 16:00:00",               
+        'Rebusløp',          
+        '2099-08-16 12:00:00', 
+        '2099-08-16 16:00:00',               
         5, 
         5, 
         json_array(
-            json_object("key", "Kategori:", "value", "Fadderuke"), 
-            json_object("key", "Sted:",     "value", "Høgskoleparken"), 
-            json_object("key", "Antrekk:",  "value", "Full uniform")
+            json_object('key', 'Kategori:', 'value', 'Fadderuke'), 
+            json_object('key', 'Sted:',     'value', 'Høgskoleparken'), 
+            json_object('key', 'Antrekk:',  'value', 'Full uniform')
         ),                                                            
-        "Beskrivelse av rebusløpet",
+        'Beskrivelse av rebusløpet',
         json_array(
             json_object(
-                "type", "DIV", 
-                "children", json_array (
+                'type', 'DIV', 
+                'children', json_array (
                     json_object(
-                        "text", "Beskrivelse av rebusløpet"
+                        'text', 'Beskrivelse av rebusløpet'
                     )
                 )
             )
         )
     ), (
         6, 
-        "Hybel til hybel",   
-        "2099-08-23 13:00:00", 
+        'Hybel til hybel',   
+        '2099-08-23 13:00:00', 
         null,                
         1, 
         1, 
         json_array(
-            json_object("key", "Kategori:", "value", "Fadderuke"), 
-            json_object("key", "Sted:",     "value", "Bergstua"), 
-            json_object("key", "Antrekk:",  "value", "Full uniform")
+            json_object('key', 'Kategori:', 'value', 'Fadderuke'), 
+            json_object('key', 'Sted:',     'value', 'Bergstua'), 
+            json_object('key', 'Antrekk:',  'value', 'Full uniform')
         ),                                                                    
-        "Beskrivelse av hybel til hybel",
+        'Beskrivelse av hybel til hybel',
         json_array(
             json_object(
-                "type", "DIV", 
-                "children", json_array (
+                'type', 'DIV', 
+                'children', json_array (
                     json_object(
-                        "text", "Beskrivelse av hyble tili hybel"
+                        'text', 'Beskrivelse av hyble tili hybel'
                     )
                 )
             )
         )
     ), (
         7, 
-        "Åpen øvelse",                  
-        "2099-08-30 17:00:00", 
-        "2099-08-31 00:00:00",
+        'Åpen øvelse',                  
+        '2099-08-30 17:00:00', 
+        '2099-08-31 00:00:00',
         1, 
         1, 
         json_array(),             
-        "Beskrivelse av åpen øvelse",
+        'Beskrivelse av åpen øvelse',
         json_array(
             json_object(
-                "type", "DIV", 
-                "children", json_array (
+                'type', 'DIV', 
+                'children', json_array (
                     json_object(
-                        "text", "Beskrivelse av åpen øvelse"
+                        'text', 'Beskrivelse av åpen øvelse'
                     )
                 )
             )
         )
     ), (
         8, 
-        "SMASH",                        
-        "2099-09-16 07:00:00", 
-        "2099-09-18 14:00:00",  
+        'SMASH',                        
+        '2099-09-16 07:00:00', 
+        '2099-09-18 14:00:00',  
         1, 
         2, 
         json_array(
-            json_object("key", "Sted:",             "value", "Ås"), 
-            json_object("key", "Påmeldingsfrist:",  "value", "1. September"), 
-            json_object("key", "Oppmøte:",          "value", "Hovedbygget på gløs"), 
-            json_object("key", "Antrekk:",          "value", "Full uniform")
+            json_object('key', 'Sted:',             'value', 'Ås'), 
+            json_object('key', 'Påmeldingsfrist:',  'value', '1. September'), 
+            json_object('key', 'Oppmøte:',          'value', 'Hovedbygget på gløs'), 
+            json_object('key', 'Antrekk:',          'value', 'Full uniform')
         ),         
-        "Beskrivelse av smash",
+        'Beskrivelse av smash',
         json_array(
             json_object(
-                "type", "DIV", 
-                "children", json_array (
+                'type', 'DIV', 
+                'children', json_array (
                     json_object(
-                        "text", "Beskrivelse av smash"
+                        'text', 'Beskrivelse av smash'
                     )
                 )
             )

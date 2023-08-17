@@ -7,7 +7,7 @@ CREATE TABLE event (
     title TEXT NOT NULL,
     start_date_time TEXT NOT NULL CHECK(start_date_time is datetime(start_date_time)),                          -- yyyy-mm-dd hh:mm
     end_date_time TEXT DEFAULT NULL CHECK(end_date_time = NULL OR end_date_time is datetime(end_date_time)),    -- yyyy-mm-dd hh:mm
-    key_info TEXT NOT NULL DEFAULT "[]" CHECK(json_valid(key_info) = 1),                                                                        -- Json array    
+    key_info TEXT NOT NULL DEFAULT '[]' CHECK(json_valid(key_info) = 1),                                                                        -- Json array    
     description TEXT NOT NULL,                                                                                  -- Html
     created_by INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -38,10 +38,10 @@ CREATE TABLE participation_status (
 INSERT INTO 
     participation_status(participation_status_id, status)
 VALUES
-    (1, "Ukjent"),
-    (2, "Deltar"),
-    (3, "Deltar kanskje"),
-    (4, "Deltar ikke");
+    (1, 'Ukjent'),
+    (2, 'Deltar'),
+    (3, 'Deltar kanskje'),
+    (4, 'Deltar ikke');
 
 CREATE TABLE event_participant (
     event_id INTEGER NOT NULL,

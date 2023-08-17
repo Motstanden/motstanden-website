@@ -39,15 +39,15 @@ CREATE TABLE user (
     user_rank_id INTEGER NOT NULL DEFAULT 1,
     email TEXT UNIQUE NOT NULL,
     first_name TEXT NOT NULL,
-    middle_name TEXT NOT NULL DEFAULT "",
+    middle_name TEXT NOT NULL DEFAULT '',
     last_name TEXT NOT NULL,
-    cape_name TEXT NOT NULL DEFAULT "",
+    cape_name TEXT NOT NULL DEFAULT '',
     phone_number INTEGER DEFAULT NULL CHECK(phone_number >= 10000000 AND phone_number <= 99999999),     -- Ensure number has 8 digits
     birth_date TEXT DEFAULT NULL CHECK(birth_date IS date(birth_date, '+0 days')),                      -- Check that format is 'YYYY-MM-DD'
     user_status_id INTEGER NOT NULL DEFAULT 1,
     start_date TEXT NOT NULL DEFAULT CURRENT_DATE CHECK(start_date IS date(start_date, '+0 days')),     -- Check that format is 'YYYY-MM-DD'
     end_date TEXT DEFAULT NULL CHECK(end_date IS date(end_date, '+0 days')),                            -- Check that format is 'YYYY-MM-DD'
-    profile_picture TEXT NOT NULL CHECK(like('files/private/profilbilder/%_._%', profile_picture)) DEFAULT "files/private/profilbilder/boy.png",
+    profile_picture TEXT NOT NULL CHECK(like('files/private/profilbilder/%_._%', profile_picture)) DEFAULT 'files/private/profilbilder/boy.png',
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_group_id)
@@ -130,7 +130,7 @@ CREATE TABLE event (
     title TEXT NOT NULL,
     start_date_time TEXT NOT NULL CHECK(start_date_time is datetime(start_date_time)),                          -- yyyy-mm-dd hh:mm
     end_date_time TEXT DEFAULT NULL CHECK(end_date_time = NULL OR end_date_time is datetime(end_date_time)),    -- yyyy-mm-dd hh:mm
-    key_info TEXT NOT NULL DEFAULT "[]" CHECK(json_valid(key_info) = 1),                                                                        -- Json array    
+    key_info TEXT NOT NULL DEFAULT '[]' CHECK(json_valid(key_info) = 1),                                                                        -- Json array    
     description_html TEXT NOT NULL,                                                                                  -- Html
     created_by INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
