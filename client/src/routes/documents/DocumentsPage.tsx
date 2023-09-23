@@ -25,10 +25,22 @@ function DocumentList() {
     if (isError) {
         return <PageContainer><span>{`${error}`}</span></PageContainer>
     }
-
     return (
         <UrlList>
-            {data.map(doc => <UrlListItem key={doc.url} to={`/${doc.url}`} text={doc.title} type="application/pdf" reloadDocument />)}
+            <>
+                <li>
+                    <a href="https://motstanden.github.io/motstanden-statutter/motstanden-statutter.pdf" type="application/pdf"  >
+                        Motstandens Statutter
+                    </a>
+                </li>
+                {data.map(doc => 
+                    <UrlListItem 
+                        key={doc.url} 
+                        to={`/${doc.url}`} 
+                        text={doc.title} 
+                        type="application/pdf" 
+                        reloadDocument />)}
+            </>
         </UrlList>
     )
 }
