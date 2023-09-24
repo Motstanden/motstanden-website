@@ -29,7 +29,7 @@ function DocumentList() {
         <UrlList>
             <>
                 <li>
-                    <a href="https://motstanden.github.io/motstanden-statutter/motstanden-statutter.pdf" type="application/pdf"  >
+                    <a href="https://statutter.motstanden.no" type="application/pdf"  >
                         Motstandens Statutter
                     </a>
                 </li>
