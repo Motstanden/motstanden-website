@@ -3,9 +3,38 @@ import { UrlList, UrlListItem } from "src/components/UrlList"
 import { useTitle } from "src/hooks/useTitle"
 import { PageContainer } from "src/layout/PageContainer"
 
+
+export default function BoardWebsiteListPage() {
+    useTitle("Styrets nettsider")
+    return (
+        <PageContainer>
+            <h1>Styrets nettsider</h1>
+            <Description/>
+            <BoardPages/>
+        </PageContainer>
+    )
+}
+
+function Description(){
+    return (
+        <div style={{maxWidth: "600px"}}>
+            <p>
+                Hvert styre i Motstanden har sin egen nettside.
+                <br/>
+                Til å begynne med inneholder nettsiden kun navnene til de i styret.
+                <br/>
+                Det er opp til styret hva de vil gjøre med nettsiden i løpet av neste året.
+            </p>
+            <p>
+                <b>Dette er en liste over alle styrenettsidene:</b>
+            </p>
+        </div>
+    )
+}
+
 // Temporary
 // This should be in the database
-const boardPages: BoardWebsite[] = [
+const boardPagesData: BoardWebsite[] = [
     {
         year: 2022,
         url: "https://styret.motstanden.no/2022"
@@ -28,21 +57,18 @@ const boardPages: BoardWebsite[] = [
     }
 ]
 
-export default function BoardWebsiteListPage() {
-    useTitle("Styrets nettsider")
+
+function BoardPages() {
     return (
-        <PageContainer>
-            <h1>Styrets nettsider</h1>
-            <UrlList>
-                {boardPages.map( boardPage => (
-                    <UrlListItem 
-                        key={boardPage.year} 
-                        to={boardPage.url}
-                        externalRoute
-                        text={`Styret ${boardPage.year}`}
-                    />
-                ))}
-            </UrlList>
-        </PageContainer>
+        <UrlList>
+            {boardPagesData.map( boardPage => (
+                <UrlListItem 
+                    key={boardPage.year} 
+                    to={boardPage.url}
+                    externalRoute
+                    text={`Styret ${boardPage.year}`}
+                />
+            ))}
+        </UrlList>
     )
 }
