@@ -24,6 +24,7 @@ const EditUserPage = lazy(() => import('src/routes/user/EditPage'))
 import AdminPage from "src/routes/admin/Admin";
 import SuperAdminPage from "src/routes/admin/SuperAdmin";
 import BecomeMemberPage from "src/routes/becomeMember/BecomeMember";
+import BoardWebsiteListPage from "src/routes/boardWebsiteList/BoardWebsiteList";
 import DocumentsPage from "src/routes/documents/DocumentsPage";
 import FrontPage from "src/routes/frontPage/FrontPage";
 import HomePage from "src/routes/home/Home";
@@ -60,6 +61,7 @@ function App() {
 						</Route>
 						<Route path="/dokumenter" element={<DocumentsPage />} />
 						<Route path="/bli-medlem" element={<BecomeMemberPage />} />
+						<Route path="/styrets-nettsider" element={<BoardWebsiteListPage/>} />
 						<Route path="/lisens" element={<LicensePage />} />
 						<Route path="/maakesodd" element={<LicenseOnlyPage />} />
 					</Route>

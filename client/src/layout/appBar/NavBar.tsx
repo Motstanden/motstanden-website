@@ -53,10 +53,12 @@ function PrivateNavBar() {
                     <Divider />
                     <ListItemLink text="Bli Medlem" to="/bli-medlem" icon={<MenuIcons.BecomeMember />} />
                     {/* <ListItemLink text="FAQ" to="/faq" disabled /> */}
-                    <Divider />
-                    <ListItemLink text="Lisens" to="/lisens" icon={<MenuIcons.License />} />
-                    <Divider />
+                    <Divider/>
+                    <ListItemLink text="Styrets Nettsider" to="/styrets-nettsider" icon={<MenuIcons.BoardWebsiteList/>} />
+                    <Divider/>
                     <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={<MenuIcons.Wiki />} />
+                    <Divider/>
+                    <ListItemLink text="Lisens" to="/lisens" icon={<MenuIcons.License />} />
                 </List>
             </NavDropDown>
         </Stack>
@@ -79,9 +81,11 @@ function PublicNavBar() {
                     <ListItemLink text="Bli Medlem" to="/bli-medlem" icon={<MenuIcons.BecomeMember />} />
                     {/* <ListItemLink text="FAQ" to="/faq" disabled /> */}
                     <Divider />
-                    <ListItemLink text="Lisens" to="/lisens" icon={<MenuIcons.License />} />
+                    <ListItemLink text="Styrets Nettsider" to="/styrets-nettsider" icon={<MenuIcons.BoardWebsiteList/>} />
                     <Divider />
                     <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={<MenuIcons.Wiki />} />
+                    <Divider />
+                    <ListItemLink text="Lisens" to="/lisens" icon={<MenuIcons.License />} />
                 </List>
             </NavDropDown>
             <NavLink text="Studenttraller" to="/studenttraller" />
