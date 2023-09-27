@@ -1,7 +1,7 @@
-import React from "react"
-import { Link } from "react-router-dom"
-import styles from "./UrlList.module.css"
-
+import { Link } from "@mui/material";
+import React from "react";
+import { Link as RouterLink } from "react-router-dom";
+import styles from "./UrlList.module.css";
 export function UrlList({ children }: { children: React.ReactNode }) {
     return (
         <ul className={styles.UrlList}>
@@ -10,13 +10,28 @@ export function UrlList({ children }: { children: React.ReactNode }) {
     )
 }
 
-export function UrlListItem({ to, text, type, reloadDocument }: { to: string, text: string, type?: string | undefined, reloadDocument?: boolean | undefined }) {
+export function UrlListItem({ 
+    to, 
+    text, 
+    type, 
+    reloadDocument,
+    externalRoute
+}: { 
+    to: string, 
+    text: string, 
+    type?: string | undefined, 
+    reloadDocument?: boolean | undefined,
+    externalRoute?: boolean | undefined
+}) {
+    const urlAttribute = externalRoute ? { href: to } : { to: to }
     return (
         <li>
             <Link
-                to={to}
+                component={externalRoute ? "a" : RouterLink}
+                {...urlAttribute}
                 type={type}
-                reloadDocument={reloadDocument}>
+                reloadDocument={reloadDocument}
+            >
                 {text}
             </Link>
         </li>
