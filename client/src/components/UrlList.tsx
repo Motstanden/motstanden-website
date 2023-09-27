@@ -1,10 +1,15 @@
 import { Link } from "@mui/material";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
-import styles from "./UrlList.module.css";
+
 export function UrlList({ children }: { children: React.ReactNode }) {
     return (
-        <ul className={styles.UrlList}>
+        <ul style={{
+            listStyle: "none",
+            padding: 0,
+            margin: 0,
+            fontSize: "larger"
+        }}>
             {children}
         </ul>
     )
@@ -25,12 +30,16 @@ export function UrlListItem({
 }) {
     const urlAttribute = externalRoute ? { href: to } : { to: to }
     return (
-        <li>
+        <li style={{
+            marginBottom: "20px"
+        }}>
             <Link
                 component={externalRoute ? "a" : RouterLink}
                 {...urlAttribute}
                 type={type}
                 reloadDocument={reloadDocument}
+                underline="hover"
+                color="secondary"
             >
                 {text}
             </Link>

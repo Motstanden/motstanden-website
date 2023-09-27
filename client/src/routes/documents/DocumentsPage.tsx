@@ -28,11 +28,11 @@ function DocumentList() {
     return (
         <UrlList>
             <>
-                <li>
-                    <a href="https://statutter.motstanden.no" type="application/pdf"  >
-                        Motstandens Statutter
-                    </a>
-                </li>
+                <UrlListItem
+                    externalRoute
+                    to="https://statutter.motstanden.no" 
+                    type="application/pdf"
+                    text="Motstandens Statutter"/>
                 {data.map(doc => 
                     <UrlListItem 
                         key={doc.url} 
