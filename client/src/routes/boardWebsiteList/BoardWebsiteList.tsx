@@ -20,7 +20,12 @@ function Description(){
         
         <div>
             <h2>Om Styrenettsidene</h2>
-            <p style={{maxWidth: "400px", paddingBottom: "10px"}}>
+            <p style={{
+                maxWidth: "650px", 
+                paddingBottom: "15px",
+                fontSize: "14pt",
+                lineHeight: "1.6",
+                }}>
                 Hvert styre i Motstanden har sin egen nettside.
                 Til å begynne med inneholder nettsiden kun navnene til de i styret.
                 Videre er det opp til styret hva de vil gjøre med nettsiden i løpet av det neste året.
