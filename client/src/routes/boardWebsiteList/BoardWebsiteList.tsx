@@ -1,3 +1,4 @@
+import { Link } from "@mui/material"
 import { BoardWebsite } from "common/interfaces"
 import { UrlList, UrlListItem } from "src/components/UrlList"
 import { useTitle } from "src/hooks/useTitle"
@@ -11,27 +12,24 @@ export default function BoardWebsiteListPage() {
             <h1>Styrets nettsider</h1>
             <Description/>
             <BoardPages/>
+            <AboutSourceCode/>
         </PageContainer>
     )
 }
 
 function Description(){
     return (
-        
-        <div>
+        <section style={{
+            maxWidth: "650px",
+            lineHeight: "1.6",
+        }}>
             <h2>Om Styrenettsidene</h2>
-            <p style={{
-                maxWidth: "650px", 
-                paddingBottom: "15px",
-                fontSize: "14pt",
-                lineHeight: "1.6",
-                }}>
+            <p>
                 Hvert styre i Motstanden har sin egen nettside.
                 Til å begynne med inneholder nettsiden kun navnene til de i styret.
                 Videre er det opp til styret hva de vil gjøre med nettsiden i løpet av det neste året.
             </p>
-            <h2>Alle Styrenettsider</h2>
-        </div>
+        </section>
     )
 }
 
@@ -62,15 +60,44 @@ const boardPagesData: BoardWebsite[] = [
 
 function BoardPages() {
     return (
-        <UrlList>
-            {boardPagesData.map( boardPage => (
-                <UrlListItem 
-                    key={boardPage.year} 
-                    to={boardPage.url}
-                    externalRoute
-                    text={`Styret ${boardPage.year}`}
-                />
-            ))}
-        </UrlList>
+        <section style={{marginTop: "40px"}}>
+            <h2>Alle Styrenettsider</h2>
+            <UrlList>
+                {boardPagesData.map( boardPage => (
+                    <UrlListItem 
+                        key={boardPage.year} 
+                        to={boardPage.url}
+                        externalRoute
+                        text={`Styret ${boardPage.year}`}
+                    />
+                ))}
+            </UrlList>
+        </section>
+    )
+}
+
+function AboutSourceCode() {
+    return (
+        <section style={{
+            marginTop: "40px",
+            maxWidth: "650px",
+            lineHeight: "1.6",
+        }}>
+            <h2 style={{marginBottom: "0px"}}>Kildekode</h2>
+            <p>
+                <span>
+                    Kildekoden til nettsidene er åpent tilgjengelig på 
+                </span>
+                <span> </span>
+                <Link 
+                    color="secondary" 
+                    underline="hover"
+                    href="https://github.com/Motstanden/motstanden-styresider"
+                    >
+                    GitHub
+                </Link>
+                <span>.</span>
+            </p>
+        </section>
     )
 }
