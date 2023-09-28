@@ -17,23 +17,21 @@ export default function BoardWebsiteListPage() {
 
 function Description(){
     return (
-        <div style={{maxWidth: "600px"}}>
-            <p>
+        
+        <div>
+            <h2>Om Styrenettsidene</h2>
+            <p style={{maxWidth: "400px", paddingBottom: "10px"}}>
                 Hvert styre i Motstanden har sin egen nettside.
-                <br/>
                 Til å begynne med inneholder nettsiden kun navnene til de i styret.
-                <br/>
-                Det er opp til styret hva de vil gjøre med nettsiden i løpet av neste året.
+                Videre er det opp til styret hva de vil gjøre med nettsiden i løpet av det neste året.
             </p>
-            <p>
-                <b>Dette er en liste over alle styrenettsidene:</b>
-            </p>
+            <h2>Alle Styrenettsider</h2>
         </div>
     )
 }
 
 // Temporary
-// This should be in the database
+// This should be in the database so that we don't need to modify the source code to update the list.
 const boardPagesData: BoardWebsite[] = [
     {
         year: 2022,
@@ -56,7 +54,6 @@ const boardPagesData: BoardWebsite[] = [
         url: "https://styret.motstanden.no/2018"
     }
 ]
-
 
 function BoardPages() {
     return (
