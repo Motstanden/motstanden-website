@@ -19,37 +19,46 @@ export default function FrontPage() {
         <PageContainer disableGutters>
             <img src={May17Img}
                 alt="Motstanden feirer 17. Mai 2021"
-                style={{ width: "100%", maxHeight: "33vh", objectFit: "cover" }} />
-            <div style={{ paddingInline: "35px", paddingBottom: "100px", maxWidth: "700px" }}>
+                style={{ 
+                    width: "100%", 
+                    maxHeight: "33vh", 
+                    objectFit: "cover"
+                 }}
+             />
+            <div style={{ 
+                paddingInline: "35px", 
+                paddingBottom: "100px", 
+                maxWidth: "700px",
+                fontSize: "14pt",
+                lineHeight: "1.6",
+            }}>
                 <h2>Om oss</h2>
                 <p>
                     Studentorchesteret den Ohmske Motstanden er et studentorchester som tilhører Linjeforeningen Elektra ved NTNU i Trondheim.
-                    <br />
                     Hovedformålet til Motstanden er å tilby et lavterskel musikalsk- sosialtilbud for medlemmer av Elektra.
                 </p>
-                <br />
-                <h2>Bli medlem?</h2>
+                <h2 style={{paddingTop: "20px"}}>
+                    Bli medlem?
+                </h2>
                 <p>
                     Alle som er medlem i Elektra kan bli medlem i Motstanden.
-                    <br />
                     Det stilles overhodet ingen krav til ferdigheter for å bli med.
-                    <br />
                     Kan du spille et instrument så er det kjempeflott, men musikalsk erfaring er absolutt ikke et krav!
-                    <br />
                     Det viktigste i Motstanden er å ha det gøy og å være sosial!
                 </p>
-                <br />
-                <h2>Øvelse</h2>
+                <h2 style={{paddingTop: "20px"}}>
+                    Øvelse
+                </h2>
                 <p>
                     <b>Motstanden har øvelse på Elektrakontoret hver torsdag fra 19:00 til 21:00.</b>
-                    <br />
-                    <br />
+                </p>
+                <p>
                     Etter øvelsen pleier vi å dra på Samfundet eller finne på noe sosialt på kontoret.
-                    <br />
                     Øvelsene er åpne for alle, så det er bare å møte opp med godt humør, <b>og gjerne et par pils...</b>
                 </p>
-                <br />
-                <h2>Kontakt oss</h2>
+                <h2 style={{paddingTop: "20px"}}>
+                    Kontakt oss
+                </h2>
                 <p>
                     Er det noe du lurer på? Kontakt oss gjerne på:
                 </p>
