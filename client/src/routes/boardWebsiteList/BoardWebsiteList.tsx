@@ -1,6 +1,17 @@
-import { Link } from "@mui/material"
+import {
+    Link,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow
+} from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
-import { UrlList, UrlListItem } from "src/components/UrlList"
+import { isNullOrWhitespace } from "common/utils"
+import dayjs from "dayjs"
+import { headerStyle, rowStyle } from "src/assets/style/tableStyle"
 import { useTitle } from "src/hooks/useTitle"
 import { PageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
@@ -73,20 +84,48 @@ function BoardPagesList() {
                 year: page.year!,
                 relativeUrl: removeIndexFromUrl(page.relativeUrl!),
                 isUpdated: page.isUpdated?.toString().toLowerCase() === "true",
+                created: formatDirtyDate(page.created),
+                updated: formatDirtyDate(page.updated),
             }
         })
+        .reverse()
 
     return (
-        <UrlList>
-            {pages.map((page, index) => (
-                <UrlListItem
-                    key={index}
-                    to={`https://styret.motstanden.no/${page.relativeUrl}`}
-                    externalRoute
-                    text={`Styret ${page.year}`}
-                />
-            ))}
-        </UrlList>
+        <TableContainer component={Paper}>
+            <Table>
+                <TableHead sx={headerStyle}>
+                    <TableRow>
+                        <TableCell>År</TableCell>
+                        <TableCell>Redigert</TableCell>
+                        <TableCell>Opprettet</TableCell>
+                        <TableCell>Oppdatert</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {pages.map((page, index) => (
+                        <TableRow key={index} sx={rowStyle}>
+                            <TableCell>
+                                <Link
+                                    href={`https://styret.motstanden.no/${page.relativeUrl}`}
+                                    color="secondary"
+                                    underline="hover">
+                                    {page.year}
+                                </Link>
+                            </TableCell>
+                            <TableCell>
+                                {page.isUpdated ? "Ja" : "Nei"}
+                            </TableCell>
+                            <TableCell>
+                                {page.created}
+                            </TableCell>
+                            <TableCell>
+                                {page.updated}
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
     )
 }
 
@@ -98,6 +137,12 @@ function removeIndexFromUrl(url: string) {
     return url;
 }
 
+function formatDirtyDate(date: string | undefined): string {
+    if(isNullOrWhitespace(date))
+        return "–"
+
+    return dayjs(date).format("D. MMM YYYY")
+}
 
 function AboutSourceCode() {
     return (
