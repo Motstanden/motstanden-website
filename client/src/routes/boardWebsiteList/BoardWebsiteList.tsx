@@ -1,6 +1,7 @@
 import {
     Link,
     Paper,
+    Skeleton,
     Table,
     TableBody,
     TableCell,
@@ -89,7 +90,7 @@ function BoardPageTableLoader() {
     const { isLoading, isError, data, error } = useQuery<RawProjectData>(["styret.motstanden.no/projectData.json"], () => fetchAsync<RawProjectData>("https://styret.motstanden.no/projectData.json"))
 
     if (isLoading || !data?.pages)
-        return <></>
+        return <Skeleton variant="rounded" height={320} />
 
     if (isError)
         return <>{error}</>
