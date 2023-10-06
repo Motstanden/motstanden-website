@@ -6,11 +6,13 @@ import {
     TableCell,
     TableContainer,
     TableHead,
-    TableRow
+    TableRow,
+    TableSortLabel
 } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { isNullOrWhitespace, strToNumber } from "common/utils"
 import dayjs, { Dayjs } from "dayjs"
+import { useState } from "react"
 import { headerStyle, rowStyle } from "src/assets/style/tableStyle"
 import { useTitle } from "src/hooks/useTitle"
 import { PageContainer } from "src/layout/PageContainer"
@@ -110,20 +112,88 @@ function BoardPageTableLoader() {
     )
 }
 
+type SortDirection = "asc" | "desc"
+
+type SortableColumn = "year" | "isUpdated" | "created" | "updated"
+
 function BoardPageTable( {data} : {data: PageData[]}) {
+
+    const [pages, setPages] = useState<PageData[]>(data)
+    const [sortedColumn, setSortedColumn] = useState<SortableColumn>("year")
+    const [sortDirection, setSortDirection] = useState<SortDirection>("desc")
+
+    const onColumnClick = (column: SortableColumn) => {
+        if(column === sortedColumn){
+            setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+        } else {
+            setSortedColumn(column)
+            if(column === "isUpdated"){
+                setSortDirection("asc")
+            } else {
+                setSortDirection("desc")
+            }        
+        }
+    }
+
+    let sortedPages: PageData[] = [...pages]
+    if (sortedColumn === "year") {
+        sortedPages.sort((a, b) => compareByNumber(a.year, b.year, sortDirection));
+    } 
+    else if (sortedColumn === "isUpdated") {
+        sortedPages.sort((a, b) => compareByBoolean(a.isUpdated, b.isUpdated, sortDirection));
+    } 
+    else if (sortedColumn === "created") {
+        sortedPages.sort((a, b) => compareByTimestamp(a.created, b.created, sortDirection));
+    } 
+    else if (sortedColumn === "updated") {
+        sortedPages.sort((a, b) => compareByTimestamp(a.updated, b.updated, sortDirection));
+    }
+
     return (
         <TableContainer component={Paper}>
             <Table>
                 <TableHead sx={headerStyle}>
                     <TableRow>
-                        <TableCell>År</TableCell>
-                        <TableCell>Redigert</TableCell>
-                        <TableCell>Opprettet</TableCell>
-                        <TableCell>Oppdatert</TableCell>
+                        <TableCell>
+                            <TableSortLabel
+                                active={sortedColumn === "year"}
+                                direction={sortedColumn === "year" ? sortDirection : "desc"}
+                                onClick={(e) => onColumnClick("year")}
+                            >
+                                År
+                            </TableSortLabel>
+                        </TableCell>
+                        <TableCell>
+                            <TableSortLabel
+                                active={sortedColumn === "isUpdated"}
+                                direction={sortedColumn === "isUpdated" ? sortDirection : "asc"}
+                                onClick={(e) => onColumnClick("isUpdated")}
+                            >
+                                Redigert
+                            </TableSortLabel>
+                        </TableCell>
+                        <TableCell>
+                            <TableSortLabel
+                                active={sortedColumn === "created"}
+                                direction={sortedColumn === "created" ? sortDirection : "desc"}
+                                onClick={(e) => onColumnClick("created")}
+                            >
+                                Opprettet
+                            </TableSortLabel>
+                        </TableCell>
+                        <TableCell>
+                            <TableSortLabel
+                                active={sortedColumn === "updated"}
+                                direction={sortedColumn === "updated" ? sortDirection : "desc"}
+                                onClick={(e) => onColumnClick("updated")}
+                            >
+                                Oppdatert
+                            </TableSortLabel>
+                        </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {data.map((page, index) => (
+                    {sortedPages.map((page, index) => (
                         <TableRow key={index} sx={rowStyle}>
                             <TableCell>
                                 <Link
@@ -149,6 +219,21 @@ function BoardPageTable( {data} : {data: PageData[]}) {
         </TableContainer>
     )
 }
+
+function compareByNumber(a: number, b: number, sortDirection: "asc" | "desc"): number {
+    return sortDirection === "asc" ? a - b : b - a;
+}
+
+function compareByBoolean(a: boolean, b: boolean, sortDirection: "asc" | "desc"): number {
+    return sortDirection === "asc" ? (a ? -1 : 1) : (a ? 1 : -1);
+}
+
+function compareByTimestamp(a: Dayjs | undefined, b: Dayjs | undefined, sortDirection: "asc" | "desc"): number {
+    const aValue = a?.unix() ?? 0;
+    const bValue = b?.unix() ?? 0;
+    return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+}
+
 
 function AboutSourceCode() {
     return (
