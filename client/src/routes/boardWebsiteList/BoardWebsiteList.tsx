@@ -9,8 +9,8 @@ import {
     TableRow
 } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
-import { isNullOrWhitespace } from "common/utils"
-import dayjs from "dayjs"
+import { isNullOrWhitespace, strToNumber } from "common/utils"
+import dayjs, { Dayjs } from "dayjs"
 import { headerStyle, rowStyle } from "src/assets/style/tableStyle"
 import { useTitle } from "src/hooks/useTitle"
 import { PageContainer } from "src/layout/PageContainer"
@@ -23,7 +23,7 @@ export default function BoardWebsiteListPage() {
         <PageContainer>
             <h1>Styrets nettsider</h1>
             <Description />
-            <BoardPages />
+            <BoardPageSection />
             <AboutSourceCode />
         </PageContainer>
     )
@@ -45,11 +45,11 @@ function Description() {
     )
 }
 
-function BoardPages() {
+function BoardPageSection() {
     return (
         <section style={{ marginTop: "40px" }}>
             <h2>Alle Styrenettsider</h2>
-            <BoardPagesList />
+            <BoardPageTableLoader />
         </section>
     )
 }
@@ -66,7 +66,23 @@ interface RawPageData {
     isUpdated?: string | boolean,
 }
 
-function BoardPagesList() {
+interface PageData {
+    year: number,
+    relativeUrl: string,
+    created?: Dayjs,
+    updated?: Dayjs,
+    isUpdated: boolean,
+}
+
+function removeIndexFromUrl(url: string) {
+    const indexPattern = /\/(index\.html|index\.htm|index)$/
+    if (url.match(indexPattern)) {
+        url = url.replace(indexPattern, '');
+    }
+    return url;
+}
+
+function BoardPageTableLoader() {
 
     const { isLoading, isError, data, error } = useQuery<RawProjectData>(["styret.motstanden.no/projectData.json"], () => fetchAsync<RawProjectData>("https://styret.motstanden.no/projectData.json"))
 
@@ -76,20 +92,25 @@ function BoardPagesList() {
     if (isError)
         return <>{error}</>
 
-    const pages = data.pages
-        .filter(page => page.year && page.relativeUrl)
+    const pages: PageData[] = data.pages
+        .filter(page => page.year && page.relativeUrl && strToNumber(page.year))
         .map(page => {
             return {
-                ...page,
-                year: page.year!,
+                year: strToNumber(page.year)!,
                 relativeUrl: removeIndexFromUrl(page.relativeUrl!),
                 isUpdated: page.isUpdated?.toString().toLowerCase() === "true",
-                created: formatDirtyDate(page.created),
-                updated: formatDirtyDate(page.updated),
+                created: isNullOrWhitespace(page.created) ? undefined : dayjs(page.created),
+                updated: isNullOrWhitespace(page.updated) ? undefined : dayjs(page.updated),
             }
         })
         .reverse()
 
+    return (
+        <BoardPageTable data={pages} />
+    )
+}
+
+function BoardPageTable( {data} : {data: PageData[]}) {
     return (
         <TableContainer component={Paper}>
             <Table>
@@ -102,7 +123,7 @@ function BoardPagesList() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {pages.map((page, index) => (
+                    {data.map((page, index) => (
                         <TableRow key={index} sx={rowStyle}>
                             <TableCell>
                                 <Link
@@ -116,10 +137,10 @@ function BoardPagesList() {
                                 {page.isUpdated ? "Ja" : "Nei"}
                             </TableCell>
                             <TableCell>
-                                {page.created}
+                                {page.created?.format("D. MMM YYYY") ?? "–"}
                             </TableCell>
                             <TableCell>
-                                {page.updated}
+                                {page.updated?.format("D. MMM YYYY") ?? "–"}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -127,21 +148,6 @@ function BoardPagesList() {
             </Table>
         </TableContainer>
     )
-}
-
-function removeIndexFromUrl(url: string) {
-    const indexPattern = /\/(index\.html|index\.htm|index)$/
-    if (url.match(indexPattern)) {
-        url = url.replace(indexPattern, '');
-    }
-    return url;
-}
-
-function formatDirtyDate(date: string | undefined): string {
-    if(isNullOrWhitespace(date))
-        return "–"
-
-    return dayjs(date).format("D. MMM YYYY")
 }
 
 function AboutSourceCode() {
