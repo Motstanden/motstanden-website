@@ -1,4 +1,4 @@
-import { Grid, Link, Skeleton } from "@mui/material";
+import { Grid, Link, Skeleton, Theme, useMediaQuery } from "@mui/material";
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
 import { EventData, Quote, Rumour } from "common/interfaces";
 import dayjs, { Dayjs } from "dayjs";
@@ -19,6 +19,7 @@ import { BoardPageUtils, RawProjectData } from "../boardWebsiteList/BoardWebsite
 export default function Home() {
     useTitle("Hjem")
     const user = useAuth().user!
+    const isSingleColumn = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
     return (
         <PageContainer>
             <h1>Hjem</h1>
@@ -30,7 +31,14 @@ export default function Home() {
                     renderSkeleton={<EventListSkeleton length={5} />}
                     renderItems={RenderEventList}
                 />
-                <NoItem />
+
+                <ItemOfTheDay 
+                    title="Siste endrede styrenettside"
+                    hide={isSingleColumn}
+                    fetchUrl="https://styret.motstanden.no/projectData.json"
+                    renderItems={RenderBoardPageList}
+                    renderSkeleton={<BoardPageListSkeleton length={3}/>}
+                />
                 <ItemOfTheDay
                     title="Nyeste sitater"
                     fetchUrl="/api/quotes?limit=3"
@@ -56,7 +64,8 @@ export default function Home() {
                     renderItems={RenderRumourList}
                 />
                 <ItemOfTheDay 
-                    title="Siste oppdaterte styrenettsider"
+                    title="Siste endrede styrenettside"
+                    hide={!isSingleColumn}
                     fetchUrl="https://styret.motstanden.no/projectData.json"
                     renderItems={RenderBoardPageList}
                     renderSkeleton={<BoardPageListSkeleton length={3}/>}
@@ -159,7 +168,10 @@ function RenderQuotesList(props: RenderItemProps<Quote[]>) {
     )
 }
 
-function NoItem() {
+function NoItem( { hide }: { hide?: boolean }) {
+    if(hide)
+        return <></>
+
     return (
         <Grid
             item
@@ -303,13 +315,18 @@ function ItemOfTheDay<T>({
     title,
     fetchUrl,
     renderSkeleton,
-    renderItems
+    renderItems,
+    hide,
 }: {
     title: string,
     fetchUrl: string,
     renderSkeleton: React.ReactElement,
     renderItems: (props: RenderItemProps<T>) => React.ReactElement,
+    hide?: boolean
 }) {
+    if(hide)
+        return <></>
+
     return (
         <Grid item xs={12} sm={12} md={6} >
             <TitleCard
