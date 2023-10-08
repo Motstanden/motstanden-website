@@ -1,7 +1,7 @@
 import { Grid, Link, Skeleton } from "@mui/material";
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
 import { EventData, Quote, Rumour } from "common/interfaces";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { TitleCard } from "src/components/TitleCard";
@@ -11,8 +11,9 @@ import { PageContainer } from "src/layout/PageContainer";
 import { buildEventItemUrl } from "src/routes/event/Context";
 import { QuoteList } from "src/routes/quotes/ListPage";
 import { ListSkeleton as QuotesListSkeleton } from "src/routes/quotes/ListPageSkeleton";
-import { ListSkeleton as RumourListSkeleton, RumourList } from "src/routes/rumour/RumourPage";
+import { RumourList, ListSkeleton as RumourListSkeleton } from "src/routes/rumour/RumourPage";
 import { fetchAsync } from "src/utils/fetchAsync";
+import { BoardPageUtils, RawProjectData } from "../boardWebsiteList/BoardWebsiteList";
 
 
 export default function Home() {
@@ -54,6 +55,12 @@ export default function Home() {
                     renderSkeleton={<RumourListSkeleton length={3} />}
                     renderItems={RenderRumourList}
                 />
+                <ItemOfTheDay 
+                    title="Siste oppdaterte styrenettsider"
+                    fetchUrl="https://styret.motstanden.no/projectData.json"
+                    renderItems={RenderBoardPageList}
+                    renderSkeleton={<BoardPageListSkeleton length={3}/>}
+                />
                 <InfoCard
                     title="Nyttige lenker"
                 />
@@ -63,11 +70,11 @@ export default function Home() {
 }
 
 type RenderItemProps<T> = {
-    items: T[],
+    items: T,
     refetchItems: VoidFunction
 }
 
-function RenderEventList(props: RenderItemProps<EventData>) {
+function RenderEventList(props: RenderItemProps<EventData[]>) {
     return (
         <ul style={{
             listStyle: "none",
@@ -121,7 +128,7 @@ function EventListSkeleton({ length }: { length: number }) {
     )
 }
 
-function RenderRumourList(props: RenderItemProps<Rumour>) {
+function RenderRumourList(props: RenderItemProps<Rumour[]>) {
     return (
         <>
             <div style={{
@@ -144,7 +151,7 @@ function RenderRumourList(props: RenderItemProps<Rumour>) {
     )
 }
 
-function RenderQuotesList(props: RenderItemProps<Quote>) {
+function RenderQuotesList(props: RenderItemProps<Quote[]>) {
     return (
         <QuoteList
             quotes={props.items}
@@ -158,6 +165,59 @@ function NoItem() {
             item
             xs={12} sm={12} md={6}
             display={{ xs: "none", xm: "none", md: "block" }} />
+    )
+}
+
+function RenderBoardPageList(props: RenderItemProps<RawProjectData>){
+    const pages = BoardPageUtils.cleanPageData(props.items.pages)
+    
+    const updatedPages = pages.filter(page => page.isUpdated).slice(0, 4)
+
+    const formatUpdateText = (date: Dayjs | undefined) => {
+        if(!date)
+            return ""
+
+        else if(date.isSame(dayjs(), "day"))
+            return "Oppdatert i dag"
+
+        else if(date.isAfter(dayjs().subtract(1, "year")))
+            return `Oppdatert ${date.fromNow()}`
+
+        return `Oppdatert ${date.format("D. MMM YYYY")}`     
+    }   
+
+    return (
+        <ul style={{ 
+            listStyle: "none", 
+            paddingLeft: "10px" 
+            }} 
+        >
+            {updatedPages.map((page, index) => (
+                <li key={index} style={{ marginBottom: "20px"}}>
+                    <Link 
+                        color="secondary"
+                        href={`https://styret.motstanden.no/${page.relativeUrl}`}
+                        underline="hover"
+                    >
+                        Styrenettside {page.year}
+                    </Link>
+                    <div style={{
+                                paddingLeft: "10px",
+                                opacity: 0.65,
+                                fontSize: "small",
+                        }}>
+                        {formatUpdateText(page.updated)}
+                    </div>
+                </li>
+            ))}
+        </ul>
+    )
+
+}
+
+function BoardPageListSkeleton({ length }: { length: number }){
+    return (
+        <></>   // Todo
     )
 }
 
@@ -278,11 +338,10 @@ function ItemLoader<T>({
     renderItems: (props: RenderItemProps<T>) => React.ReactElement
 }) {
 
-
     const queryClient = useQueryClient()
     const onRefetchItems = () => queryClient.invalidateQueries(queryKey)
 
-    const { isLoading, isError, data, error } = useQuery<T[]>(queryKey, () => fetchAsync<T[]>(fetchUrl))
+    const { isLoading, isError, data, error } = useQuery<T>(queryKey, () => fetchAsync<T>(fetchUrl))
 
     if (isLoading) {
         return (

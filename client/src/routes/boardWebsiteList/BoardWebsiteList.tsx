@@ -57,11 +57,11 @@ function BoardPageSection() {
     )
 }
 
-interface RawProjectData {
+export interface RawProjectData {
     pages?: RawPageData[]
 }
 
-interface RawPageData {
+export interface RawPageData {
     year?: string,
     relativeUrl?: string,
     created?: string,
@@ -69,7 +69,7 @@ interface RawPageData {
     isUpdated?: string | boolean,
 }
 
-interface PageData {
+export interface PageData {
     year: number,
     relativeUrl: string,
     created?: Dayjs,
@@ -85,17 +85,11 @@ function removeIndexFromUrl(url: string) {
     return url;
 }
 
-function BoardPageTableLoader() {
+function cleanPageData( rawPage: RawPageData[] | undefined): PageData[] {
+    if(!rawPage)
+        return []
 
-    const { isLoading, isError, data, error } = useQuery<RawProjectData>(["styret.motstanden.no/projectData.json"], () => fetchAsync<RawProjectData>("https://styret.motstanden.no/projectData.json"))
-
-    if (isLoading || !data?.pages)
-        return <Skeleton variant="rounded" height={320} />
-
-    if (isError)
-        return <>{error}</>
-
-    const pages: PageData[] = data.pages
+    return rawPage
         .filter(page => page.year && page.relativeUrl && strToNumber(page.year))
         .map(page => {
             return {
@@ -107,6 +101,23 @@ function BoardPageTableLoader() {
             }
         })
         .reverse()
+}
+
+export const BoardPageUtils = {
+    cleanPageData: cleanPageData,
+}
+
+function BoardPageTableLoader() {
+
+    const { isLoading, isError, data, error } = useQuery<RawProjectData>(["styret.motstanden.no/projectData.json"], () => fetchAsync<RawProjectData>("https://styret.motstanden.no/projectData.json"))
+
+    if (isLoading || !data?.pages)
+        return <Skeleton variant="rounded" height={320} />
+
+    if (isError)
+        return <>{error}</>
+
+    const pages: PageData[] = cleanPageData(data.pages)
 
     return (
         <BoardPageTable data={pages} />
