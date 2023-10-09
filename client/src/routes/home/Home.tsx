@@ -28,16 +28,16 @@ export default function Home() {
                 <ItemOfTheDay
                     title="Arrangement"
                     fetchUrl="/api/events/upcoming?limit=5"
-                    renderSkeleton={<EventListSkeleton length={5} />}
+                    renderSkeleton={<TitleAndSubtitleSkeleton length={5} />}
                     renderItems={RenderEventList}
                 />
 
                 <ItemOfTheDay 
-                    title="Siste endrede styrenettside"
+                    title="Sist oppdatert styrenettside"
                     hide={isSingleColumn}
                     fetchUrl="https://styret.motstanden.no/projectData.json"
                     renderItems={RenderBoardPageList}
-                    renderSkeleton={<BoardPageListSkeleton length={3}/>}
+                    renderSkeleton={<TitleAndSubtitleSkeleton length={5}/>}
                 />
                 <ItemOfTheDay
                     title="Nyeste sitater"
@@ -64,11 +64,11 @@ export default function Home() {
                     renderItems={RenderRumourList}
                 />
                 <ItemOfTheDay 
-                    title="Siste endrede styrenettside"
+                    title="Sist oppdatert styrenettside"
                     hide={!isSingleColumn}
                     fetchUrl="https://styret.motstanden.no/projectData.json"
                     renderItems={RenderBoardPageList}
-                    renderSkeleton={<BoardPageListSkeleton length={3}/>}
+                    renderSkeleton={<TitleAndSubtitleSkeleton length={5}/>}
                 />
                 <InfoCard
                     title="Nyttige lenker"
@@ -114,7 +114,7 @@ function RenderEventList(props: RenderItemProps<EventData[]>) {
     )
 }
 
-function EventListSkeleton({ length }: { length: number }) {
+function TitleAndSubtitleSkeleton({ length }: { length: number }) {
     return (
         <>
             <ul style={{
@@ -123,12 +123,12 @@ function EventListSkeleton({ length }: { length: number }) {
             }}
             >
                 {Array(length).fill(1).map((_, i) => (
-                    <li key={i} style={{ marginBottom: "15px" }}>
+                    <li key={i} style={{ marginBottom: "10px" }}>
                         <div>
-                            <Skeleton style={{ width: "125px", height: "2em" }} />
+                            <Skeleton variant="text" style={{ width: "125px", height: "1.5em" }} />
                         </div>
                         <div>
-                            <Skeleton style={{ marginLeft: "15px", width: "155px" }} />
+                            <Skeleton variant="text" style={{ marginLeft: "15px", width: "155px", height: "0.80em"  }} />
                         </div>
                     </li>
                 ))}
@@ -225,12 +225,6 @@ function RenderBoardPageList(props: RenderItemProps<RawProjectData>){
         </ul>
     )
 
-}
-
-function BoardPageListSkeleton({ length }: { length: number }){
-    return (
-        <></>   // Todo
-    )
 }
 
 interface InfoItem {
