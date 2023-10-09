@@ -84,6 +84,10 @@ type RenderItemProps<T> = {
 }
 
 function RenderEventList(props: RenderItemProps<EventData[]>) {
+
+    if(props.items.length <= 0)
+        return <span style={{opacity: 0.75 }}>Ingen kommende arrangementer...</span>
+
     return (
         <ul style={{
             listStyle: "none",
