@@ -1,11 +1,11 @@
 INSERT INTO poll(poll_id, created_by, updated_by, type, title) VALUES
-( 1, 3, 4, 'single', 'TODO 1'),
-( 2, 4, 3, 'single', 'TODO 2'),
-( 3, 3, 5, 'single', 'TODO 3'),
-( 4, 4, 4, 'single', 'TODO 4');
+( 1, 5, 6, 'single', 'TODO 1'),
+( 2, 6, 5, 'single', 'TODO 2'),
+( 3, 5, 7, 'single', 'TODO 3'),
+( 4, 6, 6, 'single', 'TODO 4');
 
 
-INSERT INTO option(option_id, poll_id, text) VALUES
+INSERT INTO poll_option(poll_option_id, poll_id, text) VALUES
 ( 1, 1, 'TODO A'),
 ( 2, 1, 'TODO B'),
 
@@ -26,7 +26,7 @@ INSERT INTO option(option_id, poll_id, text) VALUES
 ( 14, 4, 'TODO E');
 
 
-INSERT INTO vote(option_id, user_id) VALUES 
+INSERT INTO poll_vote(poll_option_id, user_id) VALUES 
 -- Poll 1
 ( 1, 14 ),
 ( 1, 15 ),
