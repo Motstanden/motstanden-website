@@ -18,3 +18,6 @@ sqlite3 ../../motstanden_dev.db < InsertEvents.sql;
 
 echo "    Inserting rumours";
 sqlite3 ../../motstanden_dev.db < insertRumours.sql;
+
+echo "    Inserting polls";
+sqlite3 ../../motstanden_dev.db < insertPolls.sql;
