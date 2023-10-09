@@ -91,13 +91,14 @@ function PrivateContent(props: SideDrawerContentProps) {
             <ListItemHeader />
             <ListItemLink text="Hjem" to="/hjem" onLinkClick={onRequestedExit} icon={<MenuIcons.Home />} />
             <ListItemLink text="Arrangement" to="/Arrangement" onLinkClick={onRequestedExit} icon={<MenuIcons.Event />} />
+            <ListItemDivider/>
             <ListItemLink text="Sitater" to="/sitater" onLinkClick={onRequestedExit} icon={<MenuIcons.Quotes />} />
             <ListItemLink text="Rykter" to="/rykter" onLinkClick={onRequestedExit} icon={<MenuIcons.Rumour />} />
-            <Divider light sx={{ ml: 2, mr: 4, opacity: 0.7 }} />
+            <ListItemDivider/>
             <ListItemLink text="Noter" to="/notearkiv" onLinkClick={onRequestedExit} icon={<MenuIcons.SheetArchive />} />
             <ListItemLink text="Traller" to="/studenttraller" onLinkClick={onRequestedExit} icon={<MenuIcons.Lyric />} />
             <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit} icon={<MenuIcons.Documents />} />
-            <Divider light sx={{ ml: 2, mr: 4, opacity: 0.7 }} />
+            <ListItemDivider/>
             <ListItemLink text="Styrets Nettsider" to="/styrets-nettsider" onLinkClick={onRequestedExit} icon={<MenuIcons.BoardWebsiteList/>} />
             <MemberList onLinkClick={onRequestedExit} />
             <ListItemExpander text="Om oss">
@@ -109,6 +110,12 @@ function PrivateContent(props: SideDrawerContentProps) {
             </ListItemExpander>
             <ListItemThemeSwitcher />
         </List>
+    )
+}
+
+function ListItemDivider() {
+    return (
+        <Divider light sx={{ ml: 2, mr: 4, opacity: 0.7 }} />
     )
 }
 

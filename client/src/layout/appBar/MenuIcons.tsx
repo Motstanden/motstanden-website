@@ -14,7 +14,7 @@ import MusicVideoIcon from '@mui/icons-material/MusicVideo';
 import NightlifeIcon from '@mui/icons-material/Nightlife';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CodeIcon from '@mui/icons-material/Code';
-
+import PollIcon from '@mui/icons-material/Poll';
 
 export {
     ExpandLess as ExpandLess,
@@ -33,4 +33,5 @@ export {
     MusicVideoIcon as SheetArchive,
     PersonAddIcon as MemberAdd,
     GroupsIcon as MemberList,
+    PollIcon as Poll
 };

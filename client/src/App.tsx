@@ -40,6 +40,8 @@ import { NewRumourPage, RumourPage } from 'src/routes/rumour/RumourPage';
 import { SheetArchiveContext } from "src/routes/sheetArchive/Context";
 import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
+import { PollContext } from "./routes/poll/Context";
+import PollPage from "./routes/poll/Poll";
 
 function App() {
 	const auth = useAuth()
@@ -83,6 +85,9 @@ function App() {
 						<Route path="/rykter" element={<RumourContext />}>
 							<Route index element={<RumourPage />} />
 							<Route path="ny" element={<NewRumourPage />} />
+						</Route>
+						<Route path="/avstemminger" element={<PollContext/>}>
+							<Route index element={<PollPage/>}/>
 						</Route>
 						<Route path="/medlem" element={<UserContext />}>
 							<Route path="" element={<Navigate to="liste" />} />

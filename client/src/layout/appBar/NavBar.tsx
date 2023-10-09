@@ -43,15 +43,14 @@ function PrivateNavBar() {
             <NavLink text="Arrangementer" to="/arrangement" />
             <NavLink text="Sitater" to="/sitater" />
             <NavLink text="Rykter" to="/rykter" />
+            <NavLink text="Avstemminger" to="/avstemminger" />
             <NavLink text="Traller" to="/studenttraller" />
             <NavLink text="Noter" to="/notearkiv" />
-            <NavLink text="Dokumenter" to="/dokumenter" />
             <AdminDropDown />
             <NavDropDown text="Om oss">
                 <List component="nav" disablePadding sx={{ minWidth: 200 }}>
-                    <ListItemLink text="Framside" to="/framside" icon={<MenuIcons.FrontPage />} />
+                    <ListItemLink text="Dokumenter" to="/dokumenter" icon={<MenuIcons.Documents />} />
                     <Divider />
-                    <ListItemLink text="Bli Medlem" to="/bli-medlem" icon={<MenuIcons.BecomeMember />} />
                     {/* <ListItemLink text="FAQ" to="/faq" disabled /> */}
                     <Divider/>
                     <ListItemLink text="Styrets Nettsider" to="/styrets-nettsider" icon={<MenuIcons.BoardWebsiteList/>} />
@@ -59,6 +58,8 @@ function PrivateNavBar() {
                     <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={<MenuIcons.Wiki />} />
                     <Divider/>
                     <ListItemLink text="Lisens" to="/lisens" icon={<MenuIcons.License />} />
+                    <ListItemLink text="Framside" to="/framside" icon={<MenuIcons.FrontPage />} />
+                    <ListItemLink text="Bli Medlem" to="/bli-medlem" icon={<MenuIcons.BecomeMember />} />
                 </List>
             </NavDropDown>
         </Stack>
