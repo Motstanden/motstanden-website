@@ -33,7 +33,7 @@ export default function Home() {
                 />
 
                 <ItemOfTheDay 
-                    title="Sist oppdatert styrenettside"
+                    title="Sist oppdaterte styrenettsider"
                     hide={isSingleColumn}
                     fetchUrl="https://styret.motstanden.no/projectData.json"
                     renderItems={RenderBoardPageList}
@@ -64,7 +64,7 @@ export default function Home() {
                     renderItems={RenderRumourList}
                 />
                 <ItemOfTheDay 
-                    title="Sist oppdatert styrenettside"
+                    title="Sist oppdaterte styrenettsider"
                     hide={!isSingleColumn}
                     fetchUrl="https://styret.motstanden.no/projectData.json"
                     renderItems={RenderBoardPageList}
