@@ -40,3 +40,40 @@ BEGIN
     UPDATE event SET updated_at = current_timestamp
         WHERE vote_id = old.vote_id;
 END;
+
+CREATE VIEW vw_poll_options AS
+SELECT 
+	o.poll_option_id,
+	text,
+	poll_id,
+	COUNT(v.poll_option_id) as votes
+FROM 
+	poll_option o
+LEFT JOIN poll_vote v ON o.poll_option_id = v.poll_option_id  
+GROUP BY o.poll_option_id;
+
+CREATE VIEW vw_poll AS
+SELECT 
+	poll_id,
+	title,
+	type,
+
+	created_by as created_by_user_id,
+    created_by.first_name || ' '
+       || IIF(length(trim(created_by.middle_name)) = 0, '', created_by.middle_name || ' ')
+       || created_by.last_name
+       as created_by_full_name,
+    p.created_at,
+	
+	updated_by as updated_by_user_id,
+    updated_by.first_name || ' '
+       || IIF(length(trim(updated_by.middle_name)) = 0, '', updated_by.middle_name || ' ')
+       || updated_by.last_name
+       as updated_by_full_name,
+    p.updated_at
+	
+FROM 
+	poll p
+LEFT JOIN user created_by ON created_by.user_id = p.created_by
+LEFT JOIN user updated_by ON updated_by.user_id = p.updated_by;
+
