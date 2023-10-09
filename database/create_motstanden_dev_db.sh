@@ -39,6 +39,10 @@ sqlite3 motstanden_dev.db < migrations/motstanden_db/08_rumours.sql;
 echo "Running: 09_vw_event_refactor.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/09_vw_event_refactor.sql;
 
+# Create poll table
+echo "Running: 10_poll.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/10_poll.sql;
+
 # Insert data that is representative for the current data in the database
 cd data/db
 sh motstanden-db-data.sh 
