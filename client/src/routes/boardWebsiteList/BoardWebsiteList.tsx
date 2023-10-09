@@ -105,6 +105,7 @@ function cleanPageData( rawPage: RawPageData[] | undefined): PageData[] {
 
 export const BoardPageUtils = {
     cleanPageData: cleanPageData,
+    compareByTimestamp: compareByTimestamp,
 }
 
 function BoardPageTableLoader() {

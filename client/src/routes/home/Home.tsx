@@ -187,7 +187,9 @@ function NoItem( { hide }: { hide?: boolean }) {
 function RenderBoardPageList(props: RenderItemProps<RawProjectData>){
     const pages = BoardPageUtils.cleanPageData(props.items.pages)
     
-    const updatedPages = pages.filter(page => page.isUpdated).slice(0, 4)
+    const updatedPages = pages.filter(page => page.isUpdated)
+        .sort((a, b) => BoardPageUtils.compareByTimestamp(a.updated, b.updated, "desc"))
+        .slice(0, 4)
 
     const formatUpdateText = (date: Dayjs | undefined) => {
         if(!date)
