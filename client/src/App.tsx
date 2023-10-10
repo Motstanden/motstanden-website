@@ -41,7 +41,8 @@ import { SheetArchiveContext } from "src/routes/sheetArchive/Context";
 import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
 import { PollContext } from "./routes/poll/Context";
-import PollPage from "./routes/poll/Poll";
+import PollPage from "src/routes/poll/Poll";
+import NewPollPage from "src/routes/poll/NewPage";
 
 function App() {
 	const auth = useAuth()
@@ -88,6 +89,7 @@ function App() {
 						</Route>
 						<Route path="/avstemminger" element={<PollContext/>}>
 							<Route index element={<PollPage/>}/>
+							<Route path="ny" element={<NewPollPage/>}/>
 						</Route>
 						<Route path="/medlem" element={<UserContext />}>
 							<Route path="" element={<Navigate to="liste" />} />
