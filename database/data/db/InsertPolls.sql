@@ -1,33 +1,33 @@
 INSERT INTO poll(poll_id, created_by, updated_by, type, title) VALUES
-( 1, 5, 6, 'single', 'TODO 1'),
-( 2, 6, 5, 'single', 'TODO 2'),
-( 3, 5, 7, 'single', 'TODO 3'),
-( 4, 6, 6, 'single', 'TODO 4');
+( 1, 5, 6, 'single', 'Kuleis eller Softis?'),
+( 2, 6, 5, 'single', 'Blir du værende i Trondheim i sommer?'),
+( 3, 5, 7, 'single', 'Hva er den beste julefilmen?'),
+( 4, 6, 6, 'single', 'Hva var det kuleste på SMASH?');
 
 
 INSERT INTO poll_option(poll_option_id, poll_id, text) VALUES
-( 1, 1, 'TODO A'),
-( 2, 1, 'TODO B'),
+( 1, 1, 'Kuleis'),
+( 2, 1, 'Softis'),
 
-( 3, 2, 'TODO A'),
-( 4, 2, 'TODO B'),
-( 5, 2, 'TODO C'),
+( 3, 2, 'Ja'),
+( 4, 2, 'Nei'),
+( 5, 2, 'Vet ikke'),
 
-( 6, 3, 'TODO A'),
-( 7, 3, 'TODO B'),
-( 8, 3, 'TODO C'),
-( 9, 3, 'TODO D'),
+( 6, 3, 'Flåklypa'),
+( 7, 3, 'Hjemme Alene'),
+( 8, 3, 'Die Hard'),
+( 9, 3, 'Harry Potter og de vises sten'),
 
 
-( 10, 4, 'TODO A'),
-( 11, 4, 'TODO B'),
-( 12, 4, 'TODO C'),
-( 13, 4, 'TODO D'),
-( 14, 4, 'TODO E');
+( 10, 4, 'Spille musikk, tut'),
+( 11, 4, 'Spritorientering'),
+( 12, 4, 'Phanemil'),
+( 13, 4, 'Å sprenge GRANAT!!'),
+( 14, 4, 'At Motstanden vant nachspielet!');
 
 
 INSERT INTO poll_vote(poll_option_id, user_id) VALUES 
--- Poll 1
+-- Poll 1: Kuleis eller Softis?
 ( 1, 14 ),
 ( 1, 15 ),
 ( 1, 16 ),
@@ -64,7 +64,7 @@ INSERT INTO poll_vote(poll_option_id, user_id) VALUES
 ( 2, 48 ),
 ( 2, 49 ),
 
--- Poll 2
+-- Poll 2: Blir du værende i Trondheim i sommer?
 ( 3, 14 ),
 ( 3, 15 ),
 ( 3, 16 ),
@@ -102,7 +102,7 @@ INSERT INTO poll_vote(poll_option_id, user_id) VALUES
 ( 5, 49 ),
 
 
--- Poll 3
+-- Poll 3: Hva er den beste julefilmen?
 ( 6, 14 ),
 ( 6, 15 ),
 ( 6, 16 ),
@@ -140,7 +140,7 @@ INSERT INTO poll_vote(poll_option_id, user_id) VALUES
 ( 9, 49 ),
 
 
--- Poll 5
+-- Poll 5: Hva var det kuleste på SMASH?
 ( 10, 14 ),
 ( 10, 15 ),
 ( 10, 16 ),
