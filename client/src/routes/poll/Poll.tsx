@@ -9,10 +9,12 @@ import React, { useState } from "react"
 import { useOutletContext } from "react-router-dom"
 import { TitleCard } from "src/components/TitleCard"
 import { useQueryInvalidator } from 'src/hooks/useQueryInvalidator'
+import { useTitle } from 'src/hooks/useTitle'
 import { fetchAsync } from "src/utils/fetchAsync"
 import { postJson } from 'src/utils/postJson'
 
 export default function PollPage(){
+    useTitle("Avstemminger")
     const polls = useOutletContext<Poll[]>()
     const [currentPoll, ...remainingPolls] = polls
 
