@@ -41,7 +41,7 @@ BEGIN
         WHERE vote_id = old.vote_id;
 END;
 
-CREATE VIEW vw_poll_options AS
+CREATE VIEW vw_poll_option AS
 SELECT 
 	o.poll_option_id,
 	text,

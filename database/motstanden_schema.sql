@@ -282,7 +282,7 @@ BEGIN
     UPDATE event SET updated_at = current_timestamp
         WHERE vote_id = old.vote_id;
 END;
-CREATE VIEW vw_poll_options AS
+CREATE VIEW vw_poll_option AS
 SELECT 
 	o.poll_option_id,
 	text,
@@ -292,7 +292,7 @@ FROM
 	poll_option o
 LEFT JOIN poll_vote v ON o.poll_option_id = v.poll_option_id  
 GROUP BY o.poll_option_id
-/* vw_poll_options(poll_option_id,text,poll_id,votes) */;
+/* vw_poll_option(poll_option_id,text,poll_id,votes) */;
 CREATE VIEW vw_poll AS
 SELECT 
 	poll_id,
