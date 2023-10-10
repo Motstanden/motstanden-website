@@ -1,8 +1,9 @@
-import { Accordion, AccordionDetails, AccordionSummary, FormControlLabel, Radio, RadioGroup } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Checkbox, FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { Poll, PollOption, PollWithOption } from "common/interfaces"
-import { useState } from "react"
+import React, { useState } from "react"
 import { useOutletContext } from "react-router-dom"
+import { TitleCard } from "src/components/TitleCard"
 import { fetchAsync } from "src/utils/fetchAsync"
 
 export default function PollPage(){
@@ -11,8 +12,9 @@ export default function PollPage(){
 
     return(
         <div>
-            <h1>Avstemminger</h1>
-            <CurrentPoll poll={currentPoll}/>
+            <div style={{marginBlock: "40px"}}>
+                <CurrentPoll poll={currentPoll}/>
+            </div>
             <PreviousPolls polls={remainingPolls}/>
         </div>
     )
@@ -20,11 +22,13 @@ export default function PollPage(){
 
 function CurrentPoll( { poll }: { poll: Poll }){
     return(
-        <div>
-            <h3>
-                {poll.title}
-            </h3>
-            <PollOptions poll={poll}/>
+        <div style={{
+            display: "inline-block", 
+            minWidth: "MIN(100%, 500px)"
+        }}>
+            <TitleCard title={poll.title}>
+                <PollOptions poll={poll}/>
+            </TitleCard>
         </div>
     )
 }
@@ -87,28 +91,61 @@ function SingleChoicePollOptions( {poll}: {poll: PollWithOption}) {
     const [selectedIndex, setSelectedIndex] = useState(poll.options.findIndex( p => p.isVotedOnByUser))
 
     return (
-        <RadioGroup value={selectedIndex}>
-            {poll.options.map((option, index) => (
-                <FormControlLabel 
-                    key={index}
-                    value={index}
-                    label={option.text}
-                    onClick={() => setSelectedIndex(index)}
-                    control={<Radio color="secondary" />}
+        <FormControl>
+            <RadioGroup value={selectedIndex}>
+                {poll.options.map((option, index) => (
+                    <OptionItem 
+                        key={index}
+                        value={index}
+                        option={option}
+                        variant="single"
+                        onClick={() => setSelectedIndex(index)}
                     />
-            ))}
-        </RadioGroup>
+                ))}
+            </RadioGroup>
+        </FormControl>
+    )
+}
+
+function OptionItem({
+    option, 
+    value, 
+    variant,
+    onClick
+}: {
+    option: PollOption, 
+    value: unknown, 
+    variant: "single" | "multiple",
+    onClick?: React.MouseEventHandler<HTMLLabelElement> 
+}) {
+
+    const [isMouseOver, setIsMouseOver] = useState(false)
+
+    const srcControl = variant === "single" 
+        ? <Radio color="secondary" /> 
+        : <Checkbox color="secondary" />
+
+    return (
+        <FormControlLabel 
+            value={value}
+            label={option.text}
+            onMouseEnter={() => setIsMouseOver(true)}
+            onMouseLeave={() => setIsMouseOver(false)}
+            style={isMouseOver ? {textDecoration: "underline"} : {}}
+            onClick={onClick}
+            control={srcControl}
+        />
     )
 }
 
 function MultipleChoicePollOptions( {poll}: {poll: PollWithOption}) {
     return (
-        <>Multiple choice...</>
+        <>Todo: Implement Multiple choice...</>
     )
 }
 
 function PollResult( {poll}: {poll: PollWithOption}) {
     return (
-        <>Results...</>
+        <>Todo: Show Results...</>
     )
 }
