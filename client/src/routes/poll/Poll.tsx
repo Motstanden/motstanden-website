@@ -1,13 +1,13 @@
+import BarChartIcon from '@mui/icons-material/BarChart'
+import HowToVoteIcon from '@mui/icons-material/HowToVote'
 import { LoadingButton } from "@mui/lab"
-import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Divider, FormControl, FormControlLabel, Radio, RadioGroup, Stack, Theme, useMediaQuery } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, FormControl, FormControlLabel, Radio, RadioGroup, Stack, useMediaQuery, useTheme } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { Poll, PollOption, PollWithOption } from "common/interfaces"
 import React, { useState } from "react"
 import { useOutletContext } from "react-router-dom"
 import { TitleCard } from "src/components/TitleCard"
 import { fetchAsync } from "src/utils/fetchAsync"
-import HowToVoteIcon from '@mui/icons-material/HowToVote';
-import BarChartIcon from '@mui/icons-material/BarChart';
 
 export default function PollPage(){
     const polls = useOutletContext<Poll[]>()
@@ -212,13 +212,30 @@ function MultipleChoicePollOptions(poll: PollChoiceProps) {
 function PollResult( {poll, onExitResultClick}: {poll: PollWithOption, onExitResultClick: React.MouseEventHandler<HTMLButtonElement>}) {
 
     const userHasVoted = poll.options.find(option => option.isVotedOnByUser) !== undefined
+    const totalVotes = poll.options.reduce((accumulated, option) => accumulated + option.voteCount, 0)
 
     return (
         <div>
             <div>
-                Show results...
+                {poll.options.map((option, index) => (
+                    <div 
+                        key={index} 
+                        style={{ marginBottom: "25px" }}
+                    >
+                        <div style={{
+                            marginLeft: "2px",
+                            fontSize: "1.1em",
+                        }}>
+                            {option.text}
+                        </div>
+                        <BarChartItem 
+                            percentage={option.voteCount / totalVotes * 100} 
+                            voteCount={option.voteCount}
+                            />
+                    </div>
+                ))}
             </div>
-            <div style={{marginTop: "2em", marginBottom: "1em"}}>
+            <div style={{marginTop: "1em", marginBottom: "1em"}}>
                 <Button 
                     variant="outlined"
                     color="secondary"
@@ -228,6 +245,53 @@ function PollResult( {poll, onExitResultClick}: {poll: PollWithOption, onExitRes
                     >
                         {userHasVoted ? "Endre stemme" : "Avgi stemme"}
                 </Button>
+            </div>
+        </div>
+    )
+}
+
+function BarChartItem( {percentage, voteCount}: {percentage: number, voteCount: number}){
+    const theme = useTheme();
+    let newPercentage =  Math.max(Math.min(Math.round(percentage), 100))  // Round value to nearest integer between 0 and 100
+    
+    return (
+        <div style={{
+            height: "40px",
+            width: "100%",
+            borderWidth: "1px",
+            borderStyle: "solid",
+            borderColor: theme.palette.grey[600],
+            borderRadius: "4px",
+            position: "relative",
+        }}>
+            <div style={{
+                height: "100%",
+                width: `${newPercentage}%`,
+                backgroundColor: theme.palette.primary.light,
+                borderRadius: "3px",
+            }}>
+            </div>
+            <div style={{
+                position: "absolute",
+                top: "50%",
+                transform: "translateY(-50%)",
+                left: "10px",
+                fontWeight: "bold",
+                color: theme.palette.text.secondary,
+                fontSize: "1.1em"
+            }}>
+                {newPercentage}%
+            </div>
+            <div style={{
+                position: "absolute",
+                top: "50%",
+                transform: "translateY(-50%)",
+                right: "10px",
+                fontSize: "small",
+                fontWeight: "light",
+                color: theme.palette.text.secondary,
+            }}>
+                {voteCount} stemmer
             </div>
         </div>
     )
