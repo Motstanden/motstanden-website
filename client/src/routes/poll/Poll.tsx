@@ -1,4 +1,5 @@
 import BarChartIcon from '@mui/icons-material/BarChart'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import HowToVoteIcon from '@mui/icons-material/HowToVote'
 import { LoadingButton } from "@mui/lab"
 import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, FormControl, FormControlLabel, Radio, RadioGroup, Stack, useMediaQuery, useTheme } from "@mui/material"
@@ -38,25 +39,50 @@ function CurrentPoll( { poll }: { poll: Poll }){
 
 function PreviousPolls( {polls}: { polls: Poll[] }) {
 
+    const theme = useTheme()
+
     return (
         <>
             <h2>Tidligere avstemminger</h2>
             {polls.map((poll) => (
-                <div key={poll.id} >
+                <div key={poll.id}  >
                     <Accordion 
-                        TransitionProps={{ unmountOnExit: true }} 
+                        TransitionProps={{ unmountOnExit: true  }} 
                         disableGutters
+                        elevation={0}
                         style={{ 
                             display: "inline-block",
                             minWidth: "MIN(100%, 500px)",
+                            borderBottomWidth: "0px",
+                            borderBottomStyle: "solid",
+                            borderBottomColor: theme.palette.divider,
+                            borderRadius: "0px",
                         }}
                         >
-                        <AccordionSummary>
-                            <h3>
+                        <AccordionSummary 
+                            expandIcon={<ExpandMoreIcon />}
+                            style={{
+                                backgroundColor: "transparent",
+                                flexDirection: "row-reverse", 
+                                padding: "0px",
+                                margin: "0px",
+                                fontSize: "large",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            <span style={{marginLeft: "10px"}}>
                                 {poll.title}
-                            </h3>
+                            </span>
                         </AccordionSummary>
-                        <AccordionDetails>
+                        <AccordionDetails
+                            style={{
+                                borderLeftWidth: "1px",
+                                borderLeftStyle: "solid",
+                                borderLeftColor: theme.palette.divider,
+                                padding: "20px 10px 20px 30px",
+                                marginLeft: "12px"
+                            }}
+                        >
                             <PollOptions poll={poll}/>
                         </AccordionDetails>
                     </Accordion>
@@ -71,7 +97,7 @@ function PollOptions( {poll}: {poll: Poll} ) {
     const {isLoading, isError, data, error} = useQuery<PollOption[]>( [ poll.id, "FetchPollOptions"], () => fetchAsync<PollOption[]>(`/api/polls/${poll.id}/options`))
     
     if(isLoading)
-        return <></> // TODO: Loading skeleton
+        return <div style={{minHeight: "250px"}} ></div> // TODO: Loading skeleton
 
     if(isError)
         return <></>
