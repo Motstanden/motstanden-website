@@ -1,7 +1,7 @@
 import BarChartIcon from '@mui/icons-material/BarChart'
 import HowToVoteIcon from '@mui/icons-material/HowToVote'
 import { LoadingButton } from "@mui/lab"
-import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, FormControl, FormControlLabel, Paper, Radio, RadioGroup, Stack, useMediaQuery, useTheme } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, FormControl, FormControlLabel, Radio, RadioGroup, Stack, useMediaQuery, useTheme } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { Poll, PollOption, PollWithOption } from "common/interfaces"
 import React, { useState } from "react"
@@ -91,28 +91,48 @@ function PollOptionsRenderer( {poll}: {poll: PollWithOption}) {
     const onShowResultClick = () => setShowResult(true)
     const onExitResultClick = () => setShowResult(false)
 
+    const onSubmit = async (selectedItems: PollOption[]) => { 
+        console.log(selectedItems)
+
+        // TODO: Implement submit
+        await new Promise(resolve => setTimeout(resolve, 2000))
+
+        setShowResult(true)
+    }
+
     if(showResult)
         return <PollResult poll={poll} onExitResultClick={onExitResultClick}  />
 
     if(poll.type === "multiple")
-        return <MultipleChoicePollOptions poll={poll} onShowResultClick={onShowResultClick}/>
+        return <MultipleChoicePollOptions poll={poll} onShowResultClick={onShowResultClick} onSubmit={onSubmit}/>
     
-    return <SingleChoicePollOptions poll={poll} onShowResultClick={onShowResultClick} />
+    return <SingleChoicePollOptions poll={poll} onShowResultClick={onShowResultClick} onSubmit={onSubmit} />
 }
 
 interface PollChoiceProps {
     poll: PollWithOption,
     onShowResultClick: React.MouseEventHandler<HTMLButtonElement>,
+    onSubmit: (selectedItems: PollOption[]) => Promise<void>
 }
 
 function SingleChoicePollOptions(props: PollChoiceProps) {
 
     const {poll, onShowResultClick} = props
-
     const [selectedIndex, setSelectedIndex] = useState(poll.options.findIndex( p => p.isVotedOnByUser))
+    const [isLoading, setIsLoading] = useState(false)
+
+    const onSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setIsLoading(true)
+
+        const selectedItems = [ poll.options[selectedIndex] ]
+        await props.onSubmit(selectedItems)
+        
+        setIsLoading(false)
+    }
 
     return (
-        <div>
+        <form onSubmit={onSubmit}>
             <FormControl style={{marginLeft: "5px"}}>
                 <RadioGroup value={selectedIndex}>
                     {poll.options.map((option, index) => (
@@ -127,9 +147,13 @@ function SingleChoicePollOptions(props: PollChoiceProps) {
                 </RadioGroup>
             </FormControl>
             <div style={{marginTop: "30px", marginBottom: "15px"}}>
-                <SubmitButtons onShowResultClick={onShowResultClick} />
+                <SubmitButtons 
+                    onShowResultClick={onShowResultClick} 
+                    disabled={selectedIndex < 0} 
+                    loading={isLoading} 
+                />
             </div>
-        </div>
+        </form>
     )
 }
 
@@ -170,8 +194,8 @@ function SubmitButtons({
     disabled
 }: {
     onShowResultClick: React.MouseEventHandler<HTMLButtonElement> | undefined
-    loading?: boolean,
-    disabled?: boolean,
+    loading: boolean,
+    disabled: boolean,
 }) {
     const isSmallScreen: boolean = useMediaQuery("(max-width: 360px)")
 
@@ -240,7 +264,7 @@ function PollResult( {poll, onExitResultClick}: {poll: PollWithOption, onExitRes
                     </div>
                 ))}
             </div>
-            <div style={{marginTop: "1em", marginBottom: "1em"}}>
+            <div style={{marginTop: "40px", marginBottom: "1em"}}>
                 <Button 
                     variant="outlined"
                     color="secondary"
