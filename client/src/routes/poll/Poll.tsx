@@ -1,7 +1,7 @@
 import BarChartIcon from '@mui/icons-material/BarChart'
 import HowToVoteIcon from '@mui/icons-material/HowToVote'
 import { LoadingButton } from "@mui/lab"
-import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, FormControl, FormControlLabel, Radio, RadioGroup, Stack, useMediaQuery, useTheme } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, FormControl, FormControlLabel, Paper, Radio, RadioGroup, Stack, useMediaQuery, useTheme } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { Poll, PollOption, PollWithOption } from "common/interfaces"
 import React, { useState } from "react"
@@ -41,21 +41,26 @@ function PreviousPolls( {polls}: { polls: Poll[] }) {
     return (
         <>
             <h2>Tidligere avstemminger</h2>
-            {polls.map((poll, index) => (
-                <Accordion 
-                    key={index} 
-                    TransitionProps={{ unmountOnExit: true }} 
-                    disableGutters
-                    >
-                    <AccordionSummary>
-                        <h3>
-                            {poll.title}
-                        </h3>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <PollOptions poll={poll}/>
-                    </AccordionDetails>
-                </Accordion>
+            {polls.map((poll) => (
+                <div key={poll.id} >
+                    <Accordion 
+                        TransitionProps={{ unmountOnExit: true }} 
+                        disableGutters
+                        style={{ 
+                            display: "inline-block",
+                            minWidth: "MIN(100%, 500px)",
+                        }}
+                        >
+                        <AccordionSummary>
+                            <h3>
+                                {poll.title}
+                            </h3>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <PollOptions poll={poll}/>
+                        </AccordionDetails>
+                    </Accordion>
+                </div>
             ))}
         </>
     )
@@ -108,7 +113,7 @@ function SingleChoicePollOptions(props: PollChoiceProps) {
 
     return (
         <div>
-            <FormControl>
+            <FormControl style={{marginLeft: "5px"}}>
                 <RadioGroup value={selectedIndex}>
                     {poll.options.map((option, index) => (
                         <OptionItem 
@@ -121,7 +126,7 @@ function SingleChoicePollOptions(props: PollChoiceProps) {
                     ))}
                 </RadioGroup>
             </FormControl>
-            <div style={{marginTop: "2em", marginBottom: "1em"}}>
+            <div style={{marginTop: "30px", marginBottom: "15px"}}>
                 <SubmitButtons onShowResultClick={onShowResultClick} />
             </div>
         </div>
