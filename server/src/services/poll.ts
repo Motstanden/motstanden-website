@@ -1,6 +1,6 @@
 import Database from "better-sqlite3";
 import { Poll, PollOption, PollWithOption } from "common/interfaces";
-import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig.js";
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
 
 interface DbPollOption extends Omit<PollOption, "hasVote"> {
     hasVote: number,
@@ -50,13 +50,12 @@ function getPollOptions(userId: number, pollId: number): PollOption[] {
             poll_option_id as id, 
             text, 
             votes as voteCount,
-            EXISTS(
+            poll_option_id IN (
                 SELECT 
-                    1 
+                    poll_option_id 
                 FROM 
                     poll_vote 
-                WHERE 
-                    user_id = ?
+                WHERE user_id = ?
             ) as isVotedOnByUser
         FROM 
             vw_poll_option 
@@ -121,10 +120,70 @@ function getAllPolls() : Poll[] {
 
     return pollList   
 }
- 
+
+function getPollOptionIds(pollId: number): number[] {
+    const db = new Database(motstandenDB, dbReadOnlyConfig) 
+    const stmt = db.prepare(`
+        SELECT 
+            poll_option_id as id
+        FROM 
+            poll_option 
+        WHERE 
+            poll_id = ?
+    `)
+
+    const dbData: {id: number}[] | undefined = stmt.all(pollId)
+    db.close()
+    
+    if(!dbData)
+        throw "Something went terribly wrong..."
+
+    const ids = dbData.map( item => item.id)
+
+    return ids
+ }
+
+function isValidCombination(pollId: number, rawIds: number[]){
+    const validIds = getPollOptionIds(pollId)   
+    return rawIds.every(id => validIds.includes(id))
+}
+
+function upsertVotes(userId: number, poll_id: number, optionIds: number[]) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+
+    const allOptionIds = getPollOptionIds(poll_id)
+    const questionMarks = allOptionIds.map( () => "?")
+    const deleteStmt = db.prepare(`
+        DELETE FROM 
+            poll_vote 
+        WHERE 
+            user_id = ? AND poll_option_id in (${questionMarks.join(",")});
+    `)
+
+    const insertStmt = db.prepare(`
+        INSERT INTO 
+            poll_vote (poll_option_id, user_id)
+        VALUES (?, ?)
+    `)
+
+    db.transaction( () => {
+        deleteStmt.run(userId, allOptionIds)
+        optionIds.forEach( optionId => {
+            insertStmt.run(optionId, userId)
+        })
+    })()
+
+    db.close()
+}
+
 export const pollService = {
     get: getPoll,
     getAll: getAllPolls,
     getLast: getLastPoll,
-    getPollOptions: getPollOptions
+    getPollOptions: getPollOptions,
+}
+
+export const pollVoteService = {
+    isValidCombination: isValidCombination,
+    upsertVotes: upsertVotes
 }
