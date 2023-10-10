@@ -61,8 +61,6 @@ function PreviousPolls( {polls}: { polls: Poll[] }) {
     )
 }
 
-
-
 function PollOptions( {poll}: {poll: Poll} ) {
 
     const {isLoading, isError, data, error} = useQuery<PollOption[]>( [ poll.id, "FetchPollOptions"], () => fetchAsync<PollOption[]>(`/api/polls/${poll.id}/options`))
@@ -78,18 +76,33 @@ function PollOptions( {poll}: {poll: Poll} ) {
         options: data
     }
 
-    const userHasVoted = pollData.options.find(option => option.isVotedOnByUser) !== undefined
-
-    if(userHasVoted)
-        return <PollResult poll={pollData}/>
-
-    if(poll.type === "multiple")
-        return <MultipleChoicePollOptions poll={pollData}/>
-    
-    return <SingleChoicePollOptions poll={pollData} />
+    return <PollOptionsRenderer poll={pollData}/>
 }
 
-function SingleChoicePollOptions( {poll}: {poll: PollWithOption}) {
+function PollOptionsRenderer( {poll}: {poll: PollWithOption}) {
+
+    const [showResult, setShowResult] = useState(poll.options.find(option => option.isVotedOnByUser) !== undefined) 
+
+    const onShowResultClick = () => setShowResult(true)
+    const onExitResultClick = () => setShowResult(false)
+
+    if(showResult)
+        return <PollResult poll={poll} onExitResultClick={onExitResultClick}  />
+
+    if(poll.type === "multiple")
+        return <MultipleChoicePollOptions poll={poll} onShowResultClick={onShowResultClick}/>
+    
+    return <SingleChoicePollOptions poll={poll} onShowResultClick={onShowResultClick} />
+}
+
+interface PollChoiceProps {
+    poll: PollWithOption,
+    onShowResultClick: React.MouseEventHandler<HTMLButtonElement>,
+}
+
+function SingleChoicePollOptions(props: PollChoiceProps) {
+
+    const {poll, onShowResultClick} = props
 
     const [selectedIndex, setSelectedIndex] = useState(poll.options.findIndex( p => p.isVotedOnByUser))
 
@@ -109,7 +122,7 @@ function SingleChoicePollOptions( {poll}: {poll: PollWithOption}) {
                 </RadioGroup>
             </FormControl>
             <div style={{marginTop: "2em", marginBottom: "1em"}}>
-                <SubmitButtons />
+                <SubmitButtons onShowResultClick={onShowResultClick} />
             </div>
         </div>
     )
@@ -151,7 +164,7 @@ function SubmitButtons({
     loading,
     disabled
 }: {
-    onShowResultClick?: React.MouseEventHandler<HTMLButtonElement> | undefined
+    onShowResultClick: React.MouseEventHandler<HTMLButtonElement> | undefined
     loading?: boolean,
     disabled?: boolean,
 }) {
@@ -190,14 +203,32 @@ function SubmitButtons({
     )
 }
 
-function MultipleChoicePollOptions( {poll}: {poll: PollWithOption}) {
+function MultipleChoicePollOptions(poll: PollChoiceProps) {
     return (
         <>Todo: Implement Multiple choice...</>
     )
 }
 
-function PollResult( {poll}: {poll: PollWithOption}) {
+function PollResult( {poll, onExitResultClick}: {poll: PollWithOption, onExitResultClick: React.MouseEventHandler<HTMLButtonElement>}) {
+
+    const userHasVoted = poll.options.find(option => option.isVotedOnByUser) !== undefined
+
     return (
-        <>Todo: Show Results...</>
+        <div>
+            <div>
+                Show results...
+            </div>
+            <div style={{marginTop: "2em", marginBottom: "1em"}}>
+                <Button 
+                    variant="outlined"
+                    color="secondary"
+                    style={{minWidth: "120px"}}
+                    startIcon={<HowToVoteIcon />}
+                    onClick={onExitResultClick}
+                    >
+                        {userHasVoted ? "Endre stemme" : "Avgi stemme"}
+                </Button>
+            </div>
+        </div>
     )
 }
