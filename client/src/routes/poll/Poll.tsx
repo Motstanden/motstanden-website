@@ -8,7 +8,9 @@ import { Poll, PollOption, PollWithOption } from "common/interfaces"
 import React, { useState } from "react"
 import { useOutletContext } from "react-router-dom"
 import { TitleCard } from "src/components/TitleCard"
+import { useQueryInvalidator } from 'src/hooks/useQueryInvalidator'
 import { fetchAsync } from "src/utils/fetchAsync"
+import { postJson } from 'src/utils/postJson'
 
 export default function PollPage(){
     const polls = useOutletContext<Poll[]>()
@@ -93,9 +95,13 @@ function PreviousPolls( {polls}: { polls: Poll[] }) {
 }
 
 function PollOptions( {poll}: {poll: Poll} ) {
-
-    const {isLoading, isError, data, error} = useQuery<PollOption[]>( [ poll.id, "FetchPollOptions"], () => fetchAsync<PollOption[]>(`/api/polls/${poll.id}/options`))
+    const queryKey = [ poll.id, "FetchPollOptions"]
     
+    const {isLoading, isError, data, error} = useQuery<PollOption[]>( queryKey, () => fetchAsync<PollOption[]>(`/api/polls/${poll.id}/options`))
+    
+    const queryInvalidator = useQueryInvalidator(queryKey)
+    const onSubmitSuccess = () => queryInvalidator()
+
     if(isLoading)
         return <div style={{minHeight: "250px"}} ></div> // TODO: Loading skeleton
 
@@ -107,10 +113,10 @@ function PollOptions( {poll}: {poll: Poll} ) {
         options: data
     }
 
-    return <PollOptionsRenderer poll={pollData}/>
+    return <PollOptionsRenderer poll={pollData} onSubmitSuccess={onSubmitSuccess}/>
 }
 
-function PollOptionsRenderer( {poll}: {poll: PollWithOption}) {
+function PollOptionsRenderer( {poll, onSubmitSuccess}: {poll: PollWithOption, onSubmitSuccess: () => void}) {
 
     const [showResult, setShowResult] = useState(poll.options.find(option => option.isVotedOnByUser) !== undefined) 
 
@@ -118,12 +124,17 @@ function PollOptionsRenderer( {poll}: {poll: PollWithOption}) {
     const onExitResultClick = () => setShowResult(false)
 
     const onSubmit = async (selectedItems: PollOption[]) => { 
-        console.log(selectedItems)
 
-        // TODO: Implement submit
-        await new Promise(resolve => setTimeout(resolve, 2000))
+        const url = `/api/polls/${poll.id}/vote/upsert`
+        const optionIds: number[] = selectedItems.map(item => item.id)
 
-        setShowResult(true)
+        const response = await postJson(url, optionIds, { alertOnFailure: true})
+
+        if(response && response.ok)
+        {
+            setShowResult(true)
+            onSubmitSuccess()
+        }
     }
 
     if(showResult)
