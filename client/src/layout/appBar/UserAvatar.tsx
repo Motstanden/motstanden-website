@@ -44,7 +44,7 @@ export default function UserAvatar() {
         <IconPopupMenu
             icon={(
                 <Tooltip title={fullName} disableInteractive>
-                    <Avatar aria-label="Profilmeny" alt="Mitt profilbilde" src={user.profilePicture}>{user.firstName[0]}</Avatar>
+                    <Avatar aria-label="Profilmeny" alt="Mitt profilbilde" src={`/${user.profilePicture}`}>{user.firstName[0]}</Avatar>
                 </Tooltip>
             )}
         >
