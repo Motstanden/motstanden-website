@@ -45,6 +45,7 @@ router.post("/polls/new",
     AuthenticateUser(),
     (req, res) => {
         // TODO...
+        res.end()
     }
 )
 

@@ -1,9 +1,10 @@
-
-
-export interface Poll {
-    id: number;
+export interface NewPoll {
     title: string;
     type: 'single' | 'multiple';
+}
+
+export interface Poll extends NewPoll {
+    id: number;
 
     createdByUserId: number;
     createdByName: string;
@@ -18,9 +19,16 @@ export interface PollWithOption extends Poll {
     options: PollOption[];
 }
 
-export interface PollOption {
-    id: number;
+export interface NewPollWithOption extends NewPoll {
+    options: NewPollOption[];
+}
+
+export interface NewPollOption {
     text: string;
+}
+
+export interface PollOption extends NewPollOption {
+    id: number;
     voteCount: number;
     isVotedOnByUser: boolean;          // Whether the current user has voted on this option
 }
