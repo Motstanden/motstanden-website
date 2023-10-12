@@ -12,6 +12,7 @@ import { useQueryInvalidator } from 'src/hooks/useQueryInvalidator'
 import { useTitle } from 'src/hooks/useTitle'
 import { fetchAsync } from "src/utils/fetchAsync"
 import { postJson } from 'src/utils/postJson'
+import HowToRegIcon from '@mui/icons-material/HowToReg';
 
 export default function PollPage(){
     useTitle("Avstemninger")
@@ -286,21 +287,14 @@ function PollResult( {poll, onExitResultClick}: {poll: PollWithOption, onExitRes
         <div>
             <div>
                 {poll.options.map((option, index) => (
-                    <div 
+                    <PollResultItem 
                         key={index} 
-                        style={{ marginBottom: "25px" }}
-                    >
-                        <div style={{
-                            marginLeft: "2px",
-                            fontSize: "1.1em",
-                        }}>
-                            {option.text}
-                        </div>
-                        <BarChartItem 
-                            percentage={option.voteCount / totalVotes * 100} 
-                            voteCount={option.voteCount}
-                            />
-                    </div>
+                        option={option} 
+                        totalVotes={totalVotes}
+                        style={{ 
+                            marginBottom: "25px", 
+                        }}
+                    />
                 ))}
             </div>
             <div style={{marginTop: "40px", marginBottom: "1em"}}>
@@ -317,6 +311,40 @@ function PollResult( {poll, onExitResultClick}: {poll: PollWithOption, onExitRes
         </div>
     )
 }
+
+function PollResultItem( {option, totalVotes, style}: {option: PollOption, totalVotes: number, style?: React.CSSProperties}){
+    const theme = useTheme()
+    return (
+        <div style={style}>
+            <div style={{
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginBottom: "2px",
+            }}>
+                <span style={{
+                    marginLeft: "2px",
+                    fontSize: "1.1em",
+                }}>
+                    {option.text}
+                </span>
+                {option.isVotedOnByUser && ( 
+                    <HowToRegIcon 
+                        style={{
+                            color: theme.palette.primary.light, 
+                            marginRight: "1px" 
+                        }}/>
+                )}
+            </div>
+            <BarChartItem 
+                percentage={option.voteCount / totalVotes * 100} 
+                voteCount={option.voteCount}
+                />
+        </div>
+    )
+}
+
 
 function BarChartItem( {percentage, voteCount}: {percentage: number, voteCount: number}){
     const theme = useTheme();
