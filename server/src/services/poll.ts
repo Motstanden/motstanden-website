@@ -2,8 +2,8 @@ import Database from "better-sqlite3";
 import { Poll, PollOption, PollWithOption } from "common/interfaces";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
 
-interface DbPollOption extends Omit<PollOption, "hasVote"> {
-    hasVote: number,
+interface DbPollOption extends Omit<PollOption, "isVotedOnByUser"> {
+    isVotedOnByUser: number,
 }
 
 function getPoll(userId: number, pollId: number): PollWithOption {
@@ -70,7 +70,7 @@ function getPollOptions(userId: number, pollId: number): PollOption[] {
 
     const options = dbOptions.map( item => ({
         ...item, 
-        hasVote: item.hasVote === 1
+        isVotedOnByUser: item.isVotedOnByUser === 1
     }))
 
     return options
