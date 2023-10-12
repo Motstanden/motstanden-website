@@ -1,8 +1,9 @@
-import { strToNumber } from "common/utils";
+import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { pollService, pollVoteService } from "../services/poll.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
+import { NewPollWithOption } from "common/interfaces";
 
 let router = express.Router() 
 
@@ -44,7 +45,18 @@ router.get("/polls/:id/options",
 router.post("/polls/new",
     AuthenticateUser(),
     (req, res) => {
-        // TODO...
+        const user = req.user as AccessTokenData
+        const newPoll = tryCreateValidPoll(req.body) 
+
+        if(!newPoll)
+            return res.status(400).send("Could not parse poll data")
+
+        try {
+            pollService.insertNew(newPoll, user.userId)
+        } catch (err) {
+            console.log(err)
+            res.status(500).send("Failed to insert poll into database")
+        }
         res.end()
     }
 )
@@ -100,6 +112,34 @@ function createValidNumberArray(dirtyValues: number[] | unknown | unknown[] ): n
     }
 
     return result
+}
+
+function tryCreateValidPoll(obj: unknown): NewPollWithOption | undefined {
+
+    if(typeof obj !== "object" || obj === null)
+        return undefined
+
+    const poll = obj as NewPollWithOption
+
+    if(typeof poll.title !== "string" || isNullOrWhitespace(poll.title))
+        return undefined
+
+    if(poll.type !== "single" && poll.type !== "multiple")
+        return undefined
+
+    if(typeof poll.options !== "object" || poll.options === null || !Array.isArray(poll.options))
+        return undefined
+
+    if(poll.options.length <= 1)
+        return undefined
+
+    for(let i = 0; i < poll.options.length; i++){
+        const option = poll.options[i]
+        if(typeof option.text !== "string" || isNullOrWhitespace(option.text))
+            return undefined
+    }
+
+    return poll
 }
 
 function ValidatePollId(req: express.Request, res: express.Response, next: express.NextFunction) {

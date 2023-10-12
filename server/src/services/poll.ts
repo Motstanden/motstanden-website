@@ -1,5 +1,5 @@
 import Database from "better-sqlite3";
-import { Poll, PollOption, PollWithOption } from "common/interfaces";
+import { NewPollWithOption, Poll, PollOption, PollWithOption } from "common/interfaces";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
 
 interface DbPollOption extends Omit<PollOption, "isVotedOnByUser"> {
@@ -148,6 +148,32 @@ function isValidCombination(pollId: number, rawIds: number[]){
     return rawIds.every(id => validIds.includes(id))
 }
 
+function insertNewPoll(newPoll: NewPollWithOption, userId: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+
+    const pollSmt = db.prepare(`
+        INSERT INTO
+            poll(title, type, created_by, updated_by)
+        VALUES (?, ?, ?, ?)
+    `)
+    
+    const optionStm = db.prepare(` 
+        INSERT INTO
+            poll_option(text, poll_id)
+        VALUES (?, ?)
+    `)
+
+    db.transaction( () => {
+        const pollResult = pollSmt.run(newPoll.title, newPoll.type, userId, userId)
+        const pollId = pollResult.lastInsertRowid
+
+        newPoll.options.forEach( option => {
+            optionStm.run(option.text, pollId)
+        })
+    })()
+}
+
+
 function upsertVotes(userId: number, poll_id: number, optionIds: number[]) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
 
@@ -181,6 +207,7 @@ export const pollService = {
     getAll: getAllPolls,
     getLast: getLastPoll,
     getPollOptions: getPollOptions,
+    insertNew: insertNewPoll,
 }
 
 export const pollVoteService = {
