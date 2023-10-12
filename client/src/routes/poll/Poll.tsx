@@ -1,18 +1,17 @@
 import BarChartIcon from '@mui/icons-material/BarChart'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import HowToRegIcon from '@mui/icons-material/HowToReg'
 import HowToVoteIcon from '@mui/icons-material/HowToVote'
 import { LoadingButton } from "@mui/lab"
 import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, FormControl, FormControlLabel, Radio, RadioGroup, Stack, useMediaQuery, useTheme } from "@mui/material"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Poll, PollOption, PollWithOption } from "common/interfaces"
 import React, { useState } from "react"
 import { useOutletContext } from "react-router-dom"
 import { TitleCard } from "src/components/TitleCard"
-import { useQueryInvalidator } from 'src/hooks/useQueryInvalidator'
 import { useTitle } from 'src/hooks/useTitle'
 import { fetchAsync } from "src/utils/fetchAsync"
 import { postJson } from 'src/utils/postJson'
-import HowToRegIcon from '@mui/icons-material/HowToReg';
 
 export default function PollPage(){
     useTitle("Avstemninger")
@@ -102,8 +101,8 @@ function PollOptions( {poll}: {poll: Poll} ) {
     
     const {isLoading, isError, data, error} = useQuery<PollOption[]>( queryKey, () => fetchAsync<PollOption[]>(`/api/polls/${poll.id}/options`))
     
-    const queryInvalidator = useQueryInvalidator(queryKey)
-    const onSubmitSuccess = () => queryInvalidator()
+    const queryClient = useQueryClient()
+    const onSubmitSuccess = async () => await queryClient.invalidateQueries(queryKey)
 
     if(isLoading)
         return <div style={{minHeight: "250px"}} ></div> // TODO: Loading skeleton
@@ -119,7 +118,7 @@ function PollOptions( {poll}: {poll: Poll} ) {
     return <PollOptionsRenderer poll={pollData} onSubmitSuccess={onSubmitSuccess}/>
 }
 
-function PollOptionsRenderer( {poll, onSubmitSuccess}: {poll: PollWithOption, onSubmitSuccess: () => void}) {
+function PollOptionsRenderer( {poll, onSubmitSuccess}: {poll: PollWithOption, onSubmitSuccess: () => Promise<void>}) {
 
     const [showResult, setShowResult] = useState(poll.options.find(option => option.isVotedOnByUser) !== undefined) 
 
@@ -135,8 +134,8 @@ function PollOptionsRenderer( {poll, onSubmitSuccess}: {poll: PollWithOption, on
 
         if(response && response.ok)
         {
+            await onSubmitSuccess()
             setShowResult(true)
-            onSubmitSuccess()
         }
     }
 
