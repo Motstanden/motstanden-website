@@ -3,7 +3,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import HowToRegIcon from '@mui/icons-material/HowToReg'
 import HowToVoteIcon from '@mui/icons-material/HowToVote'
 import { LoadingButton } from "@mui/lab"
-import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, FormControl, FormControlLabel, Radio, RadioGroup, Stack, useMediaQuery, useTheme } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, FormControl, FormControlLabel, Radio, RadioGroup, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Poll, PollOption, PollWithOption } from "common/interfaces"
 import React, { useState } from "react"
@@ -105,10 +105,10 @@ function PollOptions( {poll}: {poll: Poll} ) {
     const onSubmitSuccess = async () => await queryClient.invalidateQueries(queryKey)
 
     if(isLoading)
-        return <div style={{minHeight: "250px"}} ></div> // TODO: Loading skeleton
+        return <PollOptionsSkeleton/>
 
     if(isError)
-        return <></>
+        return <div style={{minHeight: "300px"}}>{`${error}`}</div>
 
     const pollData: PollWithOption = {
         ...poll,
@@ -117,6 +117,46 @@ function PollOptions( {poll}: {poll: Poll} ) {
 
     return <PollOptionsRenderer poll={pollData} onSubmitSuccess={onSubmitSuccess}/>
 }
+
+function PollOptionsSkeleton( { length }: {length?: number}) {
+    length = length ?? 3
+    return (
+        <div>
+            {Array(length).fill(1).map( (_, index) => (
+                <div 
+                    key={index}
+                    style={{
+                        marginBottom: "20px"
+                    }} 
+                >
+                    <Skeleton 
+                        variant="text"
+                        style={{
+                            width: "200px",
+                            height: "32px"
+                        }}
+                    />
+                    <Skeleton 
+                        variant="rounded"
+                        style={{
+                            height: "40px",
+                        }}
+                    />
+                </div> 
+            ))}
+            <Skeleton 
+                variant="rounded"
+                style={{
+                    height: "30px",
+                    width: "160px",
+                    marginTop: "30px",
+                    marginBottom: "15px"
+                }}
+            />
+        </div>
+    )
+ }
+
 
 function PollOptionsRenderer( {poll, onSubmitSuccess}: {poll: PollWithOption, onSubmitSuccess: () => Promise<void>}) {
 
