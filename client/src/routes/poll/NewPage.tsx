@@ -1,9 +1,8 @@
-import { Form } from "src/components/form/Form"
-import { UpsertPollForm } from "./components/UpsertPollForm"
-import { useTitle } from "src/hooks/useTitle"
-import { useNavigate } from "react-router-dom";
-import { useContextInvalidator } from "src/routes/poll/Context";
 import { NewPollWithOption } from "common/interfaces";
+import { useNavigate } from "react-router-dom";
+import { useTitle } from "src/hooks/useTitle";
+import { useContextInvalidator } from "src/routes/poll/Context";
+import { UpsertPollForm } from "./components/UpsertPollForm";
 
 const emptyPoll: NewPollWithOption = {
     title: "",
@@ -16,20 +15,20 @@ const emptyPoll: NewPollWithOption = {
 }
 
 export default function NewPollPage() {
-    useTitle("Ny avstemming");
+    useTitle("Ny avstemning");
     const navigate = useNavigate();
     const contextInvalidator = useContextInvalidator();
 
-    const onAbort = () => navigate("/avstemminger");
+    const onAbort = () => navigate("/avstemninger");
 
     const onSuccess = () => {
         contextInvalidator();
-        navigate("/avstemminger");
+        navigate("/avstemninger");
     };
 
     return (
         <>
-            <h1>Ny avstemming</h1>
+            <h1>Ny avstemning</h1>
             <UpsertPollForm
                 initialValue={emptyPoll}
                 postUrl="/api/polls/new"

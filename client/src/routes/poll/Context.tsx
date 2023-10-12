@@ -31,8 +31,8 @@ function PageContainer({ children }: { children?: React.ReactNode }) {
     return (
         <TabbedPageContainer
             tabItems={[
-                { to: "/avstemminger", label: "avstemminger" },
-                { to: "/avstemminger/ny", label: "ny" },
+                { to: "/avstemninger", label: "avstemninger" },
+                { to: "/avstemninger/ny", label: "ny" },
             ]}
         >
             {children}

@@ -14,7 +14,7 @@ import { fetchAsync } from "src/utils/fetchAsync"
 import { postJson } from 'src/utils/postJson'
 
 export default function PollPage(){
-    useTitle("Avstemminger")
+    useTitle("Avstemninger")
     const polls = useOutletContext<Poll[]>()
     const [currentPoll, ...remainingPolls] = polls
 
@@ -47,7 +47,7 @@ function PreviousPolls( {polls}: { polls: Poll[] }) {
 
     return (
         <>
-            <h2>Tidligere avstemminger</h2>
+            <h2>Tidligere avstemninger</h2>
             {polls.map((poll) => (
                 <div key={poll.id}  >
                     <Accordion 

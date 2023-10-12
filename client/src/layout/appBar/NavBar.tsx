@@ -43,7 +43,7 @@ function PrivateNavBar() {
             <NavLink text="Arrangementer" to="/arrangement" />
             <NavLink text="Sitater" to="/sitater" />
             <NavLink text="Rykter" to="/rykter" />
-            <NavLink text="Avstemminger" to="/avstemminger" />
+            <NavLink text="Avstemninger" to="/avstemninger" />
             <NavLink text="Traller" to="/studenttraller" />
             <NavLink text="Noter" to="/notearkiv" />
             <AdminDropDown />

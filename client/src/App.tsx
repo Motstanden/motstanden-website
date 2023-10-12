@@ -32,6 +32,8 @@ import { LicenseOnlyPage, LicensePage } from "src/routes/license/LicensePage";
 import LoginPage from "src/routes/login/Login";
 import { LyricItemPage, LyricListPage, LyricPageContainer } from 'src/routes/lyric/Lyric';
 import NotFound from "src/routes/notFound/NotFound";
+import NewPollPage from "src/routes/poll/NewPage";
+import PollPage from "src/routes/poll/Poll";
 import { QuotesContext } from 'src/routes/quotes/Context';
 import QuoteListPage from "src/routes/quotes/ListPage";
 import NewQuotePage from "src/routes/quotes/NewPage";
@@ -41,8 +43,6 @@ import { SheetArchiveContext } from "src/routes/sheetArchive/Context";
 import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
 import { PollContext } from "./routes/poll/Context";
-import PollPage from "src/routes/poll/Poll";
-import NewPollPage from "src/routes/poll/NewPage";
 
 function App() {
 	const auth = useAuth()
@@ -87,7 +87,7 @@ function App() {
 							<Route index element={<RumourPage />} />
 							<Route path="ny" element={<NewRumourPage />} />
 						</Route>
-						<Route path="/avstemminger" element={<PollContext/>}>
+						<Route path="/avstemninger" element={<PollContext/>}>
 							<Route index element={<PollPage/>}/>
 							<Route path="ny" element={<NewPollPage/>}/>
 						</Route>

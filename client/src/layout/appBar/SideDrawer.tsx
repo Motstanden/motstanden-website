@@ -94,7 +94,7 @@ function PrivateContent(props: SideDrawerContentProps) {
             <ListItemDivider/>
             <ListItemLink text="Sitater" to="/sitater" onLinkClick={onRequestedExit} icon={<MenuIcons.Quotes />} />
             <ListItemLink text="Rykter" to="/rykter" onLinkClick={onRequestedExit} icon={<MenuIcons.Rumour />} />
-            <ListItemLink text="Avstemminger" to="/avstemminger" onLinkClick={onRequestedExit} icon={<MenuIcons.Poll />} />
+            <ListItemLink text="Avstemninger" to="/avstemninger" onLinkClick={onRequestedExit} icon={<MenuIcons.Poll />} />
             <ListItemDivider/>
             <ListItemLink text="Noter" to="/notearkiv" onLinkClick={onRequestedExit} icon={<MenuIcons.SheetArchive />} />
             <ListItemLink text="Traller" to="/studenttraller" onLinkClick={onRequestedExit} icon={<MenuIcons.Lyric />} />

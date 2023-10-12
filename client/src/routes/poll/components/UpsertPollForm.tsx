@@ -1,10 +1,10 @@
+import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, Checkbox, IconButton, MenuItem, Radio, Stack, TextField } from "@mui/material";
 import { NewPollWithOption, PollWithOption } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
 import { useState } from "react";
 import { Form } from "src/components/form/Form";
-import AddIcon from '@mui/icons-material/Add';
 
 export function UpsertPollForm({
     initialValue, 
@@ -73,7 +73,7 @@ export function UpsertPollForm({
                 <div>
                     <TextField 
                         select
-                        label="Avstemmingstype"
+                        label="Avstemningstype"
                         name="type"
                         required
                         fullWidth
