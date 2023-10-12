@@ -6,7 +6,7 @@ interface DbPollOption extends Omit<PollOption, "isVotedOnByUser"> {
     isVotedOnByUser: number,
 }
 
-function getPoll(userId: number, pollId: number): PollWithOption {
+function getPoll(pollId: number): Poll {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
 
     const stmt = db.prepare(`
@@ -15,11 +15,11 @@ function getPoll(userId: number, pollId: number): PollWithOption {
             title, 
             type,
 
-            created_by_user_id as createdByUserId,
+            created_by_user_id as createdBy,
             created_by_full_name as createdByName,
             created_at as createdAt,
 
-            updated_by_user_id as updatedByUserId,
+            updated_by_user_id as updatedBy,
             updated_by_full_name as updatedByName,
             updated_at as updatedAt
         FROM 
@@ -27,20 +27,26 @@ function getPoll(userId: number, pollId: number): PollWithOption {
         WHERE poll_id = ?
     `)    
 
-    let pollCore: Poll | undefined  
-    pollCore = stmt.get(pollId)
+    const poll: Poll | undefined = stmt.get(pollId)
     db.close()
 
-    if(!pollCore)
+    if(!poll)
         throw "Bad data"
 
-    const poll: PollWithOption = {
-        ...pollCore,
-        options: getPollOptions(userId, pollId),
-    }
-    
     return poll
 }
+
+function getPollWithOptions(userId: number, pollId: number): PollWithOption {
+
+    const poll = getPoll(pollId)
+    const options = getPollOptions(userId, pollId)
+    const result: PollWithOption = {
+        ...poll,
+        options: options
+    }
+    return result
+}
+
 
 function getPollOptions(userId: number, pollId: number): PollOption[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
@@ -76,7 +82,7 @@ function getPollOptions(userId: number, pollId: number): PollOption[] {
     return options
 }
 
-function getLastPoll(userId: number) {
+function getLastPollWithOptions(userId: number): PollWithOption {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
 
     const stmt = db.prepare(`SELECT MAX(poll_id) as id FROM poll`)
@@ -87,7 +93,7 @@ function getLastPoll(userId: number) {
     if(!pollId)
         throw "Something went terribly wrong..."
 
-    return getPoll(userId, pollId)
+    return getPollWithOptions(userId, pollId)
 }
 
 
@@ -100,11 +106,11 @@ function getAllPolls() : Poll[] {
             title, 
             type,
 
-            created_by_user_id as createdByUserId,
+            created_by_user_id as createdBy,
             created_by_full_name as createdByName,
             created_at as createdAt,
 
-            updated_by_user_id as updatedByUserId,
+            updated_by_user_id as updatedBy,
             updated_by_full_name as updatedByName,
             updated_at as updatedAt            
         FROM 
@@ -202,10 +208,27 @@ function upsertVotes(userId: number, poll_id: number, optionIds: number[]) {
     db.close()
 }
 
+function deletePoll(pollId: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const startTransaction = db.transaction(() => {
+        const stmt = db.prepare(`
+            DELETE FROM 
+                poll 
+            WHERE 
+                poll_id = ?
+        `)
+        stmt.run(pollId)
+    })
+    startTransaction()
+    db.close()
+}
+
 export const pollService = {
     get: getPoll,
     getAll: getAllPolls,
-    getLast: getLastPoll,
+    delete: deletePoll,
+    getLastPollWithOptions: getLastPollWithOptions,
+    getPollWithOptions: getPollWithOptions,
     getPollOptions: getPollOptions,
     insertNew: insertNewPoll,
 }

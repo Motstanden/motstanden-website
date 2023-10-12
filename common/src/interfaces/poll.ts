@@ -6,11 +6,11 @@ export interface NewPoll {
 export interface Poll extends NewPoll {
     id: number;
 
-    createdByUserId: number;
+    createdBy: number;          // User id
     createdByName: string;
     createdAt: string;          // Format: 'YYYY-MM-DD HH-MM-SS'
 
-    updatedByUserId: number;
+    updatedBy: number;          // User id
     updatedByName: string;      
     updatedAt: string;          // Format: 'YYYY-MM-DD HH-MM-SS'    
 }

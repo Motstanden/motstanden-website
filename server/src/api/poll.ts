@@ -1,9 +1,11 @@
+import { UserGroup } from "common/enums";
+import { NewPollWithOption } from "common/interfaces";
 import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
+import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
 import { pollService, pollVoteService } from "../services/poll.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
-import { NewPollWithOption } from "common/interfaces";
 
 let router = express.Router() 
 
@@ -11,7 +13,7 @@ router.get("/polls/latest",
     AuthenticateUser(),
     (req, res) => {
         const user = req.user as AccessTokenData
-        const poll = pollService.getLast(user.userId)
+        const poll = pollService.getLastPollWithOptions(user.userId)
         res.send(poll)
     }
 )
@@ -56,6 +58,23 @@ router.post("/polls/new",
         } catch (err) {
             console.log(err)
             res.status(500).send("Failed to insert poll into database")
+        }
+        res.end()
+    }
+)
+
+router.post("/polls/delete",
+    AuthenticateUser(),
+    requiresGroupOrAuthor({
+        requiredGroup: UserGroup.Administrator,
+        getAuthorInfo: (id) => pollService.get(id)
+    }),
+    (req, res) => {
+        const id = req.body.id as number    // This is already validated by requiresGroupOrAuthor 
+        try {
+            pollService.delete(id)
+        } catch (err) {
+            res.status(500).send("Failed to delete poll from database")
         }
         res.end()
     }
