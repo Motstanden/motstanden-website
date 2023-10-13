@@ -357,7 +357,7 @@ function VoteForm({
             <div style={{marginTop: "30px", marginBottom: "15px"}}>
                 <SubmitButtons 
                     onShowResultClick={onShowResultClick} 
-                    disabled={selectedItems.length < 0} 
+                    disabled={selectedItems.length <= 0} 
                     loading={isLoading} 
                 />
             </div>
