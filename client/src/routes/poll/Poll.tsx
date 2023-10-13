@@ -1,22 +1,20 @@
-import BarChartIcon from '@mui/icons-material/BarChart'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import HowToRegIcon from '@mui/icons-material/HowToReg'
-import HowToVoteIcon from '@mui/icons-material/HowToVote'
+import BarChartIcon from '@mui/icons-material/BarChart';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import MoreVertIcon from '@mui/icons-material/MoreVert'
-import { LoadingButton } from "@mui/lab"
-import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Divider, FormControl, FormControlLabel, Paper, Radio, RadioGroup, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Poll, PollOption, PollWithOption } from "common/interfaces"
-import React, { useState } from "react"
-import { useOutletContext } from "react-router-dom"
-import { AuthorInfo } from 'src/components/AuthorInfo'
-import { TitleCard } from "src/components/TitleCard"
+import { LoadingButton } from "@mui/lab";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Divider, FormControl, FormControlLabel, Paper, Radio, RadioGroup, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Poll, PollOption, PollWithOption } from "common/interfaces";
+import React, { useState } from "react";
+import { useOutletContext } from "react-router-dom";
+import { AuthorInfo } from 'src/components/AuthorInfo';
 import { DeleteMenuItem } from 'src/components/menu/EditOrDeleteMenu';
-import { IconPopupMenu } from 'src/components/menu/IconPopupMenu'
-import { useTitle } from 'src/hooks/useTitle'
-import { fetchAsync } from "src/utils/fetchAsync"
-import { postJson } from 'src/utils/postJson'
+import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
+import { useTitle } from 'src/hooks/useTitle';
+import { fetchAsync } from "src/utils/fetchAsync";
+import { postJson } from 'src/utils/postJson';
 import { useContextInvalidator } from './Context';
 
 
@@ -38,6 +36,18 @@ export default function PollPage(){
                 <CurrentPoll poll={currentPoll}/>
             </div>
             <PreviousPolls polls={remainingPolls}/>
+        </div>
+    )
+}
+
+export function PollPageSkeleton(){
+    return (
+        <div style={{
+            marginBlock: "40px",
+            display: "inline-block",
+            minWidth: "MIN(100%, 500px)"
+        }}>
+            <PollSkeleton/>
         </div>
     )
 }

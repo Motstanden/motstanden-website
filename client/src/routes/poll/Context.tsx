@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator";
 import { TabbedPageContainer } from "src/layout/PageContainer";
 import { fetchAsync } from "src/utils/fetchAsync";
+import { PollPageSkeleton } from "./Poll";
 
 
 const pollListQueryKey = ["FetchPollList"]
@@ -23,7 +24,7 @@ export function PollContext() {
     const {isLoading, isError, data, error} = useQuery<Poll[]>(pollListQueryKey, () => fetchAsync<Poll[]>("/api/polls/all"))
 
     if(isLoading)
-        return <PageContainer></PageContainer>
+        return <PageContainer><PollPageSkeleton/></PageContainer>
 
     if(isError)
         return <PageContainer>{`${error}`}</PageContainer>
