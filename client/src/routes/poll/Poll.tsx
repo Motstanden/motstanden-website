@@ -16,6 +16,9 @@ import { useTitle } from 'src/hooks/useTitle';
 import { fetchAsync } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
 import { useContextInvalidator } from './Context';
+import { useAuth } from 'src/context/Authentication';
+import { UserGroup } from 'common/enums';
+import { hasGroupAccess } from 'common/utils';
 
 
 export default function PollPage(){
@@ -54,8 +57,11 @@ export function PollPageSkeleton(){
 
 function CurrentPoll( { poll }: { poll: Poll }){
 
+    const user = useAuth().user!
     const [isLoading, setIsLoading] = useState(false)
     const contextInvalidator = useContextInvalidator()
+
+    const canDeletePoll = user.userId === poll.createdBy || hasGroupAccess(user, UserGroup.Administrator)
 
     const onDeleteClick = async () => {
         setIsLoading(true)
@@ -73,7 +79,7 @@ function CurrentPoll( { poll }: { poll: Poll }){
         setIsLoading(false)
      }
 
-     if(isLoading)
+    if(isLoading)
         return <PollSkeleton/>
 
     return(
@@ -88,9 +94,11 @@ function CurrentPoll( { poll }: { poll: Poll }){
                 <h3 style={{ margin: 0 }}>
                     {poll.title}
                 </h3>
-                <div style={{marginRight: "-10px"}}>
-                    <PollMenu onDeleteClick={onDeleteClick}/>
-                </div>
+                {canDeletePoll && ( 
+                    <div style={{marginRight: "-10px"}}>
+                        <PollMenu onDeleteClick={onDeleteClick}/>
+                    </div>
+                )}
             </Stack> 
             <Divider sx={{mt: 1}}/>
             <PollContent poll={poll}/>
