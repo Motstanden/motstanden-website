@@ -1,8 +1,9 @@
 import { NewPollWithOption } from "common/interfaces";
 import { useNavigate } from "react-router-dom";
 import { useTitle } from "src/hooks/useTitle";
-import { useContextInvalidator } from "src/routes/poll/Context";
 import { UpsertPollForm } from "./components/UpsertPollForm";
+import { useQueryClient } from "@tanstack/react-query";
+import { pollListQueryKey } from "./Context";
 
 const emptyPoll: NewPollWithOption = {
     title: "",
@@ -17,12 +18,12 @@ const emptyPoll: NewPollWithOption = {
 export default function NewPollPage() {
     useTitle("Ny avstemning");
     const navigate = useNavigate();
-    const contextInvalidator = useContextInvalidator();
+    const queryClient = useQueryClient()
 
     const onAbort = () => navigate("/avstemninger");
 
     const onSuccess = () => {
-        contextInvalidator();
+        queryClient.invalidateQueries(pollListQueryKey)
         navigate("/avstemninger");
     };
 

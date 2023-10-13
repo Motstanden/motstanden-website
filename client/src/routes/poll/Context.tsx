@@ -1,23 +1,12 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Poll } from "common/interfaces";
 import { Outlet } from "react-router-dom";
-import { useQueryInvalidator } from "src/hooks/useQueryInvalidator";
 import { TabbedPageContainer } from "src/layout/PageContainer";
 import { fetchAsync } from "src/utils/fetchAsync";
 import { PollPageSkeleton } from "./Poll";
 
 
-const pollListQueryKey = ["FetchPollList"]
-
-export const useContextInvalidator = () => {
-    const queryClient = useQueryClient()
-
-    const invalidateQuery = async () => {
-        await queryClient.invalidateQueries(pollListQueryKey)
-    }
-
-    return invalidateQuery
-}
+export const pollListQueryKey = ["FetchPollList"]
 
 export function PollContext() {
 

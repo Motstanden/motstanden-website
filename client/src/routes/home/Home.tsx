@@ -1,6 +1,6 @@
-import { Grid, Link, Skeleton, Theme, useMediaQuery } from "@mui/material";
+import { Grid, Link, Skeleton } from "@mui/material";
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
-import { EventData, Quote, Rumour } from "common/interfaces";
+import { EventData, Poll, Quote, Rumour } from "common/interfaces";
 import dayjs, { Dayjs } from "dayjs";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
@@ -14,31 +14,54 @@ import { ListSkeleton as QuotesListSkeleton } from "src/routes/quotes/ListPageSk
 import { RumourList, ListSkeleton as RumourListSkeleton } from "src/routes/rumour/RumourPage";
 import { fetchAsync } from "src/utils/fetchAsync";
 import { BoardPageUtils, RawProjectData } from "../boardWebsiteList/BoardWebsiteList";
+import { PollCard, PollSkeleton } from "../poll/Poll";
 
 
 export default function Home() {
     useTitle("Hjem")
     const user = useAuth().user!
-    const isSingleColumn = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
     return (
         <PageContainer>
             <h1>Hjem</h1>
             <p style={{ marginBottom: "40px" }}>Velkommen {user.firstName}!</p>
-            <Grid container spacing={4} >
+            <Grid 
+                container 
+                spacing={4} 
+            >
                 <ItemOfTheDay
                     title="Arrangement"
                     fetchUrl="/api/events/upcoming?limit=5"
                     renderSkeleton={<TitleAndSubtitleSkeleton length={5} />}
                     renderItems={RenderEventList}
+                    md={6}
+                    display={{ xs: "block", md: "none" }}
                 />
-
-                <ItemOfTheDay 
-                    title="Sist oppdaterte styrenettsider"
-                    hide={isSingleColumn}
-                    fetchUrl="https://styret.motstanden.no/projectData.json"
-                    renderItems={RenderBoardPageList}
-                    renderSkeleton={<TitleAndSubtitleSkeleton length={5}/>}
-                />
+                <Grid 
+                    item 
+                    container 
+                    direction="row"
+                    spacing={4}
+                    xs={12} sm={12} md={6} 
+                    display={{ xs: "none", xm: "none", md: "block" }}
+                    >
+                    <ItemOfTheDay
+                        title="Arrangement"
+                        fetchUrl="/api/events/upcoming?limit=5"
+                        renderSkeleton={<TitleAndSubtitleSkeleton length={5} />}
+                        renderItems={RenderEventList}
+                        xs={12} sm={12} md={12}
+                    />
+                    <ItemOfTheDay 
+                        title="Sist oppdaterte styrenettsider"
+                        fetchUrl="https://styret.motstanden.no/projectData.json"
+                        renderItems={RenderBoardPageList}
+                        renderSkeleton={<TitleAndSubtitleSkeleton length={5}/>}
+                        xs={12} sm={12} md={12}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={12} md={6} display={{xs: "none", sm: "none", md: "block"}}>
+                    <LatestPoll/>
+                </Grid>
                 <ItemOfTheDay
                     title="Nyeste sitater"
                     fetchUrl="/api/quotes?limit=3"
@@ -51,6 +74,9 @@ export default function Home() {
                     renderSkeleton={<RumourListSkeleton length={3} />}
                     renderItems={RenderRumourList}
                 />
+                <Grid item xs={12} display={{xs: "block", md: "none"}}>
+                    <LatestPoll/>
+                </Grid>
                 <ItemOfTheDay
                     title="Dagens sitater"
                     fetchUrl="/api/quotes/daily-quotes"
@@ -65,10 +91,10 @@ export default function Home() {
                 />
                 <ItemOfTheDay 
                     title="Sist oppdaterte styrenettsider"
-                    hide={!isSingleColumn}
                     fetchUrl="https://styret.motstanden.no/projectData.json"
                     renderItems={RenderBoardPageList}
                     renderSkeleton={<TitleAndSubtitleSkeleton length={5}/>}
+                    display={{xs: "block", md: "none"}}
                 />
                 <InfoCard
                     title="Nyttige lenker"
@@ -115,6 +141,33 @@ function RenderEventList(props: RenderItemProps<EventData[]>) {
                 </li>
             ))}
         </ul>
+    )
+}
+
+function LatestPoll() {
+
+    const queryKey = ["FetchLatestPoll"]
+    const {isLoading, isError, data, error} = useQuery<Poll>(queryKey, () => fetchAsync<Poll>("/api/polls/latest"))
+
+    if(isLoading) {
+        return (
+            <PollSkeleton style={{height: "100%",  maxWidth: "600px"}}/>
+        )
+    }
+
+    if(isError) {
+        return <></>
+    }
+
+    return (
+        <PollCard 
+            poll={data} 
+            srcQueryKey={queryKey} 
+            style={{
+                height: "100%",
+                maxWidth: "600px"
+            }}
+        />
     )
 }
 
@@ -317,18 +370,26 @@ function ItemOfTheDay<T>({
     renderSkeleton,
     renderItems,
     hide,
+    xs,
+    sm,
+    md,
+    display
 }: {
     title: string,
     fetchUrl: string,
     renderSkeleton: React.ReactElement,
     renderItems: (props: RenderItemProps<T>) => React.ReactElement,
     hide?: boolean
+    xs?: number,
+    sm?: number,
+    md?: number,
+    display?: {xs?: string, sm?: string, md?: string, lg?: string, xl?: string}
 }) {
     if(hide)
         return <></>
 
     return (
-        <Grid item xs={12} sm={12} md={6} >
+        <Grid item xs={xs ?? 12} sm={sm ?? 12} md={md ?? 6} display={display} >
             <TitleCard
                 title={title}
                 sx={{ maxWidth: "600px", height: "100%" }}>

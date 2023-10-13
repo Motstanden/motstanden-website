@@ -15,7 +15,7 @@ import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 import { useTitle } from 'src/hooks/useTitle';
 import { fetchAsync } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
-import { useContextInvalidator } from './Context';
+import { pollListQueryKey } from './Context';
 import { useAuth } from 'src/context/Authentication';
 import { UserGroup } from 'common/enums';
 import { hasGroupAccess } from 'common/utils';
@@ -36,7 +36,7 @@ export default function PollPage(){
                     display: "inline-block",
                     minWidth: "MIN(100%, 500px)"
                 }}>
-                <CurrentPoll poll={currentPoll}/>
+                <PollCard poll={currentPoll} srcQueryKey={pollListQueryKey}/>
             </div>
             <PreviousPolls polls={remainingPolls}/>
         </div>
@@ -55,11 +55,11 @@ export function PollPageSkeleton(){
     )
 }
 
-function CurrentPoll( { poll }: { poll: Poll }){
+export function PollCard( { poll, srcQueryKey, style, }: { poll: Poll, srcQueryKey: any[], style?: React.CSSProperties }){
 
     const user = useAuth().user!
     const [isLoading, setIsLoading] = useState(false)
-    const contextInvalidator = useContextInvalidator()
+    const queryClient = useQueryClient()
 
     const canDeletePoll = user.userId === poll.createdBy || hasGroupAccess(user, UserGroup.Administrator)
 
@@ -74,7 +74,7 @@ function CurrentPoll( { poll }: { poll: Poll }){
             }
         )
         if(response?.ok) {
-            await contextInvalidator()
+            await queryClient.invalidateQueries(srcQueryKey)
         }
         setIsLoading(false)
      }
@@ -85,7 +85,8 @@ function CurrentPoll( { poll }: { poll: Poll }){
     return(
         <Paper 
             elevation={6} 
-            sx={{ p: 2 }} >
+            sx={{ p: 2 }} 
+            style={style}>
             <Stack 
                 flexDirection="row" 
                 justifyContent="space-between"
@@ -106,9 +107,9 @@ function CurrentPoll( { poll }: { poll: Poll }){
     )
 }
 
-function PollSkeleton() {
+export function PollSkeleton( {style}: {style?: React.CSSProperties} ) {
     return (
-        <Paper elevation={2} sx={{ p: 2 }}>
+        <Paper elevation={2} sx={{ p: 2 }} style={style}>
             <Skeleton 
                 variant="text"
                 height="45px"
