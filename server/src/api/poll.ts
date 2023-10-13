@@ -12,8 +12,7 @@ let router = express.Router()
 router.get("/polls/latest",
     AuthenticateUser(),
     (req, res) => {
-        const user = req.user as AccessTokenData
-        const poll = pollService.getLastPollWithOptions(user.userId)
+        const poll = pollService.getNewest()
         res.send(poll)
     }
 )

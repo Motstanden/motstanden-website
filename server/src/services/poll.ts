@@ -82,7 +82,7 @@ function getPollOptions(userId: number, pollId: number): PollOption[] {
     return options
 }
 
-function getLastPollWithOptions(userId: number): PollWithOption {
+function getNewest(): Poll {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
 
     const stmt = db.prepare(`SELECT MAX(poll_id) as id FROM poll`)
@@ -93,7 +93,7 @@ function getLastPollWithOptions(userId: number): PollWithOption {
     if(!pollId)
         throw "Something went terribly wrong..."
 
-    return getPollWithOptions(userId, pollId)
+    return getPoll(pollId)
 }
 
 
@@ -228,7 +228,7 @@ export const pollService = {
     get: getPoll,
     getAll: getAllPolls,
     delete: deletePoll,
-    getLastPollWithOptions: getLastPollWithOptions,
+    getNewest: getNewest,
     getPollWithOptions: getPollWithOptions,
     getPollOptions: getPollOptions,
     insertNew: insertNewPoll,
