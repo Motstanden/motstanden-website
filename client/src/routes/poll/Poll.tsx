@@ -2,17 +2,23 @@ import BarChartIcon from '@mui/icons-material/BarChart'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import HowToRegIcon from '@mui/icons-material/HowToReg'
 import HowToVoteIcon from '@mui/icons-material/HowToVote'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { LoadingButton } from "@mui/lab"
-import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, FormControl, FormControlLabel, Radio, RadioGroup, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Divider, FormControl, FormControlLabel, Paper, Radio, RadioGroup, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Poll, PollOption, PollWithOption } from "common/interfaces"
 import React, { useState } from "react"
 import { useOutletContext } from "react-router-dom"
 import { AuthorInfo } from 'src/components/AuthorInfo'
 import { TitleCard } from "src/components/TitleCard"
+import { DeleteMenuItem } from 'src/components/menu/EditOrDeleteMenu';
+import { IconPopupMenu } from 'src/components/menu/IconPopupMenu'
 import { useTitle } from 'src/hooks/useTitle'
 import { fetchAsync } from "src/utils/fetchAsync"
 import { postJson } from 'src/utils/postJson'
+import { useContextInvalidator } from './Context';
+
 
 export default function PollPage(){
     useTitle("Avstemninger")
@@ -21,7 +27,11 @@ export default function PollPage(){
 
     return(
         <div>
-            <div style={{marginBlock: "40px"}}>
+            <div style={{
+                    marginBlock: "40px",
+                    display: "inline-block",
+                    minWidth: "MIN(100%, 500px)"
+                }}>
                 <CurrentPoll poll={currentPoll}/>
             </div>
             <PreviousPolls polls={remainingPolls}/>
@@ -30,22 +40,69 @@ export default function PollPage(){
 }
 
 function CurrentPoll( { poll }: { poll: Poll }){
+
+    const [isLoading, setIsLoading] = useState(false)
+    const contextInvalidator = useContextInvalidator()
+
+    const onDeleteClick = async () => {
+        setIsLoading(true)
+        const response = await postJson(
+            "/api/polls/delete",
+            { id: poll.id },
+            {
+                alertOnFailure: true,
+                confirmText: "Vil du permanent slette denne avstemningen?"
+            }
+        )
+        if(response?.ok) {
+            await contextInvalidator()
+        }
+        setIsLoading(false)
+     }
+
+     if(isLoading)
+        return <PollSkeleton/>
+
     return(
-        <div style={{
-            display: "inline-block", 
-            minWidth: "MIN(100%, 500px)"
-        }}>
-            <TitleCard title={poll.title} paddingTop={0.5}>
-                <PollContent poll={poll}/>
-            </TitleCard>
-        </div>
+        <Paper 
+            elevation={6} 
+            sx={{ p: 2 }} >
+            <Stack 
+                flexDirection="row" 
+                justifyContent="space-between"
+                alignItems="center"
+            >
+                <h3 style={{ margin: 0 }}>
+                    {poll.title}
+                </h3>
+                <div style={{marginRight: "-10px"}}>
+                    <PollMenu onDeleteClick={onDeleteClick}/>
+                </div>
+            </Stack> 
+            <Divider sx={{mt: 1}}/>
+            <PollContent poll={poll}/>
+        </Paper>
     )
 }
 
+function PollSkeleton() 
+{
+    return (
+        <Paper elevation={2} sx={{ p: 2 }}>
+            <Skeleton 
+                variant="text"
+                height="45px"
+                width="MIN(320px, 100%)"
+            />
+            <Divider sx={{mt: 1}}/>
+            <PollOptionsSkeleton length={3}/>
+        </Paper>
+    )
+}
+
+
 function PreviousPolls( {polls}: { polls: Poll[] }) {
-
     const theme = useTheme()
-
     return (
         <>
             <h2>Tidligere avstemninger</h2>
@@ -97,10 +154,12 @@ function PreviousPolls( {polls}: { polls: Poll[] }) {
     )
 }
 
-function PollContent({poll}: {poll: Poll}) {
+function PollContent( {poll }: {poll: Poll }) {
     return (
         <div>
-            <div style={{marginBottom: "15px"}}>
+            <div style={{
+                marginBottom: "15px",
+            }}>
                 <AuthorInfo 
                     createdAt={poll.createdAt}
                     createdByUserId={poll.createdBy}
@@ -115,7 +174,7 @@ function PollContent({poll}: {poll: Poll}) {
     )
 }
 
-function PollOptions( {poll}: {poll: Poll} ) {
+function PollOptions( {poll }: {poll: Poll }) {
     const queryKey = [ poll.id, "FetchPollOptions"]
     
     const {isLoading, isError, data, error} = useQuery<PollOption[]>( queryKey, () => fetchAsync<PollOption[]>(`/api/polls/${poll.id}/options`))
@@ -141,6 +200,13 @@ function PollOptionsSkeleton( { length }: {length?: number}) {
     length = length ?? 3
     return (
         <div>
+            <div style={{marginBottom: "15px", marginTop: "10px"}}>
+                <Skeleton
+                    variant="text"
+                    height="15px"
+                    width="240px"
+                />
+            </div>
             {Array(length).fill(1).map( (_, index) => (
                 <div 
                     key={index}
@@ -177,8 +243,13 @@ function PollOptionsSkeleton( { length }: {length?: number}) {
  }
 
 
-function PollOptionsRenderer( {poll, onSubmitSuccess}: {poll: PollWithOption, onSubmitSuccess: () => Promise<void>}) {
-
+function PollOptionsRenderer( {
+    poll, 
+    onSubmitSuccess, 
+}: {
+    poll: PollWithOption, 
+    onSubmitSuccess: () => Promise<void>, 
+}) {
     const [showResult, setShowResult] = useState(poll.options.find(option => option.isVotedOnByUser) !== undefined) 
 
     const onShowResultClick = () => setShowResult(true)
@@ -202,9 +273,17 @@ function PollOptionsRenderer( {poll, onSubmitSuccess}: {poll: PollWithOption, on
         return <PollResult poll={poll} onExitResultClick={onExitResultClick}  />
 
     if(poll.type === "multiple")
-        return <MultipleChoicePollOptions poll={poll} onShowResultClick={onShowResultClick} onSubmit={onSubmit}/>
+        return <MultipleChoicePollOptions 
+            poll={poll} 
+            onShowResultClick={onShowResultClick} 
+            onSubmit={onSubmit}
+            />
     
-    return <SingleChoicePollOptions poll={poll} onShowResultClick={onShowResultClick} onSubmit={onSubmit} />
+    return <SingleChoicePollOptions 
+        poll={poll} 
+        onShowResultClick={onShowResultClick} 
+        onSubmit={onSubmit}
+        />
 }
 
 interface PollChoiceProps {
@@ -259,7 +338,7 @@ function OptionItem({
     option, 
     value, 
     variant,
-    onClick
+    onClick,
 }: {
     option: PollOption, 
     value: unknown, 
@@ -403,7 +482,6 @@ function PollResultItem( {option, totalVotes, style}: {option: PollOption, total
     )
 }
 
-
 function BarChartItem( {percentage, voteCount}: {percentage: number, voteCount: number}){
     const theme = useTheme();
     let newPercentage =  Math.max(Math.min(Math.round(percentage), 100))  // Round value to nearest integer between 0 and 100
@@ -448,5 +526,17 @@ function BarChartItem( {percentage, voteCount}: {percentage: number, voteCount: 
                 {voteCount} stemmer
             </div>
         </div>
+    )
+}
+
+function PollMenu({
+    onDeleteClick,
+}: {
+    onDeleteClick: React.MouseEventHandler<HTMLLIElement>,
+}) {
+    return (
+        <IconPopupMenu icon={<MoreHorizIcon/>}>
+            <DeleteMenuItem onClick={onDeleteClick} />
+        </IconPopupMenu>    
     )
 }

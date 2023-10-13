@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Poll } from "common/interfaces";
 import { Outlet } from "react-router-dom";
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator";
@@ -8,7 +8,15 @@ import { fetchAsync } from "src/utils/fetchAsync";
 
 const pollListQueryKey = ["FetchPollList"]
 
-export const useContextInvalidator = () => useQueryInvalidator(pollListQueryKey)
+export const useContextInvalidator = () => {
+    const queryClient = useQueryClient()
+
+    const invalidateQuery = async () => {
+        await queryClient.invalidateQueries(pollListQueryKey)
+    }
+
+    return invalidateQuery
+}
 
 export function PollContext() {
 
