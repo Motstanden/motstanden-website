@@ -8,6 +8,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Poll, PollOption, PollWithOption } from "common/interfaces"
 import React, { useState } from "react"
 import { useOutletContext } from "react-router-dom"
+import { AuthorInfo } from 'src/components/AuthorInfo'
 import { TitleCard } from "src/components/TitleCard"
 import { useTitle } from 'src/hooks/useTitle'
 import { fetchAsync } from "src/utils/fetchAsync"
@@ -34,8 +35,8 @@ function CurrentPoll( { poll }: { poll: Poll }){
             display: "inline-block", 
             minWidth: "MIN(100%, 500px)"
         }}>
-            <TitleCard title={poll.title}>
-                <PollOptions poll={poll}/>
+            <TitleCard title={poll.title} paddingTop={0.5}>
+                <PollContent poll={poll}/>
             </TitleCard>
         </div>
     )
@@ -83,16 +84,34 @@ function PreviousPolls( {polls}: { polls: Poll[] }) {
                                 borderLeftWidth: "1px",
                                 borderLeftStyle: "solid",
                                 borderLeftColor: theme.palette.divider,
-                                padding: "20px 10px 20px 30px",
+                                padding: "0px 10px 20px 30px",
                                 marginLeft: "12px"
                             }}
                         >
-                            <PollOptions poll={poll}/>
+                            <PollContent poll={poll}/>
                         </AccordionDetails>
                     </Accordion>
                 </div>
             ))}
         </>
+    )
+}
+
+function PollContent({poll}: {poll: Poll}) {
+    return (
+        <div>
+            <div style={{marginBottom: "15px"}}>
+                <AuthorInfo 
+                    createdAt={poll.createdAt}
+                    createdByUserId={poll.createdBy}
+                    createdByUserName={poll.createdByName}
+                    updatedAt={poll.updatedAt}
+                    updatedByUserId={poll.updatedBy}
+                    updatedByUserName={poll.updatedByName}
+                />
+            </div>
+            <PollOptions poll={poll}/>
+        </div>
     )
 }
 
