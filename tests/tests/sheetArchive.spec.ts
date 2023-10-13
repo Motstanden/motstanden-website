@@ -13,8 +13,13 @@ test.describe("Update song title info", async () => {
     async function runTest(browser: Browser, userGroup: UserGroup, workerInfo: TestInfo) {
         const page = await storageLogIn(browser, userGroup)
 
-        const song = getSong(workerInfo)   // We must get a different song per individual worker to avoid race conditions
-       
+        let song: string
+        try {
+            song = getSong(workerInfo)   // We must get a different song per individual worker to avoid race conditions
+        } catch (err) {
+            test.skip(err)
+        }
+
         await testUpdateSongTitle({page: page, song: song})
         await disposeStorageLogIn(page)
     }
@@ -31,8 +36,9 @@ function getSong(workerInfo: TestInfo): string {
         default: throw `Maximum worker count reached. ` +
                        `\nRace condition will occur in this tests if there exists more than 6 concurrent workers. ` +
                        `\nIndex of current worker: ${workerInfo.parallelIndex}. ` +
-                       `\nThe issue can be resolved by adding more sheet archive titles to version control.`
-    }
+                       `\nThe issue can be resolved by adding more sheet archive titles to version control, ` +
+                       `\nor manually limit the amount of workers in playwright. For example:`
+    }                  `\n\tnpx playwright test --workers 6`
 }
 
 interface TitleData extends Pick<SheetArchiveTitle, "title" | "isRepertoire" | "extraInfo"> {}
