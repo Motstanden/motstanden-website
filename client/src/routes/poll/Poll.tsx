@@ -4,7 +4,7 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { LoadingButton } from "@mui/lab";
-import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Divider, FormControl, FormControlLabel, Paper, Radio, RadioGroup, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, Paper, Radio, RadioGroup, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Poll, PollOption, PollWithOption } from "common/interfaces";
 import React, { useState } from "react";
@@ -106,8 +106,7 @@ function CurrentPoll( { poll }: { poll: Poll }){
     )
 }
 
-function PollSkeleton() 
-{
+function PollSkeleton() {
     return (
         <Paper elevation={2} sx={{ p: 2 }}>
             <Skeleton 
@@ -293,65 +292,92 @@ function PollOptionsRenderer( {
     if(showResult)
         return <PollResult poll={poll} onExitResultClick={onExitResultClick}  />
 
-    if(poll.type === "multiple")
-        return <MultipleChoicePollOptions 
-            poll={poll} 
-            onShowResultClick={onShowResultClick} 
-            onSubmit={onSubmit}
-            />
-    
-    return <SingleChoicePollOptions 
+    return <VoteForm 
         poll={poll} 
         onShowResultClick={onShowResultClick} 
         onSubmit={onSubmit}
         />
 }
 
-interface PollChoiceProps {
+function VoteForm({
+    poll,
+    onShowResultClick,
+    onSubmit,
+}: {
     poll: PollWithOption,
     onShowResultClick: React.MouseEventHandler<HTMLButtonElement>,
     onSubmit: (selectedItems: PollOption[]) => Promise<void>
-}
+}) {
 
-function SingleChoicePollOptions(props: PollChoiceProps) {
-
-    const {poll, onShowResultClick} = props
-    const [selectedIndex, setSelectedIndex] = useState(poll.options.findIndex( p => p.isVotedOnByUser))
+    const [selectedItems, setSelectedItems] = useState<PollOption[]>(poll.options.filter(option => option.isVotedOnByUser))
     const [isLoading, setIsLoading] = useState(false)
 
-    const onSubmit = async (e: React.FormEvent) => {
+    const onFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsLoading(true)
 
-        const selectedItems = [ poll.options[selectedIndex] ]
-        await props.onSubmit(selectedItems)
+        await onSubmit(selectedItems)
         
         setIsLoading(false)
     }
 
+    const onItemClicked = (item: PollOption, index: number) => {
+        if(poll.type === "single") {
+            setSelectedItems([item])
+            return
+        }
+
+        const newItems = [...selectedItems]
+        if(newItems.includes(item)) {
+            newItems.splice(newItems.indexOf(item), 1)
+        }
+        else {
+            newItems.push(item)
+        }
+
+        setSelectedItems(newItems)
+    }
+
     return (
-        <form onSubmit={onSubmit}>
-            <FormControl style={{marginLeft: "5px"}}>
-                <RadioGroup value={selectedIndex}>
-                    {poll.options.map((option, index) => (
-                        <OptionItem 
-                            key={index}
-                            value={index}
-                            option={option}
-                            variant="single"
-                            onClick={() => setSelectedIndex(index)}
-                        />
-                    ))}
-                </RadioGroup>
-            </FormControl>
+        <form onSubmit={onFormSubmit}>
+            <OptionItemGroup 
+                variant={poll.type} 
+                style={{marginLeft: "5px"}}>
+                {poll.options.map((option, index) => (
+                    <OptionItem 
+                        key={index}
+                        value={index}
+                        option={option}
+                        variant={poll.type}
+                        checked={selectedItems.includes(option)}
+                        onClick={() => onItemClicked(option, index)}
+                    />
+                ))}
+            </OptionItemGroup>
             <div style={{marginTop: "30px", marginBottom: "15px"}}>
                 <SubmitButtons 
                     onShowResultClick={onShowResultClick} 
-                    disabled={selectedIndex < 0} 
+                    disabled={selectedItems.length < 0} 
                     loading={isLoading} 
                 />
             </div>
         </form>
+    )
+}
+
+function OptionItemGroup( {children, variant, style}: {children: React.ReactNode, variant: "single" | "multiple", style?: React.CSSProperties}){
+    if (variant === "single")  {
+        return (
+            <RadioGroup style={style}>
+                {children}
+            </RadioGroup>
+        )
+    }
+    
+    return (
+        <FormGroup style={style}>
+            {children}
+        </FormGroup>
     )
 }
 
@@ -360,18 +386,27 @@ function OptionItem({
     value, 
     variant,
     onClick,
+    checked
 }: {
     option: PollOption, 
     value: unknown, 
     variant: "single" | "multiple",
-    onClick?: React.MouseEventHandler<HTMLLabelElement> 
+    onClick?: React.MouseEventHandler<HTMLLabelElement>,
+    checked?: boolean,
 }) {
 
     const [isMouseOver, setIsMouseOver] = useState(false)
 
     const srcControl = variant === "single" 
-        ? <Radio color="secondary" /> 
-        : <Checkbox color="secondary" />
+        ? <Radio color="secondary" checked={checked} /> 
+        : <Checkbox color="secondary" checked={checked} />
+
+    const onControlClick = (e: React.MouseEvent<HTMLLabelElement>) => {
+        e.preventDefault()
+        if(onClick){
+            onClick(e)
+        }
+    }
 
     return (
         <FormControlLabel 
@@ -380,7 +415,7 @@ function OptionItem({
             onMouseEnter={() => setIsMouseOver(true)}
             onMouseLeave={() => setIsMouseOver(false)}
             style={isMouseOver ? {textDecoration: "underline"} : {}}
-            onClick={onClick}
+            onClick={onControlClick}
             control={srcControl}
         />
     )
@@ -427,12 +462,6 @@ function SubmitButtons({
                 resultat
             </Button>
         </Stack>
-    )
-}
-
-function MultipleChoicePollOptions(poll: PollChoiceProps) {
-    return (
-        <>Todo: Implement Multiple choice...</>
     )
 }
 
