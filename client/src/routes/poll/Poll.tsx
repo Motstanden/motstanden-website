@@ -25,6 +25,9 @@ export default function PollPage(){
     const polls = useOutletContext<Poll[]>()
     const [currentPoll, ...remainingPolls] = polls
 
+    if(polls.length <= 0)
+        return <div style={{marginBlock: "40px", opacity: 0.8}}>Ingen avsteminger funnet...</div>
+
     return(
         <div>
             <div style={{
