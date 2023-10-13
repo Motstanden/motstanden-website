@@ -177,6 +177,7 @@ function insertNewPoll(newPoll: NewPollWithOption, userId: number) {
             optionStm.run(option.text, pollId)
         })
     })()
+    db.close()
 }
 
 
