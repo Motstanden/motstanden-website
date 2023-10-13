@@ -38,22 +38,54 @@ export function EditOrDeleteMenu({
             disabled={disabled}
             ariaLabel={ariaLabel}
         >
-            <MenuItem style={{ minHeight: "50px", minWidth: "180px" }} divider={true} onClick={onEditClick} >
-                <ListItemIcon>
-                    <EditIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>
-                    Rediger
-                </ListItemText>
-            </MenuItem>
-            <MenuItem style={{ minHeight: "50px" }} sx={{ backgroundColor: "error" }} onClick={onDeleteClick}>
-                <ListItemIcon>
-                    <DeleteForeverIcon fontSize="small" color="error" />
-                </ListItemIcon>
-                <ListItemText primaryTypographyProps={{ color: "error" }}>
-                    Slett
-                </ListItemText>
-            </MenuItem>
+            <EditMenuItem onClick={onEditClick} divider={true} />
+            <DeleteMenuItem onClick={onDeleteClick} />
         </IconPopupMenu>
     );
+}
+
+export function EditMenuItem({ 
+    onClick,
+    divider 
+}: { 
+    onClick?: React.MouseEventHandler<HTMLLIElement>,
+    divider?: boolean
+}) {
+    return (
+        <MenuItem 
+            style={{ minHeight: "50px", minWidth: "180px" }} 
+            divider={divider} 
+            onClick={onClick} >
+            <ListItemIcon>
+                <EditIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>
+                Rediger
+            </ListItemText>
+        </MenuItem>
+    )
+}
+
+
+export function DeleteMenuItem({ 
+    onClick,
+    divider 
+}: { 
+    onClick?: React.MouseEventHandler<HTMLLIElement>,
+    divider?: boolean
+}) {
+    return (
+        <MenuItem
+            onClick={onClick} 
+            divider={divider} 
+            style={{ minHeight: "50px", minWidth: "180px" }} 
+            sx={{ backgroundColor: "error"}}>
+            <ListItemIcon>
+                <DeleteForeverIcon fontSize="small" color="error" />
+            </ListItemIcon>
+            <ListItemText primaryTypographyProps={{ color: "error" }}>
+                Slett
+            </ListItemText>
+        </MenuItem>
+    )
 }
