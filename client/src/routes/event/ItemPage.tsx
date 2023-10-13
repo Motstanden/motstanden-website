@@ -22,6 +22,7 @@ import { fetchAsync } from "src/utils/fetchAsync";
 import { postJson } from "src/utils/postJson";
 import { ItemMenu } from "./components/ItemMenu";
 import { KeyInfo } from "./components/KeyInfo";
+import { AuthorInfo } from "src/components/AuthorInfo";
 
 export default function ItemPage() {
     const event = useOutletContext<EventData>();
@@ -41,7 +42,14 @@ export default function ItemPage() {
                     <ItemMenu event={event} iconOrientation="vertical" />
                 </Stack>
                 <Divider />
-                <AuthorList event={event} />
+                <AuthorInfo 
+                    createdAt={event.createdAt}
+                    createdByUserId={event.createdByUserId}
+                    createdByUserName={event.createdByName}
+                    updatedAt={event.updatedAt}
+                    updatedByUserId={event.updatedByUserId}
+                    updatedByUserName={event.updatedByName}
+                />
                 <KeyInfo
                     keyInfo={event.keyInfo}
                     startTime={event.startDateTime}
@@ -58,53 +66,6 @@ export default function ItemPage() {
             <ParticipationContainer eventId={event.eventId} />
         </div>
     );
-}
-
-function AuthorList({ event }: { event: EventData }) {
-    return (
-        <div style={{
-            fontSize: "xx-small",
-            opacity: 0.75,
-            paddingBlock: "10px",
-            display: "grid",
-            gridTemplateColumns: "min-content auto",
-            columnGap: "5px",
-            rowGap: "4px"
-        }}>
-            <div>
-                Opprettet:
-            </div>
-            <div>
-                <AuthorItem userName={event.createdByName} userId={event.createdByUserId} dateTime={event.createdAt} />
-            </div>
-            {event.createdAt !== event.updatedAt && (
-                <>
-                    <div>
-                        Redigert:
-                    </div>
-                    <div>
-                        <AuthorItem userName={event.updatedByName} userId={event.updatedByUserId} dateTime={event.updatedAt} />
-                    </div>
-                </>
-            )}
-        </div>
-    )
-}
-
-function AuthorItem({ userName, userId, dateTime }: { userName: string, userId: number, dateTime: string }) {
-    return (
-        <span>
-            {`${dayjs(dateTime).utc(true).local().format("DD. MMM YYYY HH:mm")}, av `}
-            <Link
-                color="secondary"
-                component={RouterLink}
-                to={`/medlem/${userId}`}
-                underline="hover"
-            >
-                {`${userName}`}
-            </Link>
-        </span>
-    )
 }
 
 function ParticipationContainer({ eventId }: { eventId: number }) {
