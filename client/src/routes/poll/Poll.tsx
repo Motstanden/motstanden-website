@@ -124,6 +124,10 @@ export function PollSkeleton( {style}: {style?: React.CSSProperties} ) {
 
 function PreviousPolls( {polls}: { polls: Poll[] }) {
     const theme = useTheme()
+
+    if(polls.length <= 0)
+        return <></>
+
     return (
         <>
             <h2>Tidligere avstemninger</h2>
