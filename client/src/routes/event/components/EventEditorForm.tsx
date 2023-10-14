@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { dateTimePickerStyle } from 'src/assets/style/timePickerStyles';
 import { Form } from "src/components/form/Form";
 import { useTitle } from "src/hooks/useTitle";
+import { MarkDownEditor } from './MarkDownEditor';
 
 export interface EventEditorState {
     title: string
@@ -115,15 +116,11 @@ function EventEditor( props: Omit<EventFormProps, "sx"> ) {
     return (
         <section>
             <EventInfoForm value={value} onChange={onChange} />
-            <TextField 
+            <MarkDownEditor
                 label="Beskrivelse av arrangement"
-                multiline
                 required
-                fullWidth
-                type="text"
-                autoComplete="off"
                 value={value.description}
-                onChange={e => onChange({ description: e.target.value })}
+                onChange={newValue => onChange({ description: newValue })}
                 minRows={6}
             />
         </section>
