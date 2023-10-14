@@ -117,7 +117,7 @@ function EventEditor( props: Omit<EventFormProps, "sx"> ) {
         <section>
             <EventInfoForm value={value} onChange={onChange} />
             <MarkDownEditor
-                label="Beskrivelse av arrangement"
+                placeholder="Beskrivelse av arrangement *"
                 required
                 value={value.description}
                 onChange={newValue => onChange({ description: newValue })}
