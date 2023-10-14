@@ -48,7 +48,7 @@ export default function Home() {
                     <ItemOfTheDay
                         title="Arrangement"
                         fetchUrl="/api/events/upcoming?limit=5"
-                        renderSkeleton={<TitleAndSubtitleSkeleton length={5} />}
+                        renderSkeleton={<TitleAndSubtitleSkeleton length={3} />}
                         renderItems={RenderEventList}
                         xs={12} sm={12} md={12}
                     />
@@ -56,7 +56,7 @@ export default function Home() {
                         title="Sist oppdaterte styrenettsider"
                         fetchUrl="https://styret.motstanden.no/projectData.json"
                         renderItems={RenderBoardPageList}
-                        renderSkeleton={<TitleAndSubtitleSkeleton length={5}/>}
+                        renderSkeleton={<TitleAndSubtitleSkeleton length={2}/>}
                         xs={12} sm={12} md={12}
                     />
                 </Grid>
