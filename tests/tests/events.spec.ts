@@ -84,21 +84,21 @@ async function testCrud(opts: CrudOptions) {
 		}
 	})
 
-	test(`User can participate on events (${opts.testId})`, async ({browser}) => {
-		if(!opts.participator)
-			test.skip()
-			
-		if(opts.participator === opts.creator) 
-			throw "Invalid operation: participator can creator can not be the same user";
+	if(opts.participator) {
+		test(`User can participate on events (${opts.testId})`, async ({browser}) => {
 
-		page = await storageLogIn(browser, opts.participator)
-		await page.goto(eventUrl)
-		await testParticipation(page, opts.participator)
+			if(opts.participator === opts.creator) 
+				throw "Invalid operation: participator and creator can not be the same user";
 
-		if(opts.updater !== opts.participator) {
-			await disposeStorageLogIn(page)
-		}
-	})
+			page = await storageLogIn(browser, opts.participator)
+			await page.goto(eventUrl)
+			await testParticipation(page, opts.participator)
+
+			if(opts.updater !== opts.participator) {
+				await disposeStorageLogIn(page)
+			}
+		})
+	}
 
 	test(`Update (${opts.testId})`, async ({browser}) => {
 
@@ -206,10 +206,7 @@ async function fillForm(page: Page, event: NewEventData) {
 		await page.getByPlaceholder('Tittel*').nth(i).fill(event.keyInfo[i].key);
 		await page.getByPlaceholder('info*').nth(i).fill(event.keyInfo[i].value);
 	}
-
-	const editor = page.getByTestId('event-description-editor') 
-	await editor.click()	// This circumvents a bug in the front end. See https://github.com/Motstanden/motstanden-website/issues/86
-	await editor.fill(event.description)
+	await page.getByLabel("Beskrivelse av arrangement *").fill(event.description)
 }
 
 async function saveForm(page: Page) {

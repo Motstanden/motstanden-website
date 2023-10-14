@@ -1,5 +1,3 @@
-import { Descendant } from "../richTextSchema/index.js"
-import { Optional } from "../types/index.js"
 import { KeyValuePair } from "./index.js"
 
 export interface NewEventData {
@@ -7,13 +5,12 @@ export interface NewEventData {
     startDateTime: string,                      // YYYY-MM-DD HH:MM:SS
     endDateTime: string | null                  // YYYY-MM-DD HH:MM:SS      
     keyInfo: KeyValuePair<string, string>[]
-    description: Descendant[]
-    descriptionHtml: string
+    description: string
 }
 
 export interface UpsertEventData extends NewEventData, Partial<Pick<EventData, "eventId">> { }
 
-export interface EventData extends Optional<NewEventData, "descriptionHtml"> {
+export interface EventData extends NewEventData {
     eventId: number;
 
     createdByUserId: number

@@ -14,67 +14,58 @@ import {
 } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { KeyValuePair, UpsertEventData } from "common/interfaces";
-import { isValidRichText } from "common/richTextSchema";
 import { isNullOrWhitespace } from "common/utils";
 import dayjs, { Dayjs } from "dayjs";
-import React, { Reducer, useCallback, useContext, useEffect, useMemo, useReducer } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createEditor, Descendant, Text } from "slate";
-import { withHistory } from "slate-history";
-import { Editable, RenderElementProps, RenderLeafProps, Slate, withReact } from "slate-react";
 import { dateTimePickerStyle } from 'src/assets/style/timePickerStyles';
 import { Form } from "src/components/form/Form";
-import { emptyRichText } from "src/components/TextEditor/Assets";
-import { Element } from "src/components/TextEditor/Element";
-import { handleAllFormatHotkeys } from "src/components/TextEditor/Hotkey";
-import { serialize } from "src/components/TextEditor/HtmlSerialize";
-import { Leaf } from "src/components/TextEditor/Leaf";
 import { useTitle } from "src/hooks/useTitle";
-import { EditorToolbar } from "./EditorToolbar";
 
 export interface EventEditorState {
     title: string
     startTime: Dayjs | null,
     endTime: Dayjs | null,
     keyInfo: KeyValuePair<string, string>[]
-    description: Descendant[]
+    description: string
 }
 
 function createValidState(initialValue: EventEditorState): EventEditorState {
     const newValue = { ...initialValue };
-    if (!isValidRichText(initialValue.description)) {
-        console.group("Feil")
-        console.error("Klarte ikke tolke arrangementbeskrivelsen")
-        console.log(initialValue.description)
-        console.groupEnd()
-        newValue.description = emptyRichText
-    }
     newValue.startTime = initialValue.startTime?.utc(true).local() ?? null
     newValue.endTime = initialValue.endTime?.utc(true).local() ?? null
     return newValue;
 }
 
-export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { backUrl: string; postUrl: string; initialValue: EventEditorState; eventId?: number; }) {
-
-    const reducer = (state: EventEditorState, newVal: Partial<EventEditorState>): EventEditorState => {
-        return { ...state, ...newVal };
-    };
+export function EventEditorForm({ 
+    backUrl, 
+    postUrl, 
+    initialValue, 
+    eventId 
+}: { 
+    backUrl: string; 
+    postUrl: string; 
+    initialValue: EventEditorState; 
+    eventId?: number; 
+}) {
+    const [event, setEvent] = useState(createValidState(initialValue));
 
     const navigate = useNavigate()
-    const validInitialState = useMemo(() => createValidState(initialValue), [])
-    const [state, dispatch] = useReducer<Reducer<EventEditorState, Partial<EventEditorState>>>(reducer, validInitialState);
 
-    useTitle(`${isNullOrWhitespace(state.title) ? "Ingen tittel" : state.title}*`)
+    useTitle(`${isNullOrWhitespace(event.title) ? "Ingen tittel" : event.title}*`)
+
+    const onValueChanged = (newValues: Partial<EventEditorState>) => {
+        setEvent(oldValues => ({ ...oldValues, ...newValues }))
+    }
 
     const serializeState = (): UpsertEventData => {
         const serializedEvent: UpsertEventData = {
             eventId: eventId,
-            title: state.title,
-            startDateTime: state.startTime!.utc(false).format("YYYY-MM-DD HH:mm:00"),
-            endDateTime: state.endTime?.utc(false).format("YYYY-MM-DD HH:mm:00") ?? null,
-            keyInfo: state.keyInfo,
-            description: state.description,
-            descriptionHtml: serialize(state.description)
+            title: event.title,
+            startDateTime: event.startTime!.utc(false).format("YYYY-MM-DD HH:mm:00"),
+            endDateTime: event.endTime?.utc(false).format("YYYY-MM-DD HH:mm:00") ?? null,
+            keyInfo: event.keyInfo,
+            description: event.description.trim(),
         };
         return serializedEvent;
     };
@@ -84,38 +75,18 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
         window.location.href = `${window.location.origin}/arrangement/${eventId ?? data.eventId ?? ""}`;   // Will trigger a page reload
     };
 
-    const editorHasContent = (): boolean => {
-
-        let queue: Descendant[] = [...state.description]
-        while (queue.length > 0) {
-            const child = queue.pop()
-
-            if (!child) {
-                continue
-            }
-
-            const isText = Text.isText(child)
-            if (isText && !isNullOrWhitespace(child.text)) {
-                return true
-            }
-
-            if (!isText) {
-                queue = queue.concat(child.children)
-            }
-        }
-        return false
-    }
+    const editorHasContent = (): boolean => !isNullOrWhitespace(event.description)
 
     const validateState = () => {
-        const isValidTitle = !isNullOrWhitespace(state.title)
-        const isValidStartTime = state.startTime && state.startTime.isValid()
-        const isValidEndTime = state.endTime ? state.endTime.isValid() : true
-        const isValidKeyInfo = !state.keyInfo.find(item => item.key.length === 0 || item.value.length === 0)
+        const isValidTitle = !isNullOrWhitespace(event.title)
+        const isValidStartTime = event.startTime && event.startTime.isValid()
+        const isValidEndTime = event.endTime ? event.endTime.isValid() : true
+        const isValidKeyInfo = !event.keyInfo.find(item => item.key.length === 0 || item.value.length === 0)
 
         return isValidTitle && isValidStartTime && isValidEndTime && isValidKeyInfo && editorHasContent()
     }
 
-    const isStateValid = useMemo(() => validateState(), [{ ...state }])
+    const isStateValid = validateState()
 
     return (
         <Form
@@ -126,63 +97,51 @@ export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { b
             disabled={!isStateValid}
         >
             <Paper elevation={6} sx={{ px: 2, pb: 4, pt: 3 }}>
-                <EventStateContext.Provider value={state}>
-                    <EventDispatchContext.Provider value={dispatch}>
-                        <EventEditor />
-                    </EventDispatchContext.Provider>
-                </EventStateContext.Provider>
+                <EventEditor value={event} onChange={onValueChanged} />
             </Paper>
         </Form>
     );
 }
 
-const EventStateContext = React.createContext<EventEditorState>(null!)
-const EventDispatchContext = React.createContext<React.Dispatch<Partial<EventEditorState>>>(null!)
-function useEvent(): [EventEditorState, React.Dispatch<Partial<EventEditorState>>] {
-    return [useContext(EventStateContext), useContext(EventDispatchContext)]
+interface EventFormProps {
+    value: EventEditorState, 
+    onChange: (newValues: Partial<EventEditorState>) => void
+    sx?: SxProps
 }
 
-function EventEditor() {
-    const editor = useMemo(() => withReact(withHistory(createEditor())), [])        // Production
-    // const [editor] = useState(withReact(withHistory(createEditor())))            // Development
-    const [event, dispatch] = useEvent()
-    const renderElement = useCallback((props: RenderElementProps) => <Element {...props} />, [])
-    const renderLeaf = useCallback((props: RenderLeafProps) => <Leaf {...props} />, [])
 
+function EventEditor( props: Omit<EventFormProps, "sx"> ) {
+    const {value, onChange} = props
     return (
-        <Slate editor={editor} value={event.description} onChange={newVal => dispatch({ description: newVal })}>
-            <EventInfoForm />
-            <div style={{ border: "1px solid gray" }}>
-                <div style={{ borderBottom: "1px solid #888888" }}>
-                    <EditorToolbar />
-                </div>
-                <div style={{ minHeight: "100px", padding: "10px" }}>
-                    <Editable
-                        data-testid="event-description-editor"
-                        renderElement={renderElement}
-                        renderLeaf={renderLeaf}
-                        spellCheck
-                        placeholder="Beskrivelse av arrangementet*"
-                        onKeyDown={event => handleAllFormatHotkeys(editor, event)}
-                    />
-                </div>
-            </div>
-        </Slate>
+        <section>
+            <EventInfoForm value={value} onChange={onChange} />
+            <TextField 
+                label="Beskrivelse av arrangement"
+                multiline
+                required
+                fullWidth
+                type="text"
+                autoComplete="off"
+                value={value.description}
+                onChange={e => onChange({ description: e.target.value })}
+                minRows={6}
+            />
+        </section>
     )
 }
 
-function EventInfoForm() {
+function EventInfoForm( props: Omit<EventFormProps, "sx">) {
     return (
         <Stack sx={{ mb: 6 }}>
-            <TitleForm sx={{ mb: 4 }} />
-            <TimeForm sx={{ mb: { xs: 4, sm: 2 } }} />
-            <KeyInfoForm />
+            <TitleForm {...props} sx={{ mb: 4 }} />
+            <TimeForm {...props}  sx={{ mb: { xs: 4, sm: 2 } }} />
+            <KeyInfoForm {...props} />
         </Stack>
     )
 }
 
-function TitleForm({ sx }: { sx?: SxProps }) {
-    const [event, dispatch] = useEvent()
+function TitleForm(props: EventFormProps) {
+    const {value, onChange, sx} = props
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     return (
         <TextField
@@ -191,8 +150,8 @@ function TitleForm({ sx }: { sx?: SxProps }) {
             autoComplete="off"
             required
             fullWidth
-            value={event.title}
-            onChange={e => dispatch({ title: e.target.value })}
+            value={value.title}
+            onChange={e => onChange({ title: e.target.value })}
             InputProps={{ style: { fontSize: isSmallScreen ? "1.25em" : "1.5em", fontWeight: "bolder" } }}
             sx={sx}
         />
@@ -201,8 +160,8 @@ function TitleForm({ sx }: { sx?: SxProps }) {
 
 const beginningOfTime = dayjs("2018-09-11")  // Motstandens birth day
 
-function TimeForm({ sx }: { sx?: SxProps }) {
-    const [event, dispatch] = useEvent()
+function TimeForm(props: EventFormProps) {
+    const {value, onChange, sx} = props
     const textFieldProps: TextFieldProps = {
         autoComplete: "off",
         variant: "standard",
@@ -226,8 +185,8 @@ function TimeForm({ sx }: { sx?: SxProps }) {
                 {...dateTimePickerStyle}
                 minDateTime={beginningOfTime}
                 defaultCalendarMonth={dayjs()}
-                value={event.startTime}
-                onChange={(newVal: Dayjs | null) => dispatch({ startTime: newVal })}
+                value={value.startTime}
+                onChange={(newVal: Dayjs | null) => onChange({ startTime: newVal })}
                 renderInput={params => (
                     <TextField {...params} {...textFieldProps} required />
                 )}
@@ -238,10 +197,10 @@ function TimeForm({ sx }: { sx?: SxProps }) {
             <DateTimePicker
                 label="Slutter"
                 {...dateTimePickerStyle}
-                disabled={!event.startTime}
-                minDateTime={event.startTime ?? beginningOfTime}
-                value={event.endTime}
-                onChange={(newVal: Dayjs | null) => dispatch({ endTime: newVal })}
+                disabled={!value.startTime}
+                minDateTime={value.startTime ?? beginningOfTime}
+                value={value.endTime}
+                onChange={(newVal: Dayjs | null) => onChange({ endTime: newVal })}
                 renderInput={params => (
                     <TextField {...params} {...textFieldProps} />
                 )}
@@ -250,27 +209,27 @@ function TimeForm({ sx }: { sx?: SxProps }) {
     )
 }
 
-function KeyInfoForm() {
-    const [event, dispatch] = useEvent()
+function KeyInfoForm(props: EventFormProps) {
+    const {value, onChange, sx} = props
 
     const onAddClick = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        const newItems = [...event.keyInfo, { key: "", value: "" }]
-        dispatch({ keyInfo: newItems })
+        const newItems = [...value.keyInfo, { key: "", value: "" }]
+        onChange({ keyInfo: newItems })
     }
 
     const onDeleteClick = (i: number) => {
-        const newItems = [...event.keyInfo]
+        const newItems = [...value.keyInfo]
         newItems.splice(i, 1)
-        dispatch({ keyInfo: newItems })
+        onChange({ keyInfo: newItems })
     }
 
     const onValueChange = (i: number, newVal: KeyValuePair<string, string>) => {
-        const newItems = [...event.keyInfo]
+        const newItems = [...value.keyInfo]
         newItems[i] = newVal
-        dispatch({ keyInfo: newItems })
+        onChange({ keyInfo: newItems })
     }
 
-    if (event.keyInfo.length === 0) {
+    if (value.keyInfo.length === 0) {
         return (
             <div style={{ marginTop: "30px" }}>
                 <AddInfoButton onClick={onAddClick} />
@@ -280,7 +239,7 @@ function KeyInfoForm() {
 
     return (
         <Stack>
-            {event.keyInfo.map((item, index) => <KeyInfoItem
+            {value.keyInfo.map((item, index) => <KeyInfoItem
                 key={index}
                 value={item}
                 onChange={newVal => onValueChange(index, newVal)}

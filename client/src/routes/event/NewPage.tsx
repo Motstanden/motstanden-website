@@ -1,5 +1,5 @@
-import { emptyRichText } from "src/components/TextEditor/Assets"
 import { EventEditorForm, EventEditorState } from "./components/EventEditorForm"
+
 
 export default function NewEventPage() {
 
@@ -16,5 +16,5 @@ const emptyEventObj: EventEditorState = {
     startTime: null,
     endTime: null,
     keyInfo: [],
-    description: emptyRichText
+    description: ""
 }

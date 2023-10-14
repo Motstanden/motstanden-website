@@ -14,7 +14,6 @@ import { isNullOrWhitespace } from "common/utils";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { Link as RouterLink, useOutletContext } from "react-router-dom";
-import { serialize } from "src/components/TextEditor/HtmlSerialize";
 import { TitleCard } from "src/components/TitleCard";
 import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
@@ -60,7 +59,9 @@ export default function ItemPage() {
                         marginBottom: "30px"
                     }}
                 />
-                <div dangerouslySetInnerHTML={{ __html: serialize(event.description) }} />
+                <div>
+                    {event.description}
+                </div>
             </Paper>
             <Divider sx={{ my: 4 }} />
             <ParticipationContainer eventId={event.eventId} />
