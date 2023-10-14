@@ -506,6 +506,7 @@ function PollResult( {poll, onExitResultClick}: {poll: PollWithOption, onExitRes
 
 function PollResultItem( {option, totalVotes, style}: {option: PollOption, totalVotes: number, style?: React.CSSProperties}){
     const theme = useTheme()
+    const percentage = totalVotes <= 0 ? 0 : option.voteCount / totalVotes * 100
     return (
         <div style={style}>
             <div style={{
@@ -530,7 +531,7 @@ function PollResultItem( {option, totalVotes, style}: {option: PollOption, total
                 )}
             </div>
             <BarChartItem 
-                percentage={option.voteCount / totalVotes * 100} 
+                percentage={percentage} 
                 voteCount={option.voteCount}
                 />
         </div>
@@ -540,7 +541,6 @@ function PollResultItem( {option, totalVotes, style}: {option: PollOption, total
 function BarChartItem( {percentage, voteCount}: {percentage: number, voteCount: number}){
     const theme = useTheme();
     let newPercentage =  Math.max(Math.min(Math.round(percentage), 100))  // Round value to nearest integer between 0 and 100
-    
     return (
         <div style={{
             height: "40px",
