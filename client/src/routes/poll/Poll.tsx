@@ -578,7 +578,7 @@ function BarChartItem( {percentage, voteCount}: {percentage: number, voteCount: 
                 fontWeight: "light",
                 color: theme.palette.text.secondary,
             }}>
-                {voteCount} stemmer
+                {voteCount} {voteCount === 1 ? "stemme" : "stemmer"}
             </div>
         </div>
     )
