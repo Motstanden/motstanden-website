@@ -1,6 +1,8 @@
 import { Tab, Tabs, TextField, Theme, useMediaQuery } from "@mui/material"
 import { isNullOrWhitespace } from "common/utils"
 import { useState } from "react"
+import Markdown from "react-markdown"
+import remarkGfm from 'remark-gfm'
 
 interface MarkDownEditorProps {
     value?: string,
@@ -8,6 +10,7 @@ interface MarkDownEditorProps {
     placeholder?: string
     required?: boolean,
     minRows?: number
+    previewPlaceholder?: string
 }
 
 export function MarkDownEditor( props: MarkDownEditorProps) {
@@ -84,7 +87,7 @@ interface ContentPickerProps extends MarkDownEditorProps {
 function ContentPicker(props: ContentPickerProps){
     const {isPreview, ...mdProps} = props
     return isPreview 
-        ? <MarkDownReader value={props.value}/> 
+        ? <MarkDownReader value={props.value} placeholder={props.previewPlaceholder}/> 
         : <MarkDownWriter {...mdProps}/>
 }
 
@@ -116,20 +119,41 @@ function MarkDownWriter( props: MarkDownEditorProps ) {
     )
 }
 
-function MarkDownReader( {value}: {value?: string}){
+export function MarkDownReader( {value, placeholder}: {value?: string, placeholder?: string}){
+
+    const emptyValue = isNullOrWhitespace(value)
+    const showPlaceHolder = emptyValue && !isNullOrWhitespace(placeholder)
+    const showMarkdown = !emptyValue && !showPlaceHolder
+
     return (
         <div style={{
-            padding: "15px",
+            paddingBlock: "0px",
+            paddingInline: "14px",
             borderRadius: "4px",
+            minHeight: "155px"
         }}>
-            {isNullOrWhitespace(value) && (
-                <span style={{
+            {showPlaceHolder && (
+                <div style={{
                     opacity: 0.5,
+                    marginTop: "15px",
                 }}>
-                    Ingenting å forhåndsvise...
-                </span>
+                    {placeholder}
+                </div>
             )}
-            {value}
+
+            {showMarkdown && (
+                <Markdown remarkPlugins={[remarkGfm]}>
+                    {enforceLinebreaks(value)}
+                </Markdown>
+            )}
+
         </div>
     )
+}
+
+export function enforceLinebreaks( value?: string) {
+    if(value === undefined)
+        return undefined
+
+    return value.replace(/(\r\n|\n|\r)/gm, "  \n") ?? "" // Add two spaces to end of line to force linebreak
 }

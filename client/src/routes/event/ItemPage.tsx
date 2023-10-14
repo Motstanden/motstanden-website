@@ -22,6 +22,9 @@ import { postJson } from "src/utils/postJson";
 import { ItemMenu } from "./components/ItemMenu";
 import { KeyInfo } from "./components/KeyInfo";
 import { AuthorInfo } from "src/components/AuthorInfo";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { enforceLinebreaks } from "./components/MarkDownEditor";
 
 export default function ItemPage() {
     const event = useOutletContext<EventData>();
@@ -59,9 +62,9 @@ export default function ItemPage() {
                         marginBottom: "30px"
                     }}
                 />
-                <div>
-                    {event.description}
-                </div>
+                <Markdown remarkPlugins={[remarkGfm]}>
+                    {enforceLinebreaks(event.description)}
+                </Markdown>
             </Paper>
             <Divider sx={{ my: 4 }} />
             <ParticipationContainer eventId={event.eventId} />

@@ -122,6 +122,7 @@ function EventEditor( props: Omit<EventFormProps, "sx"> ) {
                 value={value.description}
                 onChange={newValue => onChange({ description: newValue })}
                 minRows={6}
+                previewPlaceholder="Ingenting å forhåndsvise..."
             />
         </section>
     )
