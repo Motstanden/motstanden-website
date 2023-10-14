@@ -2,7 +2,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { IconButton, Menu } from "@mui/material";
 import { useRef, useState } from 'react';
 
-export function HelpButton({ text }: { text: string }) {
+export function HelpButton({ children }: { children?: React.ReactNode }) {
 
     const [isOpen, setIsOpen] = useState(false)
     const anchorEl = useRef(null)
@@ -20,7 +20,7 @@ export function HelpButton({ text }: { text: string }) {
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
                 <div style={{ margin: "10px", maxWidth: "280px" }}>
-                    {text}
+                    {children}
                 </div>
             </Menu>
         </>

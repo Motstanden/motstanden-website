@@ -233,7 +233,9 @@ function MemberForm({ value, onChange, editMode }: FormParams) {
                     {userStatusSrc.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
                 </TextField>
                 <Box sx={{ ml: 2 }}>
-                    <HelpButton text={getStatusExplanation(value.status)} />
+                    <HelpButton>
+                        {getStatusExplanation(value.status)}
+                    </HelpButton>
                 </Box>
             </Stack>
             <DatePicker
