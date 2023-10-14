@@ -47,6 +47,10 @@ sqlite3 motstanden_dev.db < migrations/motstanden_db/10_poll.sql;
 echo "Running: 11_poll_trigger_bugfixes.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/11_poll_trigger_bugfixes.sql;
 
+# Use markdown for event descriptions
+echo "Running: 12_event_md_description.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/12_event_md_description.sql;
+
 # Insert data that is representative for the current data in the database
 cd data/db
 sh motstanden-db-data.sh 
