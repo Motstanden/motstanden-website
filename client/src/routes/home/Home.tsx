@@ -35,6 +35,7 @@ export default function Home() {
                     renderItems={RenderEventList}
                     md={6}
                     display={{ xs: "block", md: "none" }}
+                    
                 />
                 <Grid 
                     item 
@@ -42,7 +43,7 @@ export default function Home() {
                     direction="row"
                     spacing={4}
                     xs={12} sm={12} md={6} 
-                    display={{ xs: "none", xm: "none", md: "block" }}
+                    display={{ xs: "none", xm: "none", md: "flex" }}
                     >
                     <ItemOfTheDay
                         title="Arrangement"
@@ -59,7 +60,7 @@ export default function Home() {
                         xs={12} sm={12} md={12}
                     />
                 </Grid>
-                <Grid item xs={12} sm={12} md={6} display={{xs: "none", sm: "none", md: "block"}}>
+                <Grid item xs={12} sm={12} md={6} display={{xs: "none", sm: "none", md: "block"}} alignSelf="flex-end">
                     <LatestPoll/>
                 </Grid>
                 <ItemOfTheDay
@@ -164,8 +165,8 @@ function LatestPoll() {
             poll={data} 
             srcQueryKey={queryKey} 
             style={{
-                height: "100%",
-                maxWidth: "600px"
+                maxWidth: "600px",
+                height: "100%"
             }}
         />
     )
