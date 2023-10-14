@@ -190,7 +190,7 @@ async function submitForm(page: Page, event: NewEventData) {
 }
 
 async function fillForm(page: Page, event: NewEventData) {
-	await page.getByPlaceholder('Tittel på arrangement*').fill(event.title);
+	await page.getByPlaceholder('Tittel på arrangement *').fill(event.title);
 	await selectDate(page, /Starter/, event.startDateTime, "TimeDayMonthYear")
 	await selectDate(page, /Slutter/, event.endDateTime, "TimeDayMonthYear")
 	
@@ -202,11 +202,11 @@ async function fillForm(page: Page, event: NewEventData) {
 
 	// Add new key info items
 	for(let i = 0; i < event.keyInfo.length; i++) {
-		await page.getByRole('button', { name: 'Nøkkelinformasjon', exact: true }).click();
-		await page.getByPlaceholder('Tittel*').nth(i).fill(event.keyInfo[i].key);
-		await page.getByPlaceholder('info*').nth(i).fill(event.keyInfo[i].value);
+		await page.getByRole('button', { name: 'Nøkkelinfo', exact: true }).click();
+		await page.getByPlaceholder('Tittel *').nth(i).fill(event.keyInfo[i].key);
+		await page.getByPlaceholder('info *').nth(i).fill(event.keyInfo[i].value);
 	}
-	await page.getByLabel("Beskrivelse av arrangement *").fill(event.description)
+	await page.getByPlaceholder('Beskrivelse av arrangement *').fill(event.description)
 }
 
 async function saveForm(page: Page) {

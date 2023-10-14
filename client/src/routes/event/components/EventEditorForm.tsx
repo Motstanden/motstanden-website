@@ -143,8 +143,9 @@ function TitleForm(props: EventFormProps) {
     return (
         <TextField
             variant="standard"
-            placeholder="Tittel på arrangement*"
+            placeholder="Tittel på arrangement *"
             autoComplete="off"
+            color="secondary"
             required
             fullWidth
             value={value.title}
@@ -185,7 +186,7 @@ function TimeForm(props: EventFormProps) {
                 value={value.startTime}
                 onChange={(newVal: Dayjs | null) => onChange({ startTime: newVal })}
                 renderInput={params => (
-                    <TextField {...params} {...textFieldProps} required />
+                    <TextField {...params} {...textFieldProps} required color="secondary" />
                 )}
             />
             <Box display={{ xs: "none", sm: "inline" }} style={{ marginInline: "20px", marginBottom: "5px" }}>
@@ -199,7 +200,7 @@ function TimeForm(props: EventFormProps) {
                 value={value.endTime}
                 onChange={(newVal: Dayjs | null) => onChange({ endTime: newVal })}
                 renderInput={params => (
-                    <TextField {...params} {...textFieldProps} />
+                    <TextField {...params} {...textFieldProps} color="secondary" />
                 )}
             />
         </Stack>
@@ -298,7 +299,7 @@ function KeyInfoItem({
                 value={value.key}
                 style={{ minWidth: "130px" }}
                 variant="standard"
-                placeholder="Tittel*"
+                placeholder="Tittel *"
                 onChange={e => onChange({ ...value, key: e.target.value })}
                 helperText={value.key.length === 0 ? `${randomExample.key}` : `${value.key.length}/${maxKeyChars}`}
                 inputProps={{
@@ -311,7 +312,7 @@ function KeyInfoItem({
             <TextField
                 {...sharedProps}
                 value={value.value}
-                placeholder="info*"
+                placeholder="info *"
                 style={{ width: "100%" }}
                 onChange={e => onChange({ ...value, value: e.target.value })}
                 helperText={value.value.length === 0 ? `${randomExample.value}` : `${value.value.length}/${maxValueChars}`}
@@ -362,6 +363,14 @@ const keyValueExample: KeyValuePair<string, string>[] = [
 
 function AddInfoButton({ onClick }: { onClick?: React.MouseEventHandler<HTMLButtonElement> }) {
     return (
-        <Button variant="contained" endIcon={<AddIcon />} size="small" onClick={onClick} >Nøkkelinformasjon</Button>
+        <Button 
+            variant="contained" 
+            endIcon={<AddIcon />} 
+            size="small" 
+            onClick={onClick} 
+            color="secondary"
+        >
+                Nøkkelinfo
+        </Button>
     )
 }
