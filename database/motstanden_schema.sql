@@ -255,12 +255,6 @@ CREATE TABLE poll (
     FOREIGN KEY(created_by) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY(updated_by) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE RESTRICT
 );
-CREATE TRIGGER trig_poll_updated_at
-    AFTER UPDATE ON poll FOR EACH ROW
-BEGIN
-    UPDATE event SET updated_at = current_timestamp
-        WHERE poll_id = old.poll_id;
-END;
 CREATE TABLE poll_option (
 	poll_option_id INTEGER PRIMARY KEY,
 	text TEXT NOT NULL,
@@ -276,12 +270,6 @@ CREATE TABLE poll_vote (
     FOREIGN KEY(user_id) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE RESTRICT,
 	UNIQUE (poll_option_id, user_id)
 );
-CREATE TRIGGER trig_poll_vote_updated_at
-    AFTER UPDATE ON poll_vote FOR EACH ROW
-BEGIN
-    UPDATE event SET updated_at = current_timestamp
-        WHERE vote_id = old.vote_id;
-END;
 CREATE VIEW vw_poll_option AS
 SELECT 
 	o.poll_option_id,
@@ -318,3 +306,15 @@ FROM
 LEFT JOIN user created_by ON created_by.user_id = p.created_by
 LEFT JOIN user updated_by ON updated_by.user_id = p.updated_by
 /* vw_poll(poll_id,title,type,created_by_user_id,created_by_full_name,created_at,updated_by_user_id,updated_by_full_name,updated_at) */;
+CREATE TRIGGER trig_poll_updated_at
+    AFTER UPDATE ON poll FOR EACH ROW
+BEGIN
+    UPDATE poll SET updated_at = current_timestamp
+        WHERE poll_id = old.poll_id;
+END;
+CREATE TRIGGER trig_poll_vote_updated_at
+    AFTER UPDATE ON poll_vote FOR EACH ROW
+BEGIN
+    UPDATE poll_vote SET updated_at = current_timestamp
+        WHERE poll_vote_id = old.poll_vote_id;
+END;
