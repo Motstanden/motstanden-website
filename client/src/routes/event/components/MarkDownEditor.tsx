@@ -1,4 +1,5 @@
 import { Tab, Tabs, TextField, Theme, useMediaQuery } from "@mui/material"
+import { isNullOrWhitespace } from "common/utils"
 import { useState } from "react"
 
 interface MarkDownEditorProps {
@@ -83,7 +84,7 @@ interface ContentPickerProps extends MarkDownEditorProps {
 function ContentPicker(props: ContentPickerProps){
     const {isPreview, ...mdProps} = props
     return isPreview 
-        ? <MarkDownReader/> 
+        ? <MarkDownReader value={props.value}/> 
         : <MarkDownWriter {...mdProps}/>
 }
 
@@ -115,10 +116,20 @@ function MarkDownWriter( props: MarkDownEditorProps ) {
     )
 }
 
-function MarkDownReader(){
+function MarkDownReader( {value}: {value?: string}){
     return (
-        <div>
-            Kommer snart...
+        <div style={{
+            padding: "15px",
+            borderRadius: "4px",
+        }}>
+            {isNullOrWhitespace(value) && (
+                <span style={{
+                    opacity: 0.5,
+                }}>
+                    Ingenting å forhåndsvise...
+                </span>
+            )}
+            {value}
         </div>
     )
 }
