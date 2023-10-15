@@ -5,6 +5,8 @@ import { UrlList, UrlListItem } from "../../components/UrlList"
 import { useTitle } from "../../hooks/useTitle"
 import { PageContainer } from "../../layout/PageContainer"
 import { fetchAsync } from "../../utils/fetchAsync"
+import { MarkDownRenderer } from 'src/components/MarkDownEditor'
+import { useTheme } from '@mui/material'
 
 export function LyricListPage() {
     useTitle("Studenttraller")
@@ -22,11 +24,16 @@ export function LyricListPage() {
 export function LyricItemPage() {
     const lyric = useOutletContext<SongLyric>()
     useTitle(lyric.title)
+    const theme = useTheme()
     return (
         <>
-            <h2>{lyric.title}</h2>
-            <div>
-                {lyric.content}
+            <div style={{
+                fontSize: "1.2em", 
+                lineHeight: "1.6em",
+                color: theme.palette.text.secondary,
+            }}>
+                <h1>{lyric.title}</h1>
+                <MarkDownRenderer value={lyric.content} />
             </div>
         </>
     )
