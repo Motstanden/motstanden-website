@@ -1,4 +1,4 @@
-import { Stack, Tab, Tabs, TextField, Theme, useMediaQuery } from "@mui/material"
+import { Link, Stack, Tab, Tabs, TextField, Theme, useMediaQuery } from "@mui/material"
 import { isNullOrWhitespace } from "common/utils"
 import { useState } from "react"
 import Markdown from "react-markdown"
@@ -125,15 +125,22 @@ function InfoButton({ fontSize, style }: {fontSize?: "small" | "medium" | "large
             <div style={{ margin: "10px", maxWidth: "280px" }}>
                 <h2>MarkDown</h2>
                 <p>
-                    Dette feltet støtter det meste av MarkDown.
-                    <br/>
-                    <br/>
-                    MarkDown er en enkel måte å formatere tekst på. 
-                    <br/>
-                    <br/>
-                    <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank" rel="noreferrer">
-                        Her er en kort oversikt over MarkDown-syntaksen.
-                    </a>
+                    <p>
+                        Dette feltet støtter det meste av MarkDown.
+                    </p>
+                    <p>
+                        MarkDown er en enkel måte å formatere tekst på. 
+                    </p>
+                    <p>
+                        <Link 
+                            href="https://www.markdownguide.org/cheat-sheet/" 
+                            target="_blank" 
+                            rel="noreferrer"
+                            color="secondary"
+                            underline="hover">
+                            Her er en kort oversikt over MarkDown-syntaksen.
+                        </Link>
+                    </p>
                 </p>
             </div>
         </HelpButton>
