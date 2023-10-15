@@ -13,7 +13,7 @@ export function PageContainer({
     disableGutters,
     disableScrollToTop
 }: {
-    children: React.ReactNode,
+    children?: React.ReactNode,
     props?: React.CSSProperties,
     disableGutters?: boolean,
     disableScrollToTop?: boolean
