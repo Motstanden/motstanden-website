@@ -209,13 +209,31 @@ export function MarkDownReader( {value, placeholder}: {value?: string, placehold
                 </div>
             )}
 
-            {showMarkdown && (
-                <Markdown remarkPlugins={[remarkGfm]}>
-                    {enforceLinebreaks(value)}
-                </Markdown>
-            )}
+            {showMarkdown && (<MarkDownRenderer value={value}/>)}
 
         </div>
+    )
+}
+
+export function MarkDownRenderer( {value}: {value?: string}){
+
+    return (
+        <Markdown 
+            remarkPlugins={[remarkGfm]}
+            components={{
+                a: ({href, children, ...props}) => ( 
+                    <Link
+                        href={href}
+                        color="secondary" 
+                        underline="hover" 
+                    >
+                        {children}
+                    </Link>
+                    ),
+            }}
+        >
+            {enforceLinebreaks(value)}
+        </Markdown>
     )
 }
 

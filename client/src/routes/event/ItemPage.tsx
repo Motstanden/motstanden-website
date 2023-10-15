@@ -11,9 +11,9 @@ import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ParticipationStatus } from "common/enums";
 import { EventData, Participant, ParticipationList, UpsertParticipant } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
-import dayjs from "dayjs";
 import { useState } from "react";
 import { Link as RouterLink, useOutletContext } from "react-router-dom";
+import { AuthorInfo } from "src/components/AuthorInfo";
 import { TitleCard } from "src/components/TitleCard";
 import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
@@ -21,10 +21,7 @@ import { fetchAsync } from "src/utils/fetchAsync";
 import { postJson } from "src/utils/postJson";
 import { ItemMenu } from "./components/ItemMenu";
 import { KeyInfo } from "./components/KeyInfo";
-import { AuthorInfo } from "src/components/AuthorInfo";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { enforceLinebreaks } from "./components/MarkDownEditor";
+import { MarkDownRenderer } from "./components/MarkDownEditor";
 
 export default function ItemPage() {
     const event = useOutletContext<EventData>();
@@ -62,9 +59,7 @@ export default function ItemPage() {
                         marginBottom: "20px"
                     }}
                 />
-                <Markdown remarkPlugins={[remarkGfm]}>
-                    {enforceLinebreaks(event.description)}
-                </Markdown>
+                <MarkDownRenderer value={event.description} />
             </Paper>
             <Divider sx={{ my: 4 }} />
             <ParticipationContainer eventId={event.eventId} />
