@@ -28,7 +28,7 @@ export function UrlListItem({
     reloadDocument?: boolean | undefined,
     externalRoute?: boolean | undefined
 }) {
-    const urlAttribute = externalRoute ? { href: to } : { to: to }
+    const urlAttribute = externalRoute ? { href: to } : { to: to, reloadDocument: {reloadDocument} }
     return (
         <li style={{
             marginBottom: "20px"
@@ -37,7 +37,6 @@ export function UrlListItem({
                 component={externalRoute ? "a" : RouterLink}
                 {...urlAttribute}
                 type={type}
-                reloadDocument={reloadDocument}
                 underline="hover"
                 color="secondary"
             >
