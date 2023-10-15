@@ -6,5 +6,6 @@ export * from "./poll.js"
 export * from "./Quote.js"
 export * from "./Rumour.js"
 export * from "./SheetArchiveSong.js"
+export * from "./SongLyric.js"
 export * from "./User.js"
 

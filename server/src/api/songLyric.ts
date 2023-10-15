@@ -3,8 +3,14 @@ import express from "express";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig.js";
+import { songLyricService } from "../services/songLyric.js";
 
-let router = express.Router()
+const router = express.Router()
+
+router.get("/song-lyric/simple-list", (req, res) => { 
+    const lyrics = songLyricService.getList()
+    res.send(lyrics)
+})
 
 router.get("/song_lyric", (req, res) => {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
