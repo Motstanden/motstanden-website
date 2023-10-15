@@ -33,6 +33,11 @@ function DocumentList() {
                     to="https://statutter.motstanden.no" 
                     type="application/pdf"
                     text="Motstandens Statutter"/>
+                <UrlListItem
+                    externalRoute
+                    to="https://manifest.motstanden.no" 
+                    type="application/pdf"
+                    text="Motstandens Propaganda 2023"/>
                 {data.map(doc => 
                     <UrlListItem 
                         key={doc.url} 
