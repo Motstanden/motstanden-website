@@ -8,15 +8,20 @@ export function AuthorInfo({
     createdByUserName,
     updatedAt,
     updatedByUserId,
-    updatedByUserName
+    updatedByUserName,
+    style
 } : {
-    createdAt: string,
-    createdByUserId: number,
-    createdByUserName: string,
+    createdAt?: string,
+    createdByUserId?: number,
+    createdByUserName?: string,
     updatedAt?: string,
     updatedByUserId?: number,
-    updatedByUserName?: string
+    updatedByUserName?: string,
+    style?: React.CSSProperties
 }){
+
+    if(!createdAt || !createdByUserId || !createdByUserName)
+        return <></>
 
     const showUpdated = updatedByUserId !== undefined &&
         updatedByUserName !== undefined &&
@@ -31,7 +36,8 @@ export function AuthorInfo({
             display: "grid",
             gridTemplateColumns: "min-content auto",
             columnGap: "5px",
-            rowGap: "4px"
+            rowGap: "4px",
+            ...style
         }}>
             <div>
                 Opprettet:

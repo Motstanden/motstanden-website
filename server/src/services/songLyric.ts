@@ -19,20 +19,30 @@ function getSimpleList(): StrippedSongLyric[] {
     return lyrics
 }
 
-function get(id: number): SongLyric {
+interface DbSongLyric extends Required<SongLyric> {}
+
+function get(id: number): DbSongLyric {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT
             song_lyric_id as id,
             title,
-            content
+            content,
+
+            created_by_user_id as createdBy,
+            created_by_full_name as createdByName,
+            created_at as createdAt,
+
+            updated_by_user_id as updatedBy,
+            updated_by_full_name as updatedByName,
+            updated_at as updatedAt
         FROM 
-            song_lyric 
+            vw_song_lyric 
         WHERE 
             song_lyric_id = ?
     `) 
 
-    const lyric: SongLyric | undefined = stmt.get(id)
+    const lyric: DbSongLyric | undefined = stmt.get(id)
     db.close()
 
     if(!lyric)

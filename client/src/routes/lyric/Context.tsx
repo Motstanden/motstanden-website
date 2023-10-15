@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { SongLyric, StrippedSongLyric } from "common/interfaces"
 import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
+import { useAuth } from "src/context/Authentication"
 import { PageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
 
@@ -35,7 +36,11 @@ export function LyricItemContext() {
 }
 
 export function LyricItemLoader( {id}: {id: number}){
-    const { isLoading, isError, data } = useQuery<SongLyric>(["LyricItem", id], () => fetchAsync<SongLyric>(`/api/song-lyric/${id}`))
+
+    const isPublic = useAuth().user === null
+    const url = `/api/${isPublic ? "public" : "private"}/song-lyric/${id}`
+
+    const { isLoading, isError, data } = useQuery<SongLyric>(["LyricItem", isPublic, id], () => fetchAsync<SongLyric>(url))
 
     if (isLoading) {
         return <></>
