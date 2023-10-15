@@ -8,8 +8,8 @@
     "serverdeploy": "npm run setup-common-linux && npm run setup-server && npm run setup-client && cd ../client && npm run build",
     
     "setup-common-link-shared": "cd ../client && npm link common && cd ../server && npm link common && cd ../tests && npm link common",
-    "setup-common-link-linux": "cd ../common && sudo npm link && npm run setup-common-link-shared",
-    "setup-common-link-win": "cd ../common && npm link && npm run setup-common-link-shared",
+    "setup-common-link-linux": "cd ../common && sudo npm link && cd ../server && npm run setup-common-link-shared",
+    "setup-common-link-win": "cd ../common && npm link && cd ../server && npm run setup-common-link-shared",
 
     "setup-common": "echo ------- Setting up common ------- && cd ../common && npm install && npx tsc",
     "setup-client": "echo ------- Setting up client ------- && cd ../client && npm install",
