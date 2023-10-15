@@ -58,8 +58,8 @@ export default function ItemPage() {
                     endTime={event.endDateTime}
                     style={{
                         margin: "0px",
-                        marginTop: "30px",
-                        marginBottom: "30px"
+                        marginTop: "20px",
+                        marginBottom: "20px"
                     }}
                 />
                 <Markdown remarkPlugins={[remarkGfm]}>
