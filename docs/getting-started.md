@@ -59,19 +59,28 @@ After completing this guide, you will have learned everything you need to know t
   for your own mail. 
 
 # Start project
-  1. Install all dependencies   
-     ```bash
-     cd server
-     npm run setup
-     ```
-  2. Run the project
-     ```bash
-     npm run dev
-     ```
+1. Install all dependencies 
 
-  The terminal is now running two servers:
-  1. http://localhost:3000/ – A front end server, responsible for compiling react and provide front end dev tools. This server is only used in development.
-  2. http://localhost:5000/ - A back end server, responsible for handling API calls and serving files. This will be the actual server that is running in production.
+    **On Windows**
+    ```bash
+    cd server
+    npm run setup-win
+    ```
+
+    **On Linux**
+    ```bash
+    cd server
+    npm run setup-linux
+    ```
+
+2. Run the project
+    ```bash
+    npm run dev
+    ```
+
+The terminal is now running two servers:
+1. http://localhost:3000/ – A front end server, responsible for compiling react and provide front end dev tools. This server is only used in development.
+2. http://localhost:5000/ - A back end server, responsible for handling API calls and serving files. This will be the actual server that is running in production.
 
 You can now go to [http://localhost:3000/](http://localhost:3000/) and start developing.<br/>
 To log in, enter one of the following email addresses and click the `DEV LOGG INN`-button. 
