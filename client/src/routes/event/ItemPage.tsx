@@ -19,9 +19,9 @@ import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
 import { fetchAsync } from "src/utils/fetchAsync";
 import { postJson } from "src/utils/postJson";
+import { MarkDownRenderer } from "../../components/MarkDownEditor";
 import { ItemMenu } from "./components/ItemMenu";
 import { KeyInfo } from "./components/KeyInfo";
-import { MarkDownRenderer } from "./components/MarkDownEditor";
 
 export default function ItemPage() {
     const event = useOutletContext<EventData>();

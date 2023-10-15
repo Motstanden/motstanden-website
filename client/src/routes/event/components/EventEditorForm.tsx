@@ -21,7 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { dateTimePickerStyle } from 'src/assets/style/timePickerStyles';
 import { Form } from "src/components/form/Form";
 import { useTitle } from "src/hooks/useTitle";
-import { MarkDownEditor } from './MarkDownEditor';
+import { MarkDownEditor } from '../../../components/MarkDownEditor';
 
 export interface EventEditorState {
     title: string
