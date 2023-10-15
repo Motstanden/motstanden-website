@@ -17,7 +17,7 @@ echo "    Inserting events";
 sqlite3 ../../motstanden_dev.db < InsertEvents.sql;
 
 echo "    Inserting rumours";
-sqlite3 ../../motstanden_dev.db < insertRumours.sql;
+sqlite3 ../../motstanden_dev.db < InsertRumours.sql;
 
 echo "    Inserting polls";
 sqlite3 ../../motstanden_dev.db < InsertPolls.sql;
