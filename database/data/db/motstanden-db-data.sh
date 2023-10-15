@@ -20,4 +20,4 @@ echo "    Inserting rumours";
 sqlite3 ../../motstanden_dev.db < insertRumours.sql;
 
 echo "    Inserting polls";
-sqlite3 ../../motstanden_dev.db < insertPolls.sql;
+sqlite3 ../../motstanden_dev.db < InsertPolls.sql;
