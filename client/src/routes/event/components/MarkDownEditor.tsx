@@ -11,7 +11,6 @@ interface MarkDownEditorProps {
     placeholder?: string
     required?: boolean,
     minRows?: number
-    previewPlaceholder?: string
 }
 
 export function MarkDownEditor( props: MarkDownEditorProps) {
@@ -155,7 +154,7 @@ interface ContentPickerProps extends MarkDownEditorProps {
 function ContentPicker(props: ContentPickerProps){
     const {isPreview, ...mdProps} = props
     return isPreview 
-        ? <MarkDownReader value={props.value} placeholder={props.previewPlaceholder}/> 
+        ? <MarkDownReader value={props.value} placeholder="Ingenting å forhåndsvise..."/> 
         : <MarkDownWriter {...mdProps}/>
 }
 
