@@ -1,8 +1,9 @@
-import { Tab, Tabs, TextField, Theme, useMediaQuery } from "@mui/material"
+import { Stack, Tab, Tabs, TextField, Theme, useMediaQuery } from "@mui/material"
 import { isNullOrWhitespace } from "common/utils"
 import { useState } from "react"
 import Markdown from "react-markdown"
 import remarkGfm from 'remark-gfm'
+import { HelpButton } from "src/components/HelpButton"
 
 interface MarkDownEditorProps {
     value?: string,
@@ -46,6 +47,7 @@ function EditorTabs( {
 }) {
 
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+    const isTinyScreen = useMediaQuery("(max-width: 360px)")
 
     const selectedTabStyle: React.CSSProperties = {
         borderTop: "1px",
@@ -56,26 +58,85 @@ function EditorTabs( {
         borderRadius: "4px",
     }
 
+    let infoButtonStyle: React.CSSProperties 
+    let infoButtonSize: "small" | "medium" | "large"
+    if(isTinyScreen) {
+        infoButtonSize = "small"
+        infoButtonStyle = {
+            position: "absolute",
+            bottom: "-28px",
+            right: "-1px",
+            zIndex: 1,
+            padding: "5px",
+        }
+    } else if (isSmallScreen) {
+        infoButtonSize = "medium"
+        infoButtonStyle = {
+            position: "absolute",
+            bottom: "-34px",
+            right: "0px",
+            zIndex: 1,
+            padding: "5px",
+        }
+    } else {
+        infoButtonSize = "large"
+        infoButtonStyle = {
+            position: "absolute",
+            top: "5px",
+            right: "-9px",
+            padding: "5px",
+        }
+    }
+
     return (
-        <Tabs 
-            value={isPreview ? 1 : 0}
-            textColor="secondary"
-            indicatorColor="secondary"
-            variant={isSmallScreen ? "fullWidth" : "standard"}
-        >
-            <Tab
-                label="Skriv"
-                value={0}
-                onClick={onWriteClick}
-                style={isPreview ? {} : selectedTabStyle}
-            />
-            <Tab
-                label="Forhåndsvis"
-                value={1}
-                onClick={onPreviewClick}
-                style={isPreview ? selectedTabStyle : {}}
-            />
-        </Tabs>
+            <div style={{position: "relative"}}>
+                <Tabs 
+                    value={isPreview ? 1 : 0}
+                    textColor="secondary"
+                    indicatorColor="secondary"
+                    variant={isSmallScreen ? "fullWidth" : "standard"}
+                >
+                    <Tab
+                        label="Skriv"
+                        value={0}
+                        onClick={onWriteClick}
+                        style={isPreview ? {} : selectedTabStyle}
+                    />
+                    <Tab
+                        label="Forhåndsvis"
+                        value={1}
+                        onClick={onPreviewClick}
+                        style={isPreview ? selectedTabStyle : {}}
+                    />
+                </Tabs>
+                {!isPreview && 
+                    <InfoButton 
+                        style={infoButtonStyle}
+                        fontSize={infoButtonSize}
+                    />
+                }   
+            </div>
+    )
+}
+
+function InfoButton({ fontSize, style }: {fontSize?: "small" | "medium" | "large", style?: React.CSSProperties }) {
+    return (
+        <HelpButton fontSize={fontSize} style={style}>
+            <div style={{ margin: "10px", maxWidth: "280px" }}>
+                <h2>MarkDown</h2>
+                <p>
+                    Dette feltet støtter det meste av MarkDown.
+                    <br/>
+                    <br/>
+                    MarkDown er en enkel måte å formatere tekst på. 
+                    <br/>
+                    <br/>
+                    <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank" rel="noreferrer">
+                        Her er en oversikt over MarkDown-syntaksen
+                    </a>
+                </p>
+            </div>
+        </HelpButton>
     )
 }
 
