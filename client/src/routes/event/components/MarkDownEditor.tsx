@@ -132,7 +132,7 @@ function InfoButton({ fontSize, style }: {fontSize?: "small" | "medium" | "large
                     <br/>
                     <br/>
                     <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank" rel="noreferrer">
-                        Her er en oversikt over MarkDown-syntaksen
+                        Her er en kort oversikt over MarkDown-syntaksen.
                     </a>
                 </p>
             </div>
