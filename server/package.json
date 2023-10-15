@@ -5,12 +5,21 @@
   "main": "src/server.js",
   "type": "module",
   "scripts": {
-    "serverdeploy": "npm run setup-common && npm run setup-server && npm run setup-client && cd ../client && npm run build",
-    "setup-common": "echo ------- Setting up common ------- && cd ../common && npm install && npx tsc && npm link",
+    "serverdeploy": "npm run setup-common-linux && npm run setup-server && npm run setup-client && cd ../client && npm run build",
+    
+    "setup-common-base": "echo ------- Setting up common ------- && cd ../common && npm install && npx tsc",
+    "setup-common-win": "npm run setup-common-base && npm link",
+    "setup-common-linux": "npm run setup-common-base && sudo npm link",
+
     "setup-client": "echo ------- Setting up client ------- && cd ../client && npm install && npm link common",
     "setup-server": "echo ------- Setting up server ------- && npm install && npm link common && npx tsc",
     "setup-tests":  "echo ------- Setting up tests -------  && cd ../tests && npm install && npm link common",
-    "setup":        "npm run setup-common && npm run setup-client && npm run setup-server && npm run setup-tests",
+
+    "setup-base":  "npm run setup-client && npm run setup-server && npm run setup-tests",
+    "setup-linux": "npm run setup-common-linux && npm run setup-base",
+    "setup-win":   "npm run setup-common-win && npm run setup-base",
+    "setup": "npm run setup-win",
+
     "client-dev": "cd ../client && npm run dev",
     "common-dev": "cd ../common && tsc --watch --preserveWatchOutput",
     "server-dev": "concurrently --prefix-colors \"auto\" --names \"typescript,console\"   \"tsc --watch --preserveWatchOutput\" \"nodemon --delay 1 build/server.js\"",
