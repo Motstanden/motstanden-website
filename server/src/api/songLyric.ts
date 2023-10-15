@@ -12,6 +12,10 @@ router.get("/song-lyric/simple-list", (req, res) => {
     res.send(lyrics)
 })
 
+router.get("/song-lyric/:title", (req, res) => {
+    res.send({ id: 0, title: req.params.title, content: "TODO..." })
+})
+
 router.get("/song_lyric", (req, res) => {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare("SELECT \

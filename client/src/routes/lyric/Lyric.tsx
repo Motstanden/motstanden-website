@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { StrippedSongLyric } from 'common/interfaces'
+import { SongLyric, StrippedSongLyric } from 'common/interfaces'
 import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
 import { UrlList, UrlListItem } from "../../components/UrlList"
 import { useTitle } from "../../hooks/useTitle"
@@ -42,16 +42,7 @@ export function LyricItemPage() {
 
     useTitle(title)
 
-    const { isLoading, isError, data } = useQuery<ILyricHtml>(["LyricItem", title], () => {
-        if (title) {
-            return fetchAsync<ILyricHtml>(`/api/song_lyric_data?title=${title}`)
-        }
-        else {
-            throw new Error("Title is null")
-        }
-    }, {
-        retry: false
-    })
+    const { isLoading, isError, data } = useQuery<SongLyric>(["LyricItem", title], () => fetchAsync<SongLyric>(`/api/song-lyric/${title}`))
 
     if (isLoading) {
         return <></>
@@ -63,12 +54,10 @@ export function LyricItemPage() {
 
     return (
         <>
-            <h2>{title}</h2>
-            <div dangerouslySetInnerHTML={{ __html: data.lyricHtml }} />
+            <h2>{data.title}</h2>
+            <div>
+                {data.content}
+            </div>
         </>
     )
-}
-
-interface ILyricHtml {
-    lyricHtml: string
 }
