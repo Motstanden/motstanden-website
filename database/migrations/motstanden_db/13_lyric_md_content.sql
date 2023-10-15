@@ -40,3 +40,29 @@ BEGIN
     UPDATE song_lyric SET updated_at = current_timestamp
         WHERE song_lyric_id = old.song_lyric_id;
 END;
+
+
+CREATE VIEW vw_song_lyric AS
+SELECT 
+	song_lyric_id,
+	title,
+	content,
+
+	created_by as created_by_user_id,
+    created_by.first_name || ' '
+       || IIF(length(trim(created_by.middle_name)) = 0, '', created_by.middle_name || ' ')
+       || created_by.last_name
+       as created_by_full_name,
+    sl.created_at,
+	
+	updated_by as updated_by_user_id,
+    updated_by.first_name || ' '
+       || IIF(length(trim(updated_by.middle_name)) = 0, '', updated_by.middle_name || ' ')
+       || updated_by.last_name
+       as updated_by_full_name,
+    sl.updated_at
+	
+FROM 
+	song_lyric sl
+LEFT JOIN user created_by ON created_by.user_id = sl.created_by
+LEFT JOIN user updated_by ON updated_by.user_id = sl.updated_by;
