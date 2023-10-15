@@ -9,14 +9,6 @@ CREATE TABLE IF NOT EXISTS "document"(
     filename TEXT NOT NULL CHECK(like('files/public/dokumenter/%_._%', filename) OR like('files/private/dokumenter/%_._%', filename)),
     is_public BOOLEAN NOT NULL GENERATED ALWAYS AS (like('files/public/%', filename)) STORED
 );
-CREATE TABLE IF NOT EXISTS "song_lyric"(
-    song_lyric_id INTEGER PRIMARY KEY NOT NULL,
-    title TEXT NOT NULL,
-    filename TEXT NOT NULL CHECK(like('files/public/studenttraller/%_.html', filename)),
-    song_melody TEXT,
-    song_text_origin TEXT,
-    song_description TEXT
-);
 CREATE TABLE user_group (
     user_group_id INTEGER PRIMARY KEY NOT NULL,
     name TEXT UNIQUE NOT NULL
@@ -314,3 +306,30 @@ ON  created_by.user_id = e.created_by
 LEFT JOIN user updated_by
 ON  updated_by.user_id = e.updated_by
 /* vw_event(event_id,title,start_date_time,end_date_time,key_info,description,created_by_user_id,created_by_full_name,created_at,updated_by_user_id,updated_by_full_name,updated_at,is_upcoming) */;
+CREATE TABLE IF NOT EXISTS "song_lyric"(
+    song_lyric_id INTEGER PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    melody TEXT,
+    text_origin TEXT,
+    description TEXT,
+
+    created_by INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_by INTEGER NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(created_by)
+        REFERENCES user(user_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    FOREIGN KEY(updated_by)
+        REFERENCES user(user_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+CREATE TRIGGER trig_song_lyric_updated_at
+    AFTER UPDATE ON event FOR EACH ROW
+BEGIN
+    UPDATE song_lyric SET updated_at = current_timestamp
+        WHERE song_lyric_id = old.song_lyric_id;
+END;

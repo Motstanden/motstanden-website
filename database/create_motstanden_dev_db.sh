@@ -51,6 +51,10 @@ sqlite3 motstanden_dev.db < migrations/motstanden_db/11_poll_trigger_bugfixes.sq
 echo "Running: 12_event_md_description.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/12_event_md_description.sql;
 
+# Use markdown for song lyrics
+echo "Running: 13_lyric_md_content.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/13_lyric_md_content.sql;
+
 # Insert data that is representative for the current data in the database
 cd data/db
 sh motstanden-db-data.sh 
