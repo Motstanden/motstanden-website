@@ -55,8 +55,8 @@ Men kommer Dragvollfolka hit,
 så er det noe jævla drit.
 
 **Ref. modulert.**
-For vi vil ha asbesten for oss sjøl
-- Her på haugen vår
+For vi vil ha asbesten for oss 
+sjøl - Her på haugen vår
 Asbest – uti mange år
 Asbest – det er best i test
 Asbest – gir en kjempefest
