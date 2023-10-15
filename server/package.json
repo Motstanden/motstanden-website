@@ -7,18 +7,17 @@
   "scripts": {
     "serverdeploy": "npm run setup-common-linux && npm run setup-server && npm run setup-client && cd ../client && npm run build",
     
-    "setup-common-base": "echo ------- Setting up common ------- && cd ../common && npm install && npx tsc",
-    "setup-common-win": "npm run setup-common-base && npm link",
-    "setup-common-linux": "npm run setup-common-base && sudo npm link",
+    "setup-common-link-linux": "cd ../common && sudo npm link && cd ../client && sudo npm link common && cd ../server && sudo npm link common && cd ../tests && sudo npm link common",
+    "setup-common-link-win": "cd ../common && npm link && cd ../client && npm link common && cd ../server && npm link common && cd ../tests && npm link common",
 
-    "setup-client": "echo ------- Setting up client ------- && cd ../client && npm install && npm link common",
-    "setup-server": "echo ------- Setting up server ------- && npm install && npm link common && npx tsc",
-    "setup-tests":  "echo ------- Setting up tests -------  && cd ../tests && npm install && npm link common",
+    "setup-common": "echo ------- Setting up common ------- && cd ../common && npm install && npx tsc",
+    "setup-client": "echo ------- Setting up client ------- && cd ../client && npm install",
+    "setup-server": "echo ------- Setting up server ------- && npm install && npx tsc",
+    "setup-tests":  "echo ------- Setting up tests -------  && cd ../tests && npm install",
 
-    "setup-base":  "npm run setup-client && npm run setup-server && npm run setup-tests",
-    "setup-linux": "npm run setup-common-linux && npm run setup-base",
-    "setup-win":   "npm run setup-common-win && npm run setup-base",
-    "setup": "npm run setup-win",
+    "setup-shared":"npm run setup-client && npm run setup-server && npm run setup-tests",
+    "setup-linux": "npm run setup-common && npm run setup-common-link-linux && npm run setup-shared",
+    "setup-win":   "npm run setup-common && npm run setup-common-link-win && npm run setup-shared",
 
     "client-dev": "cd ../client && npm run dev",
     "common-dev": "cd ../common && tsc --watch --preserveWatchOutput",
