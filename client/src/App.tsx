@@ -30,7 +30,7 @@ import FrontPage from "src/routes/frontPage/FrontPage";
 import HomePage from "src/routes/home/Home";
 import { LicenseOnlyPage, LicensePage } from "src/routes/license/LicensePage";
 import LoginPage from "src/routes/login/Login";
-import { LyricItemPage, LyricListPage, LyricPageContainer } from 'src/routes/lyric/Lyric';
+import { LyricItemPage, LyricListPage } from 'src/routes/lyric/Lyric';
 import NotFound from "src/routes/notFound/NotFound";
 import NewPollPage from "src/routes/poll/NewPage";
 import PollPage from "src/routes/poll/Poll";
@@ -42,6 +42,7 @@ import { NewRumourPage, RumourPage } from 'src/routes/rumour/RumourPage';
 import { SheetArchiveContext } from "src/routes/sheetArchive/Context";
 import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
+import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
 import { PollContext } from "./routes/poll/Context";
 
 function App() {
@@ -58,9 +59,11 @@ function App() {
 					<Route element={<Outlet/>}>
 						<Route path="/framside" element={<FrontPage />} />
 						<Route path="/logg-inn" element={<LoginPage />} />
-						<Route path="/studenttraller" element={<LyricPageContainer />}>
+						<Route path="/studenttraller" element={<LyricContext/>}>
 							<Route index element={<LyricListPage />} />
-							<Route path=":title" element={<LyricItemPage />} />
+							<Route path=":title" element={<LyricItemContext/>}>
+								<Route index element={<LyricItemPage />} />
+							</Route>
 						</Route>
 						<Route path="/dokumenter" element={<DocumentsPage />} />
 						<Route path="/bli-medlem" element={<BecomeMemberPage />} />

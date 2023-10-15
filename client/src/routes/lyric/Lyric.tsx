@@ -6,23 +6,6 @@ import { useTitle } from "../../hooks/useTitle"
 import { PageContainer } from "../../layout/PageContainer"
 import { fetchAsync } from "../../utils/fetchAsync"
 
-export function LyricPageContainer() {
-    const { isLoading, isError, data, error } = useQuery<StrippedSongLyric[]>(["AllLyricData"], () => fetchAsync<StrippedSongLyric[]>("/api/song-lyric/simple-list"))
-
-    if (isLoading) {
-        return <PageContainer><div /></PageContainer>
-    }
-
-    if (isError) {
-        return <PageContainer><span>{`${error}`}</span></PageContainer>
-    }
-    return (
-        <PageContainer>
-            <Outlet context={data} />
-        </PageContainer>
-    )
-}
-
 export function LyricListPage() {
     useTitle("Studenttraller")
     const lyricData = useOutletContext<StrippedSongLyric[]>()
@@ -37,26 +20,13 @@ export function LyricListPage() {
 }
 
 export function LyricItemPage() {
-    const params = useParams();
-    const title = params.title;
-
-    useTitle(title)
-
-    const { isLoading, isError, data } = useQuery<SongLyric>(["LyricItem", title], () => fetchAsync<SongLyric>(`/api/song-lyric/${title}`))
-
-    if (isLoading) {
-        return <></>
-    }
-
-    if (isError) {
-        return <Navigate to="/studenttraller" replace={true} />
-    }
-
+    const lyric = useOutletContext<SongLyric>()
+    useTitle(lyric.title)
     return (
         <>
-            <h2>{data.title}</h2>
+            <h2>{lyric.title}</h2>
             <div>
-                {data.content}
+                {lyric.content}
             </div>
         </>
     )
