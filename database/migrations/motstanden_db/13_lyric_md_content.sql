@@ -9,6 +9,7 @@ CREATE TABLE song_lyric_new(
     melody TEXT,
     text_origin TEXT,
     description TEXT,
+    is_popular BOOLEAN NOT NULL DEFAULT 0,
 
     created_by INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -47,6 +48,7 @@ SELECT
 	song_lyric_id,
 	title,
 	content,
+    is_popular,
 
 	created_by as created_by_user_id,
     created_by.first_name || ' '

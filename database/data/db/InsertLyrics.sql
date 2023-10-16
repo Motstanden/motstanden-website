@@ -1,11 +1,12 @@
 INSERT INTO 
-    song_lyric(title, melody, text_origin, description, created_by, updated_by, content) 
+    song_lyric(title, melody, text_origin, description, is_popular, created_by, updated_by, content) 
 VALUES
     (
         'Asbest',              
         'Go West',              
         NULL,                                                       
         NULL,
+        0,
         14,
         14,
 'På gløs er det gamle bygg
@@ -108,6 +109,7 @@ Aaaaaasbeeeest.'
         NULL,                   
         'Kalle Zwilgmeyer',                                         
         NULL,
+        1,
         14,
         14,
 '**Refreng:**
@@ -158,6 +160,7 @@ der vil jeg nyte dem i fred og i ro.
         'Jamaican Farewell',    
         'Krussedull (UKA 1957)',                                    
         NULL,
+        0,
         14,
         14,
 'Tanken går til den skjønne vår
@@ -221,6 +224,7 @@ mens min elskov videre med toget dro.
         'Kråkevisa',            
         'Nina T. Gundersen og Hans Olav Lofstad fra Motstanden',    
         NULL,
+        1,
         14,
         14,
 'De ohmske gikk seg en tur på by’n
@@ -268,6 +272,7 @@ Hei fara, Faltu riltu raltu ra'
         'Blood On the Risers',  
         NULL,                                                       
         NULL,
+        0,
         14,
         14,
 'Han hoppa fra 12000 fot med fallskjermen igjen
@@ -319,6 +324,7 @@ Nå flyter’n rundt i Nordsjøen og lengter hjem til mor...
         NULL,                   
         NULL,                                                       
         '...også kjent som "Lundsbrua"',
+        1,
         14,
         14,
 'Jeg ønsker meg en himmelseng,
@@ -361,6 +367,7 @@ jeg vet hvor jeg er deilig.'
         NULL,                   
         NULL,                                                       
         NULL,
+        1,
         14,
         14,
 'Hva skal vi gjøre med kanonene da?
@@ -398,6 +405,7 @@ jo dem skal vi lære **Å SKYTE MED KANON!!!**'
         NULL,                   
         NULL,                                                       
         NULL,
+        1,
         14,
         14,
 '*Rettet mot en fyllehund som nyter drikke:*
@@ -427,6 +435,7 @@ Han kunne kunsten å være et jævla fyllesvin!
         NULL,                   
         'Motstanden',                                               
         NULL,
+        1,
         14,
         14,
 'I en sluttet krets er summen av spenningnen lik null!
@@ -454,6 +463,7 @@ Jag gillar havre, jag äter det var dag, jag sniffar det til frukost, det gör m
         NULL,                   
         'Cassa Rossa (UKA 1929)',                                   
         NULL,
+        1,
         14,
         14,
 'Nu klinger igjennom den gamle stad, påny en studentersang,
@@ -496,6 +506,7 @@ Også sitter vi i himmelen og stemmer i vår replikk;
         'Blood On the Risers',  
         'Motstanden',                                               
         NULL,
+        1,
         14,
         14,
 'Det starta som IKEA-bord og endte opp som spon **x3**
@@ -548,6 +559,7 @@ Og det nye bordet skal leve!
         NULL,                   
         NULL,                                                       
         NULL,
+        1,
         14,
         14,
 'På en planke, uti Nordsjø’n

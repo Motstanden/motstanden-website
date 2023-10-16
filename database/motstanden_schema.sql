@@ -313,6 +313,7 @@ CREATE TABLE IF NOT EXISTS "song_lyric"(
     melody TEXT,
     text_origin TEXT,
     description TEXT,
+    is_popular BOOLEAN NOT NULL DEFAULT 0,
 
     created_by INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -338,6 +339,7 @@ SELECT
 	song_lyric_id,
 	title,
 	content,
+    is_popular,
 
 	created_by as created_by_user_id,
     created_by.first_name || ' '
@@ -357,4 +359,4 @@ FROM
 	song_lyric sl
 LEFT JOIN user created_by ON created_by.user_id = sl.created_by
 LEFT JOIN user updated_by ON updated_by.user_id = sl.updated_by
-/* vw_song_lyric(song_lyric_id,title,content,created_by_user_id,created_by_full_name,created_at,updated_by_user_id,updated_by_full_name,updated_at) */;
+/* vw_song_lyric(song_lyric_id,title,content,is_popular,created_by_user_id,created_by_full_name,created_at,updated_by_user_id,updated_by_full_name,updated_at) */;
