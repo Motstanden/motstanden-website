@@ -4,6 +4,7 @@ import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
 import { useAuth } from "src/context/Authentication"
 import { TabbedPageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
+import { strToPrettyUrl } from "src/utils/strToPrettyUrl"
 
 export function LyricContext() {
     const { isLoading, isError, data, error } = useQuery<StrippedSongLyric[]>(["AllLyricData"], () => fetchAsync<StrippedSongLyric[]>("/api/song-lyric/simple-list"))
@@ -46,10 +47,10 @@ function PageContainer( {children}: {children?: React.ReactNode} ) {
 
 export function LyricItemContext() {
     const params = useParams();
-    const title = params.title;
+    const urlTitle = params.title;
     
     const allLyrics = useOutletContext<StrippedSongLyric[]>()
-    const lyricId = allLyrics.find(item => item.title === title)?.id
+    const lyricId = allLyrics.find(item => strToPrettyUrl(item.title) === urlTitle)?.id
 
     if(!lyricId) 
         return <Navigate to="/studenttraller" replace={true} />
@@ -69,7 +70,7 @@ export function LyricItemLoader( {id}: {id: number}){
     }
 
     if (isError) {
-        return <Navigate to="/studenttraller" replace={true} />
+        return <Navigate to="/studenttraller/populaere" replace={true} />
     }
 
     return (

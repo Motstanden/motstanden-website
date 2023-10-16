@@ -8,16 +8,27 @@ import { fetchAsync } from "../../utils/fetchAsync"
 import { MarkDownRenderer } from 'src/components/MarkDownEditor'
 import { useTheme } from '@mui/material'
 import { AuthorInfo } from 'src/components/AuthorInfo'
+import { strToPrettyUrl } from 'src/utils/strToPrettyUrl'
 
 export function LyricListPage( {filterPopular}: {filterPopular?: boolean}  ) {
     useTitle("Studenttraller")
     const lyricData = useOutletContext<StrippedSongLyric[]>()
     const lyrics = filterPopular ? lyricData.filter(lyric => lyric.isPopular) : lyricData
+
+    const buildUrl = (lyric: StrippedSongLyric) => {
+        return `/studenttraller/${filterPopular ? "populaere" : "alle"}/${strToPrettyUrl(lyric.title)}`
+    }
+
     return (
         <>
             <h1>Studenttraller</h1>
             <UrlList>
-                {lyrics.map(lyric => <UrlListItem key={lyric.id} to={`/studenttraller/${lyric.title}`} text={lyric.title} />)}
+                {lyrics.map(lyric => (
+                    <UrlListItem 
+                        key={lyric.id} 
+                        to={buildUrl(lyric)} 
+                        text={lyric.title} />
+                ))}
             </UrlList>
         </>
     )
