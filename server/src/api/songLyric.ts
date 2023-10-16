@@ -59,11 +59,6 @@ function sendSongLyric({ isPublic }: {isPublic: boolean} ) {
 
 router.post("/song-lyric/:id/update",
     AuthenticateUser(),
-    requiresGroupOrAuthor({
-        requiredGroup: UserGroup.Administrator,
-        getId: (req) => strToNumber(req.params.id),
-        getAuthorInfo: (id) => songLyricService.get(id)
-    }),
     (req, res) => {
         const id = strToNumber(req.params.id) as number     // is validated by middleware
         const user = req.user as AccessTokenData
