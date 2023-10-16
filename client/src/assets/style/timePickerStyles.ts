@@ -1,4 +1,5 @@
 import { DatePickerProps, DateTimePickerProps, TimePickerProps } from "@mui/x-date-pickers";
+import { isWebKit } from "src/utils/isWebKit";
 
 interface BaseProps {
     desktopModeMediaQuery?: string
@@ -6,10 +7,6 @@ interface BaseProps {
 
 const baseStyle: BaseProps  = {
     desktopModeMediaQuery: isWebKit() ?  undefined : "@media (min-width: 600px) or (pointer: fine)"
-}
-
-function isWebKit(): boolean {
-    return navigator.userAgent.indexOf('AppleWebKit') != -1
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
