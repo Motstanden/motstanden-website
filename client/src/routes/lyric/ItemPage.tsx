@@ -10,7 +10,9 @@ import { DeleteMenuItem, EditMenuItem } from 'src/components/menu/EditOrDeleteMe
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 import { useAuth } from 'src/context/Authentication';
 import { useTitle } from "../../hooks/useTitle";
-import { useLyricItemContext } from './Context';
+import { lyricContextQueryKey, useLyricItemContext } from './Context';
+import { useQueryClient } from '@tanstack/react-query';
+import { postJson } from 'src/utils/postJson';
 
 export function LyricItemPage() {
     const [allLyrics, lyric] = useLyricItemContext()
@@ -53,27 +55,26 @@ function TitleHeader( {lyric}: {lyric: SongLyric} ) {
     const isLoggedIn = user !== null
     const canDelete = isLoggedIn && ( user.userId === lyric.createdBy || hasGroupAccess(user, UserGroup.Administrator));
 
-    
-
+    const queryClient = useQueryClient();
     const navigate = useNavigate();
 
     const onEditClick = () => {
         navigate("rediger")
     }
 
-    const onDeleteClick = () => {
-        // setIsLoading(true)
-        // const response = await postJson(
-        //     "/api/polls/delete",
-        //     { id: poll.id },
-        //     {
-        //         alertOnFailure: true,
-        //         confirmText: "Vil du permanent slette denne avstemningen?"
-        //     }
-        // )
-        // if(response?.ok) {
-        //     await queryClient.invalidateQueries(srcQueryKey)
-        // }
+    const onDeleteClick = async () => {
+        const response = await postJson(
+            `/api/song-lyric/${lyric.id}/delete`, 
+            { },
+            {
+                alertOnFailure: true,
+                confirmText: "Vil du permanent slette denne trallen?"
+            }
+        )
+        if(response?.ok) {
+            await queryClient.invalidateQueries(lyricContextQueryKey)
+            navigate("..")
+        }
     }
 
     if(!isLoggedIn)

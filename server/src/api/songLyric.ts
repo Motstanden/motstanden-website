@@ -65,7 +65,8 @@ router.post("/song-lyric/:id/update",
         getAuthorInfo: (id) => songLyricService.get(id)
     }),
     (req, res) => {
-
+        console.log("Updating...")
+        res.end()
     }
 )
 
@@ -109,5 +110,18 @@ function tryCreateValidLyric(obj: unknown): NewSongLyric | undefined {
         isPopular: lyric.isPopular
     }
 }
+
+router.post("/song-lyric/:id/delete",
+    AuthenticateUser(),
+    requiresGroupOrAuthor({
+        requiredGroup: UserGroup.Administrator,
+        getId: (req) => strToNumber(req.params.id),
+        getAuthorInfo: (id) => songLyricService.get(id)
+    }),
+    (req, res) => {
+        console.log("Deleting...")
+        res.end()
+    }
+)
 
 export default router;
