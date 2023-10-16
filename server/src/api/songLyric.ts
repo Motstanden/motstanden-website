@@ -80,7 +80,7 @@ router.post("/song-lyric/new",
             return res.status(400).send("Could not parse song lyric data")
 
         try {
-            const id = songLyricService.insertNew(newLyric, user.userId)
+            songLyricService.insertNew(newLyric, user.userId)
         } catch (err) {
             console.log(err)
             res.status(400).send("Bad data")
@@ -119,7 +119,12 @@ router.post("/song-lyric/:id/delete",
         getAuthorInfo: (id) => songLyricService.get(id)
     }),
     (req, res) => {
-        console.log("Deleting...")
+        const id = strToNumber(req.params.id) as number     // is validated by middleware
+        try {
+            songLyricService.delete(id)
+        } catch (err) {
+            res.status(500).send("Failed to delete song lyric from the database")
+        }
         res.end()
     }
 )

@@ -87,8 +87,24 @@ function insertNew(lyric: NewSongLyric, userId: number) {
     db.close()
 }
 
+function deleteLyric(id: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const startTransaction = db.transaction(() => {
+        const stmt = db.prepare(`
+            DELETE FROM 
+                song_lyric 
+            WHERE 
+                song_lyric_id = ?
+        `) 
+        stmt.run(id)
+    })
+    startTransaction()
+    db.close()
+}
+
 export const songLyricService = {
     getSimpleList: getSimpleList,
     get: get,
-    insertNew: insertNew
+    insertNew: insertNew,
+    delete: deleteLyric
 }
