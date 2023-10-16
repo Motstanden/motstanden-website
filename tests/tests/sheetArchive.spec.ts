@@ -31,7 +31,7 @@ function getSong(workerInfo: TestInfo): string {
         case 1: return "killing in the name"
         case 2: return "ice cream"
         case 3: return "another brick in the wall"
-        case 4: return "can can"
+        case 4: return "can-can"
         case 5: return "through the fire and flames"
         default: throw `Maximum worker count reached. ` +
                        `\nRace condition will occur in this tests if there exists more than 6 concurrent workers. ` +

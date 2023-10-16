@@ -23,5 +23,6 @@ WHERE
 		'Norge i Rødt Hvitt og Blått',
 		'Nu Klinger',
 		'Olsenbanden',
-		'The Bare Necessities'
+		'The Bare Necessities',
+		'Through the Fire and Flames'
 	);
