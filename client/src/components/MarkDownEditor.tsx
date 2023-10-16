@@ -236,9 +236,20 @@ export function MarkDownRenderer( {value}: {value?: string}){
     )
 }
 
-export function enforceLinebreaks( value?: string) {
-    if(value === undefined)
+export function enforceLinebreaks( srcValue?: string) {
+    if(srcValue === undefined)
         return undefined
 
-    return value.replace(/(\r\n|\n|\r)/gm, "  \n") ?? "" // Add two spaces to end of line to force linebreak
+    // Support multiple consecutive linebreaks
+    // Shamelessly copied from: https://github.com/remarkjs/react-markdown/issues/278#issuecomment-1753137127
+    let newValue = srcValue;
+    newValue = srcValue.replace(/```[\s\S]*?```/g, (m) =>
+        m.replace(/\n/g, "\n ")
+    );
+    newValue = newValue.replace(/(?<=\n\n)(?![*-])\n/g, "&nbsp;  \n ");
+
+    // Support single linebreaks
+    newValue = newValue.replace(/(\n)/gm, "  \n");
+
+    return newValue;
 }
