@@ -6,9 +6,6 @@ CREATE TABLE song_lyric_new(
     song_lyric_id INTEGER PRIMARY KEY NOT NULL,
     title TEXT NOT NULL UNIQUE,
     content TEXT NOT NULL,
-    melody TEXT,
-    text_origin TEXT,
-    description TEXT,
     is_popular BOOLEAN NOT NULL DEFAULT 0,
 
     created_by INTEGER NOT NULL,
@@ -26,9 +23,9 @@ CREATE TABLE song_lyric_new(
 );
 
 INSERT INTO 
-    song_lyric_new(title, content, melody, text_origin, description, created_by, updated_by)
+    song_lyric_new(title, content, created_by, updated_by)
 SELECT
-    title, '', song_melody, song_text_origin, song_description, 1, 1
+    title, '', 1, 1
 FROM
     song_lyric;
 

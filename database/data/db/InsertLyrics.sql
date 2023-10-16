@@ -1,15 +1,15 @@
 INSERT INTO 
-    song_lyric(title, melody, text_origin, description, is_popular, created_by, updated_by, content) 
+    song_lyric(title, is_popular, created_by, updated_by, content) 
 VALUES
     (
         'Asbest',              
-        'Go West',              
-        NULL,                                                       
-        NULL,
         0,
         14,
         14,
-'På gløs er det gamle bygg
+'**Melodi:** Go West
+
+
+På gløs er det gamle bygg
 På gløs er du aldri trygg
 På gløs blir det pusset opp
 På gløs tar vi frem en mopp
@@ -106,13 +106,13 @@ Aaaaaasbeeeest.'
     ),
     (
         'Bayer i Hånden',      
-        NULL,                   
-        'Kalle Zwilgmeyer',                                         
-        NULL,
         1,
         14,
         14,
-'**Refreng:**
+'**Tekst:** Kalle Zwilgmeyer
+
+
+**Refreng:**
 Jeg er født med en bayer i hånden
 og sådan har jeg tenkt meg at jeg også ville dø
 Jeg drikker øl til jeg oppgiver ånden,
@@ -157,13 +157,14 @@ der vil jeg nyte dem i fred og i ro.
     ),
     (
         'Calypso',             
-        'Jamaican Farewell',    
-        'Krussedull (UKA 1957)',                                    
-        NULL,
         0,
         14,
         14,
-'Tanken går til den skjønne vår
+'**Tekst:** Krussedull (UKA 1957) 
+**Melodi:** Jamaican Farewell
+
+
+Tanken går til den skjønne vår
 da jeg sang i mannskoret "Polyfon",
 til den turne da vi dro avsted
 med lokaltog fra Trondheims sentralstasjon.
@@ -221,13 +222,14 @@ mens min elskov videre med toget dro.
     ),
     (
         'De Ohmske',           
-        'Kråkevisa',            
-        'Nina T. Gundersen og Hans Olav Lofstad fra Motstanden',    
-        NULL,
         1,
         14,
         14,
-'De ohmske gikk seg en tur på by’n
+'**Tekst:** Nina T. Gundersen og Hans Olav Lofstad fra Motstanden
+**Melodi:** Kråkevisa
+
+
+De ohmske gikk seg en tur på by’n
 hei fara, en tur på by’n.
 På veien så så de et drømmesyn
 Hei fara, Faltu riltu raltu ra
@@ -269,13 +271,13 @@ Hei fara, Faltu riltu raltu ra'
     ),
     (
         'Fallskjermsangen',    
-        'Blood On the Risers',  
-        NULL,                                                       
-        NULL,
         0,
         14,
         14,
-'Han hoppa fra 12000 fot med fallskjermen igjen
+'**Melodi:** Blood on the Risers
+
+
+Han hoppa fra 12000 fot med fallskjermen igjen
 Han hoppa fra 12000 fot med fallskjermen igjen
 Han hoppa fra 12000 fot med fallskjermen igjen
 Og han skal ikke hoppe no’ mere!
@@ -321,13 +323,13 @@ Nå flyter’n rundt i Nordsjøen og lengter hjem til mor...
     ),
     (
         'Himmelseng',          
-        NULL,                   
-        NULL,                                                       
-        '...også kjent som "Lundsbrua"',
         1,
         14,
         14,
-'Jeg ønsker meg en himmelseng,
+'*...også kjent som "Lundsbrua"*
+
+
+Jeg ønsker meg en himmelseng,
 en himmelseng med speil i,
 så jeg kan ligg’ og speile meg,
 og se hvor jeg er deilig.
@@ -364,9 +366,6 @@ jeg vet hvor jeg er deilig.'
     ),
     (
         'Kanonsangen',         
-        NULL,                   
-        NULL,                                                       
-        NULL,
         1,
         14,
         14,
@@ -402,9 +401,6 @@ jo dem skal vi lære **Å SKYTE MED KANON!!!**'
     ),
     (
         'Lambo',               
-        NULL,                   
-        NULL,                                                       
-        NULL,
         1,
         14,
         14,
@@ -432,9 +428,6 @@ Han kunne kunsten å være et jævla fyllesvin!
     ),
     (
         'Motstandenskålene',   
-        NULL,                   
-        'Motstanden',                                               
-        NULL,
         1,
         14,
         14,
@@ -460,13 +453,13 @@ Jag gillar havre, jag äter det var dag, jag sniffar det til frukost, det gör m
     ),
     (
         'Nu Klinger',          
-        NULL,                   
-        'Cassa Rossa (UKA 1929)',                                   
-        NULL,
         1,
         14,
         14,
-'Nu klinger igjennom den gamle stad, påny en studentersang,
+'**Tekst:** Cassa Rossa (UKA 1929)
+
+
+Nu klinger igjennom den gamle stad, påny en studentersang,
 og alle mann alle i rekker og rad, svinger opp under begerklang!
 Og mens borgerne våkner i køia og hører det glade «kang-kang»,
 synger alle mann, alle mann, alle mann, alle mann, alle mann, alle mann an;
@@ -503,13 +496,14 @@ Også sitter vi i himmelen og stemmer i vår replikk;
     ),
     (
         'Ole Bordknuser',      
-        'Blood On the Risers',  
-        'Motstanden',                                               
-        NULL,
         1,
         14,
         14,
-'Det starta som IKEA-bord og endte opp som spon **x3**
+'**Tekst:** Motstanden
+**Melodi:** Blood On the Risers
+
+
+Det starta som IKEA-bord og endte opp som spon **x3**
 Og det skal ikke være bord mere
 
 **Refreng:**
@@ -556,9 +550,6 @@ Og det nye bordet skal leve!
     ),
     (
         'På en planke',        
-        NULL,                   
-        NULL,                                                       
-        NULL,
         1,
         14,
         14,

@@ -310,9 +310,6 @@ CREATE TABLE IF NOT EXISTS "song_lyric"(
     song_lyric_id INTEGER PRIMARY KEY NOT NULL,
     title TEXT NOT NULL UNIQUE,
     content TEXT NOT NULL,
-    melody TEXT,
-    text_origin TEXT,
-    description TEXT,
     is_popular BOOLEAN NOT NULL DEFAULT 0,
 
     created_by INTEGER NOT NULL,
