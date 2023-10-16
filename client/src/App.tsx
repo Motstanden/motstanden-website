@@ -44,6 +44,7 @@ import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
 import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
 import { PollContext } from "./routes/poll/Context";
+import { NewLyricPage } from "./routes/lyric/NewPage";
 
 function App() {
 	const auth = useAuth()
@@ -60,10 +61,16 @@ function App() {
 						<Route path="/framside" element={<FrontPage />} />
 						<Route path="/logg-inn" element={<LoginPage />} />
 						<Route path="/studenttraller" element={<LyricContext/>}>
-							<Route index element={<LyricListPage />} />
-							<Route path=":title" element={<LyricItemContext/>}>
+							<Route path="" element={<Navigate to="populaere" />} />
+							<Route path="populaere" element={<LyricListPage filterPopular/>}/>
+							<Route path="populaere/:title" element={<LyricItemContext/>}>
 								<Route index element={<LyricItemPage />} />
 							</Route>
+							<Route path="alle" element={<LyricListPage />} />
+							<Route path="alle/:title" element={<LyricItemContext/>}>
+								<Route index element={<LyricItemPage />} />
+							</Route>
+							<Route path="ny" element={<NewLyricPage/>}/>
 						</Route>
 						<Route path="/dokumenter" element={<DocumentsPage />} />
 						<Route path="/bli-medlem" element={<BecomeMemberPage />} />

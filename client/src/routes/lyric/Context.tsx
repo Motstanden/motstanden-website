@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { SongLyric, StrippedSongLyric } from "common/interfaces"
 import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
 import { useAuth } from "src/context/Authentication"
-import { PageContainer } from "src/layout/PageContainer"
+import { TabbedPageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
 
 export function LyricContext() {
@@ -19,6 +19,21 @@ export function LyricContext() {
         <PageContainer>
             <Outlet context={data} />
         </PageContainer>
+    )
+}
+
+function PageContainer( {children}: {children?: React.ReactNode} ) {
+    return (
+        <TabbedPageContainer
+            tabItems={[
+                { to: "/studenttraller/populaere", label: "Populære" },
+                { to: "/studenttraller/alle", label: "Alle" },
+                { to: "/studenttraller/ny", label: "ny" }
+            ]}
+            matchChildPath={true}
+        >
+            {children}
+        </TabbedPageContainer>
     )
 }
 

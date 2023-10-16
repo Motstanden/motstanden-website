@@ -9,14 +9,15 @@ import { MarkDownRenderer } from 'src/components/MarkDownEditor'
 import { useTheme } from '@mui/material'
 import { AuthorInfo } from 'src/components/AuthorInfo'
 
-export function LyricListPage() {
+export function LyricListPage( {filterPopular}: {filterPopular?: boolean}  ) {
     useTitle("Studenttraller")
     const lyricData = useOutletContext<StrippedSongLyric[]>()
+    const lyrics = filterPopular ? lyricData.filter(lyric => lyric.isPopular) : lyricData
     return (
         <>
             <h1>Studenttraller</h1>
             <UrlList>
-                {lyricData.map(lyric => <UrlListItem key={lyric.id} to={`/studenttraller/${lyric.title}`} text={lyric.title} />)}
+                {lyrics.map(lyric => <UrlListItem key={lyric.id} to={`/studenttraller/${lyric.title}`} text={lyric.title} />)}
             </UrlList>
         </>
     )
