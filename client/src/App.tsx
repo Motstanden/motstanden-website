@@ -30,8 +30,11 @@ import FrontPage from "src/routes/frontPage/FrontPage";
 import HomePage from "src/routes/home/Home";
 import { LicenseOnlyPage, LicensePage } from "src/routes/license/LicensePage";
 import LoginPage from "src/routes/login/Login";
-import { LyricItemPage, LyricListPage } from 'src/routes/lyric/Lyric';
+import { EditLyricPage } from "src/routes/lyric/EditPage";
+import { LyricListPage } from 'src/routes/lyric/ListPage';
+import { NewLyricPage } from "src/routes/lyric/NewPage";
 import NotFound from "src/routes/notFound/NotFound";
+import { PollContext } from "src/routes/poll/Context";
 import NewPollPage from "src/routes/poll/NewPage";
 import PollPage from "src/routes/poll/Poll";
 import { QuotesContext } from 'src/routes/quotes/Context';
@@ -43,9 +46,7 @@ import { SheetArchiveContext } from "src/routes/sheetArchive/Context";
 import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
 import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
-import { PollContext } from "src/routes/poll/Context";
-import { NewLyricPage } from "src/routes/lyric/NewPage";
-import { EditLyricPage } from "src/routes/lyric/EditPage";
+import { LyricItemPage } from './routes/lyric/ItemPage';
 
 function App() {
 	const auth = useAuth()
