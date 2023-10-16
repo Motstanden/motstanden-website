@@ -40,6 +40,7 @@ function get(id: number): Required<SongLyric> {
             song_lyric_id as id,
             title,
             content,
+            is_popular as isPopular,
 
             created_by_user_id as createdBy,
             created_by_full_name as createdByName,
