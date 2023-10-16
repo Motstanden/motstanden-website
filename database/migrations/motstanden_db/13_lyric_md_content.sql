@@ -4,7 +4,7 @@ INSERT INTO version(migration) VALUES
 
 CREATE TABLE song_lyric_new(
     song_lyric_id INTEGER PRIMARY KEY NOT NULL,
-    title TEXT NOT NULL,
+    title TEXT NOT NULL UNIQUE,
     content TEXT NOT NULL,
     melody TEXT,
     text_origin TEXT,

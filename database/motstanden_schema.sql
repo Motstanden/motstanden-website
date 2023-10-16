@@ -308,7 +308,7 @@ ON  updated_by.user_id = e.updated_by
 /* vw_event(event_id,title,start_date_time,end_date_time,key_info,description,created_by_user_id,created_by_full_name,created_at,updated_by_user_id,updated_by_full_name,updated_at,is_upcoming) */;
 CREATE TABLE IF NOT EXISTS "song_lyric"(
     song_lyric_id INTEGER PRIMARY KEY NOT NULL,
-    title TEXT NOT NULL,
+    title TEXT NOT NULL UNIQUE,
     content TEXT NOT NULL,
     melody TEXT,
     text_origin TEXT,
