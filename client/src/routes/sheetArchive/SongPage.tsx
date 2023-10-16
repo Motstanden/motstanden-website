@@ -24,7 +24,8 @@ import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
 import { Form } from 'src/components/form/Form';
 import { useAuth } from "src/context/Authentication";
 import { useTitle } from "../../hooks/useTitle";
-import { useContextInvalidator } from './Context';
+import { useQueryClient } from '@tanstack/react-query';
+import { sheetArchiveContextQueryKey } from './Context';
 
 export default function SongPage({ mode }: { mode?: "repertoire" }) {
 
@@ -72,20 +73,16 @@ type TableRowState = "read" | "edit" | "changing"
 function TitleTableRow( {song, canEdit }: {song: SheetArchiveTitle, canEdit: boolean }) {
     
     const [mode, setMode] = useState<TableRowState>("read")
-    const [justPosted, setJustPosted ] = useState(false)
-    const contextInvalidator = useContextInvalidator()
-
-    useEffect(() => setMode("read"), [song.title, song.extraInfo, song.isRepertoire])
+    const queryClient = useQueryClient()
 
     const onEditClick = () => setMode("edit")
 
     const onAbortEditClick = () => setMode("read")
 
-    const onPostSuccess = () => {
+    const onPostSuccess = async () => {
         setMode("changing")
-        setJustPosted(true)
-        setTimeout( () => setJustPosted(() => false), 700)
-        contextInvalidator()
+        await queryClient.invalidateQueries(sheetArchiveContextQueryKey)
+        setMode("read")
     }
 
     if(mode === "edit") 
@@ -94,7 +91,7 @@ function TitleTableRow( {song, canEdit }: {song: SheetArchiveTitle, canEdit: boo
             onAbort={onAbortEditClick} 
             onSuccess={onPostSuccess}/>
 
-    if(mode === "changing" || justPosted)
+    if(mode === "changing")
         return <SkeletonRow canEdit={canEdit}/>
 
     return <ReadOnlyRow song={song} canEdit={canEdit} onEditClick={onEditClick}/>
@@ -148,7 +145,15 @@ function SkeletonRow( {canEdit}: {canEdit: boolean}) {
     )
 }
 
-function EditRow( {song, onAbort, onSuccess}: {song: SheetArchiveTitle, onAbort: VoidFunction, onSuccess: VoidFunction} ) {
+function EditRow( {
+    song, 
+    onAbort, 
+    onSuccess
+}: {
+    song: SheetArchiveTitle, 
+    onAbort: VoidFunction, 
+    onSuccess: ((res: Response) => Promise<void>) | ((res: Response) => void) 
+} ) {
     const [newSong, setNewSong] = useState(song)
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
@@ -173,7 +178,7 @@ function EditRow( {song, onAbort, onSuccess}: {song: SheetArchiveTitle, onAbort:
                     value={getSubmitData} 
                     postUrl={`/api/sheet-archive/titles/update`}
                     onAbortClick={ _ => onAbort()}
-                    onPostSuccess={_ => onSuccess()}
+                    onPostSuccess={onSuccess}
                     disabled={isDisabled}
                     noDivider={true}
                     noPadding={true}>

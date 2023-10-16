@@ -6,13 +6,11 @@ import { useQueryInvalidator } from 'src/hooks/useQueryInvalidator';
 import { TabbedPageContainer } from "src/layout/PageContainer";
 import { fetchAsync } from "../../utils/fetchAsync";
 
-const sheetArchiveQueryKey = ["FetchSheetArchiveTitles"]
-
-export const useContextInvalidator = () => useQueryInvalidator(sheetArchiveQueryKey)
+export const sheetArchiveContextQueryKey = ["FetchSheetArchiveTitles"]
 
 export function SheetArchiveContext() {
 
-    const { isLoading, isError, data, error } = useQuery<SheetArchiveTitle[]>(sheetArchiveQueryKey, () => fetchAsync<SheetArchiveTitle[]>("/api/sheet_archive/song_title"));
+    const { isLoading, isError, data, error } = useQuery<SheetArchiveTitle[]>(sheetArchiveContextQueryKey, () => fetchAsync<SheetArchiveTitle[]>("/api/sheet_archive/song_title"));
 
     if (isLoading) {
         return <PageContainer><div /></PageContainer>;
