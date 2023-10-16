@@ -74,9 +74,7 @@ function App() {
 								<Route index element={<LyricItemPage />} />
 								<Route path="rediger" element={<RequireAuth><EditLyricPage/></RequireAuth>} />
 							</Route>
-							<Route element={<RequireAuthRouter requiredGroup={UserGroup.Contributor} />}>
-								<Route path="ny" element={<NewLyricPage/>}/>
-							</Route>
+							<Route path="ny" element={<RequireAuth><NewLyricPage/></RequireAuth>}/>
 						</Route>
 						<Route path="/dokumenter" element={<DocumentsPage />} />
 						<Route path="/bli-medlem" element={<BecomeMemberPage />} />
