@@ -43,8 +43,9 @@ import { SheetArchiveContext } from "src/routes/sheetArchive/Context";
 import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
 import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
-import { PollContext } from "./routes/poll/Context";
-import { NewLyricPage } from "./routes/lyric/NewPage";
+import { PollContext } from "src/routes/poll/Context";
+import { NewLyricPage } from "src/routes/lyric/NewPage";
+import { EditLyricPage } from "src/routes/lyric/EditPage";
 
 function App() {
 	const auth = useAuth()
@@ -65,10 +66,16 @@ function App() {
 							<Route path="populaere" element={<LyricListPage filterPopular/>}/>
 							<Route path="populaere/:title" element={<LyricItemContext/>}>
 								<Route index element={<LyricItemPage />} />
+								<Route element={<RequireAuthRouter requiredGroup={UserGroup.Contributor} />}>
+									<Route path="rediger" element={<EditLyricPage/>} />
+								</Route>
 							</Route>
 							<Route path="alle" element={<LyricListPage />} />
 							<Route path="alle/:title" element={<LyricItemContext/>}>
 								<Route index element={<LyricItemPage />} />
+								<Route element={<RequireAuthRouter requiredGroup={UserGroup.Contributor} />}>
+									<Route path="rediger" element={<EditLyricPage/>} />
+								</Route>
 							</Route>
 							<Route element={<RequireAuthRouter requiredGroup={UserGroup.Contributor} />}>
 								<Route path="ny" element={<NewLyricPage/>}/>
