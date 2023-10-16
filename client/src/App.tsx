@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
-import { RequireAuthRouter, useAuth } from "src/context/Authentication";
+import { RequireAuth, RequireAuthRouter, useAuth } from "src/context/Authentication";
 
 import { UserGroup } from 'common/enums';
 import { AppLayout } from 'src/layout/AppLayout';
@@ -67,16 +67,12 @@ function App() {
 							<Route path="populaere" element={<LyricListPage filterPopular/>}/>
 							<Route path="populaere/:title" element={<LyricItemContext/>}>
 								<Route index element={<LyricItemPage />} />
-								<Route element={<RequireAuthRouter requiredGroup={UserGroup.Contributor} />}>
-									<Route path="rediger" element={<EditLyricPage/>} />
-								</Route>
+								<Route path="rediger" element={<RequireAuth><EditLyricPage/></RequireAuth>} />
 							</Route>
 							<Route path="alle" element={<LyricListPage />} />
 							<Route path="alle/:title" element={<LyricItemContext/>}>
 								<Route index element={<LyricItemPage />} />
-								<Route element={<RequireAuthRouter requiredGroup={UserGroup.Contributor} />}>
-									<Route path="rediger" element={<EditLyricPage/>} />
-								</Route>
+								<Route path="rediger" element={<RequireAuth><EditLyricPage/></RequireAuth>} />
 							</Route>
 							<Route element={<RequireAuthRouter requiredGroup={UserGroup.Contributor} />}>
 								<Route path="ny" element={<NewLyricPage/>}/>
