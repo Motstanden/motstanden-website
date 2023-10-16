@@ -65,7 +65,19 @@ router.post("/song-lyric/:id/update",
         getAuthorInfo: (id) => songLyricService.get(id)
     }),
     (req, res) => {
-        console.log("Updating...")
+        const id = strToNumber(req.params.id) as number     // is validated by middleware
+        const user = req.user as AccessTokenData
+        const newLyric = tryCreateValidLyric(req.body)
+
+        if(!newLyric)
+            return res.status(400).send("Could not parse song lyric data")
+
+        try {
+            songLyricService.update(newLyric, id, user.userId)
+        } catch (err) {
+            console.log(err)
+            res.status(500).send("Failed to update song lyric in the database")
+        }
         res.end()
     }
 )
@@ -83,7 +95,7 @@ router.post("/song-lyric/new",
             songLyricService.insertNew(newLyric, user.userId)
         } catch (err) {
             console.log(err)
-            res.status(400).send("Bad data")
+            res.status(400).send("Failed to insert new song lyric into the database")
         }
         res.end()
     }

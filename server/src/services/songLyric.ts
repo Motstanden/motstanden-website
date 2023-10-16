@@ -88,6 +88,33 @@ function insertNew(lyric: NewSongLyric, userId: number) {
     db.close()
 }
 
+function update(lyric: NewSongLyric, id: number, userId: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const startTransaction = db.transaction(() => {
+        const stmt = db.prepare(`
+            UPDATE 
+                song_lyric 
+            SET 
+                title = ?,
+                content = ?,
+                is_popular = ?,
+                updated_by = ?
+            WHERE 
+                song_lyric_id = ?
+        `) 
+        stmt.run(
+            lyric.title, 
+            lyric.content, 
+            lyric.isPopular ? 1 : 0, 
+            userId, 
+            id
+        )
+    })
+    startTransaction()
+    db.close()
+
+}
+
 function deleteLyric(id: number) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
     const startTransaction = db.transaction(() => {
@@ -107,5 +134,6 @@ export const songLyricService = {
     getSimpleList: getSimpleList,
     get: get,
     insertNew: insertNew,
+    update: update,
     delete: deleteLyric
 }
