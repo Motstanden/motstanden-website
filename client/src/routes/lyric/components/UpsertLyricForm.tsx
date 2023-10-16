@@ -1,6 +1,8 @@
+import { Checkbox, FormControlLabel, FormGroup, TextField } from "@mui/material";
 import { NewSongLyric } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
 import { useState } from "react";
+import { MarkDownEditor } from "src/components/MarkDownEditor";
 import { Form } from "src/components/form/Form";
 
 export function UpsertLyricForm({
@@ -15,7 +17,10 @@ export function UpsertLyricForm({
 
     const validateData = () => {
         const isEmpty = isNullOrWhitespace(newValue.title) || isNullOrWhitespace(newValue.content);
-        const isEqual = newValue.title.trim() === initialValue.title.trim() && newValue.content.trim() === initialValue.content.trim();
+        const isEqual = newValue.title.trim() === initialValue.title.trim() 
+            && newValue.content.trim() === initialValue.content.trim() 
+            && newValue.isPopular === initialValue.isPopular;
+            
         return !isEmpty && !isEqual;
     };
 
@@ -38,7 +43,40 @@ export function UpsertLyricForm({
                 onAbortClick={_ => onAbortClick()}
                 onPostSuccess={_ => onPostSuccess()}
             >
-                Her kommer det snart et skjema...
+                <div>
+                    <TextField 
+                        label="Tittel"
+                        name="title"
+                        type="text"
+                        required
+                        fullWidth
+                        autoComplete="off"
+                        value={newValue.title}
+                        onChange={e => setNewValue((oldValue) => ({ ...oldValue, title: e.target.value }))}
+                        sx={{mb: 4}}
+                    />
+                </div>
+                <div>
+                    <FormControlLabel 
+                        label="Populær" 
+                        control={
+                            <Checkbox 
+                                checked={newValue.isPopular} 
+                                onChange={ (_, checked) => setNewValue(oldVal => ({...oldVal, isPopular: checked}))} 
+                            />
+                        }
+                        sx={{mb: 4}}
+                        style={{marginLeft: "-5px", paddingLeft: "0px"}}
+                        />
+                </div>
+                <div>
+                    <MarkDownEditor 
+                        minRows={10}
+                        value={newValue.content}
+                        onChange={val => setNewValue(oldValue => ({ ...oldValue, content: val }))}
+                        placeholder="Skriv inn trallen her..."
+                    />
+                </div>
             </Form>
         </div>
     );
