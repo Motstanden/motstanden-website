@@ -7,9 +7,11 @@ import { EventData } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { matchUrl } from "src/utils/matchUrl"
 
+export const eventContextQueryKey = ["FetchEventContext"]
+
 export function EventContext() {
 
-    const { isLoading, isError, data, error } = useQuery<EventData[]>(["FetchAllEvents"], () => fetchAsync<EventData[]>("/api/events/all"))
+    const { isLoading, isError, data, error } = useQuery<EventData[]>(eventContextQueryKey, () => fetchAsync<EventData[]>("/api/events/all"))
 
     if (isLoading) {
         return <div style={{ minHeight: "100px" }} />

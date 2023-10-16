@@ -1,9 +1,10 @@
-import { Link, Stack, Tab, Tabs, TextField, Theme, useMediaQuery } from "@mui/material"
+import { Link, Tab, Tabs, TextField, Theme, useMediaQuery } from "@mui/material"
 import { isNullOrWhitespace } from "common/utils"
 import { useState } from "react"
 import Markdown from "react-markdown"
 import remarkGfm from 'remark-gfm'
 import { HelpButton } from "src/components/HelpButton"
+import { isWebKit } from "src/utils/isWebKit"
 
 interface MarkDownEditorProps {
     value?: string,
@@ -11,7 +12,6 @@ interface MarkDownEditorProps {
     placeholder?: string
     required?: boolean,
     minRows?: number
-    previewPlaceholder?: string
 }
 
 export function MarkDownEditor( props: MarkDownEditorProps) {
@@ -155,7 +155,7 @@ interface ContentPickerProps extends MarkDownEditorProps {
 function ContentPicker(props: ContentPickerProps){
     const {isPreview, ...mdProps} = props
     return isPreview 
-        ? <MarkDownReader value={props.value} placeholder={props.previewPlaceholder}/> 
+        ? <MarkDownReader value={props.value} placeholder="Ingenting å forhåndsvise..."/> 
         : <MarkDownWriter {...mdProps}/>
 }
 
@@ -237,9 +237,26 @@ export function MarkDownRenderer( {value}: {value?: string}){
     )
 }
 
-export function enforceLinebreaks( value?: string) {
-    if(value === undefined)
+export function enforceLinebreaks( srcValue?: string) {
+    if(srcValue === undefined)
         return undefined
 
-    return value.replace(/(\r\n|\n|\r)/gm, "  \n") ?? "" // Add two spaces to end of line to force linebreak
+    let newValue = srcValue;
+    
+    // Sadly, the following regex is not supported on safari. This should be fixed in the future.
+    if(!isWebKit()){
+
+        // Support multiple consecutive linebreaks
+        // Shamelessly copied from: https://github.com/remarkjs/react-markdown/issues/278#issuecomment-1753137127
+        newValue = srcValue.replace(/```[\s\S]*?```/g, (m) =>
+            m.replace(/\n/g, "\n ")
+        );
+        newValue = newValue.replace(/(?<=\n\n)(?![*-])\n/g, "&nbsp;  \n ");
+    
+    }
+
+    // Support single linebreaks
+    newValue = newValue.replace(/(\n)/gm, "  \n");
+
+    return newValue;
 }

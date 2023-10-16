@@ -4,6 +4,7 @@ import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
+import { validateNumber } from "../middleware/validateNumber.js";
 import { pollService, pollVoteService } from "../services/poll.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 
@@ -27,7 +28,10 @@ router.get("/polls/all",
 
 router.get("/polls/:id/options",
     AuthenticateUser(),
-    ValidatePollId,
+    validateNumber({
+        getValue: (req) => req.params.id,
+        failureMessage: "Could not parse poll id"
+    }),
     (req, res) => {
         const user = req.user as AccessTokenData
         const id = strToNumber(req.params.id) as number
@@ -66,6 +70,7 @@ router.post("/polls/delete",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
+        getId: (req) => req.body.id,
         getAuthorInfo: (id) => pollService.get(id)
     }),
     (req, res) => {
@@ -81,7 +86,10 @@ router.post("/polls/delete",
 
 router.post("/polls/:id/vote/upsert",
     AuthenticateUser(),
-    ValidatePollId,
+    validateNumber({
+        getValue: (req) => req.params.id,
+        failureMessage: "Could not parse poll id"
+    }),
     (req, res) => {
         
         const user = req.user as AccessTokenData
@@ -158,15 +166,6 @@ function tryCreateValidPoll(obj: unknown): NewPollWithOption | undefined {
     }
 
     return poll
-}
-
-function ValidatePollId(req: express.Request, res: express.Response, next: express.NextFunction) {
-    const id = strToNumber(req.params.id)
-    if(!id) {
-        res.status(400).send("Could not parse poll id")
-    } else {
-        next()
-    }
 }
 
 export default router

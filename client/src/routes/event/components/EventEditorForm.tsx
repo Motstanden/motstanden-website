@@ -21,7 +21,9 @@ import { useNavigate } from "react-router-dom";
 import { dateTimePickerStyle } from 'src/assets/style/timePickerStyles';
 import { Form } from "src/components/form/Form";
 import { useTitle } from "src/hooks/useTitle";
-import { MarkDownEditor } from './MarkDownEditor';
+import { MarkDownEditor } from '../../../components/MarkDownEditor';
+import { useQueryClient } from '@tanstack/react-query';
+import { eventContextQueryKey } from '../Context';
 
 export interface EventEditorState {
     title: string
@@ -51,7 +53,10 @@ export function EventEditorForm({
 }) {
     const [event, setEvent] = useState(createValidState(initialValue));
 
+    const [hasPosted, setHasPosted] = useState(false);
+
     const navigate = useNavigate()
+    const queryClient = useQueryClient()
 
     useTitle(`${isNullOrWhitespace(event.title) ? "Ingen tittel" : event.title}*`)
 
@@ -72,8 +77,10 @@ export function EventEditorForm({
     };
 
     const onPostSuccess = async (res: Response) => {
+        setHasPosted(true)
         const data = await res.json();
-        window.location.href = `${window.location.origin}/arrangement/${eventId ?? data.eventId ?? ""}`;   // Will trigger a page reload
+        await queryClient.invalidateQueries(eventContextQueryKey)
+        navigate(`/arrangement/${eventId ?? data.eventId ?? ""}`)
     };
 
     const editorHasContent = (): boolean => !isNullOrWhitespace(event.description)
@@ -87,7 +94,7 @@ export function EventEditorForm({
         return isValidTitle && isValidStartTime && isValidEndTime && isValidKeyInfo && editorHasContent()
     }
 
-    const isStateValid = validateState()
+    const disabled = !validateState() || hasPosted
 
     return (
         <Form
@@ -95,7 +102,7 @@ export function EventEditorForm({
             postUrl={postUrl}
             onAbortClick={_ => navigate(backUrl)}
             onPostSuccess={onPostSuccess}
-            disabled={!isStateValid}
+            disabled={disabled}
         >
             <Paper elevation={6} sx={{ px: 2, pb: 4, pt: 3 }}>
                 <EventEditor value={event} onChange={onValueChanged} />
@@ -122,7 +129,6 @@ function EventEditor( props: Omit<EventFormProps, "sx"> ) {
                 value={value.description}
                 onChange={newValue => onChange({ description: newValue })}
                 minRows={6}
-                previewPlaceholder="Ingenting å forhåndsvise..."
             />
         </section>
     )

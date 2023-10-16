@@ -9,14 +9,6 @@ CREATE TABLE IF NOT EXISTS "document"(
     filename TEXT NOT NULL CHECK(like('files/public/dokumenter/%_._%', filename) OR like('files/private/dokumenter/%_._%', filename)),
     is_public BOOLEAN NOT NULL GENERATED ALWAYS AS (like('files/public/%', filename)) STORED
 );
-CREATE TABLE IF NOT EXISTS "song_lyric"(
-    song_lyric_id INTEGER PRIMARY KEY NOT NULL,
-    title TEXT NOT NULL,
-    filename TEXT NOT NULL CHECK(like('files/public/studenttraller/%_.html', filename)),
-    song_melody TEXT,
-    song_text_origin TEXT,
-    song_description TEXT
-);
 CREATE TABLE user_group (
     user_group_id INTEGER PRIMARY KEY NOT NULL,
     name TEXT UNIQUE NOT NULL
@@ -314,3 +306,54 @@ ON  created_by.user_id = e.created_by
 LEFT JOIN user updated_by
 ON  updated_by.user_id = e.updated_by
 /* vw_event(event_id,title,start_date_time,end_date_time,key_info,description,created_by_user_id,created_by_full_name,created_at,updated_by_user_id,updated_by_full_name,updated_at,is_upcoming) */;
+CREATE TABLE IF NOT EXISTS "song_lyric"(
+    song_lyric_id INTEGER PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL UNIQUE,
+    content TEXT NOT NULL,
+    is_popular BOOLEAN NOT NULL DEFAULT 0,
+
+    created_by INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_by INTEGER NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(created_by)
+        REFERENCES user(user_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    FOREIGN KEY(updated_by)
+        REFERENCES user(user_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+CREATE TRIGGER trig_song_lyric_updated_at
+    AFTER UPDATE ON song_lyric FOR EACH ROW
+BEGIN
+    UPDATE song_lyric SET updated_at = current_timestamp
+        WHERE song_lyric_id = old.song_lyric_id;
+END;
+CREATE VIEW vw_song_lyric AS
+SELECT 
+	song_lyric_id,
+	title,
+	content,
+    is_popular,
+
+	created_by as created_by_user_id,
+    created_by.first_name || ' '
+       || IIF(length(trim(created_by.middle_name)) = 0, '', created_by.middle_name || ' ')
+       || created_by.last_name
+       as created_by_full_name,
+    sl.created_at,
+	
+	updated_by as updated_by_user_id,
+    updated_by.first_name || ' '
+       || IIF(length(trim(updated_by.middle_name)) = 0, '', updated_by.middle_name || ' ')
+       || updated_by.last_name
+       as updated_by_full_name,
+    sl.updated_at
+	
+FROM 
+	song_lyric sl
+LEFT JOIN user created_by ON created_by.user_id = sl.created_by
+LEFT JOIN user updated_by ON updated_by.user_id = sl.updated_by
+/* vw_song_lyric(song_lyric_id,title,content,is_popular,created_by_user_id,created_by_full_name,created_at,updated_by_user_id,updated_by_full_name,updated_at) */;

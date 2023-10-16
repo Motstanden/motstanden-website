@@ -16,7 +16,8 @@ export function EditOrDeleteMenu({
     onMouseLeave,
     onMenuOpen,
     onMenuClose,
-    ariaLabel
+    ariaLabel,
+    style
 }: {
     onEditClick: React.MouseEventHandler<HTMLLIElement>,
     onDeleteClick: React.MouseEventHandler<HTMLLIElement>,
@@ -27,6 +28,7 @@ export function EditOrDeleteMenu({
     onMenuOpen?: VoidFunction,
     onMenuClose?: VoidFunction,
     ariaLabel?: string
+    style?: React.CSSProperties
 }) {
     return (
         <IconPopupMenu
@@ -37,6 +39,7 @@ export function EditOrDeleteMenu({
             onMenuClose={onMenuClose}
             disabled={disabled}
             ariaLabel={ariaLabel}
+            style={style}
         >
             <EditMenuItem onClick={onEditClick} divider={true} />
             <DeleteMenuItem onClick={onDeleteClick} />

@@ -9,7 +9,8 @@ export function IconPopupMenu({
     onMouseLeave,
     onMenuOpen,
     onMenuClose,
-    ariaLabel
+    ariaLabel,
+    style
 }: {
     children: React.ReactNode,
     icon: React.ReactNode,
@@ -19,6 +20,7 @@ export function IconPopupMenu({
     onMenuOpen?: VoidFunction,
     onMenuClose?: VoidFunction,
     ariaLabel?: string
+    style?: React.CSSProperties
 }) {
     const [isOpen, setIsOpen] = useState(false)
     const anchorEl = useRef(null)
@@ -41,6 +43,7 @@ export function IconPopupMenu({
                     onMouseEnter={onMouseEnter}
                     onMouseLeave={onMouseLeave}
                     aria-label={ariaLabel}
+                    style={style}
                 >
                     {icon}
                 </IconButton>

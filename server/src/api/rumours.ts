@@ -50,6 +50,7 @@ router.post("/rumours/delete",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
+        getId: (req) => req.body.id,
         getAuthorInfo: (id) => rumourService.get(id)
     }),
     (req: Request, res: Response) => {
@@ -67,6 +68,7 @@ router.post("/rumours/update",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
+        getId: (req) => req.body.id,
         getAuthorInfo: id => rumourService.get(id)
     }),
     (req: Request, res: Response) => {

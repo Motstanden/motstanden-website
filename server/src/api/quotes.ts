@@ -52,6 +52,7 @@ router.post("/quotes/delete",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
+        getId: (req) => req.body.id,
         getAuthorInfo: id => quoteService.getQuote(id)
     }),
     (req: Request, res: Response) => {
@@ -69,6 +70,7 @@ router.post("/quotes/update",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
+        getId: (req) => req.body.id,
         getAuthorInfo: id => quoteService.getQuote(id)
     }),
     (req: Request, res: Response) => {

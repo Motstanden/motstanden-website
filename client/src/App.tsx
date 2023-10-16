@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
-import { RequireAuthRouter, useAuth } from "src/context/Authentication";
+import { RequireAuth, RequireAuthRouter, useAuth } from "src/context/Authentication";
 
 import { UserGroup } from 'common/enums';
 import { AppLayout } from 'src/layout/AppLayout';
@@ -30,8 +30,11 @@ import FrontPage from "src/routes/frontPage/FrontPage";
 import HomePage from "src/routes/home/Home";
 import { LicenseOnlyPage, LicensePage } from "src/routes/license/LicensePage";
 import LoginPage from "src/routes/login/Login";
-import { LyricItemPage, LyricListPage, LyricPageContainer } from 'src/routes/lyric/Lyric';
+import { EditLyricPage } from "src/routes/lyric/EditPage";
+import { LyricListPage } from 'src/routes/lyric/ListPage';
+import { NewLyricPage } from "src/routes/lyric/NewPage";
 import NotFound from "src/routes/notFound/NotFound";
+import { PollContext } from "src/routes/poll/Context";
 import NewPollPage from "src/routes/poll/NewPage";
 import PollPage from "src/routes/poll/Poll";
 import { QuotesContext } from 'src/routes/quotes/Context';
@@ -42,7 +45,8 @@ import { NewRumourPage, RumourPage } from 'src/routes/rumour/RumourPage';
 import { SheetArchiveContext } from "src/routes/sheetArchive/Context";
 import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
-import { PollContext } from "./routes/poll/Context";
+import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
+import { LyricItemPage } from './routes/lyric/ItemPage';
 
 function App() {
 	const auth = useAuth()
@@ -58,9 +62,19 @@ function App() {
 					<Route element={<Outlet/>}>
 						<Route path="/framside" element={<FrontPage />} />
 						<Route path="/logg-inn" element={<LoginPage />} />
-						<Route path="/studenttraller" element={<LyricPageContainer />}>
-							<Route index element={<LyricListPage />} />
-							<Route path=":title" element={<LyricItemPage />} />
+						<Route path="/studenttraller" element={<LyricContext/>}>
+							<Route path="" element={<Navigate to="populaere" />} />
+							<Route path="populaere" element={<LyricListPage filterPopular/>}/>
+							<Route path="populaere/:title" element={<LyricItemContext/>}>
+								<Route index element={<LyricItemPage />} />
+								<Route path="rediger" element={<RequireAuth><EditLyricPage/></RequireAuth>} />
+							</Route>
+							<Route path="alle" element={<LyricListPage />} />
+							<Route path="alle/:title" element={<LyricItemContext/>}>
+								<Route index element={<LyricItemPage />} />
+								<Route path="rediger" element={<RequireAuth><EditLyricPage/></RequireAuth>} />
+							</Route>
+							<Route path="ny" element={<RequireAuth><NewLyricPage/></RequireAuth>}/>
 						</Route>
 						<Route path="/dokumenter" element={<DocumentsPage />} />
 						<Route path="/bli-medlem" element={<BecomeMemberPage />} />

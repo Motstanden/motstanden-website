@@ -189,7 +189,7 @@ export function getAllUsers(): User[] {
         FROM 
             vw_user 
         ORDER BY 
-            first_name ASC`)
+            first_name COLLATE NOCASE ASC`)
     const user = stmt.all() as User[]
     db.close()
 

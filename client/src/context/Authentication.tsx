@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     )
 }
 
-export function RequireAuth({ requiredGroup, children }: { requiredGroup: UserGroup, children: JSX.Element }) {
+export function RequireAuth({ requiredGroup, children }: { children: JSX.Element, requiredGroup?: UserGroup }) {
     const auth = useAuth();
     const location = useLocation()
 
@@ -76,13 +76,13 @@ export function RequireAuth({ requiredGroup, children }: { requiredGroup: UserGr
         return <Navigate to="/logg-inn" state={{ from: location }} replace />;
     }
 
-    if (!hasGroupAccess(auth.user, requiredGroup)) {
+    if (requiredGroup && !hasGroupAccess(auth.user, requiredGroup)) {
         return <Navigate to="/hjem" state={{ from: location }} replace />;
     }
 
     return children
 }
 
-export function RequireAuthRouter({ requiredGroup }: { requiredGroup: UserGroup }) {
+export function RequireAuthRouter({ requiredGroup }: { requiredGroup?: UserGroup }) {
     return <RequireAuth requiredGroup={requiredGroup}><Outlet /></RequireAuth>
 }
