@@ -1,15 +1,15 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Theme, useMediaQuery, useTheme } from '@mui/material';
+import { UserGroup } from 'common/enums';
 import { SongLyric } from 'common/interfaces';
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { hasGroupAccess } from 'common/utils';
+import { useNavigate } from "react-router-dom";
 import { AuthorInfo } from 'src/components/AuthorInfo';
 import { MarkDownRenderer } from 'src/components/MarkDownEditor';
 import { DeleteMenuItem, EditMenuItem } from 'src/components/menu/EditOrDeleteMenu';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 import { useAuth } from 'src/context/Authentication';
 import { useTitle } from "../../hooks/useTitle";
-import { UserGroup } from 'common/enums';
-import { hasGroupAccess } from 'common/utils';
 import { useLyricItemContext } from './Context';
 
 export function LyricItemPage() {
@@ -62,7 +62,18 @@ function TitleHeader( {lyric}: {lyric: SongLyric} ) {
     }
 
     const onDeleteClick = () => {
-        // Todo
+        // setIsLoading(true)
+        // const response = await postJson(
+        //     "/api/polls/delete",
+        //     { id: poll.id },
+        //     {
+        //         alertOnFailure: true,
+        //         confirmText: "Vil du permanent slette denne avstemningen?"
+        //     }
+        // )
+        // if(response?.ok) {
+        //     await queryClient.invalidateQueries(srcQueryKey)
+        // }
     }
 
     if(!isLoggedIn)
