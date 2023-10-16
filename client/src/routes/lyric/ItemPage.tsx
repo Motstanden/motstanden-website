@@ -10,9 +10,10 @@ import { useAuth } from 'src/context/Authentication';
 import { useTitle } from "../../hooks/useTitle";
 import { UserGroup } from 'common/enums';
 import { hasGroupAccess } from 'common/utils';
+import { useLyricItemContext } from './Context';
 
 export function LyricItemPage() {
-    const lyric = useOutletContext<SongLyric>();
+    const [allLyrics, lyric] = useLyricItemContext()
     useTitle(lyric.title);
 
     const theme = useTheme();

@@ -59,6 +59,7 @@ export function LyricItemContext() {
 }
 
 export function LyricItemLoader( {id}: {id: number}){
+    const allLyrics = useOutletContext<StrippedSongLyric[]>()
 
     const isPublic = useAuth().user === null
     const url = `/api/${isPublic ? "public" : "private"}/song-lyric/${id}`
@@ -73,7 +74,19 @@ export function LyricItemLoader( {id}: {id: number}){
         return <Navigate to="/studenttraller/populaere" replace={true} />
     }
 
+    const context = [allLyrics, data]
+
     return (
-        <Outlet context={data} />
+        <Outlet context={context} />
     )
+}
+
+export function useLyricContext() {
+    const context = useOutletContext<StrippedSongLyric[]>()
+    return context
+}
+
+export function useLyricItemContext() {
+    const context = useOutletContext<[StrippedSongLyric[], SongLyric]>()
+    return context
 }

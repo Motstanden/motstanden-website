@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, FormGroup, TextField } from "@mui/material";
+import { Box, Checkbox, FormControlLabel, TextField } from "@mui/material";
 import { NewSongLyric } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
 import { useState } from "react";
@@ -6,12 +6,17 @@ import { MarkDownEditor } from "src/components/MarkDownEditor";
 import { Form } from "src/components/form/Form";
 
 export function UpsertLyricForm({
-    initialValue, postUrl, onAbortClick, onPostSuccess,
+    initialValue, 
+    postUrl, 
+    onAbortClick, 
+    onPostSuccess,
+    usedTitles,
 }: {
     initialValue: NewSongLyric;
     postUrl: string;
     onAbortClick: VoidFunction;
     onPostSuccess: VoidFunction;
+    usedTitles: string[];
 }) {
     const [newValue, setNewValue] = useState<NewSongLyric>(initialValue);
 
@@ -20,10 +25,11 @@ export function UpsertLyricForm({
         const isEqual = newValue.title.trim() === initialValue.title.trim() 
             && newValue.content.trim() === initialValue.content.trim() 
             && newValue.isPopular === initialValue.isPopular;
-            
+
         return !isEmpty && !isEqual;
     };
 
+    
     const getSubmitData = (): NewSongLyric => {
         return { 
             title: newValue.title.trim(), 
@@ -31,8 +37,10 @@ export function UpsertLyricForm({
             isPopular: newValue.isPopular 
         };
     };
+    
+    const titleInUse = usedTitles.find(title => title.toLocaleLowerCase().trim() === newValue.title.toLocaleLowerCase().trim()) !== undefined;
 
-    const disabled = !validateData();
+    const disabled = !validateData() || titleInUse;
 
     return (
         <div style={{ maxWidth: "700px" }}>
@@ -53,8 +61,14 @@ export function UpsertLyricForm({
                         autoComplete="off"
                         value={newValue.title}
                         onChange={e => setNewValue((oldValue) => ({ ...oldValue, title: e.target.value }))}
-                        sx={{mb: 4}}
+                        error={titleInUse}
                     />
+                    {titleInUse && 
+                        <Box 
+                            color="error.main" 
+                            style={{marginTop: "4px"}}>
+                                Tittelen er allerede i bruk...
+                        </Box>}
                 </div>
                 <div>
                     <FormControlLabel 
@@ -65,7 +79,7 @@ export function UpsertLyricForm({
                                 onChange={ (_, checked) => setNewValue(oldVal => ({...oldVal, isPopular: checked}))} 
                             />
                         }
-                        sx={{mb: 4}}
+                        sx={{mb: 4, mt: 2.5}}
                         style={{marginLeft: "-5px", paddingLeft: "0px"}}
                         />
                 </div>
