@@ -1,9 +1,11 @@
+import { UserGroup } from "common/enums";
+import { NewSongLyric } from "common/interfaces";
 import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express, { Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
+import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
 import { validateNumber } from "../middleware/validateNumber.js";
 import { songLyricService } from "../services/songLyric.js";
-import { NewSongLyric } from "common/interfaces";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 
 const router = express.Router()
@@ -55,7 +57,17 @@ function sendSongLyric({ isPublic }: {isPublic: boolean} ) {
 }
 
 
-router.post("/song-lyric/:id/update")   // TODO
+router.post("/song-lyric/:id/update",
+    AuthenticateUser(),
+    requiresGroupOrAuthor({
+        requiredGroup: UserGroup.Administrator,
+        getId: (req) => strToNumber(req.params.id),
+        getAuthorInfo: (id) => songLyricService.get(id)
+    }),
+    (req, res) => {
+
+    }
+)
 
 router.post("/song-lyric/new",
     AuthenticateUser(),

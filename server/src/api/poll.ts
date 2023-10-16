@@ -4,9 +4,9 @@ import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
+import { validateNumber } from "../middleware/validateNumber.js";
 import { pollService, pollVoteService } from "../services/poll.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
-import { validateNumber } from "../middleware/validateNumber.js";
 
 let router = express.Router() 
 
@@ -70,6 +70,7 @@ router.post("/polls/delete",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
+        getId: (req) => req.body.id,
         getAuthorInfo: (id) => pollService.get(id)
     }),
     (req, res) => {
