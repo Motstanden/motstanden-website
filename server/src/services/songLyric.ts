@@ -1,6 +1,6 @@
 import Database from "better-sqlite3"
-import { SongLyric, StrippedSongLyric } from "common/interfaces"
-import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig.js"
+import { NewSongLyric, SongLyric, StrippedSongLyric } from "common/interfaces"
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
 
 interface DbStrippedSongLyric extends Omit<StrippedSongLyric, "isPopular"> {
     isPopular: number
@@ -68,7 +68,27 @@ function get(id: number): Required<SongLyric> {
     return lyric
 }
 
+function insertNew(lyric: NewSongLyric, userId: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(`
+        INSERT INTO 
+            song_lyric ( title, content, is_popular, created_by, updated_by ) 
+        VALUES 
+            (?, ?, ?, ?, ?)
+    `) 
+
+    stmt.run(
+        lyric.title, 
+        lyric.content, 
+        lyric.isPopular ? 1 : 0, 
+        userId, 
+        userId
+    )
+    db.close()
+}
+
 export const songLyricService = {
     getSimpleList: getSimpleList,
     get: get,
+    insertNew: insertNew
 }
