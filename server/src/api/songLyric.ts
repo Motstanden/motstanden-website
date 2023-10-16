@@ -32,6 +32,9 @@ router.get("/public/song-lyric/:id",
     })
 )
 
+router.post("/song-lyric/:id/update")   // TODO
+
+router.post("/song-lyric/new")          // TODO
 
 function sendSongLyric({ isPublic }: {isPublic: boolean} ) {
     return (req: Request, res: Response) => {

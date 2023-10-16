@@ -4,6 +4,12 @@ export interface StrippedSongLyric {
     isPopular: boolean;
 }
 
+export interface NewSongLyric {
+    title: string;
+    content: string;
+    isPopular: boolean;
+}
+
 export interface SongLyric extends StrippedSongLyric {
     content: string;
 
