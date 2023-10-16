@@ -11,16 +11,13 @@ export function NewLyricPage() {
 
     const onAbortClick = () => navigate("..");
 
-    const onPostSuccess = () => { };
-
     return (
         <div>
             <h1>Ny Trall</h1>
             <UpsertLyricForm
                 initialValue={emptyLyricItem}
                 onAbortClick={onAbortClick}
-                onPostSuccess={onPostSuccess}
-                postUrl="/song-lyric/new"
+                postUrl="/api/song-lyric/new"
                 usedTitles={usedTitles}
             />
         </div>

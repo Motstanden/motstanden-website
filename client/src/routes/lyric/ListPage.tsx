@@ -3,16 +3,12 @@ import { useOutletContext } from "react-router-dom"
 import { strToPrettyUrl } from 'src/utils/strToPrettyUrl'
 import { UrlList, UrlListItem } from "../../components/UrlList"
 import { useTitle } from "../../hooks/useTitle"
-import { useLyricContext } from './Context'
+import { buildLyricItemUrl, useLyricContext } from './Context'
 
 export function LyricListPage( {filterPopular}: {filterPopular?: boolean}  ) {
     useTitle("Studenttraller")
     const lyricData = useLyricContext()
     const lyrics = filterPopular ? lyricData.filter(lyric => lyric.isPopular) : lyricData
-
-    const buildUrl = (lyric: StrippedSongLyric) => {
-        return `/studenttraller/${filterPopular ? "populaere" : "alle"}/${strToPrettyUrl(lyric.title)}`
-    }
 
     return (
         <>
@@ -21,7 +17,7 @@ export function LyricListPage( {filterPopular}: {filterPopular?: boolean}  ) {
                 {lyrics.map(lyric => (
                     <UrlListItem 
                         key={lyric.id} 
-                        to={buildUrl(lyric)} 
+                        to={buildLyricItemUrl(lyric.title, filterPopular === true)} 
                         text={lyric.title} />
                 ))}
             </UrlList>

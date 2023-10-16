@@ -10,16 +10,13 @@ export function EditLyricPage() {
 
     const onAbortClick = () => navigate("..");
 
-    const onPostSuccess = () => { }; // todo
-
     return (
         <div>
             <h1>Rediger Trall</h1>
             <UpsertLyricForm
                 initialValue={lyric}
                 onAbortClick={onAbortClick}
-                onPostSuccess={onPostSuccess}
-                postUrl={`/song-lyric/${lyric.id}/update`}
+                postUrl={`/api/song-lyric/${lyric.id}/update`}
                 usedTitles={usedTitles}
             />
         </div>

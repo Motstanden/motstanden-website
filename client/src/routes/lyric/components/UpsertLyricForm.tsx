@@ -1,24 +1,29 @@
 import { Box, Checkbox, FormControlLabel, TextField } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { NewSongLyric } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MarkDownEditor } from "src/components/MarkDownEditor";
 import { Form } from "src/components/form/Form";
+import { buildLyricItemUrl, lyricContextQueryKey } from "../Context";
 
 export function UpsertLyricForm({
     initialValue, 
     postUrl, 
     onAbortClick, 
-    onPostSuccess,
     usedTitles,
 }: {
     initialValue: NewSongLyric;
     postUrl: string;
     onAbortClick: VoidFunction;
-    onPostSuccess: VoidFunction;
     usedTitles: string[];
 }) {
     const [newValue, setNewValue] = useState<NewSongLyric>(initialValue);
+    const [hasPosted, setHasPosted] = useState(false);
+
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
     const validateData = () => {
         const isEmpty = isNullOrWhitespace(newValue.title) || isNullOrWhitespace(newValue.content);
@@ -28,7 +33,6 @@ export function UpsertLyricForm({
 
         return !isEmpty && !isEqual;
     };
-
     
     const getSubmitData = (): NewSongLyric => {
         return { 
@@ -38,9 +42,15 @@ export function UpsertLyricForm({
         };
     };
     
+    const onPostSuccess = async (res: Response) => {
+        setHasPosted(true);
+        await queryClient.invalidateQueries(lyricContextQueryKey)
+        navigate(buildLyricItemUrl(newValue.title, newValue.isPopular))
+     };
+
     const titleInUse = usedTitles.find(title => title.toLocaleLowerCase().trim() === newValue.title.toLocaleLowerCase().trim()) !== undefined;
 
-    const disabled = !validateData() || titleInUse;
+    const disabled = !validateData() || titleInUse || hasPosted;
 
     return (
         <div style={{ maxWidth: "700px" }}>
@@ -49,7 +59,7 @@ export function UpsertLyricForm({
                 postUrl={postUrl}
                 disabled={disabled}
                 onAbortClick={_ => onAbortClick()}
-                onPostSuccess={_ => onPostSuccess()}
+                onPostSuccess={onPostSuccess}
             >
                 <div>
                     <TextField 
@@ -61,9 +71,9 @@ export function UpsertLyricForm({
                         autoComplete="off"
                         value={newValue.title}
                         onChange={e => setNewValue((oldValue) => ({ ...oldValue, title: e.target.value }))}
-                        error={titleInUse}
+                        error={!hasPosted && titleInUse}
                     />
-                    {titleInUse && 
+                    {!hasPosted && titleInUse && 
                         <Box 
                             color="error.main" 
                             style={{marginTop: "4px"}}>

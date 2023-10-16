@@ -6,8 +6,10 @@ import { TabbedPageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
 import { strToPrettyUrl } from "src/utils/strToPrettyUrl"
 
+export const lyricContextQueryKey = ["AllLyricData"]
+
 export function LyricContext() {
-    const { isLoading, isError, data, error } = useQuery<StrippedSongLyric[]>(["AllLyricData"], () => fetchAsync<StrippedSongLyric[]>("/api/song-lyric/simple-list"))
+    const { isLoading, isError, data, error } = useQuery<StrippedSongLyric[]>(lyricContextQueryKey, () => fetchAsync<StrippedSongLyric[]>("/api/song-lyric/simple-list"))
 
     if (isLoading) {
         return <PageContainer/>
@@ -89,4 +91,9 @@ export function useLyricContext() {
 export function useLyricItemContext() {
     const context = useOutletContext<[StrippedSongLyric[], SongLyric]>()
     return context
+}
+
+export function buildLyricItemUrl(title: string, isPopular: boolean) {
+    return `/studenttraller/${isPopular ? "populaere" : "alle"}/${strToPrettyUrl(title)}`
+
 }
