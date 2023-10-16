@@ -20,7 +20,7 @@ export function getTitles(): SheetArchiveTitle[] {
             url_title as url
         FROM 
             song_title 
-        ORDER BY title ASC`)
+        ORDER BY title COLLATE NOCASE ASC`)
     const dbResult: DbSheetArchiveTitle[] | undefined = stmt.all()
     db.close();
 
@@ -78,7 +78,7 @@ export function getFiles(titleId: number): SheetArchiveFile[] {
         FROM 
             vw_song_file 
         WHERE title_id = ?
-        ORDER BY instrument ASC`)
+        ORDER BY instrument COLLATE NOCASE ASC`)
     const sheets = stmt.all(titleId)
     db.close()
 

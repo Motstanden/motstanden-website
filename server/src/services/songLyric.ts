@@ -16,6 +16,7 @@ function getSimpleList(): StrippedSongLyric[] {
         FROM song_lyric 
         ORDER BY 
             title
+        COLLATE NOCASE ASC;
     `) 
 
     const dbaData: DbStrippedSongLyric[] = stmt.all()
