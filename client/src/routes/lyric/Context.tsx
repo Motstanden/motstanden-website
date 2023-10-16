@@ -23,13 +23,20 @@ export function LyricContext() {
 }
 
 function PageContainer( {children}: {children?: React.ReactNode} ) {
+    const isLoggedIn = useAuth().user !== null
+
+    let tabItems = [
+        { to: "/studenttraller/populaere", label: "Populære" },
+        { to: "/studenttraller/alle", label: "Alle" },
+    ]
+
+    if(isLoggedIn) {
+        tabItems.push({ to: "/studenttraller/ny", label: "ny" })
+    }
+
     return (
         <TabbedPageContainer
-            tabItems={[
-                { to: "/studenttraller/populaere", label: "Populære" },
-                { to: "/studenttraller/alle", label: "Alle" },
-                { to: "/studenttraller/ny", label: "ny" }
-            ]}
+            tabItems={tabItems}
             matchChildPath={true}
         >
             {children}
