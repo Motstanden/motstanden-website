@@ -329,7 +329,7 @@ CREATE TABLE IF NOT EXISTS "song_lyric"(
         ON DELETE RESTRICT
 );
 CREATE TRIGGER trig_song_lyric_updated_at
-    AFTER UPDATE ON event FOR EACH ROW
+    AFTER UPDATE ON song_lyric FOR EACH ROW
 BEGIN
     UPDATE song_lyric SET updated_at = current_timestamp
         WHERE song_lyric_id = old.song_lyric_id;
