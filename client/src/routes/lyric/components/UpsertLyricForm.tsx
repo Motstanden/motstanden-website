@@ -13,11 +13,13 @@ export function UpsertLyricForm({
     postUrl, 
     onAbortClick, 
     usedTitles,
+    onPostSuccess
 }: {
     initialValue: NewSongLyric;
     postUrl: string;
     onAbortClick: VoidFunction;
     usedTitles: string[];
+    onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
 }) {
     const [newValue, setNewValue] = useState<NewSongLyric>(initialValue);
     const [hasPosted, setHasPosted] = useState(false);
@@ -42,9 +44,12 @@ export function UpsertLyricForm({
         };
     };
     
-    const onPostSuccess = async (res: Response) => {
+    const _onPostSuccess = async (res: Response) => {
         setHasPosted(true);
         await queryClient.invalidateQueries(lyricContextQueryKey)
+        if(onPostSuccess){
+            await onPostSuccess(res);
+        }
         navigate(buildLyricItemUrl(newValue.title, newValue.isPopular))
      };
 
@@ -59,7 +64,7 @@ export function UpsertLyricForm({
                 postUrl={postUrl}
                 disabled={disabled}
                 onAbortClick={_ => onAbortClick()}
-                onPostSuccess={onPostSuccess}
+                onPostSuccess={_onPostSuccess}
             >
                 <div>
                     <TextField 

@@ -60,13 +60,15 @@ export function LyricItemContext() {
     return <LyricItemLoader id={lyricId} />
 }
 
+export const getLyricItemContextQueryKey = (id: number) => ["LyricItem", id]
+
 export function LyricItemLoader( {id}: {id: number}){
     const allLyrics = useOutletContext<StrippedSongLyric[]>()
 
     const isPublic = useAuth().user === null
     const url = `/api/${isPublic ? "public" : "private"}/song-lyric/${id}`
 
-    const { isLoading, isError, data } = useQuery<SongLyric>(["LyricItem", isPublic, id], () => fetchAsync<SongLyric>(url))
+    const { isLoading, isError, data } = useQuery<SongLyric>(getLyricItemContextQueryKey(id), () => fetchAsync<SongLyric>(url))
 
     if (isLoading) {
         return <></>
