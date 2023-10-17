@@ -8,7 +8,6 @@ VALUES
         14,
 '**Melodi:** Go West
 
-
 På gløs er det gamle bygg
 På gløs er du aldri trygg
 På gløs blir det pusset opp
@@ -111,7 +110,6 @@ Aaaaaasbeeeest.'
         14,
 '**Tekst:** Kalle Zwilgmeyer
 
-
 **Refreng:**
 Jeg er født med en bayer i hånden
 og sådan har jeg tenkt meg at jeg også ville dø
@@ -162,7 +160,6 @@ der vil jeg nyte dem i fred og i ro.
         14,
 '**Tekst:** Krussedull (UKA 1957) 
 **Melodi:** Jamaican Farewell
-
 
 Tanken går til den skjønne vår
 da jeg sang i mannskoret "Polyfon",
@@ -228,7 +225,6 @@ mens min elskov videre med toget dro.
 '**Tekst:** Nina T. Gundersen og Hans Olav Lofstad fra Motstanden
 **Melodi:** Kråkevisa
 
-
 De ohmske gikk seg en tur på by’n
 hei fara, en tur på by’n.
 På veien så så de et drømmesyn
@@ -275,7 +271,6 @@ Hei fara, Faltu riltu raltu ra'
         14,
         14,
 '**Melodi:** Blood on the Risers
-
 
 Han hoppa fra 12000 fot med fallskjermen igjen
 Han hoppa fra 12000 fot med fallskjermen igjen
@@ -326,8 +321,7 @@ Nå flyter’n rundt i Nordsjøen og lengter hjem til mor...
         1,
         14,
         14,
-'*...også kjent som "Lundsbrua"*
-
+'**...også kjent som "Lundsbrua"**
 
 Jeg ønsker meg en himmelseng,
 en himmelseng med speil i,
@@ -458,7 +452,6 @@ Jag gillar havre, jag äter det var dag, jag sniffar det til frukost, det gör m
         14,
 '**Tekst:** Cassa Rossa (UKA 1929)
 
-
 Nu klinger igjennom den gamle stad, påny en studentersang,
 og alle mann alle i rekker og rad, svinger opp under begerklang!
 Og mens borgerne våkner i køia og hører det glade «kang-kang»,
@@ -501,7 +494,6 @@ Også sitter vi i himmelen og stemmer i vår replikk;
         14,
 '**Tekst:** Motstanden
 **Melodi:** Blood On the Risers
-
 
 Det starta som IKEA-bord og endte opp som spon **x3**
 Og det skal ikke være bord mere
