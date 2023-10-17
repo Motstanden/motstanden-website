@@ -359,7 +359,7 @@ LEFT JOIN user updated_by ON updated_by.user_id = sl.updated_by
 /* vw_song_lyric(song_lyric_id,title,content,is_popular,created_by_user_id,created_by_full_name,created_at,updated_by_user_id,updated_by_full_name,updated_at) */;
 CREATE TABLE simple_text(
     simple_text_id INTEGER PRIMARY KEY NOT NULL,
-    key TEXT NOT NULL UNIQUE,
+    key TEXT NOT NULL UNIQUE COLLATE NOCASE,
     text TEXT NOT NULL,
 
     updated_by INTEGER NOT NULL,

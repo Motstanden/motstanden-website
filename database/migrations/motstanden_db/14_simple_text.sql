@@ -4,7 +4,7 @@ INSERT INTO version(migration) VALUES
 
 CREATE TABLE simple_text(
     simple_text_id INTEGER PRIMARY KEY NOT NULL,
-    key TEXT NOT NULL UNIQUE,
+    key TEXT NOT NULL UNIQUE COLLATE NOCASE,
     text TEXT NOT NULL,
 
     updated_by INTEGER NOT NULL,
