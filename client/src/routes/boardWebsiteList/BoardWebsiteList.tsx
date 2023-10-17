@@ -46,6 +46,7 @@ export default function BoardWebsiteListPage() {
                 <SimpleTextFetcher
                     textKey={topSimpleTextKey}
                     canEdit={isAdmin}
+                    skeleton={<TextSkeleton />}
                 />
 
             </section>
@@ -64,6 +65,29 @@ export default function BoardWebsiteListPage() {
                 />
             </section>
         </PageContainer>
+    )
+}
+
+function TextSkeleton() {
+    return (
+        <>
+            <div style={{
+                marginBlock: "30px"
+            }}>
+            <Skeleton 
+                variant="text" 
+                width="280px" 
+                height="3em"
+                />
+            </div>
+            <div>
+            <Skeleton
+                    variant="rounded"
+                    width="100%"
+                    height="180px"
+                />
+            </div>
+        </>   
     )
 }
 
