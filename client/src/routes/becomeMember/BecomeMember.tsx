@@ -5,6 +5,7 @@ import { useAuth } from "src/context/Authentication";
 import { ThemeName, useAppTheme } from "../../context/Themes";
 import { useTitle } from "../../hooks/useTitle";
 import { PageContainer } from "../../layout/PageContainer";
+import { useMediaQuery } from "@mui/material";
 
 const simpleTextKey = "become-member"
 
@@ -17,7 +18,7 @@ export default function BecomeMemberPage() {
     return (
         <PageContainer  >
             <div style={{ 
-                maxWidth: "700px",
+                maxWidth: "640px",
                 fontSize: "14pt",
                 lineHeight: "1.6",
                 marginTop: "25px",
@@ -29,8 +30,8 @@ export default function BecomeMemberPage() {
                     canEdit={isAdmin}
                     skeleton={<TextSkeleton/>}
                 />
-                <GoogleForm />
             </div>
+            <GoogleForm />
         </PageContainer>
     )
 }
@@ -44,13 +45,34 @@ function TextSkeleton() {
 
 function GoogleForm() {
     const theme = useAppTheme();
+
+    const isTinyScreen = useMediaQuery("(max-width: 400px)")
+    const isSmallScreen = useMediaQuery("(max-width: 600px)")
+    
+    let style: React.CSSProperties = {
+        marginLeft: "-30px"
+    }
+
+    if(isSmallScreen) {
+        style = {
+            marginLeft: "-20px"
+        }
+    }
+
+    if(isTinyScreen) {
+        style = {
+            marginLeft: "00px"
+        }
+    }
+
     const invertProps = theme.name === ThemeName.Dark
         ? { filter: "invert(100%) hue-rotate(180deg)" }
         : {}
+        
     return (
         <div style={{
+            ...style,
             overflow: "hidden",
-            marginLeft: "-20px",
             width: "100%",
             height: "1100px",
         }}>
