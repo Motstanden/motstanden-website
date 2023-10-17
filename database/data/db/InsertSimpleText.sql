@@ -54,6 +54,5 @@ Hvert styre i Motstanden har sin egen nettside. Til å begynne med inneholder ne
         14,
 '# Kildekode 
 
-Kildekoden til nettsidene er åpent tilgjengelig på [GitHub](https://github.com/Motstanden/motstanden-styresider).
-'
+Kildekoden til nettsidene er åpent tilgjengelig på [GitHub](https://github.com/Motstanden/motstanden-styresider).'
     );
