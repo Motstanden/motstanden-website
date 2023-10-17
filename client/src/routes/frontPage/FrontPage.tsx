@@ -5,6 +5,7 @@ import { fetchAsync } from "src/utils/fetchAsync";
 import May17Img from "../../assets/pictures/17mai2021.jpg";
 import { useTitle } from "../../hooks/useTitle";
 import { PageContainer } from "../../layout/PageContainer";
+import { Skeleton } from "@mui/material";
 
 const simpleTextKey = "front-page"
 const lyricContextQueryKey = ["AllLyricData", simpleTextKey]
@@ -53,7 +54,47 @@ function FrontPageTextLoader() {
 function TextSkeleton() {
     return (
         <div>
-            Todo: create skeleton for text
+            <SectionSkeleton/>
+            <SectionSkeleton/>
+            <SectionSkeleton/>
+            <SectionSkeleton/>
         </div>
+    )
+}
+
+function SectionSkeleton() { 
+    return (
+        <>
+            <div style={{
+                marginBlock: "20px"
+            }}>
+                <TitleSkeleton/>
+            </div>
+            <ContentSkeleton/>
+        </>
+    )
+}
+
+function TitleSkeleton() {
+    return (
+        <div style={{
+            marginBlock: "30px"
+        }}>
+            <Skeleton 
+                variant="text" 
+                width="280px" 
+                height="3em"
+                />
+        </div>
+    )
+}
+
+function ContentSkeleton() {
+    return (
+        <Skeleton
+            variant="rounded"
+            width="100%"
+            height="120px"
+        />
     )
 }
