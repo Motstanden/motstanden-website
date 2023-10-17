@@ -28,7 +28,7 @@ export function UrlListItem({
     reloadDocument?: boolean | undefined,
     externalRoute?: boolean | undefined
 }) {
-    const urlAttribute = externalRoute ? { href: to } : { to: to, reloadDocument: {reloadDocument} }
+    const urlAttribute = externalRoute ? { href: to } : { to: to, reloadDocument: reloadDocument }
     return (
         <li style={{
             marginBottom: "20px"
