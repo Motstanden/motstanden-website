@@ -58,11 +58,7 @@ function TextSkeleton() {
 function SectionSkeleton() { 
     return (
         <>
-            <div style={{
-                marginBlock: "20px"
-            }}>
-                <TitleSkeleton/>
-            </div>
+            <TitleSkeleton/>
             <ContentSkeleton/>
         </>
     )
