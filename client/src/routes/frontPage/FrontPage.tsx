@@ -3,12 +3,19 @@ import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
 import May17Img from "../../assets/pictures/17mai2021.jpg";
 import { useTitle } from "../../hooks/useTitle";
 import { PageContainer } from "../../layout/PageContainer";
+import { useAuth } from "src/context/Authentication";
+import { hasGroupAccess } from "common/utils";
+import { UserGroup } from "common/enums";
 
 const simpleTextKey = "front-page"
 const lyricContextQueryKey = ["AllLyricData", simpleTextKey]
 
 export default function FrontPage() {
     useTitle("Framside")
+
+    const user = useAuth().user
+    const isAdmin = !!user && hasGroupAccess(user, UserGroup.Administrator)
+
     return (
         <PageContainer disableGutters>
             <img src={May17Img}
@@ -25,10 +32,12 @@ export default function FrontPage() {
                 maxWidth: "700px",
                 fontSize: "14pt",
                 lineHeight: "1.6",
+                marginTop: "25px"
             }}>
                 <SimpleTextFetcher
                     textKey={simpleTextKey} 
                     skeleton={<TextSkeleton/>}
+                    canEdit={isAdmin}
                 />
             </div>
         </PageContainer>
