@@ -1,11 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { SimpleText } from "common/interfaces";
-import { MarkDownRenderer } from "src/components/MarkDownEditor";
-import { fetchAsync } from "src/utils/fetchAsync";
+import { Skeleton } from "@mui/material";
+import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
 import May17Img from "../../assets/pictures/17mai2021.jpg";
 import { useTitle } from "../../hooks/useTitle";
 import { PageContainer } from "../../layout/PageContainer";
-import { Skeleton } from "@mui/material";
 
 const simpleTextKey = "front-page"
 const lyricContextQueryKey = ["AllLyricData", simpleTextKey]
@@ -29,27 +26,15 @@ export default function FrontPage() {
                 fontSize: "14pt",
                 lineHeight: "1.6",
             }}>
-                <FrontPageTextLoader/>
+                <SimpleTextFetcher
+                    textKey={simpleTextKey} 
+                    skeleton={<TextSkeleton/>}
+                />
             </div>
         </PageContainer>
     )
     
 }
-
-function FrontPageTextLoader() {
-    const { isLoading, isError, data, error } = useQuery<SimpleText>(lyricContextQueryKey, () => fetchAsync<SimpleText>(`/api/simple-text/${simpleTextKey}`))
-
-    if(isLoading)
-        return <TextSkeleton/>
-
-    if(isError)
-        return <span>{`${error}`}</span>
-
-    return (
-        <MarkDownRenderer value={data.text} />
-    )
-}
-
 
 function TextSkeleton() {
     return (
