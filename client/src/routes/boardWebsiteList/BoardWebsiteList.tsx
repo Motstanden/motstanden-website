@@ -11,49 +11,59 @@ import {
     TableSortLabel
 } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
-import { isNullOrWhitespace, strToNumber } from "common/utils"
+import { UserGroup } from "common/enums"
+import { hasGroupAccess, isNullOrWhitespace, strToNumber } from "common/utils"
 import dayjs, { Dayjs } from "dayjs"
 import { useState } from "react"
 import { headerStyle, rowStyle } from "src/assets/style/tableStyle"
+import { SimpleTextFetcher } from "src/components/SimpleTextFetcher"
+import { useAuth } from "src/context/Authentication"
 import { useTitle } from "src/hooks/useTitle"
 import { PageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
 
+const topSimpleTextKey = "board-website-list-top"
+
+const bottomSimpleTextKey = "board-website-list-bottom"
 
 export default function BoardWebsiteListPage() {
     useTitle("Styrets nettsider")
+
+    const user = useAuth().user
+    const isAdmin = !!user && hasGroupAccess(user, UserGroup.Administrator)
+
     return (
         <PageContainer>
-            <h1>Styrets nettsider</h1>
-            <Description />
-            <BoardPageSection />
-            <AboutSourceCode />
-        </PageContainer>
-    )
-}
+            <section
+                style={{
+                    maxWidth: "700px",
+                    lineHeight: "1.6",
+                    fontSize: "14pt",
+                    marginTop: "25px",
+                    marginBottom: "40px"
+                }}
+            >
+                <SimpleTextFetcher
+                    textKey={topSimpleTextKey}
+                    canEdit={isAdmin}
+                />
 
-function Description() {
-    return (
-        <section style={{
-            maxWidth: "650px",
-            lineHeight: "1.6",
-        }}>
-            <h2>Om Styrenettsidene</h2>
-            <p>
-                Hvert styre i Motstanden har sin egen nettside.
-                Til å begynne med inneholder nettsiden kun navnene til de i styret.
-                Videre er det opp til styret hva de vil gjøre med nettsiden i løpet av det neste året.
-            </p>
-        </section>
-    )
-}
-
-function BoardPageSection() {
-    return (
-        <section style={{ marginTop: "40px" }}>
-            <h2>Alle Styrenettsider</h2>
+            </section>
             <BoardPageTableLoader />
-        </section>
+            <section
+                style={{
+                    maxWidth: "700px",
+                    lineHeight: "1.6",
+                    fontSize: "14pt",
+                    marginTop: "40px"
+                }}
+            >
+                <SimpleTextFetcher
+                    textKey={bottomSimpleTextKey}
+                    canEdit={isAdmin}
+                />
+            </section>
+        </PageContainer>
     )
 }
 
@@ -245,31 +255,4 @@ function compareByTimestamp(a: Dayjs | undefined, b: Dayjs | undefined, sortDire
     const aValue = a?.unix() ?? 0;
     const bValue = b?.unix() ?? 0;
     return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
-}
-
-
-function AboutSourceCode() {
-    return (
-        <section style={{
-            marginTop: "40px",
-            maxWidth: "650px",
-            lineHeight: "1.6",
-        }}>
-            <h2 style={{ marginBottom: "0px" }}>Kildekode</h2>
-            <p>
-                <span>
-                    Kildekoden til nettsidene er åpent tilgjengelig på
-                </span>
-                <span> </span>
-                <Link
-                    color="secondary"
-                    underline="hover"
-                    href="https://github.com/Motstanden/motstanden-styresider"
-                >
-                    GitHub
-                </Link>
-                <span>.</span>
-            </p>
-        </section>
-    )
 }

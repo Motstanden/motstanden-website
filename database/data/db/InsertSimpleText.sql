@@ -38,4 +38,22 @@ Er det noe du lurer på? Kontakt oss gjerne på:
 **Meld din interesse her!**
 
 Vi tar kontakt med deg så fort som mulig!'
+    ),
+    (
+        'board-website-list-top',
+        14,
+'# Styrets nettsider
+
+### Om styrenettsidene
+Hvert styre i Motstanden har sin egen nettside. Til å begynne med inneholder nettsiden kun navnene til de i styret. Videre er det opp til styret hva de vil gjøre med nettsiden i løpet av det neste året.
+
+### Alle styrenettsider'   
+    ),
+    (
+        'board-website-list-bottom',
+        14,
+'# Kildekode 
+
+Kildekoden til nettsidene er åpent tilgjengelig på [GitHub](https://github.com/Motstanden/motstanden-styresider).
+'
     );
