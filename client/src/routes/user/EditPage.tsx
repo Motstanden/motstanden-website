@@ -194,7 +194,7 @@ function MemberForm({ value, onChange, editMode }: FormParams) {
                         bottom: -20,
                         left: 5,
                     }}>
-                        Den grønne <b>{value.capeName}</b>
+                        <b>{value.capeName}</b>
                     </span>}
             </div>
             {isAdmin && (
