@@ -1,6 +1,12 @@
-import { isNullOrWhitespace } from "common/utils";
-import express from "express";
+import { isNullOrWhitespace, strToNumber } from "common/utils";
+import express, {Request, Response} from "express";
 import { simpleTextService } from "../services/simpleText.js";
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
+import { requiresGroup } from "../middleware/requiresGroup.js";
+import { UserGroup } from "common/enums";
+import { validateNumber } from "../middleware/validateNumber.js";
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
+import { UpdateSimpleText } from "common/interfaces";
 
 const router = express.Router();
 
@@ -23,5 +29,45 @@ router.get("/simple-text/:key", (req, res) => {
     }
     res.end()
 })
+
+router.post("/simple-text/:id/update", 
+    AuthenticateUser(),
+    requiresGroup(UserGroup.Administrator),
+    validateNumber({
+        getValue: req => req.params.id,
+    }),
+    (req: Request, res: Response) => {
+        const id = strToNumber(req.params.id) as number             // Has been validated by middleware
+        const user = req.user as AccessTokenData                    // Has been validated by middleware
+        const newSimpleText = tryCreateValidSimpleText(req.body)
+
+        if(!newSimpleText)
+            return res.status(400).send("Invalid data for UpdateSimpleText object")
+
+        try {
+            simpleTextService.update(newSimpleText, id, user.userId)
+        } catch (err) {
+            console.error(err)
+            return res.status(500).send("Failed to update simple text in the database")
+        }
+        res.end()
+    }
+)
+
+function tryCreateValidSimpleText(obj: unknown) : UpdateSimpleText | undefined {
+    if(typeof obj !== "object" || obj === null) {
+        return undefined
+    }
+
+    const simpleText = obj as UpdateSimpleText
+
+    if(typeof simpleText.text !== "string" || isNullOrWhitespace(simpleText.text)) {
+        return undefined
+    }
+
+    return {
+        text: simpleText.text
+    }
+}
 
 export default router
