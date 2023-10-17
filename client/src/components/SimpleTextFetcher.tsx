@@ -144,7 +144,7 @@ function SimpleTextForm( {
     }
 
     const getSubmitData = (): UpdateSimpleText => ({ 
-        text: newValue.text.trim()
+        text: newValue.text
     })
 
     const onPostSuccess = async (res: Response) => { 
