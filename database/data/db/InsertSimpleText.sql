@@ -26,4 +26,16 @@ Er det noe du lurer på? Kontakt oss gjerne på:
 - [Facebook](https://www.facebook.com/Motstanden)
 - [Instagram](https://instagram.com/denohmskemotstanden)
 - [TikTok](https://vm.tiktok.com/ZMNVv1Tk3/)'
+    ),
+    (
+        'become-member',
+        14,
+'# Bli Medlem
+
+Ønsker du litt informasjon om Motstanden?
+Ønsker du å bli med?
+
+**Meld din interesse her!**
+
+Vi tar kontakt med deg så fort som mulig!'
     );
