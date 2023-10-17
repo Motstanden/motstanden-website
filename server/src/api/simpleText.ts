@@ -1,12 +1,12 @@
+import { UserGroup } from "common/enums";
+import { UpdateSimpleText } from "common/interfaces";
 import { isNullOrWhitespace, strToNumber } from "common/utils";
-import express, {Request, Response} from "express";
-import { simpleTextService } from "../services/simpleText.js";
+import express, { Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { requiresGroup } from "../middleware/requiresGroup.js";
-import { UserGroup } from "common/enums";
 import { validateNumber } from "../middleware/validateNumber.js";
+import { simpleTextService } from "../services/simpleText.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
-import { UpdateSimpleText } from "common/interfaces";
 
 const router = express.Router();
 
@@ -19,7 +19,7 @@ router.get("/simple-text/:key", (req, res) => {
 
     try {
         const text = simpleTextService.get(key)
-        if(!text) {
+        if(text === undefined) {
             return res.status(404).send(`No simple text found for key: ${key}`)
         }
         res.send(text) 
@@ -61,7 +61,7 @@ function tryCreateValidSimpleText(obj: unknown) : UpdateSimpleText | undefined {
 
     const simpleText = obj as UpdateSimpleText
 
-    if(typeof simpleText.text !== "string" || isNullOrWhitespace(simpleText.text)) {
+    if(typeof simpleText.text !== "string") {
         return undefined
     }
 

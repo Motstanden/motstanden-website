@@ -1,13 +1,13 @@
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { SimpleText, UpdateSimpleText } from "common/interfaces"
+import { isNullOrWhitespace } from 'common/utils'
+import { useState } from "react"
 import { fetchAsync } from "src/utils/fetchAsync"
 import { MarkDownEditor, MarkDownRenderer } from "./MarkDownEditor"
-import { useState } from "react"
-import { IconPopupMenu } from "./menu/IconPopupMenu"
-import { EditMenuItem } from "./menu/EditOrDeleteMenu"
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Form } from "./form/Form"
-import { isNullOrWhitespace } from "common/utils"
+import { EditMenuItem } from "./menu/EditOrDeleteMenu"
+import { IconPopupMenu } from "./menu/IconPopupMenu"
 
 export function SimpleTextFetcher({
     queryKeyModifier,
@@ -102,6 +102,7 @@ function SimpleTextReader( {
     canEdit?: boolean,
     onEditClick?: VoidFunction
 }) {
+    const isEmpty = isNullOrWhitespace(value.text)
     return (
         <div 
             style={{
@@ -112,13 +113,19 @@ function SimpleTextReader( {
             {canEdit && (
                 <IconPopupMenu 
                     icon={<MoreHorizIcon/>} 
-                    style={{
+                    style={
+                        isEmpty ? {
+
+                        } :{
                         position: 'absolute',
                         top: 13,
                         right: 10,
                     }}
                 > 
-                    <EditMenuItem onClick={onEditClick} />
+                    <EditMenuItem 
+                        onClick={onEditClick} 
+                        text={isEmpty ? "Skriv Tekst" : undefined}
+                    />
                 </IconPopupMenu>
             )}
         </div>
@@ -131,21 +138,17 @@ function SimpleTextForm( {
     onAbortClick,
     onPosted,
 }: {
-    initialValue: UpdateSimpleText,
+    initialValue: UpdateSimpleText | SimpleText,
     postUrl: string
     onAbortClick?: VoidFunction,
     onPosted?: ((res: Response) => Promise<void>) | ((res: Response) => void)
 }){
-    const [newValue, setNewValue] = useState(initialValue)
+    const [newValue, setNewValue] = useState<UpdateSimpleText>({text: initialValue.text})
     const [hasPosted, setHasPosted] = useState(false)
 
     const validateData = () => {
-        return !isNullOrWhitespace(newValue.text) && newValue.text !== initialValue.text 
+        return newValue.text !== initialValue.text 
     }
-
-    const getSubmitData = (): UpdateSimpleText => ({ 
-        text: newValue.text
-    })
 
     const onPostSuccess = async (res: Response) => { 
         setHasPosted(true)
@@ -158,7 +161,7 @@ function SimpleTextForm( {
 
     return (
         <Form 
-            value={getSubmitData}
+            value={newValue}
             postUrl={postUrl}
             disabled={disabled}
             onAbortClick={onAbortClick}
