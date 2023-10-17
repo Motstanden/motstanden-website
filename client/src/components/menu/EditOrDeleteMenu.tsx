@@ -49,10 +49,12 @@ export function EditOrDeleteMenu({
 
 export function EditMenuItem({ 
     onClick,
-    divider 
+    divider,
+    text
 }: { 
     onClick?: React.MouseEventHandler<HTMLLIElement>,
-    divider?: boolean
+    divider?: boolean,
+    text?: string
 }) {
     return (
         <MenuItem 
@@ -63,7 +65,7 @@ export function EditMenuItem({
                 <EditIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText>
-                Rediger
+                {text ?? "Rediger"}
             </ListItemText>
         </MenuItem>
     )
@@ -72,10 +74,12 @@ export function EditMenuItem({
 
 export function DeleteMenuItem({ 
     onClick,
-    divider 
+    divider,
+    text,
 }: { 
     onClick?: React.MouseEventHandler<HTMLLIElement>,
     divider?: boolean
+    text?: string
 }) {
     return (
         <MenuItem
@@ -87,7 +91,7 @@ export function DeleteMenuItem({
                 <DeleteForeverIcon fontSize="small" color="error" />
             </ListItemIcon>
             <ListItemText primaryTypographyProps={{ color: "error" }}>
-                Slett
+                {text ?? "Slett"} 
             </ListItemText>
         </MenuItem>
     )
