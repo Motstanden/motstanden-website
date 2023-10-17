@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "type": "module",
   "scripts": {
-    "serverdeploy": "npm run setup-common-linux && npm run setup-server && npm run setup-client && cd ../client && npm run build",
+    "serverdeploy": "npm run setup-common && npm run setup-server && npm run setup-client && npm run setup-common-link-linux && cd ../client && npm run build",
     
     "setup-common-link-shared": "cd ../client && npm link common && cd ../server && npm link common && cd ../tests && npm link common",
     "setup-common-link-linux": "cd ../common && sudo npm link && cd ../server && npm run setup-common-link-shared",
