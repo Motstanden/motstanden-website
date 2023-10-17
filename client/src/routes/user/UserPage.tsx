@@ -101,7 +101,7 @@ export function PersonCard({ user }: { user: User }) {
 export function MemberCard({ user }: { user: User }) {
     return (
         <Card title="Medlemskap">
-            <CardTextItem label="Kappe" text={user.capeName} />
+            <CardTextItem label="Kappe" text={user.capeName ? user.capeName : "-"} />
             <CardTextItem label="Rang" text={userRankToPrettyStr(user.rank)} />
             <CardTextItem label="Status" text={user.status} />
             <CardTextItem label="Aktiv periode" text={formatDateInterval(user.startDate, user.endDate)} />
