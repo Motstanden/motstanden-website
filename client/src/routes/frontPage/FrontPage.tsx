@@ -8,7 +8,6 @@ import { hasGroupAccess } from "common/utils";
 import { UserGroup } from "common/enums";
 
 const simpleTextKey = "front-page"
-const lyricContextQueryKey = ["AllLyricData", simpleTextKey]
 
 export default function FrontPage() {
     useTitle("Framside")
