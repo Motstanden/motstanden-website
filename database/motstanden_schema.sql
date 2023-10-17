@@ -357,3 +357,21 @@ FROM
 LEFT JOIN user created_by ON created_by.user_id = sl.created_by
 LEFT JOIN user updated_by ON updated_by.user_id = sl.updated_by
 /* vw_song_lyric(song_lyric_id,title,content,is_popular,created_by_user_id,created_by_full_name,created_at,updated_by_user_id,updated_by_full_name,updated_at) */;
+CREATE TABLE simple_text(
+    simple_text_id INTEGER PRIMARY KEY NOT NULL,
+    key TEXT NOT NULL UNIQUE,
+    text TEXT NOT NULL,
+
+    updated_by INTEGER NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(updated_by)
+        REFERENCES user(user_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+CREATE TRIGGER trig_simple_text_updated_at
+    AFTER UPDATE ON simple_text FOR EACH ROW
+BEGIN
+    UPDATE simple_text SET updated_at = current_timestamp
+        WHERE simple_text_id = old.simple_text_id;
+END;
