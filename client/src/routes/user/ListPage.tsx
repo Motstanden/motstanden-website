@@ -130,16 +130,18 @@ function EmailLists( { users }: { users: User[]}) {
     const inactiveUsers = users.filter(user => user.status === UserStatus.Inactive)
 
     return (
-        <Grid container xs={12} sm={12} md={6}>
-            <TitleCard title='E-postlister' sx={{width: "100%", maxWidth: "600px"}}>
-                <ul style={{paddingLeft: "30px", listStyleType: `"-"`}}>
-                    <EmailListItem users={users} label="Alle"/>
-                    <EmailListItem users={activeUsers} label="Aktive"/>
-                    <EmailListItem users={veteranUsers} label="Veteraner"/>
-                    <EmailListItem users={retiredUsers} label="Pensjonister"/>
-                    <EmailListItem users={inactiveUsers} label="Inaktive"/>
-                </ul>
-            </TitleCard>
+        <Grid container> 
+            <Grid item xs={12} sm={8} md={5} >
+                <TitleCard title='E-postlister' sx={{width: "100%"}}>
+                    <ul style={{paddingLeft: "30px", listStyleType: `"-"`}}>
+                        <EmailListItem users={users} label="Alle"/>
+                        <EmailListItem users={activeUsers} label="Aktive"/>
+                        <EmailListItem users={veteranUsers} label="Veteraner"/>
+                        <EmailListItem users={retiredUsers} label="Pensjonister"/>
+                        <EmailListItem users={inactiveUsers} label="Inaktive"/>
+                    </ul>
+                </TitleCard>
+            </Grid>
         </Grid>
     )
 }
