@@ -110,13 +110,9 @@ function AttendingForm({ eventId, queryKey, user }: { eventId: number, queryKey:
         const response = await postJson("/api/event-participants/upsert", newVal, { alertOnFailure: true })
 
         if (response && response.ok) {
-            queryClient.invalidateQueries(queryKey)
-            setTimeout(() => {
-                setIsSubmitting(false)
-            }, (700));
-        } else {
-            setIsSubmitting(false)
+            await queryClient.invalidateQueries(queryKey)
         }
+        setIsSubmitting(false)
     }
 
     return (
