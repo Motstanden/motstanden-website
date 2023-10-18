@@ -33,12 +33,15 @@ export function EmailLogin({ onEmailSent }: { onEmailSent: (e: EmailInfo) => voi
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} method="post">
             <div>
-
                 <TextField
                     label="E-post"
                     type="email"
+                    name='email'
+                    autoComplete='email'
+                    aria-label='email'
+                    spellCheck={false}
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     required
