@@ -19,6 +19,8 @@ import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
 import { Card, CardTextItem, groupTVPair, rankTVPair, statusTVPair } from "./Components";
 import { AccountDetailsCard, PersonCard, formatExactDate } from "./UserPage";
+import { useQueryClient } from "@tanstack/react-query";
+import { userListQueryKey } from "./Context";
 
 export default function EditUserPage() {
     const currentUser = useAuth().user!
@@ -52,6 +54,8 @@ export default function EditUserPage() {
 function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
     const [newUser, setNewUser] = useState<User>(user)
     const [disableSubmit, setDisableSubmit] = useState(false)
+    
+    const queryClient = useQueryClient()
 
     useTitle(user.firstName + `${isUserEqual(user, newUser) ? "" : "*"}`)
     const navigate = useNavigate()
@@ -59,16 +63,21 @@ function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
     const onChange = (user: User) => setNewUser(user);
     const onIsValidChange = (isValid: boolean) => setDisableSubmit(!isValid)
 
-    const onAbort = () => canExitPage(user, newUser) && navigate(`/medlem/${user.id}`)
-    const onPostSuccess = (_: Response) => window.location.href = `${window.location.origin}/medlem/${user.id}`    // Will trigger a reload of the page
-    const preventSubmit = () => false // TODO: Validate user here. Return true if user is invalid
+    const onAbort = () => {
+        if(canExitPage(user, newUser)){
+            navigate("..", {replace: true})
+        } 
+    }
+    const onPostSuccess = async (_: Response) => {
+        await queryClient.invalidateQueries(userListQueryKey)
+        navigate("..", {replace: true})
+    }
 
     return (
         <Form
             value={newUser}
             postUrl={getPostUrl(editMode)}
             disabled={isUserEqual(user, newUser) || disableSubmit}
-            preventSubmit={preventSubmit}
             onAbortClick={onAbort}
             onPostSuccess={onPostSuccess}
         >

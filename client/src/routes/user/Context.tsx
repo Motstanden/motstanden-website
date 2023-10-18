@@ -6,8 +6,10 @@ import { PageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
 import { UserPageHeader } from "./UserPage"
 
+export const userListQueryKey = ["FetchAllUsers"]
+
 export function UserContext() {
-    const { isLoading, isError, data, error } = useQuery<User[]>(["FetchAllUsers"], () => fetchAsync<User[]>("/api/member-list"))
+    const { isLoading, isError, data, error } = useQuery<User[]>(userListQueryKey, () => fetchAsync<User[]>("/api/member-list"))
 
     if (isLoading) {
         return <PageContainer><div /></PageContainer>
