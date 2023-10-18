@@ -106,7 +106,7 @@ function saveTokenInCookie(res: Response, tokenType: TokenType, tokenStr: string
         {
             httpOnly: true,
             secure: process.env.IS_DEV_ENV === "true" ? false : true,       // In development we need this to be true in order to log in to the site from a mobile phone
-            sameSite: true,
+            sameSite: "strict",
             maxAge: maxAge
         })
 }
@@ -128,8 +128,8 @@ export function logOutAllUnits(req: Request, res: Response) {
 }
 
 function clearAllAuthCookies(res: Response) {
-    res.clearCookie(TokenType.AccessToken.toString())
-    res.clearCookie(TokenType.RefreshToken.toString())
+    res.clearCookie(TokenType.AccessToken.toString(), {sameSite: "strict"})
+    res.clearCookie(TokenType.RefreshToken.toString(), {sameSite: "strict"})
 }
 
 enum TokenType {
