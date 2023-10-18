@@ -33,6 +33,11 @@ CREATE TABLE user (
     first_name TEXT NOT NULL,
     middle_name TEXT NOT NULL DEFAULT '',
     last_name TEXT NOT NULL,
+    full_name TEXT NOT NULL GENERATED ALWAYS AS (
+        first_name || ' '
+        || IIF(length(trim(middle_name)) = 0, '', middle_name || ' ')
+        || last_name
+    ) STORED,
     cape_name TEXT NOT NULL DEFAULT '',
     phone_number INTEGER DEFAULT NULL CHECK(phone_number >= 10000000 AND phone_number <= 99999999),     -- Ensure number has 8 digits
     birth_date TEXT DEFAULT NULL CHECK(birth_date IS date(birth_date, '+0 days')),                      -- Check that format is 'YYYY-MM-DD'
@@ -73,6 +78,7 @@ SELECT
     first_name,
     middle_name,
     last_name,
+    full_name,
     cape_name,
     profile_picture,
     phone_number,
@@ -87,7 +93,7 @@ FROM
 LEFT JOIN user_group USING (user_group_id)
 LEFT JOIN user_rank USING (user_rank_id)
 LEFT JOIN user_status USING (user_status_id)
-/* vw_user(user_id,user_group_id,user_group,user_rank_id,user_rank,email,first_name,middle_name,last_name,cape_name,profile_picture,phone_number,birth_date,user_status,start_date,end_date,created_at,updated_at) */;
+/* vw_user(user_id,user_group_id,user_group,user_rank_id,user_rank,email,first_name,middle_name,last_name,full_name,cape_name,profile_picture,phone_number,birth_date,user_status,start_date,end_date,created_at,updated_at) */;
 CREATE TABLE login_token (
     token_id INTEGER PRIMARY KEY NOT NULL,
     user_id INTEGER NOT NULL,
@@ -242,21 +248,12 @@ SELECT
 	poll_id,
 	title,
 	type,
-
 	created_by as created_by_user_id,
-    created_by.first_name || ' '
-       || IIF(length(trim(created_by.middle_name)) = 0, '', created_by.middle_name || ' ')
-       || created_by.last_name
-       as created_by_full_name,
-    p.created_at,
-	
+	created_by.full_name as created_by_full_name,
+	p.created_at,
 	updated_by as updated_by_user_id,
-    updated_by.first_name || ' '
-       || IIF(length(trim(updated_by.middle_name)) = 0, '', updated_by.middle_name || ' ')
-       || updated_by.last_name
-       as updated_by_full_name,
+	updated_by.full_name as updated_by_full_name,
     p.updated_at
-	
 FROM 
 	poll p
 LEFT JOIN user created_by ON created_by.user_id = p.created_by
@@ -284,16 +281,10 @@ SELECT
     key_info,
     description,
     created_by as created_by_user_id,
-    created_by.first_name || ' '
-        || IIF(length(trim(created_by.middle_name)) = 0, '', created_by.middle_name || ' ') 
-        || created_by.last_name 
-        as created_by_full_name,
+    created_by.full_name as created_by_full_name,
     e.created_at,
     updated_by as updated_by_user_id,
-    updated_by.first_name || ' '
-        || IIF(length(trim(updated_by.middle_name)) = 0, '', updated_by.middle_name || ' ') 
-        || updated_by.last_name 
-        as updated_by_full_name,
+    updated_by.full_name as updated_by_full_name,
     e.updated_at,
     IIF( end_date_time is  NULL,
         IIF(datetime(start_date_time) < datetime('now'), 0, 1),
@@ -337,21 +328,12 @@ SELECT
 	title,
 	content,
     is_popular,
-
-	created_by as created_by_user_id,
-    created_by.first_name || ' '
-       || IIF(length(trim(created_by.middle_name)) = 0, '', created_by.middle_name || ' ')
-       || created_by.last_name
-       as created_by_full_name,
+	created_by as created_by_user_id, 
+    created_by.full_name as created_by_full_name,
     sl.created_at,
-	
 	updated_by as updated_by_user_id,
-    updated_by.first_name || ' '
-       || IIF(length(trim(updated_by.middle_name)) = 0, '', updated_by.middle_name || ' ')
-       || updated_by.last_name
-       as updated_by_full_name,
+    updated_by.full_name as updated_by_full_name,
     sl.updated_at
-	
 FROM 
 	song_lyric sl
 LEFT JOIN user created_by ON created_by.user_id = sl.created_by

@@ -68,6 +68,11 @@ CREATE TABLE user (
     first_name TEXT NOT NULL,
     middle_name TEXT NOT NULL DEFAULT '',
     last_name TEXT NOT NULL,
+    full_name TEXT NOT NULL GENERATED ALWAYS AS (
+        first_name || ' '
+        || IIF(length(trim(middle_name)) = 0, '', middle_name || ' ')
+        || last_name
+    ) STORED,
     cape_name TEXT NOT NULL DEFAULT '',
     phone_number INTEGER DEFAULT NULL CHECK(phone_number >= 10000000 AND phone_number <= 99999999),     -- Ensure number has 8 digits
     birth_date TEXT DEFAULT NULL CHECK(birth_date IS date(birth_date, '+0 days')),                      -- Check that format is 'YYYY-MM-DD'
@@ -114,6 +119,7 @@ SELECT
     first_name,
     middle_name,
     last_name,
+    full_name,
     cape_name,
     profile_picture,
     phone_number,

@@ -72,17 +72,10 @@ SELECT
     key_info,
     description,
     created_by as created_by_user_id,
-    created_by.first_name || ' '
-        || IIF(length(trim(created_by.middle_name)) = 0, '', created_by.middle_name || ' ') 
-        || created_by.last_name 
-        as created_by_full_name,
+    created_by.full_name as created_by_full_name,
     e.created_at,
     updated_by as updated_by_user_id,
-    updated_by.first_name || ' '
-        || IIF(length(trim(updated_by.middle_name)) = 0, '', updated_by.middle_name || ' ') 
-        || updated_by.last_name 
-        as updated_by_full_name,
-    e.updated_at,
+    updated_by.full_name as updated_by_full_name,
     IIF( end_date_time is  NULL,
         IIF(datetime(start_date_time) < datetime('now'), 0, 1),
         IIF(datetime(end_date_time)   < datetime('now'), 0, 1)

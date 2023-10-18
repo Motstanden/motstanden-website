@@ -46,21 +46,12 @@ SELECT
 	title,
 	content,
     is_popular,
-
-	created_by as created_by_user_id,
-    created_by.first_name || ' '
-       || IIF(length(trim(created_by.middle_name)) = 0, '', created_by.middle_name || ' ')
-       || created_by.last_name
-       as created_by_full_name,
+	created_by as created_by_user_id, 
+    created_by.full_name as created_by_full_name,
     sl.created_at,
-	
 	updated_by as updated_by_user_id,
-    updated_by.first_name || ' '
-       || IIF(length(trim(updated_by.middle_name)) = 0, '', updated_by.middle_name || ' ')
-       || updated_by.last_name
-       as updated_by_full_name,
+    updated_by.full_name as updated_by_full_name,
     sl.updated_at
-	
 FROM 
 	song_lyric sl
 LEFT JOIN user created_by ON created_by.user_id = sl.created_by
