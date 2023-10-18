@@ -1,7 +1,7 @@
 import Database, { Database as DatabaseType } from "better-sqlite3";
 import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
 import { NewUser, User } from "common/interfaces";
-import { isNtnuMail, isNullOrWhitespace, validateEmail } from "common/utils";
+import { isNtnuMail, isNullOrWhitespace } from "common/utils";
 import jwt from 'jsonwebtoken';
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
 import { JwtTokenData } from "../middleware/jwtAuthenticate.js";
@@ -10,7 +10,7 @@ import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 export function userExists(unsafeEmail: string | undefined): boolean {
     const email = unsafeEmail?.trim().toLowerCase();
 
-    if (!email || !validateEmail(email))
+    if (isNullOrWhitespace(email))
         return false
 
     const db = new Database(motstandenDB, dbReadOnlyConfig)
@@ -32,7 +32,7 @@ export function userExists(unsafeEmail: string | undefined): boolean {
 export function getAccessTokenData(unsafeEmail: string): AccessTokenData {
     const email = unsafeEmail?.trim().toLowerCase();
 
-    if (!email || !validateEmail(email))
+    if (isNullOrWhitespace(email))
         throw `The email is invalid.`
 
     const db = new Database(motstandenDB, dbReadOnlyConfig)
@@ -262,7 +262,7 @@ function isValidDate(dateStr: string): boolean {
 function makeValidUser(user: User): User | undefined {
 
     if (
-        !validateEmail(user.email) ||
+        isNullOrWhitespace(user.email) ||
         isNtnuMail(user.email) ||
         !user.groupName ||
         !user.rank ||
