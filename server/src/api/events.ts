@@ -1,5 +1,5 @@
 import { UserGroup } from "common/enums";
-import { ParticipationList, UpsertEventData, UpsertParticipant } from "common/interfaces";
+import { Participant, UpsertEventData, UpsertParticipant } from "common/interfaces";
 import { strToNumber } from "common/utils";
 import express, { NextFunction, Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
@@ -110,7 +110,7 @@ router.get("/event-participants",
             return res.status(400).send("bad data")
         }
 
-        let participants: ParticipationList
+        let participants: Participant[]
         try {
             participants = eventParticipant.getAll(eventId)
             res.json(participants)
@@ -127,7 +127,8 @@ router.post("/event-participants/upsert",
         const newData: UpsertParticipant = req.body
         try {
             eventParticipant.upsert(newData.eventId, user.userId, newData.participationStatus)
-        } catch {
+        } catch (err) {
+            console.log(err)
             return res.status(400).send("bad data")
         }
         res.end()

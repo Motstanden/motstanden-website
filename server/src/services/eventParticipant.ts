@@ -1,26 +1,27 @@
 import Database from "better-sqlite3";
 import { ParticipationStatus } from "common/enums";
-import { ParticipationList } from "common/interfaces";
+import { Participant } from "common/interfaces";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
 
 
-export function getAll(eventId: number): ParticipationList {
+export function getAll(eventId: number): Participant[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig);
     const stmt = db.prepare(`
         SELECT 
-            event_id as eventId,
-            participants
+            user_id as userId,
+            first_name as firstName,
+            middle_name as middleName,
+            last_name as lastName,
+            profile_picture as profilePicture,
+            status
         FROM
             vw_event_participant
         WHERE event_id = ?
     `);
-    const dbResult: { eventId: number, participants: string } = stmt.get(eventId);
+    const participant: Participant[]  = stmt.all(eventId);
     db.close()
-    if (!dbResult) {
-        return { eventId: eventId, participants: [] }
-    }
 
-    return { ...dbResult, participants: JSON.parse(dbResult.participants) };
+    return participant
 }
 
 export function upsert(eventId: number, userId: number, newStatus: ParticipationStatus) {

@@ -171,24 +171,6 @@ CREATE TABLE event_participant (
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
-CREATE VIEW vw_event_participant
-AS 
-SELECT 
-	event_id,
-	JSON_GROUP_ARRAY(JSON_OBJECT(
-		'userId', 				user_id,
-		'firstName', 			user.first_name,
-		'middleName',			user.middle_name,
-		'lastName',				user.last_name,
-		'profilePicture',		user.profile_picture,
-		'participationStatus',	participation_status.status
-	)) AS participants
-FROM
-	event_participant
-LEFT JOIN user USING(user_id)
-LEFT JOIN participation_status USING(participation_status_id)
-GROUP BY event_id
-/* vw_event_participant(event_id,participants) */;
 CREATE TABLE rumour (
     rumour_id INTEGER PRIMARY KEY NOT NULL,
     rumour TEXT NOT NULL,
@@ -357,3 +339,19 @@ BEGIN
     UPDATE simple_text SET updated_at = current_timestamp
         WHERE simple_text_id = old.simple_text_id;
 END;
+CREATE VIEW vw_event_participant
+AS 
+SELECT 
+	event_id,
+    user_id,
+    user.first_name,
+    user.middle_name,
+    user.last_name,
+    user.full_name,
+    user.profile_picture,
+    participation_status.status
+FROM
+	event_participant
+LEFT JOIN user USING(user_id)
+LEFT JOIN participation_status USING(participation_status_id)
+/* vw_event_participant(event_id,user_id,first_name,middle_name,last_name,full_name,profile_picture,status) */;

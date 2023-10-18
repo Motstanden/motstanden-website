@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ParticipationStatus } from "common/enums";
-import { EventData, Participant, ParticipationList, UpsertParticipant } from "common/interfaces";
+import { EventData, Participant, UpsertParticipant } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
 import { useState } from "react";
 import { Link as RouterLink, useOutletContext } from "react-router-dom";
@@ -69,7 +69,7 @@ export default function ItemPage() {
 
 function ParticipationContainer({ eventId }: { eventId: number }) {
     const queryKey = ["FetchEvenParticipants", eventId]
-    const { isLoading, isError, data, error } = useQuery<ParticipationList>(queryKey, () => fetchAsync<ParticipationList>(`/api/event-participants?eventId=${eventId}`))
+    const { isLoading, isError, data, error } = useQuery<Participant[]>(queryKey, () => fetchAsync<Participant[]>(`/api/event-participants?eventId=${eventId}`))
     const user = useAuth().user!
 
     if (isLoading) {
@@ -80,11 +80,11 @@ function ParticipationContainer({ eventId }: { eventId: number }) {
         return <div>{`${error}`}</div>
     }
 
-    const currentUserStatus = data.participants.find(participant => participant.userId === user.userId)
+    const currentUserStatus = data.find(participant => participant.userId === user.userId)
 
-    const attending = data.participants.filter(user => user.participationStatus === ParticipationStatus.Attending)
-    const maybeAttending = data.participants.filter(user => user.participationStatus === ParticipationStatus.Maybe)
-    const notAttending = data.participants.filter(user => user.participationStatus === ParticipationStatus.NotAttending)
+    const attending = data.filter(user => user.status === ParticipationStatus.Attending)
+    const maybeAttending = data.filter(user => user.status === ParticipationStatus.Maybe)
+    const notAttending = data.filter(user => user.status === ParticipationStatus.NotAttending)
 
     return (
         <>
@@ -97,7 +97,7 @@ function ParticipationContainer({ eventId }: { eventId: number }) {
 }
 
 function AttendingForm({ eventId, queryKey, user }: { eventId: number, queryKey: QueryKey, user?: Participant }) {
-    const attendingStatus = user?.participationStatus ?? ParticipationStatus.Unknown
+    const attendingStatus = user?.status ?? ParticipationStatus.Unknown
     const [isSubmitting, setIsSubmitting] = useState(false)
     const queryClient = useQueryClient()
 
