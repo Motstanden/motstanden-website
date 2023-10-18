@@ -1,6 +1,6 @@
-import { test, expect, Page } from '@playwright/test'
+import { Page, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
-import { NewUser } from 'common/interfaces'
+import { NewUser, User } from 'common/interfaces'
 import dayjs from 'common/lib/dayjs'
 import {
     getFullName,
@@ -69,24 +69,23 @@ test.describe("Set inactive status", async () => {
 
 test.describe.serial("Create and update user data", async () => {
     test.slow()
-    let user: NewUser
+    let user: UserWithoutDbData
     let userUrl: string
     let page: undefined | Page
 
     test("Should create new user @smoke", async ({browser}) => {
-        user = createNewUser({
+        user = createUser({
             capeName: null,
             phoneNumber: null,
             birthDate: null,
-            endDate: null
+            endDate: null,
+            startDate: `${dayjs().format("YYYY-MM-DD")}`,  // Today
         })
 
         page = await storageLogIn(browser, UserGroup.SuperAdministrator)
         await page.goto("/medlem/ny")
 
-
         await fillPersonalForm(page, user)
-        await selectDate(page, "Startet *", user.startDate, "MonthYear")
     
         await page.getByRole('button', { name: 'Profilbilde Gutt' }).click()
         await page.getByRole('option', { name: 'Jente' }).click()
@@ -101,7 +100,7 @@ test.describe.serial("Create and update user data", async () => {
     test("Super admin can update all info @smoke", async () => {
         await clickEditButton(page)   // Reuse the page from the previous test to reduce test time
 
-        user = createNewUser({
+        user = createUser({
             groupName: UserGroup.Editor,
             rank: UserRank.Ohm,
             status: UserStatus.Active
@@ -120,7 +119,7 @@ test.describe.serial("Create and update user data", async () => {
         page = await storageLogIn(browser, UserGroup.Administrator)
         await page.goto(`${userUrl}/rediger`)
 
-        const newData = createNewUser()
+        const newData = createUser()
         user = {
             ...user,
             // Data that the admin is allowed to change
@@ -157,7 +156,7 @@ test.describe.serial("Create and update user data", async () => {
         await expect(page).toHaveURL(`${userUrl}/rediger`)
 
         await test.step("Admin can update all", async () => {
-            user = createNewUser({ 
+            user = createUser({ 
                 groupName: UserGroup.Contributor, 
                 rank: UserRank.KiloOhm,
                 status: UserStatus.Veteran 
@@ -177,7 +176,7 @@ test.describe.serial("Create and update user data", async () => {
             expect(await page.getByRole('button', { name: /Rang/ }).count()).toBe(0)
             expect(await page.getByRole('button', { name: /Rolle/ }).count()).toBe(0)
             
-            user = createNewUser({
+            user = createUser({
                 rank: user.rank,
                 groupName: user.groupName,
                 status: UserStatus.Retired
@@ -192,7 +191,7 @@ test.describe.serial("Create and update user data", async () => {
     })
 })
 
-async function fillPersonalForm(page: Page, user: NewUser) {
+async function fillPersonalForm(page: Page, user: UserWithoutDbData) {
     await page.getByLabel('Fornavn *').fill(user.firstName)
     await page.getByLabel('Mellomnavn').fill(user.middleName)
     await page.getByLabel('Etternavn *').fill(user.lastName)
@@ -206,7 +205,7 @@ async function fillPersonalForm(page: Page, user: NewUser) {
     }
 }
 
-async function fillMembershipForm(page: Page, user: NewUser, opts?: { skipRank?: boolean }) {
+async function fillMembershipForm(page: Page, user: UserWithoutDbData, opts?: { skipRank?: boolean }) {
     await select(page, "UserStatus", user.status)
     await selectDate(page, "Startet *", user.startDate, "MonthYear")
 
@@ -249,9 +248,11 @@ async function select<T extends UserEnum>(page: Page, typeName: UserEnumName,  v
     await page.getByRole('option', { name: selectValue, exact: true }).click()
 }
 
-function createNewUser(userData?: Partial<NewUser>): NewUser {
+interface UserWithoutDbData extends Omit<User,  "id" | "groupId" | "createdAt" | "updatedAt" > {}
+
+function createUser(userData?: Partial<UserWithoutDbData>): UserWithoutDbData {
     const uuid: string = randomUUID().toLowerCase()
-    const newUser: NewUser = {
+    const user: UserWithoutDbData = {
         email: `${uuid}@motstanden.no`,
         groupName: UserGroup.Contributor,
         rank: UserRank.ShortCircuit,
@@ -267,7 +268,7 @@ function createNewUser(userData?: Partial<NewUser>): NewUser {
         birthDate: `${randomInt(1980, 2003)}-${randomInt(1, 12)}-${randomInt(1, 28)}`,
         ...userData
     }
-    return newUser
+    return user
 }
 
 async function clickEditButton(page: Page) {
@@ -280,7 +281,7 @@ async function saveChanges(page: Page) {
     await expect(page).toHaveURL(/\/medlem\/[0-9]+$/)
 }
 
-async function validateUserProfile(page: Page, user: NewUser) {
+async function validateUserProfile(page: Page, user: UserWithoutDbData) {
 
     const fullName = getFullName(user)
     await expect(page.getByText(fullName).first()).toBeVisible()

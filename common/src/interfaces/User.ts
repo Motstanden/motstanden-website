@@ -5,26 +5,27 @@ import {
 } from "../enums/index.js";
 
 export interface NewUser {
-    email: string;
-    groupName: UserGroup;
-    rank: UserRank;
     firstName: string;
     middleName: string;
     lastName: string;
+    email: string;
     profilePicture: string;
-    capeName: string;
 
-    status: UserStatus;
-    startDate: string;              // Format: 'YYYY-MM-DD'
-
-    endDate: string | null;         // Format: 'YYYY-MM-DD'
-    phoneNumber: number | null;
-    birthDate: string | null;       // Format: 'YYYY-MM-DD'
 }
 
 export interface User extends NewUser {
     id: number;
     groupId: number;
-    createdAt: string;          // Format: 'YYYY-MM-DD HH-MM-SS'
-    updatedAt: string;          // Format: 'YYYY-MM-DD HH-MM-SS'
+    groupName: UserGroup;
+    rank: UserRank;
+    capeName: string;
+    status: UserStatus;
+    phoneNumber: number | null;
+    birthDate: string | null;       // Format: 'YYYY-MM-DD'
+
+    startDate: string;              // Format: 'YYYY-MM-DD'
+    endDate: string | null;         // Format: 'YYYY-MM-DD'
+    
+    createdAt: string;              // Format: 'YYYY-MM-DD HH-MM-SS'
+    updatedAt: string;              // Format: 'YYYY-MM-DD HH-MM-SS'
 }

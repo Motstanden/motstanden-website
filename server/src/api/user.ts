@@ -68,7 +68,8 @@ router.post("/create-user", requiresGroup(UserGroup.SuperAdministrator), (req: R
     try {
         const userId = userService.createUser(user)
         res.json({userId: userId})
-    } catch {
+    } catch (err) {
+        console.log(err)
         res.status(400).send("Bad data")
     }
 

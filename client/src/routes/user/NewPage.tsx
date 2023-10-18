@@ -40,7 +40,6 @@ function NewUserForm() {
     const [middleName, setMiddleName] = useState("")
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
-    const [startDate, setStartDate] = useState<Dayjs>(dayjs());
     const [profilePicture, setProfilePicture] = useState(profilePictureTVPair[0].value)
 
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -64,17 +63,7 @@ function NewUserForm() {
             firstName: firstName.trim(),
             middleName: middleName.trim(),
             lastName: lastName.trim(),
-            startDate: startDate.format("YYYY-MM-DD"),
             profilePicture: profilePicture,
-            
-            // Fields not in the form
-            rank: UserRank.ShortCircuit,
-            status: UserStatus.Active,
-            groupName: UserGroup.Contributor,
-            endDate: null,
-            capeName: "",
-            phoneNumber: null,
-            birthDate: null
         }
     }
 
@@ -142,16 +131,6 @@ function NewUserForm() {
                     autoComplete="off"
                     fullWidth
                     helperText={isValidEmail ? null : (isNtnuMail(email) ? "Ntnu-e-post ikke tillat" : "Ugyldig e-post")}
-                />
-                <DatePicker
-                    {...datePickerStyle}
-                    views={["year", "month"]}
-                    label="Startet"
-                    minDate={dayjs().year(2018).month(7)}
-                    maxDate={dayjs()}
-                    value={startDate}
-                    onChange={newVal => setStartDate(newVal ?? dayjs())}
-                    renderInput={(params) => <TextField {...params} required fullWidth />}
                 />
                 <TextField
                     select

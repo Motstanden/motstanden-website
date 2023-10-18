@@ -200,9 +200,9 @@ export function createUser(user: NewUser): number | bigint {
     const dbRd = new Database(motstandenDB, dbReadOnlyConfig)   // Read only instance of db
 
     // Throws exceptions if not found
-    const groupId = getGroupId(user.groupName, dbRd)
-    const rankId = getRankId(user.rank, dbRd)
-    const statusId = getUserStatusId(user.status, dbRd)
+    const groupId = getGroupId(UserGroup.Contributor, dbRd)
+    const rankId = getRankId(UserRank.ShortCircuit, dbRd)
+    const statusId = getUserStatusId(UserStatus.Active, dbRd)
     dbRd.close()
 
     const dbWr = new Database(motstandenDB, dbReadWriteConfig)  // Read/Write instance of db
@@ -223,11 +223,10 @@ export function createUser(user: NewUser): number | bigint {
                 phone_number,
                 birth_date,
                 user_status_id,
-                start_date,
                 end_date
             )
             VALUES
-                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `)
         result = stmt.run(
             groupId,
@@ -237,12 +236,11 @@ export function createUser(user: NewUser): number | bigint {
             user.middleName,
             user.lastName,
             user.profilePicture,
-            user.capeName ?? "",
-            user.phoneNumber ?? null,
-            user.birthDate ?? null,
+            "",     // cape name
+            null,   // Phone number
+            null,   // Birth date
             statusId,
-            user.startDate,
-            user.endDate ?? null
+            null    // End date
         )
     })
 
