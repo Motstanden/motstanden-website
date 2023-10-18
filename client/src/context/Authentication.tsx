@@ -7,8 +7,8 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 interface AuthContextType {
     user: User | null
-    signOut: () => Promise<boolean>;
-    signOutAllUnits: () => Promise<boolean>;
+    signOut: () => Promise<void>;
+    signOutAllUnits: () => Promise<void>;
 }
 
 export const AuthContext = React.createContext<AuthContextType>(null!);
@@ -21,18 +21,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const [user, setUser] = useState<User | null>(null)
 
-    const signOutRequest = async (url: string): Promise<boolean> => {
+    const signOutRequest = async (url: string): Promise<void> => {
         const response = await fetch(url, { method: "POST" })
-        if (!response.ok) {
-            return false
+        if(response.ok) {
+            window.location.href = `${window.location.origin}` // Do a full page refresh
         }
-        setUser(null)
-        return true;
     }
 
     // Define logout logic
-    const signOut = async (): Promise<boolean> => await signOutRequest("/api/logout")
-    const signOutAllUnits = async (): Promise<boolean> => await signOutRequest("/api/logout-all-units")
+    const signOut = async (): Promise<void> => await signOutRequest("/api/logout")
+    const signOutAllUnits = async (): Promise<void> => await signOutRequest("/api/logout-all-units")
 
     const fetchUserData = async (): Promise<User | null> => {
         const res = await fetch("/api/userMetaData")

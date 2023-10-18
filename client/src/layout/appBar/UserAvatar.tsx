@@ -11,7 +11,7 @@ import {
     Tooltip
 } from "@mui/material";
 
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../../context/Authentication';
 
 import { getFullName } from 'common/utils';
@@ -21,20 +21,13 @@ import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 export default function UserAvatar() {
     const auth = useAuth()
 
-    const navigate = useNavigate()
     const onSignOutClick = async () => {
-        const success = await auth.signOut();
-        if (success) {
-            navigate("/")
-        }
+        await auth.signOut();
     }
 
     const onSignOutAllClick = async () => {
         if (window.confirm("Du vil bli logget ut av alle enheter innen 15 minutter")) {
-            const success = await auth.signOutAllUnits()
-            if (success) {
-                navigate("/")
-            }
+            await auth.signOutAllUnits()
         }
     }
 
