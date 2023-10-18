@@ -112,7 +112,7 @@ function NewUserForm() {
                     required
                     autoComplete="off"
                     fullWidth
-                    helperText={isNtnuMail ? null : "Ntnu-e-post ikke tillat" }
+                    helperText={isNtnuMail ? "Ntnu-e-post ikke tillat" : null }
                 />
                 <TextField
                     select
