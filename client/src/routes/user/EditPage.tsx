@@ -8,7 +8,7 @@ import {
 import { DatePicker } from "@mui/x-date-pickers";
 import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
 import { User } from "common/interfaces";
-import { isNtnuMail as checkIsNtnuMail, hasGroupAccess, isNullOrWhitespace, strToNumber, userRankToPrettyStr, validateEmail } from "common/utils";
+import { isNtnuMail as checkIsNtnuMail, hasGroupAccess, isNullOrWhitespace, strToNumber, userRankToPrettyStr } from "common/utils";
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate, useOutletContext } from "react-router-dom";
@@ -92,10 +92,9 @@ function PersonForm({ value, onChange, onIsValidChange, editMode }: FormParams) 
     }
 
     const isNtnuMail = checkIsNtnuMail(value.email)
-    const isValidEmail = validateEmail(value.email)
     const isValidPhone = value.phoneNumber === null || (value.phoneNumber >= 10000000 && value.phoneNumber <= 99999999)
 
-    const userIsValid = !isNtnuMail && isValidEmail && isValidPhone && !isNullOrWhitespace(value.firstName) && !isNullOrWhitespace(value.lastName)
+    const userIsValid = !isNtnuMail && isValidPhone && !isNullOrWhitespace(value.firstName) && !isNullOrWhitespace(value.lastName)
     const validChanged = (userIsValid && !isValid) || (!userIsValid && isValid)
     if (validChanged) {
         setIsValid(prev => !prev)
@@ -140,12 +139,11 @@ function PersonForm({ value, onChange, onIsValidChange, editMode }: FormParams) 
                     name="email"
                     value={value.email}
                     onChange={e => onChange({ ...value, email: e.target.value })}
-                    error={isNtnuMail || !isValidEmail}
+                    error={isNtnuMail}
                     fullWidth
                     required
                 />
                 {isNtnuMail && <div color="error.main">Ntnu mail ikke tillat</div>}
-                {!isValidEmail && <div color="error.main">Ugyldig E-post</div>}
             </div>
             <div>
                 <TextField

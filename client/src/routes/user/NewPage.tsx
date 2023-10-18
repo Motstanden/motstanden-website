@@ -6,13 +6,9 @@ import {
     Stack,
     TextField
 } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
-import { UserGroup, UserRank, UserStatus } from 'common/enums';
 import { NewUser } from 'common/interfaces';
-import { isNullOrWhitespace, validateEmail } from 'common/utils';
-import dayjs, { Dayjs } from 'dayjs';
+import { isNtnuMail as checkIsNtnuMail, isNullOrWhitespace } from 'common/utils';
 import React, { useState } from 'react';
-import { datePickerStyle } from 'src/assets/style/timePickerStyles';
 import { useTitle } from 'src/hooks/useTitle';
 import { profilePictureTVPair } from './Components';
 
@@ -43,20 +39,7 @@ function NewUserForm() {
     const [profilePicture, setProfilePicture] = useState(profilePictureTVPair[0].value)
 
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [isValidEmail, setIsValidEmail] = useState(true)
 
-    const onEmailBlur = (_: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
-        if(!validateEmail(email) || isNtnuMail(email)) {
-            setIsValidEmail(false)
-        }
-    }
-
-    const onEmailChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setEmail(e.target.value)
-        if(!isValidEmail) 
-            setIsValidEmail(true)
-    }
-    
     const buildUser = (): NewUser => {
         return {
             email: email.trim().toLowerCase(),
@@ -86,11 +69,11 @@ function NewUserForm() {
         }
     }
 
+    const isNtnuMail = checkIsNtnuMail(email)
     const isDisabled = isSubmitting ||
                        isNullOrWhitespace(firstName) || 
                        isNullOrWhitespace(lastName) ||
-                       isNtnuMail(email) ||
-                       !validateEmail(email)
+                       isNtnuMail
     return (
         <form onSubmit={onSubmit}>
             <Stack spacing={4} alignItems="center">
@@ -124,13 +107,12 @@ function NewUserForm() {
                     label="E-post"
                     name="email"
                     value={email}
-                    onChange={onEmailChange}
-                    error={!isValidEmail}
+                    onChange={e => setEmail(e.target.value)}
+                    error={isNtnuMail}
                     required
-                    onBlur={onEmailBlur}
                     autoComplete="off"
                     fullWidth
-                    helperText={isValidEmail ? null : (isNtnuMail(email) ? "Ntnu-e-post ikke tillat" : "Ugyldig e-post")}
+                    helperText={isNtnuMail ? null : "Ntnu-e-post ikke tillat" }
                 />
                 <TextField
                     select
@@ -160,7 +142,9 @@ function NewUserForm() {
                     style={{marginTop: "3em"}}
                     sx={{ maxWidth: "300px"}}
                     endIcon={<PersonAddIcon />}
-                >Legg til bruker</Button>
+                >
+                    Legg til bruker
+                </Button>
             </Stack>
         </form>
     )

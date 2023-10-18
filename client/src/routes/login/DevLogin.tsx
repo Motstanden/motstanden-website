@@ -20,9 +20,7 @@ function DevLoginBtn({ props }: { props: DevLoginProps }) {
     }
 
     return (
-        <>
-            <br />
-            <br />
+        <div style={{marginTop: "35px"}}> 
             <Button
                 variant="contained"
                 color="secondary"
@@ -32,7 +30,7 @@ function DevLoginBtn({ props }: { props: DevLoginProps }) {
             >
                 Dev logg inn
             </Button>
-        </>
+        </div>
     )
 }
 
