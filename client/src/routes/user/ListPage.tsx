@@ -243,7 +243,7 @@ function UserTable({
                             <TableCell sx={nameSx}>
                                 <Link
                                     component={RouterLink}
-                                    to={`/medlem/${user.userId}`}
+                                    to={`/medlem/${user.id}`}
                                     underline="hover"
                                     sx={noVisitedLinkStyle}
                                 >

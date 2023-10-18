@@ -80,7 +80,7 @@ function ParticipationContainer({ eventId }: { eventId: number }) {
         return <div>{`${error}`}</div>
     }
 
-    const currentUserStatus = data.find(participant => participant.userId === user.userId)
+    const currentUserStatus = data.find(participant => participant.id === user.id)
 
     const attending = data.filter(user => user.status === ParticipationStatus.Attending)
     const maybeAttending = data.filter(user => user.status === ParticipationStatus.Maybe)
@@ -146,7 +146,7 @@ function AttendingList({ title, items }: { title: string, items: Participant[] }
         <TitleCard title={title} sx={{ my: 6 }}>
             {items.map((user, index) => (
                 <Stack
-                    key={user.userId}
+                    key={user.id}
                     direction="row"
                     alignItems="center"
                     sx={{ py: 1, pl: 1 }}
@@ -158,7 +158,7 @@ function AttendingList({ title, items }: { title: string, items: Participant[] }
                     <Link
                         color="secondary"
                         component={RouterLink}
-                        to={`/medlem/${user.userId}`}
+                        to={`/medlem/${user.id}`}
                         underline="hover"
                     >
                         {`${user.firstName} ${isNullOrWhitespace(user.middleName) ? user.lastName : user.middleName + " " + user.lastName}`}

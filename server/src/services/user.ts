@@ -16,7 +16,7 @@ export function userExists(unsafeEmail: string | undefined): boolean {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
         `SELECT 
-            user_id 
+            user_id
         FROM 
             user 
         WHERE email = ?`)
@@ -135,7 +135,7 @@ export function getUserData(userToken: AccessTokenData): User {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
         `SELECT 
-            user_id as userId,
+            user_id as id,
             email,
             user_group_id as groupId,
             user_group as groupName,
@@ -169,7 +169,7 @@ export function getAllUsers(): User[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
         `SELECT 
-            user_id as userId,
+            user_id as id,
             email,
             user_group_id as groupId,
             user_group as groupName,
@@ -372,7 +372,7 @@ function getUpdateUserSql(user: User, updateMode: UserEditMode): SqlHelper {
             ...selfDefault.params,
             rankId,
             groupId,
-            user.userId
+            user.id
         ]
     }
 
@@ -388,7 +388,7 @@ function getUpdateUserSql(user: User, updateMode: UserEditMode): SqlHelper {
                 `,
                 params: [
                     ...selfDefault.params,
-                    user.userId,
+                    user.id,
                 ]
             }
         case UserEditMode.Admin:
@@ -413,7 +413,7 @@ function getUpdateUserSql(user: User, updateMode: UserEditMode): SqlHelper {
                     user.startDate,
                     user.endDate,
                     groupId,
-                    user.userId
+                    user.id
                 ]
             }
         case UserEditMode.SelfAndAdmin: return superAdminOrSelfAdmin

@@ -155,7 +155,7 @@ function DefaultItem<T extends ItemBase>({
     }
 
     const user = useAuth().user!
-    const hasEditPrivilege = user.userId === data.createdBy || hasGroupAccess(user, UserGroup.Administrator)
+    const hasEditPrivilege = user.id === data.createdBy || hasGroupAccess(user, UserGroup.Administrator)
 
     return (
         <Stack

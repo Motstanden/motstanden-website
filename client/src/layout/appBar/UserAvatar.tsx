@@ -48,7 +48,7 @@ export default function UserAvatar() {
                 </Tooltip>
             )}
         >
-            <MenuItem component={RouterLink} to={`/medlem/${user.userId}`} >
+            <MenuItem component={RouterLink} to={`/medlem/${user.id}`} >
                 <ListItemIcon><PersonIcon /></ListItemIcon>
                 Profil
             </MenuItem>

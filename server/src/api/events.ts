@@ -2,13 +2,13 @@ import { UserGroup } from "common/enums";
 import { Participant, UpsertEventData, UpsertParticipant } from "common/interfaces";
 import { strToNumber } from "common/utils";
 import express, { NextFunction, Request, Response } from "express";
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
-import * as eventParticipant from "../services/eventParticipant.js"
-import * as events from "../services/events.js"
-import { DbWriteAction } from "../ts/enums/DbWriteAction.js"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
-import { UpsertDb } from "../ts/types/UpsertDb.js"
-import { hasGroupAccess } from "../utils/accessTokenUtils.js"
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
+import * as eventParticipant from "../services/eventParticipant.js";
+import * as events from "../services/events.js";
+import { DbWriteAction } from "../ts/enums/DbWriteAction.js";
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
+import { UpsertDb } from "../ts/types/UpsertDb.js";
+import { hasGroupAccess } from "../utils/accessTokenUtils.js";
 
 let router = express.Router()
 

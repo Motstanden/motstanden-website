@@ -1,5 +1,6 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Theme, useMediaQuery, useTheme } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import { UserGroup } from 'common/enums';
 import { SongLyric } from 'common/interfaces';
 import { hasGroupAccess } from 'common/utils';
@@ -9,10 +10,9 @@ import { MarkDownRenderer } from 'src/components/MarkDownEditor';
 import { DeleteMenuItem, EditMenuItem } from 'src/components/menu/EditOrDeleteMenu';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 import { useAuth } from 'src/context/Authentication';
+import { postJson } from 'src/utils/postJson';
 import { useTitle } from "../../hooks/useTitle";
 import { lyricContextQueryKey, useLyricItemContext } from './Context';
-import { useQueryClient } from '@tanstack/react-query';
-import { postJson } from 'src/utils/postJson';
 
 export function LyricItemPage() {
     const [allLyrics, lyric] = useLyricItemContext()
@@ -53,7 +53,7 @@ function TitleHeader( {lyric}: {lyric: SongLyric} ) {
     
     const user = useAuth().user;
     const isLoggedIn = user !== null
-    const canDelete = isLoggedIn && ( user.userId === lyric.createdBy || hasGroupAccess(user, UserGroup.Administrator));
+    const canDelete = isLoggedIn && ( user.id === lyric.createdBy || hasGroupAccess(user, UserGroup.Administrator));
 
     const queryClient = useQueryClient();
     const navigate = useNavigate();

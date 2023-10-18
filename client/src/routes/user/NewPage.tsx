@@ -92,7 +92,7 @@ function NewUserForm() {
 
         setIsSubmitting(false)
         if (response.ok) {
-            const data = await response.json()
+            const data: {userId: number} = await response.json() 
             window.location.href = `${window.location.origin}/medlem/${data.userId}`;   // Redirect to the profile page of the new user
         }
     }

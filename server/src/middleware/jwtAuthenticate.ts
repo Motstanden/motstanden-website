@@ -1,10 +1,10 @@
 import crypto from "crypto";
-import { NextFunction, Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import * as userService from '../services/user.js'
-import { AccessTokenData } from '../ts/interfaces/AccessTokenData.js'
-import { RefreshTokenData } from '../ts/interfaces/RefreshTokenData.js'
+import * as userService from '../services/user.js';
+import { AccessTokenData } from '../ts/interfaces/AccessTokenData.js';
+import { RefreshTokenData } from '../ts/interfaces/RefreshTokenData.js';
 
 
 export function AuthenticateUser(options?: AuthenticateOptions) {

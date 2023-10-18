@@ -61,7 +61,7 @@ function ProfileBanner({ user }: { user: User }) {
 function EditButton({ user }: { user: User }) {
     const loggedInUser = useAuth().user!
 
-    const isSelf = loggedInUser.userId === user.userId
+    const isSelf = loggedInUser.id === user.id
     const groupPermission = hasGroupAccess(loggedInUser, UserGroup.Administrator)
     const canEdit = isSelf || groupPermission
     if (!canEdit) {
@@ -73,7 +73,7 @@ function EditButton({ user }: { user: User }) {
             <Tooltip title="Rediger Profil" >
                 <IconButton
                     component={RouterLink}
-                    to={`/medlem/${user.userId}/rediger`}
+                    to={`/medlem/${user.id}/rediger`}
                     style={{
                         position: "absolute",
                         right: "0px",

@@ -40,7 +40,7 @@ function handleUserUpdate(updateMode: UserEditMode) {
 
         if (changeSuccess) {
             const currentUser = req.user as AccessTokenData
-            if (payload.userId === currentUser.userId) {
+            if (payload.id === currentUser.userId) {
                 updateAccessToken(req, res, () => { }, {})
             }
         }
@@ -52,7 +52,7 @@ function handleUserUpdate(updateMode: UserEditMode) {
 function RequireSelf(req: Request, res: Response, next: NextFunction) {
     const user = req.user as AccessTokenData
     const newUser = req.body as User | undefined
-    if (newUser?.userId && newUser.userId === user.userId) {
+    if (newUser?.id && newUser.id === user.userId) {
         next()
     }
     else {

@@ -3,7 +3,7 @@ import { User } from "./index.js";
 
 export interface Participant extends Pick<
     User,
-    "userId" |
+    "id" |
     "firstName" |
     "middleName" |
     "lastName" |

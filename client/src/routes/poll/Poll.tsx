@@ -4,21 +4,21 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { LoadingButton } from "@mui/lab";
-import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, Paper, Radio, RadioGroup, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Divider, FormControlLabel, FormGroup, Paper, Radio, RadioGroup, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { UserGroup } from 'common/enums';
 import { Poll, PollOption, PollWithOption } from "common/interfaces";
+import { hasGroupAccess } from 'common/utils';
 import React, { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { AuthorInfo } from 'src/components/AuthorInfo';
 import { DeleteMenuItem } from 'src/components/menu/EditOrDeleteMenu';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
+import { useAuth } from 'src/context/Authentication';
 import { useTitle } from 'src/hooks/useTitle';
 import { fetchAsync } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
 import { pollListQueryKey } from './Context';
-import { useAuth } from 'src/context/Authentication';
-import { UserGroup } from 'common/enums';
-import { hasGroupAccess } from 'common/utils';
 
 
 export default function PollPage(){
@@ -61,7 +61,7 @@ export function PollCard( { poll, srcQueryKey, style, }: { poll: Poll, srcQueryK
     const [isLoading, setIsLoading] = useState(false)
     const queryClient = useQueryClient()
 
-    const canDeletePoll = user.userId === poll.createdBy || hasGroupAccess(user, UserGroup.Administrator)
+    const canDeletePoll = user.id === poll.createdBy || hasGroupAccess(user, UserGroup.Administrator)
 
     const onDeleteClick = async () => {
         setIsLoading(true)

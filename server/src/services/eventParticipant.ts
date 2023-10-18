@@ -8,7 +8,7 @@ export function getAll(eventId: number): Participant[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig);
     const stmt = db.prepare(`
         SELECT 
-            user_id as userId,
+            user_id as id,
             first_name as firstName,
             middle_name as middleName,
             last_name as lastName,

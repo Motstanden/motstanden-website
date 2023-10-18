@@ -16,7 +16,7 @@ export function ItemMenu({ event, iconOrientation }: { event: EventData; iconOri
 
     const onEditClick = () => navigate(`${buildEventItemUrl(event)}/rediger`);
 
-    if (!hasGroupAccess(user, UserGroup.Administrator) && user.userId !== event.createdByUserId) {
+    if (!hasGroupAccess(user, UserGroup.Administrator) && user.id !== event.createdByUserId) {
         return (
             <Tooltip title="Rediger">
                 <IconButton onClick={onEditClick}>

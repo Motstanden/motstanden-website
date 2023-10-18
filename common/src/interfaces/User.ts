@@ -1,8 +1,8 @@
-import { 
-    UserStatus, 
-    UserGroup, 
-    UserRank 
-} from "../enums/index.js"
+import {
+    UserGroup,
+    UserRank,
+    UserStatus
+} from "../enums/index.js";
 
 export interface NewUser {
     email: string;
@@ -23,7 +23,7 @@ export interface NewUser {
 }
 
 export interface User extends NewUser {
-    userId: number;
+    id: number;
     groupId: number;
     createdAt: string;          // Format: 'YYYY-MM-DD HH-MM-SS'
     updatedAt: string;          // Format: 'YYYY-MM-DD HH-MM-SS'

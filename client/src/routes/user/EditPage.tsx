@@ -8,23 +8,23 @@ import {
 import { DatePicker } from "@mui/x-date-pickers";
 import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
 import { User } from "common/interfaces";
-import { hasGroupAccess, isNtnuMail as checkIsNtnuMail, isNullOrWhitespace, strToNumber, userRankToPrettyStr, validateEmail } from "common/utils";
+import { isNtnuMail as checkIsNtnuMail, hasGroupAccess, isNullOrWhitespace, strToNumber, userRankToPrettyStr, validateEmail } from "common/utils";
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate, useOutletContext } from "react-router-dom";
 import { datePickerStyle } from "src/assets/style/timePickerStyles";
-import { Form } from "src/components/form/Form";
 import { HelpButton } from "src/components/HelpButton";
+import { Form } from "src/components/form/Form";
 import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
 import { Card, CardTextItem, groupTVPair, rankTVPair, statusTVPair } from "./Components";
-import { AccountDetailsCard, formatExactDate, PersonCard } from "./UserPage";
+import { AccountDetailsCard, PersonCard, formatExactDate } from "./UserPage";
 
 export default function EditUserPage() {
     const currentUser = useAuth().user!
     const viewedUser = useOutletContext<User>()
 
-    const isSelfEditing = currentUser.userId === viewedUser.userId
+    const isSelfEditing = currentUser.id === viewedUser.id
     const isSuperAdmin = hasGroupAccess(currentUser, UserGroup.SuperAdministrator)
     const isAdmin = hasGroupAccess(currentUser, UserGroup.Administrator)
 
@@ -46,7 +46,7 @@ export default function EditUserPage() {
         return <EditPage editMode={editMode} user={viewedUser} />
     }
 
-    return <Navigate to={`/medlem/${viewedUser.userId}`} />
+    return <Navigate to={`/medlem/${viewedUser.id}`} />
 }
 
 function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
@@ -59,8 +59,8 @@ function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
     const onChange = (user: User) => setNewUser(user);
     const onIsValidChange = (isValid: boolean) => setDisableSubmit(!isValid)
 
-    const onAbort = () => canExitPage(user, newUser) && navigate(`/medlem/${user.userId}`)
-    const onPostSuccess = (_: Response) => window.location.href = `${window.location.origin}/medlem/${user.userId}`    // Will trigger a reload of the page
+    const onAbort = () => canExitPage(user, newUser) && navigate(`/medlem/${user.id}`)
+    const onPostSuccess = (_: Response) => window.location.href = `${window.location.origin}/medlem/${user.id}`    // Will trigger a reload of the page
     const preventSubmit = () => false // TODO: Validate user here. Return true if user is invalid
 
     return (
