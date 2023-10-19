@@ -11,6 +11,9 @@ import { isNtnuMail as checkIsNtnuMail, isNullOrWhitespace } from 'common/utils'
 import React, { useState } from 'react';
 import { useTitle } from 'src/hooks/useTitle';
 import { profilePictureTVPair } from './Components';
+import { useQueryClient } from '@tanstack/react-query';
+import { userListQueryKey } from './Context';
+import { useNavigate } from 'react-router-dom';
 
 export default function NewUserPage() {
     useTitle("Ny bruker")
@@ -40,6 +43,9 @@ function NewUserForm() {
 
     const [isSubmitting, setIsSubmitting] = useState(false)
 
+    const queryClient = useQueryClient()
+    const navigate = useNavigate()
+
     const buildUser = (): NewUser => {
         return {
             email: email.trim().toLowerCase(),
@@ -65,7 +71,8 @@ function NewUserForm() {
         setIsSubmitting(false)
         if (response.ok) {
             const data: {userId: number} = await response.json() 
-            window.location.href = `${window.location.origin}/medlem/${data.userId}`;   // Redirect to the profile page of the new user
+            await queryClient.invalidateQueries(userListQueryKey)
+            navigate(`/medlem/${data.userId}`)
         }
     }
 
