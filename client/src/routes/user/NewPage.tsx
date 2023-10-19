@@ -12,6 +12,7 @@ import { isNtnuMail as checkIsNtnuMail, isNullOrWhitespace } from 'common/utils'
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTitle } from 'src/hooks/useTitle';
+import { postJson } from 'src/utils/postJson';
 import { profilePictureTVPair } from './Components';
 import { userListQueryKey } from './Context';
 
@@ -60,27 +61,24 @@ function NewUserForm() {
         event.preventDefault()
         setIsSubmitting(true)
         const user = buildUser()
-        const response = await fetch("/api/create-user", {
-            method: "POST",
-            body: JSON.stringify(user),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
+        
+        const response = await postJson("/api/create-user", user, {alertOnFailure: true})
+
+        if (response && response.ok) {
+            const data: {userId: number} = await response.json() 
+            await queryClient.resetQueries(userListQueryKey)
+            navigate(`/medlem/${data.userId}`, {replace: true})
+        }
 
         setIsSubmitting(false)
-        if (response.ok) {
-            const data: {userId: number} = await response.json() 
-            await queryClient.invalidateQueries(userListQueryKey)
-            navigate(`/medlem/${data.userId}`)
-        }
     }
 
     const isNtnuMail = checkIsNtnuMail(email)
     const isDisabled = isSubmitting ||
                        isNullOrWhitespace(firstName) || 
                        isNullOrWhitespace(lastName) ||
-                       isNtnuMail
+                       isNullOrWhitespace(email) ||
+                       isNtnuMail 
     return (
         <form onSubmit={onSubmit}>
             <Stack spacing={4} alignItems="center">

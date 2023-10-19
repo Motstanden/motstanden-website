@@ -17,6 +17,8 @@ export function useAuth() {
     return useContext(AuthContext)
 }
 
+export const userQueryKey = ["GetUserMetaData"]
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const [user, setUser] = useState<User | null>(null)
@@ -48,7 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return userData
     }
 
-    const { isLoading } = useQuery<User | null>(["GetUserMetaData"], () => fetchUserData())
+    const { isLoading } = useQuery<User | null>(userQueryKey, () => fetchUserData())
 
     if (isLoading) {
         return <></>

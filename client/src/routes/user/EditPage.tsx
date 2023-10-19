@@ -15,7 +15,7 @@ import { Navigate, useNavigate, useOutletContext } from "react-router-dom";
 import { datePickerStyle } from "src/assets/style/timePickerStyles";
 import { HelpButton } from "src/components/HelpButton";
 import { Form } from "src/components/form/Form";
-import { useAuth } from "src/context/Authentication";
+import { useAuth, userQueryKey } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
 import { Card, CardTextItem, groupTVPair, rankTVPair, statusTVPair } from "./Components";
 import { AccountDetailsCard, PersonCard, formatExactDate } from "./UserPage";
@@ -69,6 +69,7 @@ function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
         } 
     }
     const onPostSuccess = async (_: Response) => {
+        await queryClient.invalidateQueries(userQueryKey)
         await queryClient.invalidateQueries(userListQueryKey)
         navigate("..", {replace: true})
     }
