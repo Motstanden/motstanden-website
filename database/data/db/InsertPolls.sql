@@ -16,7 +16,7 @@ INSERT INTO poll_option(poll_option_id, poll_id, text) VALUES
 ( 6, 3, 'Flåklypa'),
 ( 7, 3, 'Hjemme Alene'),
 ( 8, 3, 'Die Hard'),
-( 9, 3, 'Harry Potter og de vises sten'),
+( 9, 3, 'Harry Potter og de vises stein'),
 
 
 ( 10, 4, 'Spille musikk, tut'),
@@ -176,3 +176,28 @@ INSERT INTO poll_vote(poll_option_id, user_id) VALUES
 ( 13, 47 ),
 ( 13, 48 ),
 ( 13, 49 );
+
+
+INSERT INTO
+    poll_comment(poll_id, user_id, content)
+VALUES
+
+-- Poll 1: Kuleis eller Softis?
+    (1, 40, 'De som valgte softis har soft-tiss'),
+    (1, 40, '( •_•)>⌐■-■'),
+    (1, 40, '(⌐■_■)'),
+    (1, 41, '🙄'),
+    (1, 42, 'Nei, nei, nei...'),
+    (1, 42, '(ㆆ_ㆆ)'),
+
+-- pOLL 4: Hva er den beste julefilmen?
+    (4, 34, 'Her er det kriminelt å ikke stemme Die Hard!'),
+    (4, 25, 'Savner Lova Actually 😿'),
+    (4, 44, 'Ildbegeret er mere julete en de vises stein. Fight me!'),
+
+-- Poll 5: Hva var det kuleste på SMASH?
+    (5, 23, 'Åååå, savner SMASH... :/'),
+    (5, 26, 'Det beste var den episke bruremarsjen kl 0200 på Lørdag 😂'),
+    (5, 27, 'Hahahahaha, ja! 😂😂'),
+    (5, 30, 'Hva skjedde der?'),
+    (5, 26, '( ͡~ ͜ʖ ͡°)');

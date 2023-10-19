@@ -111,57 +111,111 @@ INSERT INTO
     event_participant(event_id, user_id, participation_status_id)
 VALUES 
     -- Fadderuka: Rebusløp
-    (1, 1, 3),
-    (1, 2, 3),
-    (1, 3, 4),
-    (1, 4, 4),
-    (1, 5, 4),
+    (1, 14, 2),
+    (1, 15, 2),
+    (1, 16, 2),
+    (1, 17, 2),
+    (1, 18, 3),
+    (1, 25, 3),
+    (1, 26, 4),
 
     -- Fadderuke: Hybel til hybel
-    (2, 1, 2),
-    (2, 2, 2),
-    (2, 3, 3),
-    (2, 4, 3),
-    (2, 5, 4),
+    (2, 21, 2),
+    (2, 22, 2),
+    (2, 23, 3),
+    (2, 24, 3),
+    (2, 25, 4),
 
     -- Åpen øvelse
-    (3, 1, 2),
-    (3, 2, 3),
-    (3, 3, 4),
-    (3, 4, 4),
-    (3, 5, 4), 
+    (3, 21, 2),
+    (3, 22, 3),
+    (3, 23, 4),
+    (3, 24, 4),
+    (3, 25, 4), 
 
     -- SMASH                
-    (4, 1, 2),
-    (4, 2, 2),
-    (4, 3, 2),
-    (4, 4, 2),
-    (4, 5, 2),
+    (4, 21, 2),
+    (4, 22, 2),
+    (4, 23, 2),
+    (4, 24, 2),
+    (4, 25, 2),
 
     -- Fadderuka: Rebusløp
-    (5, 1, 3),
-    (5, 2, 3),
-    (5, 3, 4),
-    (5, 4, 4),
-    (5, 5, 4),
+    (5, 14, 2),
+    (5, 15, 2),
+    (5, 16, 2),
+    (5, 17, 2),
+    (5, 21, 3),
+    (5, 22, 3),
+    (5, 23, 4),
+    (5, 24, 4),
+    (5, 25, 4),
 
     -- Fadderuke: Hybel til hybel
-    (6, 1, 2),
-    (6, 2, 2),
-    (6, 3, 3),
-    (6, 4, 3),
-    (6, 5, 4),
+    (6, 17, 4),
+    (6, 18, 4),
+    (6, 21, 2),
+    (6, 22, 2),
+    (6, 23, 3),
+    (6, 24, 3),
+    (6, 25, 4),
 
     -- Åpen øvelse
-    (7, 1, 2),
-    (7, 2, 3),
-    (7, 3, 4),
-    (7, 4, 4),
-    (7, 5, 4), 
+    (7, 19, 2),
+    (7, 20, 2),
+    (7, 21, 2),
+    (7, 22, 3),
+    (7, 23, 4),
+    (7, 24, 4),
+    (7, 25, 4), 
 
-    -- SMASH                
-    (8, 1, 2),
-    (8, 2, 2),
-    (8, 3, 2),
-    (8, 4, 2),
-    (8, 5, 2);
+    -- SMASH
+    (8, 22, 2),                
+    (8, 23, 2),                
+    (8, 24, 2),                
+    (8, 25, 2),                
+    (8, 31, 2),
+    (8, 32, 2),
+    (8, 33, 2),
+    (8, 34, 2),
+    (8, 35, 2);
+
+
+INSERT INTO
+    event_comment (event_id, user_id, content)
+VALUES
+
+    -- Rebusløp:
+    (5, 14, 'Har vi planlagt hva vi skal gjøre?'),
+    (5, 15, 'Nei, tror ikke det...'),
+    (5, 16, 
+'Foreslår at vi tar en liten workshop på kontoret en dag for å planlegge hva vi skal gjøre.
+Når passer det for dere?'),
+    (5, 14, 'Passer alle dager for meg 🙂'),    
+    (5, 15, 'Jeg kan bare på onsdag...'),    
+    (5, 16, 'Åkei! Da sier vi onsdag! Passer det å møtes kl 18:00?'),    
+    (5, 15, 'Nice! Ja det passer bra 😄'),
+    (5, 16, 'Den er brun 😏'),
+
+    -- Hybel til hybel:
+    (6, 17, 'Jeg er opptatt dessverre 😭'),
+    (6, 18, 'Jeg har pappa på besøk den dagen, så jeg kan heller ikke komme 😔'),
+
+    -- Åpen øvelse
+    (7, 19, 
+'Viktig å møte opp på dette folkens!
+Vi må vise de hvor episk det er å være med i Motstanden!' ),
+    (7, 20, 'Husk å ta med ekstra øl! 😄'),
+    (7, 21, 'HYPE!!!'),
+
+    -- SMASH
+    (8, 22, 'Det her blir så sinnsykt bra! 😁'),
+    (8, 23, 
+'Til dere nye:
+SMASH er noe av det gøyeste vi gjør!
+Anbefaler på det sterkeste å bli med!'),
+    (8, 24, 'Fins det noen oversikt over hvilke sanger vi trenger i marsjheftet?'),
+    (8, 25, 'Ja, gå på noter -> repertoar'),
+    (8, 24, 'Åja, haha ¯\_(ツ)_/¯');
+
+
