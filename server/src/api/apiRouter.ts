@@ -1,4 +1,5 @@
 import express from "express";
+import comments from "./comments.js";
 import documents from "./documents.js";
 import events from "./events.js";
 import login from "./login.js";
@@ -12,6 +13,7 @@ import user from "./user.js";
 
 const router = express.Router()
 
+router.use(comments)
 router.use(documents)
 router.use(events)
 router.use(login)
