@@ -6,14 +6,14 @@ import {
     Stack,
     TextField
 } from "@mui/material";
+import { useQueryClient } from '@tanstack/react-query';
 import { NewUser } from 'common/interfaces';
 import { isNtnuMail as checkIsNtnuMail, isNullOrWhitespace } from 'common/utils';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTitle } from 'src/hooks/useTitle';
 import { profilePictureTVPair } from './Components';
-import { useQueryClient } from '@tanstack/react-query';
 import { userListQueryKey } from './Context';
-import { useNavigate } from 'react-router-dom';
 
 export default function NewUserPage() {
     useTitle("Ny bruker")
@@ -121,6 +121,14 @@ function NewUserForm() {
                     fullWidth
                     helperText={isNtnuMail ? "Ntnu-e-post ikke tillat" : null }
                 />
+                <img
+                    src={`${window.location.origin}/${profilePicture}`}
+                    alt={`Profilbilde for ny bruker: ${firstName}`}
+                    style={{
+                        maxWidth: "300px",
+                        borderRadius: "50%",
+                        textAlign: "center",
+                    }} />
                 <TextField
                     select
                     label="Profilbilde"
@@ -133,20 +141,12 @@ function NewUserForm() {
                 >
                     {profilePictureTVPair.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
                 </TextField>
-                <img
-                    src={`${window.location.origin}/${profilePicture}`}
-                    alt={`Profilbilde for ny bruker: ${firstName}`}
-                    style={{
-                        maxWidth: "300px",
-                        borderRadius: "50%",
-                        textAlign: "center",
-                    }} />
                 <Button
                     variant="contained"
                     size="large"
                     type="submit"
                     disabled={isDisabled}
-                    style={{marginTop: "3em"}}
+                    style={{marginTop: "7em"}}
                     sx={{ maxWidth: "300px"}}
                     endIcon={<PersonAddIcon />}
                 >
