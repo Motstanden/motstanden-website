@@ -9,16 +9,16 @@ import { AppLayout } from 'src/layout/AppLayout';
 // -- Event pages --
 import { EventContext, EventItemContext } from 'src/routes/event/Context';
 import EventListPage from "src/routes/event/ListPage";
-const EditEventPage = lazy(() => import("src/routes/event/EditPage"))
-const NewEventPage = lazy(() => import('src/routes/event/NewPage'))
-const EventItemPage = lazy(() => import("src/routes/event/ItemPage"))
+import EditEventPage from "src/routes/event/EditPage"
+import NewEventPage from "src/routes/event/NewPage"
+import EventItemPage from "src/routes/event/ItemPage"
 
 // -- User pages --
 import { UserContext, UserProfileContext } from 'src/routes/user/Context';
 import UserListPage from "src/routes/user/ListPage";
 import UserPage from "src/routes/user/UserPage";
-const NewUserPage = lazy(() => import('src/routes/user/NewPage'))
-const EditUserPage = lazy(() => import('src/routes/user/EditPage'))
+import NewUserPage from "src/routes/user/NewPage"
+import EditUserPage from "src/routes/user/EditPage"
 
 // -- Other pages --
 import AdminPage from "src/routes/admin/Admin";
@@ -110,10 +110,10 @@ function App() {
 							<Route path="liste" element={<UserListPage />} />
 							<Route path=":userId" element={<UserProfileContext />}>
 								<Route index element={<UserPage />} />
-								<Route path="rediger" element={<Suspense><EditUserPage/></Suspense>} /> {/* Authorization to this path is handled internally by EditUserPage. */}
+								<Route path="rediger" element={<EditUserPage/>} /> {/* Authorization to this path is handled internally by EditUserPage. */}
 							</Route>
 							<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator} />}>
-								<Route path="ny" element={<Suspense><NewUserPage/></Suspense>} />
+								<Route path="ny" element={<NewUserPage/>} />
 							</Route>
 						</Route>
 						<Route path="/arrangement" element={<EventContext />}>
@@ -121,15 +121,15 @@ function App() {
 							<Route path=':eventId' element={<EventItemContext />} /> 	{/* Will redirect to correct path */}
 							<Route path="kommende" element={<EventListPage mode='upcoming' />} />
 							<Route path="kommende/:eventId" element={<EventItemContext />}>
-								<Route index element={<Suspense><EventItemPage/></Suspense>} />
-								<Route path="rediger" element={<Suspense><EditEventPage /></Suspense>} />
+								<Route index element={<EventItemPage/>} />
+								<Route path="rediger" element={<EditEventPage />} />
 							</Route>
 							<Route path="tidligere" element={<EventListPage mode='previous' />} />
 							<Route path="tidligere/:eventId" element={<EventItemContext />}>
-								<Route index element={<Suspense><EventItemPage /></Suspense>} />
-								<Route path="rediger" element={<Suspense><EditEventPage /></Suspense>} />
+								<Route index element={<EventItemPage />} />
+								<Route path="rediger" element={<EditEventPage />} />
 							</Route>
-							<Route path="ny" element={<Suspense><NewEventPage/></Suspense>} />
+							<Route path="ny" element={<NewEventPage/>} />
 						</Route>
 					</Route>
 
