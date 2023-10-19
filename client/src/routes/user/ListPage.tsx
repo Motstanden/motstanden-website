@@ -256,7 +256,7 @@ function UserTable({
                                 {userRankToPrettyStr(user.rank)}
                             </TableCell>
                             <TableCell sx={capeSx}>
-                                {user.capeName ? <><i>Den grønne</i> {user.capeName}</> : <>-</>}
+                                {user.capeName ? user.capeName : "-"}
                             </TableCell>
                             <TableCell sx={statusSx}>
                                 {user.status}

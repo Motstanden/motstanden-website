@@ -186,25 +186,14 @@ function MemberForm({ value, onChange, editMode }: FormParams) {
 
     return (
         <Card title="Medlemskap" spacing={4}>
-            <div style={{ position: "relative" }}>
-                <TextField
-                    label="Kappe"
-                    name="capeName"
-                    fullWidth
-                    value={value.capeName}
-                    onChange={e => onChange({ ...value, capeName: e.target.value })}
-                    sx={{ mt: 2 }}
-                />
-                {!isNullOrWhitespace(value.capeName) &&
-                    <span style={{
-                        fontSize: "xx-small",
-                        position: "absolute",
-                        bottom: -20,
-                        left: 5,
-                    }}>
-                        Den grønne <b>{value.capeName}</b>
-                    </span>}
-            </div>
+            <TextField
+                label="Kappe"
+                name="capeName"
+                fullWidth
+                value={value.capeName}
+                onChange={e => onChange({ ...value, capeName: e.target.value })}
+                sx={{ mt: 2 }}
+            />
             {isAdmin && (
                 <TextField
                     select
