@@ -1,8 +1,9 @@
-import express, {Request, Response}from "express";
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { CommentEntityType } from "common/enums";
-import { validateNumber } from "../middleware/validateNumber.js";
 import { strToNumber } from "common/utils";
+import express, { Request, Response } from "express";
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
+import { validateNumber } from "../middleware/validateNumber.js";
+import { commentsService } from "../services/comments.js";
 
 const router = express.Router()
 
@@ -36,8 +37,15 @@ function getCommentsHandler( {
     getEntityId: (req: Request) => number
 }) {
     return (req: Request, res: Response) => {
-        // TODO
-        
+        const id = getEntityId(req)
+        try {
+            const comments = commentsService.getAll(entityType, id)
+            res.send(comments)
+        } catch (err) {
+            console.error(err)
+            res.status(500).send(`Failed to get ${entityType} comments from the database`)
+        }
+        res.end()
     }
 }
 
