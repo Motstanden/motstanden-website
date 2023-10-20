@@ -8,9 +8,11 @@ import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
 const router = express.Router()
 
-router.get("/member-list", (req: Request, res: Response) => {
-    const users = userService.getAllUsers()
-    res.send(users)
+router.get("/member-list", 
+    AuthenticateUser(),
+    (req: Request, res: Response) => {
+        const users = userService.getAllUsers()
+        res.send(users)
 })
 
 router.post("/super-admin/update-user", requiresGroup(UserGroup.SuperAdministrator), handleUserUpdate(UserEditMode.SuperAdmin))
