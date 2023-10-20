@@ -4,14 +4,14 @@ import { CommentEntityType } from "common/enums";
 
 const router = express.Router()
 
-router.get("event/:entityId/comments",
+router.get("/event/:entityId/comments",
     AuthenticateUser(),
     getCommentsHandler({
         entity: CommentEntityType.Event
     })
 )
 
-router.get("poll/:entityId/comments",
+router.get("/poll/:entityId/comments",
     AuthenticateUser(),
     getCommentsHandler({
         entity: CommentEntityType.Poll
@@ -29,14 +29,14 @@ function getCommentsHandler( {entity}: {entity: CommentEntityType}) {
 }
 
 
-router.post("event/:entityId/comments",
+router.post("/event/:entityId/comments",
     AuthenticateUser(),
     postCommentHandler({
         entity: CommentEntityType.Event
     })
 )
 
-router.post("poll/:entityId/comments", 
+router.post("/poll/:entityId/comments", 
     AuthenticateUser(),
     postCommentHandler({
         entity: CommentEntityType.Poll
