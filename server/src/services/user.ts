@@ -1,6 +1,6 @@
 import Database, { Database as DatabaseType } from "better-sqlite3";
 import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
-import { NewUser, User } from "common/interfaces";
+import { NewUser, User, UserReference } from "common/interfaces";
 import { isNtnuMail, isNullOrWhitespace } from "common/utils";
 import jwt from 'jsonwebtoken';
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
@@ -194,6 +194,20 @@ export function getAllUsers(): User[] {
     db.close()
 
     return user
+}
+
+export function getAllUsersSimplified(): UserReference[] {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(
+        `SELECT 
+            user_id as id,
+            full_name as fullName,
+            SUBSTR(first_name, 1, 1) || SUBSTR(last_name, 1, 1) AS initials
+        FROM 
+            user;`)
+    const user = stmt.all() as UserReference[]
+    db.close()
+    return user   
 }
 
 export function createUser(user: NewUser): number | bigint {

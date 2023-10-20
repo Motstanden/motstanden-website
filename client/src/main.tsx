@@ -10,6 +10,7 @@ import './index.css';
 import { CssBaseline } from '@mui/material';
 import { LocaleProvider } from './context/Locale';
 import { AppThemeProvider } from './context/Themes';
+import { UserReferenceProvider } from './context/UserReference';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
@@ -23,12 +24,14 @@ root.render(
 			<BrowserRouter>
 				<LocaleProvider>
 					<AuthProvider>
-						<AppThemeProvider>
-							{/* Provides reasonable default css values from the material-ui framework */}
-							<CssBaseline />
+						<UserReferenceProvider>
+							<AppThemeProvider>
+								{/* Provides reasonable default css values from the material-ui framework */}
+								<CssBaseline />
 
-							<App />
-						</AppThemeProvider>
+								<App />
+							</AppThemeProvider>
+						</UserReferenceProvider>
 					</AuthProvider>
 				</LocaleProvider>
 			</BrowserRouter>

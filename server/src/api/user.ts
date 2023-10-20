@@ -15,6 +15,13 @@ router.get("/member-list",
         res.send(users)
 })
 
+router.get("/simplified-member-list",
+    AuthenticateUser(),
+    (req: Request, res: Response) => {
+        const users = userService.getAllUsersSimplified()
+        res.send(users)
+})
+    
 router.post("/super-admin/update-user", requiresGroup(UserGroup.SuperAdministrator), handleUserUpdate(UserEditMode.SuperAdmin))
 
 router.post("/admin/update-user", requiresGroup(UserGroup.Administrator), handleUserUpdate(UserEditMode.Admin))

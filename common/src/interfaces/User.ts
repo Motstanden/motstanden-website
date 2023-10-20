@@ -4,13 +4,18 @@ import {
     UserStatus
 } from "../enums/index.js";
 
+export interface UserReference {
+    id: number;
+    fullName: string;
+    initials: string;
+}
+
 export interface NewUser {
     firstName: string;
     middleName: string;
     lastName: string;
     email: string;
     profilePicture: string;
-
 }
 
 export interface User extends NewUser {
