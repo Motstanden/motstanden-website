@@ -179,7 +179,7 @@ INSERT INTO poll_vote(poll_option_id, user_id) VALUES
 
 
 INSERT INTO
-    poll_comment(poll_id, user_id, content)
+    poll_comment(poll_id, created_by, comment)
 VALUES
 
 -- Poll 1: Kuleis eller Softis?

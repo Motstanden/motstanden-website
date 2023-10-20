@@ -358,14 +358,14 @@ LEFT JOIN participation_status USING(participation_status_id)
 CREATE TABLE event_comment (
     event_comment_id INTEGER PRIMARY KEY,
     event_id INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
+    comment TEXT NOT NULL,
 
-    content TEXT NOT NULL,
+    created_by INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     
-    FOREIGN KEY (event_id) REFERENCES event (event_id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE RESTRICT
+    FOREIGN KEY(event_id) REFERENCES event (event_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(created_by) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 CREATE TRIGGER trig_event_comment_updated_at
     AFTER UPDATE ON event_comment FOR EACH ROW
@@ -376,14 +376,14 @@ END;
 CREATE TABLE poll_comment (
     poll_comment_id INTEGER PRIMARY KEY,
     poll_id INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
-    content TEXT NOT NULL,
+    comment TEXT NOT NULL,
 
+    created_by INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     
     FOREIGN KEY (poll_id) REFERENCES event (poll_id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE RESTRICT
+    FOREIGN KEY (created_by) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 CREATE TRIGGER trig_poll_comment_updated_at
     AFTER UPDATE ON poll_comment FOR EACH ROW

@@ -182,7 +182,7 @@ VALUES
 
 
 INSERT INTO
-    event_comment (event_id, user_id, content)
+    event_comment (event_id, created_by, comment)
 VALUES
 
     -- Rebusløp:

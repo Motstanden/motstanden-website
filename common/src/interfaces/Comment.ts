@@ -1,12 +1,12 @@
 import { CommentEntityType } from "../enums/CommentEntityType.js";
 
 export interface NewComment {
-    content: string;
+    comment: string;
 }
 
 export interface Comment extends NewComment {
     id: number;
-    userId: number;
+    createdBy: number;
     createdAt: string;      // yyyy-mm-dd hh:mm:ss
 }
 
