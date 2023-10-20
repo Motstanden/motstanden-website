@@ -9,7 +9,8 @@ function getAll(entityType: CommentEntityType, entityId: number): Comment[] {
     SELECT 
         ${getIdColumnName(entityType)} as id,
         comment,
-        created_by as createdBy
+        created_by as createdBy,
+        created_at as createdAt
     FROM
         ${getTableName(entityType)}
     WHERE
