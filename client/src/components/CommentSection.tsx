@@ -1,8 +1,10 @@
-import { Avatar, Stack, useTheme } from "@mui/material"
+import { Avatar, Link, Skeleton, Stack, useTheme } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { CommentEntityType } from "common/enums"
 import { Comment } from "common/interfaces"
 import dayjs from "dayjs"
+import { Link as RouterLink } from "react-router-dom"
+import { useUserReference } from "src/context/UserReference"
 import { fetchAsync } from "src/utils/fetchAsync"
 
 
@@ -96,13 +98,12 @@ function CommentItem( {
             spacing={2}
             style={style}
         >
-            <Avatar 
+            <UserAvatar 
+                userId={comment.createdBy}
                 style={{
                     marginTop: "5px"
                 }}
-            >
-                {comment.createdBy}
-            </Avatar>
+            />
             <div
                 style={{
                     width: "100%"
@@ -116,7 +117,7 @@ function CommentItem( {
                     }}
                 >
                     <div>
-                        <b>{comment.createdBy}</b>
+                        <UserFullName userId={comment.createdBy}/>
                     </div>
                     <div>
                         {comment.comment}
@@ -129,9 +130,102 @@ function CommentItem( {
                         opacity: "0.6"
                     }}
                 >
-                    {dayjs(comment.createdAt).fromNow()}
+                    {dayjs(comment.createdAt).utc(true).fromNow()}
                 </div>
             </div>
         </Stack>
+    )
+}
+
+function UserAvatar({
+    userId,
+    style
+}: {
+    userId: number,
+    style?: React.CSSProperties
+}) {
+
+    const {isError, isLoading, userReference} = useUserReference()
+
+    if(isLoading) {
+        return (
+            <Skeleton 
+                variant="circular"
+                style={{
+                    height: "40px",
+                    width: "44px",      // I have no idea why, but width needs to be this value in order to not cause layout shift
+                    margin: 0,
+                    padding: 0,
+                    ...style
+                }}
+            />
+        )
+    }
+
+    const user = userReference[userId]
+    if(isError || !user) {
+        return <Avatar style={style}/>
+    }
+
+    return (
+        <Avatar 
+            style={{
+                height: "40px",
+                width: "40px",
+                margin: 0,
+                padding: 0,
+                ...style
+            }}
+        >
+                {user.initials}
+        </Avatar>
+    )
+}
+
+function UserFullName({
+    userId,
+    style
+}: {
+    userId: number,
+    style?: React.CSSProperties
+}) {
+
+    const {isError, isLoading, userReference} = useUserReference()
+
+    if(isLoading) {
+        return (
+            <Skeleton 
+                variant="text"
+                style={{
+                    height: "20px",
+                    width: "100px",
+                    margin: 0,
+                    padding: 0,
+                    ...style
+                }}
+            />
+        )
+    }
+
+    const user = userReference[userId]
+    if(isError || !user) {
+        return <b>[Ukjent]</b>
+    }
+
+    return (
+        <Link
+            component={RouterLink}
+            to={`/medlem/${userId}`}
+            style={{
+                wordWrap: "break-word",
+                fontSize: "inherit",
+                color: "inherit",
+                textDecorationColor: "inherit",
+                ...style
+            }}
+            underline="hover"
+        >
+            <b>{user.fullName}</b>
+        </Link>
     )
 }
