@@ -49,7 +49,7 @@ function CommentSectionFetcher({
     const { isLoading, isError, data, error } = useQuery<Comment[]>(queryKey, () => fetchAsync<Comment[]>(url))
 
     if(isLoading) {
-        return <CommentSectionSkeleton/>
+        return <CommentSectionSkeleton length={4}/>
     }
 
     if(isError) {
@@ -62,9 +62,46 @@ function CommentSectionFetcher({
     
 }
 
-function CommentSectionSkeleton() {
+function CommentSectionSkeleton( {length}: {length: number}) {
     return (
-        <></> // TODO: Implement
+        <>
+            {Array(length).fill(1).map((_, i) => (
+                <CommentItemSkeleton key={i}/>
+            ))}
+        </>
+    )
+}
+
+function CommentItemSkeleton() { 
+
+    return (
+        <Stack
+            direction="row"
+            spacing={2}
+            marginBottom="15px"
+        >
+            <UserAvatarSkeleton style={{marginTop: "5px"}}/>
+            <div 
+                style={{ 
+                    width: "100%",
+                }}>
+                <Skeleton 
+                    variant="rounded"
+                    width="100%"
+                    height="70px"
+                    style={{
+                        borderRadius: "10px",
+                    }}
+                />
+                <Skeleton 
+                    variant="text"
+                    style={{
+                        maxWidth: "100px",
+                        fontSize: "small"
+                    }}
+                />
+            </div>
+        </Stack>
     )
 }
 
@@ -148,18 +185,7 @@ function UserAvatar({
     const {isError, isLoading, userReference} = useUserReference()
 
     if(isLoading) {
-        return (
-            <Skeleton 
-                variant="circular"
-                style={{
-                    height: "40px",
-                    width: "44px",      // I have no idea why, but width needs to be this value in order to not cause layout shift
-                    margin: 0,
-                    padding: 0,
-                    ...style
-                }}
-            />
-        )
+        return <UserAvatarSkeleton style={style}/>
     }
 
     const user = userReference[userId]
@@ -182,6 +208,22 @@ function UserAvatar({
     )
 }
 
+function UserAvatarSkeleton( {style}: {style?: React.CSSProperties}) {
+    return (
+        <Skeleton 
+            variant="circular"
+            style={{
+                height: "40px",
+                width: "44px",      // I have no idea why, but width needs to be this value in order to not cause layout shift
+                margin: 0,
+                padding: 0,
+                ...style
+            }}
+        />
+    )
+}
+
+
 function UserFullName({
     userId,
     style
@@ -197,8 +239,7 @@ function UserFullName({
             <Skeleton 
                 variant="text"
                 style={{
-                    height: "20px",
-                    width: "100px",
+                    width: "150px",
                     margin: 0,
                     padding: 0,
                     ...style
