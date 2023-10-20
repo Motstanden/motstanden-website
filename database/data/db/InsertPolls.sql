@@ -193,7 +193,7 @@ VALUES
 -- pOLL 4: Hva er den beste julefilmen?
     (4, 34, 'Her er det kriminelt å ikke stemme Die Hard!'),
     (4, 25, 'Savner Lova Actually 😿'),
-    (4, 44, 'Ildbegeret er mere julete en de vises stein. Fight me!'),
+    (4, 16, 'Ildbegeret er mere julete en de vises stein. Fight me!'),
 
 -- Poll 5: Hva var det kuleste på SMASH?
     (5, 23, 'Åååå, savner SMASH... :/'),
