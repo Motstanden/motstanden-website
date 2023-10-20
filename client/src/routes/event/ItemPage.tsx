@@ -8,7 +8,7 @@ import {
     TextField
 } from "@mui/material";
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ParticipationStatus } from "common/enums";
+import { CommentEntityType, ParticipationStatus } from "common/enums";
 import { EventData, Participant, UpsertParticipant } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
 import { useState } from "react";
@@ -22,6 +22,7 @@ import { postJson } from "src/utils/postJson";
 import { MarkDownRenderer } from "../../components/MarkDownEditor";
 import { ItemMenu } from "./components/ItemMenu";
 import { KeyInfo } from "./components/KeyInfo";
+import { CommentSection } from "src/components/CommentSection";
 
 export default function ItemPage() {
     const event = useOutletContext<EventData>();
@@ -63,6 +64,11 @@ export default function ItemPage() {
             </Paper>
             <Divider sx={{ my: 4 }} />
             <ParticipationContainer eventId={event.eventId} />
+            <Divider sx={{ my: 4 }} />
+            <CommentSection 
+                entityType={CommentEntityType.Event}
+                entityId={event.eventId}            
+            />
         </div>
     );
 }

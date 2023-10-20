@@ -6,7 +6,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { LoadingButton } from "@mui/lab";
 import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Divider, FormControlLabel, FormGroup, Paper, Radio, RadioGroup, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { UserGroup } from 'common/enums';
+import { CommentEntityType, UserGroup } from 'common/enums';
 import { Poll, PollOption, PollWithOption } from "common/interfaces";
 import { hasGroupAccess } from 'common/utils';
 import React, { useState } from "react";
@@ -19,6 +19,7 @@ import { useTitle } from 'src/hooks/useTitle';
 import { fetchAsync } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
 import { pollListQueryKey } from './Context';
+import { CommentSection } from 'src/components/CommentSection';
 
 
 export default function PollPage(){
@@ -32,12 +33,18 @@ export default function PollPage(){
     return(
         <div>
             <div style={{
-                    marginBlock: "40px",
+                    marginTop: "40px",
                     display: "inline-block",
                     minWidth: "MIN(100%, 500px)"
                 }}>
                 <PollCard poll={currentPoll} srcQueryKey={pollListQueryKey}/>
             </div>
+            <Divider sx={{ my: 4 }} />
+            <CommentSection 
+                entityType={CommentEntityType.Poll}
+                entityId={currentPoll.id}            
+            />
+            <Divider sx={{ my: 4 }} />
             <PreviousPolls polls={remainingPolls}/>
         </div>
     )
