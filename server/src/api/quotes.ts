@@ -10,8 +10,6 @@ import dailyRandomInt from "../utils/dailyRandomInt.js";
 
 let router = express.Router()
 
-
-
 router.get("/quotes?:limit",
     AuthenticateUser(),
     (req, res) => {
@@ -83,7 +81,5 @@ router.post("/quotes/update",
         res.end();
     }
 )
-
-
 
 export default router
