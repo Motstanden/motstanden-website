@@ -42,6 +42,17 @@ router.get("/poll/:entityId/comments",
     })
 )
 
+router.get("/song-lyric/:entityId/comments",
+    AuthenticateUser(),
+    validateNumber({
+        getValue: (req: Request) => req.params.entityId,
+    }),
+    getCommentsHandler({
+        entityType: CommentEntityType.SongLyric,
+        getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
+    })
+)
+
 function getCommentsHandler( {
     entityType,
     getEntityId
@@ -80,6 +91,17 @@ router.post("/poll/:entityId/comments/new",
     }),
     postCommentHandler({
         entityType: CommentEntityType.Poll,
+        getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
+    })
+)
+
+router.post("/song-lyric/:entityId/comments/new", 
+    AuthenticateUser(),
+    validateNumber({
+        getValue: (req: Request) => req.params.entityId,
+    }),
+    postCommentHandler({
+        entityType: CommentEntityType.SongLyric,
         getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
     })
 )

@@ -1,7 +1,7 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Theme, useMediaQuery, useTheme } from '@mui/material';
+import { Divider, Theme, useMediaQuery, useTheme } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { UserGroup } from 'common/enums';
+import { CommentEntityType, UserGroup } from 'common/enums';
 import { SongLyric } from 'common/interfaces';
 import { hasGroupAccess } from 'common/utils';
 import { useNavigate } from "react-router-dom";
@@ -13,9 +13,11 @@ import { useAuth } from 'src/context/Authentication';
 import { postJson } from 'src/utils/postJson';
 import { useTitle } from "../../hooks/useTitle";
 import { lyricContextQueryKey, useLyricItemContext } from './Context';
+import { CommentSection } from 'src/components/CommentSection';
 
 export function LyricItemPage() {
     const [allLyrics, lyric] = useLyricItemContext()
+    const isLoggedIn = !!useAuth().user 
     useTitle(lyric.title);
 
     const theme = useTheme();
@@ -42,6 +44,15 @@ export function LyricItemPage() {
                 }}>
                     <MarkDownRenderer value={lyric.content} />
                 </div>
+                {isLoggedIn && (
+                    <div>
+                        <Divider sx={{ my: 6 }} />
+                        <CommentSection
+                            entityId={lyric.id}
+                            entityType={CommentEntityType.SongLyric}
+                            />
+                    </div>
+                )}
             </div>
         </>
     );

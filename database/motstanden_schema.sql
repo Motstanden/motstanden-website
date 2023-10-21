@@ -391,3 +391,21 @@ BEGIN
     UPDATE poll_comment SET updated_at = current_timestamp
         WHERE poll_comment_id = old.poll_comment_id;
 END;
+CREATE TABLE song_lyric_comment (
+    song_lyric_comment_id INTEGER PRIMARY KEY,
+    song_lyric_id INTEGER NOT NULL,
+    comment TEXT NOT NULL,
+    created_by INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    parent_comment_id INTEGER DEFAULT NULL,    
+    FOREIGN KEY (song_lyric_id) REFERENCES song_lyric (song_lyric_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE RESTRICT
+    FOREIGN KEY(parent_comment_id) REFERENCES song_lyric_comment(song_lyric_comment_id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+CREATE TRIGGER trig_song_lyric_comment_updated_at
+    AFTER UPDATE ON song_lyric_comment FOR EACH ROW
+BEGIN
+    UPDATE song_lyric_comment SET updated_at = current_timestamp
+        WHERE song_lyric_comment_id = old.song_lyric_comment_id;
+END;

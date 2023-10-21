@@ -1,7 +1,7 @@
 import Database from "better-sqlite3"
 import { CommentEntityType } from "common/enums"
-import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
 import { EntityComment, NewComment } from "common/interfaces"
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
 
 // This function exposes the database for sql injection attack.
 // This is dangerous, so don't touch it unless you know what you are doing
@@ -11,6 +11,8 @@ function getTableName(entityType: CommentEntityType): string {
             return "event_comment"
         case CommentEntityType.Poll:
             return "poll_comment"
+        case CommentEntityType.SongLyric:
+            return "song_lyric_comment"
         default:
             throw `Unknown entity type: ${entityType}`
     }
@@ -24,6 +26,8 @@ function getIdColumnName(entityType: CommentEntityType): string {
             return "event_comment_id"
         case CommentEntityType.Poll:
             return "poll_comment_id"
+        case CommentEntityType.SongLyric:
+            return "song_lyric_comment_id"
         default:
             throw `Unknown entity type: ${entityType}`
     }
@@ -37,6 +41,8 @@ function getEntityIdColumnName(entityType: CommentEntityType): string {
             return "event_id"
         case CommentEntityType.Poll:
             return "poll_id"
+        case CommentEntityType.SongLyric:
+            return "song_lyric_id"
         default:
             throw `Unknown entity type: ${entityType}`
     }
@@ -65,6 +71,16 @@ function getAllUnion(limit?: number): EntityComment[]{
             created_at as createdAt
         FROM 
             poll_comment
+        UNION ALL
+        SELECT 
+            song_lyric_comment_id as id,
+            'song-lyric' as type,
+            song_lyric_id as entityId,
+            comment,
+            created_by as createdBy,
+            created_at as createdAt
+        FROM 
+            song_lyric_comment
         ORDER BY created_at	DESC
         ${!!limit ? "LIMIT ?" : ""};
     `)
