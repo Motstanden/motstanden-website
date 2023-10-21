@@ -126,19 +126,21 @@ function RenderEventList(props: RenderItemProps<EventData[]>) {
 
 function RenderComments(props: RenderItemProps<EntityComment[]>) {
 
-    // TODO
     const buildUrl = (comment: EntityComment): string  => {
         switch(comment.type) {
             case CommentEntityType.Event:
                 return `/arrangement/${comment.entityId}#comment-${comment.id}`
-            case CommentEntityType.Poll:
-                return ``
+            case CommentEntityType.Poll:    
+                return ``   // TODO
             case CommentEntityType.SongLyric:
                 return `/studenttraller/${comment.entityId}#comment-${comment.id}`
             default:
                 return ``
         }
     }
+
+    if(props.items.length <= 0)
+        return <span style={{opacity: 0.75 }}>Ingen nye kommentarer...</span>
 
     return (
         <>
