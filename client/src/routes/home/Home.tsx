@@ -130,11 +130,11 @@ function RenderComments(props: RenderItemProps<EntityComment[]>) {
     const buildUrl = (comment: EntityComment): string  => {
         switch(comment.type) {
             case CommentEntityType.Event:
-                return `/arrangement/${comment.entityId}`
+                return `/arrangement/${comment.entityId}#comment-${comment.id}`
             case CommentEntityType.Poll:
                 return ``
             case CommentEntityType.SongLyric:
-                return `/studenttraller/${comment.entityId}`
+                return `/studenttraller/${comment.entityId}#comment-${comment.id}`
             default:
                 return ``
         }

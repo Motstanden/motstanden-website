@@ -1,6 +1,6 @@
 import { Theme, useMediaQuery, useTheme } from "@mui/material";
-import React, { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useEffect, useLayoutEffect } from "react";
+import { useLocation, Location } from "react-router-dom";
 import { PageTab, PageTabItem } from "src/components/PageTab";
 import { matchUrl } from "src/utils/matchUrl";
 
@@ -11,12 +11,12 @@ export function PageContainer({
     children,
     props,
     disableGutters,
-    disableScrollToTop
+    disableScrollHandling
 }: {
     children?: React.ReactNode,
     props?: React.CSSProperties,
     disableGutters?: boolean,
-    disableScrollToTop?: boolean
+    disableScrollHandling?: boolean
 }) {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery((_theme: Theme) => _theme.breakpoints.down('sm'));
@@ -26,9 +26,11 @@ export function PageContainer({
         padding = "0px 0px"
 
     const location = useLocation();
-    useEffect(() => {
-        if (!disableScrollToTop)
+    useLayoutEffect(() => {
+        const childHandlesScroll = location.hash
+        if(!disableScrollHandling && !childHandlesScroll) {
             window.scrollTo({ top: 0, left: 0, behavior: "smooth" })
+        }
     }, [location.pathname])
 
     return (
@@ -58,15 +60,16 @@ export function TabbedPageContainer({
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
     const location = useLocation();
-    useEffect(() => {
+    useLayoutEffect(() => {
         const isTabClick = tabItems.find(item => matchUrl(item.to, location, { matchChildPath: false }))         // Scroll to top if the new url is not equal to a tab url
-        if (!isTabClick) {
+        const childHandlesScroll = location.hash
+        if (!isTabClick && !childHandlesScroll) {
             window.scrollTo({ top: 0, left: 0, behavior: "smooth" })
         }
     }, [location.pathname])
 
     return (
-        <PageContainer disableGutters={isSmallScreen} disableScrollToTop={true}>
+        <PageContainer disableGutters={isSmallScreen} disableScrollHandling={true}>
             <PageTab items={tabItems} matchChildPath={matchChildPath} />
             <div style={{ padding: isSmallScreen ? smallScreenPadding : 0 }}>
                 {children}

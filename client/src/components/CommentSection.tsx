@@ -1,3 +1,4 @@
+import SendIcon from '@mui/icons-material/Send'
 import { LoadingButton } from "@mui/lab"
 import { Avatar, Link, Skeleton, Stack, TextField, useTheme } from "@mui/material"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
@@ -5,13 +6,11 @@ import { CommentEntityType } from "common/enums"
 import { Comment, NewComment } from "common/interfaces"
 import { isNullOrWhitespace } from "common/utils"
 import dayjs from "dayjs"
-import { useState } from "react"
-import { Link as RouterLink } from "react-router-dom"
+import { useLayoutEffect, useState } from "react"
+import { Link as RouterLink, useLocation } from "react-router-dom"
 import { useAuth } from "src/context/Authentication"
 import { useUserReference } from "src/context/UserReference"
 import { fetchAsync } from "src/utils/fetchAsync"
-import ChatIcon from '@mui/icons-material/Chat';
-import SendIcon from '@mui/icons-material/Send';
 import { postJson } from "src/utils/postJson"
 
 export {
@@ -128,6 +127,20 @@ function CommentItemSkeleton() {
 }
 
 function CommentSection( {comments}: {comments: Comment[]}) {
+    const location = useLocation()
+    
+    useLayoutEffect(() => {
+        if(location.hash && location.hash.startsWith("#comment-")) {
+            const element = document.getElementById(location.hash.substring(1))
+            if(element) {
+                window.scrollTo({ top: 0, left: 0, behavior: "instant" })
+                setTimeout(() => {
+                    element.scrollIntoView({ behavior: "smooth" })
+                }, 600);
+            }
+        }
+    }, [])
+
     return (
         <>
             {comments.map(comment => (
@@ -152,47 +165,49 @@ function CommentItem( {
 }) {
     const theme = useTheme()
     return (
-        <Stack 
-            direction="row"
-            spacing={2}
-            style={style}
-        >
-            <UserAvatar 
-                userId={comment.createdBy}
-                style={{
-                    marginTop: "5px"
-                }}
-            />
-            <div
-                style={{
-                    width: "100%"
-                }}
+        <div id={`comment-${comment.id}`}>
+            <Stack 
+                direction="row"
+                spacing={2}
+                style={style}
             >
+                <UserAvatar 
+                    userId={comment.createdBy}
+                    style={{
+                        marginTop: "5px"
+                    }}
+                />
                 <div
                     style={{
-                        backgroundColor: theme.palette.divider,
-                        padding: "12px",
-                        borderRadius: "10px",
+                        width: "100%"
                     }}
                 >
-                    <div>
-                        <UserFullName userId={comment.createdBy}/>
+                    <div
+                        style={{
+                            backgroundColor: theme.palette.divider,
+                            padding: "12px",
+                            borderRadius: "10px",
+                        }}
+                    >
+                        <div>
+                            <UserFullName userId={comment.createdBy}/>
+                        </div>
+                        <div>
+                            {comment.comment}
+                        </div>
                     </div>
-                    <div>
-                        {comment.comment}
+                    <div
+                        style={{
+                            marginLeft: "5px",
+                            fontSize: "small",
+                            opacity: "0.6"
+                        }}
+                    >
+                        {dayjs(comment.createdAt).utc(true).fromNow()}
                     </div>
                 </div>
-                <div
-                    style={{
-                        marginLeft: "5px",
-                        fontSize: "small",
-                        opacity: "0.6"
-                    }}
-                >
-                    {dayjs(comment.createdAt).utc(true).fromNow()}
-                </div>
-            </div>
-        </Stack>
+            </Stack>
+        </div>
     )
 }
 

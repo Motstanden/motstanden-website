@@ -57,7 +57,7 @@ export function EventItemContext() {
     const isBaseUrl = matchUrl(expectedUrlBase, location)
     const isEditUrl = matchUrl(`${expectedUrlBase}/rediger`, location) || matchUrl(`${expectedUrlBase}/rediger/`, location)
     if (!isBaseUrl && !isEditUrl) {
-        return <Navigate to={expectedUrlBase} />
+        return <Navigate to={expectedUrlBase + location.hash} replace />
     }
 
     return (
