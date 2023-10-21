@@ -196,7 +196,7 @@ function CommentItem( {
     )
 }
 
-function UserAvatar({
+export function UserAvatar({
     userId,
     style
 }: {
@@ -230,7 +230,7 @@ function UserAvatar({
     )
 }
 
-function UserAvatarSkeleton( {style}: {style?: React.CSSProperties}) {
+export function UserAvatarSkeleton( {style}: {style?: React.CSSProperties}) {
     return (
         <Skeleton 
             variant="circular"
@@ -246,7 +246,7 @@ function UserAvatarSkeleton( {style}: {style?: React.CSSProperties}) {
 }
 
 
-function UserFullName({
+export function UserFullName({
     userId,
     style
 }: {
@@ -279,16 +279,17 @@ function UserFullName({
         <Link
             component={RouterLink}
             to={`/medlem/${userId}`}
+            underline="hover"
             style={{
                 wordWrap: "break-word",
                 fontSize: "inherit",
                 color: "inherit",
                 textDecorationColor: "inherit",
+                fontWeight: "bold",
                 ...style
             }}
-            underline="hover"
         >
-            <b>{user.fullName}</b>
+            {user.fullName}
         </Link>
     )
 }

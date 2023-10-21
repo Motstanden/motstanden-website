@@ -1,9 +1,11 @@
-import { Grid, Link, Skeleton } from "@mui/material";
+import { Grid, Link, Skeleton, Stack } from "@mui/material";
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
-import { EventData, Poll, Quote, Rumour } from "common/interfaces";
+import { CommentEntityType } from "common/enums";
+import { EntityComment, EventData, Poll, Quote, Rumour } from "common/interfaces";
 import dayjs, { Dayjs } from "dayjs";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
+import { UserAvatar, UserAvatarSkeleton, UserFullName } from "src/components/CommentSection";
 import { TitleCard } from "src/components/TitleCard";
 import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
@@ -34,50 +36,34 @@ export default function Home() {
                     renderSkeleton={<TitleAndSubtitleSkeleton length={5} />}
                     renderItems={RenderEventList}
                     md={6}
-                    display={{ xs: "block", md: "none" }}
-                    
                 />
-                <Grid 
-                    item 
-                    container 
-                    direction="row"
-                    spacing={4}
-                    xs={12} sm={12} md={6} 
-                    display={{ xs: "none", xm: "none", md: "flex" }}
-                    >
-                    <ItemOfTheDay
-                        title="Arrangement"
-                        fetchUrl="/api/events/upcoming?limit=5"
-                        renderSkeleton={<TitleAndSubtitleSkeleton length={3} />}
-                        renderItems={RenderEventList}
-                        xs={12} sm={12} md={12}
-                    />
-                    <ItemOfTheDay 
-                        title="Sist oppdaterte styrenettsider"
-                        fetchUrl="https://styret.motstanden.no/projectData.json"
-                        renderItems={RenderBoardPageList}
-                        renderSkeleton={<TitleAndSubtitleSkeleton length={2}/>}
-                        xs={12} sm={12} md={12}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={12} md={6} display={{xs: "none", sm: "none", md: "block"}} alignSelf="flex-end">
-                    <LatestPoll/>
-                </Grid>
                 <ItemOfTheDay
                     title="Nyeste sitater"
                     fetchUrl="/api/quotes?limit=3"
                     renderSkeleton={<QuotesListSkeleton length={3} />}
                     renderItems={RenderQuotesList}
                 />
+                <ItemOfTheDay 
+                    title="Nyeste kommentarer"
+                    fetchUrl="/api/comments/all?limit=5"
+                    renderItems={RenderComments}
+                    renderSkeleton={<RenderCommentsSkeleton length={5}/>}
+                />
+                <Grid item xs={12} sm={12} md={6}>
+                    <LatestPoll/>
+                </Grid>
                 <ItemOfTheDay
                     title="Nyeste rykter"
                     fetchUrl="/api/rumours?limit=3"
                     renderSkeleton={<RumourListSkeleton length={3} />}
                     renderItems={RenderRumourList}
                 />
-                <Grid item xs={12} display={{xs: "block", md: "none"}}>
-                    <LatestPoll/>
-                </Grid>
+                <ItemOfTheDay 
+                    title="Sist oppdaterte styrenettsider"
+                    fetchUrl="https://styret.motstanden.no/projectData.json"
+                    renderItems={RenderBoardPageList}
+                    renderSkeleton={<TitleAndSubtitleSkeleton length={5}/>}
+                />
                 <ItemOfTheDay
                     title="Dagens sitater"
                     fetchUrl="/api/quotes/daily-quotes"
@@ -89,13 +75,6 @@ export default function Home() {
                     fetchUrl="/api/rumours/daily-rumour"
                     renderSkeleton={<RumourListSkeleton length={3} />}
                     renderItems={RenderRumourList}
-                />
-                <ItemOfTheDay 
-                    title="Sist oppdaterte styrenettsider"
-                    fetchUrl="https://styret.motstanden.no/projectData.json"
-                    renderItems={RenderBoardPageList}
-                    renderSkeleton={<TitleAndSubtitleSkeleton length={5}/>}
-                    display={{xs: "block", md: "none"}}
                 />
                 <InfoCard
                     title="Nyttige lenker"
@@ -145,6 +124,129 @@ function RenderEventList(props: RenderItemProps<EventData[]>) {
     )
 }
 
+function RenderComments(props: RenderItemProps<EntityComment[]>) {
+
+    // TODO
+    const buildUrl = (comment: EntityComment): string  => {
+        switch(comment.type) {
+            case CommentEntityType.Event:
+                return `/arrangement/${comment.entityId}`
+            case CommentEntityType.Poll:
+                return `/avstemninger`
+            default:
+                return "#"
+        }
+    }
+
+    return (
+        <>
+        {props.items.map((comment, index) => (
+            <div 
+                key={`${comment.entityId}-${comment.id}`}
+                style={{
+                    marginBottom: "15px",
+                }}
+            >
+                <Stack 
+                    direction="row"
+                    spacing={2}
+                >
+                    <UserAvatar
+                        userId={comment.createdBy}
+                        style={{
+                            marginTop: "5px"
+                        }}
+                    />
+                    <div>
+                        <div>
+                            <UserFullName 
+                                userId={comment.createdBy} 
+                                style={{
+                                    opacity: "0.75",
+                                    fontSize: "small"
+                                }}
+                                />
+                        </div>
+                        <div>
+                            <Link
+                                color="secondary"
+                                underline="hover"
+                                fontSize="large"
+                                component={RouterLink}
+                                to={buildUrl(comment) ?? "#"}
+                            >
+                                {comment.comment.substring(0, 75).trim() + (comment.comment.trim().length > 75 ? "..." : "")}
+                            </Link>
+                        </div>
+                        <div
+                            style={{
+                                fontSize: "small",
+                                opacity: "0.6"
+                            }}
+                        >
+                            {dayjs(comment.createdAt).utc(true).fromNow()}
+                        </div>
+                    </div>
+                </Stack>
+            </div>
+        ))}
+        </>
+    )
+}
+
+function RenderCommentsSkeleton({length}: {length: number}) {
+    return (
+        <div>
+            {Array(length).fill(1).map((_, i) => (
+                <div
+                    key={i}
+                    style={{
+                        marginBottom: "15px",
+                    }}
+                >
+                    <Stack
+                        direction="row"
+                        spacing={2}
+                    >
+                        <UserAvatarSkeleton 
+                            style={{
+                                marginTop: "5px"
+                            }}
+                        />
+                        <div style={{width: "80%"}}>
+                            <div>
+                                <Skeleton 
+                                    variant="text" 
+                                    style={{ 
+                                        fontSize: "small",
+                                        maxWidth: "100px",
+                                    }} />
+                            </div>
+                            <div>
+                                <Skeleton 
+                                    variant="text" 
+                                    style={{ 
+                                        fontSize: "larger",
+                                    }} />
+                            </div>
+                            <div>
+                                <Skeleton
+                                    variant="text"
+                                    style={{
+                                        fontSize: "small",
+                                        maxWidth: "80px"
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </Stack>
+                </div>
+            ))}
+
+        </div>
+    )
+}
+ 
 function LatestPoll() {
 
     const queryKey = ["FetchLatestPoll"]
