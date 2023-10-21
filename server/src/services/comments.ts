@@ -1,7 +1,7 @@
 import Database from "better-sqlite3"
 import { CommentEntityType } from "common/enums"
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
-import { NewComment } from "common/interfaces"
+import { EntityComment, NewComment } from "common/interfaces"
 
 // This function exposes the database for sql injection attack.
 // This is dangerous, so don't touch it unless you know what you are doing
@@ -42,6 +42,38 @@ function getEntityIdColumnName(entityType: CommentEntityType): string {
     }
 }
 
+function getAllUnion(limit?: number): EntityComment[]{
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+
+    const stmt = db.prepare(`
+        SELECT 
+            event_comment_id as id,
+            'event' as type,
+            event_id as entityId,
+            comment,
+            created_by as createdBy,
+            created_at as createdAt
+        FROM 
+            event_comment
+        UNION ALL
+        SELECT 
+            poll_comment_id as id,
+            'poll' as type,
+            poll_id as entityId,
+            comment,
+            created_by as createdBy,
+            created_at as createdAt
+        FROM 
+            poll_comment
+        ORDER BY created_at	DESC
+        ${!!limit ? "LIMIT ?" : ""};
+    `)
+
+    const comments: EntityComment[] = !!limit ? stmt.all(limit) : stmt.all()
+    db.close()
+    return comments   
+}
+
 function getAll(entityType: CommentEntityType, entityId: number): Comment[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
 
@@ -80,5 +112,6 @@ function insertNew(entityType: CommentEntityType, entityId: number,  comment: Ne
 
 export const commentsService = {
     getAll: getAll,
-    insertNew: insertNew
+    getAllUnion: getAllUnion,
+    insertNew: insertNew,
 }

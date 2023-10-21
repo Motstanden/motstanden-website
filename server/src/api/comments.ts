@@ -9,6 +9,17 @@ import { NewComment } from "common/interfaces";
 
 const router = express.Router()
 
+router.get("/comments/all?:limit", 
+    AuthenticateUser(),
+    validateNumber({
+        getValue: (req: Request) =>  req.query.limit?.toString() ?? ""
+    }),
+    (req, res) => {
+        const limit = strToNumber(req.query.limit?.toString()) as number
+        res.send(commentsService.getAllUnion(limit))
+    }
+)
+
 router.get("/event/:entityId/comments",
     AuthenticateUser(),
     validateNumber({
