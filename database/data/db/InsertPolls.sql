@@ -186,18 +186,18 @@ VALUES
     (1, 40, 'De som valgte softis har soft-tiss'),
     (1, 40, '( •_•)>⌐■-■'),
     (1, 40, '(⌐■_■)'),
-    (1, 41, '🙄'),
-    (1, 42, 'Nei, nei, nei...'),
-    (1, 42, '(ㆆ_ㆆ)'),
+    (1, 33, '🙄'),
+    (1, 34, 'Nei, nei, nei...'),
+    (1, 35, '(ㆆ_ㆆ)'),
 
--- pOLL 4: Hva er den beste julefilmen?
-    (4, 34, 'Her er det kriminelt å ikke stemme Die Hard!'),
-    (4, 25, 'Savner Lova Actually 😿'),
-    (4, 16, 'Ildbegeret er mere julete en de vises stein. Fight me!'),
+-- pOLL 3: Hva er den beste julefilmen?
+    (3, 34, 'Her er det kriminelt å ikke stemme Die Hard!'),
+    (3, 25, 'Savner Lova Actually 😿'),
+    (3, 16, 'Ildbegeret er mere julete en de vises stein. Fight me!'),
 
 -- Poll 5: Hva var det kuleste på SMASH?
-    (5, 23, 'Åååå, savner SMASH... :/'),
-    (5, 26, 'Det beste var den episke bruremarsjen kl 0200 på Lørdag 😂'),
-    (5, 27, 'Hahahahaha, ja! 😂😂'),
-    (5, 30, 'Hva skjedde der?'),
-    (5, 26, '( ͡~ ͜ʖ ͡°)');
+    (4, 23, 'Åååå, savner SMASH... :/'),
+    (4, 26, 'Det beste var den episke bruremarsjen kl 0200 på Lørdag 😂'),
+    (4, 27, 'Hahahahaha, ja! 😂😂'),
+    (4, 30, 'Hva skjedde der?'),
+    (4, 26, '( ͡~ ͜ʖ ͡°)');
