@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { SongLyric, StrippedSongLyric } from "common/interfaces"
+import { strToNumber } from "common/utils"
 import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
 import { useAuth } from "src/context/Authentication"
 import { TabbedPageContainer } from "src/layout/PageContainer"
@@ -48,11 +49,16 @@ function PageContainer( {children}: {children?: React.ReactNode} ) {
 }
 
 export function LyricItemContext() {
-    const params = useParams();
-    const urlTitle = params.title;
-    
     const allLyrics = useOutletContext<StrippedSongLyric[]>()
-    const lyricId = allLyrics.find(item => strToPrettyUrl(item.title) === urlTitle)?.id
+    const params = useParams();
+    
+    const urlTitle = params.title;
+    let lyricId = allLyrics.find(item => strToPrettyUrl(item.title) === urlTitle)?.id
+
+    if(!lyricId) {
+        const paramId = strToNumber(params.songId)
+        lyricId = allLyrics.find(item => item.id === paramId)?.id
+    }
 
     if(!lyricId) 
         return <Navigate to="/studenttraller" replace={true} />

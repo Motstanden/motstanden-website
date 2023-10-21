@@ -133,8 +133,10 @@ function RenderComments(props: RenderItemProps<EntityComment[]>) {
                 return `/arrangement/${comment.entityId}`
             case CommentEntityType.Poll:
                 return ``
+            case CommentEntityType.SongLyric:
+                return `/studenttraller/${comment.entityId}`
             default:
-                return ""
+                return ``
         }
     }
 

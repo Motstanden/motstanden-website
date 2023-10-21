@@ -75,6 +75,10 @@ function App() {
 								<Route path="rediger" element={<RequireAuth><EditLyricPage/></RequireAuth>} />
 							</Route>
 							<Route path="ny" element={<RequireAuth><NewLyricPage/></RequireAuth>}/>
+							<Route path=":songId" element={<LyricItemContext/>}>
+								<Route index element={<LyricItemPage />} />
+								<Route path="rediger" element={<RequireAuth><EditLyricPage/></RequireAuth>} />
+							</Route>
 						</Route>
 						<Route path="/dokumenter" element={<DocumentsPage />} />
 						<Route path="/bli-medlem" element={<BecomeMemberPage />} />
