@@ -359,13 +359,13 @@ CREATE TABLE event_comment (
     event_comment_id INTEGER PRIMARY KEY,
     event_id INTEGER NOT NULL,
     comment TEXT NOT NULL,
-
     created_by INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    
+    parent_comment_id INTEGER DEFAULT NULL,
     FOREIGN KEY(event_id) REFERENCES event (event_id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY(created_by) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE RESTRICT
+    FOREIGN KEY(created_by) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    FOREIGN KEY(parent_comment_id) REFERENCES event_comment(event_comment_id) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 CREATE TRIGGER trig_event_comment_updated_at
     AFTER UPDATE ON event_comment FOR EACH ROW
@@ -377,13 +377,13 @@ CREATE TABLE poll_comment (
     poll_comment_id INTEGER PRIMARY KEY,
     poll_id INTEGER NOT NULL,
     comment TEXT NOT NULL,
-
     created_by INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    
+    parent_comment_id INTEGER DEFAULT NULL,    
     FOREIGN KEY (poll_id) REFERENCES poll (poll_id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (created_by) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE RESTRICT
+    FOREIGN KEY(parent_comment_id) REFERENCES poll_comment(poll_comment_id) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 CREATE TRIGGER trig_poll_comment_updated_at
     AFTER UPDATE ON poll_comment FOR EACH ROW
