@@ -39,12 +39,15 @@ export default function PollPage(){
                 }}>
                 <PollCard poll={currentPoll} srcQueryKey={pollListQueryKey}/>
             </div>
-            <Divider sx={{ my: 4 }} />
+
+            {/* This comment section is coming soon™ */}
+            {/* <Divider sx={{ my: 4 }} />
             <CommentSection 
                 entityType={CommentEntityType.Poll}
                 entityId={currentPoll.id}            
             />
-            <Divider sx={{ my: 4 }} />
+            <Divider sx={{ my: 4 }} /> */}
+            
             <PreviousPolls polls={remainingPolls}/>
         </div>
     )

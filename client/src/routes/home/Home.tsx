@@ -132,9 +132,9 @@ function RenderComments(props: RenderItemProps<EntityComment[]>) {
             case CommentEntityType.Event:
                 return `/arrangement/${comment.entityId}`
             case CommentEntityType.Poll:
-                return `/avstemninger`
+                return ``
             default:
-                return "#"
+                return ""
         }
     }
 
