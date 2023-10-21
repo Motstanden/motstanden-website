@@ -1,26 +1,7 @@
 import Database from "better-sqlite3"
 import { CommentEntityType } from "common/enums"
-import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig.js"
-
-function getAll(entityType: CommentEntityType, entityId: number): Comment[] {
-    const db = new Database(motstandenDB, dbReadOnlyConfig)
-
-    const stmt = db.prepare(`
-    SELECT 
-        ${getIdColumnName(entityType)} as id,
-        comment,
-        created_by as createdBy,
-        created_at as createdAt
-    FROM
-        ${getTableName(entityType)}
-    WHERE
-        ${getEntityIdColumnName(entityType)} = ?
-    `)
-
-    const comments: Comment[] = stmt.all(entityId)
-    db.close()
-    return comments
-}
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
+import { NewComment } from "common/interfaces"
 
 // This function exposes the database for sql injection attack.
 // This is dangerous, so don't touch it unless you know what you are doing
@@ -61,7 +42,43 @@ function getEntityIdColumnName(entityType: CommentEntityType): string {
     }
 }
 
+function getAll(entityType: CommentEntityType, entityId: number): Comment[] {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+
+    const stmt = db.prepare(`
+    SELECT 
+        ${getIdColumnName(entityType)} as id,
+        comment,
+        created_by as createdBy,
+        created_at as createdAt
+    FROM
+        ${getTableName(entityType)}
+    WHERE
+        ${getEntityIdColumnName(entityType)} = ?
+    `)
+
+    const comments: Comment[] = stmt.all(entityId)
+    db.close()
+    return comments
+}
+
+function insertNew(entityType: CommentEntityType, entityId: number,  comment: NewComment, createdBy: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+
+    const stmt = db.prepare(`
+    INSERT INTO ${getTableName(entityType)} (
+        ${getEntityIdColumnName(entityType)},
+        comment,
+        created_by) 
+    VALUES 
+        (?, ?, ?)
+    `)
+    stmt.run(entityId, comment.comment, createdBy)
+    db.close()
+}
+
 
 export const commentsService = {
-    getAll: getAll
+    getAll: getAll,
+    insertNew: insertNew
 }

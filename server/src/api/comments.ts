@@ -1,9 +1,11 @@
 import { CommentEntityType } from "common/enums";
-import { strToNumber } from "common/utils";
+import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express, { Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { validateNumber } from "../middleware/validateNumber.js";
 import { commentsService } from "../services/comments.js";
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
+import { NewComment } from "common/interfaces";
 
 const router = express.Router()
 
@@ -49,7 +51,7 @@ function getCommentsHandler( {
     }
 }
 
-router.post("/event/:entityId/comments",
+router.post("/event/:entityId/comments/new",
     AuthenticateUser(),
     validateNumber({
         getValue: (req: Request) => req.params.entityId,
@@ -60,7 +62,7 @@ router.post("/event/:entityId/comments",
     })
 )
 
-router.post("/poll/:entityId/comments", 
+router.post("/poll/:entityId/comments/new", 
     AuthenticateUser(),
     validateNumber({
         getValue: (req: Request) => req.params.entityId,
@@ -79,11 +81,36 @@ function postCommentHandler( {
     getEntityId: (req: Request) => number
 }) {
     return (req: Request, res: Response) => {
-        // TODO
+        const user = req.user as AccessTokenData
+        const comment = tryCreateValidComment(req.body)
+        const entityId = getEntityId(req)
 
-        console.log("Inserting comments for entity: ", entityType, " with id: ", req.params.entityId)
+        if(!comment)
+            return res.status(400).send("Could not parse comment data")
 
-        throw "Not implemented yet"
+        try {
+            commentsService.insertNew(entityType, entityId, comment, user.userId)
+        } catch (err) {
+            console.error(err)
+            res.status(500).send(`Failed to insert ${entityType} comment into the database`)
+        }
+
+        res.end()
+    }
+}
+
+function tryCreateValidComment(obj: unknown): NewComment | undefined {
+    if (typeof obj !== "object" || obj === null) {
+        return undefined
+    }
+
+    const comment = obj as NewComment
+    if (typeof comment.comment !== "string" || isNullOrWhitespace(comment.comment)) {
+        return undefined
+    }
+
+    return {
+        comment: comment.comment.trim()
     }
 }
 
