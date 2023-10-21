@@ -1,12 +1,18 @@
-import { Avatar, Link, Skeleton, Stack, useTheme } from "@mui/material"
-import { useQuery } from "@tanstack/react-query"
+import { LoadingButton } from "@mui/lab"
+import { Avatar, Link, Skeleton, Stack, TextField, useTheme } from "@mui/material"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { CommentEntityType } from "common/enums"
-import { Comment } from "common/interfaces"
+import { Comment, NewComment } from "common/interfaces"
+import { isNullOrWhitespace } from "common/utils"
 import dayjs from "dayjs"
+import { useState } from "react"
 import { Link as RouterLink } from "react-router-dom"
+import { useAuth } from "src/context/Authentication"
 import { useUserReference } from "src/context/UserReference"
 import { fetchAsync } from "src/utils/fetchAsync"
-
+import ChatIcon from '@mui/icons-material/Chat';
+import SendIcon from '@mui/icons-material/Send';
+import { postJson } from "src/utils/postJson"
 
 export {
     CommentSectionContainer as CommentSection
@@ -21,6 +27,13 @@ function CommentSectionContainer({
     entityId: number
     style?: React.CSSProperties
 }){
+    const queryKey = [entityType, "comments", entityId]
+    const queryClient = useQueryClient()
+
+    const onPostSuccess = async () => {
+        await queryClient.invalidateQueries(queryKey)
+    }
+
     return (
         <section
             style={{
@@ -28,9 +41,16 @@ function CommentSectionContainer({
                 ...style
             }}
         >
-            <CommentSectionFetcher
-                entityId={entityId}
+            <div style={{marginBottom: "30px"}}>
+                <CommentSectionFetcher
+                    entityId={entityId}
+                    entityType={entityType}
+                    queryKey={queryKey}
+                />
+            </div>
+            <CommentForm 
                 entityType={entityType}
+                onPostSuccess={onPostSuccess}    
             />
         </section>
     )
@@ -39,12 +59,13 @@ function CommentSectionContainer({
 function CommentSectionFetcher({
     entityType,
     entityId,
+    queryKey,
 }: {
     entityType: CommentEntityType,
-    entityId: number
+    entityId: number,
+    queryKey: any[]
 }) {
 
-    const queryKey = [entityType, "comments", entityId]
     const url = `/api/${entityType}/${entityId}/comments`
     const { isLoading, isError, data, error } = useQuery<Comment[]>(queryKey, () => fetchAsync<Comment[]>(url))
 
@@ -268,5 +289,77 @@ function UserFullName({
         >
             <b>{user.fullName}</b>
         </Link>
+    )
+}
+
+function CommentForm({
+    entityType,
+    onPostSuccess
+}: {
+    entityType: CommentEntityType,
+    onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
+}) {
+    const user = useAuth().user!
+    const [value, setValue] = useState<NewComment>({ comment: "" })
+    const [isSubmitting, setIsSubmitting] = useState(false)
+
+    const onSubmit = async (e: React.FormEvent) => { 
+        e.preventDefault()
+        setIsSubmitting(true)
+
+        const response = await postJson(`/api/${entityType}/comments/new`, value, { alertOnFailure: true })
+
+        if (response && response.ok) {
+            onPostSuccess && await onPostSuccess(response)
+            setValue({ comment: "" })
+        }
+
+        setIsSubmitting(false)
+    }
+
+    const disabled = isNullOrWhitespace(value.comment)
+
+    return (
+        <form onSubmit={onSubmit}>
+            <Stack 
+                direction="row"
+                spacing={2}
+            >
+                <UserAvatar
+                    userId={user.id}
+                />
+                <div 
+                    style={{
+                        width: "100%"
+                    }}>
+                    <TextField 
+                        type="text"
+                        label="Skriv en kommentar..."
+                        required
+                        fullWidth
+                        multiline
+                        autoComplete="off"
+                        value={value.comment}
+                        onChange={(e) => setValue({ comment: e.target.value })}
+                        minRows={2}
+                        disabled={isSubmitting}
+                        sx={{mb: 4}}
+                    />
+                    <LoadingButton
+                        type="submit"
+                        loading={isSubmitting}
+                        variant="contained"
+                        loadingPosition="end"
+                        endIcon={<SendIcon />}
+                        disabled={disabled}
+                        style={{
+                            minWidth: "120px"
+                        }}
+                    >
+                        Kommenter
+                    </LoadingButton>
+                </div>
+            </Stack>
+        </form>
     )
 }
