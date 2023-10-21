@@ -50,6 +50,7 @@ function CommentSectionContainer({
             </div>
             <CommentForm 
                 entityType={entityType}
+                entityId={entityId}
                 onPostSuccess={onPostSuccess}    
             />
         </section>
@@ -294,9 +295,11 @@ function UserFullName({
 
 function CommentForm({
     entityType,
+    entityId,
     onPostSuccess
 }: {
     entityType: CommentEntityType,
+    entityId: number,
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
 }) {
     const user = useAuth().user!
@@ -307,7 +310,11 @@ function CommentForm({
         e.preventDefault()
         setIsSubmitting(true)
 
-        const response = await postJson(`/api/${entityType}/comments/new`, value, { alertOnFailure: true })
+        const newValue: NewComment = {
+            comment: value.comment.trim()
+        }
+
+        const response = await postJson(`/api/${entityType}/${entityId}/comments/new`, newValue, { alertOnFailure: true })
 
         if (response && response.ok) {
             onPostSuccess && await onPostSuccess(response)
