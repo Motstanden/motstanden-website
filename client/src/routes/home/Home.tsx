@@ -21,11 +21,9 @@ import { PollCard, PollSkeleton } from "../poll/Poll";
 
 export default function Home() {
     useTitle("Hjem")
-    const user = useAuth().user!
     return (
-        <PageContainer>
+        <>
             <h1>Hjem</h1>
-            <p style={{ marginBottom: "40px" }}>Velkommen {user.firstName}!</p>
             <Grid 
                 container 
                 spacing={4} 
@@ -80,7 +78,7 @@ export default function Home() {
                     title="Nyttige lenker"
                 />
             </Grid>
-        </PageContainer>
+        </>
     )
 }
 

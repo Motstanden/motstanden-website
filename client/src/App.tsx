@@ -1,4 +1,3 @@
-import { lazy, Suspense } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { RequireAuth, RequireAuthRouter, useAuth } from "src/context/Authentication";
 
@@ -8,17 +7,17 @@ import { AppLayout } from 'src/layout/AppLayout';
 // URL routes
 // -- Event pages --
 import { EventContext, EventItemContext } from 'src/routes/event/Context';
+import EditEventPage from "src/routes/event/EditPage";
+import EventItemPage from "src/routes/event/ItemPage";
 import EventListPage from "src/routes/event/ListPage";
-import EditEventPage from "src/routes/event/EditPage"
-import NewEventPage from "src/routes/event/NewPage"
-import EventItemPage from "src/routes/event/ItemPage"
+import NewEventPage from "src/routes/event/NewPage";
 
 // -- User pages --
 import { UserContext, UserProfileContext } from 'src/routes/user/Context';
+import EditUserPage from "src/routes/user/EditPage";
 import UserListPage from "src/routes/user/ListPage";
+import NewUserPage from "src/routes/user/NewPage";
 import UserPage from "src/routes/user/UserPage";
-import NewUserPage from "src/routes/user/NewPage"
-import EditUserPage from "src/routes/user/EditPage"
 
 // -- Other pages --
 import AdminPage from "src/routes/admin/Admin";
@@ -28,6 +27,8 @@ import BoardWebsiteListPage from "src/routes/boardWebsiteList/BoardWebsiteList";
 import DocumentsPage from "src/routes/documents/DocumentsPage";
 import FrontPage from "src/routes/frontPage/FrontPage";
 import HomePage from "src/routes/home/Home";
+import HomePageContainer from "src/routes/home/components/PageContainer"
+import WallPage from "./routes/home/Wall";
 import { LicenseOnlyPage, LicensePage } from "src/routes/license/LicensePage";
 import LoginPage from "src/routes/login/Login";
 import { EditLyricPage } from "src/routes/lyric/EditPage";
@@ -50,13 +51,13 @@ import { LyricItemPage } from './routes/lyric/ItemPage';
 
 function App() {
 	const auth = useAuth()
+	const isLoggedIn = !!auth.user 
 
 	return (
 		<div className='App' style={{ minHeight: "100vh", height: "100%" }}>
 			<Routes>
 				<Route element={<AppLayout />}>
 
-					<Route path="/" element={auth.user ? <HomePage /> : <FrontPage/>} />
 
 					{/* Routes that are publicly available */}
 					<Route element={<Outlet/>}>
@@ -87,9 +88,22 @@ function App() {
 						<Route path="/maakesodd" element={<LicenseOnlyPage />} />
 					</Route>
 
+					{!isLoggedIn && (
+						<Route path="/" element={<FrontPage/>} />
+					)} 
+
+					{isLoggedIn && (
+						<Route element={<RequireAuthRouter/>}> 
+							<Route path="/" element={<HomePageContainer />}>
+								<Route path="" element={<HomePage />} />
+								<Route path="hjem" element={<HomePage />} />
+								<Route path="vegg" element={<WallPage />} />
+							</Route>
+						</Route>
+					)} 
+
 					{/* Routes that requires the user to be logged in */}
-					<Route element={<RequireAuthRouter requiredGroup={UserGroup.Contributor} />}>
-						<Route path="/hjem" element={<HomePage />} />
+					<Route element={<RequireAuthRouter/>}>
 						<Route path="/notearkiv" element={<SheetArchiveContext />}>
 							<Route path="" element={<Navigate to="repertoar" />} />
 							<Route path="repertoar" element={<SongPage mode='repertoire' />} />
