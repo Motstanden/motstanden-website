@@ -24,3 +24,7 @@ sqlite3 ../../motstanden_dev.db < InsertEvents.sql;
 
 echo "    Inserting simple text";
 sqlite3 ../../motstanden_dev.db < InsertSimpleText.sql;
+
+
+echo "    Inserting wall posts";
+sqlite3 ../../motstanden_dev.db < InsertWallPosts.sql;
