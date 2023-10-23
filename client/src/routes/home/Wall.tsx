@@ -1,3 +1,4 @@
+import { PostingWall } from "src/components/PostingWall"
 import { useTitle } from "src/hooks/useTitle"
 
 export default function WallPage() {
@@ -5,7 +6,7 @@ export default function WallPage() {
     return (
         <>
             <h1>Vegg</h1>
-            <p>Her kan du snart skrive på veggen...</p>
+            <PostingWall/>
         </>
     )
 } 

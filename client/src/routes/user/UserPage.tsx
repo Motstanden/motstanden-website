@@ -14,16 +14,22 @@ import { Link as RouterLink, useOutletContext } from "react-router-dom";
 import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
 import { Card, CardTextItem } from "./Components";
+import { PostingWall } from "src/components/PostingWall";
 
 export default function UserPage() {
     const user = useOutletContext<User>()
     useTitle(user.firstName)
     return (
-        <Grid container alignItems="top" spacing={4}>
-            <PersonCard user={user} />
-            <MemberCard user={user} />
-            <AccountDetailsCard user={user} />
-        </Grid>
+        <div>
+            <Grid container alignItems="top" spacing={4}>
+                <PersonCard user={user} />
+                <MemberCard user={user} />
+                <AccountDetailsCard user={user} />
+            </Grid>
+            <Divider sx={{my: 4}} />
+            <h2>Tidslinje</h2>
+            <PostingWall/>
+        </div>
     )
 }
 
