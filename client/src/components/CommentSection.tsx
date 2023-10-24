@@ -1,6 +1,6 @@
 import SendIcon from '@mui/icons-material/Send'
-import { LoadingButton } from "@mui/lab"
-import { Avatar, Link, Skeleton, Stack, TextField, useTheme } from "@mui/material"
+import { LoadingButton, LoadingButtonProps } from "@mui/lab"
+import { Avatar, Link, Skeleton, Stack, TextField, TextFieldProps, useTheme } from "@mui/material"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { CommentEntityType } from "common/enums"
 import { Comment, NewComment } from "common/interfaces"
@@ -17,13 +17,17 @@ export {
     CommentSectionContainer as CommentSection
 }
 
+type CommentSectionVariant = "compact" | "normal"
+
 function CommentSectionContainer({
     entityType,
     entityId,
+    variant,
     style,
 }: {
     entityType: CommentEntityType,
-    entityId: number
+    entityId: number,
+    variant?: CommentSectionVariant,
     style?: React.CSSProperties
 }){
     const queryKey = [entityType, "comments", entityId]
@@ -45,11 +49,13 @@ function CommentSectionContainer({
                     entityId={entityId}
                     entityType={entityType}
                     queryKey={queryKey}
+                    variant={variant ?? "normal"}
                 />
             </div>
             <CommentForm 
                 entityType={entityType}
                 entityId={entityId}
+                variant={variant ?? "normal"}
                 onPostSuccess={onPostSuccess}    
             />
         </section>
@@ -60,17 +66,19 @@ function CommentSectionFetcher({
     entityType,
     entityId,
     queryKey,
+    variant,
 }: {
     entityType: CommentEntityType,
     entityId: number,
-    queryKey: any[]
+    queryKey: any[],
+    variant?: CommentSectionVariant,
 }) {
 
     const url = `/api/${entityType}/${entityId}/comments`
     const { isLoading, isError, data, error } = useQuery<Comment[]>(queryKey, () => fetchAsync<Comment[]>(url))
 
     if(isLoading) {
-        return <CommentSectionSkeleton length={4}/>
+        return <CommentSectionSkeleton variant={variant}/>
     }
 
     if(isError) {
@@ -78,27 +86,41 @@ function CommentSectionFetcher({
     }
 
     return (
-        <CommentSection comments={data} />
+        <CommentSection comments={data} variant={variant} />
     )
     
 }
 
-function CommentSectionSkeleton( {length}: {length: number}) {
+function CommentSectionSkeleton( {
+    variant,
+}: {
+    variant?: CommentSectionVariant,
+}) {
+    const length = variant === "normal" ? 4 : 2
     return (
         <>
             {Array(length).fill(1).map((_, i) => (
-                <CommentItemSkeleton key={i}/>
+                <CommentItemSkeleton key={i} variant={variant}/>
             ))}
         </>
     )
 }
 
-function CommentItemSkeleton() { 
+function CommentItemSkeleton( {variant}: {variant?: CommentSectionVariant}) { 
+
+    const commentBubbleStyle: React.CSSProperties = 
+        variant === "normal" ? {
+            height: "70px",
+            borderRadius: "10px",
+        } : {
+            height: "60px",
+            borderRadius: "16px",
+        }   
 
     return (
         <Stack
             direction="row"
-            spacing={2}
+            spacing={variant === "normal" ? 2 : 1}
             marginBottom="15px"
         >
             <UserAvatarSkeleton style={{marginTop: "5px"}}/>
@@ -108,15 +130,15 @@ function CommentItemSkeleton() {
                 }}>
                 <Skeleton 
                     variant="rounded"
-                    width="100%"
                     height="70px"
                     style={{
-                        borderRadius: "10px",
+                        ...commentBubbleStyle
                     }}
                 />
                 <Skeleton 
                     variant="text"
                     style={{
+                        marginLeft: "5px",
                         maxWidth: "100px",
                         fontSize: "small"
                     }}
@@ -126,7 +148,13 @@ function CommentItemSkeleton() {
     )
 }
 
-function CommentSection( {comments}: {comments: Comment[]}) {
+function CommentSection( {
+    comments,
+    variant
+}: {
+    comments: Comment[],
+    variant?: CommentSectionVariant,
+}) {
     const location = useLocation()
     
     useLayoutEffect(() => {
@@ -150,6 +178,7 @@ function CommentSection( {comments}: {comments: Comment[]}) {
                 <CommentItem 
                     key={comment.id}
                     comment={comment}
+                    variant={variant ?? "normal"}
                     style={{
                         marginBottom: "15px",
                     }}
@@ -161,17 +190,44 @@ function CommentSection( {comments}: {comments: Comment[]}) {
 
 function CommentItem( {
     comment,
-    style
+    style,
+    variant,
 }: {
     comment: Comment,
-    style?: React.CSSProperties
+    style?: React.CSSProperties,
+    variant?: CommentSectionVariant,
 }) {
     const theme = useTheme()
+
+    const commentContainerStyle: React.CSSProperties = 
+        variant === "normal" ? {
+            width: "100%",
+        } : {
+
+        }
+
+    const commentBubbleStyle: React.CSSProperties = 
+        variant === "normal" ? {
+            padding: "12px" ,
+            borderRadius: "10px",
+        } : {
+            paddingBlock: "7px",
+            paddingInline: "14px",
+            borderRadius: "16px",
+        }
+
+    const userNameStyle: React.CSSProperties = 
+        variant === "normal" ? {
+            fontSize: "inherit",
+        } : {
+            fontSize: "small",
+        }
+
     return (
         <div id={`comment-${comment.id}`}>
             <Stack 
                 direction="row"
-                spacing={2}
+                spacing={variant === "normal" ? 2 : 1 }
                 style={style}
             >
                 <UserAvatar 
@@ -180,20 +236,18 @@ function CommentItem( {
                         marginTop: "5px"
                     }}
                 />
-                <div
-                    style={{
-                        width: "100%"
-                    }}
-                >
+                <div style={commentContainerStyle}>
                     <div
                         style={{
                             backgroundColor: theme.palette.divider,
-                            padding: "12px",
-                            borderRadius: "10px",
+                            ...commentBubbleStyle
                         }}
                     >
                         <div>
-                            <UserFullName userId={comment.createdBy}/>
+                            <UserFullName 
+                                userId={comment.createdBy}
+                                style={userNameStyle}
+                            />
                         </div>
                         <div>
                             {comment.comment}
@@ -315,11 +369,13 @@ export function UserFullName({
 function CommentForm({
     entityType,
     entityId,
-    onPostSuccess
+    onPostSuccess,
+    variant,
 }: {
     entityType: CommentEntityType,
     entityId: number,
-    onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
+    onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void),
+    variant?: CommentSectionVariant,
 }) {
     const user = useAuth().user!
     const [value, setValue] = useState<NewComment>({ comment: "" })
@@ -345,11 +401,34 @@ function CommentForm({
 
     const disabled = isNullOrWhitespace(value.comment)
 
+    const textFieldStyle: TextFieldProps = 
+        variant === "normal" ? {
+            minRows: 2,
+            sx: {
+                mb: 4
+            }
+        } : {
+            minRows: 1,
+            sx: {
+                mb: 1.5
+            },
+            style: {
+                marginTop: "-6px"
+            }
+        }
+
+    const buttonStyle: LoadingButtonProps =
+        variant === "normal" ? {
+        
+        } : {
+            size: "small"
+        }
+
     return (
         <form onSubmit={onSubmit}>
             <Stack 
                 direction="row"
-                spacing={2}
+                spacing={variant === "normal" ? 2 : 1 }
             >
                 <UserAvatar
                     userId={user.id}
@@ -367,9 +446,8 @@ function CommentForm({
                         autoComplete="off"
                         value={value.comment}
                         onChange={(e) => setValue({ comment: e.target.value })}
-                        minRows={2}
                         disabled={isSubmitting}
-                        sx={{mb: 4}}
+                        {...textFieldStyle}
                     />
                     <LoadingButton
                         type="submit"
@@ -381,6 +459,7 @@ function CommentForm({
                         style={{
                             minWidth: "120px"
                         }}
+                        {...buttonStyle}
                     >
                         Kommenter
                     </LoadingButton>

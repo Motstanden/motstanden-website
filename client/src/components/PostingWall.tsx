@@ -1,10 +1,10 @@
-import { Divider, Paper, Stack } from "@mui/material"
+import { Divider, Paper, Stack, useTheme } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
+import { CommentEntityType } from "common/enums"
 import { WallPost } from "common/interfaces"
+import dayjs from "dayjs"
 import { fetchAsync } from "src/utils/fetchAsync"
 import { CommentSection, UserAvatar, UserFullName } from "./CommentSection"
-import dayjs from "dayjs"
-import { CommentEntityType } from "common/enums"
 
 export function PostingWall({
     userId,
@@ -90,6 +90,8 @@ function PostItem({
     style?: React.CSSProperties
 }) {
 
+    const theme = useTheme()
+
     const formatDate = (dateString: string): string => {
         const date = dayjs(dateString).utc(true)
         const now = dayjs()
@@ -106,15 +108,18 @@ function PostItem({
 
     return (
         <Paper 
-            elevation={1}
+            elevation={2}
             style={{
                 padding: "20px",
-                ...style
+                borderWidth: "1px",
+                borderStyle: "solid",
+                borderColor: theme.palette.divider,
+                ...style,
             }}
         >
             <Stack 
                 direction="row"
-                spacing={1}
+                spacing={1.5}
                 alignItems="center"
             >
                 <UserAvatar
@@ -160,7 +165,8 @@ function PostItem({
             </Stack>
             <div 
                 style={{
-                    marginTop: "10px"
+                    marginTop: "15px",
+                    marginLeft: "5px",
                 }}
             >
                 {post.content}
@@ -169,6 +175,7 @@ function PostItem({
             <CommentSection
                 entityType={CommentEntityType.WallPost}
                 entityId={post.id}
+                variant="compact"
             />
         </Paper>
     )
