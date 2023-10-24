@@ -1,10 +1,10 @@
-import { Divider, Paper, Stack, useTheme } from "@mui/material"
+import { Divider, Paper, Skeleton, Stack, useTheme } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { CommentEntityType } from "common/enums"
 import { WallPost } from "common/interfaces"
 import dayjs from "dayjs"
 import { fetchAsync } from "src/utils/fetchAsync"
-import { CommentSection, UserAvatar, UserFullName } from "./CommentSection"
+import { CommentSection, CommentSectionSkeleton, UserAvatar, UserFullName } from "./CommentSection"
 
 export function PostingWall({
     userId,
@@ -48,7 +48,7 @@ function PostSectionFetcher({
     const { isLoading, isError, data, error } = useQuery<WallPost[]>(queryKey, () => fetchAsync<WallPost[]>(url))
 
     if(isLoading) {
-        return <PostSectionSkeleton length={4}/>
+        return <PostSectionSkeleton length={6} />
     }
 
     if(isError) {
@@ -62,7 +62,73 @@ function PostSectionFetcher({
 
 function PostSectionSkeleton({length}: {length: number}) {
     return(
-        <></> // TODO: Implement skeleton
+        <>
+            {Array(length).fill(1).map((_, index) => (
+                <PostItemSkeleton 
+                    key={index} 
+                    style={{
+                        marginBottom: "20px"
+                    }}
+                />
+
+            ))}
+        </>
+    )
+}
+
+function PostItemSkeleton( {
+    style
+}: {
+    style?: React.CSSProperties
+}) {
+    const theme = useTheme()
+    return (
+        <Paper
+            elevation={2}
+            style={{
+                padding: "20px",
+                borderWidth: "1px",
+                borderStyle: "solid",
+                borderColor: theme.palette.divider,
+                ...style
+            }}
+        >
+            <Stack
+                direction="row"
+                spacing={1.5}
+                alignItems="center"
+            >
+                <Skeleton 
+                    variant="circular"
+                    height="40px"
+                    width="40px"
+                />
+                <div>
+                    <Skeleton 
+                        variant="text"
+                        style={{
+                            width: "150px",
+                        }}
+                    />
+                    <Skeleton 
+                        variant="text"
+                        style={{
+                            width: "100px",
+                            fontSize: "small"
+                        }}
+                    />
+                </div>
+            </Stack>
+            <Skeleton 
+                variant="rounded"
+                style={{
+                    marginTop: "15px",
+                    height: "80px"
+                }}
+            />
+            <Divider sx={{my: 3}} />
+            <CommentSectionSkeleton variant="compact" />
+        </Paper>
     )
 }
 

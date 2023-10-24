@@ -91,7 +91,7 @@ function CommentSectionFetcher({
     
 }
 
-function CommentSectionSkeleton( {
+export function CommentSectionSkeleton( {
     variant,
 }: {
     variant?: CommentSectionVariant,
@@ -302,7 +302,7 @@ export function UserAvatar({
     )
 }
 
-export function UserAvatarSkeleton( {style}: {style?: React.CSSProperties}) {
+function UserAvatarSkeleton( {style}: {style?: React.CSSProperties}) {
     return (
         <Skeleton 
             variant="circular"
