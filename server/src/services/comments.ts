@@ -87,6 +87,16 @@ function getAllUnion(limit?: number): EntityComment[]{
             created_at as createdAt
         FROM 
             song_lyric_comment
+        UNION ALL
+        SELECT 
+            wall_post_comment_id as id,
+            'wall-post' as type,
+            wall_post_id as entityId,
+            comment,
+            created_by as createdBy,
+            created_at as createdAt
+        FROM
+            wall_post_comment
         ORDER BY created_at	DESC
         ${!!limit ? "LIMIT ?" : ""};
     `)

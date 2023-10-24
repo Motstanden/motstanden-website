@@ -130,6 +130,8 @@ function RenderComments(props: RenderItemProps<EntityComment[]>) {
                 return ``   // TODO
             case CommentEntityType.SongLyric:
                 return `/studenttraller/${comment.entityId}#comment-${comment.id}`
+            case CommentEntityType.WallPost:
+                return `/vegg/${comment.entityId}#comment-${comment.id}`
             default:
                 return ``
         }
