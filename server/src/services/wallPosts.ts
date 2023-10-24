@@ -24,6 +24,7 @@ function getAll(userId?: number): WallPost[] {
         FROM 
             wall_post
         ${userId ? "WHERE wall_user_id = ?" : ""}
+        ORDER BY created_at DESC
     `)
     const dbPosts: DbWallPost[] = userId ? stmt.all(userId) : stmt.all()
     db.close()
