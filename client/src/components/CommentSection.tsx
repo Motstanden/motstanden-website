@@ -402,21 +402,20 @@ function CommentForm({
 
     const disabled = isNullOrWhitespace(value.comment)
 
-    const textFieldStyle: TextFieldProps = 
-        variant === "normal" ? {
-            minRows: 2,
-            sx: {
-                mb: 4
-            }
-        } : {
-            minRows: 1,
-            sx: {
-                mb: 1.5
-            },
-            style: {
-                marginTop: "-6px"
-            }
+    const textFieldStyle: TextFieldProps = variant === "normal" ? {
+        minRows: 2,
+        sx: {
+            mb: 4
         }
+    } : {
+        minRows: 1,
+        sx: {
+            mb: 1.5
+        },
+        style: {
+            marginTop: "-6px"
+        }
+    }
 
     const buttonStyle: LoadingButtonProps =
         variant === "normal" ? {
