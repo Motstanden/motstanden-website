@@ -260,6 +260,7 @@ function PostItem({
                 style={{
                     marginTop: "15px",
                     marginLeft: "5px",
+                    whiteSpace: "pre-line"
                 }}
             >
                 {post.content}

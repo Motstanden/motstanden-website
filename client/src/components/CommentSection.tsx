@@ -250,7 +250,10 @@ function CommentItem( {
                                 style={userNameStyle}
                             />
                         </div>
-                        <div>
+                        <div 
+                            style={{
+                                whiteSpace: "pre-line"
+                            }}>
                             {comment.comment}
                         </div>
                     </div>
