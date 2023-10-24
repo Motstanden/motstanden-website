@@ -28,7 +28,7 @@ export default function UserPage() {
             </Grid>
             <Divider sx={{my: 4}} />
             <h1>Tidslinje</h1>
-            <PostingWall userId={user.id}/>
+            <PostingWall userId={user.id} userFirstName={user.firstName}/>
         </div>
     )
 }

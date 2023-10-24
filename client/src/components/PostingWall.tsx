@@ -15,8 +15,10 @@ import { postJson } from 'src/utils/postJson'
 export function PostingWall({
     userId,
     style,
+    userFirstName
 }: {
     userId?: number,
+    userFirstName?: string,
     style?: React.CSSProperties
 }) {
     const currentUser = useAuth().user!
@@ -48,6 +50,7 @@ export function PostingWall({
                 style={{
                     marginBottom: "20px"
                 }} 
+                userFirstName={userFirstName}
             />
             <PostSectionFetcher 
                 queryKey={queryKey}
@@ -78,7 +81,7 @@ function PostSectionFetcher({
     if(isError) {
         return <div>{`${error}`}</div>
     }
-    
+
     return (
         <PostSection posts={data}/>
     )
@@ -272,17 +275,65 @@ export function PostSectionItem({
     )
 }
 
+const selfGreetLabels: string[] = [
+    `Hva tenker du på...?`,
+    `Hva gjør du nå...?`,
+    `Hvilke planer har du i dag...?`,
+    `Fortell noe om deg selv...`,
+    `Hva skjer...?`,
+    `Hva spiste du til middag...?`,
+    `Hva er planene for helgen...?`,
+    `Kommer du på øvelse...?`,
+    `Si noe personlig om deg selv...`,
+    `Hva er din favorittfilm...?`,
+    `Hva er din favorittserie...?`,
+    `Hva er din favorittbok...?`,
+    `Hva er din dypeste hemmelighet...?`,
+    `Hvordan er formen...?`,
+    `Hva gjorde du i helgen...?`,
+    `Hva er din favorittligning i matematikken...?`,
+    `Hvem er din favorittforeleser...?`,
+    `Hva er din favorittligning i fysikken...?`,
+    `Hva er din favorittligning innefor elektro...?`,
+]
+
+const friendGreetLabels = (name: string) : string[] => [
+    `Si hei til ${name}...`,
+    `Gi en hilsen til ${name}...`,
+    `Lovpris ${name}...`,
+    `Fortell ${name} hva du tenker på...`,
+    `Gratuler ${name} med dagen...??`,
+    `Si noe fint til ${name}...`,
+    `Si noe personlig til ${name}...`,
+]
+
+function useRandomLabel(isSelf: boolean, userFirstName?: string) {
+    const labels = !isSelf && userFirstName 
+        ? friendGreetLabels(userFirstName)
+        : selfGreetLabels 
+
+    const label = labels[Math.floor(Math.random() * labels.length)]
+    const [value, setValue] = useState(label)
+
+    return value
+}
+
 function PostForm({
     initialValue,
     style,
     onPostSuccess,
+    userFirstName,
 }: {
     initialValue: NewWallPost,
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void),
     style?: React.CSSProperties,
+    userFirstName?: string
 }) {
-    const user = useAuth().user!
     const theme = useTheme()
+
+    const user = useAuth().user!
+    const isSelf = user.id === initialValue.wallUserId
+    const label = useRandomLabel(isSelf, userFirstName)
 
     const [value, setValue] = useState<NewWallPost>(initialValue)
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -321,7 +372,6 @@ function PostForm({
             }}
         >
             <form onSubmit={onSubmit}>
-
                 <Stack 
                     direction="row"
                     spacing={1}
@@ -338,7 +388,7 @@ function PostForm({
                         }}>
                         <TextField 
                             type="text"
-                            label="Skriv et innlegg..."
+                            label={label}
                             required
                             fullWidth
                             multiline
