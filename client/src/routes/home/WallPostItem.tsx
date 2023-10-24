@@ -2,6 +2,10 @@ import { Breadcrumbs, Link } from "@mui/material";
 import { strToNumber } from "common/utils";
 import { Navigate, useParams, Link as RouterLink } from "react-router-dom";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { useQuery } from "@tanstack/react-query";
+import { WallPost } from "common/interfaces";
+import { fetchAsync } from "src/utils/fetchAsync";
+import { PostSectionItem, PostSectionSkeleton } from "src/components/PostingWall";
 
 export {
     ParamValidator as WallPostItemPage
@@ -19,11 +23,19 @@ function ParamValidator() {
     return (
         <div
             style={{
-                marginTop: "22px"
+                marginTop: "22px",
+                maxWidth: "650px",
+                marginBottom: "300px"
             }}
         >
             <NavBreadCrumbs/>  
-            <PostFetcher postId={postId}/>
+            <div 
+                style={{
+                    marginTop: "35px"
+                }}
+            >
+                <PostFetcher postId={postId}/>
+            </div>
         </div>
     )
 }
@@ -61,10 +73,19 @@ function PostFetcher({
 }: {
     postId: number
 }) {
-    // TODO
-    return (
-        <>
-        </>
-    )
+    const queryKey = ["wall-post", postId, "item" ]
+    const url = `/api/wall-posts/${postId}`
+    const { isLoading, isError, data, error } = useQuery<WallPost>(queryKey, () => fetchAsync<WallPost>(url))
 
+    if(isLoading) {
+        return <PostSectionSkeleton length={1} />
+    }
+
+    if(isError) {
+        return <div>{`${error}`}</div>
+    }
+
+    return (
+        <PostSectionItem post={data} />
+    )
 }

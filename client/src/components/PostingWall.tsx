@@ -87,11 +87,11 @@ function PostSectionFetcher({
     )
 }
 
-function PostSectionSkeleton({length}: {length: number}) {
+export function PostSectionSkeleton({length}: {length: number}) {
     return(
         <>
             {Array(length).fill(1).map((_, index) => (
-                <PostItemSkeleton 
+                <PostSectionItemSkeleton 
                     key={index} 
                     style={{
                         marginBottom: "20px"
@@ -103,7 +103,7 @@ function PostSectionSkeleton({length}: {length: number}) {
     )
 }
 
-function PostItemSkeleton( {
+function PostSectionItemSkeleton( {
     style
 }: {
     style?: React.CSSProperties
@@ -163,7 +163,7 @@ function PostSection( {posts}: {posts: WallPost[]}) {
     return (
         <>
         {posts.map((post) => (
-            <PostItem
+            <PostSectionItem
                 key={post.id}
                 post={post}
                 style={{
@@ -175,7 +175,7 @@ function PostSection( {posts}: {posts: WallPost[]}) {
     )
 }
 
-function PostItem({
+export function PostSectionItem({
     post,
     style
 }: {
