@@ -48,6 +48,7 @@ import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
 import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
 import { LyricItemPage } from './routes/lyric/ItemPage';
+import { WallPostItemPage } from "./routes/home/WallPostItem";
 
 function App() {
 	const auth = useAuth()
@@ -98,6 +99,7 @@ function App() {
 								<Route path="" element={<HomePage />} />
 								<Route path="hjem" element={<HomePage />} />
 								<Route path="vegg" element={<WallPage />} />
+								<Route path="vegg/:postId" element={<WallPostItemPage/>}/>
 							</Route>
 						</Route>
 					)} 

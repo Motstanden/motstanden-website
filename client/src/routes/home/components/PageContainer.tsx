@@ -8,6 +8,7 @@ export default function PageContainer({ children }: { children?: React.ReactNode
                 { to: "", label: "Hjem" },
                 { to: "/vegg", label: "Vegg"}
             ]}
+            matchChildPath={true}
         >
             <Outlet/>
         </TabbedPageContainer>
