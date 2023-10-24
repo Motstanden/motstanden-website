@@ -1,3 +1,8 @@
+-- Insert current version into the DB.
+INSERT INTO version(migration) VALUES
+    ('17_wall_post.sql');
+
+
 CREATE TABLE wall_post (
     wall_post_id INTEGER PRIMARY KEY,
     content TEXT NOT NULL,    
