@@ -27,7 +27,7 @@ export default function UserPage() {
                 <AccountDetailsCard user={user} />
             </Grid>
             <Divider sx={{my: 4}} />
-            <h2>Tidslinje</h2>
+            <h1>Tidslinje</h1>
             <PostingWall userId={user.id}/>
         </div>
     )

@@ -240,7 +240,8 @@ function CommentItem( {
                     <div
                         style={{
                             backgroundColor: theme.palette.divider,
-                            ...commentBubbleStyle
+                            ...commentBubbleStyle,
+                            minWidth: "130px",
                         }}
                     >
                         <div>
@@ -255,7 +256,7 @@ function CommentItem( {
                     </div>
                     <div
                         style={{
-                            marginLeft: "5px",
+                            marginLeft: "13px",
                             fontSize: "small",
                             opacity: "0.6"
                         }}

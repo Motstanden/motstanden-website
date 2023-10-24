@@ -55,6 +55,9 @@ function PostSectionFetcher({
         return <div>{`${error}`}</div>
     }
 
+    if(data.length <= 0)
+        return <div style={{opacity: 0.85, marginLeft: "6px"}} >Ingen innlegg...</div>
+
     return (
         <PostSection posts={data}/>
     )
