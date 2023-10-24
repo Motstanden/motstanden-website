@@ -1,6 +1,6 @@
 import Database from "better-sqlite3"
 import { CommentEntityType } from "common/enums"
-import { EntityComment, NewComment } from "common/interfaces"
+import { Comment, EntityComment, NewComment } from "common/interfaces"
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
 
 // This function exposes the database for sql injection attack.
@@ -13,6 +13,8 @@ function getTableName(entityType: CommentEntityType): string {
             return "poll_comment"
         case CommentEntityType.SongLyric:
             return "song_lyric_comment"
+        case CommentEntityType.WallPost:
+            return "wall_post_comment"
         default:
             throw `Unknown entity type: ${entityType}`
     }
@@ -28,6 +30,8 @@ function getIdColumnName(entityType: CommentEntityType): string {
             return "poll_comment_id"
         case CommentEntityType.SongLyric:
             return "song_lyric_comment_id"
+        case CommentEntityType.WallPost:
+            return "wall_post_comment_id"
         default:
             throw `Unknown entity type: ${entityType}`
     }
@@ -43,6 +47,8 @@ function getEntityIdColumnName(entityType: CommentEntityType): string {
             return "poll_id"
         case CommentEntityType.SongLyric:
             return "song_lyric_id"
+        case CommentEntityType.WallPost:
+            return "wall_post_id"
         default:
             throw `Unknown entity type: ${entityType}`
     }
