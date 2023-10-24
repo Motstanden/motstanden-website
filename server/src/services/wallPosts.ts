@@ -22,6 +22,26 @@ function getAll(userId?: number): WallPost[] {
     return posts
 }
 
+function get(postId: number): WallPost |undefined {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(`
+        SELECT
+            wall_post_id as id,
+            wall_user_id as wallUserId,
+            content,
+            created_by as createdBy,
+            created_at as createdAt
+        FROM 
+            wall_post
+        WHERE
+            wall_post_id = ?
+    `)
+    const post: WallPost | undefined = stmt.get(postId)
+    db.close()
+    
+    return post
+}
+
 function insertNew(post: NewWallPost, userId: number) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
     const stmt = db.prepare(`
@@ -34,8 +54,8 @@ function insertNew(post: NewWallPost, userId: number) {
     db.close()
 }
 
-
 export const wallPostService = { 
+    get: get,
     getAll: getAll,
     insertNew: insertNew
 }
