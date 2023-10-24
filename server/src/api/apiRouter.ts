@@ -10,6 +10,7 @@ import sheetArchive from "./sheetArchive.js";
 import simpleText from "./simpleText.js";
 import songLyric from "./songLyric.js";
 import user from "./user.js";
+import wallPosts from "./wallPosts.js";
 
 const router = express.Router()
 
@@ -24,5 +25,6 @@ router.use(sheetArchive)
 router.use(simpleText)
 router.use(songLyric)
 router.use(user)
+router.use(wallPosts)
 
 export default router;
