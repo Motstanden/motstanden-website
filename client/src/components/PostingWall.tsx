@@ -1,10 +1,16 @@
-import { Divider, Paper, Skeleton, Stack, useTheme } from "@mui/material"
-import { useQuery } from "@tanstack/react-query"
+import SendIcon from '@mui/icons-material/Send'
+import { LoadingButton } from "@mui/lab"
+import { Divider, Paper, Skeleton, Stack, TextField, useTheme } from "@mui/material"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { CommentEntityType } from "common/enums"
-import { WallPost } from "common/interfaces"
+import { NewWallPost, WallPost } from "common/interfaces"
 import dayjs from "dayjs"
+import { useState } from "react"
+import { useAuth } from "src/context/Authentication"
 import { fetchAsync } from "src/utils/fetchAsync"
 import { CommentSection, CommentSectionSkeleton, UserAvatar, UserFullName } from "./CommentSection"
+import { isNullOrWhitespace } from 'common/utils'
+import { postJson } from 'src/utils/postJson'
 
 export function PostingWall({
     userId,
@@ -13,11 +19,19 @@ export function PostingWall({
     userId?: number,
     style?: React.CSSProperties
 }) {
+    const currentUser = useAuth().user!
+
+    const queryClient = useQueryClient()
+
     const queryKey: any[] = ["wall-post"]
     if (userId) {
         queryKey.push(userId)
     }
-    
+
+    const onPostSuccess = async () => {
+        await queryClient.invalidateQueries(queryKey)
+    }
+
     return (
         <section
             style={{
@@ -25,6 +39,16 @@ export function PostingWall({
                 ...style
             }}
         >
+            <PostForm
+                onPostSuccess={onPostSuccess}
+                initialValue={{
+                    content: "",
+                    wallUserId: userId ?? currentUser.id,
+                }} 
+                style={{
+                    marginBottom: "20px"
+                }} 
+            />
             <PostSectionFetcher 
                 queryKey={queryKey}
                 userId={userId}
@@ -246,6 +270,105 @@ function PostItem({
                 entityId={post.id}
                 variant="compact"
             />
+        </Paper>
+    )
+}
+
+function PostForm({
+    initialValue,
+    style,
+    onPostSuccess,
+}: {
+    initialValue: NewWallPost,
+    onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void),
+    style?: React.CSSProperties,
+}) {
+    const user = useAuth().user!
+    const theme = useTheme()
+
+    const [value, setValue] = useState<NewWallPost>(initialValue)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+
+    const onSubmit = async (e: React.FormEvent) => { 
+        e.preventDefault()
+        setIsSubmitting(true)
+
+        const newValue: NewWallPost = {
+            ...value,
+            content: value.content.trim()
+        }
+
+        const response = await postJson(`/api/wall-posts/new`, newValue, { alertOnFailure: true })
+
+        if (response && response.ok) {
+            onPostSuccess && await onPostSuccess(response)
+            setValue(initialValue)
+        }
+
+        setIsSubmitting(false)
+    }
+
+    const disabled = isNullOrWhitespace(value.content)
+
+    return (
+        <Paper
+            elevation={2}
+            style={{
+                padding: "20px",
+                paddingBlock: "30px",
+                borderWidth: "1px",
+                borderStyle: "solid",
+                borderColor: theme.palette.divider,
+                ...style,
+            }}
+        >
+            <form onSubmit={onSubmit}>
+
+                <Stack 
+                    direction="row"
+                    spacing={1}
+                >
+                    <UserAvatar
+                        userId={user.id}
+                        style={{
+                            marginTop: "5px"
+                        }}
+                    />
+                    <div 
+                        style={{
+                            width: "100%"
+                        }}>
+                        <TextField 
+                            type="text"
+                            label="Skriv et innlegg..."
+                            required
+                            fullWidth
+                            multiline
+                            autoComplete="off"
+                            minRows={1}
+                            value={value.content}
+                            onChange={(e) => setValue(oldVal => ({...oldVal, content: e.target.value}))}
+                            sx={{
+                                mb: 3
+                            }}
+                            disabled={isSubmitting}
+                        />
+                        <LoadingButton
+                            type="submit"
+                            loading={isSubmitting}
+                            variant="contained"
+                            loadingPosition="end"
+                            endIcon={<SendIcon />}
+                            disabled={disabled}
+                            style={{
+                                minWidth: "120px"
+                            }}
+                        >
+                            Post
+                        </LoadingButton>
+                    </div>
+                </Stack>
+            </form>
         </Paper>
     )
 }
