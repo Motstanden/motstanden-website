@@ -1,8 +1,6 @@
 import Database from "better-sqlite3";
-import { CommentEntityType } from "common/enums";
 import { WallPost } from "common/interfaces";
 import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig.js";
-import { commentsService } from "./comments.js";
 
 interface DbWallPost extends Omit<WallPost, "comments"> {}
 
@@ -26,13 +24,8 @@ function getAll(userId?: number): WallPost[] {
         ${userId ? "WHERE wall_user_id = ?" : ""}
         ORDER BY created_at DESC
     `)
-    const dbPosts: DbWallPost[] = userId ? stmt.all(userId) : stmt.all()
+    const posts: WallPost[] = userId ? stmt.all(userId) : stmt.all()
     db.close()
-
-    const posts: WallPost[] = dbPosts.map((post) => ({
-        ...post,
-        comments: commentsService.getAll(CommentEntityType.WallPost, post.id)
-    }))
     
     return posts
 }
