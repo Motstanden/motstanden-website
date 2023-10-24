@@ -302,7 +302,7 @@ export function UserAvatar({
     )
 }
 
-function UserAvatarSkeleton( {style}: {style?: React.CSSProperties}) {
+export function UserAvatarSkeleton( {style}: {style?: React.CSSProperties}) {
     return (
         <Skeleton 
             variant="circular"
