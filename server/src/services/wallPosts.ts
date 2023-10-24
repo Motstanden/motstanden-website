@@ -1,15 +1,7 @@
 import Database from "better-sqlite3";
-import { WallPost } from "common/interfaces";
-import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig.js";
+import { NewWallPost, WallPost } from "common/interfaces";
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
 
-interface DbWallPost extends Omit<WallPost, "comments"> {}
-
-
-// This function can probably be optimized a lot.
-// Right now, the function selects all wall posts from the database, and then for each post, it selects all comments for that post.
-// It is probably faster to run a single query that selects all wall posts and all comments, and then map the comments to the correct wall post.
-// This would be more complex, but it would probably be faster.
-// Lets wait and see if this is a problem before we optimize it.
 function getAll(userId?: number): WallPost[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
@@ -30,6 +22,20 @@ function getAll(userId?: number): WallPost[] {
     return posts
 }
 
+function insertNew(post: NewWallPost, userId: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(`
+        INSERT INTO
+            wall_post (content, wall_user_id, created_by)
+        VALUES
+            (?, ?, ?)
+    `)
+    stmt.run(post.content, post.wallUserId, userId)
+    db.close()
+}
+
+
 export const wallPostService = { 
     getAll: getAll,
+    insertNew: insertNew
 }
