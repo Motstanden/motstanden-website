@@ -1,9 +1,10 @@
-import { Paper, Stack } from "@mui/material"
+import { Divider, Paper, Stack } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { WallPost } from "common/interfaces"
 import { fetchAsync } from "src/utils/fetchAsync"
-import { UserAvatar, UserFullName } from "./CommentSection"
+import { CommentSection, UserAvatar, UserFullName } from "./CommentSection"
 import dayjs from "dayjs"
+import { CommentEntityType } from "common/enums"
 
 export function PostingWall({
     userId,
@@ -164,6 +165,11 @@ function PostItem({
             >
                 {post.content}
             </div>
+            <Divider sx={{my: 3}} />
+            <CommentSection
+                entityType={CommentEntityType.WallPost}
+                entityId={post.id}
+            />
         </Paper>
     )
 }
