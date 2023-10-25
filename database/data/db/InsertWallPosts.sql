@@ -19,7 +19,17 @@ wiki.motstanden.no'),
 
 Les gjerne gjennom og kommenter! Det er viktig å si ifra hvis du er uenig i noe fra referatet, eller er uenig i hvordan referatet har blitt oversatt til statuttendringer.
 
-Hvis det er ingen innsigelser så lukkes PR-en om en uke-ish 🙂');
+Hvis det er ingen innsigelser så lukkes PR-en om en uke-ish 🙂'),
+
+    (11, 14, 14, '2023-10-25 18:15:00',
+'Det har kommet en ny funksjon på nettsiden! 
+Nå kan du like ting! 
+Test det ut her!');
+
+INSERT INTO 
+    wall_post_comment(wall_post_comment_id, wall_post_id, created_by, comment)
+VALUES 
+    (1, 11, 14, 'Test gjerne også på denne kommentaren!');
 
 INSERT INTO 
     wall_post_comment(wall_post_id, created_by, comment)
@@ -67,3 +77,35 @@ VALUES
     -- Post 10: Pull Request for generalvorssamling 2022 er ute...
     -- No comments
 
+INSERT INTO 
+    wall_post_comment_like(wall_post_comment_id, user_id, emoji_id)
+VALUES
+    (1, 14, 1),
+    (1, 15, 1),
+    (1, 16, 1),
+    (1, 17, 1),
+    (1, 18, 2),
+    (1, 19, 2),
+    (1, 20, 2),
+    (1, 21, 2),
+    (1, 22, 2),
+    (1, 23, 2),
+    (1, 24, 2),
+    (1, 25, 2),
+    (1, 26, 2),
+    (1, 27, 3),
+    (1, 28, 3),
+    (1, 29, 3),
+    (1, 30, 3),
+    (1, 31, 3),
+    (1, 32, 4),
+    (1, 33, 4),
+    (1, 34, 4),
+    (1, 35, 4),
+    (1, 36, 4),
+    (1, 37, 4),
+    (1, 38, 4),
+    (1, 39, 5),
+    (1, 40, 5),
+    (1, 41, 6),
+    (1, 42, 6);

@@ -67,9 +67,13 @@ sqlite3 motstanden_dev.db < migrations/motstanden_db/15_vw_event_participant_ref
 echo "Running: 16_comment_section.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/16_comment_section.sql;
 
-# Reimplement view of event participant table
+# Create a wall were users can post messages
 echo "Running: 17_wall_post.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/17_wall_post.sql;
+
+# Create a wall were users can post messages
+echo "Running: 18_likes.sql.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/18_likes.sql;
 
 # Insert data that is representative for the current data in the database
 cd data/db
