@@ -1,16 +1,17 @@
+import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import SendIcon from '@mui/icons-material/Send'
 import { LoadingButton } from "@mui/lab"
-import { Divider, Paper, Skeleton, Stack, TextField, useTheme } from "@mui/material"
+import { Divider, Paper, Skeleton, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { CommentEntityType } from "common/enums"
 import { NewWallPost, WallPost } from "common/interfaces"
+import { isNullOrWhitespace } from 'common/utils'
 import dayjs from "dayjs"
 import { useState } from "react"
 import { useAuth } from "src/context/Authentication"
 import { fetchAsync } from "src/utils/fetchAsync"
-import { CommentSection, CommentSectionSkeleton, UserAvatar, UserFullName } from "./CommentSection"
-import { isNullOrWhitespace } from 'common/utils'
 import { postJson } from 'src/utils/postJson'
+import { CommentSection, CommentSectionSkeleton, UserAvatar, UserFullName } from "./CommentSection"
 
 export function PostingWall({
     userId,
@@ -109,11 +110,13 @@ function PostSectionItemSkeleton( {
     style?: React.CSSProperties
 }) {
     const theme = useTheme()
+    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     return (
         <Paper
             elevation={2}
             style={{
-                padding: "20px",
+                paddingBlock: "20px",
+                paddingInline: isSmallScreen ? "10px" : "20px",
                 borderWidth: "1px",
                 borderStyle: "solid",
                 borderColor: theme.palette.divider,
@@ -185,6 +188,8 @@ export function PostSectionItem({
 
     const theme = useTheme()
 
+    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+
     const formatDate = (dateString: string): string => {
         const date = dayjs(dateString).utc(true)
         const now = dayjs()
@@ -203,7 +208,8 @@ export function PostSectionItem({
         <Paper 
             elevation={2}
             style={{
-                padding: "20px",
+                paddingBlock: "20px",
+                paddingInline: isSmallScreen ? "10px" : "20px",
                 borderWidth: "1px",
                 borderStyle: "solid",
                 borderColor: theme.palette.divider,
@@ -222,35 +228,35 @@ export function PostSectionItem({
                     }}
                 />
                 <div>
-                    <Stack
-                        direction="row"
-                        alignItems="center"
-                    >
-                        <UserFullName
-                            userId={post.createdBy}
-                            />
+                    <div>
+                        <UserFullName 
+                            userId={post.createdBy} 
+                            style={{
+                                marginRight: "3px"
+                            }}
+                        />
                         {post.createdBy !== post.wallUserId && (
                             <>
-                                <span 
+                                <ArrowRightIcon 
                                     style={{
-                                        marginInline: "3px",
                                         fontSize: "16pt",
                                         opacity: 0.5,
-                                        marginBottom: "-2px"
+                                        marginBottom: "-5px",
+                                        marginRight: "3px"
                                     }}
-                                >
-                                    ▸
-                                </span>
+                                />
                                 <UserFullName 
                                     userId={post.wallUserId}
+                                    style={{marginTop: "-10px"
+
+                                    }}
                                 />
                             </>   
                         )}
-                    </Stack>
+                    </div>
                     <div style={{
                         fontSize: "small",
                         opacity: 0.6,
-                        marginTop: post.wallUserId === post.createdBy ? "0px" : "-3px"
                     }}>
                         {formatDate(post.createdAt)}
                     </div>
@@ -331,6 +337,8 @@ function PostForm({
 }) {
     const theme = useTheme()
 
+    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+
     const user = useAuth().user!
     const isSelf = user.id === initialValue.wallUserId
     const label = useRandomLabel(isSelf, userFirstName)
@@ -363,8 +371,8 @@ function PostForm({
         <Paper
             elevation={2}
             style={{
-                padding: "20px",
-                paddingBlock: "30px",
+                paddingBlock: "20px",
+                paddingInline: isSmallScreen ? "10px" : "20px",
                 borderWidth: "1px",
                 borderStyle: "solid",
                 borderColor: theme.palette.divider,
