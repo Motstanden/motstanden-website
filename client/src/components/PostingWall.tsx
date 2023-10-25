@@ -382,12 +382,13 @@ function PostForm({
             <form onSubmit={onSubmit}>
                 <Stack 
                     direction="row"
-                    spacing={1}
                 >
                     <UserAvatar
                         userId={user.id}
                         style={{
-                            marginTop: "5px"
+                            marginTop: "5px",
+                            display: isSmallScreen ? "none" : "inherit",
+                            marginRight: "12px"
                         }}
                     />
                     <div 

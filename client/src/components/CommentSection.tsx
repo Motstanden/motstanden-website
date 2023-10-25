@@ -1,6 +1,6 @@
 import SendIcon from '@mui/icons-material/Send'
 import { LoadingButton, LoadingButtonProps } from "@mui/lab"
-import { Avatar, Link, Skeleton, Stack, TextField, TextFieldProps, useTheme } from "@mui/material"
+import { Avatar, Link, Skeleton, Stack, TextField, TextFieldProps, Theme, useMediaQuery, useTheme } from "@mui/material"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { CommentEntityType } from "common/enums"
 import { Comment, NewComment } from "common/interfaces"
@@ -385,6 +385,8 @@ function CommentForm({
     const [value, setValue] = useState<NewComment>({ comment: "" })
     const [isSubmitting, setIsSubmitting] = useState(false)
 
+    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+
     const onSubmit = async (e: React.FormEvent) => { 
         e.preventDefault()
         setIsSubmitting(true)
@@ -413,7 +415,7 @@ function CommentForm({
     } : {
         minRows: 1,
         sx: {
-            mb: 1.5
+            mb: 2
         },
         style: {
             marginTop: "-6px"
@@ -431,10 +433,13 @@ function CommentForm({
         <form onSubmit={onSubmit}>
             <Stack 
                 direction="row"
-                spacing={variant === "normal" ? 2 : 1 }
             >
                 <UserAvatar
                     userId={user.id}
+                    style={{
+                        display: isSmallScreen ? "none" : "inherit",
+                        marginRight: variant === "normal" ? "17px" : "11px"
+                    }}
                 />
                 <div 
                     style={{
