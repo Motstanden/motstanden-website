@@ -73,7 +73,18 @@ function upsert(entityType: LikeEntityType, entityId: number, like: NewLike, use
 }
 
 function emojiExists(emojiId: number): boolean {
-    throw "Not implemented"
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(`
+        SELECT
+            1
+        FROM 
+            emoji
+        WHERE
+            emoji_id = ?
+    `)
+    const exists: 1 | undefined = stmt.get(emojiId)
+    db.close()
+    return exists === 1
 }
 
 function getAllEmojis(): LikeEmoji[] {
