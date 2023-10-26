@@ -162,9 +162,7 @@ function CommentSection( {
         if(location.hash && location.hash.startsWith("#comment-")) {
             const element = document.getElementById(location.hash.substring(1))
             if(element) {
-                // We expect 'instant' to throw build errors: https://github.com/Microsoft/TypeScript/issues/28755
-                // @ts-ignore
-                window.scrollTo({ top: 0, left: 0, behavior: "instant" })
+                window.scrollTo({ top: 0, left: 0, behavior: "auto" })
                 
                 setTimeout(() => {
                     element.scrollIntoView({ behavior: "smooth" })
