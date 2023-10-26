@@ -1,6 +1,6 @@
 import Database from "better-sqlite3";
 import { LikeEntityType } from "common/enums";
-import { Like } from "common/interfaces";
+import { Like, NewLike } from "common/interfaces";
 import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig.js";
 
 function getTableName(entityType: LikeEntityType): string {
@@ -68,6 +68,19 @@ function getAll(entityType: LikeEntityType, entityId: number): Like[] {
     return likes
 }
 
+function upsert(entityType: LikeEntityType, entityId: number, like: NewLike, userId: number): void {
+    throw "Not implemented"
+}
+
+function emojiExists(emojiId: number): boolean {
+    throw "Not implemented"
+}
+
 export const likesService = { 
-    getAll: getAll
+    getAll: getAll,
+    upsert: upsert
+}
+
+export const emojiService = {
+    exists: emojiExists
 }

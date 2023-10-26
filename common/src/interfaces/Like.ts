@@ -1,5 +1,8 @@
-export interface Like {
+export interface NewLike {
+    emojiId: number
+}
+
+export interface Like extends NewLike {
     id: number,
-    emojiId: number,
     userId: number,
 }
