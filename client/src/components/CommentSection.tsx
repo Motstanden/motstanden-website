@@ -358,28 +358,6 @@ function CommentForm({
 
     const disabled = isNullOrWhitespace(value.comment)
 
-    const textFieldStyle: TextFieldProps = variant === "normal" ? {
-        minRows: 2,
-        sx: {
-            mb: 4
-        }
-    } : {
-        minRows: 1,
-        sx: {
-            mb: 2
-        },
-        style: {
-            marginTop: "-6px"
-        }
-    }
-
-    const buttonStyle: LoadingButtonProps =
-        variant === "normal" ? {
-        
-        } : {
-            size: "small"
-        }
-
     return (
         <form onSubmit={onSubmit}>
             <Stack 
@@ -406,7 +384,11 @@ function CommentForm({
                         value={value.comment}
                         onChange={(e) => setValue({ comment: e.target.value })}
                         disabled={isSubmitting}
-                        {...textFieldStyle}
+                        minRows={variant === "normal" ? 2 : 1}
+                        sx={{mb: variant === "normal" ? 4 : 2}}
+                        style={{
+                            marginTop: variant === "normal" ? "0px" : "-6px"
+                        }}
                     />
                     <LoadingButton
                         type="submit"
@@ -418,7 +400,7 @@ function CommentForm({
                         style={{
                             minWidth: "120px"
                         }}
-                        {...buttonStyle}
+                        size={variant === "normal" ? "medium" : "small"}
                     >
                         Kommenter
                     </LoadingButton>
