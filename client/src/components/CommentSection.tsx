@@ -198,30 +198,6 @@ function CommentItem( {
 }) {
     const theme = useTheme()
 
-    const commentContainerStyle: React.CSSProperties = 
-        variant === "normal" ? {
-            width: "100%",
-        } : {
-
-        }
-
-    const commentBubbleStyle: React.CSSProperties = 
-        variant === "normal" ? {
-            padding: "12px" ,
-            borderRadius: "10px",
-        } : {
-            paddingBlock: "7px",
-            paddingInline: "14px",
-            borderRadius: "16px",
-        }
-
-    const userNameStyle: React.CSSProperties = 
-        variant === "normal" ? {
-            fontSize: "inherit",
-        } : {
-            fontSize: "small",
-        }
-
     return (
         <div id={`comment-${comment.id}`}>
             <Stack 
@@ -235,18 +211,23 @@ function CommentItem( {
                         marginTop: "5px"
                     }}
                 />
-                <div style={commentContainerStyle}>
+                <div style={{
+                    width: variant === "normal" ? "100%" : undefined,
+                }}>
                     <div
                         style={{
                             backgroundColor: theme.palette.divider,
-                            ...commentBubbleStyle,
                             minWidth: "130px",
+                            padding: variant === "normal" ? "12px" : "7px 14px",
+                            borderRadius: variant === "normal" ? "10px" : "16px",
                         }}
                     >
                         <div>
                             <UserFullName 
                                 userId={comment.createdBy}
-                                style={userNameStyle}
+                                style={{
+                                    fontSize: variant === "normal" ? "inherit" : "small",
+                                }}
                             />
                         </div>
                         <div 
