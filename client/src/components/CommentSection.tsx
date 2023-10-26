@@ -1,6 +1,6 @@
 import SendIcon from '@mui/icons-material/Send'
 import { LoadingButton, LoadingButtonProps } from "@mui/lab"
-import { Avatar, Link, Skeleton, Stack, TextField, TextFieldProps, Theme, useMediaQuery, useTheme } from "@mui/material"
+import { Link, Skeleton, Stack, TextField, TextFieldProps, Theme, useMediaQuery, useTheme } from "@mui/material"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { CommentEntityType } from "common/enums"
 import { Comment, NewComment } from "common/interfaces"
@@ -12,6 +12,7 @@ import { useAuth } from "src/context/Authentication"
 import { useUserReference } from "src/context/UserReference"
 import { fetchAsync } from "src/utils/fetchAsync"
 import { postJson } from "src/utils/postJson"
+import { UserAvatar, UserAvatarSkeleton } from './user/UserAvatar'
 
 export {
     CommentSectionContainer as CommentSection
@@ -271,56 +272,6 @@ function CommentItem( {
         </div>
     )
 }
-
-export function UserAvatar({
-    userId,
-    style
-}: {
-    userId: number,
-    style?: React.CSSProperties
-}) {
-
-    const {isError, isLoading, userReference} = useUserReference()
-
-    if(isLoading) {
-        return <UserAvatarSkeleton style={style}/>
-    }
-
-    const user = userReference[userId]
-    if(isError || !user) {
-        return <Avatar style={style}/>
-    }
-
-    return (
-        <Avatar 
-            style={{
-                height: "40px",
-                width: "40px",
-                margin: 0,
-                padding: 0,
-                ...style
-            }}
-        >
-                {user.initials}
-        </Avatar>
-    )
-}
-
-export function UserAvatarSkeleton( {style}: {style?: React.CSSProperties}) {
-    return (
-        <Skeleton 
-            variant="circular"
-            style={{
-                height: "40px",
-                width: "44px",      // I have no idea why, but width needs to be this value in order to not cause layout shift
-                margin: 0,
-                padding: 0,
-                ...style
-            }}
-        />
-    )
-}
-
 
 export function UserFullName({
     userId,
