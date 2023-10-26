@@ -77,7 +77,18 @@ function emojiExists(emojiId: number): boolean {
 }
 
 function getAllEmojis(): LikeEmoji[] {
-    throw "Not implemented"
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(`
+        SELECT
+            emoji_id as id,
+            name,
+            text
+        FROM 
+            emoji
+    `)
+    const emojis: LikeEmoji[] = stmt.all()
+    db.close()
+    return emojis    
 }
 
 export const likesService = { 
