@@ -21,11 +21,11 @@ router.get("likes/emojis/all",
 
 // ---- GET likes ----
 
-router.get(`event/comment/:entityId/likes`, getLikesPipeline(LikeEntityType.EventComment))
-router.get("poll/comment/:entityId/likes", getLikesPipeline(LikeEntityType.PollComment))
-router.get("song-lyric/comment/:entityId/likes", getLikesPipeline(LikeEntityType.SongLyricComment))
-router.get("wall-post/:entityId/likes", getLikesPipeline(LikeEntityType.WallPost))
-router.get("wall-post/comment/:entityId/likes", getLikesPipeline(LikeEntityType.WallPostComment))
+router.get("/event/comment/:entityId/likes", getLikesPipeline(LikeEntityType.EventComment))
+router.get("/poll/comment/:entityId/likes", getLikesPipeline(LikeEntityType.PollComment))
+router.get("/song-lyric/comment/:entityId/likes", getLikesPipeline(LikeEntityType.SongLyricComment))
+router.get("/wall-post/:entityId/likes", getLikesPipeline(LikeEntityType.WallPost))
+router.get("/wall-post/comment/:entityId/likes", getLikesPipeline(LikeEntityType.WallPostComment))
 
 function getLikesPipeline(entityType: LikeEntityType) {
     return [
