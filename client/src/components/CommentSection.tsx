@@ -1,16 +1,19 @@
 import SendIcon from '@mui/icons-material/Send'
 import { LoadingButton } from "@mui/lab"
-import { Skeleton, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material"
+import { IconButton, Paper, Skeleton, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { CommentEntityType } from "common/enums"
+import { CommentEntityType, LikeEntityType } from "common/enums"
 import { Comment, NewComment } from "common/interfaces"
 import { isNullOrWhitespace } from "common/utils"
 import dayjs from "dayjs"
 import { useLayoutEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
 import { useAuth } from "src/context/Authentication"
+import { useLikeEmoji } from 'src/context/LikeEmoji'
 import { fetchAsync } from "src/utils/fetchAsync"
 import { postJson } from "src/utils/postJson"
+import { LikesContextProvider, useLikes } from './likes/LikesContext'
+import { LikeUtils } from './likes/utils'
 import { UserAvatar, UserAvatarSkeleton } from './user/UserAvatar'
 import { UserFullName } from './user/UserFullName'
 
@@ -87,7 +90,11 @@ function CommentSectionFetcher({
     }
 
     return (
-        <CommentSection comments={data} variant={variant} />
+        <CommentSection 
+            comments={data} 
+            variant={variant} 
+            likeEntityType={LikeUtils.convertToLikeEntity(entityType)}
+        />
     )
     
 }
@@ -151,9 +158,11 @@ function CommentItemSkeleton( {variant}: {variant?: CommentSectionVariant}) {
 
 function CommentSection( {
     comments,
-    variant
+    likeEntityType,
+    variant,
 }: {
     comments: Comment[],
+    likeEntityType: LikeEntityType,
     variant?: CommentSectionVariant,
 }) {
     const location = useLocation()
@@ -174,14 +183,19 @@ function CommentSection( {
     return (
         <>
             {comments.map(comment => (
-                <CommentItem 
+                <LikesContextProvider
+                    entityType={likeEntityType} 
+                    entityId={comment.id}
                     key={comment.id}
-                    comment={comment}
-                    variant={variant ?? "normal"}
-                    style={{
-                        marginBottom: "15px",
-                    }}
-                />
+                >
+                    <CommentItem 
+                        comment={comment}
+                        variant={variant ?? "normal"}
+                        style={{
+                            marginBottom: "15px",
+                        }}
+                        />
+                </LikesContextProvider>
             ))}
         </>
     )
@@ -218,8 +232,9 @@ function CommentItem( {
                         style={{
                             backgroundColor: theme.palette.divider,
                             minWidth: "130px",
-                            padding: variant === "normal" ? "12px" : "7px 14px",
+                            padding: variant === "normal" ? "12px" : "7px 14px 10px 14px",
                             borderRadius: variant === "normal" ? "10px" : "16px",
+                            position: "relative"
                         }}
                     >
                         <div>
@@ -236,6 +251,15 @@ function CommentItem( {
                             }}>
                             {comment.comment}
                         </div>
+                        <div
+                            style={{
+                                position: "absolute",
+                                right: "0px",
+                                zIndex: 1
+                            }}
+                        >
+                            <LikeListIconButton/>
+                        </div>
                     </div>
                     <div
                         style={{
@@ -249,6 +273,79 @@ function CommentItem( {
                 </div>
             </Stack>
         </div>
+    )
+}
+
+function LikeListIconButton() {
+
+    const likeData = useLikes()
+    const emojis = useLikeEmoji()
+    const theme = useTheme()
+
+    if(likeData.isLoading) 
+        return <LikeListIconButtonSkeleton/>
+
+    if(likeData.isError || likeData.likes.length === 0)
+        return <></>
+
+
+    const emojiIds: number[] = []
+    for(const like of likeData.likes) {             // The likes are coming in order of most used emoji
+        if(!emojiIds.includes(like.emojiId)) {
+            emojiIds.push(like.emojiId)
+        }
+
+        if(emojiIds.length >= 3) {
+            break
+        }
+    }
+
+    return (
+        <Paper
+            style={{
+                borderRadius: "10px",
+                lineHeight: "0px",
+            }}
+            elevation={4}
+        >
+            <IconButton 
+                style={{
+                    fontSize: "14px",
+                    margin: "0px",
+                    padding: "2px",
+                    borderRadius: "10px",
+                    color: theme.palette.text.primary,
+                }}
+            >
+                    {emojiIds.map(emojiId =>(
+                        <span key={emojiId}>
+                            {emojis.likeEmoji[emojiId]}
+                        </span>
+                    ))}
+                    {likeData.likes.length > 1 && (
+                        <span 
+                            style={{
+                                marginLeft: "2px",
+                                marginRight: "2px",
+                                fontSize: "small"
+                            }}
+                        >
+                            {likeData.likes.length + 1 >= 100 ? "99+" : likeData.likes.length}
+                        </span>
+                    )}
+            </IconButton>
+        </Paper>
+    )
+}
+
+function LikeListIconButtonSkeleton(){
+    // TODO: Implement
+    return (
+        <Skeleton 
+            variant='circular'
+            height={20}
+            width={20}
+        />
     )
 }
 
