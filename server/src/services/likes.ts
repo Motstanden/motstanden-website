@@ -52,15 +52,23 @@ function getEntityIdColumnName(entityType: LikeEntityType): string {
 function getAll(entityType: LikeEntityType, entityId: number): Like[] { 
     const db = new Database(motstandenDB, dbReadOnlyConfig)
 
+    // Get all likes and order them by the most used emoji
     const stmt = db.prepare(`
         SELECT
             ${getIdColumnName(entityType)} as id,
             emoji_id as emojiId,
             user_id as userId
         FROM 
-            ${getTableName(entityType)}
+            ${getTableName(entityType)} as parent
         WHERE
             ${getEntityIdColumnName(entityType)} = ?
+        ORDER BY (
+            SELECT 
+                COUNT(emoji_id)
+            FROM 
+                ${getTableName(entityType)} as child
+            WHERE parent.emoji_id = child.emoji_id
+        ) DESC
     `)
     
     const likes: Like[] = stmt.all(entityId)
