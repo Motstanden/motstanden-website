@@ -9,6 +9,16 @@ import { NewLike } from "common/interfaces";
 
 const router = express.Router()
 
+// ---- GET like emojis ----
+
+router.get("likes/emojis/all",
+    AuthenticateUser(),
+    (req, res) => {
+        const emojis = emojiService.getAll()
+        res.send(emojis)
+    }
+)
+
 // ---- GET likes ----
 
 router.get(`event/comment/:entityId/likes`, getLikesPipeline(LikeEntityType.EventComment))
