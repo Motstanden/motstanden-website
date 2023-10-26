@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { LikeEntityType } from "common/enums";
 import { Like, LikeEmoji, NewLike } from "common/interfaces";
-import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig.js";
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
 
 function getTableName(entityType: LikeEntityType): string {
     switch (entityType) {
@@ -69,7 +69,22 @@ function getAll(entityType: LikeEntityType, entityId: number): Like[] {
 }
 
 function upsert(entityType: LikeEntityType, entityId: number, like: NewLike, userId: number): void {
-    throw "Not implemented"
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const startTransaction = db.transaction(() => {
+        const stmt = db.prepare(`
+            INSERT INTO 
+                ${getTableName(entityType)} (${getEntityIdColumnName(entityType)}, emoji_id, user_id) 
+            VALUES 
+                (?, ?, ?)
+            ON CONFLICT 
+                (${getEntityIdColumnName(entityType)}, user_id) 
+            DO UPDATE
+                SET emoji_id = EXCLUDED.emoji_id 
+        `)
+        stmt.run(entityId, like.emojiId, userId)
+    })
+    startTransaction()
+    db.close()
 }
 
 function emojiExists(emojiId: number): boolean {
