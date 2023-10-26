@@ -1,6 +1,6 @@
 import { CommentEntityType, LikeEntityType } from "common/enums"
 
-function convertToLikeEntity(type: CommentEntityType): LikeEntityType | undefined {
+function convertToLikeEntity(type: CommentEntityType): LikeEntityType{
     switch(type) {
         case CommentEntityType.Event:
             return LikeEntityType.EventComment
@@ -10,8 +10,6 @@ function convertToLikeEntity(type: CommentEntityType): LikeEntityType | undefine
             return LikeEntityType.SongLyricComment
         case CommentEntityType.WallPost:
             return LikeEntityType.WallPostComment
-        default:
-            return undefined
     }
 }
 
