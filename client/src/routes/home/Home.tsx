@@ -5,9 +5,9 @@ import { EntityComment, EventData, Poll, Quote, Rumour } from "common/interfaces
 import dayjs, { Dayjs } from "dayjs";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { UserFullName } from "src/components/CommentSection";
 import { TitleCard } from "src/components/TitleCard";
 import { UserAvatar, UserAvatarSkeleton } from 'src/components/user/UserAvatar';
+import { UserFullName } from 'src/components/user/UserFullName';
 import { useTitle } from "src/hooks/useTitle";
 import { buildEventItemUrl } from "src/routes/event/Context";
 import { QuoteList } from "src/routes/quotes/ListPage";

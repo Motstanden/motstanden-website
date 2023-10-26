@@ -1,18 +1,18 @@
 import SendIcon from '@mui/icons-material/Send'
-import { LoadingButton, LoadingButtonProps } from "@mui/lab"
-import { Link, Skeleton, Stack, TextField, TextFieldProps, Theme, useMediaQuery, useTheme } from "@mui/material"
+import { LoadingButton } from "@mui/lab"
+import { Skeleton, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { CommentEntityType } from "common/enums"
 import { Comment, NewComment } from "common/interfaces"
 import { isNullOrWhitespace } from "common/utils"
 import dayjs from "dayjs"
 import { useLayoutEffect, useState } from "react"
-import { Link as RouterLink, useLocation } from "react-router-dom"
+import { useLocation } from "react-router-dom"
 import { useAuth } from "src/context/Authentication"
-import { useUserReference } from "src/context/UserReference"
 import { fetchAsync } from "src/utils/fetchAsync"
 import { postJson } from "src/utils/postJson"
 import { UserAvatar, UserAvatarSkeleton } from './user/UserAvatar'
+import { UserFullName } from './user/UserFullName'
 
 export {
     CommentSectionContainer as CommentSection
@@ -268,54 +268,6 @@ function CommentItem( {
                 </div>
             </Stack>
         </div>
-    )
-}
-
-export function UserFullName({
-    userId,
-    style
-}: {
-    userId: number,
-    style?: React.CSSProperties
-}) {
-
-    const {isError, isLoading, userReference} = useUserReference()
-
-    if(isLoading) {
-        return (
-            <Skeleton 
-                variant="text"
-                style={{
-                    width: "150px",
-                    margin: 0,
-                    padding: 0,
-                    ...style
-                }}
-            />
-        )
-    }
-
-    const user = userReference[userId]
-    if(isError || !user) {
-        return <b>[Ukjent]</b>
-    }
-
-    return (
-        <Link
-            component={RouterLink}
-            to={`/medlem/${userId}`}
-            underline="hover"
-            style={{
-                wordWrap: "break-word",
-                fontSize: "inherit",
-                color: "inherit",
-                textDecorationColor: "inherit",
-                fontWeight: "bold",
-                ...style
-            }}
-        >
-            {user.fullName}
-        </Link>
     )
 }
 

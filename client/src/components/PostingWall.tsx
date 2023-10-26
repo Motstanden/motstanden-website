@@ -11,8 +11,9 @@ import { useState } from "react"
 import { useAuth } from "src/context/Authentication"
 import { fetchAsync } from "src/utils/fetchAsync"
 import { postJson } from 'src/utils/postJson'
-import { CommentSection, CommentSectionSkeleton, UserFullName } from "./CommentSection"
+import { CommentSection, CommentSectionSkeleton } from "./CommentSection"
 import { UserAvatar } from './user/UserAvatar'
+import { UserFullName } from './user/UserFullName'
 
 export function PostingWall({
     userId,
