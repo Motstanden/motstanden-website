@@ -11,7 +11,7 @@ const router = express.Router()
 
 // ---- GET like emojis ----
 
-router.get("likes/emojis/all",
+router.get("/likes/emojis/all",
     AuthenticateUser(),
     (req, res) => {
         const emojis = emojiService.getAll()
