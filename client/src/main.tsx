@@ -11,6 +11,7 @@ import { CssBaseline } from '@mui/material';
 import { LocaleProvider } from './context/Locale';
 import { AppThemeProvider } from './context/Themes';
 import { UserReferenceProvider } from './context/UserReference';
+import { LikeEmojiProvider } from './context/LikeEmoji';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
@@ -25,12 +26,14 @@ root.render(
 				<LocaleProvider>
 					<AuthProvider>
 						<UserReferenceProvider>
-							<AppThemeProvider>
-								{/* Provides reasonable default css values from the material-ui framework */}
-								<CssBaseline />
+							<LikeEmojiProvider>
+								<AppThemeProvider>
+									{/* Provides reasonable default css values from the material-ui framework */}
+									<CssBaseline />
 
-								<App />
-							</AppThemeProvider>
+									<App />
+								</AppThemeProvider>
+							</LikeEmojiProvider>
 						</UserReferenceProvider>
 					</AuthProvider>
 				</LocaleProvider>
