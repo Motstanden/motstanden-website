@@ -327,18 +327,21 @@ function LikeListIconButton({entityType, entityId}: {entityType: LikeEntityType,
         <>
             <Paper
                 style={{
-                    borderRadius: "10px",
+                    borderRadius: "30px",
                     lineHeight: "0px",
+                    padding: "0px",
+                    margin: "0px",
                 }}
                 elevation={4}
             >
                 <IconButton 
                     onClick={onEmojiClick}
                     style={{
-                        fontSize: "14px",
+                        fontSize: "13pt",
                         margin: "0px",
-                        padding: "2px",
-                        borderRadius: "10px",
+                        padding: "0px 2px",
+                        borderRadius: "30px",
+                        lineHeight: "15pt",
                         color: theme.palette.text.primary,
                     }}
                 >
