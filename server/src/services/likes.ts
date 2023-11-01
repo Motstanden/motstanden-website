@@ -62,13 +62,8 @@ function getAll(entityType: LikeEntityType, entityId: number): Like[] {
             ${getTableName(entityType)} as parent
         WHERE
             ${getEntityIdColumnName(entityType)} = ?
-        ORDER BY (
-            SELECT 
-                COUNT(emoji_id)
-            FROM 
-                ${getTableName(entityType)} as child
-            WHERE parent.emoji_id = child.emoji_id
-        ) DESC
+        ORDER BY 
+            emoji_id ASC
     `)
     
     const likes: Like[] = stmt.all(entityId)
