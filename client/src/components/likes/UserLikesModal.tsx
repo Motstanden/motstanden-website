@@ -107,7 +107,13 @@ export function UserLikesModal({ entityType, entityId }: {entityType: LikeEntity
                     <IconButton
                         onClick={closeModal}
                         style={{
-                            marginBottom: isSmallScreen ? "10px" : undefined
+                            marginBottom: isSmallScreen ? "10px" : undefined,
+                        }}
+                        sx={{
+                            bgcolor: "rgba(128, 128, 128, 0.2)",
+                            "&:hover": {
+                                bgcolor: "rgba(128, 128, 128, 0.4)",
+                            },
                         }}
                     >
                         <CloseIcon />
