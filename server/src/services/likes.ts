@@ -99,15 +99,15 @@ function emojiExists(emojiId: number): boolean {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT
-            1
+            1 as value
         FROM 
             emoji
         WHERE
             emoji_id = ?
     `)
-    const exists: 1 | undefined = stmt.get(emojiId)
+    const data: { value: number } | undefined = stmt.get(emojiId)
     db.close()
-    return exists === 1
+    return data?.value === 1
 }
 
 function getAllEmojis(): LikeEmoji[] {
