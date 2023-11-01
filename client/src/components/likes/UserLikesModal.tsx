@@ -8,7 +8,7 @@ import { UserFullName } from "../user/UserFullName";
 import { useLikes } from "./LikesContext";
 
 
-type Size = "small" | "normal" 
+type Size = "small" | "normal"
 
 export function UserLikesModal({
     open,
@@ -16,7 +16,7 @@ export function UserLikesModal({
 }: {
     open: boolean
     onClose?: () => void
-}){
+}) {
     const { likes } = useLikes()
 
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
@@ -26,7 +26,7 @@ export function UserLikesModal({
     const onTabSelectionChanged = (emojiId: number) => setSelectedEmojiId(emojiId)
 
     let filteredLikes = likes;
-    if(selectedEmojiId !== -1){ 
+    if (selectedEmojiId !== -1) {
         filteredLikes = likes.filter(like => like.emojiId === selectedEmojiId)
     }
 
@@ -39,12 +39,12 @@ export function UserLikesModal({
             fullScreen={isSmallScreen}
         >
             <DialogTitle >
-                <Stack 
-                    direction="row" 
-                    justifyContent="space-between" 
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
                     alignItems="center"
-                    >
-                    <EmojiTabs 
+                >
+                    <EmojiTabs
                         selectedEmojiId={selectedEmojiId}
                         onSelectedChanged={onTabSelectionChanged}
                         tabItemStyle={{
@@ -55,12 +55,12 @@ export function UserLikesModal({
                         }}
                         size={isSmallScreen ? "small" : "normal"}
                     />
-                    <IconButton 
+                    <IconButton
                         onClick={onClose}
                         style={{
                             marginBottom: isSmallScreen ? "10px" : undefined
                         }}
-                        >
+                    >
                         <CloseIcon />
                     </IconButton>
                 </Stack>
@@ -70,7 +70,7 @@ export function UserLikesModal({
                     height: isSmallScreen ? undefined : "70vh"
                 }}
             >
-                <UserList items={filteredLikes}/>
+                <UserList items={filteredLikes} />
             </DialogContent>
         </Dialog>
     )
@@ -81,13 +81,13 @@ interface EmojiTab {
     count: number
 }
 
-function EmojiTabs( { 
+function EmojiTabs({
     selectedEmojiId,
     onSelectedChanged,
     tabItemStyle,
     tabIndicatorStyle,
     size = "normal"
-}: { 
+}: {
     selectedEmojiId: number,
     onSelectedChanged: (newIndex: number) => void,
     tabItemStyle?: React.CSSProperties,
@@ -96,11 +96,11 @@ function EmojiTabs( {
 }) {
 
     const { likes } = useLikes()
-    const { likeEmoji  } = useLikeEmoji()
+    const { likeEmoji } = useLikeEmoji()
 
     const tabData: EmojiTab[] = []
-    for(const emoji in likeEmoji){
-        if(likes.some(like => like.emojiId === Number(emoji))){
+    for (const emoji in likeEmoji) {
+        if (likes.some(like => like.emojiId === Number(emoji))) {
             tabData.push({
                 emojiId: Number(emoji),
                 count: likes.filter(like => like.emojiId === Number(emoji)).length
@@ -126,14 +126,14 @@ function EmojiTabs( {
                 style: tabIndicatorStyle
             }}
         >
-            <Tab 
+            <Tab
                 label="Alle"
                 value={-1}
                 onClick={() => onSelectedChanged(-1)}
                 style={tabStyle}
             />
             {tabData.map(item => (
-                <Tab 
+                <Tab
                     key={item.emojiId}
                     label={(
                         <TabEmojiLabel
@@ -146,17 +146,17 @@ function EmojiTabs( {
                     style={tabStyle}
                     onClick={() => onSelectedChanged(item.emojiId)}
                 />
-            ))} 
+            ))}
         </Tabs>
     )
 }
 
-function TabEmojiLabel({ 
-    emoji, 
+function TabEmojiLabel({
+    emoji,
     count,
     size
 }: {
-    emoji: string, 
+    emoji: string,
     count: number
     size: Size
 }) {
@@ -167,7 +167,7 @@ function TabEmojiLabel({
                 alignItems: "center",
             }}
         >
-            <span 
+            <span
                 style={{
                     fontSize: size === "small" ? "14pt" : "18pt"
                 }}
@@ -181,22 +181,22 @@ function TabEmojiLabel({
     )
 }
 
-function UserList( {items}: {items: Like[]}) {
+function UserList({ items }: { items: Like[] }) {
 
-    const { likeEmoji  } = useLikeEmoji()
+    const { likeEmoji } = useLikeEmoji()
 
     return (
         <>
             {items.map(like => (
                 <Stack
-                    key={like.userId} 
-                    direction="row" 
+                    key={like.userId}
+                    direction="row"
                     alignItems="center"
                     spacing={1.5}
                     sx={{
                         mb: 2,
                     }}
-                    >
+                >
                     <Badge
                         overlap="circular"
                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -211,14 +211,14 @@ function UserList( {items}: {items: Like[]}) {
     )
 }
 
-function EmojiBadge( { emoji }: { emoji: string} ) {
+function EmojiBadge({ emoji }: { emoji: string }) {
     return (
-        <span 
+        <span
             style={{
                 fontSize: "1.4em"
             }}
         >
             {emoji}
         </span>
-    )    
+    )
 }
