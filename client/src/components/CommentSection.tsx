@@ -272,14 +272,17 @@ function CommentItem( {
                                 style={{
                                     fontSize: "small",
                                     marginInline: "4px",
-                                    minWidth: "50px",
+                                    minWidth: "40px",
+                                    textTransform: "capitalize",
+                                    fontWeight: "bold",
+                                    opacity: "0.6"
                                 }}
                             />
                         </span>
                         <span
                             style={{
                                 fontSize: "small",
-                                opacity: "0.6"
+                                opacity: "0.6",
                             }}
                             >
                             {dayjs(comment.createdAt).utc(true).fromNow()}
