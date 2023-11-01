@@ -17,6 +17,7 @@ import { UserLikesModal, useLikesModal } from './likes/UserLikesModal'
 import { LikeUtils } from './likes/utils'
 import { UserAvatar, UserAvatarSkeleton } from './user/UserAvatar'
 import { UserFullName } from './user/UserFullName'
+import { LikeButton } from './likes/LikeButton'
 
 export {
     CommentSectionContainer as CommentSection
@@ -265,14 +266,24 @@ function CommentItem( {
                             <LikeListIconButton entityType={likeEntityType} entityId={comment.id}/>
                         </div>
                     </div>
-                    <div
-                        style={{
-                            marginLeft: "13px",
-                            fontSize: "small",
-                            opacity: "0.6"
-                        }}
-                    >
-                        {dayjs(comment.createdAt).utc(true).fromNow()}
+                    <div>
+                        <span>
+                            <LikeButton 
+                                style={{
+                                    fontSize: "small",
+                                    marginInline: "4px",
+                                    minWidth: "50px",
+                                }}
+                            />
+                        </span>
+                        <span
+                            style={{
+                                fontSize: "small",
+                                opacity: "0.6"
+                            }}
+                            >
+                            {dayjs(comment.createdAt).utc(true).fromNow()}
+                        </span>
                     </div>
                 </div>
             </Stack>
