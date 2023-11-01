@@ -1,5 +1,6 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Badge, Dialog, DialogContent, DialogTitle, IconButton, Stack, Tab, Tabs, Theme, useMediaQuery } from "@mui/material";
+import { LikeEntityType } from 'common/enums';
 import { Like } from 'common/interfaces';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -7,8 +8,6 @@ import { useLikeEmoji } from "src/context/LikeEmoji";
 import { UserAvatar } from "../user/UserAvatar";
 import { UserFullName } from "../user/UserFullName";
 import { useLikes } from "./LikesContext";
-import { LikeUtils } from './utils';
-import { LikeEntityType } from 'common/enums';
 
 
 type Size = "small" | "normal"
@@ -131,11 +130,6 @@ export function UserLikesModal({ entityType, entityId }: {entityType: LikeEntity
     )
 }
 
-interface EmojiTab {
-    emojiId: number,
-    count: number
-}
-
 function EmojiTabs({
     selectedEmojiId,
     onSelectedChanged,
@@ -150,19 +144,8 @@ function EmojiTabs({
     size?: Size
 }) {
 
-    const { likes } = useLikes()
+    const { likes, groupedLikes } = useLikes()
     const { likeEmoji } = useLikeEmoji()
-
-    const tabData: EmojiTab[] = []
-    for (const emoji in likeEmoji) {
-        if (likes.some(like => like.emojiId === Number(emoji))) {
-            tabData.push({
-                emojiId: Number(emoji),
-                count: likes.filter(like => like.emojiId === Number(emoji)).length
-            })
-        }
-    }
-    tabData.sort((a, b) => b.count - a.count)
 
     const tabStyle: React.CSSProperties = {
         minWidth: "min-content",
@@ -187,7 +170,7 @@ function EmojiTabs({
                 onClick={() => onSelectedChanged(-1)}
                 style={tabStyle}
             />
-            {tabData.map(item => (
+            {groupedLikes.map(item => (
                 <Tab
                     key={item.emojiId}
                     label={(

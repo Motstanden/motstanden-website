@@ -12,12 +12,12 @@ import { useAuth } from "src/context/Authentication"
 import { useLikeEmoji } from 'src/context/LikeEmoji'
 import { fetchAsync } from "src/utils/fetchAsync"
 import { postJson } from "src/utils/postJson"
+import { LikeButton } from './likes/LikeButton'
 import { LikesContextProvider, useLikes } from './likes/LikesContext'
 import { UserLikesModal, useLikesModal } from './likes/UserLikesModal'
 import { LikeUtils } from './likes/utils'
 import { UserAvatar, UserAvatarSkeleton } from './user/UserAvatar'
 import { UserFullName } from './user/UserFullName'
-import { LikeButton } from './likes/LikeButton'
 
 export {
     CommentSectionContainer as CommentSection
@@ -295,33 +295,22 @@ function CommentItem( {
 }
 
 function LikeListIconButton({entityType, entityId}: {entityType: LikeEntityType, entityId: number}) {
-
-    const likeData = useLikes()
-    const emojis = useLikeEmoji()
     const theme = useTheme()
+    
     const { openModal } = useLikesModal(entityType, entityId)
-
     const onEmojiClick = () => {
         openModal()
     }
+    
+    const { likeEmoji } = useLikeEmoji()
+    const { likes, groupedLikes, isLoading, isError } = useLikes()
 
-    if(likeData.isLoading) 
+    if(isLoading) 
         return <LikeListIconButtonSkeleton/>
 
-    if(likeData.isError || likeData.likes.length === 0)
+    if(isError || likes.length === 0)
         return <></>
 
-
-    const emojiIds: number[] = []
-    for(const like of likeData.likes) {             // The likes are coming in order of most used emoji
-        if(!emojiIds.includes(like.emojiId)) {
-            emojiIds.push(like.emojiId)
-        }
-
-        if(emojiIds.length >= 3) {
-            break
-        }
-    }
 
     return (
         <>
@@ -345,22 +334,25 @@ function LikeListIconButton({entityType, entityId}: {entityType: LikeEntityType,
                         color: theme.palette.text.primary,
                     }}
                 >
-                        {emojiIds.map(emojiId =>(
-                            <span key={emojiId}>
-                                {emojis.likeEmoji[emojiId]}
+                    {groupedLikes
+                        .filter( (_, index) => index <= 2 )      // Only show the tope 3 voted emojis
+                        .map( item => (
+                            <span key={item.emojiId}>
+                                {likeEmoji[item.emojiId]}
                             </span>
-                        ))}
-                        {likeData.likes.length > 1 && (
-                            <span 
-                                style={{
-                                    marginLeft: "2px",
-                                    marginRight: "2px",
-                                    fontSize: "small"
-                                }}
-                            >
-                                {likeData.likes.length + 1 >= 100 ? "99+" : likeData.likes.length}
-                            </span>
-                        )}
+                        ))
+                    }
+                    {likes.length > 1 && (
+                        <span 
+                            style={{
+                                marginLeft: "2px",
+                                marginRight: "2px",
+                                fontSize: "small"
+                            }}
+                        >
+                            {likes.length + 1 >= 100 ? "99+" : likes.length}
+                        </span>
+                    )}
                 </IconButton>
             </Paper>
             <UserLikesModal 
