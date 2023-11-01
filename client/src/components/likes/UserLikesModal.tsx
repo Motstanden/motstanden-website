@@ -8,17 +8,18 @@ import { UserAvatar } from "../user/UserAvatar";
 import { UserFullName } from "../user/UserFullName";
 import { useLikes } from "./LikesContext";
 import { LikeUtils } from './utils';
+import { LikeEntityType } from 'common/enums';
 
 
 type Size = "small" | "normal"
 
-export function useLikesModal(entityId: number) {
+export function useLikesModal(type: LikeEntityType, entityId: number) {
     const [isOpen, setIsOpen] = useState(false)
     const navigate = useNavigate()
     const location = useLocation()
 
     useEffect(() => {
-        if (location.hash === LikeUtils.buildModalHash(entityId)) {
+        if (location.hash === buildHash(type, entityId)) {
             setIsOpen(true)
         } else if(isOpen) {
             setIsOpen(false)
@@ -31,7 +32,7 @@ export function useLikesModal(entityId: number) {
     }
 
     const openHandler = () => {
-        navigate({ hash: LikeUtils.buildModalHash(entityId)})
+        navigate({ hash: buildHash(type, entityId)})
     }
 
     return {
@@ -41,9 +42,29 @@ export function useLikesModal(entityId: number) {
     }
 }
 
-export function UserLikesModal({ entityId }: {entityId: number}) {
+function buildHash(type: LikeEntityType, entityId: number) {
+
+    const getBaseHash = (): string => {
+        switch (type) {
+            case LikeEntityType.EventComment:
+                return "arrangement-kommentar"
+            case LikeEntityType.PollComment:
+                return "avstemning-kommentar"
+            case LikeEntityType.SongLyricComment:
+                return "trall-kommentar"
+            case LikeEntityType.WallPost:
+                return "innlegg"
+            case LikeEntityType.WallPostComment:
+                return "innlegg-kommentar"
+        }
+    }
+
+    return `#${getBaseHash()}-reaksjoner-${entityId}`
+}
+
+export function UserLikesModal({ entityType, entityId }: {entityType: LikeEntityType, entityId: number}) {
     
-    const {isOpen, closeModal} = useLikesModal(entityId)
+    const {isOpen, closeModal} = useLikesModal(entityType, entityId)
 
     const { likes } = useLikes()
 

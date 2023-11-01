@@ -195,6 +195,7 @@ function CommentSection( {
                         style={{
                             marginBottom: "15px",
                         }}
+                        likeEntityType={likeEntityType}
                         />
                 </LikesContextProvider>
             ))}
@@ -204,10 +205,12 @@ function CommentSection( {
 
 function CommentItem( {
     comment,
+    likeEntityType,
     style,
     variant,
 }: {
     comment: Comment,
+    likeEntityType: LikeEntityType,
     style?: React.CSSProperties,
     variant?: CommentSectionVariant,
 }) {
@@ -259,7 +262,7 @@ function CommentItem( {
                                 zIndex: 1
                             }}
                         >
-                            <LikeListIconButton entityId={comment.id}/>
+                            <LikeListIconButton entityType={likeEntityType} entityId={comment.id}/>
                         </div>
                     </div>
                     <div
@@ -277,12 +280,12 @@ function CommentItem( {
     )
 }
 
-function LikeListIconButton({entityId}: {entityId: number}) {
+function LikeListIconButton({entityType, entityId}: {entityType: LikeEntityType, entityId: number}) {
 
     const likeData = useLikes()
     const emojis = useLikeEmoji()
     const theme = useTheme()
-    const { openModal } = useLikesModal(entityId)
+    const { openModal } = useLikesModal(entityType, entityId)
 
     const onEmojiClick = () => {
         openModal()
@@ -344,6 +347,7 @@ function LikeListIconButton({entityId}: {entityId: number}) {
                 </IconButton>
             </Paper>
             <UserLikesModal 
+                entityType={entityType}
                 entityId={entityId}
             />
         </>
