@@ -6,6 +6,7 @@ import { UserAvatar } from "../user/UserAvatar";
 import { UserFullName } from "../user/UserFullName";
 import { useLikes } from "./LikesContext";
 import { TabList } from '@mui/lab';
+import { Like } from 'common/interfaces';
 
 interface EmojiTab {
     emojiId: number,
@@ -134,35 +135,50 @@ export function UserLikesModal({
                     height: isSmallScreen ? undefined : "70vh"
                 }}
             >
-                {filteredLikes.map(like => (
-                    <Stack
-                        key={like.userId} 
-                        direction="row" 
-                        alignItems="center"
-                        spacing={1.5}
-                        sx={{
-                            mb: 2,
-                        }}
-                        >
-                        <Badge
-                            overlap="circular"
-                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                            badgeContent={
-                                <span 
-                                    style={{
-                                        fontSize: "1.4em"
-                                    }}
-                                >
-                                    {emojis.likeEmoji[like.emojiId]}
-                                </span>
-                            }
-                        >
-                            <UserAvatar userId={like.userId} />
-                        </Badge>
-                        <UserFullName userId={like.userId} />
-                    </Stack>
-                ))}
+                <UserList items={filteredLikes}/>
             </DialogContent>
         </Dialog>
     )
+}
+
+function UserList( {items}: {items: Like[]}) {
+
+    const { likeEmoji  } = useLikeEmoji()
+
+    return (
+        <>
+            {items.map(like => (
+                <Stack
+                    key={like.userId} 
+                    direction="row" 
+                    alignItems="center"
+                    spacing={1.5}
+                    sx={{
+                        mb: 2,
+                    }}
+                    >
+                    <Badge
+                        overlap="circular"
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        badgeContent={(<EmojiBadge emoji={likeEmoji[like.emojiId]} />)}
+                    >
+                        <UserAvatar userId={like.userId} />
+                    </Badge>
+                    <UserFullName userId={like.userId} />
+                </Stack>
+            ))}
+        </>
+    )
+}
+
+function EmojiBadge( { emoji }: { emoji: string} ) {
+    return (
+        <span 
+            style={{
+                fontSize: "1.4em"
+            }}
+        >
+            {emoji}
+        </span>
+    )    
 }
