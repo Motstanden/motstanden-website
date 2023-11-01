@@ -13,7 +13,7 @@ import { useLikeEmoji } from 'src/context/LikeEmoji'
 import { fetchAsync } from "src/utils/fetchAsync"
 import { postJson } from "src/utils/postJson"
 import { LikesContextProvider, useLikes } from './likes/LikesContext'
-import { UserLikesModal, useLikesModalOpener } from './likes/UserLikesModal'
+import { UserLikesModal, useLikesModal } from './likes/UserLikesModal'
 import { LikeUtils } from './likes/utils'
 import { UserAvatar, UserAvatarSkeleton } from './user/UserAvatar'
 import { UserFullName } from './user/UserFullName'
@@ -282,10 +282,10 @@ function LikeListIconButton({entityId}: {entityId: number}) {
     const likeData = useLikes()
     const emojis = useLikeEmoji()
     const theme = useTheme()
-    const modalOpener = useLikesModalOpener(entityId)
+    const { openModal } = useLikesModal(entityId)
 
     const onEmojiClick = () => {
-        modalOpener()    // Will trigger the modal to open
+        openModal()
     }
 
     if(likeData.isLoading) 

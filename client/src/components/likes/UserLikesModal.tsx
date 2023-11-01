@@ -12,37 +12,39 @@ import { LikeUtils } from './utils';
 
 type Size = "small" | "normal"
 
-export function useLikesModalOpener(entityId: number) {
-
+export function useLikesModal(entityId: number) {
+    const [isOpen, setIsOpen] = useState(false)
     const navigate = useNavigate()
     const location = useLocation()
-    const open = () => {
+
+    useEffect(() => {
+        if (location.hash === LikeUtils.buildModalHash(entityId)) {
+            setIsOpen(true)
+        } else if(isOpen) {
+            setIsOpen(false)
+        }
+    }, [location.hash])
+
+    const closeHandler = () => {
+        setIsOpen(false)
+        navigate("")
+    }
+
+    const openHandler = () => {
         navigate({ hash: LikeUtils.buildModalHash(entityId)})
     }
 
-    return open
+    return {
+        isOpen: isOpen,
+        closeModal: closeHandler,
+        openModal: openHandler
+    }
 }
 
 export function UserLikesModal({ entityId }: {entityId: number}) {
     
-    const [open, setOpen] = useState(false)
-    
-    const navigate = useNavigate()
-    const location = useLocation()
-    
-    useEffect(() => {
-        if (location.hash === LikeUtils.buildModalHash(entityId)) {
-            setOpen(true)
-        } else if(open) {
-            setOpen(false)
-        }
-    }, [location.hash])
-    
-    const handleClose = () => {
-        setOpen(false)
-        navigate("")
-    }
-    
+    const {isOpen, closeModal} = useLikesModal(entityId)
+
     const { likes } = useLikes()
 
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
@@ -58,8 +60,8 @@ export function UserLikesModal({ entityId }: {entityId: number}) {
 
     return (
         <Dialog
-            open={open}
-            onClose={handleClose}
+            open={isOpen}
+            onClose={closeModal}
             scroll="paper"
             fullWidth
             fullScreen={isSmallScreen}
@@ -82,7 +84,7 @@ export function UserLikesModal({ entityId }: {entityId: number}) {
                         size={isSmallScreen ? "small" : "normal"}
                     />
                     <IconButton
-                        onClick={handleClose}
+                        onClick={closeModal}
                         style={{
                             marginBottom: isSmallScreen ? "10px" : undefined
                         }}
