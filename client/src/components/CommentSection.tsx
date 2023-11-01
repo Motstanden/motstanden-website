@@ -13,6 +13,7 @@ import { useLikeEmoji } from 'src/context/LikeEmoji'
 import { fetchAsync } from "src/utils/fetchAsync"
 import { postJson } from "src/utils/postJson"
 import { LikesContextProvider, useLikes } from './likes/LikesContext'
+import { UserLikesModal } from './likes/UserLikesModal'
 import { LikeUtils } from './likes/utils'
 import { UserAvatar, UserAvatarSkeleton } from './user/UserAvatar'
 import { UserFullName } from './user/UserFullName'
@@ -282,6 +283,12 @@ function LikeListIconButton() {
     const emojis = useLikeEmoji()
     const theme = useTheme()
 
+    const [isModalOpen, setIsOpenModal] = useState(false)
+
+    const onEmojiClick = () => setIsOpenModal(true)
+
+    const onClose = () => setIsOpenModal(false)
+
     if(likeData.isLoading) 
         return <LikeListIconButtonSkeleton/>
 
@@ -301,42 +308,50 @@ function LikeListIconButton() {
     }
 
     return (
-        <Paper
-            style={{
-                borderRadius: "10px",
-                lineHeight: "0px",
-            }}
-            elevation={4}
-        >
-            <IconButton 
+        <>
+            <Paper
                 style={{
-                    fontSize: "14px",
-                    margin: "0px",
-                    padding: "2px",
                     borderRadius: "10px",
-                    color: theme.palette.text.primary,
+                    lineHeight: "0px",
                 }}
+                elevation={4}
             >
-                    {emojiIds.map(emojiId =>(
-                        <span key={emojiId}>
-                            {emojis.likeEmoji[emojiId]}
-                        </span>
-                    ))}
-                    {likeData.likes.length > 1 && (
-                        <span 
-                            style={{
-                                marginLeft: "2px",
-                                marginRight: "2px",
-                                fontSize: "small"
-                            }}
-                        >
-                            {likeData.likes.length + 1 >= 100 ? "99+" : likeData.likes.length}
-                        </span>
-                    )}
-            </IconButton>
-        </Paper>
+                <IconButton 
+                    onClick={onEmojiClick}
+                    style={{
+                        fontSize: "14px",
+                        margin: "0px",
+                        padding: "2px",
+                        borderRadius: "10px",
+                        color: theme.palette.text.primary,
+                    }}
+                >
+                        {emojiIds.map(emojiId =>(
+                            <span key={emojiId}>
+                                {emojis.likeEmoji[emojiId]}
+                            </span>
+                        ))}
+                        {likeData.likes.length > 1 && (
+                            <span 
+                                style={{
+                                    marginLeft: "2px",
+                                    marginRight: "2px",
+                                    fontSize: "small"
+                                }}
+                            >
+                                {likeData.likes.length + 1 >= 100 ? "99+" : likeData.likes.length}
+                            </span>
+                        )}
+                </IconButton>
+            </Paper>
+            <UserLikesModal
+                open={isModalOpen}
+                onClose={onClose}
+            />
+        </>
     )
 }
+
 
 function LikeListIconButtonSkeleton(){
     // TODO: Implement
