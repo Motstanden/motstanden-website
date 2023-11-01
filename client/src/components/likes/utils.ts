@@ -13,6 +13,11 @@ function convertToLikeEntity(type: CommentEntityType): LikeEntityType{
     }
 }
 
+export function buildModalHash(entityId: number) {
+    return `#reaksjoner-${entityId}`
+}
+
 export const LikeUtils = {
-    convertToLikeEntity: convertToLikeEntity
+    convertToLikeEntity: convertToLikeEntity,
+    buildModalHash: buildModalHash
 }

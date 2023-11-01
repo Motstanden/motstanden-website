@@ -1,28 +1,54 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Badge, Dialog, DialogContent, DialogTitle, IconButton, Stack, Tab, Tabs, Theme, useMediaQuery } from "@mui/material";
 import { Like } from 'common/interfaces';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useLikeEmoji } from "src/context/LikeEmoji";
 import { UserAvatar } from "../user/UserAvatar";
 import { UserFullName } from "../user/UserFullName";
 import { useLikes } from "./LikesContext";
+import { LikeUtils } from './utils';
 
 
 type Size = "small" | "normal"
 
-export function UserLikesModal({
-    open,
-    onClose
-}: {
-    open: boolean
-    onClose?: () => void
-}) {
+export function useLikesModalOpener(entityId: number) {
+
+    const navigate = useNavigate()
+    const location = useLocation()
+    const open = () => {
+        navigate({ hash: LikeUtils.buildModalHash(entityId)})
+    }
+
+    return open
+}
+
+export function UserLikesModal({ entityId }: {entityId: number}) {
+    
+    const [open, setOpen] = useState(false)
+    
+    const navigate = useNavigate()
+    const location = useLocation()
+    
+    useEffect(() => {
+        if (location.hash === LikeUtils.buildModalHash(entityId)) {
+            setOpen(true)
+        } else if(open) {
+            setOpen(false)
+        }
+    }, [location.hash])
+    
+    const handleClose = () => {
+        setOpen(false)
+        navigate("")
+    }
+    
     const { likes } = useLikes()
 
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
-
+    
     const [selectedEmojiId, setSelectedEmojiId] = useState(-1)
-
+    
     const onTabSelectionChanged = (emojiId: number) => setSelectedEmojiId(emojiId)
 
     let filteredLikes = likes;
@@ -33,7 +59,7 @@ export function UserLikesModal({
     return (
         <Dialog
             open={open}
-            onClose={onClose}
+            onClose={handleClose}
             scroll="paper"
             fullWidth
             fullScreen={isSmallScreen}
@@ -56,7 +82,7 @@ export function UserLikesModal({
                         size={isSmallScreen ? "small" : "normal"}
                     />
                     <IconButton
-                        onClick={onClose}
+                        onClick={handleClose}
                         style={{
                             marginBottom: isSmallScreen ? "10px" : undefined
                         }}
