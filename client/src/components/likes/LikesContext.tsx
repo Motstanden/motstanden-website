@@ -7,6 +7,8 @@ import { fetchAsync } from "src/utils/fetchAsync"
 export interface LikesContextType {
     isLoading: boolean,
     isError: boolean,
+    entityType: LikeEntityType,
+    entityId: number,
     queryKey: any[],
     likes: Like[]
 }
@@ -14,6 +16,8 @@ export interface LikesContextType {
 const defaultLikesContext: LikesContextType = {
     isLoading: true,
     isError: false,
+    entityType: null!,
+    entityId: null!,
     queryKey: [],
     likes: []
 }
@@ -38,6 +42,8 @@ export function LikesContextProvider( {
 
     const [likesContext, setLikesContext] = useState<LikesContextType>({
         ...defaultLikesContext,
+        entityId: entityId,
+        entityType: entityType,
         queryKey: queryKey
     })
 

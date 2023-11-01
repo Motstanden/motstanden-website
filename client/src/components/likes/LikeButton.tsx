@@ -1,6 +1,10 @@
 import { Button, ClickAwayListener, Paper, Popover, Popper } from "@mui/material";
 import React, { useRef, useState } from "react";
 import { useLikeEmoji } from "src/context/LikeEmoji";
+import { useLikes } from "./LikesContext";
+import { NewLike } from "common/interfaces";
+import { postJson } from "src/utils/postJson";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function LikeButton({
     style
@@ -16,6 +20,10 @@ export function LikeButton({
     }
 
     const onClickAway = () => {
+        setIsOpen(false)
+    }
+
+    const onPostSuccess = () => { 
         setIsOpen(false)
     }
 
@@ -47,15 +55,39 @@ export function LikeButton({
                         anchorEl={anchorEl.current}
                         placement="bottom-start"
                         >
-                        <LikeForm/>
+                        <LikeForm onPostSuccess={onPostSuccess}/>
                     </Popper>
             </span>
         </ClickAwayListener>
     )
 }
 
-function LikeForm() {
+function LikeForm( {
+    onPostSuccess
+}: {
+    onPostSuccess?: () => void
+}) {
     const { likeEmoji } = useLikeEmoji()
+    const [isDisabled, setIsDisabled] = useState(false)
+    
+    const queryClient = useQueryClient()
+
+    const {entityType, entityId, queryKey} = useLikes()
+
+    const onClick = async (id: number) => {
+        setIsDisabled(true)
+
+        const value: NewLike = { emojiId: id }
+        const url = `/api/${entityType}/${entityId}/likes/upsert`
+
+        const response = await postJson(url, value, { alertOnFailure: true })
+
+        if(response?.ok){
+            await queryClient.invalidateQueries(queryKey)
+        }
+        onPostSuccess?.()
+        setIsDisabled(false)
+    }
 
     return (
         <Paper
@@ -64,10 +96,12 @@ function LikeForm() {
             }}
             elevation={8}
         >
-            {Object.values(likeEmoji).map((emoji, index) => (
+            {Object.keys(likeEmoji).map( idStr => (
                 <Button
-                    key={emoji}
+                    key={idStr}
                     color="secondary"
+                    onClick={() => onClick(Number(idStr))}
+                    disabled={isDisabled}
                     style={{
                         margin: "0px",
                         padding: "0px",
@@ -77,7 +111,7 @@ function LikeForm() {
                         borderRadius: "30px",
                     }}
                 >
-                    {emoji}
+                    {likeEmoji[Number(idStr)]}
                 </Button>
             ))}
         </Paper>
