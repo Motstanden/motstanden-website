@@ -7,6 +7,7 @@ import { WallPost } from "common/interfaces";
 import { fetchAsync } from "src/utils/fetchAsync";
 import { PostSectionItem, PostSectionSkeleton } from "src/components/PostingWall";
 import { LikesContextProvider, useLikes } from 'src/components/likes/LikesContext'
+import { CommentEntityType, LikeEntityType } from "common/enums"
 
 export {
     ParamValidator as WallPostItemPage
