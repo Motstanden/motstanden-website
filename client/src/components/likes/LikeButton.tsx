@@ -99,13 +99,13 @@ function LikeForm( {
     const onClick = async (id: number) => {
         setIsDisabled(true)
 
-        const isDelete = selfLike?.emojiId === id
+        const isDeleteAction = selfLike?.emojiId === id
 
-        const value: NewLike | Record<never, never> = isDelete 
+        const value: NewLike | Record<never, never> = isDeleteAction 
             ? {} 
             : { emojiId: id }
 
-        const url = isDelete 
+        const url = isDeleteAction 
             ? `/api/${entityType}/${entityId}/likes/delete`
             : `/api/${entityType}/${entityId}/likes/upsert`
 
