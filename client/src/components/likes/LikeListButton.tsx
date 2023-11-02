@@ -19,7 +19,7 @@ export function LikeListIconButton( props: LikeListButtonProps) {
     }
     
     if(isLoading) 
-        return <LikeListIconButtonSkeleton/>
+        return <LikeListIconButtonSkeleton style={style}/>
 
     if(isError || likes.length === 0)
         return <></>
@@ -73,13 +73,17 @@ export function LikeListEmojiContent( { maxItems, showCount}: {maxItems?: number
     )
 }
 
-function LikeListIconButtonSkeleton() {
-    // TODO: Implement
+function LikeListIconButtonSkeleton( {style}: {style?: React.CSSProperties}) {
     return (
         <Skeleton 
-            variant='circular'
-            height={20}
-            width={20}
+            variant='rectangular'
+            height={21}
+            width={70}
+            style={{
+                padding: 0,
+                margin: 0,
+                ...style
+            }}
         />
     )
 }
