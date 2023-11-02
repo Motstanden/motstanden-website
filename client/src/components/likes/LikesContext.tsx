@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { LikeEntityType } from "common/enums"
 import { Like } from "common/interfaces"
 import React, { useEffect, useState } from "react"
+import { useAuth } from "src/context/Authentication"
 import { fetchAsync } from "src/utils/fetchAsync"
 
 interface GroupedLike {
@@ -10,13 +11,14 @@ interface GroupedLike {
 }
 
 export interface LikesContextType {
-    isLoading: boolean,
-    isError: boolean,
-    entityType: LikeEntityType,
-    entityId: number,
-    queryKey: any[],
+    isLoading: boolean
+    isError: boolean
+    entityType: LikeEntityType
+    entityId: number
+    queryKey: any[]
     likes: Like[]
     groupedLikes: GroupedLike[]
+    selfLike?: Like
 }
 
 const defaultLikesContext: LikesContextType = {
@@ -47,6 +49,8 @@ export function LikesContextProvider( {
     const queryKey = ["likes", entityType, entityId]
     const url = `/api/${entityType}/${entityId}/likes`
 
+    const userId = useAuth().user?.id ?? -1
+
     const [likesContext, setLikesContext] = useState<LikesContextType>({
         ...defaultLikesContext,
         entityId: entityId,
@@ -62,7 +66,8 @@ export function LikesContextProvider( {
             isError: isError,
             isLoading: isLoading,
             likes:  data ?? [],
-            groupedLikes: groupAndSort(data ?? [])
+            groupedLikes: groupAndSort(data ?? []),
+            selfLike: data?.find(like => like.userId === userId)
         }))
     }, [isLoading, isError, data])
 

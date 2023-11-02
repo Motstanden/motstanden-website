@@ -277,6 +277,11 @@ function CommentItem( {
                                     fontWeight: "bold",
                                     opacity: "0.6"
                                 }}
+                                isLikedStyle={{
+                                    opacity: "1",
+                                    fontWeight: "bold",
+                                    color: "hsl(42, 100%, 59%)",    // TODO: Use theme. This is approximately emoji color
+                                }}
                             />
                         </span>
                         <span

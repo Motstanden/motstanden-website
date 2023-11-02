@@ -7,10 +7,15 @@ import { postJson } from "src/utils/postJson";
 import { useQueryClient } from "@tanstack/react-query";
 
 export function LikeButton({
-    style
+    style,
+    isLikedStyle,
 }:{
     style?: React.CSSProperties
+    isLikedStyle?: React.CSSProperties
 }) {
+
+    const { selfLike } = useLikes()
+    const { likeEmoji } = useLikeEmoji()
 
     const [isOpen, setIsOpen] = useState(false)
     const anchorEl = useRef(null)
@@ -27,6 +32,7 @@ export function LikeButton({
         setIsOpen(false)
     }
 
+    const addedStyle = selfLike ? isLikedStyle : {}
     return (
         <ClickAwayListener onClickAway={onClickAway}>
             <span>
@@ -36,9 +42,10 @@ export function LikeButton({
                     variant="text"
                     onClick={onClick}
                     style={{
-                        padding: "0px",
+                        padding: "0px 2px",
                         margin: "0px",
-                        ...style
+                        ...style,
+                        ...addedStyle
                     }}
                     sx={{
                         bgcolor: "transparent",
@@ -48,7 +55,7 @@ export function LikeButton({
                         color: (theme) => theme.palette.text.primary,
                     }}
                 >
-                    Lik
+                    {selfLike ? likeEmoji[selfLike.emojiId] + "likt" : "lik"}
                 </Button>
                     <Popper 
                         open={isOpen}
