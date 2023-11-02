@@ -104,11 +104,11 @@ function LikeForm( {
             }}
             elevation={8}
         >
-            {Object.keys(emojis).map( idStr => (
+            {Object.values(emojis).map( emoji => (
                 <Button
-                    key={idStr}
+                    key={emoji.id}
                     color="secondary"
-                    onClick={() => onClick(Number(idStr))}
+                    onClick={() => onClick(emoji.id)}
                     disabled={isDisabled}
                     style={{
                         margin: "0px",
@@ -119,7 +119,7 @@ function LikeForm( {
                         borderRadius: "30px",
                     }}
                 >
-                    {emojis[Number(idStr)].text}
+                    {emoji.text}
                 </Button>
             ))}
         </Paper>
