@@ -14,7 +14,7 @@ import { postJson } from 'src/utils/postJson'
 import { CommentSection, CommentSectionSkeleton } from "./CommentSection"
 import { UserAvatar } from './user/UserAvatar'
 import { UserFullName } from './user/UserFullName'
-import { LikeButton } from './likes/LikeButton'
+import { LikeButton, LikeButtonSkeleton } from './likes/LikeButton'
 import { LikesContextProvider, useLikes } from './likes/LikesContext'
 import { LikeListEmojiContent, LikeListIconButton } from './likes/LikeListButton'
 import { useUserReference } from 'src/context/UserReference'
@@ -160,10 +160,16 @@ function PostSectionItemSkeleton( {
                 variant="rounded"
                 style={{
                     marginTop: "15px",
-                    height: "80px"
+                    height: "80px",
+                    marginBottom: "15px"
                 }}
             />
-            <Divider sx={{my: 3}} />
+            <Stack direction="row" justifyContent="space-between">
+                <LikeButtonSkeleton/>
+                <LikeListSkeleton/>
+            </Stack>
+
+            <Divider sx={{mb: 3, mt: 1}} />
             <CommentSectionSkeleton variant="compact" />
         </Paper>
     )
@@ -315,12 +321,8 @@ function LikeList() {
         openModal()
     }
 
-    if(isLoading) {
-        let width = isTinyScreen 
-            ? 60 
-            : isSmallScreen ? 160 : 240
-        return <Skeleton width={width} />
-    }
+    if(isLoading) 
+        return <LikeListSkeleton/>
 
     if(likes.length <= 0)
         return <></>
@@ -391,6 +393,17 @@ function LikeList() {
             </Button>
             <UserLikesModal/>
         </div>
+    )
+}
+
+function LikeListSkeleton() {
+    const isTinyScreen = useMediaQuery("(max-width: 350px)")
+    const isSmallScreen = useMediaQuery("(max-width: 430px)")
+    let width = isTinyScreen 
+        ? 60 
+        : isSmallScreen ? 160 : 240
+    return ( 
+        <Skeleton width={width} />
     )
 }
 

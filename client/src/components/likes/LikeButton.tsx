@@ -86,7 +86,7 @@ export function LikeButton(props: LikeButtonProps) {
     )
 }
 
-function LikeButtonSkeleton( { style }: {style?: React.CSSProperties}) {
+export function LikeButtonSkeleton( { style }: {style?: React.CSSProperties}) {
     return (
         <Skeleton
             variant="text" 
