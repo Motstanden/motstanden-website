@@ -175,7 +175,7 @@ function EmojiTabs({
                     key={item.emojiId}
                     label={(
                         <TabEmojiLabel
-                            emoji={emojis[item.emojiId]}
+                            emoji={emojis[item.emojiId].text}
                             count={item.count}
                             size={size}
                         />
@@ -238,7 +238,7 @@ function UserList({ items }: { items: Like[] }) {
                     <Badge
                         overlap="circular"
                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                        badgeContent={(<EmojiBadge emoji={emojis[like.emojiId]} />)}
+                        badgeContent={(<EmojiBadge emoji={emojis[like.emojiId].text} />)}
                     >
                         <UserAvatar userId={like.userId} />
                     </Badge>

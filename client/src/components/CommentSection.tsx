@@ -307,7 +307,7 @@ function LikeListIconButton({entityType, entityId}: {entityType: LikeEntityType,
         openModal()
     }
     
-    const { emojis: likeEmoji } = useLikeEmoji()
+    const { emojis } = useLikeEmoji()
     const { likes, groupedLikes, isLoading, isError } = useLikes()
 
     if(isLoading) 
@@ -343,7 +343,7 @@ function LikeListIconButton({entityType, entityId}: {entityType: LikeEntityType,
                         .filter( (_, index) => index <= 2 )      // Only show the tope 3 voted emojis
                         .map( item => (
                             <span key={item.emojiId}>
-                                {likeEmoji[item.emojiId]}
+                                {emojis[item.emojiId].text}
                             </span>
                         ))
                     }

@@ -1,6 +1,6 @@
 import { Button, ClickAwayListener, Paper, Popper } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import { NewLike } from "common/interfaces";
+import { LikeEmoji, NewLike } from "common/interfaces";
 import React, { useRef, useState } from "react";
 import { useLikeEmoji } from "src/context/LikeEmoji";
 import { postJson } from "src/utils/postJson";
@@ -16,6 +16,7 @@ export function LikeButton({
 
     const { selfLike } = useLikes()
     const { emojis } = useLikeEmoji()
+    const usedEmoji: LikeEmoji | undefined = selfLike ? emojis[selfLike.emojiId] : undefined
 
     const [isOpen, setIsOpen] = useState(false)
     const anchorEl = useRef(null)
@@ -55,7 +56,7 @@ export function LikeButton({
                         color: (theme) => theme.palette.text.primary,
                     }}
                 >
-                    {selfLike ? emojis[selfLike.emojiId] + "likt" : "lik"}
+                    {usedEmoji ? usedEmoji.text + usedEmoji.description : "lik"}
                 </Button>
                     <Popper 
                         open={isOpen}
@@ -118,7 +119,7 @@ function LikeForm( {
                         borderRadius: "30px",
                     }}
                 >
-                    {emojis[Number(idStr)]}
+                    {emojis[Number(idStr)].text}
                 </Button>
             ))}
         </Paper>
