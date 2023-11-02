@@ -1,4 +1,4 @@
-import { Button, ClickAwayListener, Paper, Popper } from "@mui/material";
+import { Button, ClickAwayListener, Paper, ButtonProps, Popper } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { LikeEmoji, NewLike } from "common/interfaces";
 import React, { useRef, useState } from "react";
@@ -6,13 +6,14 @@ import { useLikeEmoji } from "src/context/LikeEmoji";
 import { postJson } from "src/utils/postJson";
 import { useLikes } from "./LikesContext";
 
-export function LikeButton({
-    style,
-    isLikedStyle,
-}:{
+interface LikeButtonProps extends Omit<ButtonProps, "style" | "onClick" | "ref"> {
     style?: React.CSSProperties
     isLikedStyle?: React.CSSProperties
-}) {
+}
+
+export function LikeButton(props: LikeButtonProps) {
+
+    const { style, isLikedStyle, sx, ...remainingProps } = props
 
     const { selfLike } = useLikes()
     const { emojis } = useLikeEmoji()
@@ -49,12 +50,10 @@ export function LikeButton({
                         ...addedStyle
                     }}
                     sx={{
-                        bgcolor: "transparent",
-                        "&:hover": {
-                            bgcolor: "transparent",
-                        },
                         color: (theme) => theme.palette.text.primary,
+                        ...sx
                     }}
+                    {...remainingProps}
                 >
                     {usedEmoji ? usedEmoji.text + usedEmoji.description : "lik"}
                 </Button>
