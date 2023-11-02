@@ -90,6 +90,23 @@ function upsert(entityType: LikeEntityType, entityId: number, like: NewLike, use
     db.close()
 }
 
+function deleteLike(entityType: LikeEntityType, entityId: number, userId: number): void {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const startTransaction = db.transaction(() => {
+        const stmt = db.prepare(`
+            DELETE FROM 
+                ${getTableName(entityType)}
+            WHERE
+                ${getEntityIdColumnName(entityType)} = ?
+            AND
+                user_id = ?
+        `)
+        stmt.run(entityId, userId)
+    })
+    startTransaction()
+    db.close()
+}
+
 function emojiExists(emojiId: number): boolean {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
@@ -122,7 +139,8 @@ function getAllEmojis(): LikeEmoji[] {
 
 export const likesService = { 
     getAll: getAll,
-    upsert: upsert
+    upsert: upsert,
+    delete: deleteLike
 }
 
 export const emojiService = {

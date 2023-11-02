@@ -127,4 +127,45 @@ function tryCreateValidLike(obj: unknown ): NewLike | undefined {
     }
 }
 
+// ---- DELETE likes ----
+
+router.post("/event/comment/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.EventComment))
+router.post("/poll/comment/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.PollComment))
+router.post("/song-lyric/comment/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.SongLyricComment))
+router.post("/wall-post/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.WallPost))
+router.post("/wall-post/comment/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.WallPostComment))
+
+function deleteLikePipeline(entitType: LikeEntityType) {
+    return [
+        AuthenticateUser(),
+        validateNumber({
+            getValue: (req: Request) => req.params.entityId,
+        }),
+        deleteLikeHandler({
+            entityType: entitType,
+            getEntityId: (req: Request) => strToNumber(req.params.entityId) as number   // Validated by previous middleware
+        })
+    ]
+}
+
+function deleteLikeHandler({
+    entityType,
+    getEntityId
+}: {
+    entityType: LikeEntityType
+    getEntityId: (req: Request) => number
+}) {
+    return async (req: Request, res: Response) => {
+        const user = req.user as AccessTokenData
+        const entityId = getEntityId(req)
+        try {
+            likesService.delete(entityType, entityId, user.userId)
+        } catch (err) {
+            console.error(err)
+            res.status(500).send(`Failed to delete ${entityType} with id '${entityId}' from database`)
+        }
+        res.end()
+    }
+}
+
 export default router

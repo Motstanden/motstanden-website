@@ -86,8 +86,15 @@ function LikeForm( {
     const onClick = async (id: number) => {
         setIsDisabled(true)
 
-        const value: NewLike = { emojiId: id }
-        const url = `/api/${entityType}/${entityId}/likes/upsert`
+        const isDelete = selfLike?.emojiId === id
+
+        const value: NewLike | Record<never, never> = isDelete 
+            ? {} 
+            : { emojiId: id }
+
+        const url = isDelete 
+            ? `/api/${entityType}/${entityId}/likes/delete`
+            : `/api/${entityType}/${entityId}/likes/upsert`
 
         const response = await postJson(url, value, { alertOnFailure: true })
 
