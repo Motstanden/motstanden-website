@@ -307,7 +307,7 @@ function LikeListIconButton({entityType, entityId}: {entityType: LikeEntityType,
         openModal()
     }
     
-    const { likeEmoji } = useLikeEmoji()
+    const { emojis: likeEmoji } = useLikeEmoji()
     const { likes, groupedLikes, isLoading, isError } = useLikes()
 
     if(isLoading) 

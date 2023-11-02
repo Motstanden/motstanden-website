@@ -145,7 +145,7 @@ function EmojiTabs({
 }) {
 
     const { likes, groupedLikes } = useLikes()
-    const { likeEmoji } = useLikeEmoji()
+    const { emojis } = useLikeEmoji()
 
     const tabStyle: React.CSSProperties = {
         minWidth: "min-content",
@@ -175,7 +175,7 @@ function EmojiTabs({
                     key={item.emojiId}
                     label={(
                         <TabEmojiLabel
-                            emoji={likeEmoji[item.emojiId]}
+                            emoji={emojis[item.emojiId]}
                             count={item.count}
                             size={size}
                         />
@@ -221,7 +221,7 @@ function TabEmojiLabel({
 
 function UserList({ items }: { items: Like[] }) {
 
-    const { likeEmoji } = useLikeEmoji()
+    const { emojis } = useLikeEmoji()
 
     return (
         <>
@@ -238,7 +238,7 @@ function UserList({ items }: { items: Like[] }) {
                     <Badge
                         overlap="circular"
                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                        badgeContent={(<EmojiBadge emoji={likeEmoji[like.emojiId]} />)}
+                        badgeContent={(<EmojiBadge emoji={emojis[like.emojiId]} />)}
                     >
                         <UserAvatar userId={like.userId} />
                     </Badge>

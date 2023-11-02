@@ -1,10 +1,10 @@
-import { Button, ClickAwayListener, Paper, Popover, Popper } from "@mui/material";
+import { Button, ClickAwayListener, Paper, Popper } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
+import { NewLike } from "common/interfaces";
 import React, { useRef, useState } from "react";
 import { useLikeEmoji } from "src/context/LikeEmoji";
-import { useLikes } from "./LikesContext";
-import { NewLike } from "common/interfaces";
 import { postJson } from "src/utils/postJson";
-import { useQueryClient } from "@tanstack/react-query";
+import { useLikes } from "./LikesContext";
 
 export function LikeButton({
     style,
@@ -15,7 +15,7 @@ export function LikeButton({
 }) {
 
     const { selfLike } = useLikes()
-    const { likeEmoji } = useLikeEmoji()
+    const { emojis } = useLikeEmoji()
 
     const [isOpen, setIsOpen] = useState(false)
     const anchorEl = useRef(null)
@@ -55,7 +55,7 @@ export function LikeButton({
                         color: (theme) => theme.palette.text.primary,
                     }}
                 >
-                    {selfLike ? likeEmoji[selfLike.emojiId] + "likt" : "lik"}
+                    {selfLike ? emojis[selfLike.emojiId] + "likt" : "lik"}
                 </Button>
                     <Popper 
                         open={isOpen}
@@ -74,7 +74,7 @@ function LikeForm( {
 }: {
     onPostSuccess?: () => void
 }) {
-    const { likeEmoji } = useLikeEmoji()
+    const { emojis } = useLikeEmoji()
     const [isDisabled, setIsDisabled] = useState(false)
     
     const queryClient = useQueryClient()
@@ -103,7 +103,7 @@ function LikeForm( {
             }}
             elevation={8}
         >
-            {Object.keys(likeEmoji).map( idStr => (
+            {Object.keys(emojis).map( idStr => (
                 <Button
                     key={idStr}
                     color="secondary"
@@ -118,7 +118,7 @@ function LikeForm( {
                         borderRadius: "30px",
                     }}
                 >
-                    {likeEmoji[Number(idStr)]}
+                    {emojis[Number(idStr)]}
                 </Button>
             ))}
         </Paper>

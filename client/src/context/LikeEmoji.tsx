@@ -5,11 +5,11 @@ import { fetchAsync } from "src/utils/fetchAsync";
 import { useAuth } from "./Authentication";
 
 export interface LikeEmojiContextType { 
-    likeEmoji: Record<number, string>
+    emojis: Record<number, string>
 }
 
 const emptyLikeEmoji: LikeEmojiContextType = {
-    likeEmoji: {}
+    emojis: {}
 }
 
 const LikeEmojiContext = React.createContext<LikeEmojiContextType>(emptyLikeEmoji);
@@ -24,12 +24,10 @@ export function LikeEmojiProvider( {children}: {children: React.ReactNode} ) {
 
     const [likeEmoji, setLikeEmoji] = React.useState<LikeEmojiContextType>(emptyLikeEmoji)
 
-    const { data } = useQuery<LikeEmoji[]>(
-        ["like-emoji"], 
-        () => fetchAsync<LikeEmoji[]>("/api/likes/emojis/all"),
-        {
-            enabled: isEnabled
-        })
+    const { data } = useQuery<LikeEmoji[]>(["like-emoji"], () => fetchAsync<LikeEmoji[]>("/api/likes/emojis/all"),{
+        enabled: isEnabled
+    })
+    
     useEffect(() => { 
         const likeEmojiLookUpTable: Record<number, string> = {}
         if(data) {
@@ -38,7 +36,7 @@ export function LikeEmojiProvider( {children}: {children: React.ReactNode} ) {
             }
         }
         setLikeEmoji({
-            likeEmoji: likeEmojiLookUpTable
+            emojis: likeEmojiLookUpTable
         })
     }, [data])
 
