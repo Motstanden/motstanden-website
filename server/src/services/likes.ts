@@ -110,7 +110,7 @@ function getAllEmojis(): LikeEmoji[] {
     const stmt = db.prepare(`
         SELECT
             emoji_id as id,
-            name,
+            description,
             text
         FROM 
             emoji

@@ -7,8 +7,10 @@ export interface Like extends NewLike {
     userId: number,
 }
 
+type EmojiDescription = "liker" | "elsk" | "haha" | "wow" | "sint" | "trist"
+
 export interface LikeEmoji {
     id: number,
-    name: string,
+    description: EmojiDescription,
     text: string,
 }

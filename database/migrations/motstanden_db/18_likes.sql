@@ -5,19 +5,19 @@ INSERT INTO version(migration) VALUES
 
 CREATE TABLE emoji (
     emoji_id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
+    description TEXT NOT NULL,
     text TEXT NOT NULL
 );
 
 INSERT INTO 
-    emoji(emoji_id, text, name)
+    emoji(emoji_id, text, description)
 VALUES
-    (1, '👍', 'thumb'),
-    (2, '💚', 'heart'),
-    (3, '😆', 'laugh'),
-    (4, '😮', 'surprised'),
-    (5, '😢', 'sad'),
-    (6, '😠', 'angry');
+    (1, '👍', 'liker'),
+    (2, '💚', 'elsk'),
+    (3, '😆', 'haha'),
+    (4, '😮', 'wow'),
+    (5, '😢', 'trist'),
+    (6, '😠', 'sint');
 
 CREATE TABLE wall_post_comment_like(
     wall_post_comment_like_id INTEGER PRIMARY KEY,

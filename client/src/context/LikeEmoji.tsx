@@ -30,7 +30,6 @@ export function LikeEmojiProvider( {children}: {children: React.ReactNode} ) {
         {
             enabled: isEnabled
         })
-    
     useEffect(() => { 
         const likeEmojiLookUpTable: Record<number, string> = {}
         if(data) {

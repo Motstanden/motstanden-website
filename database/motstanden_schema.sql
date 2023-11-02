@@ -445,7 +445,7 @@ BEGIN
 END;
 CREATE TABLE emoji (
     emoji_id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
+    description TEXT NOT NULL,
     text TEXT NOT NULL
 );
 CREATE TABLE wall_post_comment_like(
