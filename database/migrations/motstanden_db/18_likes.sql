@@ -1,6 +1,6 @@
 -- Insert current version into the DB.
 INSERT INTO version(migration) VALUES
-    ('17_likes.sql');
+    ('18_likes.sql');
 
 
 CREATE TABLE emoji (
