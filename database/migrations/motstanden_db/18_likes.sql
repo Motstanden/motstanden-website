@@ -13,7 +13,7 @@ INSERT INTO
     emoji(emoji_id, text, description)
 VALUES
     (1, '👍', 'liker'),
-    (2, '💚', 'elsk'),
+    (2, '💚', 'elsker'),
     (3, '😆', 'haha'),
     (4, '😮', 'wow'),
     (5, '😢', 'trist'),
