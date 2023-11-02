@@ -1,4 +1,4 @@
-import { Button, ClickAwayListener, Paper, ButtonProps, Popper } from "@mui/material";
+import { Button, ClickAwayListener, Paper, ButtonProps, Popper, Skeleton } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { LikeEmoji, NewLike } from "common/interfaces";
 import React, { useRef, useState } from "react";
@@ -15,7 +15,7 @@ export function LikeButton(props: LikeButtonProps) {
 
     const { style, isLikedStyle, sx, ...remainingProps } = props
 
-    const { selfLike } = useLikes()
+    const { selfLike, isLoading } = useLikes()
     const { emojis } = useLikeEmoji()
     const usedEmoji: LikeEmoji | undefined = selfLike ? emojis[selfLike.emojiId] : undefined
 
@@ -33,6 +33,9 @@ export function LikeButton(props: LikeButtonProps) {
     const onPostSuccess = () => { 
         setIsOpen(false)
     }
+
+    if(isLoading)
+        return <LikeButtonSkeleton style={style}/>
 
     let addedStyle = {}
     if(selfLike) {
@@ -80,6 +83,19 @@ export function LikeButton(props: LikeButtonProps) {
                     </Popper>
             </span>
         </ClickAwayListener>
+    )
+}
+
+function LikeButtonSkeleton( { style }: {style?: React.CSSProperties}) {
+    return (
+        <Skeleton
+            variant="text" 
+            width={60}
+            style={{
+                display: "inline-block",
+                ...style
+            }}
+        />
     )
 }
 
