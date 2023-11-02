@@ -21,7 +21,7 @@ VALUES
     (3,     4,      '2018-09-01',       'Dirigent',         '',                 'Ω',                'dirigent@motstanden.no'                    ),
     (3,     4,      '2018-09-01',       'PR',               '',                 'Ω',                'pr@motstanden.no'                          ),
 
-    -- All other accounts [ids: 14-42]
+    -- All other accounts [ids: 14-40]
     (3,     6,      '2018-09-01',       'Gustav',           '',                 'Kirchhoff',        'gustav.kirchhoff@gmail.com'                ),                  
     (4,     6,      '2018-09-01',       'Georg',            'Simon',            'Ohm',              'georg.simon.ohm@gmail.com'                 ),                  
     (1,     5,      '2018-09-01',       'Nikola',           '',                 'Tesla',            'nikola.tesla@live.com'                     ),      
