@@ -454,8 +454,15 @@ CREATE TABLE wall_post_comment_like(
     user_id INTEGER NOT NULL,
     emoji_id INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (wall_post_comment_id) REFERENCES wall_post_comment (wall_post_comment_id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (emoji_id) REFERENCES emoji (emoji_id) ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (user_id) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     UNIQUE (wall_post_comment_id, user_id)
 );
+CREATE TRIGGER trig_wall_post_comment_like_updated_at
+    AFTER UPDATE ON wall_post_comment_like FOR EACH ROW
+BEGIN
+    UPDATE wall_post_comment_like SET updated_at = current_timestamp
+        WHERE wall_post_comment_like_id = old.wall_post_comment_like_id;
+END;
