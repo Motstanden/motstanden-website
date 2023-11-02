@@ -305,7 +305,7 @@ export function PostSectionItem({
 }
 
 function LikeList() {
-    const {likes} = useLikes()
+    const { likes, isLoading } = useLikes()
     const { userReference } = useUserReference()
     const isTinyScreen = useMediaQuery("(max-width: 350px)");
     const isSmallScreen = useMediaQuery("(max-width: 430px)")
@@ -313,6 +313,13 @@ function LikeList() {
     const { openModal } = useLikesModal()
     const onClick = () => { 
         openModal()
+    }
+
+    if(isLoading) {
+        let width = isTinyScreen 
+            ? 60 
+            : isSmallScreen ? 160 : 240
+        return <Skeleton width={width} />
     }
 
     if(likes.length <= 0)
