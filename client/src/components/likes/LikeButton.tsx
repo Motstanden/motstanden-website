@@ -75,6 +75,7 @@ function LikeForm( {
 }: {
     onPostSuccess?: () => void
 }) {
+    const { selfLike } = useLikes()
     const { emojis } = useLikeEmoji()
     const [isDisabled, setIsDisabled] = useState(false)
     
@@ -108,6 +109,7 @@ function LikeForm( {
                 <Button
                     key={emoji.id}
                     color="secondary"
+                    variant={selfLike?.emojiId === emoji.id ? "outlined" : "text"}
                     onClick={() => onClick(emoji.id)}
                     disabled={isDisabled}
                     style={{
