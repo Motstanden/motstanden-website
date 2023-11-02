@@ -18,6 +18,7 @@ import { UserLikesModal, useLikesModal } from './likes/UserLikesModal'
 import { LikeUtils } from './likes/utils'
 import { UserAvatar, UserAvatarSkeleton } from './user/UserAvatar'
 import { UserFullName } from './user/UserFullName'
+import { relativeTimeShortFormat } from 'src/context/Locale'
 
 export {
     CommentSectionContainer as CommentSection
@@ -288,7 +289,7 @@ function CommentItem( {
                                 opacity: "0.6",
                             }}
                             >
-                            {dayjs(comment.createdAt).utc(true).fromNow()}
+                            {dayjs(comment.createdAt).utc(true).locale(relativeTimeShortFormat).fromNow()}
                         </span>
                     </div>
                 </div>
