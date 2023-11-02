@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { WallPost } from "common/interfaces";
 import { fetchAsync } from "src/utils/fetchAsync";
 import { PostSectionItem, PostSectionSkeleton } from "src/components/PostingWall";
+import { LikesContextProvider, useLikes } from 'src/components/likes/LikesContext'
 
 export {
     ParamValidator as WallPostItemPage
@@ -86,6 +87,12 @@ function PostFetcher({
     }
 
     return (
+                <LikesContextProvider
+                    key={post.id}
+                    entityType={LikeEntityType.WallPost}
+                    entityId={post.id}
+                >
         <PostSectionItem post={data} />
+                </LikesContextProvider>
     )
 }
