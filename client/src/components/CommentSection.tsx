@@ -19,6 +19,7 @@ import { LikeUtils } from './likes/utils'
 import { UserAvatar, UserAvatarSkeleton } from './user/UserAvatar'
 import { UserFullName } from './user/UserFullName'
 import { relativeTimeShortFormat } from 'src/context/Locale'
+import { LikeListIconButton } from './likes/LikeListButton'
 
 export {
     CommentSectionContainer as CommentSection
@@ -197,8 +198,7 @@ function CommentSection( {
                         style={{
                             marginBottom: "15px",
                         }}
-                        likeEntityType={likeEntityType}
-                        />
+                    />
                 </LikesContextProvider>
             ))}
         </>
@@ -207,12 +207,10 @@ function CommentSection( {
 
 function CommentItem( {
     comment,
-    likeEntityType,
     style,
     variant,
 }: {
     comment: Comment,
-    likeEntityType: LikeEntityType,
     style?: React.CSSProperties,
     variant?: CommentSectionVariant,
 }) {
@@ -264,7 +262,25 @@ function CommentItem( {
                                 zIndex: 1
                             }}
                         >
-                            <LikeListIconButton entityType={likeEntityType} entityId={comment.id}/>
+                            <Paper
+                                style={{
+                                    borderRadius: "30px",
+                                    lineHeight: "0px",
+                                    padding: "0px",
+                                    margin: "0px",
+                                }}
+                                elevation={4}
+                            >
+                                <LikeListIconButton 
+                                    maxItems={2}
+                                    style={{
+                                        borderRadius: "30px",
+                                        fontSize: "13pt",
+                                        lineHeight: "15pt",
+                                        padding: "0px 2px 1px 2px",
+                                    }}
+                                />
+                            </Paper>
                         </div>
                     </div>
                     <div>
@@ -289,87 +305,6 @@ function CommentItem( {
                 </div>
             </Stack>
         </div>
-    )
-}
-
-function LikeListIconButton({entityType, entityId}: {entityType: LikeEntityType, entityId: number}) {
-    const theme = useTheme()
-    
-    const { openModal } = useLikesModal(entityType, entityId)
-    const onEmojiClick = () => {
-        openModal()
-    }
-    
-    const { emojis } = useLikeEmoji()
-    const { likes, groupedLikes, isLoading, isError } = useLikes()
-
-    if(isLoading) 
-        return <LikeListIconButtonSkeleton/>
-
-    if(isError || likes.length === 0)
-        return <></>
-
-
-    return (
-        <>
-            <Paper
-                style={{
-                    borderRadius: "30px",
-                    lineHeight: "0px",
-                    padding: "0px",
-                    margin: "0px",
-                }}
-                elevation={4}
-            >
-                <IconButton 
-                    onClick={onEmojiClick}
-                    style={{
-                        fontSize: "13pt",
-                        margin: "0px",
-                        padding: "0px 2px",
-                        borderRadius: "30px",
-                        lineHeight: "15pt",
-                        color: theme.palette.text.primary,
-                    }}
-                >
-                    {groupedLikes
-                        .filter( (_, index) => index <= 2 )      // Only show the tope 3 voted emojis
-                        .map( item => (
-                            <span key={item.emojiId}>
-                                {emojis[item.emojiId].text}
-                            </span>
-                        ))
-                    }
-                    {likes.length > 1 && (
-                        <span 
-                            style={{
-                                marginLeft: "2px",
-                                marginRight: "2px",
-                                fontSize: "small"
-                            }}
-                        >
-                            {likes.length + 1 >= 100 ? "99+" : likes.length}
-                        </span>
-                    )}
-                </IconButton>
-            </Paper>
-            <UserLikesModal 
-                entityType={entityType}
-                entityId={entityId}
-            />
-        </>
-    )
-}
-
-
-function LikeListIconButtonSkeleton(){
-    // TODO: Implement
-    return (
-        <Skeleton 
-            variant='circular'
-            height={20}
-            width={20}
-        />
     )
 }
 

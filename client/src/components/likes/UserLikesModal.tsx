@@ -12,13 +12,14 @@ import { useLikes } from "./LikesContext";
 
 type Size = "small" | "normal"
 
-export function useLikesModal(type: LikeEntityType, entityId: number) {
+export function useLikesModal() {
+    const { entityType, entityId } = useLikes()
     const [isOpen, setIsOpen] = useState(false)
     const navigate = useNavigate()
     const location = useLocation()
 
     useEffect(() => {
-        if (location.hash === buildHash(type, entityId)) {
+        if (location.hash === buildHash(entityType, entityId)) {
             setIsOpen(true)
         } else if(isOpen) {
             setIsOpen(false)
@@ -31,7 +32,7 @@ export function useLikesModal(type: LikeEntityType, entityId: number) {
     }
 
     const openHandler = () => {
-        navigate({ hash: buildHash(type, entityId)})
+        navigate({ hash: buildHash(entityType, entityId)})
     }
 
     return {
@@ -61,9 +62,9 @@ function buildHash(type: LikeEntityType, entityId: number) {
     return `#${getBaseHash()}-reaksjoner-${entityId}`
 }
 
-export function UserLikesModal({ entityType, entityId }: {entityType: LikeEntityType, entityId: number}) {
+export function UserLikesModal() {
     
-    const {isOpen, closeModal} = useLikesModal(entityType, entityId)
+    const {isOpen, closeModal} = useLikesModal()
 
     const { likes } = useLikes()
 
