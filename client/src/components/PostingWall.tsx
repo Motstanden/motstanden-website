@@ -1,7 +1,7 @@
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import SendIcon from '@mui/icons-material/Send'
 import { LoadingButton } from "@mui/lab"
-import { Divider, Paper, Skeleton, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material"
+import { Button, Divider, Paper, Skeleton, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { CommentEntityType, LikeEntityType } from "common/enums"
 import { NewWallPost, WallPost } from "common/interfaces"
@@ -15,7 +15,10 @@ import { CommentSection, CommentSectionSkeleton } from "./CommentSection"
 import { UserAvatar } from './user/UserAvatar'
 import { UserFullName } from './user/UserFullName'
 import { LikeButton } from './likes/LikeButton'
-import { LikesContextProvider } from './likes/LikesContext'
+import { LikesContextProvider, useLikes } from './likes/LikesContext'
+import { LikeListEmojiContent, LikeListIconButton } from './likes/LikeListButton'
+import { useUserReference } from 'src/context/UserReference'
+import { UserLikesModal, useLikesModal } from './likes/UserLikesModal'
 
 export function PostingWall({
     userId,
@@ -281,14 +284,16 @@ export function PostSectionItem({
             >
                 {post.content}
             </div>
-            <LikeButton
-                style={{
-                    padding: "0px",
-                    paddingInline: "6px",
-                    minWidth: "0px",
-                }}
-                
-            />
+            <Stack direction="row" justifyContent="space-between">
+                <LikeButton
+                    style={{
+                        padding: "0px",
+                        paddingInline: "6px",
+                        minWidth: "0px",
+                    }}
+                />
+                <LikeList/>
+            </Stack>
             <Divider sx={{mb: 3, mt: 1}} />
             <CommentSection
                 entityType={CommentEntityType.WallPost}
@@ -296,6 +301,89 @@ export function PostSectionItem({
                 variant="compact"
             />
         </Paper>
+    )
+}
+
+function LikeList() {
+    const {likes} = useLikes()
+    const { userReference } = useUserReference()
+    const isTinyScreen = useMediaQuery("(max-width: 350px)");
+    const isSmallScreen = useMediaQuery("(max-width: 430px)")
+
+    const { openModal } = useLikesModal()
+    const onClick = () => { 
+        openModal()
+    }
+
+    if(likes.length <= 0)
+        return <></>
+    
+    let text = ""
+    if(userReference && !isTinyScreen) {
+
+        const name = userReference[likes[0].userId].fullName
+
+        if(likes.length === 1)
+            text = `${name}` 
+
+        if(likes.length === 2) {
+            text = `${name} og ${userReference[likes[1].userId].fullName}` 
+
+            if(text.length > 27 && isSmallScreen) {
+                text = `${name} og 1 annen`
+                
+                if(text.length > 27) {
+                    text = `${name} + 1`
+                }
+            }
+        }
+
+        if(likes.length > 2) {
+            text = `${name} og ${likes.length - 1} andre`
+            if(text.length > 27 && isSmallScreen) {
+                text = `${name} + ${likes.length - 1}`
+            }
+        }
+    }
+
+    return (
+        <div>
+            <Button 
+                color="secondary"
+                variant="text"
+                onClick={onClick}
+                style={{
+                    minWidth: "0px",
+                    padding: "0px 5px",
+                    textTransform: "none",
+                }}
+                sx={{
+                    color: (theme) => theme.palette.text.primary
+                }}
+            >
+                <span 
+                    style={{
+                        verticalAlign: "top",
+                    }}
+                    >
+                    <LikeListEmojiContent 
+                        maxItems={isSmallScreen ? 2 : 3} 
+                        showCount={isTinyScreen}/>
+                </span>
+                {text &&(
+                    <span 
+                        style={{
+                            marginLeft: "3px",
+                            fontWeight: "bold",
+                            opacity: 0.6,
+                        }}
+                    >
+                        {text}
+                    </span>
+                )}
+            </Button>
+            <UserLikesModal/>
+        </div>
     )
 }
 
