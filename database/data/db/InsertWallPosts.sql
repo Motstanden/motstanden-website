@@ -86,9 +86,9 @@ VALUES
     (6, 34, 2),
 
     -- Post 7: Hvordan lagger jeg ny artikkel på wiki-en?
-    (7, 30, 3),
+    (7, 30, 2),
     (7, 31, 3),
-    (7, 32, 3),
+    (7, 32, 4),
 
     -- Post 8-9: Gratulerer med dagen...
     (8, 24, 2),
