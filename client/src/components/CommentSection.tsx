@@ -274,12 +274,6 @@ function CommentItem( {
                                     fontSize: "small",
                                     marginInline: "4px",
                                     minWidth: "40px",
-                                    textTransform: "capitalize",
-                                    fontWeight: "bold",
-                                    opacity: "0.6"
-                                }}
-                                isLikedStyle={{
-                                    opacity: "1",
                                 }}
                             />
                         </span>

@@ -34,7 +34,20 @@ export function LikeButton(props: LikeButtonProps) {
         setIsOpen(false)
     }
 
-    const addedStyle = selfLike ? isLikedStyle : {}
+    let addedStyle = {}
+    if(selfLike) {
+       addedStyle = {
+           opacity: 1,
+           ...style,
+            ...isLikedStyle
+       } 
+    } else {
+        addedStyle = {
+            opacity: 0.6,
+            ...style
+        }
+    }
+
     return (
         <ClickAwayListener onClickAway={onClickAway}>
             <span>
@@ -46,7 +59,8 @@ export function LikeButton(props: LikeButtonProps) {
                     style={{
                         padding: "0px 2px",
                         margin: "0px",
-                        ...style,
+                        textTransform: "capitalize",
+                        fontWeight: "bold",
                         ...addedStyle
                     }}
                     sx={{

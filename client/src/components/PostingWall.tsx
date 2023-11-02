@@ -3,7 +3,7 @@ import SendIcon from '@mui/icons-material/Send'
 import { LoadingButton } from "@mui/lab"
 import { Divider, Paper, Skeleton, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { CommentEntityType } from "common/enums"
+import { CommentEntityType, LikeEntityType } from "common/enums"
 import { NewWallPost, WallPost } from "common/interfaces"
 import { isNullOrWhitespace } from 'common/utils'
 import dayjs from "dayjs"
@@ -14,6 +14,8 @@ import { postJson } from 'src/utils/postJson'
 import { CommentSection, CommentSectionSkeleton } from "./CommentSection"
 import { UserAvatar } from './user/UserAvatar'
 import { UserFullName } from './user/UserFullName'
+import { LikeButton } from './likes/LikeButton'
+import { LikesContextProvider } from './likes/LikesContext'
 
 export function PostingWall({
     userId,
@@ -167,15 +169,20 @@ function PostSectionItemSkeleton( {
 function PostSection( {posts}: {posts: WallPost[]}) {
     return (
         <>
-        {posts.map((post) => (
-            <PostSectionItem
-                key={post.id}
-                post={post}
-                style={{
-                    marginBottom: "20px"
-                }}
-            />
-        ))}
+            {posts.map((post) => (
+                <LikesContextProvider
+                    key={post.id}
+                    entityType={LikeEntityType.WallPost}
+                    entityId={post.id}
+                >
+                    <PostSectionItem
+                        post={post}
+                        style={{
+                            marginBottom: "20px"
+                        }}
+                    />
+                </LikesContextProvider>
+            ))}
         </>
     )
 }
@@ -268,12 +275,21 @@ export function PostSectionItem({
                 style={{
                     marginTop: "15px",
                     marginLeft: "5px",
-                    whiteSpace: "pre-line"
+                    whiteSpace: "pre-line",
+                    marginBottom: "15px"
                 }}
             >
                 {post.content}
             </div>
-            <Divider sx={{my: 3}} />
+            <LikeButton
+                style={{
+                    padding: "0px",
+                    paddingInline: "6px",
+                    minWidth: "0px",
+                }}
+                
+            />
+            <Divider sx={{mb: 3, mt: 1}} />
             <CommentSection
                 entityType={CommentEntityType.WallPost}
                 entityId={post.id}
