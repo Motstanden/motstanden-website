@@ -128,9 +128,9 @@ function LikeForm( {
         const response = await postJson(url, value, { alertOnFailure: true })
 
         if(response?.ok){
-            await queryClient.invalidateQueries(queryKey)
+            queryClient.invalidateQueries(queryKey)
+            onPostSuccess?.()
         }
-        onPostSuccess?.()
         setIsDisabled(false)
     }
 
