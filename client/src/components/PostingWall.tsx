@@ -313,7 +313,8 @@ export function PostSectionItem({
 function LikeList() {
     const { likes, isLoading } = useLikes()
     const { userReference } = useUserReference()
-    const isTinyScreen = useMediaQuery("(max-width: 370px)");
+    const isVeryTinyScreen = useMediaQuery("(max-width: 350px)");
+    const isTinyScreen = useMediaQuery("(max-width: 350px)");
     const isSmallScreen = useMediaQuery("(max-width: 430px)")
 
     const { openModal } = useLikesModal()
@@ -328,7 +329,7 @@ function LikeList() {
         return <></>
     
     let text = ""
-    if(userReference && !isTinyScreen) {
+    if(userReference && !isVeryTinyScreen) {
 
         const name = userReference[likes[0].userId].fullName
 
@@ -353,7 +354,12 @@ function LikeList() {
                 text = `${name} + ${likes.length - 1}`
             }
         }
+
+        if(isTinyScreen && text.length > 27) {  // some people have long names
+            text = ""
+        }
     }
+
 
     return (
         <div>
@@ -376,8 +382,8 @@ function LikeList() {
                     }}
                     >
                     <LikeListEmojiContent 
-                        maxItems={isSmallScreen ? 2 : 3} 
-                        showCount={isTinyScreen}/>
+                        maxItems={isSmallScreen && !isNullOrWhitespace(text) ? 2 : 3} 
+                        showCount={isNullOrWhitespace(text)}/>
                 </span>
                 {text &&(
                     <span 
