@@ -314,7 +314,7 @@ function LikeList() {
     const { likes, isLoading } = useLikes()
     const { userReference } = useUserReference()
     const isVeryTinyScreen = useMediaQuery("(max-width: 350px)");
-    const isTinyScreen = useMediaQuery("(max-width: 350px)");
+    const isTinyScreen = useMediaQuery("(max-width: 370px)");
     const isSmallScreen = useMediaQuery("(max-width: 430px)")
 
     const { openModal } = useLikesModal()
