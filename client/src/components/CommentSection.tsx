@@ -1,6 +1,6 @@
 import SendIcon from '@mui/icons-material/Send'
 import { LoadingButton } from "@mui/lab"
-import { IconButton, Paper, Skeleton, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material"
+import { Paper, Skeleton, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { CommentEntityType, LikeEntityType } from "common/enums"
 import { Comment, NewComment } from "common/interfaces"
@@ -9,17 +9,15 @@ import dayjs from "dayjs"
 import { useLayoutEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
 import { useAuth } from "src/context/Authentication"
-import { useLikeEmoji } from 'src/context/LikeEmoji'
+import { relativeTimeShortFormat } from 'src/context/Locale'
 import { fetchAsync } from "src/utils/fetchAsync"
 import { postJson } from "src/utils/postJson"
 import { LikeButton } from './likes/LikeButton'
-import { LikesContextProvider, useLikes } from './likes/LikesContext'
-import { UserLikesModal, useLikesModal } from './likes/UserLikesModal'
+import { LikeListIconButton } from './likes/LikeListButton'
+import { LikesContextProvider } from './likes/LikesContext'
 import { LikeUtils } from './likes/utils'
 import { UserAvatar, UserAvatarSkeleton } from './user/UserAvatar'
 import { UserFullName } from './user/UserFullName'
-import { relativeTimeShortFormat } from 'src/context/Locale'
-import { LikeListIconButton } from './likes/LikeListButton'
 
 export {
     CommentSectionContainer as CommentSection
