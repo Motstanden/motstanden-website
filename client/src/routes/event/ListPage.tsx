@@ -1,14 +1,14 @@
 import {
     Link,
-    Paper, 
+    Paper,
     Stack
 } from "@mui/material";
 import { EventData } from "common/interfaces";
 import { Link as RouterLink, useOutletContext } from "react-router-dom";
 import { useTitle } from "src/hooks/useTitle";
+import { buildEventItemUrl } from "./Context";
 import { ItemMenu } from "./components/ItemMenu";
 import { KeyInfo } from "./components/KeyInfo";
-import { buildEventItemUrl } from "./Context";
 
 export default function EventListPage({ mode }: { mode?: "upcoming" | "previous" | "all" }) {
     useTitle("Arrangement")
@@ -24,7 +24,13 @@ export default function EventListPage({ mode }: { mode?: "upcoming" | "previous"
         <>
             <h1>Arrangement</h1>
             <div style={{ maxWidth: "650px" }}>
-                {events.map((e, index) => <EventItem key={`${index} ${e.title}}`} event={e} />)}
+                {events.map( e => (
+                    <EventItem key={e.eventId} event={e} />
+                ))}
+                
+                {events.length <= 0 && 
+                    <span style={{opacity: 0.75 }}>Ingen kommende arrangementer...</span>
+                }
             </div>
         </>
     )
