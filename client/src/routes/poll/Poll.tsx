@@ -4,13 +4,13 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { LoadingButton } from "@mui/lab";
-import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Divider, FormControlLabel, FormGroup, Paper, Radio, RadioGroup, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Dialog, Divider, FormControlLabel, FormGroup, Link, Paper, Radio, RadioGroup, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CommentEntityType, UserGroup } from 'common/enums';
+import { UserGroup } from 'common/enums';
 import { Poll, PollOption, PollWithOption } from "common/interfaces";
-import { hasGroupAccess } from 'common/utils';
+import { hasGroupAccess, strToNumber } from 'common/utils';
 import React, { useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { Link as RouterLink, useOutletContext, useSearchParams } from "react-router-dom";
 import { AuthorInfo } from 'src/components/AuthorInfo';
 import { DeleteMenuItem } from 'src/components/menu/EditOrDeleteMenu';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
@@ -19,7 +19,6 @@ import { useTitle } from 'src/hooks/useTitle';
 import { fetchAsync } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
 import { pollListQueryKey } from './Context';
-import { CommentSection } from 'src/components/CommentSection';
 
 
 export default function PollPage(){
@@ -93,27 +92,30 @@ export function PollCard( { poll, srcQueryKey, style, }: { poll: Poll, srcQueryK
         return <PollSkeleton/>
 
     return(
-        <Paper 
-            elevation={6} 
-            sx={{ p: 2 }} 
-            style={style}>
-            <Stack 
-                flexDirection="row" 
-                justifyContent="space-between"
-                alignItems="center"
-            >
-                <h3 style={{ margin: 0 }}>
-                    {poll.title}
-                </h3>
-                {canDeletePoll && ( 
-                    <div style={{marginRight: "-10px"}}>
-                        <PollMenu onDeleteClick={onDeleteClick}/>
-                    </div>
-                )}
-            </Stack> 
-            <Divider sx={{mt: 1}}/>
-            <PollContent poll={poll}/>
-        </Paper>
+        <>
+            <Paper 
+                elevation={6} 
+                sx={{ p: 2 }} 
+                style={style}>
+                <Stack 
+                    flexDirection="row" 
+                    justifyContent="space-between"
+                    alignItems="center"
+                >
+                    <h3 style={{ margin: 0 }}>
+                        {poll.title}
+                    </h3>
+                    {canDeletePoll && ( 
+                        <div style={{marginRight: "-10px"}}>
+                            <PollMenu onDeleteClick={onDeleteClick}/>
+                        </div>
+                    )}
+                </Stack> 
+                <Divider sx={{mt: 1}}/>
+                <PollContent poll={poll}/>
+            </Paper>
+            <VoterViewerModal poll={poll}/>
+        </>
     )
 }
 
@@ -491,6 +493,7 @@ function PollResult( {poll, onExitResultClick}: {poll: PollWithOption, onExitRes
                 {poll.options.map((option, index) => (
                     <PollResultItem 
                         key={index} 
+                        pollId={poll.id}
                         option={option} 
                         totalVotes={totalVotes}
                         style={{ 
@@ -514,7 +517,17 @@ function PollResult( {poll, onExitResultClick}: {poll: PollWithOption, onExitRes
     )
 }
 
-function PollResultItem( {option, totalVotes, style}: {option: PollOption, totalVotes: number, style?: React.CSSProperties}){
+function PollResultItem( {
+    pollId, 
+    option, 
+    totalVotes, 
+    style
+}: {
+    pollId: number, 
+    option: PollOption, 
+    totalVotes: number, 
+    style?: React.CSSProperties
+}){
     const theme = useTheme()
     const percentage = totalVotes <= 0 ? 0 : option.voteCount / totalVotes * 100
     return (
@@ -543,12 +556,13 @@ function PollResultItem( {option, totalVotes, style}: {option: PollOption, total
             <BarChartItem 
                 percentage={percentage} 
                 voteCount={option.voteCount}
+                voterViewerUrl={`?poll-id=${pollId}&option-id=${option.id}`}
                 />
         </div>
     )
 }
 
-function BarChartItem( {percentage, voteCount}: {percentage: number, voteCount: number}){
+function BarChartItem( {percentage, voteCount, voterViewerUrl}: {percentage: number, voteCount: number, voterViewerUrl: string}){
     const theme = useTheme();
     let newPercentage =  Math.max(Math.min(Math.round(percentage), 100))  // Round value to nearest integer between 0 and 100
     return (
@@ -588,9 +602,41 @@ function BarChartItem( {percentage, voteCount}: {percentage: number, voteCount: 
                 fontWeight: "light",
                 color: theme.palette.text.secondary,
             }}>
-                {voteCount} {voteCount === 1 ? "stemme" : "stemmer"}
+                <Link
+                    underline='hover'
+                    color="secondary"
+                    to={voterViewerUrl}
+                    component={RouterLink}
+                >
+                    {voteCount} {voteCount === 1 ? "stemme" : "stemmer"}
+                </Link>
             </div>
         </div>
+    )
+}
+
+function VoterViewerModal({poll}: {poll: Poll}) {
+
+    const [searchParams, setSearchParams] = useSearchParams()
+
+    const pollId = strToNumber(searchParams.get(`poll-id`) ?? undefined)
+    const optionId = strToNumber(searchParams.get(`option-id`) ?? undefined)    // TODO
+
+    const onClose = () => {
+        const newParams = new URLSearchParams (searchParams);
+
+        newParams.delete ('poll-id');
+        newParams.delete ('option-id');
+    
+        setSearchParams (newParams);
+    }
+
+    const open = pollId === poll.id
+
+    return (
+        <Dialog open={open} onClose={onClose}>
+            Here you can soon see who voted on what...
+        </Dialog>
     )
 }
 
