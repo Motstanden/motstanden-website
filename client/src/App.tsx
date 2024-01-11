@@ -93,16 +93,14 @@ function App() {
 						<Route path="/" element={<FrontPage/>} />
 					)} 
 
-					{isLoggedIn && (
-						<Route element={<RequireAuthRouter/>}> 
-							<Route path="/" element={<HomePageContainer />}>
-								<Route path="" element={<HomePage />} />
-								<Route path="hjem" element={<HomePage />} />
-								<Route path="vegg" element={<WallPage />} />
-								<Route path="vegg/:postId" element={<WallPostItemPage/>}/>
-							</Route>
+					<Route element={<RequireAuthRouter/>}> 
+						<Route path="/" element={<HomePageContainer />}>
+							<Route path="" element={<HomePage />} />
+							<Route path="hjem" element={<HomePage />} />
+							<Route path="vegg" element={<WallPage />} />
+							<Route path="vegg/:postId" element={<WallPostItemPage/>}/>
 						</Route>
-					)} 
+					</Route>
 
 					{/* Routes that requires the user to be logged in */}
 					<Route element={<RequireAuthRouter/>}>
