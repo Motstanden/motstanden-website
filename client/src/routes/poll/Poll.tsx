@@ -4,7 +4,7 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { LoadingButton } from "@mui/lab";
-import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Dialog, Divider, FormControlLabel, FormGroup, Link, Paper, Radio, RadioGroup, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Dialog, DialogTitle, Divider, FormControlLabel, FormGroup, Link, Paper, Radio, RadioGroup, Skeleton, Stack, Theme, useMediaQuery, useTheme } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserGroup } from 'common/enums';
 import { Poll, PollOption, PollWithOption } from "common/interfaces";
@@ -19,6 +19,7 @@ import { useTitle } from 'src/hooks/useTitle';
 import { fetchAsync } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
 import { pollListQueryKey } from './Context';
+import { CloseModalButton } from 'src/components/CloseModalButton';
 
 
 export default function PollPage(){
@@ -622,6 +623,8 @@ function VoterViewerModal({poll}: {poll: Poll}) {
     const pollId = strToNumber(searchParams.get(`poll-id`) ?? undefined)
     const optionId = strToNumber(searchParams.get(`option-id`) ?? undefined)    // TODO
 
+    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+
     const onClose = () => {
         const newParams = new URLSearchParams (searchParams);
 
@@ -634,8 +637,25 @@ function VoterViewerModal({poll}: {poll: Poll}) {
     const open = pollId === poll.id
 
     return (
-        <Dialog open={open} onClose={onClose}>
-            Here you can soon see who voted on what...
+        <Dialog 
+            open={open} 
+            onClose={onClose}
+            scroll="paper"
+            fullWidth
+            fullScreen={isSmallScreen}
+            >
+            <DialogTitle>
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                >
+                    <span>
+                        {poll.title}
+                    </span>
+                    <CloseModalButton onClick={onClose}/>
+                </Stack>
+            </DialogTitle>
         </Dialog>
     )
 }

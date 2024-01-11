@@ -1,4 +1,3 @@
-import CloseIcon from '@mui/icons-material/Close';
 import { Badge, Dialog, DialogContent, DialogTitle, IconButton, Stack, Tab, Tabs, Theme, useMediaQuery } from "@mui/material";
 import { LikeEntityType } from 'common/enums';
 import { Like } from 'common/interfaces';
@@ -8,6 +7,7 @@ import { useLikeEmoji } from "src/context/LikeEmoji";
 import { UserAvatar } from "../user/UserAvatar";
 import { UserFullName } from "../user/UserFullName";
 import { useLikes } from "./LikesContext";
+import { CloseModalButton } from "../CloseModalButton";
 
 
 type Size = "small" | "normal"
@@ -104,20 +104,10 @@ export function UserLikesModal() {
                         }}
                         size={isSmallScreen ? "small" : "normal"}
                     />
-                    <IconButton
-                        onClick={closeModal}
-                        style={{
-                            marginBottom: isSmallScreen ? "10px" : undefined,
-                        }}
-                        sx={{
-                            bgcolor: "rgba(128, 128, 128, 0.2)",
-                            "&:hover": {
-                                bgcolor: "rgba(128, 128, 128, 0.4)",
-                            },
-                        }}
-                    >
-                        <CloseIcon />
-                    </IconButton>
+                    <CloseModalButton 
+                        onClick={closeModal} 
+                        style={{marginBottom: isSmallScreen ? "10px" : undefined}}
+                    />
                 </Stack>
             </DialogTitle>
             <DialogContent
