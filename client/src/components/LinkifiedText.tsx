@@ -1,11 +1,12 @@
 
 import { Link } from "@mui/material";
+import DOMPurify from "dompurify";
 import Linkify from 'linkify-react';
 
 export function LinkifiedText({ children }: {children: string}) {
     return (
         <Linkify options={{render: RenderLink}} >
-            {children}
+            {DOMPurify.sanitize(children)}
         </Linkify>
     );
 }
