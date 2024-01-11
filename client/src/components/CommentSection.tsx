@@ -8,6 +8,7 @@ import { isNullOrWhitespace } from "common/utils"
 import dayjs from "dayjs"
 import { useLayoutEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
+import { LinkifiedText } from 'src/components/LinkifiedText'
 import { useAuth } from "src/context/Authentication"
 import { relativeTimeShortFormat } from 'src/context/Locale'
 import { fetchAsync } from "src/utils/fetchAsync"
@@ -251,7 +252,9 @@ function CommentItem( {
                             style={{
                                 whiteSpace: "pre-line"
                             }}>
-                            {comment.comment}
+                            <LinkifiedText>
+                                {comment.comment}
+                            </LinkifiedText>
                         </div>
                         <div
                             style={{

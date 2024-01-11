@@ -4,6 +4,7 @@ import { KeyValuePair } from "common/interfaces";
 import { formatDateTimeInterval } from "common/utils/dateTime";
 import dayjs from "dayjs";
 import React from "react";
+import { LinkifiedText } from "src/components/LinkifiedText";
 
 export function KeyInfo({
     keyInfo,
@@ -56,7 +57,7 @@ function KeyValueList({ items, style }: { items: KeyValuePair<string, string>[];
                         }}
                     >
                         <strong>{item.key + " "}</strong>
-                        <span>{item.value}</span>
+                        <span><LinkifiedText>{item.value}</LinkifiedText></span>
                     </div>
                 ))}
             </div>
@@ -81,7 +82,7 @@ function KeyValueList({ items, style }: { items: KeyValuePair<string, string>[];
                         <strong>{item.key}</strong>
                     </div>
                     <div>
-                        {item.value}
+                        <LinkifiedText>{item.value}</LinkifiedText>
                     </div>
                 </React.Fragment>
             ))}

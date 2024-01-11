@@ -19,6 +19,7 @@ import { LikesContextProvider, useLikes } from './likes/LikesContext'
 import { LikeListEmojiContent, LikeListIconButton } from './likes/LikeListButton'
 import { useUserReference } from 'src/context/UserReference'
 import { UserLikesModal, useLikesModal } from './likes/UserLikesModal'
+import { LinkifiedText } from './LinkifiedText'
 
 export function PostingWall({
     userId,
@@ -288,7 +289,9 @@ export function PostSectionItem({
                     marginBottom: "15px"
                 }}
             >
-                {post.content}
+                <LinkifiedText>
+                    {post.content}
+                </LinkifiedText>
             </div>
             <Stack direction="row" justifyContent="space-between">
                 <LikeButton
