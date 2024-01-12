@@ -13,6 +13,7 @@ import React, { useState } from "react";
 import { Link as RouterLink, useOutletContext, useSearchParams } from "react-router-dom";
 import { AuthorInfo } from 'src/components/AuthorInfo';
 import { CloseModalButton } from 'src/components/CloseModalButton';
+import { UserList } from 'src/components/UserList';
 import { DeleteMenuItem } from 'src/components/menu/EditOrDeleteMenu';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 import { useAuth } from 'src/context/Authentication';
@@ -642,7 +643,7 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
 
     const isOpen = pollId === poll.id 
     
-    const selectedOption = poll.options.find(opt => opt.id === optionId) ?? poll.options[0]
+    let selectedOption = poll.options.find(opt => opt.id === optionId) ?? poll.options[0]
 
     return (
         <Dialog 
@@ -665,13 +666,13 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
                 </Stack>
             </DialogTitle>
             <DialogTitle>
-                <VoterList poll={poll}/>
+                <VoterList poll={poll} optionId={selectedOption.id} />
             </DialogTitle>
         </Dialog>
     )
 }
 
-function VoterList( {poll}: {poll: PollWithOption}) {
+function VoterList( {poll, optionId}: {poll: PollWithOption, optionId: number}) {
     const {isLoading, isError, data, error} = useQuery<PollOptionVoters[]>(["FetchPollVoters", poll.id], () => fetchAsync<PollOptionVoters[]>(`/api/polls/${poll.id}/voter-list`))
 
     if(isLoading)
@@ -680,10 +681,11 @@ function VoterList( {poll}: {poll: PollWithOption}) {
     if(isError)
         return <div>{`${error}`}</div>
 
-    console.log(data)
+    const selectedData = data?.find(voter => voter.optionId === optionId)
+        ?? { optionId: optionId, voters: [] }
 
     return (
-        <VoterListRenderer />
+        <VoterListRenderer voterData={selectedData} />
     )
 }
 
@@ -693,9 +695,10 @@ function VoterListSkeleton() {
     )
 }
 
-function VoterListRenderer() {
+function VoterListRenderer( {voterData}: {voterData: PollOptionVoters} ) {
+    console.log(voterData)
     return (
-        <>Her kan du snart se en list over brukere...</>
+        <UserList users={voterData.voters} noUsersText="Ingen har stemt på dette..."/>
     )
 }
 

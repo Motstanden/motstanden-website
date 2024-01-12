@@ -1,20 +1,20 @@
 import {
-    Avatar,
     Divider,
-    Link,
     MenuItem,
     Paper,
     Stack,
-    TextField
+    TextField,
+    useTheme
 } from "@mui/material";
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CommentEntityType, ParticipationStatus } from "common/enums";
 import { EventData, Participant, UpsertParticipant } from "common/interfaces";
-import { isNullOrWhitespace } from "common/utils";
 import { useState } from "react";
-import { Link as RouterLink, useOutletContext } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import { AuthorInfo } from "src/components/AuthorInfo";
+import { CommentSection } from "src/components/CommentSection";
 import { TitleCard } from "src/components/TitleCard";
+import { UserList } from "src/components/UserList";
 import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
 import { fetchAsync } from "src/utils/fetchAsync";
@@ -22,7 +22,6 @@ import { postJson } from "src/utils/postJson";
 import { MarkDownRenderer } from "../../components/MarkDownEditor";
 import { ItemMenu } from "./components/ItemMenu";
 import { KeyInfo } from "./components/KeyInfo";
-import { CommentSection } from "src/components/CommentSection";
 
 export default function ItemPage() {
     const event = useOutletContext<EventData>();
@@ -145,33 +144,22 @@ function AttendingForm({ eventId, queryKey, user }: { eventId: number, queryKey:
 }
 
 function AttendingList({ title, items }: { title: string, items: Participant[] }) {
+    const theme = useTheme()
+    
     if (items.length === 0) {
         return <></>
     }
     return (
         <TitleCard title={title} sx={{ my: 6 }}>
-            {items.map((user, index) => (
-                <Stack
-                    key={user.id}
-                    direction="row"
-                    alignItems="center"
-                    sx={{ py: 1, pl: 1 }}
-                    spacing={2}
-                    borderRadius="7px"
-                    bgcolor={index % 2 === 1 ? "action.hover" : "transparent"}
-                >
-                    <Avatar>{user.firstName[0] + user.lastName[0]}</Avatar>
-                    <Link
-                        color="secondary"
-                        component={RouterLink}
-                        to={`/medlem/${user.id}`}
-                        underline="hover"
-                    >
-                        {`${user.firstName} ${isNullOrWhitespace(user.middleName) ? user.lastName : user.middleName + " " + user.lastName}`}
-                    </Link>
-                </Stack>
-            )
-            )}
+            <UserList 
+                users={items} 
+                style={{
+                    borderRadius: "7px",
+                }}
+                alternatingStyle={{
+                    backgroundColor: theme.palette.action.hover
+                }}
+            />
         </TitleCard>
     )
 }
