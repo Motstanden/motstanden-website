@@ -1,4 +1,4 @@
-import { Avatar, Link, Stack } from "@mui/material";
+import { Avatar, Link, Stack, useTheme } from "@mui/material";
 import { UserReference } from "common/interfaces";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
@@ -14,6 +14,7 @@ export function UserList( {
     style?: React.CSSProperties 
     alternatingStyle?: React.CSSProperties
 }) {
+    const theme = useTheme()
 
     if(users.length === 0 && noUsersText) {
         return (
@@ -21,6 +22,18 @@ export function UserList( {
                 {noUsersText}
             </p>
         )
+    }
+
+    const defaultStyle: React.CSSProperties = { 
+        borderRadius: "7px",
+        ...style
+    }
+
+    const defaultAnteratingStyle: React.CSSProperties = {
+        backgroundColor: theme.palette.action.hover,
+        borderRadius: "7px",
+        ...style,
+        ...alternatingStyle   
     }
 
     return (
@@ -35,7 +48,7 @@ export function UserList( {
                         pl: 1 
                     }}
                     spacing={2}
-                    style={index % 2 === 1 ? { ...style, ...alternatingStyle } : style}
+                    style={index % 2 === 0 ? defaultStyle : defaultAnteratingStyle}
                 >
                     <Avatar>{user.initials}</Avatar>
                     <Link

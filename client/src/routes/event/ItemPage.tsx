@@ -151,15 +151,7 @@ function AttendingList({ title, items }: { title: string, items: Participant[] }
     }
     return (
         <TitleCard title={title} sx={{ my: 6 }}>
-            <UserList 
-                users={items} 
-                style={{
-                    borderRadius: "7px",
-                }}
-                alternatingStyle={{
-                    backgroundColor: theme.palette.action.hover
-                }}
-            />
+            <UserList users={items}/>
         </TitleCard>
     )
 }
