@@ -502,6 +502,7 @@ function PollResult( {poll, onExitResultClick}: {poll: PollWithOption, onExitRes
                         pollId={poll.id}
                         option={option} 
                         totalVotes={totalVotes}
+                        optionIndex={index}
                         style={{ 
                             marginBottom: "25px", 
                         }}
@@ -527,11 +528,13 @@ function PollResultItem( {
     pollId, 
     option, 
     totalVotes, 
+    optionIndex,
     style
 }: {
     pollId: number, 
     option: PollOption, 
     totalVotes: number, 
+    optionIndex: number,
     style?: React.CSSProperties
 }){
     const theme = useTheme()
@@ -562,7 +565,7 @@ function PollResultItem( {
             <BarChartItem 
                 percentage={percentage} 
                 voteCount={option.voteCount}
-                voterViewerUrl={`?${voterParams.pollId}=${pollId}&${voterParams.optionId}=${option.id}`}
+                voterViewerUrl={`?${voterParams.pollId}=${pollId}&${voterParams.optionIndex}=${optionIndex}`}
                 />
         </div>
     )
@@ -623,35 +626,54 @@ function BarChartItem( {percentage, voteCount, voterViewerUrl}: {percentage: num
 
 const voterParams = {
     pollId: "poll-id",
-    optionId: "option-id"
+    optionIndex: "option-index"
 }
-
 
 function VoterViewerModal({poll}: {poll: PollWithOption}) {
     
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const [searchParams, setSearchParams] = useSearchParams()
     
-    const [optionId, setOptionId] = useState<number>(poll.options[0].id)
+    const [optionIndex, setOptionIndex] = useState<number>(0)
     useEffect(() => { 
-        const newOptionId = strToNumber(searchParams.get(voterParams.optionId) ?? undefined)
-        if(newOptionId && newOptionId !== optionId) {
-            setOptionId(newOptionId)
+        const newOptionIndex = strToNumber(searchParams.get(voterParams.optionIndex) ?? undefined)
+        if(newOptionIndex !== undefined && newOptionIndex !== optionIndex) {
+            setOptionIndex(newOptionIndex)
         }
     }, [searchParams])
 
     const onClose = () => {
-        const newParams = new URLSearchParams (searchParams);
+        const newParams = new URLSearchParams(searchParams);
         newParams.delete(voterParams.pollId);
-        newParams.delete(voterParams.optionId);
+        newParams.delete(voterParams.optionIndex);
         setSearchParams(newParams);
     }
     
-    const pollId = strToNumber(searchParams.get(voterParams.pollId) ?? undefined)
+    const onNavigateLeft = () => {
+        const currentIndex = strToNumber(searchParams.get(voterParams.optionIndex)) ?? 0;
+        const nextIndex = (currentIndex - 1 + poll.options.length) % poll.options.length;
+
+        setOptionUrl(nextIndex)
+    }
+
+    const onNavigateRight = () => {
+        const currentIndex = strToNumber(searchParams.get(voterParams.optionIndex)) ?? 0
+        const nextIndex = (currentIndex + 1) % (poll.options.length)
+
+        setOptionUrl(nextIndex)
+    }
+
+    const setOptionUrl = (index: number) => {
+        const newParams = new URLSearchParams(searchParams)
+        newParams.set(voterParams.optionIndex, `${index}`)
+        setSearchParams(newParams)
+    }
+
+    const pollId = strToNumber(searchParams.get(voterParams.pollId))
     const isOpen = pollId === poll.id 
     
-    let selectedOption = poll.options.find(opt => opt.id === optionId) ?? poll.options[0]
-
+    const selectedIndex = optionIndex % poll.options.length
+    const selectedOption = poll.options[selectedIndex]
     return (
         <Dialog 
             open={isOpen} 
@@ -682,18 +704,23 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
                     <h3 style={{marginTop: "5px", marginBottom: "20px", marginInline: "5px"}}>
                         {selectedOption.text}
                     </h3>
-                    <NavigationButtons/>
+                    <NavigationButtons 
+                        onLeftClick={onNavigateLeft}
+                        onRightClick={onNavigateRight}
+                        currentIndex={selectedIndex + 1}
+                        maxIndex={poll.options.length}
+                    />
                 </Stack>
                 <VoterList 
                     poll={poll} 
-                    optionId={selectedOption.id} 
+                    selectedOptionId={selectedOption.id} 
                 />
             </DialogContent>
         </Dialog>
     )
 }
 
-function VoterList( {poll, optionId}: {poll: PollWithOption, optionId: number}) {
+function VoterList( {poll, selectedOptionId}: {poll: PollWithOption, selectedOptionId: number}) {
     const {isLoading, isError, data, error} = useQuery<PollOptionVoters[]>(["FetchPollVoters", poll.id], () => fetchAsync<PollOptionVoters[]>(`/api/polls/${poll.id}/voter-list`))
 
     if(isLoading)
@@ -702,8 +729,8 @@ function VoterList( {poll, optionId}: {poll: PollWithOption, optionId: number}) 
     if(isError)
         return <div>{`${error}`}</div>
 
-    const selectedData = data?.find(voter => voter.optionId === optionId)
-        ?? { optionId: optionId, voters: [] }
+    const selectedData = data?.find(voter => voter.optionId === selectedOptionId)
+        ?? { optionId: selectedOptionId, voters: [] }
 
     return (
         <VoterListRenderer voterData={selectedData} />
@@ -723,10 +750,20 @@ function VoterListRenderer( {voterData}: {voterData: PollOptionVoters} ) {
     )
 }
 
-function NavigationButtons() {
+function NavigationButtons( {
+    onLeftClick,
+    onRightClick,
+    currentIndex,
+    maxIndex,
+}: {
+    onLeftClick?: VoidFunction,
+    onRightClick?: VoidFunction,
+    currentIndex: number,
+    maxIndex: number,
+}) {
     return (
         <div style={{whiteSpace: "nowrap"}}>
-            <IconButton >
+            <IconButton onClick={onLeftClick}>
                 <KeyboardArrowLeftIcon/>
             </IconButton>
             <span style={{
@@ -734,9 +771,9 @@ function NavigationButtons() {
                 opacity: 0.5,
                 paddingInline: "2px",
             }}>
-                1/5
+                {currentIndex}/{maxIndex}
             </span>
-            <IconButton>
+            <IconButton onClick={onRightClick}>
                 <KeyboardArrowRightIcon/>
             </IconButton>
         </div>
