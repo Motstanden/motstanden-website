@@ -1,14 +1,7 @@
 import { ParticipationStatus } from "../enums/index.js";
-import { User } from "./index.js";
+import { UserReference } from "./index.js";
 
-export interface Participant extends Pick<
-    User,
-    "id" |
-    "firstName" |
-    "middleName" |
-    "lastName" |
-    "profilePicture"
-> {
+export interface Participant extends UserReference {
     status: ParticipationStatus
 }
 

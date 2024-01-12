@@ -9,11 +9,9 @@ export function getAll(eventId: number): Participant[] {
     const stmt = db.prepare(`
         SELECT 
             user_id as id,
-            first_name as firstName,
-            middle_name as middleName,
-            last_name as lastName,
-            profile_picture as profilePicture,
-            status
+            status,
+            full_name as fullName,
+            SUBSTR(first_name, 1, 1) || SUBSTR(last_name, 1, 1) AS initials
         FROM
             vw_event_participant
         WHERE event_id = ?
