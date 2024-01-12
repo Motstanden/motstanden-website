@@ -18,21 +18,21 @@ export function UserList( {
 
     if(users.length === 0 && noUsersText) {
         return (
-            <p style={{opacity: 0.75 }}>
+            <div style={{opacity: 0.75, paddingLeft: "6px" }}>
                 {noUsersText}
-            </p>
+            </div>
         )
     }
 
     const defaultStyle: React.CSSProperties = { 
         borderRadius: "7px",
+        paddingLeft: "10px",
         ...style
     }
 
     const defaultAnteratingStyle: React.CSSProperties = {
         backgroundColor: theme.palette.action.hover,
-        borderRadius: "7px",
-        ...style,
+        ...defaultStyle,
         ...alternatingStyle   
     }
 
@@ -45,7 +45,6 @@ export function UserList( {
                     alignItems="center"
                     sx={{ 
                         py: 1, 
-                        pl: 1 
                     }}
                     spacing={2}
                     style={index % 2 === 0 ? defaultStyle : defaultAnteratingStyle}
