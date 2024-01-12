@@ -1,3 +1,5 @@
+import { UserReference } from "./User.js";
+
 export interface NewPoll {
     title: string;
     type: 'single' | 'multiple';
@@ -31,4 +33,9 @@ export interface PollOption extends NewPollOption {
     id: number;
     voteCount: number;
     isVotedOnByUser: boolean;          // Whether the current user has voted on this option
+}
+
+export interface PollVoters { 
+    optionId: number,
+    voters: UserReference[]
 }
