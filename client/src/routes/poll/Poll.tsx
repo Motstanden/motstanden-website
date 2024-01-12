@@ -9,9 +9,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserGroup } from 'common/enums';
 import { Poll, PollOption, PollWithOption } from "common/interfaces";
 import { hasGroupAccess, strToNumber } from 'common/utils';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link as RouterLink, useOutletContext, useSearchParams } from "react-router-dom";
 import { AuthorInfo } from 'src/components/AuthorInfo';
+import { CloseModalButton } from 'src/components/CloseModalButton';
 import { DeleteMenuItem } from 'src/components/menu/EditOrDeleteMenu';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 import { useAuth } from 'src/context/Authentication';
@@ -19,7 +20,6 @@ import { useTitle } from 'src/hooks/useTitle';
 import { fetchAsync } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
 import { pollListQueryKey } from './Context';
-import { CloseModalButton } from 'src/components/CloseModalButton';
 
 
 export default function PollPage(){
@@ -115,7 +115,6 @@ export function PollCard( { poll, srcQueryKey, style, }: { poll: Poll, srcQueryK
                 <Divider sx={{mt: 1}}/>
                 <PollContent poll={poll}/>
             </Paper>
-            <VoterViewerModal poll={poll}/>
         </>
     )
 }
@@ -208,6 +207,7 @@ function PollContent( {poll }: {poll: Poll }) {
                 />
             </div>
             <PollOptions poll={poll}/>
+            <VoterViewerModal poll={poll}/>
         </div>
     )
 }
@@ -557,7 +557,7 @@ function PollResultItem( {
             <BarChartItem 
                 percentage={percentage} 
                 voteCount={option.voteCount}
-                voterViewerUrl={`?poll-id=${pollId}&option-id=${option.id}`}
+                voterViewerUrl={`?${voterParams.pollId}=${pollId}&${voterParams.optionId}=${option.id}`}
                 />
         </div>
     )
@@ -616,29 +616,32 @@ function BarChartItem( {percentage, voteCount, voterViewerUrl}: {percentage: num
     )
 }
 
+const voterParams = {
+    pollId: "poll-id",
+    optionId: "option-id"
+}
+
+
 function VoterViewerModal({poll}: {poll: Poll}) {
-
-    const [searchParams, setSearchParams] = useSearchParams()
-
-    const pollId = strToNumber(searchParams.get(`poll-id`) ?? undefined)
-    const optionId = strToNumber(searchParams.get(`option-id`) ?? undefined)    // TODO
-
+    
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
-
+    const [searchParams, setSearchParams] = useSearchParams()
+    
     const onClose = () => {
         const newParams = new URLSearchParams (searchParams);
-
-        newParams.delete ('poll-id');
-        newParams.delete ('option-id');
-    
-        setSearchParams (newParams);
+        newParams.delete(voterParams.pollId);
+        newParams.delete(voterParams.optionId);
+        setSearchParams(newParams);
     }
 
-    const open = pollId === poll.id
+    const pollId = strToNumber(searchParams.get(voterParams.pollId) ?? undefined)
+    const optionId = strToNumber(searchParams.get(voterParams.optionId) ?? undefined)    // TODO
+    
+    const isOpen = pollId === poll.id 
 
     return (
         <Dialog 
-            open={open} 
+            open={isOpen} 
             onClose={onClose}
             scroll="paper"
             fullWidth
