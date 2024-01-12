@@ -7,7 +7,7 @@ import { LoadingButton } from "@mui/lab";
 import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Dialog, DialogTitle, Divider, FormControlLabel, FormGroup, Link, Paper, Radio, RadioGroup, Skeleton, Stack, Theme, useMediaQuery, useTheme } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserGroup } from 'common/enums';
-import { Poll, PollOption, PollWithOption } from "common/interfaces";
+import { Poll, PollOption, PollVoters, PollWithOption } from "common/interfaces";
 import { hasGroupAccess, strToNumber } from 'common/utils';
 import React, { useState } from "react";
 import { Link as RouterLink, useOutletContext, useSearchParams } from "react-router-dom";
@@ -672,7 +672,7 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
 }
 
 function VoterList( {poll}: {poll: PollWithOption}) {
-    const {isLoading, isError, data, error} = useQuery<PollOption[]>([poll.id, "FetchPollVoters"], () => fetchAsync<PollOption[]>(`/api/polls/${poll.id}/voters`))
+    const {isLoading, isError, data, error} = useQuery<PollVoters[]>(["FetchPollVoters", poll.id], () => fetchAsync<PollVoters[]>(`/api/polls/${poll.id}/voter-list`))
 
     if(isLoading)
         return VoterListSkeleton()
@@ -695,7 +695,7 @@ function VoterListSkeleton() {
 
 function VoterListRenderer() {
     return (
-        <>Her kan du snart se en list over brukere</>
+        <>Her kan du snart se en list over brukere...</>
     )
 }
 

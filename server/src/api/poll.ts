@@ -47,7 +47,7 @@ router.get("/polls/:id/options",
     }
 )
 
-router.post("/polls/:id/voters",
+router.get("/polls/:id/voter-list",
     AuthenticateUser(),
     validateNumber({
         getValue: (req) => req.params.id,
@@ -55,13 +55,13 @@ router.post("/polls/:id/voters",
     }),
     (req, res) => { 
         const pollId = strToNumber(req.params.id) as number
-
+        
         try {
             const voters = pollService.getPollVoters(pollId)
             res.send(voters)
         }
         catch (e){
-            console.log(e)
+            console.error(e)
             res.status(500).end()
         }
         res.end()
