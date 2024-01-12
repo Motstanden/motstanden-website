@@ -1,5 +1,5 @@
 import Database from "better-sqlite3";
-import { NewPollWithOption, Poll, PollOption, PollVoters, PollWithOption } from "common/interfaces";
+import { NewPollWithOption, Poll, PollOption, PollOptionVoters, PollWithOption } from "common/interfaces";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
 
 interface DbPollOption extends Omit<PollOption, "isVotedOnByUser"> {
@@ -149,11 +149,11 @@ function getPollOptionIds(pollId: number): number[] {
     return ids
  }
 
-interface DbPollVoters extends Omit<PollVoters, "userReference"> {
+interface DbPollOptionVoters extends Omit<PollOptionVoters, "userReference"> {
     userReference: string,
 }
 
- function getPollVoters(pollId: number): PollVoters[] {
+ function getPollVoters(pollId: number): PollOptionVoters[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT 
@@ -174,7 +174,7 @@ interface DbPollVoters extends Omit<PollVoters, "userReference"> {
             poll_option_id;
     `)
     
-    const dbData: DbPollVoters[] | undefined = stmt.all(pollId)
+    const dbData: DbPollOptionVoters[] | undefined = stmt.all(pollId)
     db.close()
 
     const voters = dbData.map( item => ({

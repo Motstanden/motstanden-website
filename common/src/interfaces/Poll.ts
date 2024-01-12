@@ -35,7 +35,7 @@ export interface PollOption extends NewPollOption {
     isVotedOnByUser: boolean;          // Whether the current user has voted on this option
 }
 
-export interface PollVoters { 
+export interface PollOptionVoters { 
     optionId: number,
     voters: UserReference[]
 }
