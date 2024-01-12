@@ -538,3 +538,20 @@ BEGIN
     UPDATE song_lyric_comment_like SET updated_at = current_timestamp
         WHERE song_lyric_comment_like_id = old.song_lyric_comment_like_id;
 END;
+CREATE VIEW vw_poll_voter AS
+SELECT 
+	poll_vote_id,
+	vote.updated_at as vote_updated_at,
+	poll_id,
+	poll_option_id,
+	text as poll_option_text,
+	user_id,
+	first_name,
+	middle_name,
+	last_name,
+	full_name
+FROM 
+	poll_vote vote
+LEFT JOIN poll_option USING (poll_option_id)
+LEFT JOIN user USING(user_id)
+/* vw_poll_voter(poll_vote_id,vote_updated_at,poll_id,poll_option_id,poll_option_text,user_id,first_name,middle_name,last_name,full_name) */;

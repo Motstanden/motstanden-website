@@ -72,8 +72,12 @@ echo "Running: 17_wall_post.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/17_wall_post.sql;
 
 # Create a wall were users can post messages
-echo "Running: 18_likes.sql.sql"
+echo "Running: 18_likes.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/18_likes.sql;
+
+# Create a view to see what users have voted on in a poll.
+echo "Running: 19_poll_voters_view.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/19_poll_voters_view.sql;
 
 # Insert data that is representative for the current data in the database
 cd data/db
