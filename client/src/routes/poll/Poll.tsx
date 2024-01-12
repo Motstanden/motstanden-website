@@ -9,7 +9,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserGroup } from 'common/enums';
 import { Poll, PollOption, PollWithOption } from "common/interfaces";
 import { hasGroupAccess, strToNumber } from 'common/utils';
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link as RouterLink, useOutletContext, useSearchParams } from "react-router-dom";
 import { AuthorInfo } from 'src/components/AuthorInfo';
 import { CloseModalButton } from 'src/components/CloseModalButton';
@@ -93,29 +93,27 @@ export function PollCard( { poll, srcQueryKey, style, }: { poll: Poll, srcQueryK
         return <PollSkeleton/>
 
     return(
-        <>
-            <Paper 
-                elevation={6} 
-                sx={{ p: 2 }} 
-                style={style}>
-                <Stack 
-                    flexDirection="row" 
-                    justifyContent="space-between"
-                    alignItems="center"
-                >
-                    <h3 style={{ margin: 0 }}>
-                        {poll.title}
-                    </h3>
-                    {canDeletePoll && ( 
-                        <div style={{marginRight: "-10px"}}>
-                            <PollMenu onDeleteClick={onDeleteClick}/>
-                        </div>
-                    )}
-                </Stack> 
-                <Divider sx={{mt: 1}}/>
-                <PollContent poll={poll}/>
-            </Paper>
-        </>
+        <Paper 
+            elevation={6} 
+            sx={{ p: 2 }} 
+            style={style}>
+            <Stack 
+                flexDirection="row" 
+                justifyContent="space-between"
+                alignItems="center"
+            >
+                <h3 style={{ margin: 0 }}>
+                    {poll.title}
+                </h3>
+                {canDeletePoll && ( 
+                    <div style={{marginRight: "-10px"}}>
+                        <PollMenu onDeleteClick={onDeleteClick}/>
+                    </div>
+                )}
+            </Stack> 
+            <Divider sx={{mt: 1}}/>
+            <PollContent poll={poll}/>
+        </Paper>
     )
 }
 
@@ -207,7 +205,6 @@ function PollContent( {poll }: {poll: Poll }) {
                 />
             </div>
             <PollOptions poll={poll}/>
-            <VoterViewerModal poll={poll}/>
         </div>
     )
 }
@@ -231,7 +228,13 @@ function PollOptions( {poll }: {poll: Poll }) {
         options: data
     }
 
-    return <PollOptionsRenderer poll={pollData} onSubmitSuccess={onSubmitSuccess}/>
+    return (
+        <>
+            <PollOptionsRenderer poll={pollData} onSubmitSuccess={onSubmitSuccess}/>
+            <VoterViewerModal poll={pollData}/>
+        </>
+
+    ) 
 }
 
 function PollOptionsSkeleton( { length }: {length?: number}) {
@@ -622,7 +625,7 @@ const voterParams = {
 }
 
 
-function VoterViewerModal({poll}: {poll: Poll}) {
+function VoterViewerModal({poll}: {poll: PollWithOption}) {
     
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const [searchParams, setSearchParams] = useSearchParams()
@@ -635,9 +638,11 @@ function VoterViewerModal({poll}: {poll: Poll}) {
     }
 
     const pollId = strToNumber(searchParams.get(voterParams.pollId) ?? undefined)
-    const optionId = strToNumber(searchParams.get(voterParams.optionId) ?? undefined)    // TODO
-    
+    const optionId = strToNumber(searchParams.get(voterParams.optionId) ?? undefined)
+
     const isOpen = pollId === poll.id 
+    
+    const selectedOption = poll.options.find(opt => opt.id === optionId) ?? poll.options[0]
 
     return (
         <Dialog 
@@ -654,7 +659,7 @@ function VoterViewerModal({poll}: {poll: Poll}) {
                     alignItems="center"
                 >
                     <span>
-                        {poll.title}
+                        {selectedOption.text}
                     </span>
                     <CloseModalButton onClick={onClose}/>
                 </Stack>
