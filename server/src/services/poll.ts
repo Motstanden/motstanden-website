@@ -149,8 +149,8 @@ function getPollOptionIds(pollId: number): number[] {
     return ids
  }
 
-interface DbPollOptionVoters extends Omit<PollOptionVoters, "userReference"> {
-    userReference: string,
+interface DbPollOptionVoters extends Omit<PollOptionVoters, "voters"> {
+    voters: string,
 }
 
  function getPollVoters(pollId: number): PollOptionVoters[] {
@@ -161,11 +161,10 @@ interface DbPollOptionVoters extends Omit<PollOptionVoters, "userReference"> {
             JSON_GROUP_ARRAY(
                 JSON_OBJECT(
                     'id', user_id, 
-                    'firstName', first_name, 
-                    'lastName', last_name,
+                    'fullName', full_name, 
                     'initials', SUBSTR(first_name, 1, 1) || SUBSTR(last_name, 1, 1))
                 ) 
-            AS userReference
+            AS voters
         FROM 
             vw_poll_voter
         WHERE
@@ -177,12 +176,15 @@ interface DbPollOptionVoters extends Omit<PollOptionVoters, "userReference"> {
     const dbData: DbPollOptionVoters[] | undefined = stmt.all(pollId)
     db.close()
 
-    const voters = dbData.map( item => ({
+    if(!dbData)
+        throw `Something went wrong when querying vw_poll_voter for poll_id: ${pollId}`
+
+    const voterData: PollOptionVoters[] = dbData.map( item => ({
         ...item,
-        userReference: JSON.parse(item.userReference)
+        voters: JSON.parse(item.voters)
     }))
     
-    return voters
+    return voterData
 }
 
 function isValidCombination(pollId: number, rawIds: number[]){
