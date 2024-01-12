@@ -54,15 +54,6 @@ INSERT INTO poll_vote(poll_option_id, user_id) VALUES
 ( 2, 37 ),
 ( 2, 38 ),
 ( 2, 39 ),
-( 2, 40 ),
-( 2, 41 ),
-( 2, 42 ),
-( 2, 43 ),
-( 2, 44 ),
-( 2, 45 ),
-( 2, 47 ),
-( 2, 48 ),
-( 2, 49 ),
 
 -- Poll 2: Blir du værende i Trondheim i sommer?
 ( 3, 14 ),
@@ -92,15 +83,6 @@ INSERT INTO poll_vote(poll_option_id, user_id) VALUES
 ( 5, 38 ),
 ( 5, 39 ),
 ( 5, 40 ),
-( 5, 41 ),
-( 5, 42 ),
-( 5, 43 ),
-( 5, 44 ),
-( 5, 45 ),
-( 5, 47 ),
-( 5, 48 ),
-( 5, 49 ),
-
 
 -- Poll 3: Hva er den beste julefilmen?
 ( 6, 14 ),
@@ -130,15 +112,6 @@ INSERT INTO poll_vote(poll_option_id, user_id) VALUES
 ( 8, 38 ),
 ( 8, 39 ),
 ( 8, 40 ),
-( 8, 41 ),
-( 8, 42 ),
-( 9, 43 ),
-( 9, 44 ),
-( 9, 45 ),
-( 9, 47 ),
-( 9, 48 ),
-( 9, 49 ),
-
 
 -- Poll 5: Hva var det kuleste på SMASH?
 ( 10, 14 ),
@@ -167,15 +140,7 @@ INSERT INTO poll_vote(poll_option_id, user_id) VALUES
 ( 13, 37 ),
 ( 13, 38 ),
 ( 13, 39 ),
-( 13, 40 ),
-( 13, 41 ),
-( 13, 42 ),
-( 13, 43 ),
-( 13, 44 ),
-( 13, 45 ),
-( 13, 47 ),
-( 13, 48 ),
-( 13, 49 );
+( 13, 40 );
 
 
 INSERT INTO
