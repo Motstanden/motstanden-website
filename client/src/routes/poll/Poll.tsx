@@ -669,6 +669,14 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
         setSearchParams(newParams)
     }
 
+    const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if(e.key === "ArrowRight"){
+            onNavigateRight()
+        } else if (e.key === "ArrowLeft") {
+            onNavigateLeft()
+        }
+    }
+
     const pollId = strToNumber(searchParams.get(voterParams.pollId))
     const isOpen = pollId === poll.id 
     
@@ -681,6 +689,7 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
             scroll="paper"
             fullWidth
             fullScreen={isSmallScreen}
+            onKeyDown={onKeyDown}
             >
             <DialogTitle>
                 <Stack
@@ -744,7 +753,6 @@ function VoterListSkeleton() {
 }
 
 function VoterListRenderer( {voterData}: {voterData: PollOptionVoters} ) {
-    console.log(voterData)
     return (
         <UserList users={voterData.voters} noUsersText="Ingen har stemt på dette..."/>
     )
