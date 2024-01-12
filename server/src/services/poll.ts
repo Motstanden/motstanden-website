@@ -1,5 +1,5 @@
 import Database from "better-sqlite3";
-import { NewPollWithOption, Poll, PollOption, PollWithOption } from "common/interfaces";
+import { NewPollWithOption, Poll, PollOption, PollVoters, PollWithOption } from "common/interfaces";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
 
 interface DbPollOption extends Omit<PollOption, "isVotedOnByUser"> {
@@ -149,9 +149,41 @@ function getPollOptionIds(pollId: number): number[] {
     return ids
  }
 
- function getPollVoters(pollId: number) {
-    throw "Not implemented"  
- }
+interface DbPollVoters extends Omit<PollVoters, "userReference"> {
+    userReference: string,
+}
+
+ function getPollVoters(pollId: number): PollVoters[] {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(`
+        SELECT 
+            poll_option_id as optionId, 
+            JSON_GROUP_ARRAY(
+                JSON_OBJECT(
+                    'id', user_id, 
+                    'firstName', first_name, 
+                    'lastName', last_name,
+                    'initials', SUBSTR(first_name, 1, 1) || SUBSTR(last_name, 1, 1))
+                ) 
+            AS userReference
+        FROM 
+            vw_poll_voter
+        WHERE
+            poll_id = ?
+        GROUP BY 
+            poll_option_id;
+    `)
+    
+    const dbData: DbPollVoters[] | undefined = stmt.all(pollId)
+    db.close()
+
+    const voters = dbData.map( item => ({
+        ...item,
+        userReference: JSON.parse(item.userReference)
+    }))
+    
+    return voters
+}
 
 function isValidCombination(pollId: number, rawIds: number[]){
     const validIds = getPollOptionIds(pollId)   
