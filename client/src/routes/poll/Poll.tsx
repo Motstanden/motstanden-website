@@ -4,7 +4,7 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { LoadingButton } from "@mui/lab";
-import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Dialog, DialogActions, DialogTitle, Divider, FormControlLabel, FormGroup, Link, Paper, Radio, RadioGroup, Skeleton, Stack, Theme, useMediaQuery, useTheme } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControlLabel, FormGroup, IconButton, Link, Paper, Radio, RadioGroup, Skeleton, Stack, Theme, useMediaQuery, useTheme } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserGroup } from 'common/enums';
 import { Poll, PollOption, PollOptionVoters, PollWithOption } from "common/interfaces";
@@ -21,7 +21,8 @@ import { useTitle } from 'src/hooks/useTitle';
 import { fetchAsync } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
 import { pollListQueryKey } from './Context';
-
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 export default function PollPage(){
     useTitle("Avstemninger")
@@ -670,17 +671,24 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
                     </h3>
                     <CloseModalButton onClick={onClose} style={{marginBottom: "2px"}}/>
                 </Stack>
+                
                 <Divider sx={{pt: 2}}/>
             </DialogTitle>
-            <DialogTitle style={{paddingTop: "0px"}}>
-                <h4 style={{marginTop: "5px", marginBottom: "20px", marginInline: "5px"}}>
-                    {selectedOption.text}
-                </h4>
+            <DialogContent >
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                >
+                    <h3 style={{marginTop: "5px", marginBottom: "20px", marginInline: "5px"}}>
+                        {selectedOption.text}
+                    </h3>
+                    <NavigationButtons/>
+                </Stack>
                 <VoterList 
                     poll={poll} 
                     optionId={selectedOption.id} 
                 />
-            </DialogTitle>
+            </DialogContent>
         </Dialog>
     )
 }
@@ -712,6 +720,26 @@ function VoterListRenderer( {voterData}: {voterData: PollOptionVoters} ) {
     console.log(voterData)
     return (
         <UserList users={voterData.voters} noUsersText="Ingen har stemt på dette..."/>
+    )
+}
+
+function NavigationButtons() {
+    return (
+        <div style={{whiteSpace: "nowrap"}}>
+            <IconButton >
+                <KeyboardArrowLeftIcon/>
+            </IconButton>
+            <span style={{
+                fontSize: "x-small",
+                opacity: 0.5,
+                paddingInline: "2px",
+            }}>
+                1/5
+            </span>
+            <IconButton>
+                <KeyboardArrowRightIcon/>
+            </IconButton>
+        </div>
     )
 }
 
