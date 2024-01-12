@@ -9,7 +9,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserGroup } from 'common/enums';
 import { Poll, PollOption, PollOptionVoters, PollWithOption } from "common/interfaces";
 import { hasGroupAccess, strToNumber } from 'common/utils';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link as RouterLink, useOutletContext, useSearchParams } from "react-router-dom";
 import { AuthorInfo } from 'src/components/AuthorInfo';
 import { CloseModalButton } from 'src/components/CloseModalButton';
@@ -631,16 +631,22 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const [searchParams, setSearchParams] = useSearchParams()
     
+    const [optionId, setOptionId] = useState<number>(poll.options[0].id)
+    useEffect(() => { 
+        const newOptionId = strToNumber(searchParams.get(voterParams.optionId) ?? undefined)
+        if(newOptionId && newOptionId !== optionId) {
+            setOptionId(newOptionId)
+        }
+    }, [searchParams])
+
     const onClose = () => {
         const newParams = new URLSearchParams (searchParams);
         newParams.delete(voterParams.pollId);
         newParams.delete(voterParams.optionId);
         setSearchParams(newParams);
     }
-
+    
     const pollId = strToNumber(searchParams.get(voterParams.pollId) ?? undefined)
-    const optionId = strToNumber(searchParams.get(voterParams.optionId) ?? undefined)
-
     const isOpen = pollId === poll.id 
     
     let selectedOption = poll.options.find(opt => opt.id === optionId) ?? poll.options[0]
