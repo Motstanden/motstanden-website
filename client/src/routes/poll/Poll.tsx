@@ -4,7 +4,7 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { LoadingButton } from "@mui/lab";
-import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Dialog, DialogTitle, Divider, FormControlLabel, FormGroup, Link, Paper, Radio, RadioGroup, Skeleton, Stack, Theme, useMediaQuery, useTheme } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Dialog, DialogActions, DialogTitle, Divider, FormControlLabel, FormGroup, Link, Paper, Radio, RadioGroup, Skeleton, Stack, Theme, useMediaQuery, useTheme } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserGroup } from 'common/enums';
 import { Poll, PollOption, PollOptionVoters, PollWithOption } from "common/interfaces";
@@ -665,14 +665,21 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <span>
-                        {selectedOption.text}
-                    </span>
-                    <CloseModalButton onClick={onClose}/>
+                    <h3 style={{ margin: "0px"}}>
+                        {poll.title}
+                    </h3>
+                    <CloseModalButton onClick={onClose} style={{marginBottom: "2px"}}/>
                 </Stack>
+                <Divider sx={{pt: 2}}/>
             </DialogTitle>
-            <DialogTitle>
-                <VoterList poll={poll} optionId={selectedOption.id} />
+            <DialogTitle style={{paddingTop: "0px"}}>
+                <h4 style={{marginTop: "5px", marginBottom: "20px", marginInline: "5px"}}>
+                    {selectedOption.text}
+                </h4>
+                <VoterList 
+                    poll={poll} 
+                    optionId={selectedOption.id} 
+                />
             </DialogTitle>
         </Dialog>
     )
