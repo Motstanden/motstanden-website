@@ -47,6 +47,27 @@ router.get("/polls/:id/options",
     }
 )
 
+router.post("/polls/:id/voters",
+    AuthenticateUser(),
+    validateNumber({
+        getValue: (req) => req.params.id,
+        failureMessage: "Could not parse poll id"
+    }),
+    (req, res) => { 
+        const pollId = strToNumber(req.params.id) as number
+
+        try {
+            const voters = pollService.getPollVoters(pollId)
+            res.send(voters)
+        }
+        catch (e){
+            console.log(e)
+            res.status(500).end()
+        }
+        res.end()
+    }
+)
+
 router.post("/polls/new",
     AuthenticateUser(),
     (req, res) => {

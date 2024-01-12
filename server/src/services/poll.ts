@@ -149,6 +149,10 @@ function getPollOptionIds(pollId: number): number[] {
     return ids
  }
 
+ function getPollVoters(pollId: number) {
+    throw "Not implemented"  
+ }
+
 function isValidCombination(pollId: number, rawIds: number[]){
     const validIds = getPollOptionIds(pollId)   
     return rawIds.every(id => validIds.includes(id))
@@ -231,6 +235,7 @@ export const pollService = {
     getNewest: getNewest,
     getPollWithOptions: getPollWithOptions,
     getPollOptions: getPollOptions,
+    getPollVoters: getPollVoters,
     insertNew: insertNewPoll,
 }
 

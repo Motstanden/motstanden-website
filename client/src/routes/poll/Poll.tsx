@@ -664,7 +664,38 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
                     <CloseModalButton onClick={onClose}/>
                 </Stack>
             </DialogTitle>
+            <DialogTitle>
+                <VoterList poll={poll}/>
+            </DialogTitle>
         </Dialog>
+    )
+}
+
+function VoterList( {poll}: {poll: PollWithOption}) {
+    const {isLoading, isError, data, error} = useQuery<PollOption[]>([poll.id, "FetchPollVoters"], () => fetchAsync<PollOption[]>(`/api/polls/${poll.id}/voters`))
+
+    if(isLoading)
+        return VoterListSkeleton()
+
+    if(isError)
+        return <div>{`${error}`}</div>
+
+    console.log(data)
+
+    return (
+        <VoterListRenderer />
+    )
+}
+
+function VoterListSkeleton() {
+    return (
+        <>Laster...</>
+    )
+}
+
+function VoterListRenderer() {
+    return (
+        <>Her kan du snart se en list over brukere</>
     )
 }
 
