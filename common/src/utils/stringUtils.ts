@@ -1,4 +1,4 @@
-export function strToNumber(str: string | undefined): number | undefined {
+export function strToNumber(str: string | undefined | null): number | undefined {
     if (!str)
         return undefined
 
