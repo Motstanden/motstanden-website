@@ -2,9 +2,11 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { LoadingButton } from "@mui/lab";
-import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControlLabel, FormGroup, IconButton, Link, Paper, Radio, RadioGroup, Skeleton, Stack, Theme, useMediaQuery, useTheme } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Dialog, DialogContent, DialogTitle, Divider, FormControlLabel, FormGroup, IconButton, Link, Paper, Radio, RadioGroup, Skeleton, Stack, Theme, useMediaQuery, useTheme } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserGroup } from 'common/enums';
 import { Poll, PollOption, PollOptionVoters, PollWithOption } from "common/interfaces";
@@ -13,7 +15,7 @@ import React, { useEffect, useState } from "react";
 import { Link as RouterLink, useOutletContext, useSearchParams } from "react-router-dom";
 import { AuthorInfo } from 'src/components/AuthorInfo';
 import { CloseModalButton } from 'src/components/CloseModalButton';
-import { UserList } from 'src/components/UserList';
+import { UserList, UserListSkeleton } from 'src/components/UserList';
 import { DeleteMenuItem } from 'src/components/menu/EditOrDeleteMenu';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 import { useAuth } from 'src/context/Authentication';
@@ -21,8 +23,6 @@ import { useTitle } from 'src/hooks/useTitle';
 import { fetchAsync } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
 import { pollListQueryKey } from './Context';
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 export default function PollPage(){
     useTitle("Avstemninger")
@@ -749,7 +749,7 @@ function VoterList( {poll, selectedOptionId}: {poll: PollWithOption, selectedOpt
     const {isLoading, isError, data, error} = useQuery<PollOptionVoters[]>(["FetchPollVoters", poll.id], () => fetchAsync<PollOptionVoters[]>(`/api/polls/${poll.id}/voter-list`))
 
     if(isLoading)
-        return VoterListSkeleton()
+        return <UserListSkeleton/>
 
     if(isError)
         return <div>{`${error}`}</div>
@@ -759,12 +759,6 @@ function VoterList( {poll, selectedOptionId}: {poll: PollWithOption, selectedOpt
 
     return (
         <UserList users={selectedData.voters} noUsersText="Ingen har stemt på dette..."/>
-    )
-}
-
-function VoterListSkeleton() {
-    return (
-        <>Laster...</>
     )
 }
 

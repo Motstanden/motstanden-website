@@ -1,7 +1,8 @@
-import { Avatar, Link, Stack, useTheme } from "@mui/material";
+import { Avatar, Link, Skeleton, Stack, useTheme } from "@mui/material";
 import { UserReference } from "common/interfaces";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
+import { UserAvatarSkeleton } from "./user/UserAvatar";
 
 export function UserList( { 
     users,
@@ -14,7 +15,6 @@ export function UserList( {
     style?: React.CSSProperties 
     alternatingStyle?: React.CSSProperties
 }) {
-    const theme = useTheme()
 
     if(users.length === 0 && noUsersText) {
         return (
@@ -23,6 +23,71 @@ export function UserList( {
             </div>
         )
     }
+
+    return (
+        <>
+            {users.map((user, index) => (
+                <UserStack
+                    key={`userId: ${user.id}, index: ${index}`}
+                    style={style}
+                    alternatingStyle={alternatingStyle}
+                    isAlternate={index % 2 === 1}
+                >
+                    <Avatar>{user.initials}</Avatar>
+                    <Link
+                        color="secondary"
+                        component={RouterLink}
+                        to={`/medlem/${user.id}`}
+                        underline="hover"
+                    >
+                        {user.fullName}
+                    </Link>
+                </UserStack>
+            ))}
+        </>
+    )
+}
+
+export function UserListSkeleton( {
+    length = 5,
+    style,
+    alternatingStyle,
+}: { 
+    length?: number,
+    style?: React.CSSProperties,
+    alternatingStyle?: React.CSSProperties,
+}) {
+    return (
+        <>
+            {Array(length).fill(1).map((_, index) => (
+                <UserStack
+                    style={style}
+                    alternatingStyle={alternatingStyle}
+                    isAlternate={index % 2 === 1}
+                >
+                    <UserAvatarSkeleton style={{width: "40px", height: "40px"}}/>
+                    <Skeleton
+                        variant="text"
+                        style={{ width: "170px"}} 
+                    />
+                </UserStack>
+            ))}
+        </>
+    )
+}
+
+function UserStack( {
+    children, 
+    style, 
+    alternatingStyle, 
+    isAlternate
+}: {
+    children?: React.ReactNode,
+    style?: React.CSSProperties,
+    alternatingStyle?: React.CSSProperties,
+    isAlternate?: boolean
+}) {
+    const theme = useTheme()
 
     const defaultStyle: React.CSSProperties = { 
         borderRadius: "7px",
@@ -36,30 +101,19 @@ export function UserList( {
         ...alternatingStyle   
     }
 
+    const selectedStyle = isAlternate ? defaultAnteratingStyle : defaultStyle
+
     return (
-        <>
-            {users.map((user, index) => (
-                <Stack
-                    key={user.id}
-                    direction="row"
-                    alignItems="center"
-                    sx={{ 
-                        py: 1, 
-                    }}
-                    spacing={2}
-                    style={index % 2 === 0 ? defaultStyle : defaultAnteratingStyle}
-                >
-                    <Avatar>{user.initials}</Avatar>
-                    <Link
-                        color="secondary"
-                        component={RouterLink}
-                        to={`/medlem/${user.id}`}
-                        underline="hover"
-                    >
-                        {user.fullName}
-                    </Link>
-                </Stack>
-            ))}
-        </>
+        <Stack
+            direction="row"
+            alignItems="center"
+            sx={{ 
+                py: 1, 
+            }}
+            spacing={2}
+            style={selectedStyle}
+        >
+            {children} 
+        </Stack>   
     )
 }
