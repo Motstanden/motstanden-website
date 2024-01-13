@@ -730,6 +730,7 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
 }
 
 function VoterList( {poll, selectedOptionId}: {poll: PollWithOption, selectedOptionId: number}) {
+    
     const {isLoading, isError, data, error} = useQuery<PollOptionVoters[]>(["FetchPollVoters", poll.id], () => fetchAsync<PollOptionVoters[]>(`/api/polls/${poll.id}/voter-list`))
 
     if(isLoading)
@@ -742,19 +743,13 @@ function VoterList( {poll, selectedOptionId}: {poll: PollWithOption, selectedOpt
         ?? { optionId: selectedOptionId, voters: [] }
 
     return (
-        <VoterListRenderer voterData={selectedData} />
+        <UserList users={selectedData.voters} noUsersText="Ingen har stemt på dette..."/>
     )
 }
 
 function VoterListSkeleton() {
     return (
         <>Laster...</>
-    )
-}
-
-function VoterListRenderer( {voterData}: {voterData: PollOptionVoters} ) {
-    return (
-        <UserList users={voterData.voters} noUsersText="Ingen har stemt på dette..."/>
     )
 }
 
