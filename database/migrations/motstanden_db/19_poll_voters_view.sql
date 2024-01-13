@@ -1,3 +1,7 @@
+-- Insert current version into the DB.
+INSERT INTO version(migration) VALUES
+    ('19_poll_voters_view.sql');
+
 CREATE VIEW vw_poll_voter AS
 SELECT 
 	poll_vote_id,
