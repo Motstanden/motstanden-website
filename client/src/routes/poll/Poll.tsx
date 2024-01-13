@@ -666,7 +666,7 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
     const setOptionUrl = (index: number) => {
         const newParams = new URLSearchParams(searchParams)
         newParams.set(voterParams.optionIndex, `${index}`)
-        setSearchParams(newParams)
+        setSearchParams(newParams, {replace: true})
     }
 
     const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
