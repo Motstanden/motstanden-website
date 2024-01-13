@@ -233,7 +233,7 @@ function PollOptions( {poll }: {poll: Poll }) {
     return (
         <>
             <PollOptionsRenderer poll={pollData} onSubmitSuccess={onSubmitSuccess}/>
-            <VoterViewerModal poll={pollData}/>
+            <VoterListModal poll={pollData}/>
         </>
 
     ) 
@@ -624,17 +624,33 @@ function BarChartItem( {percentage, voteCount, voterViewerUrl}: {percentage: num
     )
 }
 
+function PollMenu({
+    onDeleteClick,
+}: {
+    onDeleteClick: React.MouseEventHandler<HTMLLIElement>,
+}) {
+    return (
+        <IconPopupMenu icon={<MoreHorizIcon/>}>
+            <DeleteMenuItem onClick={onDeleteClick} />
+        </IconPopupMenu>    
+    )
+}
+
 const voterParams = {
     pollId: "poll-id",
     optionIndex: "option-index"
 }
 
-function VoterViewerModal({poll}: {poll: PollWithOption}) {
+function VoterListModal({poll}: {poll: PollWithOption}) {
     
-    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const [searchParams, setSearchParams] = useSearchParams()
-    
-    const [optionIndex, setOptionIndex] = useState<number>(0)
+
+    // You may wonder why this is a state variable, and not a normal variable that is derived from the searchParams.
+    // The reason is that when we want to close the modal we want to remove the optionIndex from the url, but we don't want to re-render the modal.
+    // If we were to use a normal variable, the content in the modal will have time to re-render, 
+    // which furthermore will cause a slightly noticeable flicker in the exit animation.  
+    const [optionIndex, setOptionIndex] = useState<number>(0)   
+
     useEffect(() => { 
         const newOptionIndex = strToNumber(searchParams.get(voterParams.optionIndex) ?? undefined)
         if(newOptionIndex !== undefined && newOptionIndex !== optionIndex) {
@@ -650,16 +666,12 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
     }
     
     const onNavigateLeft = () => {
-        const currentIndex = strToNumber(searchParams.get(voterParams.optionIndex)) ?? 0;
-        const nextIndex = (currentIndex - 1 + poll.options.length) % poll.options.length;
-
+        const nextIndex = (optionIndex - 1 + poll.options.length) % poll.options.length;
         setOptionUrl(nextIndex)
     }
 
     const onNavigateRight = () => {
-        const currentIndex = strToNumber(searchParams.get(voterParams.optionIndex)) ?? 0
-        const nextIndex = (currentIndex + 1) % (poll.options.length)
-
+        const nextIndex = (optionIndex + 1) % (poll.options.length)
         setOptionUrl(nextIndex)
     }
 
@@ -677,11 +689,14 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
         }
     }
 
+    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+
     const pollId = strToNumber(searchParams.get(voterParams.pollId))
     const isOpen = pollId === poll.id 
     
     const selectedIndex = optionIndex % poll.options.length
     const selectedOption = poll.options[selectedIndex]
+
     return (
         <Dialog 
             open={isOpen} 
@@ -780,17 +795,5 @@ function NavigationButtons( {
                 <KeyboardArrowRightIcon/>
             </IconButton>
         </div>
-    )
-}
-
-function PollMenu({
-    onDeleteClick,
-}: {
-    onDeleteClick: React.MouseEventHandler<HTMLLIElement>,
-}) {
-    return (
-        <IconPopupMenu icon={<MoreHorizIcon/>}>
-            <DeleteMenuItem onClick={onDeleteClick} />
-        </IconPopupMenu>    
     )
 }
