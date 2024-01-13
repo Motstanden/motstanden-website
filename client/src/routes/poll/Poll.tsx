@@ -705,7 +705,7 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
                 
                 <Divider sx={{pt: 2}}/>
             </DialogTitle>
-            <DialogContent >
+            <DialogContent style={{ height: isSmallScreen ? undefined : "70vh"}}>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
@@ -730,7 +730,7 @@ function VoterViewerModal({poll}: {poll: PollWithOption}) {
 }
 
 function VoterList( {poll, selectedOptionId}: {poll: PollWithOption, selectedOptionId: number}) {
-    
+
     const {isLoading, isError, data, error} = useQuery<PollOptionVoters[]>(["FetchPollVoters", poll.id], () => fetchAsync<PollOptionVoters[]>(`/api/polls/${poll.id}/voter-list`))
 
     if(isLoading)
