@@ -57,7 +57,7 @@ interface SideDrawerContentProps {
     onRequestedExit?: VoidFunction
 }
 
-function ContentPicker(props: SideDrawerContentProps) {
+export function ContentPicker(props: SideDrawerContentProps) {
     const auth = useAuth()
     return auth.user
         ? <PrivateContent onRequestedExit={props.onRequestedExit} />
@@ -68,7 +68,7 @@ function PublicContent(props: SideDrawerContentProps) {
     const { onRequestedExit } = props
     return (
         <List sx={{ minWidth: 230 }} >
-            <ListItemHeader />
+            {/* <ListItemHeader /> */}
             <ListItemExpander text="Om oss" startsOpen>
                 <ListItemLink text="Framside" to="/" onLinkClick={onRequestedExit} icon={<MenuIcons.FrontPage />} />
                 <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onRequestedExit} icon={<MenuIcons.BecomeMember />} />
@@ -79,7 +79,7 @@ function PublicContent(props: SideDrawerContentProps) {
             <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit} icon={<MenuIcons.Documents />} />
             <ListItemLink text="Styrets Nettsider" to="/styrets-nettsider" onLinkClick={onRequestedExit} icon={<MenuIcons.BoardWebsiteList/>} />
             <ListItemLink externalRoute text="Lisens" to="/lisens" onLinkClick={onRequestedExit} icon={<MenuIcons.License />} />
-            <ListItemThemeSwitcher />
+            {/* <ListItemThemeSwitcher /> */}
         </List>
     )
 }
@@ -88,7 +88,7 @@ function PrivateContent(props: SideDrawerContentProps) {
     const { onRequestedExit } = props
     return (
         <List sx={{ minWidth: 230 }} >
-            <ListItemHeader />
+            {/* <ListItemHeader /> */}
             <ListItemLink text="Hjem" to="/hjem" onLinkClick={onRequestedExit} icon={<MenuIcons.Home />} />
             <ListItemLink text="Arrangement" to="/Arrangement" onLinkClick={onRequestedExit} icon={<MenuIcons.Event />} />
             <ListItemDivider/>
@@ -109,7 +109,7 @@ function PrivateContent(props: SideDrawerContentProps) {
                 <ListItemLink externalRoute text="Lisens" to="/lisens" onLinkClick={onRequestedExit} icon={<MenuIcons.License />} />
                 <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" onLinkClick={onRequestedExit} icon={<MenuIcons.Wiki />} />
             </ListItemExpander>
-            <ListItemThemeSwitcher />
+            {/* <ListItemThemeSwitcher /> */}
         </List>
     )
 }

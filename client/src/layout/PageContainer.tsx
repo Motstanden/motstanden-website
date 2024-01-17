@@ -4,7 +4,7 @@ import { useLocation, Location } from "react-router-dom";
 import { PageTab, PageTabItem } from "src/components/PageTab";
 import { matchUrl } from "src/utils/matchUrl";
 
-const defaultPadding = "15Px 35px 150px 35px"
+const defaultPadding = "15Px min(70px, 2vw) 150px min(70px, 2vw)"
 const smallScreenPadding = "15px 15px 150px 15px"
 
 export function PageContainer({
@@ -36,8 +36,6 @@ export function PageContainer({
     return (
         <div style={{
             minHeight: "100vh",
-            maxWidth: "1200px",
-            marginInline: "auto",
             backgroundColor: theme.palette.background.paper,
             paddingBottom: "150px",
             padding: padding,

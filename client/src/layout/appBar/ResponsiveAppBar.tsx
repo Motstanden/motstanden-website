@@ -94,7 +94,7 @@ function MobileToolBar({ display }: { display: DisplayProp }) {
 }
 
 
-function HeaderTitle({ variant, sx }: { variant?: VariantType, sx?: SxProps }) {
+export function HeaderTitle({ variant, sx }: { variant?: VariantType, sx?: SxProps }) {
     const auth = useAuth()
     const isLoggedIn = auth.user ? true : false // It is a tight fit on the navbar if the user is logged in
     return (
@@ -140,7 +140,7 @@ function HeaderTitle({ variant, sx }: { variant?: VariantType, sx?: SxProps }) {
     )
 }
 
-function UserInfo() {
+export function UserInfo() {
     const auth = useAuth()
     return auth.user
         ? <UserAvatar />
