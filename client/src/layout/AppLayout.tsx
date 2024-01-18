@@ -1,11 +1,11 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import { AppBar, Box, Divider, Drawer, IconButton, Link, Stack, SwipeableDrawer, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
+import { AppBar, Box, Divider, IconButton, Link, Stack, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 import { Outlet, Link as RouterLink } from "react-router-dom";
 import MotstandenImg from "src/assets/logos/motstanden.png";
 import { useAuth } from "src/context/Authentication";
 import { FooterContent } from "./Footer";
-import { DrawerContent } from './SideDrawer';
+import { SideDrawer } from './SideDrawer';
 import { ThemeSwitchButton } from "./appBar/SideDrawer";
 import UserAvatar from './appBar/UserAvatar';
 
@@ -14,6 +14,7 @@ const mediumDrawerWidth = 220
 const smallDrawerWidth = 240    // Mobile drawer width
 const desktopAppBarHeight = 70;
 const mobileAppBarHeight = 57;
+
 
 export function AppLayout() {
 
@@ -27,18 +28,16 @@ export function AppLayout() {
         drawerWidth = mediumDrawerWidth
     }
 
-    const [mobileOpen, setMobileOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState(false)
 
-    const closeDrawer = () => setMobileOpen(false)
-    const openDrawer = () => setMobileOpen(true)
-    const toggleDrawer = () => setMobileOpen(prevValue => !prevValue)
+    const closeDrawer = () => setIsOpen(false)
+    const openDrawer = () => setIsOpen(true)
+    const toggleDrawer = () => setIsOpen(prevValue => !prevValue)
 
     const appBarHeight = isSmallScreen ? mobileAppBarHeight : desktopAppBarHeight
 
     return (
         <div style={{display: "flex"}}>
-
-            {/* Bar at the top */}
             <AppBar
                 position={isSmallScreen ? "fixed" : "absolute"}
                 sx={{
@@ -48,63 +47,32 @@ export function AppLayout() {
                 }}>
                 <AppBarContent onMenuClick={toggleDrawer}/>
             </AppBar>
-
-            {/* Side drawer */}
             <Box 
-                component="nav"
-                sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-            >
-                {/* Desktop drawer */}
-                <Drawer 
-                    variant="permanent"
-                    sx={{
-                        display: { xs: 'none', sm: 'block' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth},
-                    }}
-                    open
-                    >
-                    <DrawerContent mobileHeaderHeight={mobileAppBarHeight} onRequestedExit={closeDrawer}/>
-                </Drawer>
-
-                {/* Mobile drawer */}
-                <SwipeableDrawer
-                    anchor='left'
-                    open={mobileOpen}
+                component="nav" 
+                sx={{ 
+                    width: drawerWidth, 
+                    flexShrink: { sm: 0 } 
+                }}>
+                <SideDrawer
+                    open={isOpen}
                     onClose={closeDrawer}
                     onOpen={openDrawer}
-                    swipeAreaWidth={400}
-                    disableSwipeToOpen={true}
-                    ModalProps={{
-                        keepMounted: true, // Better open performance on mobile.
-                    }}
-                    sx={{
-                        display: { xs: 'block', sm: 'none' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-                      }}
-                >
-                    <DrawerContent mobileHeaderHeight={mobileAppBarHeight} onRequestedExit={closeDrawer} />
-                </SwipeableDrawer>
+                    drawerWidth={drawerWidth} 
+                    headerHeight={appBarHeight}
+                />
             </Box>
-
-            {/* Rest of the page */}
             <Box sx={{ 
                 flexGrow: 1, 
                 pt: `${appBarHeight}px`,  
                 width: { sm: `calc(100% - ${drawerWidth}px)` } }}
             >   
-                
-                {/* Main content */}
                 <main style={{ minHeight: `calc(100vh - ${appBarHeight}px)` }}>
                     <Outlet/>
                 </main>
-
-                {/* Footer */}
                 <footer>
                     <FooterContent/>
                 </footer>
-
             </Box>
-
         </div>
     )
 }

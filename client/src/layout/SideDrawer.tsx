@@ -1,5 +1,5 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { Collapse, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SxProps, Toolbar } from "@mui/material";
+import { Collapse, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SwipeableDrawer, SxProps, Toolbar } from "@mui/material";
 import { UserGroup } from "common/enums";
 import { hasGroupAccess } from "common/utils";
 import { useEffect, useRef, useState } from "react";
@@ -13,7 +13,62 @@ interface SideDrawerContentProps {
     onRequestedExit?: VoidFunction
 }
 
-export function DrawerContent({ 
+export function SideDrawer( {
+    open: mobileOpen,
+    onOpen,
+    onClose,
+    drawerWidth,
+    headerHeight,
+}: {
+    open: boolean,
+    onOpen: VoidFunction,
+    onClose: VoidFunction,
+    headerHeight: number,
+    drawerWidth: number,
+}) {
+    return (
+        <>
+            {/* Desktop drawer */}
+            <Drawer 
+                open={true}             // Desktop is always open 
+                variant="permanent"
+                sx={{
+                    display: { xs: 'none', sm: 'block' },
+                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth},
+                }}
+                >
+                <DrawerContent 
+                    mobileHeaderHeight={headerHeight} 
+                    onRequestedExit={onClose}
+                    />
+            </Drawer>
+
+            {/* Mobile drawer */}
+            <SwipeableDrawer
+                anchor='left'
+                open={mobileOpen}
+                onClose={onClose}
+                onOpen={onOpen}
+                swipeAreaWidth={400}
+                disableSwipeToOpen={true}
+                ModalProps={{
+                    keepMounted: true, // Better open performance on mobile.
+                }}
+                sx={{
+                    display: { xs: 'block', sm: 'none' },
+                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                }}
+            >
+                <DrawerContent 
+                    mobileHeaderHeight={headerHeight} 
+                    onRequestedExit={onClose} 
+                />
+            </SwipeableDrawer>
+        </>
+    )
+}
+
+function DrawerContent({ 
     mobileHeaderHeight, 
     onRequestedExit 
 }: {
