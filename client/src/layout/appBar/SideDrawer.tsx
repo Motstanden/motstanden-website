@@ -80,7 +80,7 @@ function PublicContent(props: SideDrawerContentProps) {
             <ListItemLink text="Styrets Nettsider" to="/styrets-nettsider" onLinkClick={onRequestedExit} icon={<MenuIcons.BoardWebsiteList/>} />
             <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={<MenuIcons.Wiki />} />
             <ListItemDivider/>
-            <ListItemLink externalRoute text="Lisens" to="/lisens" onLinkClick={onRequestedExit} icon={<MenuIcons.License />} />
+            <ListItemLink text="Lisens" to="/lisens" onLinkClick={onRequestedExit} icon={<MenuIcons.License />} />
             {/* <ListItemThemeSwitcher /> */}
         </List>
     )
@@ -108,7 +108,7 @@ function PrivateContent(props: SideDrawerContentProps) {
             <ListItemExpander text="Om oss">
                 <ListItemLink text="Framside" to="/framside" onLinkClick={onRequestedExit} icon={<MenuIcons.FrontPage />} />
                 <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onRequestedExit} icon={<MenuIcons.BecomeMember />} />
-                <ListItemLink externalRoute text="Lisens" to="/lisens" onLinkClick={onRequestedExit} icon={<MenuIcons.License />} />
+                <ListItemLink text="Lisens" to="/lisens" onLinkClick={onRequestedExit} icon={<MenuIcons.License />} />
             </ListItemExpander>
             {/* <ListItemThemeSwitcher /> */}
         </List>
