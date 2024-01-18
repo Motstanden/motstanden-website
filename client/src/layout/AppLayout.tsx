@@ -4,10 +4,10 @@ import { useState } from "react";
 import { Outlet, Link as RouterLink } from "react-router-dom";
 import MotstandenImg from "src/assets/logos/motstanden.png";
 import { useAuth } from "src/context/Authentication";
+import { FooterContent } from "src/layout/Footer";
+import { SideDrawer } from 'src/layout/SideDrawer/SideDrawer';
 import { ThemeSwitchButton } from 'src/layout/ThemeSwitchButton';
-import { FooterContent } from "./Footer";
-import { SideDrawer } from './SideDrawer/SideDrawer';
-import UserAvatar from './appBar/UserAvatar';
+import UserAvatar from 'src/layout/UserAvatar';
 
 const largeDrawerWidth = 290
 const mediumDrawerWidth = 220
