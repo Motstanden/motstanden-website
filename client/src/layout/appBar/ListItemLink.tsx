@@ -3,6 +3,7 @@ import React from 'react';
 // Material UI 
 import {
     ListItem,
+    ListItemButton,
     ListItemIcon,
     ListItemText,
     SxProps
@@ -25,32 +26,22 @@ export default function ListItemLink(props: ListItemLinkProps) {
         to,
         text,
         externalRoute,
-        disabled,
-        sx,
         icon,
         onLinkClick
     } = props
-
     const urlAttribute = externalRoute ? { href: to } : { to: to }
     return (
-        <ListItem
-            button
-            component={externalRoute ? "a" : RouterLink}
-            {...urlAttribute}
-            disabled={disabled}
-            sx={{
-                '& .MuiSvgIcon-root': {
-                    // Target icon properties here
-                    // fontSize: "x-large"
-                },
-                ...sx
-            }}
-            onClick={onLinkClick}
-        >
-            <ListItemIcon sx={{ minWidth: "0px", paddingRight: "10px" }} style={{ fontSize: "tiny" }} >
-                {icon}
-            </ListItemIcon>
-            <ListItemText primary={text} />
+        <ListItem>
+            <ListItemButton
+                component={externalRoute ? "a" : RouterLink}
+                {...urlAttribute}
+                onClick={onLinkClick}
+                >
+                <ListItemIcon sx={{ minWidth: "0px", paddingRight: "10px" }}>
+                    {icon}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+            </ListItemButton>
         </ListItem>
     )
 }
