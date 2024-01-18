@@ -1,12 +1,11 @@
 import CloseIcon from '@mui/icons-material/Close';
 import MenuIcon from '@mui/icons-material/Menu';
-import { AppBar, Box, Divider, Drawer, IconButton, Stack, SwipeableDrawer, Theme, Toolbar, Typography, colors, useMediaQuery } from "@mui/material";
+import { AppBar, Box, Divider, Drawer, IconButton, Link, Stack, SwipeableDrawer, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 import { Outlet, Link as RouterLink } from "react-router-dom";
 import MotstandenImg from "src/assets/logos/motstanden.png";
 import { useAuth } from "src/context/Authentication";
 import { FooterContent } from "./Footer";
-import { NavLink } from './appBar/NavBar';
 import { ContentPicker, ThemeSwitchButton } from "./appBar/SideDrawer";
 import UserAvatar from './appBar/UserAvatar';
 
@@ -193,9 +192,24 @@ function AppBarContent( {onMenuClick}: {onMenuClick?: VoidFunction}) {
 
 function UserInfo() {
     const auth = useAuth()
-    return auth.user
-        ? <UserAvatar />
-        : <NavLink text="LOGG INN" to="/logg-inn" sx={{ fontWeight: 600 }} />
+
+    if(auth.user)
+        return <UserAvatar/>
+
+    return (
+        <Link
+            component={RouterLink}
+            to="/logg-inn"
+            underline="hover"
+            sx={{
+                color: "inherit",
+                pl: 1,
+                fontWeight: 600
+            }}
+        >
+            LOGG INN
+        </Link>
+    )
 }
 
 function DrawerContent( {onRequestedExit}: {onRequestedExit?: VoidFunction}) {
