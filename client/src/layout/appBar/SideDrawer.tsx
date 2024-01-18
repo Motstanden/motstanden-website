@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // Material UI 
 import MenuIcon from '@mui/icons-material/Menu';
@@ -19,6 +19,7 @@ import MotstandenImg from "../../assets/logos/motstanden.png";
 
 import { UserGroup } from 'common/enums';
 import { hasGroupAccess } from 'common/utils';
+import { isElementInViewport } from 'src/utils/isElementInViewport';
 import { useAuth } from '../../context/Authentication';
 import * as MenuIcons from './MenuIcons';
 import ThemeSwitcher from './ThemeSwitcher';
@@ -69,16 +70,15 @@ function PublicContent(props: SideDrawerContentProps) {
     const { onRequestedExit } = props
     return (
         <List sx={{ minWidth: 230 }} >
-            {/* <ListItemHeader /> */}
-            <ListItemExpander text="Om oss" startsOpen>
-                <ListItemLink text="Framside" to="/" onLinkClick={onRequestedExit} icon={<MenuIcons.FrontPage />} />
-                <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onRequestedExit} icon={<MenuIcons.BecomeMember />} />
-                {/* <ListItemLink text="FAQ" to="/faq" disabled onLinkClick={onRequestedExit}/> */}
-                <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={<MenuIcons.Wiki />} />
-            </ListItemExpander>
-            <ListItemLink text="Studenttraller" to="/studenttraller" onLinkClick={onRequestedExit} icon={<MenuIcons.Lyric />} />
+            <ListItemLink text="Framside" to="/" onLinkClick={onRequestedExit} icon={<MenuIcons.Home />} />
+            <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onRequestedExit} icon={<MenuIcons.BecomeMember />} />
+            <ListItemDivider/>
+            <ListItemLink text="Traller" to="/studenttraller" onLinkClick={onRequestedExit} icon={<MenuIcons.Lyric />} />
+            <ListItemDivider/>
             <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit} icon={<MenuIcons.Documents />} />
             <ListItemLink text="Styrets Nettsider" to="/styrets-nettsider" onLinkClick={onRequestedExit} icon={<MenuIcons.BoardWebsiteList/>} />
+            <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={<MenuIcons.Wiki />} />
+            <ListItemDivider/>
             <ListItemLink externalRoute text="Lisens" to="/lisens" onLinkClick={onRequestedExit} icon={<MenuIcons.License />} />
             {/* <ListItemThemeSwitcher /> */}
         </List>
@@ -88,8 +88,7 @@ function PublicContent(props: SideDrawerContentProps) {
 function PrivateContent(props: SideDrawerContentProps) {
     const { onRequestedExit } = props
     return (
-        <List sx={{ minWidth: 230 }} >
-            {/* <ListItemHeader /> */}
+        <List>
             <ListItemLink text="Hjem" to="/hjem" onLinkClick={onRequestedExit} icon={<MenuIcons.Home />} />
             <ListItemLink text="Arrangement" to="/Arrangement" onLinkClick={onRequestedExit} icon={<MenuIcons.Event />} />
             <ListItemDivider/>
@@ -99,16 +98,16 @@ function PrivateContent(props: SideDrawerContentProps) {
             <ListItemDivider/>
             <ListItemLink text="Noter" to="/notearkiv" onLinkClick={onRequestedExit} icon={<MenuIcons.SheetArchive />} />
             <ListItemLink text="Traller" to="/studenttraller" onLinkClick={onRequestedExit} icon={<MenuIcons.Lyric />} />
-            <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit} icon={<MenuIcons.Documents />} />
             <ListItemDivider/>
+            <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" onLinkClick={onRequestedExit} icon={<MenuIcons.Wiki />} />
+            <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onRequestedExit} icon={<MenuIcons.Documents />} />
             <ListItemLink text="Styrets Nettsider" to="/styrets-nettsider" onLinkClick={onRequestedExit} icon={<MenuIcons.BoardWebsiteList/>} />
+            <ListItemDivider/>
             <MemberList onLinkClick={onRequestedExit} />
             <ListItemExpander text="Om oss">
                 <ListItemLink text="Framside" to="/framside" onLinkClick={onRequestedExit} icon={<MenuIcons.FrontPage />} />
                 <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onRequestedExit} icon={<MenuIcons.BecomeMember />} />
-                {/* <ListItemLink text="FAQ" to="/faq" disabled onLinkClick={onRequestedExit}/> */}
                 <ListItemLink externalRoute text="Lisens" to="/lisens" onLinkClick={onRequestedExit} icon={<MenuIcons.License />} />
-                <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" onLinkClick={onRequestedExit} icon={<MenuIcons.Wiki />} />
             </ListItemExpander>
             {/* <ListItemThemeSwitcher /> */}
         </List>
@@ -117,7 +116,9 @@ function PrivateContent(props: SideDrawerContentProps) {
 
 function ListItemDivider() {
     return (
-        <Divider light sx={{ ml: 2, mr: 4, opacity: 0.7 }} />
+        <>
+            <Divider light sx={{ opacity: 0.7 }} />
+        </>
     )
 }
 
