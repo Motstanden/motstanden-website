@@ -1,9 +1,10 @@
+import CloseIcon from '@mui/icons-material/Close';
 import MenuIcon from '@mui/icons-material/Menu';
-import { AppBar, Box, Divider, Drawer, IconButton, Stack, SwipeableDrawer, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
+import { AppBar, Box, Divider, Drawer, IconButton, Stack, SwipeableDrawer, Theme, Toolbar, Typography, colors, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 import { Outlet, Link as RouterLink } from "react-router-dom";
+import MotstandenImg from "src/assets/logos/motstanden.png";
 import { useAuth } from "src/context/Authentication";
-import MotstandenImg from "../assets/logos/motstanden.png";
 import { FooterContent } from "./Footer";
 import { NavLink } from './appBar/NavBar';
 import { ContentPicker, ThemeSwitchButton } from "./appBar/SideDrawer";
@@ -11,8 +12,9 @@ import UserAvatar from './appBar/UserAvatar';
 
 const largeDrawerWidth = 290
 const mediumDrawerWidth = 220
-const smallDrawerWidth = 230    // Mobile drawer width
-const appBarHeight = 70;
+const smallDrawerWidth = 240    // Mobile drawer width
+const desktopAppBarHeight = 70;
+const mobileAppBarHeight = 57;
 
 export function AppLayout() {
 
@@ -31,6 +33,8 @@ export function AppLayout() {
     const closeDrawer = () => setMobileOpen(false)
     const openDrawer = () => setMobileOpen(true)
     const toggleDrawer = () => setMobileOpen(prevValue => !prevValue)
+
+    const appBarHeight = isSmallScreen ? mobileAppBarHeight : desktopAppBarHeight
 
     return (
         <div style={{display: "flex"}}>
@@ -134,7 +138,7 @@ function AppBarContent( {onMenuClick}: {onMenuClick?: VoidFunction}) {
                     sx={{ display: isSmallScreen ? "none" : "flex" }}>
                     <img 
                         src={MotstandenImg} 
-                        style={{ height: "57px", marginTop: "3px" }} 
+                        style={{ height: "57px"}} 
                         loading="lazy" />
                 </Box>
                 <Typography
@@ -160,7 +164,12 @@ function AppBarContent( {onMenuClick}: {onMenuClick?: VoidFunction}) {
                 >
                 <ThemeSwitchButton 
                     fontSize='large'
-                    sx={{width: "42px", height: "42px", display: {xs: "none", sm: "flex"}}}
+                    sx={{
+                        width: "42px", 
+                        height: "42px", 
+                        display: {xs: "none", sm: "flex"},
+                        color: "inherit"
+                    }}
                 />
                 <Divider 
                     light={true}
@@ -192,15 +201,20 @@ function UserInfo() {
 function DrawerContent( {onRequestedExit}: {onRequestedExit?: VoidFunction}) {
     return (
         <>
-            {/* Put something here? */}
-
-            {/* <Toolbar style={{justifyContent: "space-between", height: `${appBarHeight - 1}px`}}>
-                <HeaderLogo/>
-                <UserInfo/>
-                <ThemeSwitcher/>
+            <Toolbar sx={{
+                alignItems: "center", 
+                justifyContent: "space-between", 
+                paddingLeft: "25px",
+                paddingRight: "25px",
+                height: `${mobileAppBarHeight - 1}px`,
+                display: { xs: "flex", sm: "none" },
+            }}>
+                <ThemeSwitchButton fontSize='medium'/>
+                <IconButton onClick={onRequestedExit}>
+                    <CloseIcon />
+                </IconButton>
             </Toolbar>
-            <Divider/> */}
-            
+            <Divider sx={{ opacity: 1, display: {xs: "flex", sm: "none" }}} />
             <DrawerNavigation onRequestedExit={onRequestedExit}/>
         </>
     )

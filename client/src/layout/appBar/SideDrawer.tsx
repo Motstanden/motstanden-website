@@ -81,7 +81,6 @@ function PublicContent(props: SideDrawerContentProps) {
             <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" icon={<MenuIcons.Wiki />} />
             <ListItemDivider/>
             <ListItemLink text="Lisens" to="/lisens" onLinkClick={onRequestedExit} icon={<MenuIcons.License />} />
-            {/* <ListItemThemeSwitcher /> */}
         </List>
     )
 }
@@ -110,7 +109,6 @@ function PrivateContent(props: SideDrawerContentProps) {
                 <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onRequestedExit} icon={<MenuIcons.BecomeMember />} />
                 <ListItemLink text="Lisens" to="/lisens" onLinkClick={onRequestedExit} icon={<MenuIcons.License />} />
             </ListItemExpander>
-            {/* <ListItemThemeSwitcher /> */}
         </List>
     )
 }
@@ -220,10 +218,7 @@ export function ThemeSwitchButton( {
             <IconButton 
                 onClick={onClick} 
                 style={style} 
-                sx={{
-                    color: "inherit", 
-                    ...sx
-                }} > 
+                sx={sx}> 
                 {isDarkMode() ? <ModeNightSharpIcon fontSize={fontSize}/> : <LightModeIcon fontSize={fontSize}/>}
             </IconButton>
         </Tooltip>
