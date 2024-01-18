@@ -1,7 +1,8 @@
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import { Collapse, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SxProps } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { Link as RouterLink } from 'react-router-dom';
-import * as MenuIcons from 'src/layout/appBar/MenuIcons';
 import { isElementInViewport } from "src/utils/isElementInViewport";
 
 export function ListItemLink({
@@ -67,8 +68,8 @@ export function ListItemExpander({
                 <ListItemButton onClick={() => setIsOpen(!isOpen)}>
                     <ListItemIcon sx={{ minWidth: "0px", paddingRight: "10px" }}>
                         { isOpen 
-                        ? <MenuIcons.ExpandLess /> 
-                        : <MenuIcons.ExpandMore />}
+                        ? <ExpandLess /> 
+                        : <ExpandMore />}
                     </ListItemIcon>
                     <ListItemText primary={text} />
                 </ListItemButton>
