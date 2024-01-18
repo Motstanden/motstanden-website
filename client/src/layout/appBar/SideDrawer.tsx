@@ -22,6 +22,7 @@ import { hasGroupAccess } from 'common/utils';
 import { useAuth } from '../../context/Authentication';
 import * as MenuIcons from './MenuIcons';
 import ThemeSwitcher from './ThemeSwitcher';
+import { isElementInViewport } from 'src/utils/isElementInViewPort';
 
 
 
@@ -137,30 +138,55 @@ function MemberList({ onLinkClick }: { onLinkClick?: VoidFunction }) {
     )
 }
 
-function ListItemHeader() {
+function ListItemExpander({ 
+    text, 
+    startsOpen, 
+    children 
+}: { 
+    text: string, 
+    startsOpen?: boolean, 
+    children: React.ReactNode 
+}) {
+    const [isOpen, setIsOpen] = useState(startsOpen ?? false)
+    const [isExpanding, setIsExpanding] = useState(false)       // True if the list is currently opening, otherwise false
+
+    useEffect(() => setIsExpanding(isOpen), [isOpen])
+
+    const contentRef = useRef<HTMLDivElement>(null)
+
+    const onTransitionEnd = () => {
+        if(isExpanding) {
+            setIsExpanding(false)  
+            
+            const inView = isElementInViewport(contentRef.current)
+            if(!inView) {
+                contentRef.current?.scrollIntoView({behavior: 'smooth', block: "end"})
+            }
+        }
+    }
+
     return (
         <>
             <ListItem>
-                <ListItemIcon >
-                    <img src={MotstandenImg} style={{ width: "40px" }} loading="lazy" />
-                </ListItemIcon>
-                <ListItemText >Motstanden</ListItemText>
+                <ListItemButton onClick={() => setIsOpen(!isOpen)}>
+                    <ListItemIcon sx={{ minWidth: "0px", paddingRight: "10px" }}>
+                        { isOpen 
+                        ? <MenuIcons.ExpandLess /> 
+                        : <MenuIcons.ExpandMore />}
+                    </ListItemIcon>
+                    <ListItemText primary={text} />
+                </ListItemButton>
             </ListItem>
-            <Divider light={false} />
-        </>
-    )
-}
-
-function ListItemExpander({ text, startsOpen, children }: { text: string, startsOpen?: boolean, children: JSX.Element | JSX.Element[] }) {
-    const [isOpen, setIsOpen] = useState(startsOpen)
-    return (
-        <>
-            <ListItemButton onClick={() => setIsOpen(!isOpen)}>
-                <ListItemText primary={text} />
-                {isOpen ? <MenuIcons.ExpandLess /> : <MenuIcons.ExpandMore />}
-            </ListItemButton>
-            <Collapse in={isOpen} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ pl: 4 }}>
+            <Collapse 
+                in={isOpen} 
+                timeout="auto"
+                onTransitionEnd={onTransitionEnd}
+                ref={contentRef}
+                >
+                <List 
+                    component="div" 
+                    disablePadding sx={{ pl: 4 }}
+                    >
                     {children}
                 </List>
             </Collapse>
