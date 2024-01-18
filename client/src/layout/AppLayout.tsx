@@ -5,7 +5,7 @@ import { Outlet, Link as RouterLink } from "react-router-dom";
 import MotstandenImg from "src/assets/logos/motstanden.png";
 import { useAuth } from "src/context/Authentication";
 import { FooterContent } from "./Footer";
-import { SideDrawer } from './SideDrawer';
+import { SideDrawer } from './SideDrawer/SideDrawer';
 import { ThemeSwitchButton } from "./appBar/SideDrawer";
 import UserAvatar from './appBar/UserAvatar';
 
@@ -47,12 +47,7 @@ export function AppLayout() {
                 }}>
                 <AppBarContent onMenuClick={toggleDrawer}/>
             </AppBar>
-            <Box 
-                component="nav" 
-                sx={{ 
-                    width: drawerWidth, 
-                    flexShrink: { sm: 0 } 
-                }}>
+            <Box component="nav" sx={{ flexShrink: { sm: 0 }}}>
                 <SideDrawer
                     open={isOpen}
                     onClose={closeDrawer}
