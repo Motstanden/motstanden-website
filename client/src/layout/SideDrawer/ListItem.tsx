@@ -92,5 +92,5 @@ export function ListItemExpander({
 }
 
 export function ListItemDivider( {sx}: {sx?: SxProps}) {
-    return <Divider sx={{ opacity: 1 }} />   
+    return <Divider sx={{ opacity: 1, ...sx }} />   
 }
