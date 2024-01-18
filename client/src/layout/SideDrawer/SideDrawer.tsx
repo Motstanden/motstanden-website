@@ -1,6 +1,6 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Drawer, IconButton, SwipeableDrawer, SxProps, Toolbar } from "@mui/material";
-import { ThemeSwitchButton } from "../appBar/SideDrawer";
+import { ThemeSwitchButton } from 'src/layout/ThemeSwitchButton';
 import { ListItemDivider } from './ListItem';
 import { NavContent } from './NavContent';
 
