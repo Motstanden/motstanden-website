@@ -1,4 +1,3 @@
-import CloseIcon from '@mui/icons-material/Close';
 import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Box, Divider, Drawer, IconButton, Link, Stack, SwipeableDrawer, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
 import { useState } from "react";
@@ -6,7 +5,8 @@ import { Outlet, Link as RouterLink } from "react-router-dom";
 import MotstandenImg from "src/assets/logos/motstanden.png";
 import { useAuth } from "src/context/Authentication";
 import { FooterContent } from "./Footer";
-import { ContentPicker, ThemeSwitchButton } from "./appBar/SideDrawer";
+import { DrawerContent } from './SideDrawer';
+import { ThemeSwitchButton } from "./appBar/SideDrawer";
 import UserAvatar from './appBar/UserAvatar';
 
 const largeDrawerWidth = 290
@@ -63,7 +63,7 @@ export function AppLayout() {
                     }}
                     open
                     >
-                    <DrawerContent onRequestedExit={closeDrawer}/>
+                    <DrawerContent mobileHeaderHeight={mobileAppBarHeight} onRequestedExit={closeDrawer}/>
                 </Drawer>
 
                 {/* Mobile drawer */}
@@ -82,7 +82,7 @@ export function AppLayout() {
                         '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
                       }}
                 >
-                    <DrawerContent onRequestedExit={closeDrawer} />
+                    <DrawerContent mobileHeaderHeight={mobileAppBarHeight} onRequestedExit={closeDrawer} />
                 </SwipeableDrawer>
             </Box>
 
@@ -209,48 +209,5 @@ function UserInfo() {
         >
             LOGG INN
         </Link>
-    )
-}
-
-function DrawerContent( {onRequestedExit}: {onRequestedExit?: VoidFunction}) {
-    return (
-        <>
-            <Toolbar sx={{
-                alignItems: "center", 
-                justifyContent: "space-between", 
-                paddingLeft: "25px",
-                paddingRight: "25px",
-                height: `${mobileAppBarHeight - 1}px`,
-                display: { xs: "flex", sm: "none" },
-            }}>
-                <ThemeSwitchButton fontSize='medium'/>
-                <IconButton onClick={onRequestedExit}>
-                    <CloseIcon />
-                </IconButton>
-            </Toolbar>
-            <Divider sx={{ opacity: 1, display: {xs: "flex", sm: "none" }}} />
-            <DrawerNavigation onRequestedExit={onRequestedExit}/>
-        </>
-    )
-}
-
-function DrawerNavigation({onRequestedExit}: {onRequestedExit?: VoidFunction}) {
-    const auth = useAuth()
-    return auth.user
-        ? <PrivateDrawerNavigation onRequestedExit={onRequestedExit} />
-        : <PublicDrawerNavigation onRequestedExit={onRequestedExit} />
-}
-
-function PublicDrawerNavigation( {onRequestedExit}: {onRequestedExit?: VoidFunction} ) {
-    // Temporary
-    return (
-        <ContentPicker onRequestedExit={onRequestedExit} />
-    )
-}
-
-function PrivateDrawerNavigation( {onRequestedExit}: {onRequestedExit?: VoidFunction}) {
-    // Temporary
-    return (
-        <ContentPicker onRequestedExit={onRequestedExit}/>    
     )
 }
