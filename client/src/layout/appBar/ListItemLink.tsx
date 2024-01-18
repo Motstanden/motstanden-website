@@ -10,25 +10,20 @@ import {
 } from "@mui/material";
 import { Link as RouterLink } from 'react-router-dom';
 
-
-interface ListItemLinkProps {
+export default function ListItemLink({
+    to,
+    text,
+    externalRoute,
+    icon,
+    onLinkClick,
+}: {
     to: string
     text: string
     externalRoute?: boolean
-    disabled?: boolean
     sx?: SxProps
     icon?: React.ReactNode
     onLinkClick?: VoidFunction
-}
-
-export default function ListItemLink(props: ListItemLinkProps) {
-    const {
-        to,
-        text,
-        externalRoute,
-        icon,
-        onLinkClick
-    } = props
+}) {
     const urlAttribute = externalRoute ? { href: to } : { to: to }
     return (
         <ListItem>
