@@ -47,7 +47,12 @@ export function AppLayout() {
                 }}>
                 <AppBarContent onMenuClick={toggleDrawer}/>
             </AppBar>
-            <Box component="nav" sx={{ flexShrink: { sm: 0 }}}>
+            <Box component="nav" 
+                sx={{ 
+                    flexShrink: { sm: 0 },
+                    display: { xs: 'none', sm: 'flex' },
+                    width: { sm: `${drawerWidth}px` },
+                }}>
                 <SideDrawer
                     open={isOpen}
                     onClose={closeDrawer}
