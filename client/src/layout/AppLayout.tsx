@@ -1,14 +1,13 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import { AppBar, Box, Drawer, IconButton, Stack, SxProps, Theme, Toolbar, Typography, useMediaQuery, SwipeableDrawer } from "@mui/material";
+import { AppBar, Box, Divider, Drawer, IconButton, Stack, SwipeableDrawer, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 import { Outlet, Link as RouterLink } from "react-router-dom";
 import { useAuth } from "src/context/Authentication";
 import MotstandenImg from "../assets/logos/motstanden.png";
 import { FooterContent } from "./Footer";
-import { ContentPicker } from "./appBar/SideDrawer";
-import UserAvatar from './appBar/UserAvatar';
 import { NavLink } from './appBar/NavBar';
-import { useTheme } from '@emotion/react';
+import { ContentPicker, ThemeSwitchButton } from "./appBar/SideDrawer";
+import UserAvatar from './appBar/UserAvatar';
 
 const largeDrawerWidth = 290
 const mediumDrawerWidth = 220
@@ -109,7 +108,9 @@ export function AppLayout() {
 
 function AppBarContent( {onMenuClick}: {onMenuClick?: VoidFunction}) {
 
-    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
+    const isMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
+    const isSmallScreen = useMediaQuery("(max-width: 663px)");
+    const isMobileScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'))
 
     return (
         <Toolbar sx={{
@@ -117,8 +118,10 @@ function AppBarContent( {onMenuClick}: {onMenuClick?: VoidFunction}) {
             height: "100%",
             justifyContent: "space-between",
         }}>
-            <IconButton sx={{ display: { sm: 'none' } }} onClick={onMenuClick}>
-                <MenuIcon />
+            <IconButton 
+                sx={{display: { sm: 'none' },}}
+                onClick={onMenuClick}>
+                <MenuIcon sx={{ color: "primary.contrastText" }}  />
             </IconButton>
             <Stack 
                 direction="row" 
@@ -128,7 +131,7 @@ function AppBarContent( {onMenuClick}: {onMenuClick?: VoidFunction}) {
                 <Box
                     component={RouterLink}
                     to="/"
-                    sx={{ display: {xs: "none", sm: "inline"}}}>
+                    sx={{ display: isSmallScreen ? "none" : "flex" }}>
                     <img 
                         src={MotstandenImg} 
                         style={{ height: "57px", marginTop: "3px" }} 
@@ -138,7 +141,7 @@ function AppBarContent( {onMenuClick}: {onMenuClick?: VoidFunction}) {
                     component={RouterLink}
                     to="/"
                     noWrap
-                    variant={isSmallScreen ? "h6" : "h5"}
+                    variant={isMobileScreen ? "inherit" : "h5"}
                     sx={{
                         fontWeight: 700,
                         letterSpacing: '.1rem',
@@ -146,10 +149,35 @@ function AppBarContent( {onMenuClick}: {onMenuClick?: VoidFunction}) {
                         textDecoration: 'none',
                     }}
                 >
-                    {isSmallScreen ? "MOTSTANDEN" : "Den Ohmske Motstanden"}
+                    {isMediumScreen ? "MOTSTANDEN" : "Den Ohmske Motstanden"}
                 </Typography>
             </Stack>
-            <UserInfo/>
+            <Stack 
+                direction="row" 
+                alignItems="center" 
+                color="primary.contrastText"
+                style={{height: "100%"}}
+                >
+                <ThemeSwitchButton 
+                    fontSize='large'
+                    sx={{width: "42px", height: "42px", display: {xs: "none", sm: "flex"}}}
+                />
+                <Divider 
+                    light={true}
+                    orientation='vertical'  
+                    flexItem variant='middle'
+                    color="inherit"
+                    sx={{
+                        mx: 0.5,
+                        height: "50%",
+                        my: "auto",
+                        bgcolor: "primary.contrastText",
+                        opacity: 0.3,
+                        display: {xs: "none", sm: "flex"}
+                    }}
+                    />
+                <UserInfo/>
+            </Stack>
         </Toolbar>
     )
 }
@@ -158,7 +186,7 @@ function UserInfo() {
     const auth = useAuth()
     return auth.user
         ? <UserAvatar />
-        : <NavLink text="Logg Inn" to="/logg-inn" sx={{ fontWeight: 600 }} />
+        : <NavLink text="LOGG INN" to="/logg-inn" sx={{ fontWeight: 600 }} />
 }
 
 function DrawerContent( {onRequestedExit}: {onRequestedExit?: VoidFunction}) {

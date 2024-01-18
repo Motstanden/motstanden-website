@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 // Material UI 
+import LightModeIcon from '@mui/icons-material/LightMode';
 import MenuIcon from '@mui/icons-material/Menu';
+import ModeNightSharpIcon from '@mui/icons-material/ModeNightSharp';
 import {
     Collapse,
     Divider,
@@ -11,19 +13,18 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    SwipeableDrawer
+    SwipeableDrawer,
+    SxProps,
+    Tooltip
 } from "@mui/material";
 import ListItemLink from './ListItemLink';
 
-import MotstandenImg from "../../assets/logos/motstanden.png";
-
 import { UserGroup } from 'common/enums';
 import { hasGroupAccess } from 'common/utils';
+import { ThemeName, useAppTheme } from 'src/context/Themes';
 import { isElementInViewport } from 'src/utils/isElementInViewport';
 import { useAuth } from '../../context/Authentication';
 import * as MenuIcons from './MenuIcons';
-import ThemeSwitcher from './ThemeSwitcher';
-import { isElementInViewport } from 'src/utils/isElementInViewPort';
 
 
 
@@ -117,7 +118,7 @@ function PrivateContent(props: SideDrawerContentProps) {
 function ListItemDivider() {
     return (
         <>
-            <Divider light sx={{ opacity: 0.7 }} />
+            <Divider sx={{ opacity: 1 }} />
         </>
     )
 }
@@ -195,15 +196,36 @@ function ListItemExpander({
     )
 }
 
-// TODO
-function ListItemThemeSwitcher() {
+export function ThemeSwitchButton( {
+    style, 
+    sx,
+    fontSize = "inherit"
+}: {
+    style?: React.CSSProperties, 
+    sx?: SxProps,
+    fontSize?: "small" | "inherit" | "medium" | "large"
+}) {
+
+    const theme = useAppTheme()
+
+    const isDarkMode = () => theme.name === ThemeName.Dark
+
+    const onClick = () => {
+        const newTheme = isDarkMode() ? ThemeName.Light : ThemeName.Dark
+        theme.changeTheme(newTheme)
+    }
+
     return (
-        <>
-            <Divider light={false} />
-            <ListItem>
-                <ThemeSwitcher />
-            </ListItem>
-            <Divider light={false} />
-        </>
+        <Tooltip title={isDarkMode() ? "Bytt til Dagmodus" : "Bytt til Nattmodus"}>
+            <IconButton 
+                onClick={onClick} 
+                style={style} 
+                sx={{
+                    color: "inherit", 
+                    ...sx
+                }} > 
+                {isDarkMode() ? <ModeNightSharpIcon fontSize={fontSize}/> : <LightModeIcon fontSize={fontSize}/>}
+            </IconButton>
+        </Tooltip>
     )
 }
