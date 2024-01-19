@@ -104,7 +104,7 @@ const lightTheme: AppThemeProps = {
             },
             background: {
                 default: "#E5E5E5",
-                paper: "white"
+                paper: "#F8F8F8"
             },
             text: {
                 primary: "#000",
