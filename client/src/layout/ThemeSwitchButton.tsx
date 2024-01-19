@@ -6,7 +6,7 @@ import {
     Tooltip
 } from "@mui/material";
 import React from 'react';
-import { ThemeName, useAppTheme } from 'src/context/Themes';
+import { useAppTheme } from 'src/context/Themes';
 
 
 export function ThemeSwitchButton({
@@ -19,22 +19,15 @@ export function ThemeSwitchButton({
     fontSize?: "small" | "inherit" | "medium" | "large";
 }) {
 
-    const theme = useAppTheme();
-
-    const isDarkMode = () => theme.name === ThemeName.Dark;
-
-    const onClick = () => {
-        const newTheme = isDarkMode() ? ThemeName.Light : ThemeName.Dark;
-        theme.changeTheme(newTheme);
-    };
+    const { isDarkMode, toggleTheme } = useAppTheme();
 
     return (
-        <Tooltip title={isDarkMode() ? "Bytt til Dagmodus" : "Bytt til Nattmodus"}>
+        <Tooltip title={isDarkMode ? "Bytt til Dagmodus" : "Bytt til Nattmodus"}>
             <IconButton
-                onClick={onClick}
+                onClick={toggleTheme}
                 style={style}
                 sx={sx}>
-                {isDarkMode() ? <ModeNightSharpIcon fontSize={fontSize} /> : <LightModeIcon fontSize={fontSize} />}
+                {isDarkMode ? <ModeNightSharpIcon fontSize={fontSize} /> : <LightModeIcon fontSize={fontSize} />}
             </IconButton>
         </Tooltip>
     );

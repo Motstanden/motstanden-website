@@ -14,12 +14,12 @@ export enum ThemeName {
     Light = "light"
 }
 
-type AppThemeType = {
+type AppThemeProps = {
     theme: Theme,
     name: ThemeName
 }
 
-const darkTheme: AppThemeType = {
+const darkTheme: AppThemeProps = {
     name: ThemeName.Dark,
     theme: createTheme({
         palette: {
@@ -85,7 +85,7 @@ const darkTheme: AppThemeType = {
     })
 }
 
-const lightTheme: AppThemeType = {
+const lightTheme: AppThemeProps = {
     name: ThemeName.Light,
     theme: createTheme({
         palette: {
@@ -151,50 +151,63 @@ const lightTheme: AppThemeType = {
     })
 }
 
-const OsPreferDarkMode = (): boolean => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+function osPreferDarkMode(): boolean {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
 
-const objectToTheme = (name: string | ThemeName | null | undefined): AppThemeType => {
+function objectToTheme(name: string | ThemeName | null | undefined): AppThemeProps {
     switch (name?.trim().toLowerCase()) {
-        case ThemeName.Light: return lightTheme
-        case ThemeName.Dark: return darkTheme
-        default: return OsPreferDarkMode() ? darkTheme : lightTheme
+        case ThemeName.Light: 
+            return lightTheme
+        case ThemeName.Dark: 
+            return darkTheme
+        default: 
+            return osPreferDarkMode() ? darkTheme : lightTheme
     }
 }
 
 const themeStorageKey = "AppTheme"
 
-const getDefaultTheme = (): AppThemeType => {
+function getDefaultTheme(): AppThemeProps {
     const storedData = localStorage.getItem(themeStorageKey)
     const theme = objectToTheme(storedData)
     return theme;
 }
 
-const setDefaultTheme = (theme: AppThemeType) => localStorage.setItem(themeStorageKey, theme.name)
-
-interface AppThemeContextType extends AppThemeType {
-    changeTheme: (newThemeName: ThemeName, callback?: VoidFunction) => void
+function setDefaultTheme(theme: AppThemeProps) {
+    localStorage.setItem(themeStorageKey, theme.name)
 }
 
-export const AppThemeContext = createContext<AppThemeContextType>(null!)
+interface AppThemeContextProps extends AppThemeProps {
+    toggleTheme: VoidFunction
+    isDarkMode: boolean,    
+}
+
+export const AppThemeContext = createContext<AppThemeContextProps>(null!)
 
 export function useAppTheme() {
     return useContext(AppThemeContext)
 }
 
 export function AppThemeProvider({ children }: { children: React.ReactNode }) {
-    const [themeInfo, setTheme] = useState<AppThemeType>(getDefaultTheme())
 
-    const changeTheme = (newThemeName: ThemeName, callback?: VoidFunction) => {
-        if (newThemeName === themeInfo.name) return;
+    const [themeInfo, setTheme] = useState<AppThemeProps>(getDefaultTheme())
 
-        const newThemeInfo: AppThemeType = objectToTheme(newThemeName)
+    const isDarkMode = () => themeInfo.name === ThemeName.Dark;
+
+    const toggleTheme = () => {
+        const newTheme = isDarkMode() ? ThemeName.Light : ThemeName.Dark;
+        const newThemeInfo = objectToTheme(newTheme)
 
         setTheme(newThemeInfo)
         setDefaultTheme(newThemeInfo)
-        if (callback) callback();
     }
 
-    const contextValue = { ...themeInfo, changeTheme }
+    const contextValue: AppThemeContextProps = { 
+        ...themeInfo, 
+        toggleTheme: toggleTheme,
+        isDarkMode: isDarkMode()
+    }
 
     return (
         <AppThemeContext.Provider value={contextValue}>
