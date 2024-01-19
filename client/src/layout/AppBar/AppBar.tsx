@@ -1,10 +1,10 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import { AppBar as MuiAppBar, Box, Divider, IconButton, Link, Stack, SxProps, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
+import { Box, Divider, IconButton, Link, AppBar as MuiAppBar, Stack, SxProps, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import MotstandenImg from "src/assets/logos/motstanden.png";
 import { useAuth } from 'src/context/Authentication';
+import UserAvatar from 'src/layout/AppBar/UserAvatar';
 import { ThemeSwitchButton } from 'src/layout/ThemeSwitchButton';
-import UserAvatar from 'src/layout/UserAvatar';
 
 export function AppBar({ 
     onMenuClick, 

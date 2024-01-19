@@ -1,5 +1,3 @@
-
-// Material UI
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import {
@@ -10,10 +8,8 @@ import {
     MenuItem,
     Tooltip
 } from "@mui/material";
-
 import { Link as RouterLink } from 'react-router-dom';
-import { useAuth } from '../context/Authentication';
-
+import { useAuth } from 'src/context/Authentication';
 import { getFullName } from 'common/utils';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 
