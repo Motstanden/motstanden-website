@@ -21,6 +21,7 @@ import SheetArchiveIcon from '@mui/icons-material/MusicVideo';
 import LyricIcon from '@mui/icons-material/Nightlife';
 import MemberAddIcon from '@mui/icons-material/PersonAdd';
 import PollIcon from '@mui/icons-material/Poll';
+import { useMatch } from "react-router-dom";
 
 export function NavContent({onItemClick}: {onItemClick: VoidFunction}) {
     const auth = useAuth()
@@ -30,9 +31,10 @@ export function NavContent({onItemClick}: {onItemClick: VoidFunction}) {
 }
 
 function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
+    const matchesFrontPage = !!useMatch("/framside/*")
     return (
         <List>
-            <ListItemLink text="Framside" to="/" onLinkClick={onItemClick} icon={<HomeIcon/>} />
+            <ListItemLink text="Framside" to="/" onLinkClick={onItemClick} icon={<HomeIcon/>} activate={matchesFrontPage} />
             <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onItemClick} icon={<BecomeMemberIcon/>} />
             <ListItemDivider/>
             <ListItemLink text="Traller" to="/studenttraller" onLinkClick={onItemClick} icon={<LyricIcon/>} />
@@ -48,12 +50,14 @@ function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
 
 function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
     const { user } = useAuth();
+    const matchesFrontPage = !!useMatch("/hjem/*")
+    const matchesWallPage = !!useMatch("/vegg/*")
     const isSuperAdmin = hasGroupAccess(user!, UserGroup.SuperAdministrator)
 
     return (
         <List>
-            <ListItemLink text="Hjem" to="/hjem" onLinkClick={onItemClick} icon={<HomeIcon/>} />
-            <ListItemLink text="Arrangement" to="/Arrangement" onLinkClick={onItemClick} icon={<EventIcon/>} />
+            <ListItemLink text="Hjem" to="/" onLinkClick={onItemClick} icon={<HomeIcon/>} activate={matchesFrontPage || matchesWallPage} />
+            <ListItemLink text="Arrangement" to="/arrangement" onLinkClick={onItemClick} icon={<EventIcon/>} />
             <ListItemDivider/>
             <ListItemLink text="Sitater" to="/sitater" onLinkClick={onItemClick} icon={<QuotesIcon/>} />
             <ListItemLink text="Rykter" to="/rykter" onLinkClick={onItemClick} icon={<RumourIcon/>} />
