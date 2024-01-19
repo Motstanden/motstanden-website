@@ -13,7 +13,7 @@ export function AppBar({
 }: { 
     onMenuClick?: VoidFunction,
     sx?: SxProps,
-    position?: "fixed" | "absolute" | "sticky" | "static" | "relative" 
+    position?: "fixed" | "absolute" | "relative" | "static" | "sticky" 
 }) {
 
     const isLoggedIn = useAuth().user != null

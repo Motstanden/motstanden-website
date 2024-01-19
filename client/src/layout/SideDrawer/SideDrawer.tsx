@@ -3,18 +3,17 @@ import { Drawer, IconButton, SwipeableDrawer, SxProps, Toolbar } from "@mui/mate
 import { ThemeSwitchButton } from 'src/layout/ThemeSwitchButton';
 import { ListItemDivider } from './ListItem';
 import { NavContent } from './NavContent';
+import { useAppSizes } from 'src/layout/useAppSizes';
 
 export function SideDrawer( {
     open: mobileOpen,
     onOpen,
     onClose,
     drawerWidth,
-    headerHeight,
 }: {
     open: boolean,
     onOpen: VoidFunction,
     onClose: VoidFunction,
-    headerHeight: number,
     drawerWidth: number,
 }) {
     return (
@@ -28,10 +27,7 @@ export function SideDrawer( {
                     '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth},
                 }}
                 >
-                <DrawerContent 
-                    mobileHeaderHeight={headerHeight} 
-                    onClose={onClose}
-                    />
+                <DrawerContent onClose={onClose} />
             </Drawer>
 
             {/* Mobile drawer */}
@@ -50,29 +46,21 @@ export function SideDrawer( {
                     '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
                 }}
             >
-                <DrawerContent 
-                    mobileHeaderHeight={headerHeight} 
-                    onClose={onClose} 
-                />
+                <DrawerContent onClose={onClose}/>
             </SwipeableDrawer>
         </>
     )
 }
 
-function DrawerContent({ 
-    mobileHeaderHeight, 
-    onClose 
-}: {
-    mobileHeaderHeight: number, 
-    onClose: VoidFunction
-}) {
+function DrawerContent({ onClose }: { onClose: VoidFunction }) {
+    const { appBarHeight } = useAppSizes()
     return (
         <>
             <MobileHeader 
                 onClose={onClose}
                 sx={{ 
                     display: { xs: "flex", sm: "none" },
-                    height: `${mobileHeaderHeight - 1}px`,
+                    height: `${appBarHeight - 1}px`,
                 }}/>
             <ListItemDivider sx={{ display: {xs: "flex", sm: "none" }}}/>
             <NavContent onItemClick={onClose}/>
