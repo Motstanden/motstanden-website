@@ -16,6 +16,8 @@ export function AppBar({
     position?: "fixed" | "absolute" | "sticky" | "static" | "relative" 
 }) {
 
+    const isLoggedIn = useAuth().user != null
+
     const isMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
     const isSmallScreen = useMediaQuery("(max-width: 663px)");
     const isMobileScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
@@ -32,6 +34,7 @@ export function AppBar({
                     onClick={onMenuClick}>
                     <MenuIcon sx={{ color: "primary.contrastText" }} />
                 </IconButton>
+
                 <Stack
                     direction="row"
                     alignItems="center"
@@ -61,6 +64,7 @@ export function AppBar({
                         {isMediumScreen ? "MOTSTANDEN" : "Den Ohmske Motstanden"}
                     </Typography>
                 </Stack>
+                
                 <Stack
                     direction="row"
                     alignItems="center"
@@ -68,10 +72,10 @@ export function AppBar({
                     style={{ height: "100%" }}
                 >
                     <ThemeSwitchButton
-                        fontSize='large'
+                        fontSize={isLoggedIn ? "large" : "medium"}
                         sx={{
-                            width: "42px",
-                            height: "42px",
+                            width: isLoggedIn ? "42px" : "35px",
+                            height: isLoggedIn ? "42px" : "35px",
                             display: { xs: "none", sm: "flex" },
                             color: "inherit"
                         }} />
@@ -82,7 +86,7 @@ export function AppBar({
                         color="inherit"
                         sx={{
                             mx: 0.5,
-                            height: "50%",
+                            height: isLoggedIn ? "50%" : "35%",
                             my: "auto",
                             bgcolor: "primary.contrastText",
                             opacity: 0.3,
@@ -90,6 +94,7 @@ export function AppBar({
                         }} />
                     <UserInfo />
                 </Stack>
+
             </Toolbar>
         </MuiAppBar>
     );
