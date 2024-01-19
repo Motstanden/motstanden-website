@@ -34,58 +34,157 @@ function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
     const matchesFrontPage = !!useMatch("/framside/*")
     return (
         <List>
-            <ListItemLink text="Framside" to="/" onLinkClick={onItemClick} icon={<HomeIcon/>} activate={matchesFrontPage} />
-            <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onItemClick} icon={<BecomeMemberIcon/>} />
+            <ListItemLink 
+                text="Framside" 
+                to="/" 
+                onLinkClick={onItemClick} 
+                icon={<HomeIcon/>} 
+                activate={matchesFrontPage} />
+            <ListItemLink 
+                text="Bli Medlem" 
+                to="/bli-medlem" 
+                icon={<BecomeMemberIcon/>}
+                onLinkClick={onItemClick}/>
             <ListItemDivider/>
-            <ListItemLink text="Traller" to="/studenttraller" onLinkClick={onItemClick} icon={<LyricIcon/>} />
+            <ListItemLink 
+                text="Traller" 
+                to="/studenttraller" 
+                icon={<LyricIcon/>} 
+                onLinkClick={onItemClick}/>
             <ListItemDivider/>
-            <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onItemClick} icon={<DocumentsIcon/>} />
-            <ListItemLink text="Styrets Nettsider" to="/styrets-nettsider" onLinkClick={onItemClick} icon={<BoardWebsiteListIcon/>} />
-            <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" onLinkClick={onItemClick} icon={<WikiIcon/>} />
+            <ListItemLink 
+                text="Dokumenter" 
+                to="/dokumenter" 
+                icon={<DocumentsIcon/>} 
+                onLinkClick={onItemClick}/>
+            <ListItemLink 
+                text="Styrets Nettsider" 
+                to="/styrets-nettsider" 
+                icon={<BoardWebsiteListIcon/>}
+                onLinkClick={onItemClick}/> 
+            <ListItemLink 
+                externalRoute 
+                text="Wiki" 
+                to="https://wiki.motstanden.no/" 
+                icon={<WikiIcon/>} 
+                onLinkClick={onItemClick}/>
             <ListItemDivider/>
-            <ListItemLink text="Lisens" to="/lisens" onLinkClick={onItemClick} icon={<LicenseIcon/>} />
+            <ListItemLink 
+                text="Lisens" 
+                to="/lisens" 
+                icon={<LicenseIcon/>} 
+                onLinkClick={onItemClick}/>
         </List>
     )
 }
 
 function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
     const { user } = useAuth();
+    const isSuperAdmin = hasGroupAccess(user!, UserGroup.SuperAdministrator)
+
     const matchesFrontPage = !!useMatch("/hjem/*")
     const matchesWallPage = !!useMatch("/vegg/*")
-    const isSuperAdmin = hasGroupAccess(user!, UserGroup.SuperAdministrator)
 
     return (
         <List>
-            <ListItemLink text="Hjem" to="/" onLinkClick={onItemClick} icon={<HomeIcon/>} activate={matchesFrontPage || matchesWallPage} />
-            <ListItemLink text="Arrangement" to="/arrangement" onLinkClick={onItemClick} icon={<EventIcon/>} />
+            <ListItemLink 
+                text="Hjem" 
+                to="/" 
+                activate={matchesFrontPage || matchesWallPage} 
+                icon={<HomeIcon/>} 
+                onLinkClick={onItemClick}/>
+            <ListItemLink 
+                text="Arrangement" 
+                to="/arrangement" 
+                icon={<EventIcon/>} 
+                onLinkClick={onItemClick} 
+                />
             <ListItemDivider/>
-            <ListItemLink text="Sitater" to="/sitater" onLinkClick={onItemClick} icon={<QuotesIcon/>} />
-            <ListItemLink text="Rykter" to="/rykter" onLinkClick={onItemClick} icon={<RumourIcon/>} />
-            <ListItemLink text="Avstemninger" to="/avstemninger" onLinkClick={onItemClick} icon={<PollIcon/>} />
+            <ListItemLink 
+                text="Sitater" 
+                to="/sitater" 
+                icon={<QuotesIcon/>} 
+                onLinkClick={onItemClick}/>
+            <ListItemLink 
+                text="Rykter" 
+                to="/rykter" 
+                icon={<RumourIcon/>} 
+                onLinkClick={onItemClick}/>
+            <ListItemLink 
+                text="Avstemninger" 
+                to="/avstemninger" 
+                icon={<PollIcon/>} 
+                onLinkClick={onItemClick} 
+            />
             <ListItemDivider/>
-            <ListItemLink text="Noter" to="/notearkiv" onLinkClick={onItemClick} icon={<SheetArchiveIcon/>} />
-            <ListItemLink text="Traller" to="/studenttraller" onLinkClick={onItemClick} icon={<LyricIcon/>} />
+            <ListItemLink 
+                text="Noter" 
+                to="/notearkiv" 
+                icon={<SheetArchiveIcon/>} 
+                onLinkClick={onItemClick} />
+            <ListItemLink
+                text="Traller" 
+                to="/studenttraller" 
+                icon={<LyricIcon/>} 
+                onLinkClick={onItemClick}/>
             <ListItemDivider/>
-            <ListItemLink externalRoute text="Wiki" to="https://wiki.motstanden.no/" onLinkClick={onItemClick} icon={<WikiIcon/>} />
-            <ListItemLink text="Dokumenter" to="/dokumenter" onLinkClick={onItemClick} icon={<DocumentsIcon />} />
-            <ListItemLink text="Styrets Nettsider" to="/styrets-nettsider" onLinkClick={onItemClick} icon={<BoardWebsiteListIcon/>} />
+            <ListItemLink 
+                externalRoute 
+                text="Wiki" 
+                to="https://wiki.motstanden.no/" 
+                icon={<WikiIcon/>} 
+                onLinkClick={onItemClick}/>
+            <ListItemLink 
+                text="Dokumenter" 
+                to="/dokumenter" 
+                icon={<DocumentsIcon />} 
+                onLinkClick={onItemClick}/>
+            <ListItemLink 
+                text="Styrets Nettsider" 
+                to="/styrets-nettsider" 
+                icon={<BoardWebsiteListIcon/>} 
+                onLinkClick={onItemClick}/>
             <ListItemDivider/>
 
             {isSuperAdmin && (
                 <ListItemExpander text="Medlem">
-                    <ListItemLink text="Ny" to="/medlem/ny" onLinkClick={onItemClick} icon={<MemberAddIcon/>} />
-                    <ListItemLink text="Liste" to="/medlem/liste" onLinkClick={onItemClick} icon={<MemberListIcon/>} />
+                    <ListItemLink 
+                        text="Ny" 
+                        to="/medlem/ny" 
+                        icon={<MemberAddIcon/>} 
+                        onLinkClick={onItemClick}/>
+                    <ListItemLink 
+                        text="Liste" 
+                        to="/medlem/liste" 
+                        icon={<MemberListIcon/>} 
+                        onLinkClick={onItemClick}/>
                 </ListItemExpander>
             )}
 
             {!isSuperAdmin && (
-                <ListItemLink text="Medlemmer" to="/medlem/liste" onLinkClick={onItemClick} icon={<MemberListIcon/>}/>
+                <ListItemLink 
+                    text="Medlemmer" 
+                    to="/medlem/liste" 
+                    icon={<MemberListIcon/>}
+                    onLinkClick={onItemClick}/>
             )}
 
             <ListItemExpander text="Om oss">
-                <ListItemLink text="Framside" to="/framside" onLinkClick={onItemClick} icon={<FrontPageIcon/>} />
-                <ListItemLink text="Bli Medlem" to="/bli-medlem" onLinkClick={onItemClick} icon={<BecomeMemberIcon/>} />
-                <ListItemLink text="Lisens" to="/lisens" onLinkClick={onItemClick} icon={<LicenseIcon/>} />
+                <ListItemLink 
+                    text="Framside" 
+                    to="/framside" 
+                    icon={<FrontPageIcon/>} 
+                    onLinkClick={onItemClick}/>
+                <ListItemLink 
+                    text="Bli Medlem" 
+                    to="/bli-medlem" 
+                    icon={<BecomeMemberIcon/>} 
+                    onLinkClick={onItemClick}/>
+                <ListItemLink 
+                    text="Lisens" 
+                    to="/lisens" 
+                    icon={<LicenseIcon/>} 
+                    onLinkClick={onItemClick}/>
             </ListItemExpander>
         </List>
     )
