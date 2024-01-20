@@ -61,6 +61,7 @@ export function UserListSkeleton( {
         <>
             {Array(length).fill(1).map((_, index) => (
                 <UserStack
+                    key={index}
                     style={style}
                     alternatingStyle={alternatingStyle}
                     isAlternate={index % 2 === 1}
