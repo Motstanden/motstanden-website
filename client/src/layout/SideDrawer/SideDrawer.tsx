@@ -1,9 +1,8 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Drawer, IconButton, SwipeableDrawer, SxProps, Toolbar } from "@mui/material";
+import { useAppTheme } from 'src/context/Themes';
 import { ThemeSwitchButton } from 'src/layout/ThemeSwitchButton';
-import { ListItemDivider } from './ListItem';
 import { NavContent } from './NavContent';
-import { useAppSizes } from 'src/layout/useAppSizes';
 
 export function SideDrawer( {
     open: mobileOpen,
@@ -53,32 +52,45 @@ export function SideDrawer( {
 }
 
 function DrawerContent({ onClose }: { onClose: VoidFunction }) {
-    const { appBarHeight } = useAppSizes()
     return (
         <>
             <MobileHeader 
                 onClose={onClose}
                 sx={{ 
                     display: { xs: "flex", sm: "none" },
-                    height: `${appBarHeight - 1}px`,
                 }}/>
-            <ListItemDivider sx={{ display: {xs: "flex", sm: "none" }}}/>
             <NavContent onItemClick={onClose}/>
         </>
     )   
 }
 
 function MobileHeader({ onClose, sx }: {onClose?: VoidFunction, sx?: SxProps}) {
+    const { theme } = useAppTheme()
+
     return (
         <Toolbar sx={{
             alignItems: "center", 
             justifyContent: "space-between", 
             paddingLeft: "25px",
             paddingRight: "25px",
+            mb: "-13px",
             ...sx
         }}>
-            <ThemeSwitchButton fontSize='medium'/>
-            <IconButton onClick={onClose}>
+            <ThemeSwitchButton 
+                fontSize='medium' 
+                sx={{
+                    borderColor: `${theme.palette.action.hover}`,
+                    borderStyle: "solid", 
+                    borderWidth: "1px"
+                }}
+            />
+            <IconButton 
+                onClick={onClose}
+                sx={{
+                    borderColor: `${theme.palette.action.hover}`,
+                    borderStyle: "solid", 
+                    borderWidth: "1px"
+                }}>
                 <CloseIcon />
             </IconButton>
         </Toolbar>
