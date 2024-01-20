@@ -64,9 +64,17 @@ export function TabbedPageContainer({
 }) {
     const { theme } = useAppTheme()
 
-    const location = useLocation()
-    const urlMatchesTab = () => !!findActiveTab(tabItems, location, { matchChildPath: matchChildPath })
-    useTopScroller({ prevent: urlMatchesTab})
+    const [preventScroll, setPreventScroll] = React.useState(false)
+
+    const onTabClick = () => {
+        setPreventScroll(true)
+    }
+
+    useTopScroller({ prevent: () => {
+        const prevent = preventScroll
+        setPreventScroll(false)
+        return prevent
+    }})
 
     return (
         <>
@@ -75,7 +83,8 @@ export function TabbedPageContainer({
                 matchChildPath={matchChildPath}
                 style={{
                     backgroundColor: theme.palette.background.paper
-                }} 
+                }}
+                onTabClick={onTabClick}
             />
             <PageContainer disableScrollHandling={true}>
                 <div>
@@ -94,7 +103,7 @@ function useTopScroller( {
     const location = useLocation();
 
     useLayoutEffect(() => {
-        const childHandlesScroll = location.hash
+        const childHandlesScroll = !!location.hash
 
         let preventScroll = false
         if(typeof prevent === "function") {

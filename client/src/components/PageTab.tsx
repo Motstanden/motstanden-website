@@ -14,12 +14,14 @@ export function PageTab({
     items, 
     tabProps, 
     matchChildPath,
-    style
+    style,
+    onTabClick,
 }: { 
     items: PageTabItem[], 
     tabProps?: TabsProps, 
     matchChildPath?: boolean,
     style?: React.CSSProperties
+    onTabClick?: () => void
 }) {
 
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
@@ -45,6 +47,7 @@ export function PageTab({
                         value={item.label}
                         label={item.label}
                         wrapped
+                        onClick={onTabClick}
                     />)
                 )}
             </Tabs>
