@@ -47,7 +47,7 @@ export function AppLayout() {
             <Box sx={{ 
                 flexGrow: 1, 
                 pt: `${appBarHeight}px`,  
-                width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+                width: { xs: "100%", sm: `calc(100% - ${drawerWidth}px)` } }}
             >   
                 <main style={{ minHeight: `calc(100vh - ${appBarHeight}px)` }}>
                     <Outlet/>
