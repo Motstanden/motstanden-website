@@ -1,11 +1,20 @@
-export const headerStyle = {
+import { SxProps, Theme } from "@mui/material"
+
+export const headerStyle: SxProps<Theme> = {
     backgroundColor: "primary.main",
+    color: "primary.contrastText",
     "& th": {
         fontSize: 14,
         fontWeight: "bold",
         textTransform: "uppercase",
         color: "primary.contrastText"
-    }
+    },
+    "& .MuiTableSortLabel-icon": {
+        color: (theme: Theme) => theme.palette.primary.contrastText + " !important",
+    },
+    "& .MuiTableSortLabel-root": {
+        color: "primary.contrastText",
+    },
 }
 
 export const rowStyle = {
