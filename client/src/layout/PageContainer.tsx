@@ -4,8 +4,10 @@ import { useLocation } from "react-router-dom";
 import { PageTab, PageTabItem, findActiveTab } from "src/components/PageTab";
 import { useAppTheme } from "src/context/Themes";
 
-const defaultPadding = "15Px min(70px, 2vw) 150px min(70px, 2vw)"
-const smallScreenPadding = "15px 15px 150px 15px"
+const largePadding = "15Px min(100px, 4vw) 150px min(100px, 4vw)"
+const mediumPadding = "15Px min(80px, 3vw) 150px min(80px, 3vw)"
+const smallPadding = "15Px min(70px, 2vw) 150px min(70px, 2vw)"
+const tinyPadding = "15px 15px 150px 15px"
 
 export function PageContainer({
     children,
@@ -20,11 +22,20 @@ export function PageContainer({
 }) {
     const { theme } = useAppTheme()
 
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const isSmall = useMediaQuery(theme.breakpoints.only('sm'));
+    const isMedium = useMediaQuery(theme.breakpoints.only('md'));
+    const isLarge = useMediaQuery(theme.breakpoints.up("lg"));
 
-    let padding = isSmallScreen ? smallScreenPadding : defaultPadding
-    if (disableGutters)
+    let padding = tinyPadding
+    if(disableGutters) {
         padding = "0px 0px"
+    } else if (isSmall) {
+        padding = smallPadding
+    } else if (isMedium) {
+        padding = mediumPadding
+    } else if(isLarge) {
+        padding = largePadding
+    }
 
     useTopScroller({ prevent: disableScrollHandling })
 
