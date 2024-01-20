@@ -5,7 +5,7 @@ export default function PageContainer({ children }: { children?: React.ReactNode
     return (
         <TabbedPageContainer
             tabItems={[
-                { to: "", label: "Hjem" },
+                { to: "/hjem", label: "Hjem" },
                 { to: "/vegg", label: "Vegg"}
             ]}
             matchChildPath={true}

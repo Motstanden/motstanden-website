@@ -1,8 +1,8 @@
-import { Theme, useMediaQuery, useTheme } from "@mui/material";
-import React, { useEffect, useLayoutEffect } from "react";
-import { useLocation, Location } from "react-router-dom";
-import { PageTab, PageTabItem } from "src/components/PageTab";
-import { matchUrl } from "src/utils/matchUrl";
+import { useMediaQuery } from "@mui/material";
+import React, { useLayoutEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { PageTab, PageTabItem, findActiveTab } from "src/components/PageTab";
+import { useAppTheme } from "src/context/Themes";
 
 const defaultPadding = "15Px min(70px, 2vw) 150px min(70px, 2vw)"
 const smallScreenPadding = "15px 15px 150px 15px"
@@ -18,28 +18,24 @@ export function PageContainer({
     disableGutters?: boolean,
     disableScrollHandling?: boolean
 }) {
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery((_theme: Theme) => _theme.breakpoints.down('sm'));
+    const { theme } = useAppTheme()
+
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     let padding = isSmallScreen ? smallScreenPadding : defaultPadding
     if (disableGutters)
         padding = "0px 0px"
 
-    const location = useLocation();
-    useLayoutEffect(() => {
-        const childHandlesScroll = location.hash
-        if(!disableScrollHandling && !childHandlesScroll) {
-            window.scrollTo({ top: 0, left: 0, behavior: "smooth" })
-        }
-    }, [location.pathname])
+    useTopScroller({ prevent: disableScrollHandling })
 
     return (
         <div style={{
             minHeight: "100vh",
+            width: "100%",
             backgroundColor: theme.palette.background.paper,
             paddingBottom: "150px",
             padding: padding,
-            ...props
+            ...props,
         }}>
             {children}
         </div>
@@ -55,23 +51,51 @@ export function TabbedPageContainer({
     tabItems: PageTabItem[],
     matchChildPath?: boolean
 }) {
-    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+    const { theme } = useAppTheme()
 
-    const location = useLocation();
-    useLayoutEffect(() => {
-        const isTabClick = tabItems.find(item => matchUrl(item.to, location, { matchChildPath: false }))         // Scroll to top if the new url is not equal to a tab url
-        const childHandlesScroll = location.hash
-        if (!isTabClick && !childHandlesScroll) {
-            window.scrollTo({ top: 0, left: 0, behavior: "smooth" })
-        }
-    }, [location.pathname])
+    const location = useLocation()
+    const urlMatchesTab = () => !!findActiveTab(tabItems, location, { matchChildPath: matchChildPath })
+    useTopScroller({ prevent: urlMatchesTab})
 
     return (
-        <PageContainer disableGutters={isSmallScreen} disableScrollHandling={true}>
-            <PageTab items={tabItems} matchChildPath={matchChildPath} />
-            <div style={{ padding: isSmallScreen ? smallScreenPadding : 0 }}>
-                {children}
-            </div>
-        </PageContainer>
+        <>
+            <PageTab 
+                items={tabItems} 
+                matchChildPath={matchChildPath}
+                style={{
+                    backgroundColor: theme.palette.background.paper
+                }} 
+            />
+            <PageContainer disableScrollHandling={true}>
+                <div>
+                    {children}
+                </div>
+            </PageContainer>
+        </>
     )
+}
+
+function useTopScroller( { 
+    prevent 
+}: { 
+    prevent?: boolean | undefined | (() => boolean | undefined)
+}) {
+    const location = useLocation();
+
+    useLayoutEffect(() => {
+        const childHandlesScroll = location.hash
+
+        let preventScroll = false
+        if(typeof prevent === "function") {
+            preventScroll = prevent() ?? false
+        } else if(typeof prevent === "boolean") {
+            preventScroll = prevent
+        }
+
+        const shouldScroll = !childHandlesScroll && !preventScroll 
+
+        if (shouldScroll) {
+            window.scrollTo({ top: 0, left: 0})
+        }
+    }, [location.pathname])   
 }

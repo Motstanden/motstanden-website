@@ -7,20 +7,28 @@ import {
     Theme,
     useMediaQuery
 } from "@mui/material";
+import React from "react";
+import { Link as RouterLink, Location as RouterLocation, matchPath, useLocation } from "react-router-dom";
 
-import { Link as RouterLink, useLocation } from "react-router-dom";
-import { matchUrl } from "../utils/matchUrl";
-export function PageTab({ items, tabProps, matchChildPath }: { items: PageTabItem[], tabProps?: TabsProps, matchChildPath?: boolean }) {
+export function PageTab({ 
+    items, 
+    tabProps, 
+    matchChildPath,
+    style
+}: { 
+    items: PageTabItem[], 
+    tabProps?: TabsProps, 
+    matchChildPath?: boolean,
+    style?: React.CSSProperties
+}) {
 
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
-    // Find the item that matches the current url.
-    //  - Logic retrieved from NavLink at https://github.com/remix-run/react-router/blob/main/packages/react-router-dom/index.tsx
     const location = useLocation()
-    const currentValue = items.find(item => matchUrl(item.to, location, { matchChildPath: matchChildPath })) ?? items[0]
+    const currentValue = findActiveTab(items, location, {matchChildPath: matchChildPath}) ?? items[0]
 
     return (
-        <div>
+        <div style={style}>
             <Tabs
                 value={currentValue.label}
                 textColor="secondary"
@@ -43,6 +51,24 @@ export function PageTab({ items, tabProps, matchChildPath }: { items: PageTabIte
             <Divider />
         </div>
     )
+}
+
+export function findActiveTab(
+    tabs: PageTabItem[], 
+    location: RouterLocation,
+    options?: {
+        matchChildPath?: boolean
+    }
+): PageTabItem | undefined {
+    for(let i = 0; i < tabs.length; i++) {
+        const item = tabs[i]
+        const pattern = options?.matchChildPath ? item.to + "/*" : item.to
+        const isMatch = !!matchPath(pattern, location.pathname)
+        if(isMatch) {
+            return item
+        }
+    }
+    return undefined;
 }
 
 export interface PageTabItem {
