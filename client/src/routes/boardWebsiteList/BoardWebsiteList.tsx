@@ -227,20 +227,20 @@ function BoardPageTable( {data} : {data: PageData[]}) {
                         </TableCell>
                         <TableCell>
                             <TableSortLabel
-                                active={sortedColumn === "created"}
-                                direction={sortedColumn === "created" ? sortDirection : "desc"}
-                                onClick={(e) => onColumnClick("created")}
-                            >
-                                Opprettet
-                            </TableSortLabel>
-                        </TableCell>
-                        <TableCell>
-                            <TableSortLabel
                                 active={sortedColumn === "updated"}
                                 direction={sortedColumn === "updated" ? sortDirection : "desc"}
                                 onClick={(e) => onColumnClick("updated")}
                             >
                                 Oppdatert
+                            </TableSortLabel>
+                        </TableCell>
+                        <TableCell>
+                            <TableSortLabel
+                                active={sortedColumn === "created"}
+                                direction={sortedColumn === "created" ? sortDirection : "desc"}
+                                onClick={(e) => onColumnClick("created")}
+                            >
+                                Opprettet
                             </TableSortLabel>
                         </TableCell>
                     </TableRow>
@@ -260,10 +260,10 @@ function BoardPageTable( {data} : {data: PageData[]}) {
                                 {page.isUpdated ? "Ja" : "Nei"}
                             </TableCell>
                             <TableCell>
-                                {page.created?.format("D. MMM YYYY") ?? "–"}
+                                {page.updated?.format("D. MMM YYYY") ?? "–"}
                             </TableCell>
                             <TableCell>
-                                {page.updated?.format("D. MMM YYYY") ?? "–"}
+                                {page.created?.format("D. MMM YYYY") ?? "–"}
                             </TableCell>
                         </TableRow>
                     ))}
