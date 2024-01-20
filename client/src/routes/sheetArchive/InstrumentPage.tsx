@@ -31,7 +31,11 @@ export default function InstrumentPage() {
     return (
         <>
             <h2>{song.title}</h2>
-            <div style={{ marginBottom: "150px", marginTop: "30px" }}>
+            <div style={{ 
+                maxWidth: "1300px",
+                marginBottom: "150px", 
+                marginTop: "30px" 
+            }}>
                 <FileFetcher songTitle={song}/>
             </div>
 

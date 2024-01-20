@@ -26,6 +26,7 @@ export default function Home() {
             <Grid 
                 container 
                 spacing={4} 
+                style={{maxWidth: "1265px"}}
             >
                 <ItemOfTheDay
                     title="Arrangement"

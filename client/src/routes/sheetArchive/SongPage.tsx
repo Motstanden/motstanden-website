@@ -40,7 +40,11 @@ export default function SongPage({ mode }: { mode?: "repertoire" }) {
         return (
         <>
             <h1>Notearkiv</h1>
-            <TitleTable items={data}/>
+            <div style={{
+                maxWidth: "1300px"
+            }}>
+                <TitleTable items={data}/>
+            </div>
         </>
     )
 }

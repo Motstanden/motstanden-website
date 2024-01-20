@@ -50,7 +50,13 @@ export default function BoardWebsiteListPage() {
                 />
 
             </section>
-            <BoardPageTableLoader />
+            <section
+                style={{
+                    maxWidth: "1100px"
+                }}
+            >
+                <BoardPageTableLoader />
+            </section>
             <section
                 style={{
                     maxWidth: "700px",

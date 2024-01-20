@@ -34,8 +34,8 @@ export default function PollPage(){
 
     return(
         <div>
+            <h1>Avstemning</h1>
             <div style={{
-                    marginTop: "40px",
                     display: "inline-block",
                     minWidth: "MIN(100%, 500px)"
                 }}>
