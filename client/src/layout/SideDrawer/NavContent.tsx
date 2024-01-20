@@ -1,4 +1,4 @@
-import { List } from "@mui/material";
+import { List, Theme, useMediaQuery } from "@mui/material";
 import { UserGroup } from "common/enums";
 import { hasGroupAccess } from "common/utils";
 import { useAuth } from "src/context/Authentication";
@@ -81,12 +81,14 @@ function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
 function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
     const { user } = useAuth();
     const isSuperAdmin = hasGroupAccess(user!, UserGroup.SuperAdministrator)
-
+    
     const matchesFrontPage = !!useMatch("/hjem/*")
     const matchesWallPage = !!useMatch("/vegg/*")
 
+    const isMobile = useMediaQuery( (theme: Theme) => theme.breakpoints.only("xs"))
+    
     return (
-        <List>
+        <List dense={isMobile} sx={{pb: "50px"}}>
             <ListItemLink 
                 text="Hjem" 
                 to="/" 
