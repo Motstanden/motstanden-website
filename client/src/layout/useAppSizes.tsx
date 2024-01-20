@@ -1,8 +1,10 @@
-import { Theme, useMediaQuery } from "@mui/material";
+import { useMediaQuery } from "@mui/material";
+import { useAppTheme } from "src/context/Themes";
 
-const desktopDrawerWidth = 290
-const smallDesktopDrawerWidth = 220
-const mobileDrawerWidth = 240    // Mobile drawer width
+const largeDesktopDrawerWidth = 335
+const mediumDesktopDrawerWidth = 270
+const smallDesktopDrawerWidth = 230
+const mobileDrawerWidth = 240  
 
 const desktopAppBarHeight = 70;
 const mobileAppBarHeight = 57;
@@ -14,22 +16,27 @@ interface AppSizesProps {
 }
 
 export function useAppSizes(): AppSizesProps {
-    const isMobileScreen = useMediaQuery((theme: Theme) => theme.breakpoints.only('xs'))
-    const isSmallDesktopScreen = useMediaQuery((theme: Theme) => theme.breakpoints.between('sm', 'md'))
+    const {theme} = useAppTheme()
+    const isTiny = useMediaQuery(theme.breakpoints.only('xs'))
+    const isSmall = useMediaQuery(theme.breakpoints.only('sm'))
+    const isMedium = useMediaQuery(theme.breakpoints.only("md"))
+    const isLarge = useMediaQuery(theme.breakpoints.up("lg"))
 
-    let drawerWidth = desktopDrawerWidth
-    if(isMobileScreen) {
-        drawerWidth = mobileDrawerWidth
-    } else if(isSmallDesktopScreen) {
+    let drawerWidth = mobileDrawerWidth
+    if(isSmall) {
         drawerWidth = smallDesktopDrawerWidth
+    } else if(isMedium) {
+        drawerWidth = mediumDesktopDrawerWidth
+    } else if (isLarge) {
+        drawerWidth = largeDesktopDrawerWidth
     }
 
-    const appBarHeight = isMobileScreen ? mobileAppBarHeight : desktopAppBarHeight
+    const appBarHeight = isTiny ? mobileAppBarHeight : desktopAppBarHeight
 
     const appSizes: AppSizesProps = {
         drawerWidth: drawerWidth,
         appBarHeight: appBarHeight,
-        isMobileScreen: isMobileScreen,
+        isMobileScreen: isTiny,
     }
 
     return appSizes
