@@ -25,11 +25,31 @@ export function FaqPage() {
     )
 }
 
-function TextSkeleton() {
+function TextSkeleton( {length = 6}: {length?: number} ) {
     return (
         <>
-            {/* TODO */}
-            <Skeleton variant="rounded" width="100%" height="700px" />
+            <div style={{
+                marginBlock: "30px"
+            }}>
+            <Skeleton 
+                variant="text" 
+                width="280px" 
+                height="3em"
+                />
+            </div>
+            {Array(length).fill(1).map((_, i) => (
+                <div key={i}>
+                    <Skeleton 
+                        variant="text" 
+                        width="250px"/>
+                    <Skeleton 
+                        variant="text" 
+                        width="100%"
+                        height="6em"
+                        />
+                    <br/>
+                </div>
+            ))}
         </>
     )
 }
