@@ -1,8 +1,10 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { UserGroup } from 'common/enums'
 import { SimpleText, UpdateSimpleText } from "common/interfaces"
-import { isNullOrWhitespace } from 'common/utils'
+import { hasGroupAccess, isNullOrWhitespace } from 'common/utils'
 import { useState } from "react"
+import { useAuth } from 'src/context/Authentication'
 import { fetchAsync } from "src/utils/fetchAsync"
 import { MarkDownEditor, MarkDownRenderer } from "./MarkDownEditor"
 import { Form } from "./form/Form"
@@ -11,17 +13,17 @@ import { IconPopupMenu } from "./menu/IconPopupMenu"
 
 export function SimpleTextFetcher({
     queryKeyModifier,
-    canEdit,
     textKey,
     skeleton,
 }: {
     textKey: string,
-    canEdit?: boolean
     queryKeyModifier?: any[]
     skeleton?: React.ReactNode
 }) {
-    const queryKey = buildQueryKey(textKey, queryKeyModifier)
+    const user = useAuth().user
+    const isEditor = !!user && hasGroupAccess(user, UserGroup.Editor)
 
+    const queryKey = buildQueryKey(textKey, queryKeyModifier)
     const { isLoading, isError, data, error } = useQuery<SimpleText>(queryKey, () => fetchAsync<SimpleText>(`/api/simple-text/${textKey}`))
 
     if(isLoading)
@@ -33,7 +35,7 @@ export function SimpleTextFetcher({
     return (
         <SimpleTextEditor 
             value={data} 
-            canEdit={canEdit}
+            canEdit={isEditor}
             contextQueryKey={queryKey}
         />
     )
@@ -55,6 +57,7 @@ function SimpleTextEditor( {
     contextQueryKey?: any[]
     canEdit?: boolean 
 }) {
+
     const [isEditing, setIsEditing] = useState(false)
     const queryClient = useQueryClient()
 

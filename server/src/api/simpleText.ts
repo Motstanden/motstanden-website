@@ -32,7 +32,7 @@ router.get("/simple-text/:key", (req, res) => {
 
 router.post("/simple-text/:id/update", 
     AuthenticateUser(),
-    requiresGroup(UserGroup.Administrator),
+    requiresGroup(UserGroup.Editor),
     validateNumber({
         getValue: req => req.params.id,
     }),

@@ -1,21 +1,15 @@
-import { UserGroup } from "common/enums";
-import { hasGroupAccess } from "common/utils";
+import { Skeleton, useMediaQuery } from "@mui/material";
+import React, { useState } from "react";
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
-import { useAuth } from "src/context/Authentication";
 import { ThemeName, useAppTheme } from "../../context/Themes";
 import { useTitle } from "../../hooks/useTitle";
 import { PageContainer } from "../../layout/PageContainer";
-import { Skeleton, useMediaQuery } from "@mui/material";
-import React, { useState } from "react";
 
 const simpleTextKey = "become-member"
 
 export default function BecomeMemberPage() {
     useTitle("Bli medlem!")
     
-    const user = useAuth().user
-    const isAdmin = !!user && hasGroupAccess(user, UserGroup.Administrator)
-
     return (
         <PageContainer  >
             <div style={{ 
@@ -28,7 +22,6 @@ export default function BecomeMemberPage() {
             }}>
                 <SimpleTextFetcher
                     textKey={simpleTextKey} 
-                    canEdit={isAdmin}
                     skeleton={<TextSkeleton/>}
                 />
             </div>

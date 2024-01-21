@@ -11,13 +11,11 @@ import {
     TableSortLabel
 } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
-import { UserGroup } from "common/enums"
-import { hasGroupAccess, isNullOrWhitespace, strToNumber } from "common/utils"
+import { isNullOrWhitespace, strToNumber } from "common/utils"
 import dayjs, { Dayjs } from "dayjs"
 import { useState } from "react"
 import { headerStyle, rowStyle } from "src/assets/style/tableStyle"
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher"
-import { useAuth } from "src/context/Authentication"
 import { useTitle } from "src/hooks/useTitle"
 import { PageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
@@ -28,9 +26,6 @@ const bottomSimpleTextKey = "board-website-list-bottom"
 
 export default function BoardWebsiteListPage() {
     useTitle("Styrets nettsider")
-
-    const user = useAuth().user
-    const isAdmin = !!user && hasGroupAccess(user, UserGroup.Administrator)
 
     return (
         <PageContainer>
@@ -45,10 +40,8 @@ export default function BoardWebsiteListPage() {
             >
                 <SimpleTextFetcher
                     textKey={topSimpleTextKey}
-                    canEdit={isAdmin}
                     skeleton={<TextSkeleton />}
                 />
-
             </section>
             <section
                 style={{
@@ -67,7 +60,6 @@ export default function BoardWebsiteListPage() {
             >
                 <SimpleTextFetcher
                     textKey={bottomSimpleTextKey}
-                    canEdit={isAdmin}
                 />
             </section>
         </PageContainer>

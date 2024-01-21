@@ -1,20 +1,14 @@
 import { Skeleton, Theme, useMediaQuery } from "@mui/material";
-import { UserGroup } from "common/enums";
-import { hasGroupAccess } from "common/utils";
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
-import { useAuth } from "src/context/Authentication";
+import { useAppTheme } from "src/context/Themes";
 import May17Img from "../../assets/pictures/17mai2021.jpg";
 import { useTitle } from "../../hooks/useTitle";
 import { PageContainer, usePagePadding } from "../../layout/PageContainer";
-import { useAppTheme } from "src/context/Themes";
 
 const simpleTextKey = "front-page"
 
 export default function FrontPage() {
     useTitle("Framside")
-
-    const user = useAuth().user
-    const isAdmin = !!user && hasGroupAccess(user, UserGroup.Administrator)
 
     const { theme } = useAppTheme()
     const isLargeScreen = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'))
@@ -60,7 +54,6 @@ export default function FrontPage() {
                 <SimpleTextFetcher
                     textKey={simpleTextKey} 
                     skeleton={<TextSkeleton/>}
-                    canEdit={isAdmin}
                 />
             </div>
         </PageContainer>
