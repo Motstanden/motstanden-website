@@ -25,12 +25,16 @@ import SuperAdminPage from "src/routes/admin/SuperAdmin";
 import BecomeMemberPage from "src/routes/becomeMember/BecomeMember";
 import BoardWebsiteListPage from "src/routes/boardWebsiteList/BoardWebsiteList";
 import DocumentsPage from "src/routes/documents/DocumentsPage";
+import { FaqPage } from "src/routes/faq/FaqPage";
 import FrontPage from "src/routes/frontPage/FrontPage";
 import HomePage from "src/routes/home/Home";
+import WallPage from "src/routes/home/Wall";
+import { WallPostItemPage } from "src/routes/home/WallPostItem";
 import HomePageContainer from "src/routes/home/components/PageContainer";
 import { LicenseOnlyPage, LicensePage } from "src/routes/license/LicensePage";
 import LoginPage from "src/routes/login/Login";
 import { EditLyricPage } from "src/routes/lyric/EditPage";
+import { LyricItemPage } from 'src/routes/lyric/ItemPage';
 import { LyricListPage } from 'src/routes/lyric/ListPage';
 import { NewLyricPage } from "src/routes/lyric/NewPage";
 import NotFound from "src/routes/notFound/NotFound";
@@ -46,11 +50,7 @@ import { SheetArchiveContext } from "src/routes/sheetArchive/Context";
 import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
 import { HistoryPage } from "./routes/history/HistoryPage";
-import WallPage from "src/routes/home/Wall";
-import { WallPostItemPage } from "src/routes/home/WallPostItem";
 import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
-import { LyricItemPage } from 'src/routes/lyric/ItemPage';
-import { FaqPage } from "src/routes/faq/faqPage";
 
 function App() {
 	const auth = useAuth()
