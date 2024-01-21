@@ -1,11 +1,12 @@
-import { Skeleton } from "@mui/material";
+import { Skeleton, Theme, useMediaQuery } from "@mui/material";
+import { UserGroup } from "common/enums";
+import { hasGroupAccess } from "common/utils";
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
+import { useAuth } from "src/context/Authentication";
 import May17Img from "../../assets/pictures/17mai2021.jpg";
 import { useTitle } from "../../hooks/useTitle";
-import { PageContainer } from "../../layout/PageContainer";
-import { useAuth } from "src/context/Authentication";
-import { hasGroupAccess } from "common/utils";
-import { UserGroup } from "common/enums";
+import { PageContainer, usePagePadding } from "../../layout/PageContainer";
+import { useAppTheme } from "src/context/Themes";
 
 const simpleTextKey = "front-page"
 
@@ -15,19 +16,42 @@ export default function FrontPage() {
     const user = useAuth().user
     const isAdmin = !!user && hasGroupAccess(user, UserGroup.Administrator)
 
+    const { theme } = useAppTheme()
+    const isLargeScreen = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'))
+
+    const { 
+        paddingLeft: pagePaddingLeft,
+        paddingRight: pagePaddingRight,
+        paddingBottom: pagePaddingBottom,
+    } = usePagePadding()
+
     return (
         <PageContainer disableGutters>
-            <img src={May17Img}
-                alt="Motstanden feirer 17. Mai 2021"
-                style={{ 
-                    width: "100%", 
-                    maxHeight: "33vh", 
-                    objectFit: "cover"
-                 }}
-             />
+            <div style={
+                isLargeScreen ? {
+                    paddingTop: "50px",
+                    paddingLeft: pagePaddingLeft,
+                    paddingRight: pagePaddingRight,
+                } : undefined}
+            >
+                <img src={May17Img}
+                    alt="Motstanden feirer 17. Mai 2021"
+                    style={{ 
+                        width: "100%", 
+                        maxHeight: "60vh",
+                        objectFit: "cover",
+                        maxWidth: theme.breakpoints.values.lg,
+                        borderRadius: isLargeScreen ? "10px" : "0px",
+                        borderWidth:  isLargeScreen ? "2px" : "0px",
+                        borderStyle: "solid",
+                        borderColor: theme.palette.divider,
+                    }}
+                />
+            </div>
             <div style={{ 
-                paddingInline: "35px", 
-                paddingBottom: "100px", 
+                paddingLeft: pagePaddingLeft,
+                paddingRight: pagePaddingRight,
+                paddingBottom: pagePaddingBottom,
                 maxWidth: "700px",
                 fontSize: "14pt",
                 lineHeight: "1.6",

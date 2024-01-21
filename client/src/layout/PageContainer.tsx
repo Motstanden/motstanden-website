@@ -1,13 +1,8 @@
 import { useMediaQuery } from "@mui/material";
 import React, { useLayoutEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { PageTab, PageTabItem, findActiveTab } from "src/components/PageTab";
+import { PageTab, PageTabItem } from "src/components/PageTab";
 import { useAppTheme } from "src/context/Themes";
-
-const largePadding = "15Px min(100px, 4vw) 150px min(100px, 4vw)"
-const mediumPadding = "15Px min(80px, 3vw) 150px min(80px, 3vw)"
-const smallPadding = "15Px min(70px, 2vw) 150px min(70px, 2vw)"
-const tinyPadding = "15px 15px 150px 15px"
 
 export function PageContainer({
     children,
@@ -21,21 +16,10 @@ export function PageContainer({
     disableScrollHandling?: boolean
 }) {
     const { theme } = useAppTheme()
-
-    const isSmall = useMediaQuery(theme.breakpoints.only('sm'));
-    const isMedium = useMediaQuery(theme.breakpoints.only('md'));
-    const isLarge = useMediaQuery(theme.breakpoints.up("lg"));
-
-    let padding = tinyPadding
-    if(disableGutters) {
-        padding = "0px 0px"
-    } else if (isSmall) {
-        padding = smallPadding
-    } else if (isMedium) {
-        padding = mediumPadding
-    } else if(isLarge) {
-        padding = largePadding
-    }
+    
+    let { padding } = usePagePadding()
+    if(disableGutters)
+        padding = "0px"
 
     useTopScroller({ prevent: disableScrollHandling })
 
@@ -93,6 +77,44 @@ export function TabbedPageContainer({
             </PageContainer>
         </>
     )
+}
+
+const paddingTop = "15px"
+const paddingBottom = "150px"
+
+const tinyPaddingInline = "15px"
+const smallPaddingInline = "min(70px, 2vw)"
+const mediumPaddingInline = "min(80px, 3vw)"
+const largePaddingInline = "min(100px, 4vw)"
+
+export function usePagePadding() {
+    const { theme } = useAppTheme()
+
+    const isTiny = useMediaQuery(theme.breakpoints.only('xs'));
+    const isSmall = useMediaQuery(theme.breakpoints.only('sm'));
+    const isMedium = useMediaQuery(theme.breakpoints.only('md'));
+    const isLarge = useMediaQuery(theme.breakpoints.up("lg"));
+
+    let inlinePadding = "0px"
+    if (isTiny) {
+        inlinePadding = tinyPaddingInline
+    } else if (isSmall) {
+        inlinePadding = smallPaddingInline
+    } else if (isMedium) {
+        inlinePadding = mediumPaddingInline
+    } else if(isLarge) {
+        inlinePadding = largePaddingInline
+    }   
+
+    const pagePadding = {
+        paddingTop: paddingTop,
+        paddingBottom: paddingBottom,
+        paddingLeft: inlinePadding,
+        paddingRight: inlinePadding,
+        padding: `${paddingTop} ${inlinePadding} ${paddingBottom} ${inlinePadding}`
+    }
+
+    return pagePadding
 }
 
 function useTopScroller( { 
