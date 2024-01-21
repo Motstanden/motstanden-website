@@ -1,30 +1,27 @@
 import { Link } from "@mui/material"
 import dayjs from "dayjs"
 import { Link as RouterLink } from "react-router-dom"
+import { useUserReference } from "src/context/UserReference"
 
 export function AuthorInfo({ 
     createdAt,
     createdByUserId,
-    createdByUserName,
     updatedAt,
     updatedByUserId,
-    updatedByUserName,
     style
 } : {
     createdAt?: string,
     createdByUserId?: number,
-    createdByUserName?: string,
     updatedAt?: string,
     updatedByUserId?: number,
-    updatedByUserName?: string,
     style?: React.CSSProperties
 }){
 
-    if(!createdAt || !createdByUserId || !createdByUserName)
+    if(!createdAt || !createdByUserId || !createdByUserId)
         return <></>
 
     const showUpdated = updatedByUserId !== undefined &&
-        updatedByUserName !== undefined &&
+        createdByUserId !== undefined &&
         updatedAt !== undefined &&
         updatedAt !== createdAt
 
@@ -44,7 +41,6 @@ export function AuthorInfo({
             </div>
             <div>
                 <AuthorItem 
-                    userName={createdByUserName} 
                     userId={createdByUserId} 
                     dateTime={createdAt} />
             </div>
@@ -55,7 +51,6 @@ export function AuthorInfo({
                     </div>
                     <div>
                         <AuthorItem 
-                            userName={updatedByUserName} 
                             userId={updatedByUserId} 
                             dateTime={updatedAt} />
                     </div>
@@ -65,7 +60,9 @@ export function AuthorInfo({
     )
 }
 
-function AuthorItem({ userName, userId, dateTime }: { userName: string, userId: number, dateTime: string }) {
+export function AuthorItem({ userId, dateTime }: { userId: number, dateTime: string }) {
+    const { userReference } = useUserReference()
+    const user = userReference[userId]
     return (
         <span>
             {`${dayjs(dateTime).utc(true).local().format("DD. MMM YYYY HH:mm")}, av `}
@@ -75,7 +72,7 @@ function AuthorItem({ userName, userId, dateTime }: { userName: string, userId: 
                 to={`/medlem/${userId}`}
                 underline="hover"
             >
-                {`${userName}`}
+                {user.fullName}
             </Link>
         </span>
     )

@@ -200,10 +200,8 @@ function PollContent( {poll }: {poll: Poll }) {
                 <AuthorInfo 
                     createdAt={poll.createdAt}
                     createdByUserId={poll.createdBy}
-                    createdByUserName={poll.createdByName}
                     updatedAt={poll.updatedAt}
                     updatedByUserId={poll.updatedBy}
-                    updatedByUserName={poll.updatedByName}
                 />
             </div>
             <PollOptions poll={poll}/>

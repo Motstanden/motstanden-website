@@ -44,10 +44,8 @@ export default function ItemPage() {
                 <AuthorInfo 
                     createdAt={event.createdAt}
                     createdByUserId={event.createdByUserId}
-                    createdByUserName={event.createdByName}
                     updatedAt={event.updatedAt}
                     updatedByUserId={event.updatedByUserId}
-                    updatedByUserName={event.updatedByName}
                 />
                 <KeyInfo
                     keyInfo={event.keyInfo}

@@ -6,6 +6,7 @@ import { SongLyric } from 'common/interfaces';
 import { hasGroupAccess } from 'common/utils';
 import { useNavigate } from "react-router-dom";
 import { AuthorInfo } from 'src/components/AuthorInfo';
+import { CommentSection } from 'src/components/CommentSection';
 import { MarkDownRenderer } from 'src/components/MarkDownEditor';
 import { DeleteMenuItem, EditMenuItem } from 'src/components/menu/EditOrDeleteMenu';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
@@ -13,7 +14,6 @@ import { useAuth } from 'src/context/Authentication';
 import { postJson } from 'src/utils/postJson';
 import { useTitle } from "../../hooks/useTitle";
 import { lyricContextQueryKey, useLyricItemContext } from './Context';
-import { CommentSection } from 'src/components/CommentSection';
 
 export function LyricItemPage() {
     const [allLyrics, lyric] = useLyricItemContext()
@@ -30,10 +30,8 @@ export function LyricItemPage() {
                 <TitleHeader lyric={lyric} />
                 <AuthorInfo
                     createdByUserId={lyric.createdBy}
-                    createdByUserName={lyric.createdByName}
                     createdAt={lyric.createdAt}
                     updatedByUserId={lyric.updatedBy}
-                    updatedByUserName={lyric.updatedByName}
                     updatedAt={lyric.updatedAt}
                     style={{
                         fontSize: "small",
