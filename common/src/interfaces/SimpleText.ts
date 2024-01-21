@@ -5,5 +5,7 @@ export interface UpdateSimpleText {
 export interface SimpleText extends UpdateSimpleText {
     id: number;
     key: string;
+    updatedBy: number;
+    updatedAt: string;
 }
 

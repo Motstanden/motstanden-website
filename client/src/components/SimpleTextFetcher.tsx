@@ -6,6 +6,7 @@ import { hasGroupAccess, isNullOrWhitespace } from 'common/utils'
 import { useState } from "react"
 import { useAuth } from 'src/context/Authentication'
 import { fetchAsync } from "src/utils/fetchAsync"
+import { authorInfoTextStyle, AuthorItem } from './AuthorInfo'
 import { MarkDownEditor, MarkDownRenderer } from "./MarkDownEditor"
 import { Form } from "./form/Form"
 import { EditMenuItem } from "./menu/EditOrDeleteMenu"
@@ -112,6 +113,7 @@ function SimpleTextReader( {
                 position: "relative"
             }}
         >
+            <LastEditInfo simpleText={value} />
             <MarkDownRenderer value={value.text} />
             {canEdit && (
                 <IconPopupMenu 
@@ -121,7 +123,7 @@ function SimpleTextReader( {
 
                         } :{
                         position: 'absolute',
-                        top: 13,
+                        top: -14,
                         right: 10,
                     }}
                 > 
@@ -131,6 +133,29 @@ function SimpleTextReader( {
                     />
                 </IconPopupMenu>
             )}
+        </div>
+    )
+}
+
+function LastEditInfo( {simpleText}: {simpleText: SimpleText} ) {
+    const isLoggedIn = !!useAuth().user
+
+    if(!isLoggedIn)
+        return <></>
+
+    return (
+        <div style={{
+            ...authorInfoTextStyle,
+            marginTop: "-15px",
+            marginBottom: "-10px"
+        }}>
+            <span style={{paddingRight: "4px"}}>
+                Redigert:
+            </span>
+            <AuthorItem 
+                userId={simpleText.updatedBy} 
+                dateTime={simpleText.updatedAt} 
+            />
         </div>
     )
 }

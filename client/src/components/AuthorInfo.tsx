@@ -3,6 +3,11 @@ import dayjs from "dayjs"
 import { Link as RouterLink } from "react-router-dom"
 import { useUserReference } from "src/context/UserReference"
 
+export const authorInfoTextStyle: React.CSSProperties = { 
+    fontSize: "xx-small",
+    opacity: 0.75,
+}
+
 export function AuthorInfo({ 
     createdAt,
     createdByUserId,
@@ -27,8 +32,7 @@ export function AuthorInfo({
 
     return (
         <div style={{
-            fontSize: "xx-small",
-            opacity: 0.75,
+            ...authorInfoTextStyle,
             paddingBlock: "10px",
             display: "grid",
             gridTemplateColumns: "min-content auto",

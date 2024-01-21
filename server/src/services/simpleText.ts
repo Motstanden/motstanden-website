@@ -8,7 +8,9 @@ function get(key: string): SimpleText | undefined {
     SELECT 
         simple_text_id as id,
         key,
-        text
+        text,
+        updated_by as updatedBy,
+        updated_at as updatedAt
     FROM 
         simple_text 
     WHERE 
