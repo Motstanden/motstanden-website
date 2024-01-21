@@ -1,4 +1,4 @@
-import { Link } from "@mui/material"
+import { Link, Skeleton } from "@mui/material"
 import dayjs from "dayjs"
 import { Link as RouterLink } from "react-router-dom"
 import { useUserReference } from "src/context/UserReference"
@@ -65,19 +65,33 @@ export function AuthorInfo({
 }
 
 export function AuthorItem({ userId, dateTime }: { userId: number, dateTime: string }) {
-    const { userReference } = useUserReference()
+    const { userReference, isLoading, isError } = useUserReference()
+
+    if(isLoading)
+        return <Skeleton variant="text" style={{display: "inline-block", width: "190px"}} />
+    
+    if(isError)
+        return <span style={{color: "red"}}>Oops, noe gikk galt...🤔</span>
+
     const user = userReference[userId]
     return (
         <span>
             {`${dayjs(dateTime).utc(true).local().format("DD. MMM YYYY HH:mm")}, av `}
-            <Link
-                color="secondary"
-                component={RouterLink}
-                to={`/medlem/${userId}`}
-                underline="hover"
-            >
-                {user.fullName}
-            </Link>
+            
+            {user && (
+                <Link
+                    color="secondary"
+                    component={RouterLink}
+                    to={`/medlem/${userId}`}
+                    underline="hover"
+                >
+                    {user.fullName}
+                </Link> 
+            )}
+
+            {!user && (
+                <span>Ukjent</span>
+            )}
         </span>
     )
 }
