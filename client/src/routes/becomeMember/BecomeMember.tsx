@@ -6,6 +6,7 @@ import { ThemeName, useAppTheme } from "../../context/Themes";
 import { useTitle } from "../../hooks/useTitle";
 import { PageContainer } from "../../layout/PageContainer";
 import { Skeleton, useMediaQuery } from "@mui/material";
+import React, { useState } from "react";
 
 const simpleTextKey = "become-member"
 
@@ -31,7 +32,7 @@ export default function BecomeMemberPage() {
                     skeleton={<TextSkeleton/>}
                 />
             </div>
-            <GoogleForm />
+            <GoogleFormLoader/>
         </PageContainer>
     )
 }
@@ -59,54 +60,84 @@ function TextSkeleton() {
     )
 }
 
+function GoogleFormLoader() {
+    const [isLoading, setIsLoading] = useState(true)
 
-function GoogleForm() {
+    const onLoad = () => {
+        setIsLoading(false)
+    }
+
+    return (
+        <>
+            <GoogleForm onLoad={onLoad} style={{display: isLoading  ? "none" : "block"}} />
+            <GoogleFormSkeleton style={{display: isLoading ? "block" : "none"}} />
+        </>
+    )
+}
+
+function GoogleFormSkeleton({ style }: { style?: React.CSSProperties}) { 
+    return (
+        <div style={style}>
+            <Skeleton 
+                variant="rounded"
+                width="100%"
+                height="750px"
+                style={{
+                    maxWidth: "650px", 
+                    borderRadius: "10px"
+                }}
+            />
+        </div>
+    )
+}
+
+function GoogleForm({
+    onLoad,
+    style
+}: {
+    onLoad?: () => void,
+    style?: React.CSSProperties
+}) {
     const theme = useAppTheme();
 
-    const isTinyScreen = useMediaQuery("(max-width: 400px)")
     const isSmallScreen = useMediaQuery("(max-width: 600px)")
-    
-    let style: React.CSSProperties = {
-        marginLeft: "-30px"
-    }
+    const isMediumScreen = useMediaQuery("(max-width: 850px)")
 
-    if(isSmallScreen) {
-        style = {
-            marginLeft: "-20px"
-        }
-    }
+    const baseStyle: React.CSSProperties =  
+        isSmallScreen ? 
+            { marginLeft: " 0px" } :
+        isMediumScreen ? 
+            { marginLeft: "-10px" } :
+            { marginLeft: "-30px" } 
 
-    if(isTinyScreen) {
-        style = {
-            marginLeft: "00px"
-        }
-    }
 
     const invertProps = theme.name === ThemeName.Dark
         ? { filter: "invert(100%) hue-rotate(180deg)" }
         : {}
         
     return (
-        <div style={{
-            ...style,
-            overflow: "hidden",
-            width: "100%",
-            height: "1100px",
-        }}>
-            <iframe
-                src="https://docs.google.com/forms/d/e/1FAIpQLSdJwbR3AjGFGwLXaOXYEzhohegIj5DIXf75e87CX2EoogwinA/viewform?embedded=true"
-                allowFullScreen
-                frameBorder="0"
-                scrolling="no"
-                style={{
-                    height: "100%",
-                    width: "100%",
-                    maxWidth: "700px",
-                    overflow: "hidden",
-                    ...invertProps
-                }}>
-                Laster inn…
-            </iframe>
-        </div>
+        <>
+            <div style={{
+                ...baseStyle,
+                overflow: "hidden",
+                width: "100%",
+                height: "1100px",
+                ...style,
+            }}>
+                <iframe
+                    src="https://docs.google.com/forms/d/e/1FAIpQLSdJwbR3AjGFGwLXaOXYEzhohegIj5DIXf75e87CX2EoogwinA/viewform?embedded=true"
+                    allowFullScreen
+                    frameBorder="0"
+                    scrolling="no"
+                    onLoad={onLoad}
+                    style={{
+                        height: "100%",
+                        width: "100%",
+                        maxWidth: "700px",
+                        overflow: "hidden",
+                        ...invertProps
+                    }}/>
+            </div>
+        </>
     )
 }
