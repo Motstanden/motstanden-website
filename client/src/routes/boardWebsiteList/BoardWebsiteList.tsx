@@ -16,6 +16,7 @@ import dayjs, { Dayjs } from "dayjs"
 import { useState } from "react"
 import { headerStyle, rowStyle } from "src/assets/style/tableStyle"
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher"
+import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton"
 import { useTitle } from "src/hooks/useTitle"
 import { PageContainer } from "src/layout/PageContainer"
 import { fetchAsync } from "src/utils/fetchAsync"
@@ -40,7 +41,7 @@ export default function BoardWebsiteListPage() {
             >
                 <SimpleTextFetcher
                     textKey={topSimpleTextKey}
-                    skeleton={<TextSkeleton />}
+                    skeleton={<SimpleTextSkeleton />}
                 />
             </section>
             <section
@@ -60,32 +61,10 @@ export default function BoardWebsiteListPage() {
             >
                 <SimpleTextFetcher
                     textKey={bottomSimpleTextKey}
+                    skeleton={<SimpleTextSkeleton />}
                 />
             </section>
         </PageContainer>
-    )
-}
-
-function TextSkeleton() {
-    return (
-        <>
-            <div style={{
-                marginBlock: "30px"
-            }}>
-            <Skeleton 
-                variant="text" 
-                width="280px" 
-                height="3em"
-                />
-            </div>
-            <div>
-            <Skeleton
-                    variant="rounded"
-                    width="100%"
-                    height="180px"
-                />
-            </div>
-        </>   
     )
 }
 

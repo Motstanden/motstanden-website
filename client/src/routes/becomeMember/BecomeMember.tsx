@@ -4,6 +4,7 @@ import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
 import { ThemeName, useAppTheme } from "../../context/Themes";
 import { useTitle } from "../../hooks/useTitle";
 import { PageContainer } from "../../layout/PageContainer";
+import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton";
 
 const simpleTextKey = "become-member"
 
@@ -22,34 +23,11 @@ export default function BecomeMemberPage() {
             }}>
                 <SimpleTextFetcher
                     textKey={simpleTextKey} 
-                    skeleton={<TextSkeleton/>}
+                    skeleton={<SimpleTextSkeleton/>}
                 />
             </div>
             <GoogleFormLoader/>
         </PageContainer>
-    )
-}
-
-function TextSkeleton() {
-    return (
-        <>
-            <div style={{
-                marginBlock: "30px"
-            }}>
-            <Skeleton 
-                variant="text" 
-                width="280px" 
-                height="3em"
-                />
-            </div>
-            <div>
-            <Skeleton
-                    variant="rounded"
-                    width="100%"
-                    height="145px"
-                />
-            </div>
-        </>   
     )
 }
 

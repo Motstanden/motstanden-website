@@ -4,6 +4,7 @@ import { useAppTheme } from "src/context/Themes";
 import May17Img from "../../assets/pictures/17mai2021.jpg";
 import { useTitle } from "../../hooks/useTitle";
 import { PageContainer, usePagePadding } from "../../layout/PageContainer";
+import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton";
 
 const simpleTextKey = "front-page"
 
@@ -53,54 +54,10 @@ export default function FrontPage() {
             }}>
                 <SimpleTextFetcher
                     textKey={simpleTextKey} 
-                    skeleton={<TextSkeleton/>}
+                    skeleton={<SimpleTextSkeleton numberOfSections={4}/>}
                 />
             </div>
         </PageContainer>
     )
     
-}
-
-function TextSkeleton() {
-    return (
-        <div>
-            <SectionSkeleton/>
-            <SectionSkeleton/>
-            <SectionSkeleton/>
-            <SectionSkeleton/>
-        </div>
-    )
-}
-
-function SectionSkeleton() { 
-    return (
-        <>
-            <TitleSkeleton/>
-            <ContentSkeleton/>
-        </>
-    )
-}
-
-function TitleSkeleton() {
-    return (
-        <div style={{
-            marginBlock: "30px"
-        }}>
-            <Skeleton 
-                variant="text" 
-                width="280px" 
-                height="3em"
-                />
-        </div>
-    )
-}
-
-function ContentSkeleton() {
-    return (
-        <Skeleton
-            variant="rounded"
-            width="100%"
-            height="120px"
-        />
-    )
 }

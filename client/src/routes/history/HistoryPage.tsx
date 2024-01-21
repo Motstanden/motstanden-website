@@ -1,5 +1,6 @@
 import { Skeleton } from "@mui/material";
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
+import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton";
 import { useTitle } from "src/hooks/useTitle";
 import { PageContainer } from "src/layout/PageContainer";
 
@@ -18,50 +19,9 @@ export function HistoryPage() {
             }}>
                 <SimpleTextFetcher
                     textKey={simpleTextKey} 
-                    skeleton={<TextSkeleton/>}
+                    skeleton={<SimpleTextSkeleton numberOfSections={4}/>}
                 />
             </article>
         </PageContainer>
-    )
-}
-
-function TextSkeleton() {
-    return (
-        <div>
-            <Skeleton variant="rounded" width={"100%"} />
-        </div>
-    )
-}
-
-function SectionSkeleton() { 
-    return (
-        <>
-            <TitleSkeleton/>
-            <ContentSkeleton/>
-        </>
-    )
-}
-
-function TitleSkeleton() {
-    return (
-        <div style={{
-            marginBlock: "30px"
-        }}>
-            <Skeleton 
-                variant="text" 
-                width="280px" 
-                height="3em"
-                />
-        </div>
-    )
-}
-
-function ContentSkeleton() {
-    return (
-        <Skeleton
-            variant="rounded"
-            width="100%"
-            height="120px"
-        />
     )
 }
