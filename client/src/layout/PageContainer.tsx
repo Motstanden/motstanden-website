@@ -1,27 +1,23 @@
 import { useMediaQuery } from "@mui/material";
-import React, { useLayoutEffect } from "react";
-import { useLocation } from "react-router-dom";
+import React from "react";
 import { PageTab, PageTabItem } from "src/components/PageTab";
 import { useAppTheme } from "src/context/Themes";
+import { useTopScroller } from "src/context/TopScroller";
 
 export function PageContainer({
     children,
     props,
     disableGutters,
-    disableScrollHandling
 }: {
     children?: React.ReactNode,
     props?: React.CSSProperties,
     disableGutters?: boolean,
-    disableScrollHandling?: boolean
 }) {
     const { theme } = useAppTheme()
     
     let { padding } = usePagePadding()
     if(disableGutters)
         padding = "0px"
-
-    useTopScroller({ prevent: disableScrollHandling })
 
     return (
         <div style={{
@@ -48,17 +44,11 @@ export function TabbedPageContainer({
 }) {
     const { theme } = useAppTheme()
 
-    const [preventScroll, setPreventScroll] = React.useState(false)
+    const { preventNextScroll } = useTopScroller()
 
     const onTabClick = () => {
-        setPreventScroll(true)
+        preventNextScroll(true)
     }
-
-    useTopScroller({ prevent: () => {
-        const prevent = preventScroll
-        setPreventScroll(false)
-        return prevent
-    }})
 
     return (
         <>
@@ -70,7 +60,7 @@ export function TabbedPageContainer({
                 }}
                 onTabClick={onTabClick}
             />
-            <PageContainer disableScrollHandling={true}>
+            <PageContainer>
                 <div>
                     {children}
                 </div>
@@ -115,29 +105,4 @@ export function usePagePadding() {
     }
 
     return pagePadding
-}
-
-function useTopScroller( { 
-    prevent 
-}: { 
-    prevent?: boolean | undefined | (() => boolean | undefined)
-}) {
-    const location = useLocation();
-
-    useLayoutEffect(() => {
-        const childHandlesScroll = !!location.hash
-
-        let preventScroll = false
-        if(typeof prevent === "function") {
-            preventScroll = prevent() ?? false
-        } else if(typeof prevent === "boolean") {
-            preventScroll = prevent
-        }
-
-        const shouldScroll = !childHandlesScroll && !preventScroll 
-
-        if (shouldScroll) {
-            window.scrollTo({ top: 0, left: 0})
-        }
-    }, [location.pathname])   
 }

@@ -10,11 +10,12 @@ import { UserGroup } from "common/enums";
 import { User } from "common/interfaces";
 import { getFullName, hasGroupAccess, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";
 import dayjs from "dayjs";
-import { Link as RouterLink, useOutletContext } from "react-router-dom";
+import { Link as RouterLink, matchPath, useLocation, useOutletContext } from "react-router-dom";
+import { PostingWall } from "src/components/PostingWall";
 import { useAuth } from "src/context/Authentication";
+import { useTopScroller } from 'src/context/TopScroller';
 import { useTitle } from "src/hooks/useTitle";
 import { Card, CardTextItem } from "./Components";
-import { PostingWall } from "src/components/PostingWall";
 
 export default function UserPage() {
     const user = useOutletContext<User>()
@@ -67,11 +68,21 @@ function ProfileBanner({ user }: { user: User }) {
 function EditButton({ user }: { user: User }) {
     const loggedInUser = useAuth().user!
 
+    const { preventNextScroll } = useTopScroller()
+    const location  = useLocation()
+
     const isSelf = loggedInUser.id === user.id
     const groupPermission = hasGroupAccess(loggedInUser, UserGroup.Administrator)
     const canEdit = isSelf || groupPermission
     if (!canEdit) {
         return <></>
+    }
+
+    const onClick = () => {
+        const isEditPage = matchPath("/medlem/:id/rediger", location.pathname)
+        if(!isEditPage) {
+            preventNextScroll(true)
+        }
     }
 
     return (
@@ -81,6 +92,7 @@ function EditButton({ user }: { user: User }) {
                     component={RouterLink}
                     to={`rediger`}
                     replace
+                    onClick={onClick}
                     style={{
                         position: "absolute",
                         right: "0px",

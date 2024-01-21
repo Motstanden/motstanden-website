@@ -12,6 +12,7 @@ import { LocaleProvider } from './context/Locale';
 import { AppThemeProvider } from './context/Themes';
 import { UserReferenceProvider } from './context/UserReference';
 import { LikeEmojiProvider } from './context/LikeEmoji';
+import { TopScrollerProvider } from './context/TopScroller';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
@@ -28,10 +29,12 @@ root.render(
 						<UserReferenceProvider>
 							<LikeEmojiProvider>
 								<AppThemeProvider>
-									{/* Provides reasonable default css values from the material-ui framework */}
-									<CssBaseline />
+									<TopScrollerProvider>
+										{/* Provides reasonable default css values from the material-ui framework */}
+										<CssBaseline />
 
-									<App />
+										<App />
+									</TopScrollerProvider>
 								</AppThemeProvider>
 							</LikeEmojiProvider>
 						</UserReferenceProvider>
