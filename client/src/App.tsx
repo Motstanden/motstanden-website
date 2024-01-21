@@ -27,8 +27,7 @@ import BoardWebsiteListPage from "src/routes/boardWebsiteList/BoardWebsiteList";
 import DocumentsPage from "src/routes/documents/DocumentsPage";
 import FrontPage from "src/routes/frontPage/FrontPage";
 import HomePage from "src/routes/home/Home";
-import HomePageContainer from "src/routes/home/components/PageContainer"
-import WallPage from "./routes/home/Wall";
+import HomePageContainer from "src/routes/home/components/PageContainer";
 import { LicenseOnlyPage, LicensePage } from "src/routes/license/LicensePage";
 import LoginPage from "src/routes/login/Login";
 import { EditLyricPage } from "src/routes/lyric/EditPage";
@@ -46,9 +45,12 @@ import { NewRumourPage, RumourPage } from 'src/routes/rumour/RumourPage';
 import { SheetArchiveContext } from "src/routes/sheetArchive/Context";
 import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
+import { HistoryPage } from "./routes/history/HistoryPage";
+import WallPage from "src/routes/home/Wall";
+import { WallPostItemPage } from "src/routes/home/WallPostItem";
 import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
-import { LyricItemPage } from './routes/lyric/ItemPage';
-import { WallPostItemPage } from "./routes/home/WallPostItem";
+import { LyricItemPage } from 'src/routes/lyric/ItemPage';
+import { FaqPage } from "src/routes/faq/faqPage";
 
 function App() {
 	const auth = useAuth()
@@ -84,6 +86,8 @@ function App() {
 						</Route>
 						<Route path="/dokumenter" element={<DocumentsPage />} />
 						<Route path="/bli-medlem" element={<BecomeMemberPage />} />
+						<Route path="/historie" element={<HistoryPage/>} />
+						<Route path="/faq" element={<FaqPage/>} />
 						<Route path="/styrets-nettsider" element={<BoardWebsiteListPage/>} />
 						<Route path="/lisens" element={<LicensePage />} />
 						<Route path="/maakesodd" element={<LicenseOnlyPage />} />

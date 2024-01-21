@@ -1,6 +1,7 @@
 import { List, Theme, useMediaQuery } from "@mui/material";
 import { UserGroup } from "common/enums";
 import { hasGroupAccess } from "common/utils";
+import { useMatch } from "react-router-dom";
 import { useAuth } from "src/context/Authentication";
 import { ListItemDivider, ListItemExpander, ListItemLink } from './ListItem';
 
@@ -17,11 +18,12 @@ import HomeIcon from '@mui/icons-material/Home';
 import FrontPageIcon from '@mui/icons-material/Info';
 import WikiIcon from '@mui/icons-material/Language';
 import LicenseIcon from '@mui/icons-material/LocalPolice';
+import HistoryIcon from '@mui/icons-material/MenuBook';
 import SheetArchiveIcon from '@mui/icons-material/MusicVideo';
 import LyricIcon from '@mui/icons-material/Nightlife';
 import MemberAddIcon from '@mui/icons-material/PersonAdd';
 import PollIcon from '@mui/icons-material/Poll';
-import { useMatch } from "react-router-dom";
+import FaqIcon from '@mui/icons-material/QuestionMark';
 
 export function NavContent({onItemClick}: {onItemClick: VoidFunction}) {
     const auth = useAuth()
@@ -32,8 +34,10 @@ export function NavContent({onItemClick}: {onItemClick: VoidFunction}) {
 
 function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
     const matchesFrontPage = !!useMatch("/framside/*")
+    const isMobile = useMediaQuery( (theme: Theme) => theme.breakpoints.only("xs"))
+
     return (
-        <List>
+        <List dense={isMobile}>
             <ListItemLink 
                 text="Framside" 
                 to="/" 
@@ -45,6 +49,12 @@ function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 to="/bli-medlem" 
                 icon={<BecomeMemberIcon/>}
                 onLinkClick={onItemClick}/>
+            <ListItemLink 
+                text="FAQ"
+                to="/faq"
+                icon={<FaqIcon/>}
+                onLinkClick={onItemClick}
+            />
             <ListItemDivider/>
             <ListItemLink 
                 text="Traller" 
@@ -57,6 +67,12 @@ function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 to="/dokumenter" 
                 icon={<DocumentsIcon/>} 
                 onLinkClick={onItemClick}/>
+            <ListItemLink 
+                text="Historie"
+                to="/historie"
+                icon={<HistoryIcon/>}
+                onLinkClick={onItemClick}
+            />
             <ListItemLink 
                 text="Styrets Nettsider" 
                 to="/styrets-nettsider" 
@@ -177,6 +193,18 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                     to="/framside" 
                     icon={<FrontPageIcon/>} 
                     onLinkClick={onItemClick}/>
+                <ListItemLink 
+                    text="FAQ"
+                    to="/faq"
+                    icon={<FaqIcon/>}
+                    onLinkClick={onItemClick}
+                />
+                <ListItemLink 
+                    text="Historie"
+                    to="/historie"
+                    icon={<HistoryIcon/>}
+                    onLinkClick={onItemClick}
+                />
                 <ListItemLink 
                     text="Bli Medlem" 
                     to="/bli-medlem" 

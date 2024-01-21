@@ -1,6 +1,8 @@
 INSERT INTO 
     simple_text(key, updated_by, text)
 VALUES
+
+---------------- Front page ----------------
     (
         'front-page',
         14,
@@ -27,6 +29,8 @@ Er det noe du lurer på? Kontakt oss gjerne på:
 - [Instagram](https://instagram.com/denohmskemotstanden)
 - [TikTok](https://vm.tiktok.com/ZMNVv1Tk3/)'
     ),
+
+---------------- Become member ----------------
     (
         'become-member',
         14,
@@ -39,6 +43,8 @@ Er det noe du lurer på? Kontakt oss gjerne på:
 
 Vi tar kontakt med deg så fort som mulig!'
     ),
+
+---------------- Board website 1 ----------------
     (
         'board-website-list-top',
         14,
@@ -49,10 +55,60 @@ Hvert styre i Motstanden har sin egen nettside. Til å begynne med inneholder ne
 
 ### Alle styrenettsider'   
     ),
+
+---------------- Board website 2 ----------------
     (
         'board-website-list-bottom',
         14,
 '# Kildekode 
 
 Kildekoden til nettsidene er åpent tilgjengelig på [GitHub](https://github.com/Motstanden/motstanden-styresider).'
+    ),
+
+---------------- History ----------------
+    (
+        'history-page',
+        14,
+'# Historie
+*Her kommer det snart en historiker å skriver om eventyret Motstanden!*'
+    ),
+
+---------------- FAQ ----------------
+    (
+        'faq-page',
+        14,
+'# Ofte stilte spørsmål
+
+**Er Motstanden et korps?**
+Nei, Motstanden er et **[studentorchester](https://wiki.motstanden.no/index.php?title=Studentorchester)**!
+
+**Kan man låne instrument?**
+Ja, alle som blir med i Motstanden kan låne instrument! 
+
+**Drar dere på turer?**
+Ja, hvert år har vi muligheten til å dra på SMASH, SORK, og SOFF. Videre så blir det gjerne muligheter for å besøke studentorchestre fra Finland, Sverige eller Tyskland når de arrangerer jubileum.
+
+**Hva er SMASH?**
+SMASH er en orchestersammenkomst for alle norske studentorchestre. Arrangeres hvert semester i Kristiansand, Bergen, Ås eller Trondheim.
+
+**Hva er SORK?**
+De dårligste orchestrene i skandinavia møtes for å hedre den sure tone og den bitre klang. Arrangeres en gang i året i Norge, Sverige eller Finland.
+
+**Hva er SOFF?**
+Studentorchesterfestival i Sverige.
+
+**Hva er TORSK?**
+Sammenkomst for alle studentorchestre i Trondheim. Arrangeres av Strindens hvert år på Samfundet.
+
+**Hvilke andre studentorchestre er det på NTNU?**
+- [Berseblæsten](https://bergstud.no/kor-korps/berseblaesten/) (Bergstuderendes Forening)
+- [Dragern](https://aarhonen.no/dragern/) (H.M. Aarhønen)
+- [Maxwells Muntre Musikanter](https://nabla.no/komite/maxwells-muntre-musikanter/) (Nabla)
+- [Medisinsk Selskabs Orchester](https://www.mfplacebo.no/msorch) (MF Placebo)
+- [Strindens Promenade Orchester](https://www.strindens.no/) (Studentersamfundet)
+- [Studentorchesteret Dei Taktlause](https://taktlaus.no) (Omega)
+- [TapHel & Toddy](https://www.hc.ntnu.no/undergrupper/taphel-toddy/) (Høiskolens Chemikerforening)
+
+**Er Ohma Electra et lokomotiv?**
+Nei, [Ohma Electra](https://wiki.motstanden.no/index.php?title=Ohma_Electra) er en Trikk!'
     );
