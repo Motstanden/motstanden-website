@@ -48,7 +48,7 @@ export default function EditUserPage() {
         return <EditPage editMode={editMode} user={viewedUser} />
     }
 
-    return <Navigate to={`/medlem/${viewedUser.id}`} />
+    return <Navigate to={`/medlem/${viewedUser.id}`} replace />
 }
 
 function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {

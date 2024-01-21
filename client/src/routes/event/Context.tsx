@@ -43,13 +43,13 @@ export function EventItemContext() {
     const params = useParams();
     const eventId = strToNumber(params.eventId)
     if (!eventId) {
-        return <Navigate to="/arrangement" />
+        return <Navigate to="/arrangement" replace />
     }
 
-    // Check if the provided parameter matches and even id
+    // Check if the provided parameter matches an eventId
     const event = allEvents.find(item => item.eventId === eventId)
     if (!event) {
-        return <Navigate to="/arrangement" />
+        return <Navigate to="/arrangement" replace/>
     }
 
     // Redirect to correct url if the pattern does not match '/arrangement/[kommende | tidligere]/:eventId'

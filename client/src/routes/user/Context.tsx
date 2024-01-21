@@ -32,13 +32,13 @@ export function UserProfileContext() {
     const params = useParams();
     const userId = strToNumber(params.userId)
     if (!userId) {
-        return <Navigate to="/medlem/liste" />
+        return <Navigate to="/medlem/liste" replace />
     }
 
     const user = users.find(item => item.id === userId)
 
     if (!user) {
-        return <Navigate to="/medlem/liste" />
+        return <Navigate to="/medlem/liste" replace />
     }
 
     return (

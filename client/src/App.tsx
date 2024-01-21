@@ -65,7 +65,7 @@ function App() {
 						<Route path="/framside" element={<FrontPage />} />
 						<Route path="/logg-inn" element={<LoginPage />} />
 						<Route path="/studenttraller" element={<LyricContext/>}>
-							<Route path="" element={<Navigate to="populaere" />} />
+							<Route path="" element={<Navigate to="populaere" replace />} />
 							<Route path="populaere" element={<LyricListPage filterPopular/>}/>
 							<Route path="populaere/:title" element={<LyricItemContext/>}>
 								<Route index element={<LyricItemPage />} />
@@ -105,7 +105,7 @@ function App() {
 					{/* Routes that requires the user to be logged in */}
 					<Route element={<RequireAuthRouter/>}>
 						<Route path="/notearkiv" element={<SheetArchiveContext />}>
-							<Route path="" element={<Navigate to="repertoar" />} />
+							<Route path="" element={<Navigate to="repertoar" replace />} />
 							<Route path="repertoar" element={<SongPage mode='repertoire' />} />
 							<Route path="repertoar/:title" element={<InstrumentPage />} />
 							<Route path="alle" element={<SongPage />} />
@@ -124,7 +124,7 @@ function App() {
 							<Route path="ny" element={<NewPollPage/>}/>
 						</Route>
 						<Route path="/medlem" element={<UserContext />}>
-							<Route path="" element={<Navigate to="liste" />} />
+							<Route path="" element={<Navigate to="liste" replace/>} />
 							<Route path="liste" element={<UserListPage />} />
 							<Route path=":userId" element={<UserProfileContext />}>
 								<Route index element={<UserPage />} />
@@ -135,7 +135,7 @@ function App() {
 							</Route>
 						</Route>
 						<Route path="/arrangement" element={<EventContext />}>
-							<Route path="" element={<Navigate to="kommende" />} />
+							<Route path="" element={<Navigate to="kommende" replace/>} />
 							<Route path=':eventId' element={<EventItemContext />} /> 	{/* Will redirect to correct path */}
 							<Route path="kommende" element={<EventListPage mode='upcoming' />} />
 							<Route path="kommende/:eventId" element={<EventItemContext />}>

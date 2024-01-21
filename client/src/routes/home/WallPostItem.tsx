@@ -19,7 +19,7 @@ function ParamValidator() {
     const postId = strToNumber(params.postId)    
     
     if(!postId)
-        return <Navigate to="/vegg" />
+        return <Navigate to="/vegg" replace />
 
 
     return (
