@@ -2,7 +2,6 @@ import { SxProps, Theme } from "@mui/material"
 
 export const headerStyle: SxProps<Theme> = {
     backgroundColor: "primary.main",
-    color: "primary.contrastText",
     "& th": {
         fontSize: 14,
         fontWeight: "bold",
@@ -13,8 +12,8 @@ export const headerStyle: SxProps<Theme> = {
         color: (theme: Theme) => theme.palette.primary.contrastText + " !important",
     },
     "& .MuiTableSortLabel-root": {
-        color: "primary.contrastText",
-    },
+        color: (theme: Theme) => theme.palette.primary.contrastText + " !important",
+    }
 }
 
 export const rowStyle = {
