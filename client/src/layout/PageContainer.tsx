@@ -1,6 +1,7 @@
-import { useMediaQuery } from "@mui/material";
-import React from "react";
+import { useMediaQuery, useScrollTrigger } from "@mui/material";
+import React, { useEffect } from "react";
 import { PageTab, PageTabItem } from "src/components/PageTab";
+import { appBarBoxShadow, useAppBarStyle } from "src/context/AppBarStyle";
 import { useAppTheme } from "src/context/Themes";
 
 export function PageContainer({
@@ -44,8 +45,28 @@ export function TabbedPageContainer({
     matchChildPath?: boolean
 }) {
     const { theme } = useAppTheme()
-
     const isMobile = useMediaQuery(theme.breakpoints.only('xs'));
+
+    const { addBoxShadow, removeBoxShadow } = useAppBarStyle()
+
+    useEffect(() => {
+        removeBoxShadow()
+        return () => addBoxShadow()
+    }, [])
+
+    useEffect(() => {
+        if(isMobile) {
+            addBoxShadow()
+        } else {
+            removeBoxShadow()
+        }
+    }, [isMobile])
+
+    const trigger = useScrollTrigger({
+        disableHysteresis: true,
+        threshold: 0
+    })    
+    const boxShadow = trigger ? appBarBoxShadow : 0
 
     const tabPositionStyle: React.CSSProperties = isMobile ? {} : {
         position: "fixed",
@@ -65,6 +86,9 @@ export function TabbedPageContainer({
                 tabProps={{
                     style: {
                         height: `${tabBarHeight}px`,
+                    },
+                    sx: {
+                        boxShadow: isMobile ? undefined : boxShadow,
                     }
                 }}
             />
@@ -72,7 +96,7 @@ export function TabbedPageContainer({
                 paddingTop: isMobile ? undefined : `${tabBarHeight}px`
             }}>
                 <PageContainer>
-                        {children}
+                    {children}
                 </PageContainer>
             </div>
         </>
@@ -116,3 +140,4 @@ export function usePagePadding() {
 
     return pagePadding
 }
+

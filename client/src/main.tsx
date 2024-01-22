@@ -13,6 +13,7 @@ import { AppThemeProvider } from './context/Themes';
 import { UserReferenceProvider } from './context/UserReference';
 import { LikeEmojiProvider } from './context/LikeEmoji';
 import { TopScrollerProvider } from './context/TopScroller';
+import { AppBarStyleProvider } from './context/AppBarStyle';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
@@ -30,10 +31,12 @@ root.render(
 							<LikeEmojiProvider>
 								<AppThemeProvider>
 									<TopScrollerProvider>
-										{/* Provides reasonable default css values from the material-ui framework */}
-										<CssBaseline />
+										<AppBarStyleProvider>
+											{/* Provides reasonable default css values from the material-ui framework */}
+											<CssBaseline />
 
-										<App />
+											<App />
+										</AppBarStyleProvider>
 									</TopScrollerProvider>
 								</AppThemeProvider>
 							</LikeEmojiProvider>

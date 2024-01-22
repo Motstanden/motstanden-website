@@ -1,7 +1,8 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import { Box, Divider, IconButton, Link, AppBar as MuiAppBar, Stack, SxProps, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
+import { Box, Divider, IconButton, Link, AppBar as MuiAppBar, Stack, SxProps, Theme, Toolbar, Typography, useMediaQuery, useScrollTrigger } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import MotstandenImg from "src/assets/logos/motstanden.png";
+import { useAppBarStyle } from 'src/context/AppBarStyle';
 import { useAuth } from 'src/context/Authentication';
 import UserAvatar from 'src/layout/AppBar/UserAvatar';
 import { ThemeSwitchButton } from 'src/layout/ThemeSwitchButton';
@@ -18,12 +19,19 @@ export function AppBar({
 
     const isLoggedIn = useAuth().user != null
 
+    const appBarStyle = useAppBarStyle()
+    
     const isMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
     const isSmallScreen = useMediaQuery("(max-width: 663px)");
     const isMobileScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
     return (
-        <MuiAppBar position={position} sx={sx}>
+        <MuiAppBar 
+            position={position} 
+            sx={{
+                boxShadow: appBarStyle.boxShadow,
+                ...sx,
+            }}>
             <Toolbar sx={{
                 bgcolor: "primary.main",
                 height: "100%",
