@@ -46,7 +46,13 @@ export function TabbedPageContainer({
 }) {
     const { theme } = useAppTheme()
 
-    const { preventNextScroll } = useTopScroller()
+    const isMobile = useMediaQuery(theme.breakpoints.only('xs'));
+
+    const tabPositionStyle: React.CSSProperties = isMobile ? {} : {
+        position: "fixed",
+        width: "100%",
+        zIndex: 1000,
+    }
 
     return (
         <>
@@ -55,19 +61,16 @@ export function TabbedPageContainer({
                 matchChildPath={matchChildPath}
                 style={{
                     backgroundColor: theme.palette.background.paper,
-                    position: "fixed",
-                    width: "100%",
-                    zIndex: 1000,
+                    ...tabPositionStyle,
                 }}
                 tabProps={{
                     style: {
                         height: `${tabBarHeight}px`,
-                        fontSize: "30pt !important"
                     }
                 }}
             />
             <div style={{
-                paddingTop: `${tabBarHeight}px`
+                paddingTop: isMobile ? undefined : `${tabBarHeight}px`
             }}>
                 <PageContainer>
                         {children}
