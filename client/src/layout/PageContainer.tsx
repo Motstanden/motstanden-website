@@ -33,6 +33,8 @@ export function PageContainer({
     );
 }
 
+const tabBarHeight = 48
+
 export function TabbedPageContainer({
     children,
     tabItems,
@@ -46,25 +48,31 @@ export function TabbedPageContainer({
 
     const { preventNextScroll } = useTopScroller()
 
-    const onTabClick = () => {
-        preventNextScroll(true)
-    }
-
     return (
         <>
             <PageTab 
                 items={tabItems} 
                 matchChildPath={matchChildPath}
                 style={{
-                    backgroundColor: theme.palette.background.paper
+                    backgroundColor: theme.palette.background.paper,
+                    position: "fixed",
+                    width: "100%",
+                    zIndex: 1000,
                 }}
-                onTabClick={onTabClick}
+                tabProps={{
+                    style: {
+                        height: `${tabBarHeight}px`,
+                        fontSize: "30pt !important"
+                    }
+                }}
             />
-            <PageContainer>
-                <div>
-                    {children}
-                </div>
-            </PageContainer>
+            <div style={{
+                paddingTop: `${tabBarHeight}px`
+            }}>
+                <PageContainer>
+                        {children}
+                </PageContainer>
+            </div>
         </>
     )
 }
