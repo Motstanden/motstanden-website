@@ -8,7 +8,7 @@ export function LicensePage() {
     useTitle("Lisens")
     return (
         <PageContainer>
-            <div style={{ maxWidth: "600px", marginInline: "auto" }}>
+            <div style={{ maxWidth: "700px"}}>
                 <Introduction />
                 <Divider sx={{ my: 5 }} />
                 <License />
@@ -21,7 +21,7 @@ export function LicenseOnlyPage() {
     useTitle("Måkesodd")
     return (
         <PageContainer>
-            <div style={{ maxWidth: "600px", marginInline: "auto" }}>
+            <div style={{ maxWidth: "700px"}}>
                 <License />
             </div>
         </PageContainer>
