@@ -1,4 +1,4 @@
-import { Box, Theme, useMediaQuery } from "@mui/material";
+import { Box } from "@mui/material";
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { FooterContent } from "src/layout/Footer";
@@ -8,7 +8,7 @@ import { useAppSizes } from "./useAppSizes";
 
 export function AppLayout() {
 
-    const { appBarHeight, drawerWidth, isMobileScreen } = useAppSizes()
+    const { appBarHeight, drawerWidth } = useAppSizes()
     const [isOpen, setIsOpen] = useState(false)
 
     const closeDrawer = () => setIsOpen(false)
@@ -21,7 +21,7 @@ export function AppLayout() {
             <header>
                 <AppBar 
                     onMenuClick={toggleDrawer}
-                    position={isMobileScreen ? "fixed" : "absolute"}
+                    position="fixed"
                     sx={{
                         width: { sm: `calc(100% - ${drawerWidth}px)` },
                         ml: { sm: `${drawerWidth}px` },

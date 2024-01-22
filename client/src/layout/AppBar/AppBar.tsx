@@ -46,7 +46,7 @@ export function AppBar({
                         sx={{ display: isSmallScreen ? "none" : "flex" }}>
                         <img
                             src={MotstandenImg}
-                            style={{ height: "57px" }}
+                            style={{ height: "48px" }}
                             loading="lazy" />
                     </Box>
                     <Typography

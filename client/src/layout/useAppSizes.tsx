@@ -6,7 +6,7 @@ const mediumDesktopDrawerWidth = 270
 const smallDesktopDrawerWidth = 230
 const mobileDrawerWidth = 240  
 
-const desktopAppBarHeight = 70;
+const desktopAppBarHeight = 64;
 const mobileAppBarHeight = 57;
 
 interface AppSizesProps {
