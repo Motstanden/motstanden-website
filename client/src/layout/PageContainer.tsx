@@ -2,7 +2,6 @@ import { useMediaQuery } from "@mui/material";
 import React from "react";
 import { PageTab, PageTabItem } from "src/components/PageTab";
 import { useAppTheme } from "src/context/Themes";
-import { useTopScroller } from "src/context/TopScroller";
 
 export function PageContainer({
     children,
