@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 INSERT INTO rumour(created_by, rumour) VALUES 
 (1,     'Leonardo da Vinci er i London?' ),
 (3,     'Isaac Newton har snekret sin egen seng?' ),

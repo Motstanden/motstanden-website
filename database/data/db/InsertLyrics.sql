@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 INSERT INTO 
     song_lyric(title, is_popular, created_by, updated_by, content) 
 VALUES

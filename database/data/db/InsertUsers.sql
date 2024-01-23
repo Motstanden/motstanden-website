@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 INSERT INTO 
     user(user_group_id, user_rank_id, start_date, first_name, middle_name, last_name, email)
 VALUES
@@ -25,7 +27,7 @@ VALUES
     (3,     6,      '2018-09-01',       'Gustav',           '',                 'Kirchhoff',        'gustav.kirchhoff@gmail.com'                ),                  
     (4,     6,      '2018-09-01',       'Georg',            'Simon',            'Ohm',              'georg.simon.ohm@gmail.com'                 ),                  
     (1,     5,      '2018-09-01',       'Nikola',           '',                 'Tesla',            'nikola.tesla@live.com'                     ),      
-    (1,     9,      '2018-09-01',       'Charles',          'Augustin',         'Coulumb',          'charles.augustin.coulumb@gmail.com'        ),                     
+    (1,     5,      '2018-09-01',       'Charles',          'Augustin',         'Coulumb',          'charles.augustin.coulumb@gmail.com'        ),                     
     (4,     6,      '2018-09-01',       'Albert',           '',                 'Einstein',         'albert.einstein@gmail.com'                 ),            
     (2,     5,      '2020-03-01',       'Isaac',            '',                 'Newton',           'isaac.newton@gmail.com'                    ),            
     (1,     1,      '2019-10-01',       'Niels',            '',                 'Bohr',             'niels.bohr@gmail.com'                      ),         

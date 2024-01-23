@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 INSERT INTO 
     event(event_id, title, start_date_time, end_date_time, created_by, updated_by, key_info, description)
 VALUES

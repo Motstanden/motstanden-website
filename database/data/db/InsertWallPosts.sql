@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 INSERT INTO 
     wall_post(wall_post_id, wall_user_id, created_by, created_at, content)
 VALUES

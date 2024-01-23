@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 INSERT INTO 
     simple_text(key, updated_by, text)
 VALUES

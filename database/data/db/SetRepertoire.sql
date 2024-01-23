@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 UPDATE 
 	song_title
 SET is_repertoire = 1

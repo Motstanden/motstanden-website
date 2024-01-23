@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 INSERT INTO poll(poll_id, created_by, updated_by, type, title) VALUES
 ( 1, 5, 6, 'single', 'Kuleis eller Softis?'),
 ( 2, 6, 5, 'single', 'Blir du værende i Trondheim i sommer?'),
