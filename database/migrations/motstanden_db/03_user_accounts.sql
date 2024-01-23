@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 -- Insert current version into the DB.
 INSERT INTO version(migration) VALUES
     ('03_user_accounts.sql');

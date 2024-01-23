@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 -- Retroactively insert previous version into the DB.
 INSERT INTO version(migration) VALUES
     ('10_poll.sql');

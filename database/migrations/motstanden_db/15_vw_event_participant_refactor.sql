@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 -- Insert current version into the DB.
 INSERT INTO version(migration) VALUES
     ('15_vw_event_participant_refactor.sql');

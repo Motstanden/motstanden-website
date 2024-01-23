@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 CREATE TABLE poll (
 	poll_id INTEGER PRIMARY KEY,
 	title TEXT NOT NULL,

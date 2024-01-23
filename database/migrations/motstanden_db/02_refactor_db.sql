@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 -- ::::::::::::::::::::::::::
 --      database version
 -- ::::::::::::::::::::::::::
