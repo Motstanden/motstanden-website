@@ -113,74 +113,74 @@ INSERT INTO
     event_participant(event_id, user_id, participation_status_id)
 VALUES 
     -- Fadderuka: Rebusløp
-    (1, 14, 2),
-    (1, 15, 2),
-    (1, 16, 2),
-    (1, 17, 2),
-    (1, 18, 3),
-    (1, 25, 3),
-    (1, 26, 4),
+    (1, 1, 2),
+    (1, 2, 2),
+    (1, 3, 2),
+    (1, 4, 2),
+    (1, 5, 3),
+    (1, 6, 3),
+    (1, 7, 4),
 
     -- Fadderuke: Hybel til hybel
-    (2, 21, 2),
-    (2, 22, 2),
-    (2, 23, 3),
-    (2, 24, 3),
-    (2, 25, 4),
+    (2, 8, 2),
+    (2, 9, 2),
+    (2, 10, 3),
+    (2, 11, 3),
+    (2, 13, 4),
 
     -- Åpen øvelse
-    (3, 21, 2),
-    (3, 22, 3),
-    (3, 23, 4),
-    (3, 24, 4),
-    (3, 25, 4), 
+    (3, 8, 2),
+    (3, 9, 3),
+    (3, 10, 4),
+    (3, 11, 4),
+    (3, 13, 4), 
 
     -- SMASH                
-    (4, 21, 2),
-    (4, 22, 2),
-    (4, 23, 2),
-    (4, 24, 2),
-    (4, 25, 2),
+    (4, 8, 2),
+    (4, 9, 2),
+    (4, 10, 2),
+    (4, 11, 2),
+    (4, 13, 2),
 
     -- Fadderuka: Rebusløp
-    (5, 14, 2),
-    (5, 15, 2),
-    (5, 16, 2),
-    (5, 17, 2),
-    (5, 21, 3),
-    (5, 22, 3),
-    (5, 23, 4),
-    (5, 24, 4),
-    (5, 25, 4),
+    (5, 1, 2),
+    (5, 2, 2),
+    (5, 3, 2),
+    (5, 4, 2),
+    (5, 5, 3),
+    (5, 6, 3),
+    (5, 7, 4),
+    (5, 8, 4),
+    (5, 9, 4),
 
     -- Fadderuke: Hybel til hybel
-    (6, 17, 4),
-    (6, 18, 4),
-    (6, 21, 2),
-    (6, 22, 2),
-    (6, 23, 3),
-    (6, 24, 3),
-    (6, 25, 4),
+    (6, 4, 4),
+    (6, 5, 4),
+    (6, 6, 2),
+    (6, 7, 2),
+    (6, 8, 3),
+    (6, 9, 3),
+    (6, 10, 4),
 
     -- Åpen øvelse
-    (7, 19, 2),
-    (7, 20, 2),
-    (7, 21, 2),
-    (7, 22, 3),
-    (7, 23, 4),
-    (7, 24, 4),
-    (7, 25, 4), 
+    (7, 6, 2),
+    (7, 7, 2),
+    (7, 8, 2),
+    (7, 9, 3),
+    (7, 10, 4),
+    (7, 11, 4),
+    (7, 12, 4), 
 
     -- SMASH
-    (8, 22, 2),                
-    (8, 23, 2),                
-    (8, 24, 2),                
-    (8, 25, 2),                
-    (8, 31, 2),
-    (8, 32, 2),
-    (8, 33, 2),
-    (8, 34, 2),
-    (8, 35, 2);
+    (8, 9, 2),                
+    (8, 10, 2),                
+    (8, 11, 2),                
+    (8, 12, 2),                
+    (8, 13, 2),
+    (8, 19, 2),
+    (8, 20, 2),
+    (8, 21, 2),
+    (8, 22, 2);
 
 
 INSERT INTO
@@ -188,36 +188,36 @@ INSERT INTO
 VALUES
 
     -- Rebusløp:
-    (5, 14, 'Har vi planlagt hva vi skal gjøre?'),
-    (5, 15, 'Nei, tror ikke det...'),
-    (5, 16, 
+    (5, 1, 'Har vi planlagt hva vi skal gjøre?'),
+    (5, 2, 'Nei, tror ikke det...'),
+    (5, 3, 
 'Foreslår at vi tar en liten workshop på kontoret en dag for å planlegge hva vi skal gjøre.
 Når passer det for dere?'),
-    (5, 14, 'Passer alle dager for meg 🙂'),    
-    (5, 15, 'Jeg kan bare på onsdag...'),    
-    (5, 16, 'Åkei! Da sier vi onsdag! Passer det å møtes kl 18:00?'),    
-    (5, 15, 'Nice! Ja det passer bra 😄'),
-    (5, 16, 'Den er brun 😏'),
+    (5, 1, 'Passer alle dager for meg 🙂'),    
+    (5, 2, 'Jeg kan bare på onsdag...'),    
+    (5, 3, 'Åkei! Da sier vi onsdag! Passer det å møtes kl 18:00?'),    
+    (5, 2, 'Nice! Ja det passer bra 😄'),
+    (5, 3, 'Den er brun 😏'),
 
     -- Hybel til hybel:
-    (6, 17, 'Jeg er opptatt dessverre 😭'),
-    (6, 18, 'Jeg har pappa på besøk den dagen, så jeg kan heller ikke komme 😔'),
+    (6, 4, 'Jeg er opptatt dessverre 😭'),
+    (6, 5, 'Jeg har pappa på besøk den dagen, så jeg kan heller ikke komme 😔'),
 
     -- Åpen øvelse
-    (7, 19, 
+    (7, 6, 
 'Viktig å møte opp på dette folkens!
 Vi må vise de hvor episk det er å være med i Motstanden!' ),
-    (7, 20, 'Husk å ta med ekstra øl! 😄'),
-    (7, 21, 'HYPE!!!'),
+    (7, 7, 'Husk å ta med ekstra øl! 😄'),
+    (7, 8, 'HYPE!!!'),
 
     -- SMASH
-    (8, 22, 'Det her blir så sinnsykt bra! 😁'),
-    (8, 23, 
+    (8, 9, 'Det her blir så sinnsykt bra! 😁'),
+    (8, 10, 
 'Til dere nye:
 SMASH er noe av det gøyeste vi gjør!
 Anbefaler på det sterkeste å bli med!'),
-    (8, 24, 'Fins det noen oversikt over hvilke sanger vi trenger i marsjheftet?'),
-    (8, 25, 'Ja, gå på noter -> repertoar'),
-    (8, 24, 'Åja, haha ¯\_(ツ)_/¯');
+    (8, 11, 'Fins det noen oversikt over hvilke sanger vi trenger i marsjheftet?'),
+    (8, 12, 'Ja, gå på noter -> repertoar'),
+    (8, 11, 'Åja, haha ¯\_(ツ)_/¯');
 
 

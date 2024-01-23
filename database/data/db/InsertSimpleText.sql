@@ -7,7 +7,7 @@ VALUES
 ---------------- Front page ----------------
     (
         'front-page',
-        14,
+        23,
 '# Om oss
 
 Studentorchesteret den Ohmske Motstanden er et studentorchester som tilhører Linjeforeningen Elektra ved NTNU i Trondheim. Hovedformålet til Motstanden er å tilby et lavterskel musikalsk- sosialtilbud for medlemmer av Elektra.
@@ -35,7 +35,7 @@ Er det noe du lurer på? Kontakt oss gjerne på:
 ---------------- Become member ----------------
     (
         'become-member',
-        14,
+        23,
 '# Bli Medlem
 
 Ønsker du litt informasjon om Motstanden?
@@ -49,7 +49,7 @@ Vi tar kontakt med deg så fort som mulig!'
 ---------------- Board website 1 ----------------
     (
         'board-website-list-top',
-        14,
+        23,
 '# Styrets nettsider
 
 ### Om styrenettsidene
@@ -61,7 +61,7 @@ Hvert styre i Motstanden har sin egen nettside. Til å begynne med inneholder ne
 ---------------- Board website 2 ----------------
     (
         'board-website-list-bottom',
-        14,
+        23,
 '# Kildekode 
 
 Kildekoden til nettsidene er åpent tilgjengelig på [GitHub](https://github.com/Motstanden/motstanden-styresider).'
@@ -70,7 +70,7 @@ Kildekoden til nettsidene er åpent tilgjengelig på [GitHub](https://github.com
 ---------------- History ----------------
     (
         'history-page',
-        14,
+        23,
 '# Historie
 *Her kommer det snart en historiker å skriver om eventyret Motstanden!*'
     ),
@@ -78,7 +78,7 @@ Kildekoden til nettsidene er åpent tilgjengelig på [GitHub](https://github.com
 ---------------- FAQ ----------------
     (
         'faq-page',
-        14,
+        23,
 '# Ofte stilte spørsmål
 
 **Er Motstanden et korps?**

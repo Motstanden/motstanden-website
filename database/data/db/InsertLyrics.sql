@@ -6,8 +6,8 @@ VALUES
     (
         'Asbest',              
         0,
-        14,
-        14,
+        1,
+        1,
 '**Melodi:** Go West
 
 På gløs er det gamle bygg
@@ -108,8 +108,8 @@ Aaaaaasbeeeest.'
     (
         'Bayer i Hånden',      
         1,
-        14,
-        14,
+        1,
+        1,
 '**Tekst:** Kalle Zwilgmeyer
 
 **Refreng:**
@@ -158,8 +158,8 @@ der vil jeg nyte dem i fred og i ro.
     (
         'Calypso',             
         0,
-        14,
-        14,
+        1,
+        1,
 '**Tekst:** Krussedull (UKA 1957) 
 **Melodi:** Jamaican Farewell
 
@@ -222,8 +222,8 @@ mens min elskov videre med toget dro.
     (
         'De Ohmske',           
         1,
-        14,
-        14,
+        1,
+        1,
 '**Tekst:** Nina T. Gundersen og Hans Olav Lofstad fra Motstanden
 **Melodi:** Kråkevisa
 
@@ -270,8 +270,8 @@ Hei fara, Faltu riltu raltu ra'
     (
         'Fallskjermsangen',    
         0,
-        14,
-        14,
+        1,
+        1,
 '**Melodi:** Blood on the Risers
 
 Han hoppa fra 12000 fot med fallskjermen igjen
@@ -321,8 +321,8 @@ Nå flyter’n rundt i Nordsjøen og lengter hjem til mor...
     (
         'Himmelseng',          
         1,
-        14,
-        14,
+        1,
+        1,
 '**...også kjent som "Lundsbrua"**
 
 Jeg ønsker meg en himmelseng,
@@ -363,8 +363,8 @@ jeg vet hvor jeg er deilig.'
     (
         'Kanonsangen',         
         1,
-        14,
-        14,
+        1,
+        1,
 'Hva skal vi gjøre med kanonene da?
 Hva skal vi gjøre med dem, hva skal vi gjøre med dem..
 Jo dem skal vi skyte, jo dem skal vi skyte,
@@ -398,8 +398,8 @@ jo dem skal vi lære **Å SKYTE MED KANON!!!**'
     (
         'Lambo',               
         1,
-        14,
-        14,
+        1,
+        1,
 '*Rettet mot en fyllehund som nyter drikke:*
 
 Se der står en fyllehund,
@@ -425,8 +425,8 @@ Han kunne kunsten å være et jævla fyllesvin!
     (
         'Motstandenskålene',   
         1,
-        14,
-        14,
+        1,
+        1,
 'I en sluttet krets er summen av spenningnen lik null!
 
 I ett forgreningspunkt er summen av strømmene lik null!
@@ -450,8 +450,8 @@ Jag gillar havre, jag äter det var dag, jag sniffar det til frukost, det gör m
     (
         'Nu Klinger',          
         1,
-        14,
-        14,
+        1,
+        1,
 '**Tekst:** Cassa Rossa (UKA 1929)
 
 Nu klinger igjennom den gamle stad, påny en studentersang,
@@ -492,8 +492,8 @@ Også sitter vi i himmelen og stemmer i vår replikk;
     (
         'Ole Bordknuser',      
         1,
-        14,
-        14,
+        1,
+        1,
 '**Tekst:** Motstanden
 **Melodi:** Blood On the Risers
 
@@ -545,8 +545,8 @@ Og det nye bordet skal leve!
     (
         'På en planke',        
         1,
-        14,
-        14,
+        1,
+        1,
 'På en planke, uti Nordsjø’n
 satt en liten gutt og gråt.
 Planken vippa hit og dit,
