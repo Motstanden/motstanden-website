@@ -13,26 +13,36 @@ test.describe("Update song title info", async () => {
     async function runTest(browser: Browser, workerInfo: TestInfo, userGroup: UserGroup) {
         const { page } = await logIn(browser, workerInfo, userGroup)
 
-        let song: string
-        try {
-            song = getSong(workerInfo)   // We must get a different song per individual worker to avoid race conditions
-        } catch (err) {
-            test.skip(err)
-        }
+        const song = getSong(workerInfo)   // We must get a different song per individual worker to avoid race conditions
 
         await testUpdateSongTitle({page: page, song: song})
         await disposeLogIn(page)
     }
 })
 
+// NB: This list must be updated if there are more than 20 worker threads running tests concurrently
 function getSong(workerInfo: TestInfo): string {
     switch(workerInfo.parallelIndex) {
-        case 0: return "nu klinger"
-        case 1: return "killing in the name"
-        case 2: return "ice cream"
+        case 0: return "99 luftballons"
+        case 1: return "a swinging safari"
+        case 2: return "anchors aweigh"
         case 3: return "another brick in the wall"
-        case 4: return "can-can"
-        case 5: return "through the fire and flames"
+        case 4: return "axel f"
+        case 5: return "bruremarsj"
+        case 6: return "can-can"
+        case 7: return "dixieland strut"
+        case 8: return "dyreparkens røvermarsj"
+        case 9: return "funkytown"
+        case 10: return "gonna fly now"
+        case 11: return "happy"
+        case 12: return "holmenkollmarsj"
+        case 13: return "ice cream"
+        case 14: return "killing in the name"
+        case 15: return "norge i rødt hvitt og blått"
+        case 16: return "nu klinger"
+        case 17: return "olsenbanden"
+        case 18: return "the bare necessities"
+        case 19: return "through the fire and flames"
         default: throw `Maximum worker count reached. ` +
                        `\nRace condition will occur in this tests if there exists more than 6 concurrent workers. ` +
                        `\nIndex of current worker: ${workerInfo.parallelIndex}. ` +
@@ -41,11 +51,24 @@ function getSong(workerInfo: TestInfo): string {
     }                  `\n\tnpx playwright test --workers 6`
 }
 
+const songNotFoundMsg = (song: string) => `The song "${song}" is not visible on the page /notearkiv/repertoar.
+This occurs if you have manually edited the sheet archive page,
+or if this test did not finish correctly the last time it was run.
+
+To fix this, you need to rebuild the sheet archive database:
+    cd database
+    ./create_sheet_archive_dev_db.sh
+`;
+
 interface TitleData extends Pick<SheetArchiveTitle, "title" | "isRepertoire" | "extraInfo"> {}
 
 async function testUpdateSongTitle( {page, song}: {page: Page, song: string | RegExp}) {
     await page.goto("/notearkiv/repertoar")
-    await page.getByRole('row', { name: song }).getByRole('button').click();
+
+    const row = page.getByRole('row', { name: song })
+    expect(row, songNotFoundMsg(song.toString())).toBeVisible({timeout: 10000})
+
+    await row.getByRole('button').click();
     const saveButton = page.getByRole('button', { name: 'Lagre' })
     
     const titleBox = page.getByLabel('Tittel *')
