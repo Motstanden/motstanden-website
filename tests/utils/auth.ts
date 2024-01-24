@@ -1,6 +1,6 @@
 import { Browser, Page } from "@playwright/test"
 import { UserGroup, UserRank, UserStatus } from "common/enums"
-import { NewUser } from "common/interfaces"
+import { User } from "common/interfaces"
 import { navClick } from "./navClick.js"
 
 export function getStoragePath(group: UserGroup): string {
@@ -37,15 +37,13 @@ export async function disposeStorageLogIn(page: Page) {
     await page.context().close()
 }
 
-interface TestUser extends NewUser {
-    userId: number
-}
+interface TestUser extends Omit<User, "groupId" | "createdAt" | "updatedAt"> { }
 
 export function getUser(group: UserGroup): TestUser {
     switch (group) {
         case UserGroup.Contributor: return  {
-            userId: 1,
-            email: "test-contributor@motstanden.no",
+            id: 301,
+            email: "test-contributor-1@motstanden.no",
             groupName: UserGroup.Contributor,
             rank: UserRank.KiloOhm,
             firstName: "__Test User",
@@ -60,8 +58,8 @@ export function getUser(group: UserGroup): TestUser {
             birthDate: null
         }
         case UserGroup.Editor: return {
-            userId: 2,
-            email: "test-editor@motstanden.no",
+            id: 321,
+            email: "test-editor-1@motstanden.no",
             groupName: UserGroup.Editor,
             rank: UserRank.MegaOhm,
             firstName: "__Test User",
@@ -75,8 +73,8 @@ export function getUser(group: UserGroup): TestUser {
             phoneNumber: null,
             birthDate: null }
         case UserGroup.Administrator: return {
-            userId: 3,
-            email: "test-admin@motstanden.no",
+            id: 341,
+            email: "test-admin-1@motstanden.no",
             groupName: UserGroup.Administrator,
             rank: UserRank.GigaOhm,
             firstName: "__Test User",
@@ -90,8 +88,8 @@ export function getUser(group: UserGroup): TestUser {
             phoneNumber: null,
             birthDate: null}
         case UserGroup.SuperAdministrator: return {
-            userId: 4,
-            email: "test-superadmin@motstanden.no",
+            id: 361,
+            email: "test-superadmin-1@motstanden.no",
             groupName: UserGroup.SuperAdministrator,
             rank: UserRank.HighImpedance,
             firstName: "__Test User",

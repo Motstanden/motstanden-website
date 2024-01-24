@@ -1,6 +1,6 @@
 import { Page, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
-import { NewUser, User } from 'common/interfaces'
+import { User } from 'common/interfaces'
 import dayjs from 'common/lib/dayjs'
 import {
     getFullName,
@@ -351,7 +351,7 @@ async function gotoUser(page: Page, group: UserGroup, opts?: {editUser?: boolean
 } 
 
 function getUserUrl( group: UserGroup, opts?: {editUser?: boolean}): string {
-    const id = getUser(group).userId
+    const id = getUser(group).id
     let url = `/medlem/${id}`
     if(opts?.editUser) 
         url += "/rediger"
