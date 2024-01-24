@@ -137,4 +137,26 @@ VALUES
     (377,   4,     6,     '2018-09-01',        '__Test User',      '',                 'Super Admin 17',    'test-superadmin-17@motstanden.no'          ),
     (378,   4,     6,     '2018-09-01',        '__Test User',      '',                 'Super Admin 18',    'test-superadmin-18@motstanden.no'          ),
     (379,   4,     6,     '2018-09-01',        '__Test User',      '',                 'Super Admin 19',    'test-superadmin-19@motstanden.no'          ),
-    (380,   4,     6,     '2018-09-01',        '__Test User',      '',                 'Super Admin 20',    'test-superadmin-20@motstanden.no'          );
+    (380,   4,     6,     '2018-09-01',        '__Test User',      '',                 'Super Admin 20',    'test-superadmin-20@motstanden.no'          ),
+
+    -- Accounts reserved for tests\tests\auth.spec.ts [ids: 381-400]
+    (381,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 1',      'test-auth-1@motstanden.no'                 ),
+    (382,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 2',      'test-auth-2@motstanden.no'                 ),
+    (383,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 3',      'test-auth-3@motstanden.no'                 ),
+    (384,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 4',      'test-auth-4@motstanden.no'                 ),
+    (385,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 5',      'test-auth-5@motstanden.no'                 ),
+    (386,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 6',      'test-auth-6@motstanden.no'                 ),
+    (387,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 7',      'test-auth-7@motstanden.no'                 ),
+    (388,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 8',      'test-auth-8@motstanden.no'                 ),
+    (389,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 9',      'test-auth-9@motstanden.no'                 ),
+    (390,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 10',     'test-auth-10@motstanden.no'                ),
+    (391,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 11',     'test-auth-11@motstanden.no'                ),
+    (392,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 12',     'test-auth-12@motstanden.no'                ),
+    (393,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 13',     'test-auth-13@motstanden.no'                ),
+    (394,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 14',     'test-auth-14@motstanden.no'                ),
+    (395,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 15',     'test-auth-15@motstanden.no'                ),
+    (396,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 16',     'test-auth-16@motstanden.no'                ),
+    (397,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 17',     'test-auth-17@motstanden.no'                ),
+    (398,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 18',     'test-auth-18@motstanden.no'                ),
+    (399,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 19',     'test-auth-19@motstanden.no'                ),
+    (400,   1,     3,     '2018-09-01',        '__Test User',      '',                 'auth tests 20',     'test-auth-20@motstanden.no'                );

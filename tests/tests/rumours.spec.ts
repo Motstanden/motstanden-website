@@ -3,7 +3,7 @@ import { UserGroup } from 'common/enums';
 import { NewRumour } from 'common/interfaces';
 import { randomUUID } from "crypto";
 import { EditListPage } from '../pages/EditListPage.js';
-import { disposeStorageLogIn, storageLogIn } from '../utils/auth.js';
+import { disposeLogIn, logIn, storageLogIn } from '../utils/auth.js';
 
 test.describe.serial("Users can update and delete rumours created by themselves @smoke",  async () => {
 	await testCrud({
@@ -35,29 +35,28 @@ async function testCrud(opts: {creator: UserGroup, moderator: UserGroup, testId:
 	const rumour1: NewRumour = createRandomRumour()
 	const rumour2: NewRumour = createRandomRumour()
 
-	let page: Page
-
-	test(`New (${opts.testId})`, async ({browser}) => {
-		page = await storageLogIn(browser, opts.creator)
+	test(`New (${opts.testId})`, async ({browser}, workerInfo) => {
+		const { page } = await logIn(browser, workerInfo, opts.creator)
     	
 		await testCreateNew(page, rumour1)
 
-		if(opts.creator !== opts.moderator) {
-			await disposeStorageLogIn(page)
-		}
+		await disposeLogIn(page)
 	})
 
-	test(`Update (${opts.testId})`, async ({browser}) => {
-		page = opts.creator === opts.moderator 
-			 ? page 
-			 : await storageLogIn(browser, opts.moderator) 
+	test(`Update (${opts.testId})`, async ({browser}, workerInfo) => {
+		const { page } = await logIn(browser, workerInfo, opts.moderator)
 
     	await testUpdate(page, rumour1, rumour2)
+	
+		await disposeLogIn(page)
 	})
 
-	test(`Delete (${opts.testId})`, async () => {
-    	await testDelete(page, rumour2)
-		await disposeStorageLogIn(page)
+	test(`Delete (${opts.testId})`, async ({browser}, workerInfo) => {
+		const { page } = await logIn(browser, workerInfo, opts.moderator)
+    
+		await testDelete(page, rumour2)
+	
+		await disposeLogIn(page)
 	})
 }
 

@@ -5,7 +5,7 @@ import dayjs from "common/lib/dayjs";
 import { getFullName } from 'common/utils';
 import { formatDateTimeInterval } from "common/utils/dateTime";
 import { randomInt, randomUUID } from 'crypto';
-import { disposeStorageLogIn, getUser, storageLogIn } from '../utils/auth.js';
+import { disposeLogIn, logIn, TestUser } from '../utils/auth.js';
 import { selectDate } from '../utils/datePicker.js';
 import { navClick } from '../utils/navClick.js';
 
@@ -69,10 +69,10 @@ async function testCrud(opts: CrudOptions) {
 	const event2: NewEventData = createRandomEvent()
 
 	let eventUrl: string
-	let page: Page
 
-	test(`New (${opts.testId})`, async ({browser}) => {
-		page = await storageLogIn(browser, opts.creator)
+	test(`New (${opts.testId})`, async ({browser}, workerInfo) => {
+		
+		const { page } = await logIn(browser, workerInfo, opts.creator)
 		await page.goto("/arrangement/ny")
 
 		await testCreateNew(page, event1)
@@ -80,56 +80,48 @@ async function testCrud(opts: CrudOptions) {
 		eventUrl = page.url()
 
 		if(runParticipationTest || opts.creator !== opts.updater) {
-			await disposeStorageLogIn(page)
+			await disposeLogIn(page)
 		}
 	})
 
 	if(opts.participator) {
-		test(`User can participate on events (${opts.testId})`, async ({browser}) => {
+		test(`User can participate on events (${opts.testId})`, async ({browser}, workerInfo) => {
 
 			if(opts.participator === opts.creator) 
 				throw "Invalid operation: participator and creator can not be the same user";
 
-			page = await storageLogIn(browser, opts.participator)
+			const { page, user } = await logIn(browser, workerInfo, opts.participator)
 			await page.goto(eventUrl)
-			await testParticipation(page, opts.participator)
 
-			if(opts.updater !== opts.participator) {
-				await disposeStorageLogIn(page)
-			}
+			await testParticipation(page, user)
+
+			await disposeLogIn(page)
 		})
 	}
 
-	test(`Update (${opts.testId})`, async ({browser}) => {
+	test(`Update (${opts.testId})`, async ({browser}, workerInfo) => {
 
-		const reusePage = opts.creator === opts.updater || (runParticipationTest && opts.updater === opts.participator) 
-		if(!reusePage) {
-			page = await storageLogIn(browser, opts.updater)
-			await page.goto(eventUrl)
-		}
+		const { page } = await logIn(browser, workerInfo, opts.updater)
+		await page.goto(eventUrl)
 
     	await testUpdate(page, event1, event2)
 
-		if(opts.updater !== opts.deleter) {
-			await disposeStorageLogIn(page)
-		}
+		await disposeLogIn(page)
 	})
 
-	test(`Delete (${opts.testId})`, async ({browser}) => {
-		const reusePage = opts.updater === opts.deleter
-		if(!reusePage) {
-			page = await storageLogIn(browser, opts.deleter)
-			await page.goto(eventUrl)
-		}
+	test(`Delete (${opts.testId})`, async ({browser}, workerInfo) => {
+
+		const { page } = await logIn(browser, workerInfo, opts.deleter)
+		await page.goto(eventUrl)
 		
     	await testDelete(page, event2)
-		await disposeStorageLogIn(page)
+		await disposeLogIn(page)
 	})
 }
 
-async function testParticipation(page: Page,  userGroup: UserGroup) {
+async function testParticipation(page: Page,  user: TestUser) {
 
-	const userFullName = getFullName(getUser(userGroup))
+	const userFullName = getFullName(user)
 	const userLink = page.getByRole('link', { name: userFullName })
 
 	const attendHeading = page.getByRole('heading', { name: statusToString(ParticipationStatus.Attending), exact: true })

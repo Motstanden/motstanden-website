@@ -10,54 +10,58 @@ import {
     userStatusToPrettyStr
 } from "common/utils"
 import { randomInt, randomUUID } from 'crypto'
-import { disposeStorageLogIn, emailLogIn, getUser, storageLogIn } from '../utils/auth.js'
+import { TestUser, disposeLogIn, logIn, unsafeApiLogIn } from '../utils/auth.js'
 import { selectDate } from '../utils/datePicker.js'
 import { navClick } from '../utils/navClick.js'
 
-test("New users can only be created by super admin", async ({browser}) => {
-    const adminPage = await storageLogIn(browser, UserGroup.Administrator)
-    const superAdminPage = await storageLogIn(browser, UserGroup.SuperAdministrator)
-    
+test("New users can only be created by super admin", async ({browser}, workerInfo) => {
+
+    const {page: adminPage } = await logIn(browser, workerInfo, UserGroup.Administrator)
+    const {page: superAdminPage } = await logIn(browser, workerInfo, UserGroup.SuperAdministrator)
+
     await adminPage.goto("/medlem/ny")
     await superAdminPage.goto("/medlem/ny")
     
     await expect(adminPage).toHaveURL("/hjem")
     await expect(superAdminPage).toHaveURL("/medlem/ny")
 
-    await disposeStorageLogIn(adminPage)
-    await disposeStorageLogIn(superAdminPage)
+    await disposeLogIn(adminPage)
+    await disposeLogIn(superAdminPage)
 })
 
-test("Admin can not promote self to super admin", async ({browser}) => {
-    const page = await storageLogIn(browser, UserGroup.Administrator)
-    await gotoUser(page, UserGroup.Administrator, { editUser: true})
+test("Admin can not promote self to super admin", async ({browser}, workerInfo) => {
+    const {page, user} = await logIn(browser, workerInfo, UserGroup.Administrator)
+
+    await gotoUser(page, user, { editUser: true})
 
     await page.getByRole('button', { name: /Rolle/ }).click()
 
     const superAdminCount = await page.getByRole('option', { name: userGroupToPrettyStr(UserGroup.SuperAdministrator)}).count()
     expect(superAdminCount).toBe(0)
 
-    await disposeStorageLogIn(page)
+    await disposeLogIn(page)
 })
 
 test.describe("Set inactive status", async () => {
     
-    test("Contributor can not update self to be inactive", async ({browser}) => {
-        const page = await storageLogIn(browser, UserGroup.Contributor)
-        await gotoUser(page, UserGroup.Contributor, {editUser: true})
+    test("Contributor can not update self to be inactive", async ({browser}, workerInfo) => {
+        const { page, user} = await logIn(browser, workerInfo, UserGroup.Contributor)        
+
+        await gotoUser(page, user, {editUser: true})
 
         expect(await canUpdateInactive(page)).not.toBeTruthy()
 
-        await disposeStorageLogIn(page)
+        await disposeLogIn(page)
     })
 
-    test("Admin can update self to be inactive", async ({browser}) => {
-        const page = await storageLogIn(browser, UserGroup.Administrator)
-        await gotoUser(page, UserGroup.Administrator, {editUser: true})
+    test("Admin can update self to be inactive", async ({browser}, workerInfo) => {
+        const {page, user} = await logIn(browser, workerInfo, UserGroup.Administrator)
+
+        await gotoUser(page, user, {editUser: true})
 
         expect(await canUpdateInactive(page)).toBeTruthy()
 
-        await disposeStorageLogIn(page)
+        await disposeLogIn(page)
     })
         
     async function canUpdateInactive(page: Page): Promise<boolean> {
@@ -71,9 +75,8 @@ test.describe.serial("Create and update user data", async () => {
     test.slow()
     let user: UserWithoutDbData
     let userUrl: string
-    let page: undefined | Page
 
-    test("Should create new user @smoke", async ({browser}) => {
+    test("Should create new user @smoke", async ({browser}, workerInfo) => {
         user = createUser({
             capeName: null,
             phoneNumber: null,
@@ -81,8 +84,8 @@ test.describe.serial("Create and update user data", async () => {
             endDate: null,
             startDate: `${dayjs().format("YYYY-MM-DD")}`,  // Today
         })
+        const { page } = await logIn(browser, workerInfo, UserGroup.SuperAdministrator)
 
-        page = await storageLogIn(browser, UserGroup.SuperAdministrator)
         await page.goto("/medlem/ny")
 
         await fillPersonalForm(page, user)
@@ -95,10 +98,14 @@ test.describe.serial("Create and update user data", async () => {
         userUrl = page.url()
 
         await validateUserProfile(page, user)
+
+        await disposeLogIn(page)
     })
 
-    test("Super admin can update all info @smoke", async () => {
-        await clickEditButton(page)   // Reuse the page from the previous test to reduce test time
+    test("Super admin can update all info @smoke", async ({browser}, workerInfo) => {
+        const { page } = await logIn(browser, workerInfo, UserGroup.SuperAdministrator)
+        
+        await page.goto(`${userUrl}/rediger`)
 
         user = createUser({
             groupName: UserGroup.Editor,
@@ -112,11 +119,12 @@ test.describe.serial("Create and update user data", async () => {
         await saveChanges(page)
         await validateUserProfile(page, user)
 
-        await disposeStorageLogIn(page)
+        await disposeLogIn(page)
     })
 
-    test("Admin can update membership info", async ({browser}) => {
-        page = await storageLogIn(browser, UserGroup.Administrator)
+    test("Admin can update membership info", async ({browser}, workerInfo) => {
+        const { page } = await logIn(browser, workerInfo, UserGroup.Administrator)
+
         await page.goto(`${userUrl}/rediger`)
 
         const newData = createUser()
@@ -144,15 +152,13 @@ test.describe.serial("Create and update user data", async () => {
         await saveChanges(page)
         await validateUserProfile(page, user)
 
-        await disposeStorageLogIn(page)
+        await disposeLogIn(page)
     })
 
     test("User can update info about themselves", async ({page}) => {
+        await unsafeApiLogIn(page.request, user.email)
 
         await page.goto(`${userUrl}/rediger`)
-        await expect(page).toHaveURL("/logg-inn")
-
-        await emailLogIn(page, user.email)
         await expect(page).toHaveURL(`${userUrl}/rediger`)
 
         await test.step("Admin can update all", async () => {
@@ -345,15 +351,9 @@ function getEnums<T>(enumObj: {}): T[] {
                  .map(itemStr => enumObj[itemStr as keyof typeof enumObj] as T)
 }
 
-async function gotoUser(page: Page, group: UserGroup, opts?: {editUser?: boolean}) {
-    const url = getUserUrl(group, opts)
+async function gotoUser(page: Page, user: TestUser, opts?: {editUser?: boolean}) {
+    const url = opts.editUser 
+        ? `/medlem/${user.id}/rediger`
+        : `/medlem/${user.id}`
     await page.goto(url)
-} 
-
-function getUserUrl( group: UserGroup, opts?: {editUser?: boolean}): string {
-    const id = getUser(group).id
-    let url = `/medlem/${id}`
-    if(opts?.editUser) 
-        url += "/rediger"
-    return url;
 }

@@ -1,6 +1,6 @@
 import { FullConfig, request } from "@playwright/test";
 import { UserGroup } from "common/enums";
-import { apiLogIn, getStoragePath, getUser, testUserVariationsCount } from "./utils/auth.js";
+import { testUserVariationsCount, unsafeApiLogIn, unsafeGetUser } from "./utils/auth.js";
 
 
 export default async function globalSetup(config: FullConfig) {
@@ -25,9 +25,9 @@ async function authSetup() {
 }
 
 async function loginUser(userGroup: UserGroup, variantIndex: number) {
-    const user = getUser(userGroup, variantIndex)
+    const user = unsafeGetUser(userGroup, variantIndex)
     const apiContext = await request.newContext({ baseURL: process.env.BASEURL })
-    await apiLogIn(apiContext, user.email)
-    apiContext.storageState({ path: getStoragePath(userGroup, variantIndex) })
+    await unsafeApiLogIn(apiContext, user.email)
+    apiContext.storageState({ path: user.storageStatePath })
     apiContext.dispose()
 }

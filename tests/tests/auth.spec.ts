@@ -1,18 +1,31 @@
-import { Browser, chromium, Cookie, expect, firefox, test, webkit, type Page } from '@playwright/test';
-import { emailLogIn } from '../utils/auth.js';
+import { Cookie, TestInfo, expect, test, type Page } from '@playwright/test';
+import { unsafeApiLogIn } from '../utils/auth.js';
 import { navClick } from '../utils/navClick.js';
 
-test("Login tokens are created and persisted", async ({page}) => {
+function getReservedMail(workerInfo: TestInfo) {
+    return `test-auth-${workerInfo.parallelIndex + 1}@motstanden.no`
+}
 
-    // We must do a manual log in to prevent flaky tests.
-    // A race condition will eventually occur and fail the tests if we try to log in with storage state.
-    // The condition for this race condition are:
-    //      - The tests has been running repeatedly for more than 14 minutes.
-    //        This can happen if you are hunting for flaky tests.
-    //      - The AccessToken expires at a random time during the test
-    await emailLogIn(page, "stephen.hawking@gmail.com")
+// We must do a manual log in to prevent flaky tests.
+// A race condition will eventually occur and fail the tests if we try to log in with storage state.
+// The condition for this race condition are:
+//      - The tests has been running repeatedly for more than 14 minutes.
+//        This can happen if you are hunting for flaky tests.
+//      - The AccessToken expires at a random time during the test
+async function logIntoResvedUser(page: Page, workerInfo: TestInfo) {
+    const reservedUser = getReservedMail(workerInfo)
+    await unsafeApiLogIn(page.request, reservedUser)
+}
 
-    await test.step("AccessToken and RefreshTokens is defined", async () => {
+test.describe("Login tokens are created and persisted", () => {
+
+    test.beforeEach(async ({page}, workerInfo) => {
+        logIntoResvedUser(page, workerInfo)
+        await page.goto("/")
+    })
+
+    test("AccessToken and RefreshTokens is defined", async ({page}, workerInfo) => {
+
         const cookies = await page.context().cookies()
         expect(cookies.length).toBe(2)
         
@@ -26,7 +39,7 @@ test("Login tokens are created and persisted", async ({page}) => {
         expect(accessToken.expires * 1000).toBeLessThanOrEqual(Date.now() + 1000*60*15)
     })
 
-    await test.step("AccessToken is renewed if browser only has RefreshToken", async () => {
+    test("AccessToken is renewed if browser only has RefreshToken", async ({page}, workerInfo) => {
         
         const getAccessToken = async (): Promise<Cookie | undefined> => {
             const cookies = await page.context().cookies()
@@ -52,54 +65,34 @@ test("Login tokens are created and persisted", async ({page}) => {
     })
 })
 
-test.describe.serial( "User can log out", () => {
+test.describe( "User can log out", () => {
     
-    // We need to provide a different user for each browser so that the tests can run isolated in parallel in different browsers.
-    function getMail(browser: Browser) {
-        const browserName = browser.browserType().name()
-        
-        if(browserName === chromium.name())
-            return "alan.turing@gmail.com"
-
-        if(browserName === firefox.name())
-            return "linus.torvalds@gmail.com"
-
-        if(browserName === webkit.name())
-            return "albert.einstein@gmail.com"
-
-        throw `The browser is not supported: "${browserName}"`
-    }
-
-
-    test("Log out in current browser", async ({ page, browser }) => {
-        
-        const userMail = getMail(browser)
-        await emailLogIn(page, userMail)
+    test("Log out in current browser", async ({ page }, workerInfo) => {        
+        logIntoResvedUser(page, workerInfo)
+        await page.goto("/")
 
         await page.getByRole('button', { name: 'Profilmeny' }).click();
         await navClick(page.getByRole('menuitem', { name: 'Logg ut', exact: true }))
 
         await expect(page).toHaveURL('')
         await testUserIsLoggedOut(page)
-
     });
 
-    test("Log out of all browser @smoke", async ({ browser }) => {
+    test("Log out of all browser @smoke", async ({ browser }, workerInfo) => {
     
         const newLoginContext = async (): Promise<Page> => {
             const context = await browser.newContext()
             const page = await context.newPage()
-            const userMail = getMail(browser)
-            await emailLogIn(page, userMail)
+            logIntoResvedUser(page, workerInfo)
+            await page.goto("/")    
             return page
         }
 
         const page1 = await newLoginContext()
         const page2 = await newLoginContext()
       
+        // Log out of the last opened page to provide a nice viewing experience when running test in headed mode
         await test.step("Click 'log out of all units'", async () => {
-
-            // Log out of the last opened page to provide a nice viewing experience when running test in headed mode
 
             page2.once('dialog', dialog => dialog.accept());
             await page2.getByRole('button', { name: 'Profilmeny' }).click();
@@ -124,7 +117,7 @@ test.describe.serial( "User can log out", () => {
 
 async function expireAccessToken(page: Page) {
     // ideally we would be able to fast forward the browser to a time when the AccessToken has expired.
-    // This is not possible at the moment.
+    // This is not possible at the moment (October 27th, 2022).
     // We will therefore simulate this by manually deleting the AccessToken cookie
     const oldCookies = await page.context().cookies()
     const newCookies = oldCookies.filter( c => c.name !== "AccessToken")

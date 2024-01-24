@@ -2,16 +2,16 @@ import { Browser, expect, Page, test, TestInfo } from '@playwright/test';
 import { UserGroup } from 'common/enums';
 import { SheetArchiveTitle } from 'common/interfaces';
 import { randomUUID } from "crypto";
-import { disposeStorageLogIn, storageLogIn } from '../utils/auth.js';
+import { disposeLogIn, logIn } from '../utils/auth.js';
 import { navClick } from '../utils/navClick.js';
 
 test.describe("Update song title info", async () => {
-    test("Admin can update data @smoke", async ({browser}, workerInfo) => await runTest(browser, UserGroup.Administrator, workerInfo))
+    test("Admin can update data @smoke", async ({browser}, workerInfo) => await runTest(browser, workerInfo, UserGroup.Administrator))
 
-    test("Super admin can update data", async ({browser}, workerInfo) => await runTest(browser, UserGroup.SuperAdministrator, workerInfo))
+    test("Super admin can update data", async ({browser}, workerInfo) => await runTest(browser, workerInfo, UserGroup.SuperAdministrator))
 
-    async function runTest(browser: Browser, userGroup: UserGroup, workerInfo: TestInfo) {
-        const page = await storageLogIn(browser, userGroup)
+    async function runTest(browser: Browser, workerInfo: TestInfo, userGroup: UserGroup) {
+        const { page } = await logIn(browser, workerInfo, userGroup)
 
         let song: string
         try {
@@ -21,7 +21,7 @@ test.describe("Update song title info", async () => {
         }
 
         await testUpdateSongTitle({page: page, song: song})
-        await disposeStorageLogIn(page)
+        await disposeLogIn(page)
     }
 })
 

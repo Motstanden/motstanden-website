@@ -3,7 +3,7 @@ import { UserGroup } from 'common/enums';
 import { NewQuote } from "common/interfaces";
 import { randomUUID } from "crypto";
 import { EditListPage } from "../pages/EditListPage.js";
-import { disposeStorageLogIn, storageLogIn } from '../utils/auth.js';
+import { disposeLogIn, logIn } from '../utils/auth.js';
 
 test.describe.serial("Users can update and delete quotes created by themselves",  async () => {
     await testCrud({
@@ -36,29 +36,28 @@ async function testCrud(opts: {creator: UserGroup, moderator: UserGroup, testId:
     const quote1: NewQuote = createRandomQuote()
     const quote2: NewQuote = createRandomQuote()
 
-    let page: Page
-
-    test(`New (${opts.testId})`, async ({browser}) => {
-        page = await storageLogIn(browser, opts.creator)
+    test(`New (${opts.testId})`, async ({browser}, workerInfo) => {
+        const { page } = await logIn(browser, workerInfo, opts.creator)
 
         await testCreateNew(page, quote1)
 
-        if(opts.creator !== opts.moderator) {
-            await disposeStorageLogIn(page)
-        }
+        await disposeLogIn(page)
     })
 
-    test(`Update (${opts.testId})`, async ({browser}) => {
-        page = opts.creator === opts.moderator 
-             ? page 
-             : await storageLogIn(browser, opts.moderator) 
+    test(`Update (${opts.testId})`, async ({browser}, workerInfo) => {
+        const { page } = await logIn(browser, workerInfo, opts.moderator)
 
         await testUpdate(page, quote1, quote2)
+
+        await disposeLogIn(page)
     })
 
-    test(`Delete (${opts.testId})`, async () => {
+    test(`Delete (${opts.testId})`, async ({browser}, workerInfo) => {
+        const { page } = await logIn(browser, workerInfo, opts.moderator)
+
         await testDelete(page, quote2)
-        await disposeStorageLogIn(page)
+        
+        await disposeLogIn(page)
     })
 }
 
