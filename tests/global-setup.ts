@@ -1,9 +1,6 @@
-import { chromium, FullConfig } from "@playwright/test";
+import { FullConfig, request } from "@playwright/test";
 import { UserGroup } from "common/enums";
-import dayjs from "dayjs";
-import * as fs from "fs";
-import * as fsPromises from "fs/promises";
-import { getStoragePath, logIn } from "./utils/auth.js";
+import { apiLogIn, getStoragePath, getUser } from "./utils/auth.js";
 
 
 export default async function globalSetup(config: FullConfig) {
@@ -11,35 +8,20 @@ export default async function globalSetup(config: FullConfig) {
 }
 
 async function authSetup() {
-    const groups = await getGroups()
+    
+    console.log("[Setup] Authenticating users...")
 
-    if(groups.length <= 0) 
-        return
+    const groups = Object.values(UserGroup)
 
-    const browser = await chromium.launch()
     for(let i = 0; i < groups.length; i++) {
         const group = groups[i]
-        const page = await browser.newPage() 
-        await logIn(page, group)
-        await page.context().storageState({ path: getStoragePath(group) })
-        await page.context().close()
+        const user = getUser(group)
+
+        const apiContext = await request.newContext({ baseURL: process.env.BASEURL })
+        await apiLogIn(apiContext, user.email)
+        apiContext.storageState({ path: getStoragePath(group) })
+        apiContext.dispose()
     }
 
-    await browser.close()
-}
-
-async function getGroups(): Promise<UserGroup[]> {
-    const groups: UserGroup[] = Object.values(UserGroup)
-    const result: UserGroup[] = []
-    for(let i = 0; i < groups.length; i++) {
-
-        const stat: fs.Stats | undefined = await fsPromises.stat(getStoragePath(groups[i]))
-                                                           .catch(err => undefined)
-        const fileExists = !!stat                                                   
-        const fileIsOld = fileExists && dayjs(stat.birthtime).add(1, "week").isBefore(dayjs())
-        if(!fileExists || fileIsOld) {
-            result.push(groups[i])
-        }         
-    }
-    return result
+    console.log("[Setup] All users authenticated")
 }

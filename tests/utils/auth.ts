@@ -1,4 +1,4 @@
-import { Browser, Page } from "@playwright/test"
+import { APIRequestContext, Browser, Page, Request } from "@playwright/test"
 import { UserGroup, UserRank, UserStatus } from "common/enums"
 import { User } from "common/interfaces"
 import { navClick } from "./navClick.js"
@@ -25,6 +25,12 @@ export async function emailLogIn(page: Page, email: string) {
     }
     await page.getByLabel('E-post *').fill(email);
     await navClick(page.getByRole('button', { name: 'Dev logg inn' }))
+}
+
+export async function apiLogIn(apiContext: APIRequestContext, email: string) {
+    const res = await apiContext.post("/api/dev/login", { data: { destination: email } })
+    if(!res.ok()) 
+        throw `Failed to authenticate user: ${email}`
 }
 
 export async function storageLogIn(browser: Browser, group: UserGroup) {
