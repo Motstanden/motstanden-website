@@ -48,6 +48,9 @@ VALUES
 
 
     -- Accounts reserved for testing [ids: 300-499]
+    --      The data here must match the data in tests/utils/auth.ts
+    --      If you update the data here, you must also update the data in tests/utils/auth.ts
+    --
     -- Contributor [ids: 301-320]
     (301,   1,     3,     '2018-09-01',        '__Test User',      '',                 'Contributor 1',     'test-contributor-1@motstanden.no'           ),
     (302,   1,     3,     '2018-09-01',        '__Test User',      '',                 'Contributor 2',     'test-contributor-2@motstanden.no'           ),
