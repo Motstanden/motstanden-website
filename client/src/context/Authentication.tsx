@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const signOutAllUnits = async (): Promise<void> => await signOutRequest("/api/auth/logout/all-devices")
 
     const fetchUserData = async (): Promise<User | null> => {
-        const res = await fetch("/api/userMetaData")
+        const res = await fetch("/api/auth/current-user")
         if (!res.ok) {
             throw new Error(res.statusText)
         }

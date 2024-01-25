@@ -56,13 +56,13 @@ router.post("/auth/logout", AuthenticateUser(), logOut)
 
 router.post("/auth/logout/all-devices", AuthenticateUser(), logOutAllUnits)
 
-router.get("/userMetaData",
-    AuthenticateUser({ failureRedirect: "/api/userMetaDataFailure" }),
+router.get("/auth/current-user",
+    AuthenticateUser({ failureRedirect: "/api/auth/current-user-failure" }),
     (req, res) => {
         res.send(userService.getUserData(req.user as AccessTokenData))
     }
 )
 
-router.get("/userMetaDataFailure", (req, res) => res.status(204).end())
+router.get("/auth/current-user-failure", (req, res) => res.status(204).end())
 
 export default router
