@@ -33,7 +33,7 @@ const jwtLogin = new JWTStrategy({
 // --------------------------------------------
 const DomainUrl = process.env.IS_DEV_ENV === 'true' ? 'http://localhost:3000' : 'https://motstanden.no'
 
-export const MagicLinkCallbackPath = "/auth/magic_login/callback"
+export const MagicLinkCallbackPath = "/auth/magic-link/callback"
 
 async function onSendMagicLinkRequest(email: string, href: string, code: string): Promise<void> {
     const htmlStr = await createMagicLinkHtml(email, href, code)

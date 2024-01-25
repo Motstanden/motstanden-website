@@ -1,17 +1,17 @@
 import { MagicLinkResponse } from "common/interfaces";
 import express from "express";
 import passport from "passport";
-import * as passportConfig from "../config/passportConfig.js"
-import { AuthenticateUser, loginUser, logOut, logOutAllUnits } from "../middleware/jwtAuthenticate.js"
-import { requiresDevEnv } from "../middleware/requiresDevEnv.js"
-import * as userService from "../services/user.js"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
-import { getRandomInt } from "../utils/getRandomInt.js"
-import { sleepAsync } from "../utils/sleepAsync.js"
+import * as passportConfig from "../config/passportConfig.js";
+import { AuthenticateUser, loginUser, logOut, logOutAllUnits } from "../middleware/jwtAuthenticate.js";
+import { requiresDevEnv } from "../middleware/requiresDevEnv.js";
+import * as userService from "../services/user.js";
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
+import { getRandomInt } from "../utils/getRandomInt.js";
+import { sleepAsync } from "../utils/sleepAsync.js";
 
 const router = express.Router()
 
-router.post("/auth/magic_login", (req, res) => {
+router.post("/auth/magic-link", (req, res) => {
 
     if (userService.userExists(req.body.destination)) {
         passportConfig.magicLogin.send(req, res)
