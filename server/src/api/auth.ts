@@ -34,7 +34,7 @@ router.get(
     passport.authenticate("magiclogin", { session: false }),
     (req, res) => {
         loginUser(req, res)
-        res.redirect("/hjem")
+        res.redirect("/")
     }
 );
 
