@@ -23,7 +23,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const [user, setUser] = useState<User | null>(null)
 
-
     const signOutRequest = async (url: string): Promise<void> => {
         const response = await fetch(url, { method: "POST" })
         if(response.ok) {
@@ -34,11 +33,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Define logout logic
     const signOut = async (): Promise<void> => await signOutRequest("/api/auth/logout")
     const signOutAllUnits = async (): Promise<void> => await signOutRequest("/api/auth/logout/all-devices")
-
-    console.log(window.location, window.location.pathname, window.location.pathname.toLowerCase().startsWith("/api/auth/magic-link/verify"))
-
-    const location = useLocation()
-    console.log(location, location.pathname, location.pathname.toLowerCase().startsWith("/api/auth/magic-link/verify"))
 
     const fetchUserData = async (): Promise<User | null> => {
         const res = await fetch("/api/auth/current-user")
