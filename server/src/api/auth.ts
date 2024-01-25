@@ -34,7 +34,10 @@ router.get(
     passport.authenticate("magiclogin", { session: false }),
     async (req, res) => {
         loginUser(req, res)
-        await sleepAsync(10000) // Debug a bug that only occurs in production
+         
+        // TODO: Figure out why this is neccessary. I don't have time to do it before dinner.
+        await sleepAsync(2000) 
+        
         res.redirect("/")
     }
 );
