@@ -27,8 +27,10 @@ router.post("/auth/magic-link", (req, res) => {
     }
 });
 
+export const magicLinkVerifyPath = "/auth/magic-link/verify"
+
 router.get(
-    passportConfig.MagicLinkCallbackPath,
+    magicLinkVerifyPath,
     passport.authenticate("magiclogin", { session: false }),
     (req, res) => {
         loginUser(req, res)

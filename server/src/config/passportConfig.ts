@@ -7,6 +7,7 @@ import MagicLoginStrategy from 'passport-magic-login';
 import * as user from "../services/user.js";
 import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload.js";
 import * as Mail from './mailConfig.js';
+import { magicLinkVerifyPath } from "../api/login.js";
 
 // Ensure .env is loaded
 dotenv.config()
@@ -33,10 +34,8 @@ const jwtLogin = new JWTStrategy({
 // --------------------------------------------
 const DomainUrl = process.env.IS_DEV_ENV === 'true' ? 'http://localhost:3000' : 'https://motstanden.no'
 
-export const MagicLinkCallbackPath = "/auth/magic-link/callback"
-
 async function onSendMagicLinkRequest(email: string, href: string, code: string): Promise<void> {
-    const htmlStr = await createMagicLinkHtml(email, href, code)
+    const htmlStr = await createMagicLinkHtml(href, code)
     await Mail.transporter.sendMail({
         from: {
             name: "Motstanden",
@@ -48,7 +47,7 @@ async function onSendMagicLinkRequest(email: string, href: string, code: string)
     })
 }
 
-async function createMagicLinkHtml(email: string, href: string, code: string) {
+async function createMagicLinkHtml(href: string, code: string) {
 
     const filePath = new URL(`../../assets/mail-templates/MagicLink.html`, import.meta.url)
     const html = await fs.readFile(filePath, "utf-8")
@@ -64,16 +63,13 @@ function onVerifyLinkClick(
     payload: MagicLinkPayload,
     callback: (err?: Error | undefined, user?: Object | undefined, info?: any) => void
 ): void {
-    // TODO:
-    //      - Ensure that the link is only allowed to be clicked exactly once
-    //      - Retrieve user information and send it further
     const accessTokenData = user.getAccessTokenData(payload.destination)
     callback( /*Error*/ undefined, accessTokenData)
 }
 
 export const magicLogin = new MagicLoginStrategy.default({
     secret: process.env.ACCESS_TOKEN_SECRET,
-    callbackUrl: `api${MagicLinkCallbackPath}`,
+    callbackUrl: `api${magicLinkVerifyPath}`,
     sendMagicLink: onSendMagicLinkRequest,
     verify: onVerifyLinkClick,
 })
