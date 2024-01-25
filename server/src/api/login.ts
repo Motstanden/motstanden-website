@@ -54,7 +54,7 @@ if (process.env.IS_DEV_ENV) {
 
 router.post("/logout", AuthenticateUser(), logOut)
 
-router.post("/logout-all-units", AuthenticateUser(), logOutAllUnits)
+router.post("/auth/logout/all-devices", AuthenticateUser(), logOutAllUnits)
 
 router.get("/userMetaData",
     AuthenticateUser({ failureRedirect: "/api/userMetaDataFailure" }),

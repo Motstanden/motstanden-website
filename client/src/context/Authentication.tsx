@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Define logout logic
     const signOut = async (): Promise<void> => await signOutRequest("/api/logout")
-    const signOutAllUnits = async (): Promise<void> => await signOutRequest("/api/logout-all-units")
+    const signOutAllUnits = async (): Promise<void> => await signOutRequest("/api/auth/logout/all-devices")
 
     const fetchUserData = async (): Promise<User | null> => {
         const res = await fetch("/api/userMetaData")
