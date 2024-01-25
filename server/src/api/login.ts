@@ -52,7 +52,7 @@ if (process.env.IS_DEV_ENV) {
     })
 }
 
-router.post("/logout", AuthenticateUser(), logOut)
+router.post("/auth/logout", AuthenticateUser(), logOut)
 
 router.post("/auth/logout/all-devices", AuthenticateUser(), logOutAllUnits)
 
