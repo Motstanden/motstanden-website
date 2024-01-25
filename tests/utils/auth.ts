@@ -11,7 +11,7 @@ export async function apiLogIn(apiContext: APIRequestContext, user: TestUser): P
 }
 
 export async function unsafeApiLogIn(apiContext: APIRequestContext, email: string): Promise<void> {
-    const res = await apiContext.post("/api/dev/login", { data: { destination: email } })
+    const res = await apiContext.post("/api/dev/auth/login", { data: { destination: email } })
     if(!res.ok()) 
         throw `Failed to authenticate user: ${email}`
 }

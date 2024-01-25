@@ -39,7 +39,7 @@ router.get(
 );
 
 if (process.env.IS_DEV_ENV) {
-    router.post("/dev/login", requiresDevEnv, (req, res) => {
+    router.post("/dev/auth/login", requiresDevEnv, (req, res) => {
 
         const unsafeEmail = req.body.destination as string;
         if (!userService.userExists(unsafeEmail)) {

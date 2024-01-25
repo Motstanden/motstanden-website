@@ -7,7 +7,7 @@ export default function DevLogin(props: DevLoginProps) {
 function DevLoginBtn({ props }: { props: DevLoginProps }) {
     const onClick = async () => {
 
-        const res = await fetch("/api/dev/login", {
+        const res = await fetch("/api/dev/auth/login", {
             method: `POST`,
             body: JSON.stringify({
                 destination: props.email.toLowerCase().trim(),
