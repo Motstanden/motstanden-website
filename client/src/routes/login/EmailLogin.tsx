@@ -15,7 +15,7 @@ export function EmailLogin({ onEmailSent }: { onEmailSent: (e: EmailInfo) => voi
         const emailTrimmed = email.toLowerCase().trim()
 
         // POST a request with the users email or phone number to the server
-        const res = await fetch("/api/auth/magic-link", {
+        const res = await fetch("/api/auth/magic-link/create", {
             method: `POST`,
             body: JSON.stringify({
                 destination: emailTrimmed,

@@ -11,7 +11,7 @@ import { sleepAsync } from "../utils/sleepAsync.js";
 
 const router = express.Router()
 
-router.post("/auth/magic-link", (req, res) => {
+router.post("/auth/magic-link/create", (req, res) => {
 
     if (userService.userExists(req.body.destination)) {
         passportConfig.magicLogin.send(req, res)
@@ -35,7 +35,8 @@ router.get(
     (req, res) => {
         loginUser(req, res)
         res.redirect("/hjem")
-    });
+    }
+);
 
 if (process.env.IS_DEV_ENV) {
     router.post("/dev/login", requiresDevEnv, (req, res) => {
