@@ -32,8 +32,9 @@ export const magicLinkVerifyPath = "/auth/magic-link/verify"
 router.get(
     magicLinkVerifyPath,
     passport.authenticate("magiclogin", { session: false }),
-    (req, res) => {
+    async (req, res) => {
         loginUser(req, res)
+        await sleepAsync(10000) // Debug a bug that only occurs in production
         res.redirect("/")
     }
 );
