@@ -8,7 +8,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 interface AuthContextType {
     user: User | null
     signOut: () => Promise<void>;
-    signOutAllUnits: () => Promise<void>;
+    signOutAllDevices: () => Promise<void>;
 }
 
 export const AuthContext = React.createContext<AuthContextType>(null!);
@@ -17,22 +17,26 @@ export function useAuth() {
     return useContext(AuthContext)
 }
 
+
+async function signOutCurrentUser(): Promise<void> {
+    const response = await fetch("/api/auth/logout", { method: "POST" })
+    if(response.ok) {
+        window.location.href = `${window.location.origin}` // Do a full page refresh
+    }
+}
+
+async function signOutAllDevices(): Promise<void> {
+    const response = await fetch("/api/auth/logout/all-devices", { method: "POST" })
+    if(response.ok) {
+        window.location.href = `${window.location.origin}` // Do a full page refresh
+    }
+}
+
 export const userQueryKey = ["GetUserMetaData"]
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const [user, setUser] = useState<User | null>(null)
-
-    const signOutRequest = async (url: string): Promise<void> => {
-        const response = await fetch(url, { method: "POST" })
-        if(response.ok) {
-            window.location.href = `${window.location.origin}` // Do a full page refresh
-        }
-    }
-
-    // Define logout logic
-    const signOut = async (): Promise<void> => await signOutRequest("/api/auth/logout")
-    const signOutAllUnits = async (): Promise<void> => await signOutRequest("/api/auth/logout/all-devices")
 
     const fetchUserData = async (): Promise<User | null> => {
         const res = await fetch("/api/auth/current-user")
@@ -56,7 +60,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return <></>
     }
 
-    const contextValue = { user, signOut, signOutAllUnits }
+    const contextValue = { 
+        user: user, 
+        signOut: signOutCurrentUser, 
+        signOutAllDevices: signOutAllDevices 
+    }
     return (
         <AuthContext.Provider value={contextValue}>
             {children}

@@ -8,10 +8,10 @@ import {
     MenuItem,
     Tooltip
 } from "@mui/material";
-import { Link as RouterLink } from 'react-router-dom';
-import { useAuth } from 'src/context/Authentication';
 import { getFullName } from 'common/utils';
+import { Link as RouterLink } from 'react-router-dom';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
+import { useAuth } from 'src/context/Authentication';
 
 
 export default function UserAvatar() {
@@ -23,7 +23,7 @@ export default function UserAvatar() {
 
     const onSignOutAllClick = async () => {
         if (window.confirm("Du vil bli logget ut av alle enheter innen 15 minutter")) {
-            await auth.signOutAllUnits()
+            await auth.signOutAllDevices()
         }
     }
 
