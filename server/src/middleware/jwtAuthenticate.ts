@@ -1,11 +1,16 @@
+import { PublicCookieName } from "common/enums";
 import crypto from "crypto";
-import { NextFunction, Request, Response } from 'express';
+import { CookieOptions, NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import * as userService from '../services/user.js';
 import { AccessTokenData } from '../ts/interfaces/AccessTokenData.js';
 import { RefreshTokenData } from '../ts/interfaces/RefreshTokenData.js';
 
+enum JwtToken {
+    AccessToken = "AccessToken",
+    RefreshToken = "RefreshToken"
+}
 
 export function AuthenticateUser(options?: AuthenticateOptions) {
     return (req: Request, res: Response, next: NextFunction) => onAuthenticateRequest(req, res, next, options ?? {})
@@ -36,6 +41,11 @@ export function updateAccessToken(req: Request, res: Response, next: NextFunctio
         return onFailure()
     }
 
+    const expireToken = !!getToken(req, PublicCookieName.RefreshTokenExpiry)
+    if(!expireToken) {
+        return onFailure()
+    }
+
     let payload: JwtTokenData
     try {
         payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET) as JwtTokenData
@@ -57,7 +67,7 @@ export function updateAccessToken(req: Request, res: Response, next: NextFunctio
     next()
 }
 
-function getToken(req: Request, tokenType: JwtToken): string | undefined {
+function getToken(req: Request, tokenType: JwtToken | PublicCookieName.RefreshTokenExpiry): string | undefined {
     let token = undefined
     if (req && req.cookies) {
         token = req.cookies[tokenType.toString()]
@@ -91,24 +101,49 @@ export function loginUser(req: Request, res: Response) {
     const refreshToken = createToken(JwtToken.RefreshToken, userData)
 
     userService.insertLoginToken(refreshToken)
+    
+    const refreshCookieExpiry = getCookieExpiry(JwtToken.RefreshToken)    
 
     saveTokenInCookie(res, JwtToken.AccessToken, accessToken)
-    saveTokenInCookie(res, JwtToken.RefreshToken, refreshToken)
+    saveTokenInCookie(res, JwtToken.RefreshToken, refreshToken, { expires: refreshCookieExpiry })
+    saveTokenInCookie(res, PublicCookieName.RefreshTokenExpiry, refreshCookieExpiry.toUTCString(), { expires: refreshCookieExpiry, httpOnly: false})
 }
 
-function saveTokenInCookie(res: Response, tokenType: JwtToken, tokenStr: string | RefreshTokenData) {
-    const maxAge = tokenType === JwtToken.AccessToken
-        ? 1000 * 60 * 15                 // 15 min
-        : 1000 * 60 * 60 * 24 * 365      // 365 days
+function saveTokenInCookie(
+    res: Response, 
+    tokenType: JwtToken |  PublicCookieName.RefreshTokenExpiry,
+    tokenData: string,
+    opts?: CookieOptions
+) {
     res.cookie(
         tokenType.toString(),
-        tokenStr,
+        tokenData,
         {
             httpOnly: true,
             secure: process.env.IS_DEV_ENV === "true" ? false : true,       // In development we need this to be true in order to log in to the site from a mobile phone
             sameSite: "strict",
-            maxAge: maxAge
+            expires: getCookieExpiry(tokenType),
+            encode: (val) => val,
+            ...opts
         })
+}
+
+function getCookieExpiry(tokenType: JwtToken | PublicCookieName.RefreshTokenExpiry ): Date {
+
+    let maxAge: number
+    switch(tokenType) {
+        case JwtToken.AccessToken:
+            maxAge = 1000 * 60 * 15                 // 15 min
+            break
+        case JwtToken.RefreshToken:
+            maxAge = 1000 * 60 * 60 * 24 * 365      // 365 days
+            break
+        case PublicCookieName.RefreshTokenExpiry:
+            maxAge = 1000 * 60 * 60 * 24 * 365      // 365 days
+            break
+    }
+
+    return new Date(Date.now() + maxAge)
 }
 
 export function logOut(req: Request, res: Response) {
@@ -130,11 +165,7 @@ export function logOutAllUnits(req: Request, res: Response) {
 function clearAllAuthCookies(res: Response) {
     res.clearCookie(JwtToken.AccessToken.toString(), {sameSite: "strict"})
     res.clearCookie(JwtToken.RefreshToken.toString(), {sameSite: "strict"})
-}
-
-enum JwtToken {
-    AccessToken = "AccessToken",
-    RefreshToken = "RefreshToken"
+    res.clearCookie(PublicCookieName.RefreshTokenExpiry.toString(), {sameSite: "strict"})
 }
 
 export interface JwtTokenData extends AccessTokenData, jwt.JwtPayload {
