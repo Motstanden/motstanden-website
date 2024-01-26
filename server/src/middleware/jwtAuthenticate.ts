@@ -12,7 +12,7 @@ export function AuthenticateUser(options?: AuthenticateOptions) {
 }
 
 function onAuthenticateRequest(req: Request, res: Response, next: NextFunction, options: AuthenticateOptions) {
-    const accessToken = getToken(req, TokenType.AccessToken)
+    const accessToken = getToken(req, JwtToken.AccessToken)
     if (accessToken) {
         return passport.authenticate("jwt", { session: false, ...options })(req, res, next)
     }
@@ -31,7 +31,7 @@ export function updateAccessToken(req: Request, res: Response, next: NextFunctio
         return res.status(401).send("Unauthorized").end()
     }
 
-    const refreshToken = getToken(req, TokenType.RefreshToken)
+    const refreshToken = getToken(req, JwtToken.RefreshToken)
     if (!refreshToken) {
         return onFailure()
     }
@@ -50,14 +50,14 @@ export function updateAccessToken(req: Request, res: Response, next: NextFunctio
     }
 
     const user = userService.getTokenDataFromId(payload.userId)
-    const accessToken = createToken(TokenType.AccessToken, user)
-    saveTokenInCookie(res, TokenType.AccessToken, accessToken)
+    const accessToken = createToken(JwtToken.AccessToken, user)
+    saveTokenInCookie(res, JwtToken.AccessToken, accessToken)
 
     req.user = user
     next()
 }
 
-function getToken(req: Request, tokenType: TokenType): string | undefined {
+function getToken(req: Request, tokenType: JwtToken): string | undefined {
     let token = undefined
     if (req && req.cookies) {
         token = req.cookies[tokenType.toString()]
@@ -66,8 +66,8 @@ function getToken(req: Request, tokenType: TokenType): string | undefined {
 }
 
 
-export function createToken(tokenType: TokenType, user: AccessTokenData): string {
-    return tokenType === TokenType.AccessToken
+export function createToken(tokenType: JwtToken, user: AccessTokenData): string {
+    return tokenType === JwtToken.AccessToken
         ? createAccessToken(user)
         : createRefreshToken(user)
 }
@@ -87,17 +87,17 @@ function createRefreshToken(user: AccessTokenData): string {
 export function loginUser(req: Request, res: Response) {
     const userData = req.user as AccessTokenData
 
-    const accessToken = createToken(TokenType.AccessToken, userData)
-    const refreshToken = createToken(TokenType.RefreshToken, userData)
+    const accessToken = createToken(JwtToken.AccessToken, userData)
+    const refreshToken = createToken(JwtToken.RefreshToken, userData)
 
     userService.insertLoginToken(refreshToken)
 
-    saveTokenInCookie(res, TokenType.AccessToken, accessToken)
-    saveTokenInCookie(res, TokenType.RefreshToken, refreshToken)
+    saveTokenInCookie(res, JwtToken.AccessToken, accessToken)
+    saveTokenInCookie(res, JwtToken.RefreshToken, refreshToken)
 }
 
-function saveTokenInCookie(res: Response, tokenType: TokenType, tokenStr: string | RefreshTokenData) {
-    const maxAge = tokenType === TokenType.AccessToken
+function saveTokenInCookie(res: Response, tokenType: JwtToken, tokenStr: string | RefreshTokenData) {
+    const maxAge = tokenType === JwtToken.AccessToken
         ? 1000 * 60 * 15                 // 15 min
         : 1000 * 60 * 60 * 24 * 365      // 365 days
     res.cookie(
@@ -112,7 +112,7 @@ function saveTokenInCookie(res: Response, tokenType: TokenType, tokenStr: string
 }
 
 export function logOut(req: Request, res: Response) {
-    const refreshToken = getToken(req, TokenType.RefreshToken)
+    const refreshToken = getToken(req, JwtToken.RefreshToken)
     if (refreshToken) {
         userService.removeLoginToken(refreshToken)
     }
@@ -128,11 +128,11 @@ export function logOutAllUnits(req: Request, res: Response) {
 }
 
 function clearAllAuthCookies(res: Response) {
-    res.clearCookie(TokenType.AccessToken.toString(), {sameSite: "strict"})
-    res.clearCookie(TokenType.RefreshToken.toString(), {sameSite: "strict"})
+    res.clearCookie(JwtToken.AccessToken.toString(), {sameSite: "strict"})
+    res.clearCookie(JwtToken.RefreshToken.toString(), {sameSite: "strict"})
 }
 
-enum TokenType {
+enum JwtToken {
     AccessToken = "AccessToken",
     RefreshToken = "RefreshToken"
 }
