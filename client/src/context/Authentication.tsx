@@ -1,15 +1,40 @@
 import { useQuery } from '@tanstack/react-query';
-import { UserGroup } from "common/enums";
+import { PublicCookieName, UserGroup } from "common/enums";
 import { User } from "common/interfaces";
 import { hasGroupAccess } from "common/utils";
-import React, { useContext, useState } from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import dayjs from 'dayjs';
+import React, { useContext, useEffect, useState } from "react";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { fetchAsync } from 'src/utils/fetchAsync';
 
-interface AuthContextType {
-    user: User | null
+enum LoginStatus {
+    LoggedIn,
+    LoggedOut,
+    PossiblyLoggedIn
+}
+
+type LoggedInContextType = {
+    loginStatus: LoginStatus.LoggedIn,
+    isProbablyLoggedIn: true,
+    user: User,
     signOut: () => Promise<void>;
     signOutAllDevices: () => Promise<void>;
 }
+
+type LoggedOutContextType = {
+    loginStatus: LoginStatus.LoggedOut,
+    isProbablyLoggedIn: false,
+    user: undefined,
+}
+
+type PossiblyLoggedInContextType = {
+    isProbablyLoggedIn: true,
+    user: undefined,
+    loginStatus: LoginStatus.PossiblyLoggedIn,
+}
+
+type AuthContextType = LoggedInContextType | LoggedOutContextType | PossiblyLoggedInContextType
+
 
 export const AuthContext = React.createContext<AuthContextType>(null!);
 
@@ -32,39 +57,77 @@ async function signOutAllDevices(): Promise<void> {
     }
 }
 
+// Returns false if there is absolutely no way the user is logged in. 
+// Returns true if the user might be logged in. (We have no way to know for sure without asking the server)
+function isProbablyLoggedIn(): boolean {
+    const refreshTokenExpiry = document.cookie
+        .split(";")
+        .find((item) => item.trim().startsWith(`${PublicCookieName.RefreshTokenExpiry}=`))
+        ?.split("=")[1]
+    
+    if(!refreshTokenExpiry)
+        return false
+
+    const expiryTime = dayjs(refreshTokenExpiry)
+
+    if(!expiryTime.isValid())
+        return false
+
+    const currentTime = dayjs()
+
+    return currentTime.isBefore(expiryTime)
+}
+
 export const userQueryKey = ["GetUserMetaData"]
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
-    const [user, setUser] = useState<User | null>(null)
+    const isOptimisticAuth = isProbablyLoggedIn()
+    const { isLoading, data, isError } = useQuery<User>(userQueryKey, () => fetchAsync<User>("/api/auth/current-user"), {
+        enabled: isOptimisticAuth
+    })
 
-    const fetchUserData = async (): Promise<User | null> => {
-        const res = await fetch("/api/auth/current-user")
-        if (!res.ok) {
-            throw new Error(res.statusText)
+    let loginStatus: LoginStatus
+
+    if(isOptimisticAuth && (isLoading || isError)) {
+        loginStatus = LoginStatus.PossiblyLoggedIn
+    } else if(!isLoading && !isError && !!data) {
+        loginStatus = LoginStatus.LoggedIn
+    } else {
+        loginStatus = LoginStatus.LoggedOut
+    }
+
+    let contextValue: AuthContextType
+
+    switch(loginStatus) {
+        case LoginStatus.LoggedIn: {
+            contextValue = { 
+                loginStatus: LoginStatus.LoggedIn,
+                isProbablyLoggedIn: true,
+                user: data!,
+                signOut: signOutCurrentUser,
+                signOutAllDevices: signOutAllDevices
+            }
+            break;
         }
-
-        if (res.status === 204) {   // Request was successful but user is not logged in. 
-            setUser(null)
-            return null
+        case LoginStatus.PossiblyLoggedIn: {
+            contextValue = {
+                loginStatus: LoginStatus.PossiblyLoggedIn,
+                isProbablyLoggedIn: true,
+                user: undefined,
+            }
+            break;
         }
-
-        const userData = await res.json() as User;
-        setUser(userData)
-        return userData
+        case LoginStatus.LoggedOut: {
+            contextValue = {
+                loginStatus: LoginStatus.LoggedOut,
+                isProbablyLoggedIn: false,
+                user: undefined,
+            }
+            break;
+        }
     }
 
-    const { isLoading } = useQuery<User | null>(userQueryKey, () => fetchUserData())
-
-    if (isLoading) {
-        return <></>
-    }
-
-    const contextValue = { 
-        user: user, 
-        signOut: signOutCurrentUser, 
-        signOutAllDevices: signOutAllDevices 
-    }
     return (
         <AuthContext.Provider value={contextValue}>
             {children}
@@ -73,19 +136,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function RequireAuth({ requiredGroup, children }: { children: JSX.Element, requiredGroup?: UserGroup }) {
-    const auth = useAuth();
+    const { loginStatus, user } = useAuth();
+    
     const location = useLocation()
+    const [initialLocation ] = useState(location)
 
-    if (!auth.user) {
-        // Redirect them to the /logg-inn page, but save the current location they were
-        // trying to go to when they were redirected. This allows us to send them
-        // along to that page after they login, which is a nicer user experience
-        // than dropping them off on the home page.
-        return <Navigate to="/logg-inn" state={{ from: location }} replace />;
+    if(loginStatus === LoginStatus.LoggedOut) {
+        return <Navigate to="/logg-inn" state={{ from: initialLocation }} replace />;
     }
 
-    if (requiredGroup && !hasGroupAccess(auth.user, requiredGroup)) {
-        return <Navigate to="/hjem" state={{ from: location }} replace />;
+    if(loginStatus === LoginStatus.LoggedIn && requiredGroup && !hasGroupAccess(user, requiredGroup)) {
+        return <Navigate to="/" state={{ from: location }} replace />;
     }
 
     return children
