@@ -1,6 +1,7 @@
 import { Cookie, TestInfo, expect, test, type Page } from '@playwright/test';
 import { unsafeApiLogIn } from '../utils/auth.js';
 import { navClick } from '../utils/navClick.js';
+import { PublicCookieName } from 'common/enums';
 
 function getReservedMail(workerInfo: TestInfo) {
     return `test-auth-${workerInfo.parallelIndex + 1}@motstanden.no`
@@ -27,13 +28,16 @@ test.describe("Login tokens are created and persisted", () => {
     test("AccessToken and RefreshTokens is defined", async ({page}, workerInfo) => {
 
         const cookies = await page.context().cookies()
-        expect(cookies.length).toBe(2)
+        expect(cookies.length).toBe(3)
         
         const accessToken = cookies.find(c => c.name === "AccessToken")
         expect(accessToken).toBeDefined()
     
         const refreshToken = cookies.find(c => c.name === "RefreshToken")
         expect(refreshToken).toBeDefined()
+
+        const userInfo = cookies.find(c => c.name === PublicCookieName.UnsafeUserInfo)
+        expect(userInfo).toBeDefined()
 
         // Test that AccessToken expires within 15 minutes
         expect(accessToken.expires * 1000).toBeLessThanOrEqual(Date.now() + 1000*60*15)
@@ -47,7 +51,7 @@ test.describe("Login tokens are created and persisted", () => {
             return token
         }
 
-        await expireAccessToken(page)
+        await expireCookie(page, CookieName.AccessToken)
         const oldAccessToken = await getAccessToken()
         expect(oldAccessToken).not.toBeDefined()
 
@@ -62,6 +66,32 @@ test.describe("Login tokens are created and persisted", () => {
 
         const newAccessToken = await getAccessToken()
         expect(newAccessToken).toBeDefined()
+    })
+
+    test("UnsafeUserInfo is renewed if browser only has RefreshToken", async ({page}, workerInfo) => {
+        
+        const getUserInfo = async (): Promise<Cookie | undefined> => {
+            const cookies = await page.context().cookies()
+            const token = cookies.find(c => c.name === PublicCookieName.UnsafeUserInfo) 
+            return token
+        }
+
+        await expireCookie(page, CookieName.UnsafeUserInfo)
+        await expireCookie(page, CookieName.AccessToken)
+
+        const oldUserInfo = await getUserInfo()
+        expect(oldUserInfo).not.toBeDefined()
+
+        await page.reload()
+
+        // I wrote this hack because: 
+        //      1. I don't want to spend time figuring out exactly when the browser instantiates the token.
+        //      2. It performs better than simply just waiting for the page to completely load.
+        while( !(await getUserInfo()) ) 
+            await page.waitForTimeout(100);
+
+        const newUserInfo = await getUserInfo()
+        expect(newUserInfo).toBeDefined()
     })
 })
 
@@ -107,7 +137,7 @@ test.describe( "User can log out", () => {
         await test.step("Test that the user is logged out of other browser", async () => {
 
             // The user should be logged out when the AccessToken expires.
-            await expireAccessToken(page1)
+            await expireCookie(page1, CookieName.AccessToken)
 
             await testUserIsLoggedOut(page1)
             await page1.context().close()
@@ -115,14 +145,20 @@ test.describe( "User can log out", () => {
     })
 });
 
-async function expireAccessToken(page: Page) {
+async function expireCookie(page: Page, cookieName: CookieName) {
     // ideally we would be able to fast forward the browser to a time when the AccessToken has expired.
     // This is not possible at the moment (October 27th, 2022).
     // We will therefore simulate this by manually deleting the AccessToken cookie
     const oldCookies = await page.context().cookies()
-    const newCookies = oldCookies.filter( c => c.name !== "AccessToken")
+    const newCookies = oldCookies.filter( c => c.name !== cookieName)
     await page.context().clearCookies()
     await page.context().addCookies(newCookies)
+}
+
+enum CookieName {
+    AccessToken = "AccessToken",
+    RefreshToken = "RefreshToken",
+    UnsafeUserInfo = PublicCookieName.UnsafeUserInfo
 }
 
 async function testUserIsLoggedOut(page: Page) {

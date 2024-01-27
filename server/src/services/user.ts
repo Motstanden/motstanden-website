@@ -45,35 +45,11 @@ export function getAccessTokenData(unsafeEmail: string): AccessTokenData {
         FROM 
             vw_user 
         WHERE email = ?`)
-    const user = stmt.get(unsafeEmail)
+    const user: AccessTokenData | undefined = stmt.get(unsafeEmail)
     db.close()
 
     if (!user)
         throw `The user does not exist in the database`
-
-    const accessToken = user as AccessTokenData;
-    if (!accessToken.userId || !accessToken.email || !accessToken.groupId || !accessToken.groupName)
-        throw `Database yielded invalid result.`
-
-    return accessToken
-}
-
-export function getTokenDataFromId(userId: number): AccessTokenData {
-    const db = new Database(motstandenDB, dbReadOnlyConfig)
-    const stmt = db.prepare(
-        `SELECT 
-            user_id as userId,
-            email,
-            user_group_id as groupId,
-            user_group as groupName
-        FROM 
-            vw_user 
-        WHERE user_id = ?`)
-    const user = stmt.get(userId) as AccessTokenData
-    db.close()
-
-    if (!user.userId || !user.email || !user.groupId || !user.groupName)
-        throw `Database yielded invalid result.`
 
     return user
 }
@@ -131,7 +107,7 @@ export function removeAllLoginTokens(user: AccessTokenData) {
     db.close()
 }
 
-export function getUserData(userToken: AccessTokenData): User {
+export function getUser(id: number): User {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
         `SELECT 
@@ -155,11 +131,11 @@ export function getUserData(userToken: AccessTokenData): User {
         FROM 
             vw_user 
         WHERE user_id = ?`)
-    const user = stmt.get(userToken.userId) as User
+    const user = stmt.get(id) as User
     db.close()
 
-    if (!user || user.email !== userToken.email)
-        throw `Database yielded invalid result.`
+    if (!user)
+        throw "User not found"
 
     return user
 }

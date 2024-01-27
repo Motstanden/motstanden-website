@@ -1,47 +1,24 @@
 import { useQuery } from '@tanstack/react-query';
 import { PublicCookieName, UserGroup } from "common/enums";
-import { User } from "common/interfaces";
-import { hasGroupAccess } from "common/utils";
+import { UnsafeUserCookie, User } from "common/interfaces";
+import { hasGroupAccess, isNullOrWhitespace } from "common/utils";
 import dayjs from 'dayjs';
 import React, { useContext, useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { fetchAsync } from 'src/utils/fetchAsync';
 
-enum LoginStatus {
-    LoggedIn,
-    LoggedOut,
-    PossiblyLoggedIn
+type AuthContextType =  {
+    user: User | undefined,
+    isLoading: boolean,
+    signOut: () => Promise<void>
+    signOutAllDevices: () => Promise<void>
 }
-
-type LoggedInContextType = {
-    loginStatus: LoginStatus.LoggedIn,
-    isProbablyLoggedIn: true,
-    user: User,
-    signOut: () => Promise<void>;
-    signOutAllDevices: () => Promise<void>;
-}
-
-type LoggedOutContextType = {
-    loginStatus: LoginStatus.LoggedOut,
-    isProbablyLoggedIn: false,
-    user: undefined,
-}
-
-type PossiblyLoggedInContextType = {
-    isProbablyLoggedIn: true,
-    user: undefined,
-    loginStatus: LoginStatus.PossiblyLoggedIn,
-}
-
-type AuthContextType = LoggedInContextType | LoggedOutContextType | PossiblyLoggedInContextType
-
 
 export const AuthContext = React.createContext<AuthContextType>(null!);
 
 export function useAuth() {
     return useContext(AuthContext)
 }
-
 
 async function signOutCurrentUser(): Promise<void> {
     const response = await fetch("/api/auth/logout", { method: "POST" })
@@ -57,75 +34,51 @@ async function signOutAllDevices(): Promise<void> {
     }
 }
 
-// Returns false if there is absolutely no way the user is logged in. 
-// Returns true if the user might be logged in. (We have no way to know for sure without asking the server)
-function isProbablyLoggedIn(): boolean {
-    const refreshTokenExpiry = document.cookie
+// Gets the user from the previous session if it exists.
+// Nb: Never trust the user object from this cookie, it can be tampered with.
+function getPreviousUser(): User | undefined {
+    const cookieValue = document.cookie
         .split(";")
-        .find((item) => item.trim().startsWith(`${PublicCookieName.RefreshTokenExpiry}=`))
+        .find((item) => item.trim().startsWith(`${PublicCookieName.UnsafeUserInfo}=`))
         ?.split("=")[1]
     
-    if(!refreshTokenExpiry)
-        return false
+    if(!cookieValue || isNullOrWhitespace(cookieValue))
+        return undefined
 
-    const expiryTime = dayjs(refreshTokenExpiry)
+    let user: UnsafeUserCookie
+    try {
+        user = JSON.parse(cookieValue)
+    } catch {
+        return undefined
+    }
+
+    const expiryTime = dayjs(user.expires)
+
+    console.log(expiryTime, user.expires)
 
     if(!expiryTime.isValid())
-        return false
+        return undefined
 
     const currentTime = dayjs()
+    if(currentTime.isAfter(expiryTime))
+        return undefined
 
-    return currentTime.isBefore(expiryTime)
+    return user
 }
 
 export const userQueryKey = ["GetUserMetaData"]
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
-    const isOptimisticAuth = isProbablyLoggedIn()
-    const { isLoading, data, isError } = useQuery<User>(userQueryKey, () => fetchAsync<User>("/api/auth/current-user"), {
-        enabled: isOptimisticAuth
-    })
+    const [ previousUser ] = useState<User | undefined>(getPreviousUser())
 
-    let loginStatus: LoginStatus
+    const { isLoading, data } = useQuery<User | undefined>(userQueryKey, () => fetchAsync<User | undefined>("/api/auth/current-user"))
 
-    if(isOptimisticAuth && (isLoading || isError)) {
-        loginStatus = LoginStatus.PossiblyLoggedIn
-    } else if(!isLoading && !isError && !!data) {
-        loginStatus = LoginStatus.LoggedIn
-    } else {
-        loginStatus = LoginStatus.LoggedOut
-    }
-
-    let contextValue: AuthContextType
-
-    switch(loginStatus) {
-        case LoginStatus.LoggedIn: {
-            contextValue = { 
-                loginStatus: LoginStatus.LoggedIn,
-                isProbablyLoggedIn: true,
-                user: data!,
-                signOut: signOutCurrentUser,
-                signOutAllDevices: signOutAllDevices
-            }
-            break;
-        }
-        case LoginStatus.PossiblyLoggedIn: {
-            contextValue = {
-                loginStatus: LoginStatus.PossiblyLoggedIn,
-                isProbablyLoggedIn: true,
-                user: undefined,
-            }
-            break;
-        }
-        case LoginStatus.LoggedOut: {
-            contextValue = {
-                loginStatus: LoginStatus.LoggedOut,
-                isProbablyLoggedIn: false,
-                user: undefined,
-            }
-            break;
-        }
+    const contextValue: AuthContextType = {
+        user: isLoading ? previousUser : data,
+        isLoading: isLoading,
+        signOut: signOutCurrentUser,
+        signOutAllDevices: signOutAllDevices
     }
 
     return (
@@ -136,17 +89,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function RequireAuth({ requiredGroup, children }: { children: JSX.Element, requiredGroup?: UserGroup }) {
-    const { loginStatus, user } = useAuth();
+    const { user } = useAuth();
     
-    const location = useLocation()
-    const [initialLocation ] = useState(location)
+    const [ initialLocation ] = useState(useLocation())
 
-    if(loginStatus === LoginStatus.LoggedOut) {
+    const isLoggedIn = () => !!user
+
+    const isInvalidGroup = () => user && requiredGroup && !hasGroupAccess(user, requiredGroup)
+
+    if(!isLoggedIn()) {
         return <Navigate to="/logg-inn" state={{ from: initialLocation }} replace />;
     }
 
-    if(loginStatus === LoginStatus.LoggedIn && requiredGroup && !hasGroupAccess(user, requiredGroup)) {
-        return <Navigate to="/" state={{ from: location }} replace />;
+    if(isInvalidGroup()) {
+        return <Navigate to="/" replace />;
     }
 
     return children

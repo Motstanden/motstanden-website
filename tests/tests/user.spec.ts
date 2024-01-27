@@ -22,7 +22,7 @@ test("New users can only be created by super admin", async ({browser}, workerInf
     await adminPage.goto("/medlem/ny")
     await superAdminPage.goto("/medlem/ny")
     
-    await expect(adminPage).toHaveURL("/hjem")
+    await expect(adminPage).toHaveURL("/")
     await expect(superAdminPage).toHaveURL("/medlem/ny")
 
     await disposeLogIn(adminPage)

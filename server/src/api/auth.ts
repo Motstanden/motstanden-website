@@ -63,7 +63,14 @@ router.post("/auth/logout/all-devices", AuthenticateUser(), logOutAllUnits)
 router.get("/auth/current-user",
     AuthenticateUser(),
     (req, res) => {
-        res.send(userService.getUserData(req.user as AccessTokenData))
+        const user = req.user as AccessTokenData
+        try {
+            const data = userService.getUser(user.userId)
+            res.send(data)
+        } catch(err) {
+            console.error(err)
+            res.status(404).end()
+        }
     }
 )
 
