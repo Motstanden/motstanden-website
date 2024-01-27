@@ -54,8 +54,6 @@ function getPreviousUser(): User | undefined {
 
     const expiryTime = dayjs(user.expires)
 
-    console.log(expiryTime, user.expires)
-
     if(!expiryTime.isValid())
         return undefined
 
@@ -66,16 +64,27 @@ function getPreviousUser(): User | undefined {
     return user
 }
 
+async function fetchCurrentUser(): Promise<User | null> {
+    const res = await fetch("/api/auth/current-user")
+    if(!res.ok)
+        throw `${res.status} ${res.statusText}`
+
+    if (res.status === 204)     // Request was successful but user is not logged in
+        return null
+    
+    return await res.json()
+}
+
 export const userQueryKey = ["GetUserMetaData"]
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const [ previousUser ] = useState<User | undefined>(getPreviousUser())
 
-    const { isLoading, data } = useQuery<User | undefined>(userQueryKey, () => fetchAsync<User | undefined>("/api/auth/current-user"))
+    const { isLoading, data } = useQuery<User | null>(userQueryKey, fetchCurrentUser)
 
     const contextValue: AuthContextType = {
-        user: isLoading ? previousUser : data,
+        user: isLoading ? previousUser : data ?? undefined,
         isLoading: isLoading,
         signOut: signOutCurrentUser,
         signOutAllDevices: signOutAllDevices

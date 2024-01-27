@@ -61,7 +61,7 @@ router.post("/auth/logout", AuthenticateUser(), logOut)
 router.post("/auth/logout/all-devices", AuthenticateUser(), logOutAllUnits)
 
 router.get("/auth/current-user",
-    AuthenticateUser(),
+    AuthenticateUser( { failureRedirect: "/api/auth/current-user-failure" }),
     (req, res) => {
         const user = req.user as AccessTokenData
         try {
@@ -73,5 +73,7 @@ router.get("/auth/current-user",
         }
     }
 )
+
+router.get("/auth/current-user-failure", (req, res) => res.status(204).end())
 
 export default router
