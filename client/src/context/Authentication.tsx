@@ -75,7 +75,7 @@ async function fetchCurrentUser(): Promise<User | null> {
     return await res.json()
 }
 
-export const userQueryKey = ["GetUserMetaData"]
+export const userQueryKey = ["GetCurrentUser"]
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
