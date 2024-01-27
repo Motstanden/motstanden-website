@@ -61,7 +61,7 @@ function TitleHeader( {lyric}: {lyric: SongLyric} ) {
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     
     const user = useAuth().user;
-    const isLoggedIn = user !== null
+    const isLoggedIn = !!user
     const canDelete = isLoggedIn && ( user.id === lyric.createdBy || hasGroupAccess(user, UserGroup.Administrator));
 
     const queryClient = useQueryClient();
