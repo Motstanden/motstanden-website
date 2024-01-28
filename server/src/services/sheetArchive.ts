@@ -21,12 +21,9 @@ export function getTitles(): SheetArchiveTitle[] {
         FROM 
             song_title 
         ORDER BY title COLLATE NOCASE ASC`)
-    const dbResult: DbSheetArchiveTitle[] | undefined = stmt.all()
+    const dbResult = <DbSheetArchiveTitle[]> stmt.all()
     db.close();
 
-    if(!dbResult)
-        throw "Bad data"
-        
     const sheets = dbResult.map( item => ({
         ...item, 
         isPublic: item.isPublic === 1, 
@@ -79,7 +76,7 @@ export function getFiles(titleId: number): SheetArchiveFile[] {
             vw_song_file 
         WHERE title_id = ?
         ORDER BY instrument COLLATE NOCASE ASC`)
-    const sheets = stmt.all(titleId)
+    const sheets = <SheetArchiveFile[]> stmt.all(titleId)
     db.close()
 
     if(!sheets)

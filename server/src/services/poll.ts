@@ -27,7 +27,7 @@ function getPoll(pollId: number): Poll {
         WHERE poll_id = ?
     `)    
 
-    const poll: Poll | undefined = stmt.get(pollId)
+    const poll = <Poll | undefined> stmt.get(pollId)
     db.close()
 
     if(!poll)
@@ -68,7 +68,7 @@ function getPollOptions(userId: number, pollId: number): PollOption[] {
         WHERE poll_id = ?
     `)
 
-    const dbOptions: DbPollOption[] | undefined = stmt.all(userId, pollId)
+    const dbOptions = <DbPollOption[] | undefined> stmt.all(userId, pollId)
     db.close()
 
     if(!dbOptions)
@@ -85,15 +85,31 @@ function getPollOptions(userId: number, pollId: number): PollOption[] {
 function getNewest(): Poll {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
 
-    const stmt = db.prepare(`SELECT MAX(poll_id) as id FROM poll`)
+    const stmt = db.prepare(`
+        SELECT 
+            MAX(poll_id) as id, 
+            title, 
+            type,
+
+            created_by_user_id as createdBy,
+            created_by_full_name as createdByName,
+            created_at as createdAt,
+
+            updated_by_user_id as updatedBy,
+            updated_by_full_name as updatedByName,
+            updated_at as updatedAt
+        FROM 
+            vw_poll
+    `)
     
-    const pollId: number | undefined = stmt.get().id
+    const poll = (<Poll | undefined> stmt.get())
+    
     db.close()
 
-    if(!pollId)
+    if(!poll)
         throw "Something went terribly wrong..."
 
-    return getPoll(pollId)
+    return poll
 }
 
 
@@ -118,7 +134,7 @@ function getAllPolls() : Poll[] {
         ORDER BY poll_id DESC
     `)
 
-    const pollList: Poll[] | undefined = stmt.all()
+    const pollList = <Poll[] | undefined> stmt.all()
     db.close()
 
     if(!pollList)
@@ -138,7 +154,7 @@ function getPollOptionIds(pollId: number): number[] {
             poll_id = ?
     `)
 
-    const dbData: {id: number}[] | undefined = stmt.all(pollId)
+    const dbData = <{id: number}[] | undefined> stmt.all(pollId)
     db.close()
     
     if(!dbData)
@@ -173,7 +189,7 @@ interface DbPollOptionVoters extends Omit<PollOptionVoters, "voters"> {
             poll_option_id;
     `)
     
-    const dbData: DbPollOptionVoters[] | undefined = stmt.all(pollId)
+    const dbData = <DbPollOptionVoters[] | undefined> stmt.all(pollId)
     db.close()
 
     if(!dbData)

@@ -66,7 +66,7 @@ function getAll(entityType: LikeEntityType, entityId: number): Like[] {
             emoji_id ASC
     `)
     
-    const likes: Like[] = stmt.all(entityId)
+    const likes = <Like[]> stmt.all(entityId)
     db.close()
     return likes
 }
@@ -117,7 +117,7 @@ function emojiExists(emojiId: number): boolean {
         WHERE
             emoji_id = ?
     `)
-    const data: { value: number } | undefined = stmt.get(emojiId)
+    const data = <{ value: number } | undefined> stmt.get(emojiId)
     db.close()
     return data?.value === 1
 }
@@ -132,7 +132,7 @@ function getAllEmojis(): LikeEmoji[] {
         FROM 
             emoji
     `)
-    const emojis: LikeEmoji[] = stmt.all()
+    const emojis = <LikeEmoji[]> stmt.all()
     db.close()
     return emojis    
 }

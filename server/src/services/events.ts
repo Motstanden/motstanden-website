@@ -1,5 +1,5 @@
 import Database from "better-sqlite3";
-import { EventData, NewEventData, UpsertEventData } from "common/interfaces";
+import { EventData, KeyValuePair, NewEventData, UpsertEventData } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
 import { DbWriteAction } from "../ts/enums/DbWriteAction.js";
@@ -24,6 +24,10 @@ const allEventColumns = `
     is_upcoming as isUpcoming
 `
 
+interface DbEventData extends Omit<EventData, "keyInfo"> {
+    keyInfo: string
+}
+
 export function getEvent(eventId: number): EventData {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
@@ -33,7 +37,7 @@ export function getEvent(eventId: number): EventData {
             vw_event
         WHERE event_id = ?
     `)
-    const dbResult = stmt.get(eventId)
+    const dbResult = <DbEventData | undefined> stmt.get(eventId)
     db.close()
 
     if (!dbResult)
@@ -53,33 +57,36 @@ export function getEvents({
 }): EventData[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
-    SELECT 
-        ${allEventColumns}
-    FROM 
-        vw_event 
-    WHERE is_upcoming = ?
-    ORDER BY start_date_time ${upcoming ? "ASC" : "DESC"}
-    ${!!limit ? "LIMIT ?" : ""}`)
+        SELECT 
+            ${allEventColumns}
+        FROM 
+            vw_event 
+        WHERE 
+            is_upcoming = ?
+        ORDER BY 
+            start_date_time ${upcoming ? "ASC" : "DESC"}
+        ${!!limit ? "LIMIT ?" : ""}
+    `)
 
     let args: any[] = [upcoming ? 1 : 0]
     if (!!limit)
         args.push(limit)
 
-    let events = stmt.all(args)
+    let events = <DbEventData[]> stmt.all(args)
     db.close()
 
     const parsedEvents: EventData[] = events.map(item => {
+        let keyInfo: KeyValuePair<string, string>[] = []
         try {
-            return {
-                ...item,
-                keyInfo: JSON.parse(item.keyInfo),
-            }
-        } catch {
-            // This should never happen. 
-            // But if there somehow is an error in the database we will simply filter the error out
-            return null
+            keyInfo = JSON.parse(item.keyInfo)
+        } catch (err) {
+            console.log(`Failed to parse keyinfo for eventId ${item.eventId}\nError: ${err}\nData: ${item}`)
         }
-    }).filter(item => !!item);
+        return { 
+            ...item, 
+            keyInfo 
+        }
+    })
 
     return parsedEvents
 }

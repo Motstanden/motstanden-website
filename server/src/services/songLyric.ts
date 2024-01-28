@@ -19,7 +19,7 @@ function getSimpleList(): StrippedSongLyric[] {
         COLLATE NOCASE ASC;
     `) 
 
-    const dbaData: DbStrippedSongLyric[] = stmt.all()
+    const dbaData = <DbStrippedSongLyric[]> stmt.all()
     db.close()
 
     const lyrics: StrippedSongLyric[] = dbaData.map(item => ({
@@ -56,7 +56,7 @@ function get(id: number): Required<SongLyric> {
             song_lyric_id = ?
     `) 
 
-    const dbData: DbSongLyric | undefined = stmt.get(id)
+    const dbData = <DbSongLyric | undefined> stmt.get(id)
     db.close()
 
     if(!dbData)

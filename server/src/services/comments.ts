@@ -101,7 +101,8 @@ function getAllUnion(limit?: number): EntityComment[]{
         ${!!limit ? "LIMIT ?" : ""};
     `)
 
-    const comments: EntityComment[] = !!limit ? stmt.all(limit) : stmt.all()
+    const comments = <EntityComment[]> ( !!limit ? stmt.all(limit) : stmt.all() )
+
     db.close()
     return comments   
 }
@@ -121,7 +122,7 @@ function getAll(entityType: CommentEntityType, entityId: number): Comment[] {
         ${getEntityIdColumnName(entityType)} = ?
     `)
 
-    const comments: Comment[] = stmt.all(entityId)
+    const comments = <Comment[]> stmt.all(entityId)
     db.close()
     return comments
 }

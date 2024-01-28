@@ -15,7 +15,7 @@ function get(key: string): SimpleText | undefined {
         simple_text 
     WHERE 
         key = ?`)
-    const data: SimpleText | undefined = stmt.get(key)
+    const data = <SimpleText | undefined> stmt.get(key)
     db.close()
     return data
 }

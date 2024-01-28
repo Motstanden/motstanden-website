@@ -16,7 +16,7 @@ export function getAll(eventId: number): Participant[] {
             vw_event_participant
         WHERE event_id = ?
     `);
-    const participant: Participant[]  = stmt.all(eventId);
+    const participant = <Participant[]> stmt.all(eventId);
     db.close()
 
     return participant
@@ -55,12 +55,11 @@ function getStatusId(status: ParticipationStatus): number {
         WHERE 
             status = ?
     `)
-    const result = stmt.get(status.toString())
+    const result = <{statusId: number} | undefined> stmt.get(status.toString())
     db.close()
 
-    if (!result.statusId)
+    if (!result?.statusId)
         throw "Could not retrieve participation status id"
 
-
-    return result.statusId as number
+    return result.statusId
 }

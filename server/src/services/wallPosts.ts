@@ -16,7 +16,7 @@ function getAll(userId?: number): WallPost[] {
         ${userId ? "WHERE wall_user_id = ?" : ""}
         ORDER BY created_at DESC
     `)
-    const posts: WallPost[] = userId ? stmt.all(userId) : stmt.all()
+    const posts = <WallPost[]>( userId ? stmt.all(userId) : stmt.all() )
     db.close()
     
     return posts
@@ -36,7 +36,7 @@ function get(postId: number): WallPost |undefined {
         WHERE
             wall_post_id = ?
     `)
-    const post: WallPost | undefined = stmt.get(postId)
+    const post = stmt.get(postId) as WallPost | undefined 
     db.close()
     
     return post

@@ -45,7 +45,7 @@ export function getAccessTokenData(unsafeEmail: string): AccessTokenData {
         FROM 
             vw_user 
         WHERE email = ?`)
-    const user: AccessTokenData | undefined = stmt.get(unsafeEmail)
+    const user = <AccessTokenData | undefined> stmt.get(unsafeEmail)
     db.close()
 
     if (!user)
@@ -79,7 +79,7 @@ export function verifyLoginToken(loginToken: string, userId: number): boolean {
         WHERE user_id = ?
         `
     )
-    const tokens = stmt.all(userId)
+    const tokens = <{token: string}[]> stmt.all(userId)
     db.close()
     const tokenMatch = tokens.find(item => item.token === loginToken)
     return !!tokenMatch
@@ -457,7 +457,8 @@ function getUserStatusId(status: UserStatus, db?: DatabaseType): number {
 function dangerouslyGetStringEnumId(
     strEnum: StrEnum,
     dangerousInput: DangerousInput,
-    db?: DatabaseType): number {
+    db?: DatabaseType
+): number {
     db = db ?? new Database(motstandenDB, dbReadOnlyConfig)
 
     const tableName = dangerousInput.__dangerousTableName
@@ -470,7 +471,7 @@ function dangerouslyGetStringEnumId(
         + `  WHERE 
             ${columnName} = ?`         // DANGER!!!!
     )
-    const dbResult = stmt.get(strEnum.valueOf())
+    const dbResult = <{id: number} | undefined> stmt.get(strEnum.valueOf())
     if (!dbResult)
         throw `Failed to retrieve value from database`
     return dbResult.id
