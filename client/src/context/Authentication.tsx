@@ -3,13 +3,12 @@ import { PublicCookieName, UserGroup } from "common/enums";
 import { UnsafeUserCookie, User } from "common/interfaces";
 import { hasGroupAccess, isNullOrWhitespace } from "common/utils";
 import dayjs from 'dayjs';
-import React, { useContext, useEffect, useState } from "react";
-import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { fetchAsync } from 'src/utils/fetchAsync';
+import React, { useContext, useState } from "react";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 type AuthContextType =  {
     user: User | undefined,
-    isLoading: boolean,
+    isPending: boolean,
     signOut: () => Promise<void>
     signOutAllDevices: () => Promise<void>
 }
@@ -81,11 +80,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const [ previousUser ] = useState<User | undefined>(getPreviousUser())
 
-    const { isLoading, data } = useQuery<User | null>(userQueryKey, fetchCurrentUser)
+    const { isPending, data } = useQuery<User | null>({
+        queryKey: userQueryKey,
+        queryFn: fetchCurrentUser
+    })
 
     const contextValue: AuthContextType = {
-        user: isLoading ? previousUser : data ?? undefined,
-        isLoading: isLoading,
+        user: isPending ? previousUser : data ?? undefined,
+        isPending: isPending,
         signOut: signOutCurrentUser,
         signOutAllDevices: signOutAllDevices
     }

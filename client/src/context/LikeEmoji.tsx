@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { LikeEmoji } from "common/interfaces";
 import React, { useEffect } from "react";
-import { fetchAsync } from "src/utils/fetchAsync";
+import { fetchFn } from "src/utils/fetchAsync";
 import { useAuth } from "./Authentication";
 
 export interface LikeEmojiContextType { 
@@ -24,7 +24,9 @@ export function LikeEmojiProvider( {children}: {children: React.ReactNode} ) {
 
     const [likeEmoji, setLikeEmoji] = React.useState<LikeEmojiContextType>(emptyLikeEmoji)
 
-    const { data } = useQuery<LikeEmoji[]>(["like-emoji"], () => fetchAsync<LikeEmoji[]>("/api/likes/emojis/all"),{
+    const { data } = useQuery<LikeEmoji[]>({
+        queryKey: ["like-emoji"],
+        queryFn: fetchFn<LikeEmoji[]>("/api/likes/emojis/all"),
         enabled: isEnabled
     })
 

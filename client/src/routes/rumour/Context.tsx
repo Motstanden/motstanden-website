@@ -4,7 +4,7 @@ import React from "react"
 import { Outlet, useLocation } from "react-router-dom"
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
 import { TabbedPageContainer } from "src/layout/PageContainer"
-import { fetchAsync } from "src/utils/fetchAsync"
+import { fetchAsync, fetchFn } from "src/utils/fetchAsync"
 import { matchUrl } from "src/utils/matchUrl"
 import { PageSkeleton } from "./RumourPage"
 
@@ -14,11 +14,14 @@ const rumourQueryKey = ["FetchAllRumours"]
 export const useContextInvalidator = () => useQueryInvalidator(rumourQueryKey)
 
 export function RumourContext() {
-
-    const { isLoading, isError, data, error } = useQuery<QuoteData[]>(rumourQueryKey, () => fetchAsync<QuoteData[]>("/api/rumours"))
+    
     const location = useLocation()
+    const { isPending, isError, data, error } = useQuery<QuoteData[]>({
+        queryKey: rumourQueryKey,
+        queryFn: fetchFn<QuoteData[]>("/api/rumours"),
+    })
 
-    if (isLoading) {
+    if (isPending) {
 
         if (matchUrl("/rykter", location)) {
             return (

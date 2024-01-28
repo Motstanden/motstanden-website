@@ -3,7 +3,7 @@ import { LikeEntityType } from "common/enums"
 import { Like } from "common/interfaces"
 import React, { useEffect, useState } from "react"
 import { useAuth } from "src/context/Authentication"
-import { fetchAsync } from "src/utils/fetchAsync"
+import { fetchAsync, fetchFn } from "src/utils/fetchAsync"
 
 interface GroupedLike {
     emojiId: number 
@@ -11,7 +11,7 @@ interface GroupedLike {
 }
 
 export interface LikesContextType {
-    isLoading: boolean
+    isPending: boolean
     isError: boolean
     entityType: LikeEntityType
     entityId: number
@@ -22,7 +22,7 @@ export interface LikesContextType {
 }
 
 const defaultLikesContext: LikesContextType = {
-    isLoading: true,
+    isPending: true,
     isError: false,
     entityType: null!,
     entityId: null!,
@@ -58,18 +58,21 @@ export function LikesContextProvider( {
         queryKey: queryKey
     })
 
-    const { isLoading, isError, data, error } = useQuery<Like[]>(queryKey, () => fetchAsync<Like[]>(url))
+    const { isPending, isError, data, error } = useQuery<Like[]>({
+        queryKey: queryKey,
+        queryFn: fetchFn<Like[]>(url)
+    })
 
     useEffect(() => {
         setLikesContext( (oldVal) => ({
             ...oldVal,
             isError: isError,
-            isLoading: isLoading,
+            isPending: isPending,
             likes:  data ?? [],
             groupedLikes: groupAndSort(data ?? []),
             selfLike: data?.find(like => like.userId === userId)
         }))
-    }, [isLoading, isError, data])
+    }, [isPending, isError, data])
 
     return (
         <LikesContext.Provider value={likesContext}>

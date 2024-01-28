@@ -6,6 +6,7 @@ import {
     TextField
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
+import { useQueryClient } from "@tanstack/react-query";
 import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
 import { User } from "common/interfaces";
 import { isNtnuMail as checkIsNtnuMail, hasGroupAccess, isNullOrWhitespace, strToNumber, userRankToPrettyStr } from "common/utils";
@@ -18,9 +19,8 @@ import { Form } from "src/components/form/Form";
 import { useAuth, userQueryKey } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
 import { Card, CardTextItem, groupTVPair, rankTVPair, statusTVPair } from "./Components";
-import { AccountDetailsCard, PersonCard, formatExactDate } from "./UserPage";
-import { useQueryClient } from "@tanstack/react-query";
 import { userListQueryKey } from "./Context";
+import { AccountDetailsCard, PersonCard, formatExactDate } from "./UserPage";
 
 export default function EditUserPage() {
     const currentUser = useAuth().user!
@@ -69,8 +69,8 @@ function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
         } 
     }
     const onPostSuccess = async (_: Response) => {
-        await queryClient.invalidateQueries(userQueryKey)
-        await queryClient.invalidateQueries(userListQueryKey)
+        await queryClient.invalidateQueries({queryKey: userQueryKey})
+        await queryClient.invalidateQueries({queryKey: userListQueryKey})
         navigate("..", {replace: true})
     }
 

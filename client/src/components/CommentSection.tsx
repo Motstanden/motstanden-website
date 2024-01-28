@@ -11,7 +11,7 @@ import { useLocation } from "react-router-dom"
 import { LinkifiedText } from 'src/components/LinkifiedText'
 import { useAuth } from "src/context/Authentication"
 import { relativeTimeShortFormat } from 'src/context/Locale'
-import { fetchAsync } from "src/utils/fetchAsync"
+import { fetchAsync, fetchFn } from "src/utils/fetchAsync"
 import { postJson } from "src/utils/postJson"
 import { LikeButton } from './likes/LikeButton'
 import { LikeListIconButton } from './likes/LikeListButton'
@@ -41,7 +41,7 @@ function CommentSectionContainer({
     const queryClient = useQueryClient()
 
     const onPostSuccess = async () => {
-        await queryClient.invalidateQueries(queryKey)
+        await queryClient.invalidateQueries({ queryKey: queryKey })
     }
 
     return (
@@ -82,9 +82,12 @@ function CommentSectionFetcher({
 }) {
 
     const url = `/api/${entityType}/${entityId}/comments`
-    const { isLoading, isError, data, error } = useQuery<Comment[]>(queryKey, () => fetchAsync<Comment[]>(url))
+    const { isPending, isError, data, error } = useQuery<Comment[]>({
+        queryKey: queryKey,
+        queryFn: fetchFn<Comment[]>(url),
+    })
 
-    if(isLoading) {
+    if(isPending) {
         return <CommentSectionSkeleton variant={variant}/>
     }
 

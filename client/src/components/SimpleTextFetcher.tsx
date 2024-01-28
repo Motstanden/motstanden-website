@@ -5,8 +5,8 @@ import { SimpleText, UpdateSimpleText } from "common/interfaces"
 import { hasGroupAccess, isNullOrWhitespace } from 'common/utils'
 import { useState } from "react"
 import { useAuth } from 'src/context/Authentication'
-import { fetchAsync } from "src/utils/fetchAsync"
-import { authorInfoTextStyle, AuthorItem } from './AuthorInfo'
+import { fetchAsync, fetchFn } from "src/utils/fetchAsync"
+import { AuthorItem, authorInfoTextStyle } from './AuthorInfo'
 import { MarkDownEditor, MarkDownRenderer } from "./MarkDownEditor"
 import { Form } from "./form/Form"
 import { EditMenuItem } from "./menu/EditOrDeleteMenu"
@@ -25,9 +25,12 @@ export function SimpleTextFetcher({
     const isEditor = !!user && hasGroupAccess(user, UserGroup.Editor)
 
     const queryKey = buildQueryKey(textKey, queryKeyModifier)
-    const { isLoading, isError, data, error } = useQuery<SimpleText>(queryKey, () => fetchAsync<SimpleText>(`/api/simple-text/${textKey}`))
+    const { isPending, isError, data, error } = useQuery<SimpleText>({
+        queryKey: queryKey,
+        queryFn: fetchFn<SimpleText>(`/api/simple-text/${textKey}`),
+    })
 
-    if(isLoading)
+    if(isPending)
         return skeleton ? <>{skeleton}</> : <></>
 
     if(isError)
@@ -71,7 +74,7 @@ function SimpleTextEditor( {
     const onAbortClick = () => setIsEditing(false)
 
     const onPosted = async () => {
-        await queryClient.invalidateQueries(contextQueryKey)
+        await queryClient.invalidateQueries({ queryKey: contextQueryKey })
         setIsEditing(false)
     }
 

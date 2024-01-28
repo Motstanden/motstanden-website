@@ -9,17 +9,17 @@ import { isNullOrWhitespace } from 'common/utils'
 import dayjs from "dayjs"
 import { useState } from "react"
 import { useAuth } from "src/context/Authentication"
-import { fetchAsync } from "src/utils/fetchAsync"
+import { useUserReference } from 'src/context/UserReference'
+import { fetchFn } from "src/utils/fetchAsync"
 import { postJson } from 'src/utils/postJson'
 import { CommentSection, CommentSectionSkeleton } from "./CommentSection"
+import { LinkifiedText } from './LinkifiedText'
+import { LikeButton, LikeButtonSkeleton } from './likes/LikeButton'
+import { LikeListEmojiContent } from './likes/LikeListButton'
+import { LikesContextProvider, useLikes } from './likes/LikesContext'
+import { UserLikesModal, useLikesModal } from './likes/UserLikesModal'
 import { UserAvatar } from './user/UserAvatar'
 import { UserFullName } from './user/UserFullName'
-import { LikeButton, LikeButtonSkeleton } from './likes/LikeButton'
-import { LikesContextProvider, useLikes } from './likes/LikesContext'
-import { LikeListEmojiContent, LikeListIconButton } from './likes/LikeListButton'
-import { useUserReference } from 'src/context/UserReference'
-import { UserLikesModal, useLikesModal } from './likes/UserLikesModal'
-import { LinkifiedText } from './LinkifiedText'
 
 export function PostingWall({
     userId,
@@ -40,7 +40,7 @@ export function PostingWall({
     }
 
     const onPostSuccess = async () => {
-        await queryClient.invalidateQueries(queryKey)
+        await queryClient.invalidateQueries({queryKey: queryKey})
     }
 
     return (
@@ -78,12 +78,15 @@ function PostSectionFetcher({
 }) {
     
     let url = "/api/wall-posts/all"
-
     if(userId)
         url += `?userId=${userId}`
-    const { isLoading, isError, data, error } = useQuery<WallPost[]>(queryKey, () => fetchAsync<WallPost[]>(url))
 
-    if(isLoading) {
+    const { isPending, isError, data, error } = useQuery<WallPost[]>({
+        queryKey: queryKey,
+        queryFn: fetchFn<WallPost[]>(url), 
+    })
+
+    if(isPending) {
         return <PostSectionSkeleton length={6} />
     }
 
@@ -314,7 +317,7 @@ export function PostSectionItem({
 }
 
 function LikeList() {
-    const { likes, isLoading } = useLikes()
+    const { likes, isPending } = useLikes()
     const { userReference } = useUserReference()
     const isVeryTinyScreen = useMediaQuery("(max-width: 350px)");
     const isTinyScreen = useMediaQuery("(max-width: 370px)");
@@ -325,7 +328,7 @@ function LikeList() {
         openModal()
     }
 
-    if(isLoading) 
+    if(isPending) 
         return <LikeListSkeleton/>
 
     if(likes.length <= 0)

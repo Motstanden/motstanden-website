@@ -13,7 +13,9 @@ export function EditLyricPage() {
     const onAbortClick = () => navigate("..");
 
     const onPostSuccess = async () => {
-        await queryClient.invalidateQueries(getLyricItemContextQueryKey(lyric.id))
+        await queryClient.invalidateQueries({
+            queryKey: getLyricItemContextQueryKey(lyric.id)
+        })
     }
 
     return (

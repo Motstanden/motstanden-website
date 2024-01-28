@@ -10,9 +10,9 @@ export function UserFullName({
     style?: React.CSSProperties;
 }) {
 
-    const { isError, isLoading, userReference } = useUserReference();
+    const { isError, isPending, userReference } = useUserReference();
 
-    if (isLoading) {
+    if (isPending) {
         return (
             <Skeleton
                 variant="text"

@@ -20,7 +20,7 @@ import { DeleteMenuItem } from 'src/components/menu/EditOrDeleteMenu';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 import { useAuth } from 'src/context/Authentication';
 import { useTitle } from 'src/hooks/useTitle';
-import { fetchAsync } from "src/utils/fetchAsync";
+import { fetchAsync, fetchFn } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
 import { pollListQueryKey } from './Context';
 
@@ -86,7 +86,7 @@ export function PollCard( { poll, srcQueryKey, style, }: { poll: Poll, srcQueryK
             }
         )
         if(response?.ok) {
-            await queryClient.invalidateQueries(srcQueryKey)
+            await queryClient.invalidateQueries({queryKey: srcQueryKey})
         }
         setIsLoading(false)
      }
@@ -212,12 +212,15 @@ function PollContent( {poll }: {poll: Poll }) {
 function PollOptions( {poll }: {poll: Poll }) {
     const queryKey = [ poll.id, "FetchPollOptions"]
     
-    const {isLoading, isError, data, error} = useQuery<PollOption[]>( queryKey, () => fetchAsync<PollOption[]>(`/api/polls/${poll.id}/options`))
+    const {isPending, isError, data, error} = useQuery<PollOption[]>({
+        queryKey: queryKey,
+        queryFn: fetchFn<PollOption[]>(`/api/polls/${poll.id}/options`),
+    })
     
     const queryClient = useQueryClient()
-    const onSubmitSuccess = async () => await queryClient.invalidateQueries(queryKey)
+    const onSubmitSuccess = async () => await queryClient.invalidateQueries({queryKey: queryKey})
 
-    if(isLoading)
+    if(isPending)
         return <PollOptionsSkeleton/>
 
     if(isError)
@@ -744,9 +747,12 @@ function VoterListModal({poll}: {poll: PollWithOption}) {
 
 function VoterList( {poll, selectedOptionId}: {poll: PollWithOption, selectedOptionId: number}) {
 
-    const {isLoading, isError, data, error} = useQuery<PollOptionVoters[]>(["FetchPollVoters", poll.id], () => fetchAsync<PollOptionVoters[]>(`/api/polls/${poll.id}/voter-list`))
+    const {isPending, isError, data, error} = useQuery<PollOptionVoters[]>({
+        queryKey: ["FetchPollVoters", poll.id],
+        queryFn: fetchFn<PollOptionVoters[]>(`/api/polls/${poll.id}/voter-list`),
+    })
 
-    if(isLoading)
+    if(isPending)
         return <UserListSkeleton/>
 
     if(isError)

@@ -17,7 +17,7 @@ import { TitleCard } from "src/components/TitleCard";
 import { UserList } from "src/components/UserList";
 import { useAuth } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
-import { fetchAsync } from "src/utils/fetchAsync";
+import { fetchFn } from "src/utils/fetchAsync";
 import { postJson } from "src/utils/postJson";
 import { MarkDownRenderer } from "../../components/MarkDownEditor";
 import { ItemMenu } from "./components/ItemMenu";
@@ -72,10 +72,14 @@ export default function ItemPage() {
 
 function ParticipationContainer({ eventId }: { eventId: number }) {
     const queryKey = ["FetchEvenParticipants", eventId]
-    const { isLoading, isError, data, error } = useQuery<Participant[]>(queryKey, () => fetchAsync<Participant[]>(`/api/event-participants?eventId=${eventId}`))
+    const { isPending, isError, data, error } = useQuery<Participant[]>({
+        queryKey: queryKey,
+        queryFn: fetchFn<Participant[]>(`/api/event-participants?eventId=${eventId}`),
+    })
+    
     const user = useAuth().user!
 
-    if (isLoading) {
+    if (isPending) {
         return <></>
     }
 
@@ -113,7 +117,7 @@ function AttendingForm({ eventId, queryKey, user }: { eventId: number, queryKey:
         const response = await postJson("/api/event-participants/upsert", newVal, { alertOnFailure: true })
 
         if (response && response.ok) {
-            await queryClient.invalidateQueries(queryKey)
+            await queryClient.invalidateQueries({ queryKey: queryKey })
         }
         setIsSubmitting(false)
     }

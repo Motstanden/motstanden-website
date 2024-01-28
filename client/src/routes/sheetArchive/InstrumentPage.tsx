@@ -11,13 +11,14 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { SheetArchiveFile, SheetArchiveTitle } from "common/interfaces";
 import {
+    Navigate,
     Link as RouterLink,
-    Navigate, useOutletContext,
+    useOutletContext,
     useParams
 } from "react-router-dom";
 import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
 import { useTitle } from "../../hooks/useTitle";
-import { fetchAsync } from "../../utils/fetchAsync";
+import { fetchFn } from "../../utils/fetchAsync";
 
 export default function InstrumentPage() {
     const { title } = useParams();
@@ -45,9 +46,12 @@ export default function InstrumentPage() {
 
 function FileFetcher( {songTitle}: {songTitle: SheetArchiveTitle}) {
 
-    const { isLoading, isError, data } = useQuery<SheetArchiveFile[]>(["FetchSheetArchiveFile", songTitle.url], () => fetchAsync<SheetArchiveFile[]>(`/api/sheet_archive/song_files?id=${songTitle.id}`))
+    const { isPending, isError, data } = useQuery<SheetArchiveFile[]>({
+        queryKey: ["FetchSheetArchiveFile", songTitle.url],
+        queryFn: fetchFn<SheetArchiveFile[]>(`/api/sheet_archive/song_files?id=${songTitle.id}`),
+    })
 
-    if (isLoading) {
+    if (isPending) {
         return <>Loading...</>;
     }
 

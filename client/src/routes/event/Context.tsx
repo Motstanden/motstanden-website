@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { Navigate, Outlet, useLocation, useOutletContext, useParams } from "react-router-dom"
 import { TabbedPageContainer } from "src/layout/PageContainer"
-import { fetchAsync } from "src/utils/fetchAsync"
+import { fetchFn } from "src/utils/fetchAsync"
 
 import { EventData } from "common/interfaces"
 import { strToNumber } from "common/utils"
@@ -11,9 +11,12 @@ export const eventContextQueryKey = ["FetchEventContext"]
 
 export function EventContext() {
 
-    const { isLoading, isError, data, error } = useQuery<EventData[]>(eventContextQueryKey, () => fetchAsync<EventData[]>("/api/events/all"))
+    const { isPending, isError, data, error } = useQuery<EventData[]>({
+        queryKey: eventContextQueryKey,
+        queryFn: fetchFn<EventData[]>("/api/events/all"),
+    })
 
-    if (isLoading) {
+    if (isPending) {
         return <div style={{ minHeight: "100px" }} />
     }
 

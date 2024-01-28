@@ -19,7 +19,7 @@ import { SimpleTextFetcher } from "src/components/SimpleTextFetcher"
 import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton"
 import { useTitle } from "src/hooks/useTitle"
 import { PageContainer } from "src/layout/PageContainer"
-import { fetchAsync } from "src/utils/fetchAsync"
+import { fetchAsync, fetchFn } from "src/utils/fetchAsync"
 
 const topSimpleTextKey = "board-website-list-top"
 
@@ -121,9 +121,12 @@ export const BoardPageUtils = {
 
 function BoardPageTableLoader() {
 
-    const { isLoading, isError, data, error } = useQuery<RawProjectData>(["styret.motstanden.no/projectData.json"], () => fetchAsync<RawProjectData>("https://styret.motstanden.no/projectData.json"))
+    const { isPending, isError, data, error } = useQuery<RawProjectData>({
+        queryKey: ["styret.motstanden.no/projectData.json"],
+        queryFn: fetchFn<RawProjectData>("https://styret.motstanden.no/projectData.json")
+    })
 
-    if (isLoading || !data?.pages)
+    if (isPending || !data?.pages)
         return <Skeleton variant="rounded" height={320} />
 
     if (isError)

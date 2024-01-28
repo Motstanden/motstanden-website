@@ -1,6 +1,6 @@
 import { ButtonProps, IconButton, Skeleton, useTheme } from "@mui/material"
-import { useLikes } from "./LikesContext"
 import { useLikeEmoji } from "src/context/LikeEmoji"
+import { useLikes } from "./LikesContext"
 import { UserLikesModal, useLikesModal } from "./UserLikesModal"
 
 interface LikeListButtonProps extends Omit<ButtonProps, "onClick"> {
@@ -10,7 +10,7 @@ interface LikeListButtonProps extends Omit<ButtonProps, "onClick"> {
 export function LikeListIconButton( props: LikeListButtonProps) {
     const { maxItems, style, ...remainingProps } = props
 
-    const { likes, isLoading, isError } = useLikes()
+    const { likes, isPending, isError } = useLikes()
     const theme = useTheme()
     
     const { openModal } = useLikesModal()
@@ -18,7 +18,7 @@ export function LikeListIconButton( props: LikeListButtonProps) {
         openModal()
     }
     
-    if(isLoading) 
+    if(isPending) 
         return <LikeListIconButtonSkeleton style={style}/>
 
     if(isError || likes.length === 0)

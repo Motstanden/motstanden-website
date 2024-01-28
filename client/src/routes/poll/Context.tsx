@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Poll } from "common/interfaces";
 import { Outlet } from "react-router-dom";
 import { TabbedPageContainer } from "src/layout/PageContainer";
-import { fetchAsync } from "src/utils/fetchAsync";
+import { fetchAsync, fetchFn } from "src/utils/fetchAsync";
 import { PollPageSkeleton } from "./Poll";
 
 
@@ -10,9 +10,12 @@ export const pollListQueryKey = ["FetchPollList"]
 
 export function PollContext() {
 
-    const {isLoading, isError, data, error} = useQuery<Poll[]>(pollListQueryKey, () => fetchAsync<Poll[]>("/api/polls/all"))
+    const {isPending, isError, data, error} = useQuery<Poll[]>({
+        queryKey: pollListQueryKey,
+        queryFn: fetchFn<Poll[]>("/api/polls/all")
+    })
 
-    if(isLoading)
+    if(isPending)
         return <PageContainer><PollPageSkeleton/></PageContainer>
 
     if(isError)

@@ -8,9 +8,9 @@ export function UserAvatar({
     style?: React.CSSProperties;
 }) {
 
-    const { isError, isLoading, userReference } = useUserReference();
+    const { isError, isPending, userReference } = useUserReference();
 
-    if (isLoading) {
+    if (isPending) {
         return <UserAvatarSkeleton style={style} />;
     }
 

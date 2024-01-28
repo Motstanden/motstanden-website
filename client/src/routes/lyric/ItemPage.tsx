@@ -81,7 +81,7 @@ function TitleHeader( {lyric}: {lyric: SongLyric} ) {
             }
         )
         if(response?.ok) {
-            await queryClient.invalidateQueries(lyricContextQueryKey)
+            await queryClient.invalidateQueries({queryKey: lyricContextQueryKey})
             navigate("..")
         }
     }

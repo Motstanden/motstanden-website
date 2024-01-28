@@ -46,7 +46,7 @@ export function UpsertLyricForm({
     
     const _onPostSuccess = async (res: Response) => {
         setHasPosted(true);
-        await queryClient.invalidateQueries(lyricContextQueryKey)
+        await queryClient.invalidateQueries({queryKey: lyricContextQueryKey})
         if(onPostSuccess){
             await onPostSuccess(res);
         }

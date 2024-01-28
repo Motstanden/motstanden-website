@@ -4,7 +4,7 @@ import React from "react"
 import { Outlet, useLocation } from "react-router-dom"
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
 import { TabbedPageContainer } from "src/layout/PageContainer"
-import { fetchAsync } from "src/utils/fetchAsync"
+import { fetchFn } from "src/utils/fetchAsync"
 import { matchUrl } from "src/utils/matchUrl"
 import { ListPageSkeleton } from "./ListPageSkeleton"
 
@@ -14,10 +14,13 @@ export const useContextInvalidator = () => useQueryInvalidator(quotesQueryKey)
 
 export function QuotesContext() {
 
-    const { isLoading, isError, data, error } = useQuery<QuoteData[]>(quotesQueryKey, () => fetchAsync<QuoteData[]>("/api/quotes"))
     const location = useLocation()
+    const { isPending, isError, data, error } = useQuery<QuoteData[]>({
+        queryKey: quotesQueryKey,
+        queryFn: fetchFn<QuoteData[]>("/api/quotes"),
+    })
 
-    if (isLoading) {
+    if (isPending) {
 
         if (matchUrl("/sitater", location)) {
             return (

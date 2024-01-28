@@ -1,18 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { UserReference } from "common/interfaces";
 import React, { useEffect } from "react";
-import { fetchAsync } from "src/utils/fetchAsync";
+import { fetchAsync, fetchFn } from "src/utils/fetchAsync";
 import { useAuth } from "./Authentication";
 
 export interface UserReferenceContextType {
-    isLoading: boolean,
+    isPending: boolean,
     isError: boolean,
     isEnabled: boolean,
     userReference: Record<number, UserReference>
 }
 
 const emptyUserReference: UserReferenceContextType = {
-    isLoading: false,
+    isPending: false,
     isError: false,
     isEnabled: false,
     userReference: {}
@@ -32,17 +32,17 @@ export function UserReferenceProvider( {children}: {children: React.ReactNode} )
     let initialValue: UserReferenceContextType = emptyUserReference
     if(!isEnabled) {
         initialValue.isError = false
-        initialValue.isLoading = false
+        initialValue.isPending = false
     }
     initialValue.isEnabled = isEnabled
 
     const [userReference, setUserReference] = React.useState<UserReferenceContextType>(initialValue)
 
-    const { isLoading, isError, data, error } = useQuery<UserReference[]>(["user-reference"], () => 
-        fetchAsync<UserReference[]>("/api/simplified-member-list"), 
-        {
-            enabled: isEnabled
-        })
+    const { isPending, isError, data, error } = useQuery<UserReference[]>({
+        queryKey: ["user-reference"],
+        queryFn: fetchFn<UserReference[]>("/api/simplified-member-list"),
+        enabled: isEnabled
+    })
 
     useEffect(() => {
 
@@ -54,13 +54,13 @@ export function UserReferenceProvider( {children}: {children: React.ReactNode} )
         }
 
         setUserReference({
-            isLoading: isLoading,
+            isPending: isPending,
             isError: isError,
             userReference: userLookUpTable,
             isEnabled: isEnabled
         })
 
-    }, [data, isLoading, isError])
+    }, [data, isPending, isError])
 
     return (
         <UserReferenceContext.Provider value={userReference}>

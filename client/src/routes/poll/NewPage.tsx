@@ -28,7 +28,7 @@ export default function NewPollPage() {
     const onAbort = () => navigate("/avstemninger");
 
     const onSuccess = () => {
-        queryClient.invalidateQueries(pollListQueryKey)
+        queryClient.invalidateQueries({queryKey: pollListQueryKey})
         navigate("/avstemninger");
     };
 

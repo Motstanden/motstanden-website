@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { UrlList, UrlListItem } from "../../components/UrlList"
 import { useTitle } from "../../hooks/useTitle"
 import { PageContainer } from "../../layout/PageContainer"
-import { fetchAsync } from "../../utils/fetchAsync"
+import { fetchFn } from "../../utils/fetchAsync"
 
 export default function DocumentsPage() {
     useTitle("Dokumenter")
@@ -16,9 +16,12 @@ export default function DocumentsPage() {
 
 function DocumentList() {
 
-    const { isLoading, isError, data, error } = useQuery<Document[]>(["FetchDocuments"], () => fetchAsync<Document[]>("/api/documents"))
+    const { isPending, isError, data, error } = useQuery<Document[]>({
+        queryKey: ["FetchDocuments"],
+        queryFn: fetchFn<Document[]>("/api/documents"),
+    })
 
-    if (isLoading) {
+    if (isPending) {
         return <PageContainer><div /></PageContainer>
     }
 

@@ -4,7 +4,7 @@ export function useQueryInvalidator(queryKey: QueryKey) {  // eslint-disable-nex
     const queryClient = useQueryClient()
 
     const invalidateQuery = () => {
-        queryClient.invalidateQueries(queryKey)
+        queryClient.invalidateQueries({queryKey: queryKey})
     }
 
     return invalidateQuery

@@ -3,15 +3,18 @@ import { User } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
 import { PageContainer } from "src/layout/PageContainer"
-import { fetchAsync } from "src/utils/fetchAsync"
+import { fetchFn } from "src/utils/fetchAsync"
 import { UserPageHeader } from "./UserPage"
 
 export const userListQueryKey = ["FetchAllUsers"]
 
 export function UserContext() {
-    const { isLoading, isError, data, error } = useQuery<User[]>(userListQueryKey, () => fetchAsync<User[]>("/api/member-list"))
+    const { isPending, isError, data, error } = useQuery<User[]>({
+        queryKey: userListQueryKey,
+        queryFn: fetchFn<User[]>("/api/member-list"),
+    })
 
-    if (isLoading) {
+    if (isPending) {
         return <PageContainer><div /></PageContainer>
     }
 

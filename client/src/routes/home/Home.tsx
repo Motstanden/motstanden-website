@@ -13,7 +13,7 @@ import { buildEventItemUrl } from "src/routes/event/Context";
 import { QuoteList } from "src/routes/quotes/ListPage";
 import { ListSkeleton as QuotesListSkeleton } from "src/routes/quotes/ListPageSkeleton";
 import { RumourList, ListSkeleton as RumourListSkeleton } from "src/routes/rumour/RumourPage";
-import { fetchAsync } from "src/utils/fetchAsync";
+import { fetchFn } from "src/utils/fetchAsync";
 import { BoardPageUtils, RawProjectData } from "../boardWebsiteList/BoardWebsiteList";
 import { PollCard, PollSkeleton } from "../poll/Poll";
 
@@ -254,9 +254,12 @@ function RenderCommentsSkeleton({length}: {length: number}) {
 function LatestPoll() {
 
     const queryKey = ["FetchLatestPoll"]
-    const {isLoading, isError, data, error} = useQuery<Poll>(queryKey, () => fetchAsync<Poll>("/api/polls/latest"))
+    const {isPending, isError, data, error} = useQuery<Poll>({
+        queryKey: queryKey,
+        queryFn: fetchFn<Poll>("/api/polls/latest")
+    })
 
-    if(isLoading) {
+    if(isPending) {
         return (
             <PollSkeleton style={{height: "100%",  maxWidth: "600px"}}/>
         )
@@ -524,11 +527,14 @@ function ItemLoader<T>({
 }) {
 
     const queryClient = useQueryClient()
-    const onRefetchItems = () => queryClient.invalidateQueries(queryKey)
+    const onRefetchItems = () => queryClient.invalidateQueries({queryKey: queryKey})
 
-    const { isLoading, isError, data, error } = useQuery<T>(queryKey, () => fetchAsync<T>(fetchUrl))
+    const { isPending, isError, data, error } = useQuery<T>({
+        queryKey: queryKey,
+        queryFn: fetchFn<T>(fetchUrl),
+    })
 
-    if (isLoading) {
+    if (isPending) {
         return (
             <>
                 {renderSkeleton}

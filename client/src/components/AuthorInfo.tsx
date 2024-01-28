@@ -65,9 +65,9 @@ export function AuthorInfo({
 }
 
 export function AuthorItem({ userId, dateTime }: { userId: number, dateTime: string }) {
-    const { userReference, isLoading, isError } = useUserReference()
+    const { userReference, isPending, isError } = useUserReference()
 
-    if(isLoading)
+    if(isPending)
         return <Skeleton variant="text" style={{display: "inline-block", width: "190px"}} />
     
     if(isError)

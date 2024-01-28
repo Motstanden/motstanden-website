@@ -4,15 +4,19 @@ import { strToNumber } from "common/utils"
 import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
 import { useAuth } from "src/context/Authentication"
 import { TabbedPageContainer } from "src/layout/PageContainer"
-import { fetchAsync } from "src/utils/fetchAsync"
+import { fetchFn } from "src/utils/fetchAsync"
 import { strToPrettyUrl } from "src/utils/strToPrettyUrl"
 
 export const lyricContextQueryKey = ["AllLyricData"]
 
 export function LyricContext() {
-    const { isLoading, isError, data, error } = useQuery<StrippedSongLyric[]>(lyricContextQueryKey, () => fetchAsync<StrippedSongLyric[]>("/api/song-lyric/simple-list"))
 
-    if (isLoading) {
+    const { isPending, isError, data, error } = useQuery<StrippedSongLyric[]>({
+        queryKey: lyricContextQueryKey,
+        queryFn: fetchFn<StrippedSongLyric[]>("/api/song-lyric/simple-list"),
+    })
+
+    if (isPending) {
         return <PageContainer/>
     }
 
@@ -74,9 +78,12 @@ export function LyricItemLoader( {id}: {id: number}){
     const isPublic = useAuth().user === null
     const url = `/api/${isPublic ? "public" : "private"}/song-lyric/${id}`
 
-    const { isLoading, isError, data } = useQuery<SongLyric>(getLyricItemContextQueryKey(id), () => fetchAsync<SongLyric>(url))
+    const { isPending, isError, data } = useQuery<SongLyric>({
+        queryKey: getLyricItemContextQueryKey(id),
+        queryFn: fetchFn<SongLyric>(url),
+    })
 
-    if (isLoading) {
+    if (isPending) {
         return <></>
     }
 

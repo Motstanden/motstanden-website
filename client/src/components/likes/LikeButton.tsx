@@ -1,4 +1,4 @@
-import { Button, ClickAwayListener, Paper, ButtonProps, Popper, Skeleton } from "@mui/material";
+import { Button, ButtonProps, ClickAwayListener, Paper, Popper, Skeleton } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { LikeEmoji, NewLike } from "common/interfaces";
 import React, { useRef, useState } from "react";
@@ -15,7 +15,7 @@ export function LikeButton(props: LikeButtonProps) {
 
     const { style, isLikedStyle, sx, ...remainingProps } = props
 
-    const { selfLike, isLoading } = useLikes()
+    const { selfLike, isPending } = useLikes()
     const { emojis } = useLikeEmoji()
     const usedEmoji: LikeEmoji | undefined = selfLike ? emojis[selfLike.emojiId] : undefined
 
@@ -34,7 +34,7 @@ export function LikeButton(props: LikeButtonProps) {
         setIsOpen(false)
     }
 
-    if(isLoading)
+    if(isPending)
         return <LikeButtonSkeleton style={style}/>
 
     let addedStyle = {}
@@ -128,7 +128,7 @@ function LikeForm( {
         const response = await postJson(url, value, { alertOnFailure: true })
 
         if(response?.ok){
-            queryClient.invalidateQueries(queryKey)
+            queryClient.invalidateQueries({queryKey: queryKey})
             onPostSuccess?.()
         }
         setIsDisabled(false)

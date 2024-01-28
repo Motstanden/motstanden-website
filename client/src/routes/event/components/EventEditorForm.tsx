@@ -13,6 +13,7 @@ import {
     useMediaQuery
 } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers";
+import { useQueryClient } from '@tanstack/react-query';
 import { KeyValuePair, UpsertEventData } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
 import dayjs, { Dayjs } from "dayjs";
@@ -22,7 +23,6 @@ import { dateTimePickerStyle } from 'src/assets/style/timePickerStyles';
 import { Form } from "src/components/form/Form";
 import { useTitle } from "src/hooks/useTitle";
 import { MarkDownEditor } from '../../../components/MarkDownEditor';
-import { useQueryClient } from '@tanstack/react-query';
 import { eventContextQueryKey } from '../Context';
 
 export interface EventEditorState {
@@ -79,7 +79,7 @@ export function EventEditorForm({
     const onPostSuccess = async (res: Response) => {
         setHasPosted(true)
         const data = await res.json();
-        await queryClient.invalidateQueries(eventContextQueryKey)
+        await queryClient.invalidateQueries({queryKey: eventContextQueryKey})
         navigate(`/arrangement/${eventId ?? data.eventId ?? ""}`)
     };
 
