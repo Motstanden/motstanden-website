@@ -10,15 +10,15 @@ const baseStyle: BaseProps  = {
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const dateTimePickerStyle: Partial<DateTimePickerProps<any, any>> = {
+export const dateTimePickerStyle: Partial<DateTimePickerProps<any>> = {
     ...baseStyle,
 }
 
-export const datePickerStyle: Partial<DatePickerProps<any, any>> = {
+export const datePickerStyle: Partial<DatePickerProps<any>> = {
     ...baseStyle,
 }
 
-export const timePickerStyle: Partial<TimePickerProps<any, any>> = {
+export const timePickerStyle: Partial<TimePickerProps<any>> = {
     ...baseStyle,
 }
 

@@ -141,7 +141,6 @@ function PersonForm({ value, onChange, onIsValidChange, editMode }: FormParams) 
                 maxDate={dayjs().subtract(18, "year")}
                 value={value.birthDate ? dayjs(value.birthDate) : null}
                 onChange={(newVal: Dayjs | null) => onChange({ ...value, birthDate: newVal?.format("YYYY-MM-DD") ?? null })}
-                renderInput={params => <TextField {...params} />}
             />
             <div>
                 <TextField
@@ -243,7 +242,9 @@ function MemberForm({ value, onChange, editMode }: FormParams) {
                 maxDate={dayjs()}
                 value={dayjs(value.startDate)}
                 onChange={(newVal: Dayjs | null) => newVal && onChange({ ...value, startDate: newVal?.format("YYYY-MM-DD") })}
-                renderInput={(params) => <TextField {...params} required />}
+                slotProps={{
+                    textField: { required: true }
+                }}
             />
             <DatePicker
                 {...datePickerStyle}
@@ -253,7 +254,9 @@ function MemberForm({ value, onChange, editMode }: FormParams) {
                 maxDate={dayjs().add(6, "year")}
                 value={value.endDate ? dayjs(value.endDate) : null}
                 onChange={(newVal: Dayjs | null) => onChange({ ...value, endDate: newVal?.format("YYYY-MM-DD") ?? null })}
-                renderInput={(params) => <TextField {...params} />}
+                slotProps={{
+                    textField: { required: true }
+                }}
             />
         </Card>
     )

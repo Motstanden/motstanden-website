@@ -192,9 +192,9 @@ function TimeForm(props: EventFormProps) {
                 defaultCalendarMonth={dayjs()}
                 value={value.startTime}
                 onChange={(newVal: Dayjs | null) => onChange({ startTime: newVal })}
-                renderInput={params => (
-                    <TextField {...params} {...textFieldProps} required color="secondary" />
-                )}
+                slotProps={{
+                    textField: { ...textFieldProps, required: true, color: "secondary" }
+                }}
             />
             <Box display={{ xs: "none", sm: "inline" }} style={{ marginInline: "20px", marginBottom: "5px" }}>
                 –
@@ -206,9 +206,9 @@ function TimeForm(props: EventFormProps) {
                 minDateTime={value.startTime ?? beginningOfTime}
                 value={value.endTime}
                 onChange={(newVal: Dayjs | null) => onChange({ endTime: newVal })}
-                renderInput={params => (
-                    <TextField {...params} {...textFieldProps} color="secondary" />
-                )}
+                slotProps={{
+                    textField: { ...textFieldProps, required: true, color: "secondary" }
+                }}
             />
         </Stack>
     )
