@@ -34,7 +34,7 @@ test("Admin can not promote self to super admin", async ({browser}, workerInfo) 
 
     await gotoUser(page, user, { editUser: true})
 
-    await page.getByRole('button', { name: /Rolle/ }).click()
+    await page.getByRole("combobox", { name: /Rolle/ }).click()
 
     const superAdminCount = await page.getByRole('option', { name: userGroupToPrettyStr(UserGroup.SuperAdministrator)}).count()
     expect(superAdminCount).toBe(0)
@@ -65,7 +65,7 @@ test.describe("Set inactive status", async () => {
     })
         
     async function canUpdateInactive(page: Page): Promise<boolean> {
-        await page.getByRole('button', { name: /Status/ }).click()
+        await page.getByRole("combobox", { name: /Status/ }).click()
         const inactiveCount = await page.getByRole('option', { name: userStatusToPrettyStr(UserStatus.Inactive) }).count()
         return inactiveCount === 1
     }
@@ -90,7 +90,7 @@ test.describe.serial("Create and update user data", async () => {
 
         await fillPersonalForm(page, user)
     
-        await page.getByRole('button', { name: 'Profilbilde Gutt' }).click()
+        await page.getByRole("combobox", { name: 'Profilbilde Gutt' }).click()
         await page.getByRole('option', { name: 'Jente' }).click()
         
         await navClick(page.getByRole('button', { name: 'Legg til bruker' }))
@@ -179,8 +179,8 @@ test.describe.serial("Create and update user data", async () => {
             await clickEditButton(page)
             
             // Expect the user not to be able to edit rank or group
-            expect(await page.getByRole('button', { name: /Rang/ }).count()).toBe(0)
-            expect(await page.getByRole('button', { name: /Rolle/ }).count()).toBe(0)
+            expect(await page.getByRole("combobox", { name: /Rang/ }).count()).toBe(0)
+            expect(await page.getByRole("combobox", { name: /Rolle/ }).count()).toBe(0)
             
             user = createUser({
                 rank: user.rank,
@@ -250,7 +250,7 @@ async function select<T extends UserEnum>(page: Page, typeName: UserEnumName,  v
             throw `The type is not implemented: "${typeName}"`
     }
 
-    await page.getByRole('button', { name: buttonRegEx}).click()
+    await page.getByRole("combobox", { name: buttonRegEx}).click()
     await page.getByRole('option', { name: selectValue, exact: true }).click()
 }
 
