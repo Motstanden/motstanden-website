@@ -3,7 +3,6 @@ import { UserGroup } from 'common/enums';
 import { SheetArchiveTitle } from 'common/interfaces';
 import { randomUUID } from "crypto";
 import { disposeLogIn, logIn } from '../utils/auth.js';
-import { navClick } from '../utils/navClick.js';
 
 test.describe("Update song title info", async () => {
     test("Admin can update data @smoke", async ({browser}, workerInfo) => await runTest(browser, workerInfo, UserGroup.Administrator))
@@ -106,7 +105,8 @@ async function testUpdateSongTitle( {page, song}: {page: Page, song: string | Re
     await expect(titleLocator1).not.toBeVisible()
     await expect(titleLocator2).not.toBeVisible()
 
-    await navClick(page.getByRole('tab', { name: 'Alle' }))
+    await page.getByRole('tab', { name: 'Alle' }).click()
+    await page.waitForURL("/notearkiv/alle")
 
     await expect(titleLocator1).not.toBeVisible()
     await expect(titleLocator2).toBeVisible()
@@ -118,7 +118,8 @@ async function testUpdateSongTitle( {page, song}: {page: Page, song: string | Re
     await expect(titleLocator1).toBeVisible()
     await expect(titleLocator2).not.toBeVisible()
     
-    await navClick(page.getByRole('tab', { name: 'Repertoar' }))
+    await page.getByRole('tab', { name: 'Repertoar' }).click()
+    await page.waitForURL("/notearkiv/repertoar")
 
     await expect(titleLocator1).toBeVisible()
     await expect(titleLocator2).not.toBeVisible()

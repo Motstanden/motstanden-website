@@ -3,7 +3,7 @@ import { UserGroup } from 'common/enums';
 import { NewRumour } from 'common/interfaces';
 import { randomUUID } from "crypto";
 import { EditListPage } from '../pages/EditListPage.js';
-import { disposeLogIn, logIn, storageLogIn } from '../utils/auth.js';
+import { disposeLogIn, logIn } from '../utils/auth.js';
 
 test.describe.serial("Users can update and delete rumours created by themselves @smoke",  async () => {
 	await testCrud({
@@ -101,6 +101,10 @@ function createRandomRumour(): NewRumour {
 
 class RumourPage extends EditListPage<NewRumour> {
 	
+	constructor(page: Page) {
+		super(page, '/rykter')
+	}
+
 	protected override async fillForm(value: NewRumour): Promise<void> {
 		await this.page.getByLabel('Har du hørt at...? *').fill(value.rumour);
 	}

@@ -12,7 +12,6 @@ import {
 import { randomInt, randomUUID } from 'crypto'
 import { TestUser, disposeLogIn, logIn, unsafeApiLogIn } from '../utils/auth.js'
 import { selectDate } from '../utils/datePicker.js'
-import { navClick } from '../utils/navClick.js'
 
 test("New users can only be created by super admin", async ({browser}, workerInfo) => {
 
@@ -93,8 +92,9 @@ test.describe.serial("Create and update user data", async () => {
         await page.getByRole("combobox", { name: 'Profilbilde Gutt' }).click()
         await page.getByRole('option', { name: 'Jente' }).click()
         
-        await navClick(page.getByRole('button', { name: 'Legg til bruker' }))
-        await expect(page).toHaveURL(/\/medlem\/[0-9]+/)
+        await page.getByRole('button', { name: 'Legg til bruker' }).click()
+        await page.waitForURL(/\/medlem\/[0-9]+/)
+
         userUrl = page.url()
 
         await validateUserProfile(page, user)
@@ -283,8 +283,8 @@ async function clickEditButton(page: Page) {
 }
 
 async function saveChanges(page: Page) {
-    await navClick(page.getByRole('button', { name: 'Lagre' }))
-    await expect(page).toHaveURL(/\/medlem\/[0-9]+$/)
+    await page.getByRole('button', { name: 'Lagre' }).click()
+    await page.waitForURL(/\/medlem\/[0-9]+$/)
 }
 
 async function validateUserProfile(page: Page, user: UserWithoutDbData) {

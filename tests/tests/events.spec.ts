@@ -7,7 +7,6 @@ import { formatDateTimeInterval } from "common/utils/dateTime";
 import { randomInt, randomUUID } from 'crypto';
 import { disposeLogIn, logIn, TestUser } from '../utils/auth.js';
 import { selectDate } from '../utils/datePicker.js';
-import { navClick } from '../utils/navClick.js';
 
 test.describe("Contributor can update and delete events they have created", async () => {
     await testCrud({
@@ -200,8 +199,8 @@ async function fillForm(page: Page, event: NewEventData) {
 }
 
 async function saveForm(page: Page) {
-	const saveButton = page.getByRole('button', { name: 'Lagre' })
-	await navClick(saveButton)
+	await page.getByRole('button', { name: 'Lagre' }).click()
+	await page.waitForURL(/\/arrangement\/(kommende|tidligere)\/[0-9]+/)
 }
 
 async function validateEventPage(page: Page, event: NewEventData) {
@@ -234,14 +233,16 @@ async function clickEdit(page: Page) {
 
 	await Promise.race([
 		menuButton.click(),
-		navClick(editButton)
+		editButton.click(),
 	])
-
+	
 	const editMenuItem = await page.getByRole('menuitem', { name: "Rediger" })
 	const isPopupMenu = await editMenuItem.isVisible()
 	if(isPopupMenu){
-		await  navClick(editMenuItem)
-	}	
+		await  editButton.click()
+	}
+
+	await page.waitForURL(/\/arrangement\/(kommende|tidligere)\/[0-9]+\/rediger/)	
 }
 async function selectStatusItem(page: Page, status: ParticipationStatus) {
 	const selectButton = page.getByRole("combobox", { name: /Min status/ })

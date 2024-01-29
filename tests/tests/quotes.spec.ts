@@ -105,6 +105,11 @@ function createRandomQuote(): NewQuote {
 }
 
 class QuotePage extends EditListPage<NewQuote> {
+
+    constructor(page: Page) {
+        super(page, '/sitater')
+    }
+
 	protected override async fillForm(value: NewQuote): Promise<void> {
 		await this.page.getByLabel('Sitat *').fill(value.quote);
         await this.page.getByLabel('Sitatytrer *').fill(value.utterer);
