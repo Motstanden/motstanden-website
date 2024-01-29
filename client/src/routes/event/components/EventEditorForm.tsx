@@ -189,7 +189,6 @@ function TimeForm(props: EventFormProps) {
                 label="Starter"
                 {...dateTimePickerStyle}
                 minDateTime={beginningOfTime}
-                defaultCalendarMonth={dayjs()}
                 value={value.startTime}
                 onChange={(newVal: Dayjs | null) => onChange({ startTime: newVal })}
                 slotProps={{
@@ -207,7 +206,7 @@ function TimeForm(props: EventFormProps) {
                 value={value.endTime}
                 onChange={(newVal: Dayjs | null) => onChange({ endTime: newVal })}
                 slotProps={{
-                    textField: { ...textFieldProps, required: true, color: "secondary" }
+                    textField: { ...textFieldProps, color: "secondary" }
                 }}
             />
         </Stack>

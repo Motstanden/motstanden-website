@@ -63,7 +63,6 @@ async function testCrud(opts: CrudOptions) {
 
 	opts.updater ??= opts.creator
     opts.deleter ??= opts.updater
-	const runParticipationTest = !!opts.participator
 
     const event1: NewEventData = createRandomEvent()
 	const event2: NewEventData = createRandomEvent()
@@ -79,9 +78,7 @@ async function testCrud(opts: CrudOptions) {
 
 		eventUrl = page.url()
 
-		if(runParticipationTest || opts.creator !== opts.updater) {
-			await disposeLogIn(page)
-		}
+		await disposeLogIn(page)
 	})
 
 	if(opts.participator) {
@@ -115,6 +112,7 @@ async function testCrud(opts: CrudOptions) {
 		await page.goto(eventUrl)
 		
     	await testDelete(page, event2)
+
 		await disposeLogIn(page)
 	})
 }
@@ -246,7 +244,8 @@ async function clickEdit(page: Page) {
 	}	
 }
 async function selectStatusItem(page: Page, status: ParticipationStatus) {
-	const selectButton = page.getByRole('button', { name: /Min status/ })
+	const selectButton = page.getByRole("combobox", { name: /Min status/ })
+
 	await selectButton.click()
 
 	const option = page.getByRole('option', { name: statusToString(status), exact: true})
