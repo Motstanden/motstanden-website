@@ -10,11 +10,33 @@ import { postJson } from 'src/utils/postJson';
 import { buildEventItemUrl } from "../Context";
 
 
-export function ItemMenu({ event, iconOrientation }: { event: EventData; iconOrientation?: "horizontal" | "vertical"; }) {
+export function ItemMenu({ 
+    event, 
+    iconOrientation,
+    onDeleteSuccess,
+}: { 
+    event: EventData,
+    iconOrientation?: "horizontal" | "vertical", 
+    onDeleteSuccess?: VoidFunction,
+}) {
     const user = useAuth().user!;
     const navigate = useNavigate();
 
     const onEditClick = () => navigate(`${buildEventItemUrl(event)}/rediger`);
+
+    const onDeleteClick = async () => {
+        const res = await postJson(
+            "/api/events/delete",
+            { eventId: event.eventId },
+            {
+                confirmText: `Vil du permanent slette:\n«${event.title}»`,
+                alertOnFailure: true
+            }
+        )
+
+        if(res?.ok)
+            onDeleteSuccess && onDeleteSuccess()
+    }
 
     if (!hasGroupAccess(user, UserGroup.Administrator) && user.id !== event.createdByUserId) {
         return (
@@ -30,19 +52,8 @@ export function ItemMenu({ event, iconOrientation }: { event: EventData; iconOri
         <EditOrDeleteMenu
             iconOrientation={iconOrientation}
             ariaLabel="Arrangementmeny"
-            onDeleteClick={() => deleteEvent(event)}
+            onDeleteClick={onDeleteClick}
             onEditClick={onEditClick}
         />
-    )
-}
-
-async function deleteEvent(event: EventData) {
-    await postJson(
-        "/api/events/delete",
-        { eventId: event.eventId },
-        {
-            confirmText: `Vil du permanent slette:\n«${event.title}»`,
-            alertOnFailure: true
-        }
     )
 }

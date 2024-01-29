@@ -6,9 +6,10 @@ import {
 import { EventData } from "common/interfaces";
 import { Link as RouterLink, useOutletContext } from "react-router-dom";
 import { useTitle } from "src/hooks/useTitle";
-import { buildEventItemUrl } from "./Context";
+import { buildEventItemUrl, eventContextQueryKey } from "./Context";
 import { ItemMenu } from "./components/ItemMenu";
 import { KeyInfo } from "./components/KeyInfo";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function EventListPage({ mode }: { mode?: "upcoming" | "previous" | "all" }) {
     useTitle("Arrangement")
@@ -37,6 +38,13 @@ export default function EventListPage({ mode }: { mode?: "upcoming" | "previous"
 }
 
 function EventItem({ event }: { event: EventData }) {
+
+    const queryClient = useQueryClient()
+
+    const onDeleteSuccess = async () => {
+        await queryClient.invalidateQueries({queryKey: eventContextQueryKey})
+    }
+
     return (
         <Paper sx={{ mb: 4, p: 2, pt: 1.5 }} elevation={3}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -51,7 +59,10 @@ function EventItem({ event }: { event: EventData }) {
                     </Link>
 
                 </h3>
-                <ItemMenu event={event} />
+                <ItemMenu 
+                    event={event} 
+                    onDeleteSuccess={onDeleteSuccess}
+                />
             </Stack>
             <KeyInfo keyInfo={event.keyInfo} startTime={event.startDateTime} endTime={event.endDateTime} />
         </Paper>

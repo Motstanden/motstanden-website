@@ -10,7 +10,7 @@ import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CommentEntityType, ParticipationStatus } from "common/enums";
 import { EventData, Participant, UpsertParticipant } from "common/interfaces";
 import { useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { AuthorInfo } from "src/components/AuthorInfo";
 import { CommentSection } from "src/components/CommentSection";
 import { TitleCard } from "src/components/TitleCard";
@@ -22,10 +22,20 @@ import { postJson } from "src/utils/postJson";
 import { MarkDownRenderer } from "../../components/MarkDownEditor";
 import { ItemMenu } from "./components/ItemMenu";
 import { KeyInfo } from "./components/KeyInfo";
+import { eventContextQueryKey } from "./Context";
 
 export default function ItemPage() {
     const event = useOutletContext<EventData>();
     useTitle(event.title)
+
+    const queryClient = useQueryClient()
+    const navigate = useNavigate()
+
+    const onDeleteSuccess = () => {
+        queryClient.invalidateQueries({queryKey: eventContextQueryKey})
+        navigate("./..")
+    }
+
     return (
         <div style={{ maxWidth: "900px" }}>
 
@@ -38,7 +48,11 @@ export default function ItemPage() {
                     paddingTop={2}
                 >
                     <h1 style={{ margin: 0 }}>{event.title}</h1>
-                    <ItemMenu event={event} iconOrientation="vertical" />
+                    <ItemMenu 
+                        event={event} 
+                        iconOrientation="vertical" 
+                        onDeleteSuccess={onDeleteSuccess}
+                    />
                 </Stack>
                 <Divider />
                 <AuthorInfo 
@@ -146,8 +160,6 @@ function AttendingForm({ eventId, queryKey, user }: { eventId: number, queryKey:
 }
 
 function AttendingList({ title, items }: { title: string, items: Participant[] }) {
-    const theme = useTheme()
-    
     if (items.length === 0) {
         return <></>
     }
