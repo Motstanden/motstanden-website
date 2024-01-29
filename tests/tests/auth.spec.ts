@@ -1,7 +1,6 @@
 import { Cookie, TestInfo, expect, test, type Page } from '@playwright/test';
-import { unsafeApiLogIn } from '../utils/auth.js';
-import { navClick } from '../utils/navClick.js';
 import { PublicCookieName } from 'common/enums';
+import { disposeLogIn, unsafeApiLogIn } from '../utils/auth.js';
 
 function getReservedMail(workerInfo: TestInfo) {
     return `test-auth-${workerInfo.parallelIndex + 1}@motstanden.no`
@@ -13,7 +12,7 @@ function getReservedMail(workerInfo: TestInfo) {
 //      - The tests has been running repeatedly for more than 14 minutes.
 //        This can happen if you are hunting for flaky tests.
 //      - The AccessToken expires at a random time during the test
-async function logIntoResvedUser(page: Page, workerInfo: TestInfo) {
+async function logIntoReservedUser(page: Page, workerInfo: TestInfo) {
     const reservedUser = getReservedMail(workerInfo)
     await unsafeApiLogIn(page.request, reservedUser)
 }
@@ -21,8 +20,8 @@ async function logIntoResvedUser(page: Page, workerInfo: TestInfo) {
 test.describe("Login tokens are created and persisted", () => {
 
     test.beforeEach(async ({page}, workerInfo) => {
-        logIntoResvedUser(page, workerInfo)
-        await page.goto("/")
+        await logIntoReservedUser(page, workerInfo)
+        await page.goto("/hjem")
     })
 
     test("AccessToken and RefreshTokens is defined", async ({page}, workerInfo) => {
@@ -55,8 +54,6 @@ test.describe("Login tokens are created and persisted", () => {
         const oldAccessToken = await getAccessToken()
         expect(oldAccessToken).not.toBeDefined()
 
-        await page.reload()
-
         // I wrote this hack because: 
         //      1. I don't want to spend time figuring out exactly when the browser instantiates the token.
         //      2. It performs better than simply just waiting for the page to completely load.
@@ -82,8 +79,6 @@ test.describe("Login tokens are created and persisted", () => {
         const oldUserInfo = await getUserInfo()
         expect(oldUserInfo).not.toBeDefined()
 
-        await page.reload()
-
         // I wrote this hack because: 
         //      1. I don't want to spend time figuring out exactly when the browser instantiates the token.
         //      2. It performs better than simply just waiting for the page to completely load.
@@ -98,13 +93,13 @@ test.describe("Login tokens are created and persisted", () => {
 test.describe( "User can log out", () => {
     
     test("Log out in current browser", async ({ page }, workerInfo) => {        
-        logIntoResvedUser(page, workerInfo)
-        await page.goto("/")
+        await logIntoReservedUser(page, workerInfo)
+        await page.goto("/hjem")
 
         await page.getByRole('button', { name: 'Profilmeny' }).click();
-        await navClick(page.getByRole('menuitem', { name: 'Logg ut', exact: true }))
+        await page.getByRole('menuitem', { name: 'Logg ut', exact: true }).click()
+        await page.waitForURL("/")
 
-        await expect(page).toHaveURL('')
         await testUserIsLoggedOut(page)
     });
 
@@ -113,8 +108,8 @@ test.describe( "User can log out", () => {
         const newLoginContext = async (): Promise<Page> => {
             const context = await browser.newContext()
             const page = await context.newPage()
-            logIntoResvedUser(page, workerInfo)
-            await page.goto("/")    
+            await logIntoReservedUser(page, workerInfo)
+            await page.goto("/hjem")    
             return page
         }
 
@@ -126,12 +121,12 @@ test.describe( "User can log out", () => {
 
             page2.once('dialog', dialog => dialog.accept());
             await page2.getByRole('button', { name: 'Profilmeny' }).click();
-            await navClick(page2.getByRole('menuitem', { name: 'Logg ut alle enheter' }))
-            
-            await expect(page2).toHaveURL('')
+            await page2.getByRole('menuitem', { name: 'Logg ut alle enheter' }).click()
+            await page2.waitForURL("/")
+
             await testUserIsLoggedOut(page2)
 
-            await page2.context().close()
+            await disposeLogIn(page2)
         })
 
         await test.step("Test that the user is logged out of other browser", async () => {
@@ -140,7 +135,8 @@ test.describe( "User can log out", () => {
             await expireCookie(page1, CookieName.AccessToken)
 
             await testUserIsLoggedOut(page1)
-            await page1.context().close()
+
+            await disposeLogIn(page1)
         })  
     })
 });
