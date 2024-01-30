@@ -4,10 +4,10 @@
   - [TypeScript](https://www.typescriptlang.org/)
   
 ## Client
-  - [React](https://reactjs.org/)
+  - [React](https://react.dev/)
 
 ## Server
-  - [node version 18](https://nodejs.org/)
+  - [node version 20](https://nodejs.org/)
   - [Express version 4](https://expressjs.com/)
   - [better-sqlite3](https://github.com/JoshuaWise/better-sqlite3)
 

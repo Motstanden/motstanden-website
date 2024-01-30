@@ -4,7 +4,7 @@ After completing this guide, you will have learned everything you need to know t
 
 # Requirements
   The following programs must be installed and added to PATH.
-  - [node 18](https://nodejs.org/)
+  - [node 20](https://nodejs.org/)
       ```bash
       # Check which version is installed in your path
       node --version
