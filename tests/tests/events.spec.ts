@@ -236,10 +236,10 @@ async function clickEdit(page: Page) {
 		editButton.click(),
 	])
 	
-	const editMenuItem = await page.getByRole('menuitem', { name: "Rediger" })
+	const editMenuItem = page.getByRole('menuitem', { name: "Rediger" })
 	const isPopupMenu = await editMenuItem.isVisible()
 	if(isPopupMenu){
-		await  editButton.click()
+		await  editMenuItem.click()
 	}
 
 	await page.waitForURL(/\/arrangement\/(kommende|tidligere)\/[0-9]+\/rediger/)	
