@@ -1,6 +1,7 @@
 import { Cookie, TestInfo, expect, test, type Page } from '@playwright/test';
 import { PublicCookieName } from 'common/enums';
-import { disposeLogIn, unsafeApiLogIn } from '../utils/auth.js';
+import { unsafeApiLogIn } from '../utils/auth.js';
+import { SideDrawerNavigation, navigateSideDrawer } from '../utils/navigateSideDrawer.js';
 
 function getReservedMail(workerInfo: TestInfo) {
     return `test-auth-${workerInfo.parallelIndex + 1}@motstanden.no`
@@ -24,7 +25,7 @@ test.describe("Login tokens are created and persisted", () => {
         await page.goto("/hjem")
     })
 
-    test("AccessToken and RefreshTokens is defined", async ({page}, workerInfo) => {
+    test("AccessToken and RefreshTokens is defined", async ({page}) => {
 
         const cookies = await page.context().cookies()
         expect(cookies.length).toBe(3)
@@ -54,6 +55,9 @@ test.describe("Login tokens are created and persisted", () => {
         const oldAccessToken = await getAccessToken()
         expect(oldAccessToken).not.toBeDefined()
 
+        // Refresh the tokens by navigating to a page that requires authentication
+        await navigateSideDrawer(page, SideDrawerNavigation.Quotes)
+
         // I wrote this hack because: 
         //      1. I don't want to spend time figuring out exactly when the browser instantiates the token.
         //      2. It performs better than simply just waiting for the page to completely load.
@@ -65,7 +69,7 @@ test.describe("Login tokens are created and persisted", () => {
         expect(newAccessToken).toBeDefined()
     })
 
-    test("UnsafeUserInfo is renewed if browser only has RefreshToken", async ({page}, workerInfo) => {
+    test("UnsafeUserInfo is renewed if browser only has RefreshToken", async ({page}) => {
         
         const getUserInfo = async (): Promise<Cookie | undefined> => {
             const cookies = await page.context().cookies()
@@ -78,6 +82,9 @@ test.describe("Login tokens are created and persisted", () => {
 
         const oldUserInfo = await getUserInfo()
         expect(oldUserInfo).not.toBeDefined()
+
+        // Refresh the tokens by navigating to a page that requires authentication
+        await navigateSideDrawer(page, SideDrawerNavigation.Quotes)
 
         // I wrote this hack because: 
         //      1. I don't want to spend time figuring out exactly when the browser instantiates the token.
@@ -101,6 +108,7 @@ test.describe( "User can log out", () => {
         await page.waitForURL("/")
 
         await testUserIsLoggedOut(page)
+
     });
 
     test("Log out of all browser @smoke", async ({ browser }, workerInfo) => {
@@ -111,6 +119,11 @@ test.describe( "User can log out", () => {
             await logIntoReservedUser(page, workerInfo)
             await page.goto("/hjem")    
             return page
+        }
+
+        const disposePage = async (page: Page) => {
+            await page.context().close()
+            await page.close()
         }
 
         const page1 = await newLoginContext()
@@ -126,7 +139,7 @@ test.describe( "User can log out", () => {
 
             await testUserIsLoggedOut(page2)
 
-            await disposeLogIn(page2)
+            await disposePage(page2)
         })
 
         await test.step("Test that the user is logged out of other browser", async () => {
@@ -136,7 +149,7 @@ test.describe( "User can log out", () => {
 
             await testUserIsLoggedOut(page1)
 
-            await disposeLogIn(page1)
+            await disposePage(page1)
         })  
     })
 });
@@ -161,7 +174,6 @@ async function testUserIsLoggedOut(page: Page) {
     await page.goto('/hjem');
     await expect(page.getByRole('link', { name: 'Logg Inn' })).toBeVisible()
     await expect(page).toHaveURL('/logg-inn');
-
     const cookies = await page.context().cookies()
     expect(cookies.length).toBe(0)
 }
