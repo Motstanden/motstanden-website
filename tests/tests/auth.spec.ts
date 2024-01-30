@@ -1,7 +1,6 @@
-import { Cookie, TestInfo, expect, test, type Page } from '@playwright/test';
+import { TestInfo, expect, test, type Page } from '@playwright/test';
 import { PublicCookieName } from 'common/enums';
 import { unsafeApiLogIn } from '../utils/auth.js';
-import { SideDrawerNavigation, navigateSideDrawer } from '../utils/navigateSideDrawer.js';
 
 function getReservedMail(workerInfo: TestInfo) {
     return `test-auth-${workerInfo.parallelIndex + 1}@motstanden.no`
@@ -22,7 +21,6 @@ test.describe("Login tokens are created and persisted", () => {
 
     test.beforeEach(async ({page}, workerInfo) => {
         await logIntoReservedUser(page, workerInfo)
-        await page.goto("/hjem")
     })
 
     test("AccessToken and RefreshTokens is defined", async ({page}) => {
@@ -45,55 +43,39 @@ test.describe("Login tokens are created and persisted", () => {
 
     test("AccessToken is renewed if browser only has RefreshToken", async ({page}, workerInfo) => {
         
-        const getAccessToken = async (): Promise<Cookie | undefined> => {
-            const cookies = await page.context().cookies()
-            const token = cookies.find(c => c.name === "AccessToken") 
-            return token
-        }
-
         await expireCookie(page, CookieName.AccessToken)
-        const oldAccessToken = await getAccessToken()
+
+        const oldAccessToken = await getCookie(page, CookieName.AccessToken)
         expect(oldAccessToken).not.toBeDefined()
 
         // Refresh the tokens by navigating to a page that requires authentication
-        await navigateSideDrawer(page, SideDrawerNavigation.Quotes)
+        // Note: To avoid race conditions, it is important that we do not navigate to a page before expireCookie() is called. See comment in expireCookie() 
+        await page.goto("/sitater", { waitUntil: "networkidle" })
 
-        // I wrote this hack because: 
-        //      1. I don't want to spend time figuring out exactly when the browser instantiates the token.
-        //      2. It performs better than simply just waiting for the page to completely load.
-        while( !(await getAccessToken()) ) 
-            await page.waitForTimeout(100);
-
-
-        const newAccessToken = await getAccessToken()
+        const newAccessToken = await getCookie(page, CookieName.AccessToken)
         expect(newAccessToken).toBeDefined()
     })
 
     test("UnsafeUserInfo is renewed if browser only has RefreshToken", async ({page}) => {
         
-        const getUserInfo = async (): Promise<Cookie | undefined> => {
-            const cookies = await page.context().cookies()
-            const token = cookies.find(c => c.name === PublicCookieName.UnsafeUserInfo) 
-            return token
-        }
-
         await expireCookie(page, CookieName.UnsafeUserInfo)
         await expireCookie(page, CookieName.AccessToken)
 
-        const oldUserInfo = await getUserInfo()
+        const oldUserInfo = await getCookie(page, CookieName.UnsafeUserInfo)
+        const oldAccessToken = await getCookie(page, CookieName.AccessToken)
+        
         expect(oldUserInfo).not.toBeDefined()
-
+        expect(oldAccessToken).not.toBeDefined()
+    
         // Refresh the tokens by navigating to a page that requires authentication
-        await navigateSideDrawer(page, SideDrawerNavigation.Quotes)
+        // Note: To avoid race conditions, it is important that we do not navigate to a page before expireCookie() is called. See comment in expireCookie()
+        await page.goto("/sitater", { waitUntil: "networkidle" })
 
-        // I wrote this hack because: 
-        //      1. I don't want to spend time figuring out exactly when the browser instantiates the token.
-        //      2. It performs better than simply just waiting for the page to completely load.
-        while( !(await getUserInfo()) ) 
-            await page.waitForTimeout(100);
+        const newUserInfo = await getCookie(page, CookieName.UnsafeUserInfo)
+        const newAccessToken = await getCookie(page, CookieName.AccessToken)
 
-        const newUserInfo = await getUserInfo()
         expect(newUserInfo).toBeDefined()
+        expect(newAccessToken).toBeDefined()
     })
 })
 
@@ -108,7 +90,6 @@ test.describe( "User can log out", () => {
         await page.waitForURL("/")
 
         await testUserIsLoggedOut(page)
-
     });
 
     test("Log out of all browser @smoke", async ({ browser }, workerInfo) => {
@@ -154,26 +135,44 @@ test.describe( "User can log out", () => {
     })
 });
 
-async function expireCookie(page: Page, cookieName: CookieName) {
-    // ideally we would be able to fast forward the browser to a time when the AccessToken has expired.
-    // This is not possible at the moment (October 27th, 2022).
-    // We will therefore simulate this by manually deleting the AccessToken cookie
-    const oldCookies = await page.context().cookies()
-    const newCookies = oldCookies.filter( c => c.name !== cookieName)
-    await page.context().clearCookies()
-    await page.context().addCookies(newCookies)
-}
-
-enum CookieName {
-    AccessToken = "AccessToken",
-    RefreshToken = "RefreshToken",
-    UnsafeUserInfo = PublicCookieName.UnsafeUserInfo
-}
-
 async function testUserIsLoggedOut(page: Page) {
     await page.goto('/hjem');
     await expect(page.getByRole('link', { name: 'Logg Inn' })).toBeVisible()
     await expect(page).toHaveURL('/logg-inn');
     const cookies = await page.context().cookies()
     expect(cookies.length).toBe(0)
+}
+
+async function getCookie(page: Page, cookieName: CookieName) {
+    const cookies = await page.context().cookies()
+    const token = cookies.find(c => c.name === cookieName.toString()) 
+    return token
+}
+
+// **** This function is prone to a race condition. Use it carefully!! ****
+//
+// The following race condition costed me so many hours of debugging.
+// Here is the scenario:
+//      1. The current page is somewhere in the application.
+//      2. We delete all cookies: context.clearCookies()
+//      3. Immediately after deleting the cookies, the application happens to randomly send a request to the server (now without a refresh token cookie) 
+//      4. We manually add the cookies again: context.addCookies()
+//      5. The server receives the request in step 3 and responds by deleting all cookies.
+//      6. Now the browser has zero cookies :-( 
+//
+async function expireCookie(page: Page, cookieName: CookieName) {
+    const context = page.context()
+    
+    const oldCookies = await context.cookies()
+    const newCookies = oldCookies.filter( c => c.name !== cookieName)
+    
+    // These lines may cause a race condition.
+    await context.clearCookies()
+    await context.addCookies(newCookies)
+}
+
+enum CookieName {
+    AccessToken = "AccessToken",
+    RefreshToken = "RefreshToken",
+    UnsafeUserInfo = PublicCookieName.UnsafeUserInfo
 }
