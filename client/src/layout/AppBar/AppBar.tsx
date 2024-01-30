@@ -17,7 +17,7 @@ export function AppBar({
     position?: "fixed" | "absolute" | "relative" | "static" | "sticky" 
 }) {
 
-    const isLoggedIn = useAuth().user != null
+    const isLoggedIn = !!useAuth().user
 
     const appBarStyle = useAppBarStyle()
     
