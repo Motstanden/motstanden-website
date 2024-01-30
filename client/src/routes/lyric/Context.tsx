@@ -27,8 +27,9 @@ export function LyricContext() {
 }
 
 function PageContainer( {children}: {children?: React.ReactNode} ) {
-    const isLoggedIn = useAuth().user !== null
-
+    const { user } = useAuth()
+    const isLoggedIn = !!user
+    
     let tabItems = [
         { to: "/studenttraller/populaere", label: "Populære" },
         { to: "/studenttraller/alle", label: "Alle" },
