@@ -76,8 +76,8 @@ export const getLyricItemContextQueryKey = (id: number) => ["LyricItem", id]
 export function LyricItemLoader( {id}: {id: number}){
     const allLyrics = useOutletContext<StrippedSongLyric[]>()
 
-    const isPublic = useAuth().user === null
-    const url = `/api/${isPublic ? "public" : "private"}/song-lyric/${id}`
+    const isLoggedIn = !!useAuth().user
+    const url = `/api/${isLoggedIn ? "private" : "public"}/song-lyric/${id}`
 
     const { isPending, isError, data } = useQuery<SongLyric>({
         queryKey: getLyricItemContextQueryKey(id),
