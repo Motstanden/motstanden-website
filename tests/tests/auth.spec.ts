@@ -50,7 +50,8 @@ test.describe("Login tokens are created and persisted", () => {
 
         // Refresh the tokens by navigating to a page that requires authentication
         // Note: To avoid race conditions, it is important that we do not navigate to a page before expireCookie() is called. See comment in expireCookie() 
-        await page.goto("/sitater", { waitUntil: "networkidle" })
+        await page.goto("/sitater", { waitUntil: "load" })
+        await waitForCookie(page, CookieName.AccessToken)
 
         const newAccessToken = await getCookie(page, CookieName.AccessToken)
         expect(newAccessToken).toBeDefined()
@@ -69,7 +70,8 @@ test.describe("Login tokens are created and persisted", () => {
     
         // Refresh the tokens by navigating to a page that requires authentication
         // Note: To avoid race conditions, it is important that we do not navigate to a page before expireCookie() is called. See comment in expireCookie()
-        await page.goto("/sitater", { waitUntil: "networkidle" })
+        await page.goto("/sitater", { waitUntil: "load" })
+        await waitForCookie(page, CookieName.AccessToken)
 
         const newUserInfo = await getCookie(page, CookieName.UnsafeUserInfo)
         const newAccessToken = await getCookie(page, CookieName.AccessToken)
@@ -147,6 +149,12 @@ async function getCookie(page: Page, cookieName: CookieName) {
     const cookies = await page.context().cookies()
     const token = cookies.find(c => c.name === cookieName.toString()) 
     return token
+}
+
+async function waitForCookie(page: Page, cookieName: CookieName) {
+    while( !(await getCookie(page, cookieName))) {
+        await page.waitForTimeout(200);
+    } 
 }
 
 // **** This function is prone to a race condition. Use it carefully!! ****
