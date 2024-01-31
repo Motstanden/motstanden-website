@@ -15,6 +15,9 @@ dotenv.config();
  */
 const config: PlaywrightTestConfig = {
   testDir: './tests',
+  testMatch: [
+    "*.spec.ts", "*.api.ts"
+  ],
   /* Maximum time one test can run for. */
   timeout: 45 * 1000,
   expect: {
