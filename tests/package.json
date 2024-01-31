@@ -17,6 +17,7 @@
     "common": "file:../common",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.10",
-    "dotenv": "^16.4.1"
+    "dotenv": "^16.4.1",
+    "zod": "^3.22.4"
   }
 }
