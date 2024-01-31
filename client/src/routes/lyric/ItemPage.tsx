@@ -17,7 +17,7 @@ import { lyricContextQueryKey, useLyricItemContext } from './Context';
 
 export function LyricItemPage() {
     const [allLyrics, lyric] = useLyricItemContext()
-    const isLoggedIn = !!useAuth().user 
+    const { isLoggedIn } = useAuth()
     useTitle(lyric.title);
 
     const theme = useTheme();
@@ -60,8 +60,7 @@ export function LyricItemPage() {
 function TitleHeader( {lyric}: {lyric: SongLyric} ) {
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     
-    const user = useAuth().user;
-    const isLoggedIn = !!user
+    const {isLoggedIn, user} = useAuth();
     const canDelete = isLoggedIn && ( user.id === lyric.createdBy || hasGroupAccess(user, UserGroup.Administrator));
 
     const queryClient = useQueryClient();

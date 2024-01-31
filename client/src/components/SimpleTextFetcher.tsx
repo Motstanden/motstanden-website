@@ -5,7 +5,7 @@ import { SimpleText, UpdateSimpleText } from "common/interfaces"
 import { hasGroupAccess, isNullOrWhitespace } from 'common/utils'
 import { useState } from "react"
 import { useAuth } from 'src/context/Authentication'
-import { fetchAsync, fetchFn } from "src/utils/fetchAsync"
+import { fetchFn } from "src/utils/fetchAsync"
 import { AuthorItem, authorInfoTextStyle } from './AuthorInfo'
 import { MarkDownEditor, MarkDownRenderer } from "./MarkDownEditor"
 import { Form } from "./form/Form"
@@ -141,7 +141,7 @@ function SimpleTextReader( {
 }
 
 function LastEditInfo( {simpleText}: {simpleText: SimpleText} ) {
-    const isLoggedIn = !!useAuth().user
+    const { isLoggedIn } = useAuth()
 
     if(!isLoggedIn)
         return <></>

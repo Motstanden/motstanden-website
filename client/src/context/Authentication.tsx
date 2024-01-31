@@ -6,16 +6,33 @@ import dayjs from 'dayjs';
 import React, { useContext, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-type AuthContextType =  {
-    user: User | undefined,
+type LoggedOutContextType = { 
+    user: undefined,
     isPending: boolean,
+    isLoggedIn: false,
+    isEditor: false,
+    isAdmin: false,
+    isSuperAdmin: false,
+    signOut: undefined,
+    signOutAllDevices: undefined
+}
+
+type LoggedInContextType = { 
+    user: User,
+    isPending: boolean,
+    isLoggedIn: true,
+    isEditor: boolean,
+    isAdmin: boolean,
+    isSuperAdmin: boolean,
     signOut: () => Promise<void>
     signOutAllDevices: () => Promise<void>
 }
 
+type AuthContextType =  LoggedInContextType | LoggedOutContextType
+
 export const AuthContext = React.createContext<AuthContextType>(null!);
 
-export function useAuth() {
+export function useAuth(): AuthContextType {
     return useContext(AuthContext)
 }
 
@@ -85,11 +102,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         queryFn: fetchCurrentUser
     })
 
-    const contextValue: AuthContextType = {
-        user: isPending ? previousUser : data ?? undefined,
-        isPending: isPending,
-        signOut: signOutCurrentUser,
-        signOutAllDevices: signOutAllDevices
+    const user = isPending 
+        ? previousUser 
+        : data ?? undefined
+    let contextValue: AuthContextType
+    if(user) {
+        contextValue = {
+            user: user,
+            isPending: isPending,
+            isLoggedIn: true as const,
+            isEditor: hasGroupAccess(user, UserGroup.Editor),
+            isAdmin: hasGroupAccess(user, UserGroup.Administrator),
+            isSuperAdmin: hasGroupAccess(user, UserGroup.SuperAdministrator),
+            signOut: signOutCurrentUser,
+            signOutAllDevices: signOutAllDevices
+        } as const
+    } else {
+        contextValue = {
+            user: undefined,
+            isPending: isPending,
+            isLoggedIn: false as const,
+            isEditor: false as const,
+            isAdmin: false as const,
+            isSuperAdmin: false as const,
+            signOut: undefined,
+            signOutAllDevices: undefined
+        } as const
     }
 
     return (
@@ -99,20 +137,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     )
 }
 
-export function RequireAuth({ requiredGroup, children }: { children: JSX.Element, requiredGroup?: UserGroup }) {
-    const { user } = useAuth();
+export function RequireAuth({ requiredGroup, children }: { children: React.ReactNode, requiredGroup?: UserGroup }) {
+    const { user, isLoggedIn } = useAuth();
     
     const [ initialLocation ] = useState(useLocation())
 
-    const isLoggedIn = () => !!user
-
-    const isInvalidGroup = () => user && requiredGroup && !hasGroupAccess(user, requiredGroup)
-
-    if(!isLoggedIn()) {
+    if(!isLoggedIn) {
         return <Navigate to="/logg-inn" state={{ from: initialLocation }} replace />;
     }
 
-    if(isInvalidGroup()) {
+    if(requiredGroup && !hasGroupAccess(user, requiredGroup)) {
         return <Navigate to="/" replace />;
     }
 

@@ -15,24 +15,25 @@ import { useAuth } from 'src/context/Authentication';
 
 
 export default function UserAvatar() {
-    const auth = useAuth()
+    const { user, isLoggedIn, signOut, signOutAllDevices} = useAuth()
+
+    if(!isLoggedIn) 
+        return <></>
 
     const onSignOutClick = async () => {
-        await auth.signOut();
+        await signOut();
     }
 
     const onSignOutAllClick = async () => {
         if (window.confirm("Du vil bli logget ut av alle enheter innen 15 minutter")) {
-            await auth.signOutAllDevices()
+            await signOutAllDevices()
         }
     }
 
-    const user = auth.user!
-    const fullName = getFullName(user)
     return (
         <IconPopupMenu
             icon={(
-                <Tooltip title={fullName} disableInteractive>
+                <Tooltip title={getFullName(user)} disableInteractive>
                     <Avatar aria-label="Profilmeny" alt="Mitt profilbilde" src={`/${user.profilePicture}`}>{user.firstName[0]}</Avatar>
                 </Tooltip>
             )}

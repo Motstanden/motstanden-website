@@ -53,8 +53,7 @@ import { HistoryPage } from "./routes/history/HistoryPage";
 import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
 
 function App() {
-	const auth = useAuth()
-	const isLoggedIn = !!auth.user 
+	const { isLoggedIn } = useAuth()
 
 	return (
 		<div className='App' style={{ minHeight: "100vh", height: "100%" }}>
