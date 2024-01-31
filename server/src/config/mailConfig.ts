@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
 // How json should be imported:
-// import key from "../info-mail-key.json" assert { type: "json" };     // Experimental in node 18 :-(  Hopefully this feature is stable in node 20...
+// import key from "../../info-mail-key.json" with { type: "json" };     // Experimental in node 20 :-(  Hopefully this feature is stable in node 22...
 
 // Workaround for importing json: 
 import { createRequire } from "module";
