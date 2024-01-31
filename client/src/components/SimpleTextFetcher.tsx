@@ -4,7 +4,7 @@ import { UserGroup } from 'common/enums'
 import { SimpleText, UpdateSimpleText } from "common/interfaces"
 import { hasGroupAccess, isNullOrWhitespace } from 'common/utils'
 import { useState } from "react"
-import { useAuth } from 'src/context/Authentication'
+import { usePotentialUser } from 'src/context/Authentication'
 import { fetchFn } from "src/utils/fetchAsync"
 import { AuthorItem, authorInfoTextStyle } from './AuthorInfo'
 import { MarkDownEditor, MarkDownRenderer } from "./MarkDownEditor"
@@ -21,8 +21,8 @@ export function SimpleTextFetcher({
     queryKeyModifier?: any[]
     skeleton?: React.ReactNode
 }) {
-    const user = useAuth().user
-    const isEditor = !!user && hasGroupAccess(user, UserGroup.Editor)
+    const { user, isLoggedIn } = usePotentialUser()
+    const isEditor = isLoggedIn && hasGroupAccess(user, UserGroup.Editor)
 
     const queryKey = buildQueryKey(textKey, queryKeyModifier)
     const { isPending, isError, data, error } = useQuery<SimpleText>({
@@ -141,7 +141,7 @@ function SimpleTextReader( {
 }
 
 function LastEditInfo( {simpleText}: {simpleText: SimpleText} ) {
-    const { isLoggedIn } = useAuth()
+    const { isLoggedIn } = usePotentialUser()
 
     if(!isLoggedIn)
         return <></>

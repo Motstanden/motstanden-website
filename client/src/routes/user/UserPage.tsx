@@ -6,13 +6,12 @@ import {
     Paper,
     Tooltip
 } from "@mui/material";
-import { UserGroup } from "common/enums";
 import { User } from "common/interfaces";
-import { getFullName, hasGroupAccess, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";
+import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";
 import dayjs from "dayjs";
 import { Link as RouterLink, matchPath, useLocation, useOutletContext } from "react-router-dom";
 import { PostingWall } from "src/components/PostingWall";
-import { useAuth } from "src/context/Authentication";
+import { useAuthenticatedUser } from "src/context/Authentication";
 import { useTopScroller } from 'src/context/TopScroller';
 import { useTitle } from "src/hooks/useTitle";
 import { Card, CardTextItem } from "./Components";
@@ -66,14 +65,13 @@ function ProfileBanner({ user }: { user: User }) {
 }
 
 function EditButton({ user }: { user: User }) {
-    const loggedInUser = useAuth().user!
+    const {user: currentUser, isAdmin} = useAuthenticatedUser()
 
     const { preventNextScroll } = useTopScroller()
     const location  = useLocation()
 
-    const isSelf = loggedInUser.id === user.id
-    const groupPermission = hasGroupAccess(loggedInUser, UserGroup.Administrator)
-    const canEdit = isSelf || groupPermission
+    const isSelf = currentUser.id === user.id
+    const canEdit = isSelf || isAdmin
     if (!canEdit) {
         return <></>
     }

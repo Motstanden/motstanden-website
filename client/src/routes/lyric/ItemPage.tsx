@@ -1,23 +1,22 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Divider, Theme, useMediaQuery, useTheme } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { CommentEntityType, UserGroup } from 'common/enums';
+import { CommentEntityType } from 'common/enums';
 import { SongLyric } from 'common/interfaces';
-import { hasGroupAccess } from 'common/utils';
 import { useNavigate } from "react-router-dom";
 import { AuthorInfo } from 'src/components/AuthorInfo';
 import { CommentSection } from 'src/components/CommentSection';
 import { MarkDownRenderer } from 'src/components/MarkDownEditor';
 import { DeleteMenuItem, EditMenuItem } from 'src/components/menu/EditOrDeleteMenu';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
-import { useAuth } from 'src/context/Authentication';
+import { usePotentialUser } from 'src/context/Authentication';
 import { postJson } from 'src/utils/postJson';
 import { useTitle } from "../../hooks/useTitle";
 import { lyricContextQueryKey, useLyricItemContext } from './Context';
 
 export function LyricItemPage() {
     const [allLyrics, lyric] = useLyricItemContext()
-    const { isLoggedIn } = useAuth()
+    const { isLoggedIn } = usePotentialUser()
     useTitle(lyric.title);
 
     const theme = useTheme();
@@ -60,8 +59,8 @@ export function LyricItemPage() {
 function TitleHeader( {lyric}: {lyric: SongLyric} ) {
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     
-    const {isLoggedIn, user} = useAuth();
-    const canDelete = isLoggedIn && ( user.id === lyric.createdBy || hasGroupAccess(user, UserGroup.Administrator));
+    const {isLoggedIn, isAdmin, user} = usePotentialUser();
+    const canDelete = isAdmin || (isLoggedIn && user.id === lyric.createdBy)
 
     const queryClient = useQueryClient();
     const navigate = useNavigate();

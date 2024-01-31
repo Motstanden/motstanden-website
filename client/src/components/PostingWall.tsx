@@ -8,7 +8,7 @@ import { NewWallPost, WallPost } from "common/interfaces"
 import { isNullOrWhitespace } from 'common/utils'
 import dayjs from "dayjs"
 import { useState } from "react"
-import { useAuth } from "src/context/Authentication"
+import { useAuthenticatedUser } from "src/context/Authentication"
 import { useUserReference } from 'src/context/UserReference'
 import { fetchFn } from "src/utils/fetchAsync"
 import { postJson } from 'src/utils/postJson'
@@ -30,7 +30,7 @@ export function PostingWall({
     userFirstName?: string,
     style?: React.CSSProperties
 }) {
-    const currentUser = useAuth().user!
+    const { user: currentUser } = useAuthenticatedUser()
 
     const queryClient = useQueryClient()
 
@@ -477,7 +477,7 @@ function PostForm({
 
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
-    const user = useAuth().user!
+    const { user } = useAuthenticatedUser()
     const isSelf = user.id === initialValue.wallUserId
     const label = useRandomLabel(isSelf, userFirstName)
 

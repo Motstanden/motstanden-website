@@ -1,8 +1,6 @@
 import { List, Theme, useMediaQuery } from "@mui/material";
-import { UserGroup } from "common/enums";
-import { hasGroupAccess } from "common/utils";
 import { useMatch } from "react-router-dom";
-import { useAuth } from "src/context/Authentication";
+import { usePotentialUser } from "src/context/Authentication";
 import { ListItemDivider, ListItemExpander, ListItemLink } from './ListItem';
 
 // Icons. See https://mui.com/components/material-icons/ for more icons
@@ -26,8 +24,8 @@ import PollIcon from '@mui/icons-material/Poll';
 import FaqIcon from '@mui/icons-material/QuestionMark';
 
 export function NavContent({onItemClick}: {onItemClick: VoidFunction}) {
-    const auth = useAuth()
-    return auth.user
+    const { isLoggedIn } = usePotentialUser()
+    return isLoggedIn
         ? <PrivateNavContent onItemClick={onItemClick} />
         : <PublicNavContent onItemClick={onItemClick} />
 }
@@ -95,8 +93,7 @@ function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
 }
 
 function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
-    const { user } = useAuth();
-    const isSuperAdmin = hasGroupAccess(user!, UserGroup.SuperAdministrator)
+    const { user, isSuperAdmin } = usePotentialUser();
     
     const matchesFrontPage = !!useMatch("/hjem/*")
     const matchesWallPage = !!useMatch("/vegg/*")

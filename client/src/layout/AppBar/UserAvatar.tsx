@@ -11,11 +11,11 @@ import {
 import { getFullName } from 'common/utils';
 import { Link as RouterLink } from 'react-router-dom';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
-import { useAuth } from 'src/context/Authentication';
+import { usePotentialUser } from 'src/context/Authentication';
 
 
 export default function UserAvatar() {
-    const { user, isLoggedIn, signOut, signOutAllDevices} = useAuth()
+    const { user, isLoggedIn, signOut, signOutAllDevices} = usePotentialUser()
 
     if(!isLoggedIn) 
         return <></>

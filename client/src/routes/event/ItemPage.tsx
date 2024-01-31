@@ -3,8 +3,7 @@ import {
     MenuItem,
     Paper,
     Stack,
-    TextField,
-    useTheme
+    TextField
 } from "@mui/material";
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CommentEntityType, ParticipationStatus } from "common/enums";
@@ -15,14 +14,14 @@ import { AuthorInfo } from "src/components/AuthorInfo";
 import { CommentSection } from "src/components/CommentSection";
 import { TitleCard } from "src/components/TitleCard";
 import { UserList } from "src/components/UserList";
-import { useAuth } from "src/context/Authentication";
+import { useAuthenticatedUser } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
 import { fetchFn } from "src/utils/fetchAsync";
 import { postJson } from "src/utils/postJson";
 import { MarkDownRenderer } from "../../components/MarkDownEditor";
+import { eventContextQueryKey } from "./Context";
 import { ItemMenu } from "./components/ItemMenu";
 import { KeyInfo } from "./components/KeyInfo";
-import { eventContextQueryKey } from "./Context";
 
 export default function ItemPage() {
     const event = useOutletContext<EventData>();
@@ -91,7 +90,7 @@ function ParticipationContainer({ eventId }: { eventId: number }) {
         queryFn: fetchFn<Participant[]>(`/api/event-participants?eventId=${eventId}`),
     })
     
-    const user = useAuth().user!
+    const { user } = useAuthenticatedUser()
 
     if (isPending) {
         return <></>

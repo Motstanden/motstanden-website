@@ -18,9 +18,9 @@ import { CloseModalButton } from 'src/components/CloseModalButton';
 import { UserList, UserListSkeleton } from 'src/components/UserList';
 import { DeleteMenuItem } from 'src/components/menu/EditOrDeleteMenu';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
-import { useAuth } from 'src/context/Authentication';
+import { useAuthenticatedUser } from 'src/context/Authentication';
 import { useTitle } from 'src/hooks/useTitle';
-import { fetchAsync, fetchFn } from "src/utils/fetchAsync";
+import { fetchFn } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
 import { pollListQueryKey } from './Context';
 
@@ -69,7 +69,7 @@ export function PollPageSkeleton(){
 
 export function PollCard( { poll, srcQueryKey, style, }: { poll: Poll, srcQueryKey: any[], style?: React.CSSProperties }){
 
-    const user = useAuth().user!
+    const { user } = useAuthenticatedUser()
     const [isLoading, setIsLoading] = useState(false)
     const queryClient = useQueryClient()
 

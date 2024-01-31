@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { UserReference } from "common/interfaces";
 import React, { useEffect } from "react";
-import { fetchAsync, fetchFn } from "src/utils/fetchAsync";
-import { useAuth } from "./Authentication";
+import { fetchFn } from "src/utils/fetchAsync";
+import { usePotentialUser } from "./Authentication";
 
 export interface UserReferenceContextType {
     isPending: boolean,
@@ -26,22 +26,21 @@ export function useUserReference() {
 
 export function UserReferenceProvider( {children}: {children: React.ReactNode} ) {
  
-    const user = useAuth().user
-    const isEnabled = !!user        // The context is enabled if the user is logged in
+    const { isLoggedIn } = usePotentialUser()
 
     let initialValue: UserReferenceContextType = emptyUserReference
-    if(!isEnabled) {
+    if(!isLoggedIn) {
         initialValue.isError = false
         initialValue.isPending = false
     }
-    initialValue.isEnabled = isEnabled
+    initialValue.isEnabled = isLoggedIn
 
     const [userReference, setUserReference] = React.useState<UserReferenceContextType>(initialValue)
 
     const { isPending, isError, data, error } = useQuery<UserReference[]>({
         queryKey: ["user-reference"],
         queryFn: fetchFn<UserReference[]>("/api/simplified-member-list"),
-        enabled: isEnabled
+        enabled: isLoggedIn
     })
 
     useEffect(() => {
@@ -57,7 +56,7 @@ export function UserReferenceProvider( {children}: {children: React.ReactNode} )
             isPending: isPending,
             isError: isError,
             userReference: userLookUpTable,
-            isEnabled: isEnabled
+            isEnabled: isLoggedIn
         })
 
     }, [data, isPending, isError])

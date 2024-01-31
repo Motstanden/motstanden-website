@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { SongLyric, StrippedSongLyric } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
-import { useAuth } from "src/context/Authentication"
+import { usePotentialUser } from "src/context/Authentication"
 import { TabbedPageContainer } from "src/layout/PageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
 import { strToPrettyUrl } from "src/utils/strToPrettyUrl"
@@ -31,7 +31,7 @@ export function LyricContext() {
 }
 
 function PageContainer( {children}: {children?: React.ReactNode} ) {
-    const { isLoggedIn } = useAuth()
+    const { isLoggedIn } = usePotentialUser()
     
     let tabItems = [
         { to: "/studenttraller/populaere", label: "Populære" },
@@ -75,7 +75,7 @@ export const getLyricItemContextQueryKey = (id: number) => ["LyricItem", id]
 export function LyricItemLoader( {id}: {id: number}){
     const allLyrics = useOutletContext<StrippedSongLyric[]>()
 
-    const isLoggedIn = !!useAuth().user
+    const isLoggedIn = !!usePotentialUser().user
     const url = `/api/${isLoggedIn ? "private" : "public"}/song-lyric/${id}`
 
     const { isPending, isError, data } = useQuery<SongLyric>({

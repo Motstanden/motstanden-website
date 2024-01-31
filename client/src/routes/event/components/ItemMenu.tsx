@@ -5,7 +5,7 @@ import { EventData } from "common/interfaces";
 import { hasGroupAccess } from "common/utils";
 import { useNavigate } from "react-router-dom";
 import { EditOrDeleteMenu } from "src/components/menu/EditOrDeleteMenu";
-import { useAuth } from "src/context/Authentication";
+import { useAuthenticatedUser } from "src/context/Authentication";
 import { postJson } from 'src/utils/postJson';
 import { buildEventItemUrl } from "../Context";
 
@@ -19,7 +19,7 @@ export function ItemMenu({
     iconOrientation?: "horizontal" | "vertical", 
     onDeleteSuccess?: VoidFunction,
 }) {
-    const user = useAuth().user!;
+    const { user } = useAuthenticatedUser();
     const navigate = useNavigate();
 
     const onEditClick = () => navigate(`${buildEventItemUrl(event)}/rediger`);

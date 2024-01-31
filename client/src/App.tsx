@@ -1,5 +1,5 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
-import { RequireAuth, RequireAuthRouter, useAuth } from "src/context/Authentication";
+import { RequireAuth, RequireAuthRouter, usePotentialUser } from "src/context/Authentication";
 
 import { UserGroup } from 'common/enums';
 import { AppLayout } from 'src/layout/AppLayout';
@@ -53,7 +53,7 @@ import { HistoryPage } from "./routes/history/HistoryPage";
 import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
 
 function App() {
-	const { isLoggedIn } = useAuth()
+	const { isLoggedIn } = usePotentialUser()
 
 	return (
 		<div className='App' style={{ minHeight: "100vh", height: "100%" }}>

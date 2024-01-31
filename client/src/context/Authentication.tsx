@@ -30,10 +30,24 @@ type LoggedInContextType = {
 
 type AuthContextType =  LoggedInContextType | LoggedOutContextType
 
-export const AuthContext = React.createContext<AuthContextType>(null!);
+export const potentialUserContext = React.createContext<AuthContextType>(null!);
+export const authenticatedUserContext = React.createContext<LoggedInContextType>(null!);
 
-export function useAuth(): AuthContextType {
-    return useContext(AuthContext)
+/**
+ * Use this hook when you need to get user data in contexts where you don't know if the user is logged in or not.
+ * @returns The current user or undefined if the user is not logged in.
+ */
+export function usePotentialUser(): AuthContextType {
+    return useContext(potentialUserContext)
+}
+
+/**
+ * Use this hook when you need to get user data in contexts where you know for a fact that the user is logged in.
+ * If the user is not logged in, this break the app.
+ * @returns The current user.
+ */
+export function useAuthenticatedUser(): LoggedInContextType {
+    return useContext(authenticatedUserContext)
 }
 
 async function signOutCurrentUser(): Promise<void> {
@@ -93,6 +107,9 @@ async function fetchCurrentUser(): Promise<User | null> {
 
 export const userQueryKey = ["GetCurrentUser"]
 
+/**
+ * Provider for usePotentialUser hook.
+ */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const [ previousUser ] = useState<User | undefined>(getPreviousUser())
@@ -131,15 +148,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <AuthContext.Provider value={contextValue}>
+        <potentialUserContext.Provider value={contextValue}>
             {children}
-        </AuthContext.Provider>
+        </potentialUserContext.Provider>
     )
 }
 
+/**
+ * Provider for useAuthenticatedUser hook.
+ */
 export function RequireAuth({ requiredGroup, children }: { children: React.ReactNode, requiredGroup?: UserGroup }) {
-    const { user, isLoggedIn } = useAuth();
-    
+    const auth = usePotentialUser();
+    const {isLoggedIn, user} = auth;
+
     const [ initialLocation ] = useState(useLocation())
 
     if(!isLoggedIn) {
@@ -150,7 +171,10 @@ export function RequireAuth({ requiredGroup, children }: { children: React.React
         return <Navigate to="/" replace />;
     }
 
-    return children
+    return (
+        <authenticatedUserContext.Provider value={auth}>
+            {children}
+        </authenticatedUserContext.Provider>)
 }
 
 export function RequireAuthRouter({ requiredGroup }: { requiredGroup?: UserGroup }) {

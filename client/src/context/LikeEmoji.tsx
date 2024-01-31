@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { LikeEmoji } from "common/interfaces";
 import React, { useEffect } from "react";
 import { fetchFn } from "src/utils/fetchAsync";
-import { useAuth } from "./Authentication";
+import { usePotentialUser } from "./Authentication";
 
 export interface LikeEmojiContextType { 
     emojis: Record<number, LikeEmoji>
@@ -19,15 +19,14 @@ export function useLikeEmoji() {
 }
 
 export function LikeEmojiProvider( {children}: {children: React.ReactNode} ) {
-    const user = useAuth().user
-    const isEnabled = !!user    // The context is enabled if the user is logged in
+    const { isLoggedIn } = usePotentialUser()
 
     const [likeEmoji, setLikeEmoji] = React.useState<LikeEmojiContextType>(emptyLikeEmoji)
 
     const { data } = useQuery<LikeEmoji[]>({
         queryKey: ["like-emoji"],
         queryFn: fetchFn<LikeEmoji[]>("/api/likes/emojis/all"),
-        enabled: isEnabled
+        enabled: isLoggedIn
     })
 
     useEffect(() => { 

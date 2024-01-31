@@ -9,26 +9,24 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { useQueryClient } from "@tanstack/react-query";
 import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
 import { User } from "common/interfaces";
-import { isNtnuMail as checkIsNtnuMail, hasGroupAccess, isNullOrWhitespace, strToNumber, userRankToPrettyStr } from "common/utils";
+import { isNtnuMail as checkIsNtnuMail, isNullOrWhitespace, strToNumber, userRankToPrettyStr } from "common/utils";
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate, useOutletContext } from "react-router-dom";
 import { datePickerStyle } from "src/assets/style/timePickerStyles";
 import { HelpButton } from "src/components/HelpButton";
 import { Form } from "src/components/form/Form";
-import { useAuth, userQueryKey } from "src/context/Authentication";
+import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
 import { Card, CardTextItem, groupTVPair, rankTVPair, statusTVPair } from "./Components";
 import { userListQueryKey } from "./Context";
 import { AccountDetailsCard, PersonCard, formatExactDate } from "./UserPage";
 
 export default function EditUserPage() {
-    const currentUser = useAuth().user!
+    const {user, isAdmin, isSuperAdmin} = useAuthenticatedUser()
     const viewedUser = useOutletContext<User>()
 
-    const isSelfEditing = currentUser.id === viewedUser.id
-    const isSuperAdmin = hasGroupAccess(currentUser, UserGroup.SuperAdministrator)
-    const isAdmin = hasGroupAccess(currentUser, UserGroup.Administrator)
+    const isSelfEditing = user.id === viewedUser.id
 
     let editMode: UserEditMode | undefined
     if (isSuperAdmin) {

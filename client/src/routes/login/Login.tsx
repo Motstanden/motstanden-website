@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from 'src/context/Authentication';
+import { usePotentialUser } from 'src/context/Authentication';
 import { useTitle } from '../../hooks/useTitle';
 import { PageContainer } from '../../layout/PageContainer';
 import { AnimationAvatar } from './AnimationAvatar';
@@ -11,10 +11,10 @@ export default function LoginPage() {
 	const [mailInfo, setMailInfo] = useState<EmailInfo | undefined>(undefined)
 
 	useTitle("Logg inn")
-	const auth = useAuth()
+	const { isLoggedIn } = usePotentialUser()
 	const location = useLocation()
 
-	if (auth.user) {
+	if (isLoggedIn) {
 		const to: string = location.state?.from?.pathname ?? "/hjem"
 		return <Navigate to={to} state={{ from: location }} replace />
 	}

@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query"
 import { LikeEntityType } from "common/enums"
 import { Like } from "common/interfaces"
 import React, { useEffect, useState } from "react"
-import { useAuth } from "src/context/Authentication"
-import { fetchAsync, fetchFn } from "src/utils/fetchAsync"
+import { useAuthenticatedUser } from "src/context/Authentication"
+import { fetchFn } from "src/utils/fetchAsync"
 
 interface GroupedLike {
     emojiId: number 
@@ -49,7 +49,7 @@ export function LikesContextProvider( {
     const queryKey = ["likes", entityType, entityId]
     const url = `/api/${entityType}/${entityId}/likes`
 
-    const userId = useAuth().user?.id ?? -1
+    const { user } = useAuthenticatedUser()
 
     const [likesContext, setLikesContext] = useState<LikesContextType>({
         ...defaultLikesContext,
@@ -70,7 +70,7 @@ export function LikesContextProvider( {
             isPending: isPending,
             likes:  data ?? [],
             groupedLikes: groupAndSort(data ?? []),
-            selfLike: data?.find(like => like.userId === userId)
+            selfLike: data?.find(like => like.userId === user.id)
         }))
     }, [isPending, isError, data])
 

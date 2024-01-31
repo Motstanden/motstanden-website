@@ -16,14 +16,12 @@ import {
     useMediaQuery
 } from "@mui/material";
 import { useQueryClient } from '@tanstack/react-query';
-import { UserGroup } from "common/enums";
 import { SheetArchiveTitle } from "common/interfaces";
-import { hasGroupAccess } from "common/utils";
 import { useState } from 'react';
 import { Link as RouterLink, useOutletContext } from "react-router-dom";
 import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
 import { Form } from 'src/components/form/Form';
-import { useAuth } from "src/context/Authentication";
+import { useAuthenticatedUser } from "src/context/Authentication";
 import { useTitle } from "../../hooks/useTitle";
 import { sheetArchiveContextQueryKey } from './Context';
 
@@ -50,8 +48,8 @@ export default function SongPage({ mode }: { mode?: "repertoire" }) {
 }
 
 function TitleTable( { items }: { items: SheetArchiveTitle[]}) {
-    const user = useAuth().user
-    const isAdmin = !!user && hasGroupAccess(user, UserGroup.Administrator)
+    const {user, isAdmin} = useAuthenticatedUser()
+    
     return (
         <TableContainer component={Paper}>
             <Table>

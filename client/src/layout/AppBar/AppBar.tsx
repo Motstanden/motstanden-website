@@ -1,9 +1,9 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import { Box, Divider, IconButton, Link, AppBar as MuiAppBar, Stack, SxProps, Theme, Toolbar, Typography, useMediaQuery, useScrollTrigger } from "@mui/material";
+import { Box, Divider, IconButton, Link, AppBar as MuiAppBar, Stack, SxProps, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import MotstandenImg from "src/assets/logos/motstanden.png";
 import { useAppBarStyle } from 'src/context/AppBarStyle';
-import { useAuth } from 'src/context/Authentication';
+import { usePotentialUser } from 'src/context/Authentication';
 import UserAvatar from 'src/layout/AppBar/UserAvatar';
 import { ThemeSwitchButton } from 'src/layout/ThemeSwitchButton';
 
@@ -17,7 +17,7 @@ export function AppBar({
     position?: "fixed" | "absolute" | "relative" | "static" | "sticky" 
 }) {
 
-    const { isLoggedIn } = useAuth()
+    const { isLoggedIn } = usePotentialUser()
 
     const appBarStyle = useAppBarStyle()
     
@@ -109,7 +109,7 @@ export function AppBar({
 }
 
 function UserInfo() {
-    const auth = useAuth()
+    const auth = usePotentialUser()
 
     if(auth.user)
         return <UserAvatar/>

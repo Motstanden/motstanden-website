@@ -9,9 +9,9 @@ import dayjs from "dayjs"
 import { useLayoutEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
 import { LinkifiedText } from 'src/components/LinkifiedText'
-import { useAuth } from "src/context/Authentication"
+import { useAuthenticatedUser } from "src/context/Authentication"
 import { relativeTimeShortFormat } from 'src/context/Locale'
-import { fetchAsync, fetchFn } from "src/utils/fetchAsync"
+import { fetchFn } from "src/utils/fetchAsync"
 import { postJson } from "src/utils/postJson"
 import { LikeButton } from './likes/LikeButton'
 import { LikeListIconButton } from './likes/LikeListButton'
@@ -323,7 +323,7 @@ function CommentForm({
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void),
     variant?: CommentSectionVariant,
 }) {
-    const user = useAuth().user!
+    const { user } = useAuthenticatedUser()
     const [value, setValue] = useState<NewComment>({ comment: "" })
     const [isSubmitting, setIsSubmitting] = useState(false)
 
