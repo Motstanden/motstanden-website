@@ -1,6 +1,6 @@
 import { TestInfo, expect, test, type Page } from '@playwright/test';
 import { PublicCookieName } from 'common/enums';
-import { unsafeApiLogIn } from '../utils/auth.js';
+import { unsafeApiLogIn } from '../../utils/auth.js';
 
 function getReservedMail(workerInfo: TestInfo) {
     return `test-auth-${workerInfo.parallelIndex + 1}@motstanden.no`

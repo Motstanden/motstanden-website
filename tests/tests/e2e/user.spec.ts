@@ -10,8 +10,8 @@ import {
     userStatusToPrettyStr
 } from "common/utils"
 import { randomInt, randomUUID } from 'crypto'
-import { TestUser, disposeLogIn, logIn, unsafeApiLogIn } from '../utils/auth.js'
-import { selectDate } from '../utils/datePicker.js'
+import { TestUser, disposeLogIn, logIn, unsafeApiLogIn } from '../../utils/auth.js'
+import { selectDate } from '../../utils/datePicker.js'
 
 test("New users can only be created by super admin", async ({browser}, workerInfo) => {
 

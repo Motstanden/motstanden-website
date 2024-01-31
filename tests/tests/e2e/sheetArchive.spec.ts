@@ -2,7 +2,7 @@ import { Browser, expect, Page, test, TestInfo } from '@playwright/test';
 import { UserGroup } from 'common/enums';
 import { SheetArchiveTitle } from 'common/interfaces';
 import { randomUUID } from "crypto";
-import { disposeLogIn, logIn } from '../utils/auth.js';
+import { disposeLogIn, logIn } from '../../utils/auth.js';
 
 test.describe("Update song title info", async () => {
     test("Admin can update data @smoke", async ({browser}, workerInfo) => await runTest(browser, workerInfo, UserGroup.Administrator))
