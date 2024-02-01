@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
 import { Quote as QuoteData } from "common/interfaces"
-import React from "react"
 import { Outlet, useLocation } from "react-router-dom"
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
@@ -12,37 +11,11 @@ const quotesQueryKey = ["FetchAllQuotes"]
 
 export const useContextInvalidator = () => useQueryInvalidator(quotesQueryKey)
 
-export function QuotesContext() {
-
-    const location = useLocation()
-    const { isPending, isError, data, error } = useQuery<QuoteData[]>({
-        queryKey: quotesQueryKey,
-        queryFn: fetchFn<QuoteData[]>("/api/quotes"),
-    })
-
-    if (isPending) {
-
-        if (matchUrl("/sitater", location)) {
-            return (
-                <PageContainer>
-                    <ListPageSkeleton />
-                </PageContainer>
-            )
-        }
-    }
-
-    if (isError) {
-        return <PageContainer>{`${error}`}</PageContainer>
-    }
-
-    return (
-        <PageContainer>
-            <Outlet context={data} />
-        </PageContainer>
-    )
+export {
+    QuotesContainer as QuotesContext
 }
 
-function PageContainer({ children }: { children?: React.ReactNode }) {
+function QuotesContainer() {
     return (
         <TabbedPageContainer
             tabItems={[
@@ -50,7 +23,29 @@ function PageContainer({ children }: { children?: React.ReactNode }) {
                 { to: "/sitater/ny", label: "ny" },
             ]}
         >
-            {children}
+            <QuotesLoader/>
         </TabbedPageContainer>
+    )
+}
+
+function QuotesLoader() {
+    const { isPending, isError, data, error } = useQuery<QuoteData[]>({
+        queryKey: quotesQueryKey,
+        queryFn: fetchFn<QuoteData[]>("/api/quotes"),
+    })
+
+    const location = useLocation()
+    const isQuotesPage = matchUrl("/sitater", location)
+
+    if (isPending && isQuotesPage) {
+        return <ListPageSkeleton/>
+    }
+
+    if (isError) {
+        return `${error}`
+    }
+
+    return (
+        <Outlet context={data} />
     )
 }
