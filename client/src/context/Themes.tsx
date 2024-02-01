@@ -38,7 +38,7 @@ const darkTheme: AppThemeProps = {
                 // contrastText: "
             },
             background: {
-                default: "#0C0C0C",
+                default: "#161616",
                 paper: "#161616"
             },
             text: {
@@ -103,7 +103,7 @@ const lightTheme: AppThemeProps = {
                 //contrastText: "",
             },
             background: {
-                default: "#FFFFFF",
+                default: "#F3F4F3",
                 paper: "#F3F4F3"
             },
             text: {
