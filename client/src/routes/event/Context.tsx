@@ -9,21 +9,11 @@ import { matchUrl } from "src/utils/matchUrl"
 
 export const eventContextQueryKey = ["FetchEventContext"]
 
-export function EventContext() {
+export {
+    EventContainer as EventContext
+}
 
-    const { isPending, isError, data, error } = useQuery<EventData[]>({
-        queryKey: eventContextQueryKey,
-        queryFn: fetchFn<EventData[]>("/api/events/all"),
-    })
-
-    if (isPending) {
-        return <div style={{ minHeight: "100px" }} />
-    }
-
-    if (isError) {
-        return <div style={{ minHeight: "100px" }}>{`${error}`}</div>
-    }
-
+function EventContainer() {
     return (
         <TabbedPageContainer
             tabItems={[
@@ -33,8 +23,28 @@ export function EventContext() {
             ]}
             matchChildPath={true}
         >
-            <Outlet context={data} />
+            <EventContextLoader/>
         </TabbedPageContainer>
+    )
+}
+
+function EventContextLoader() {
+    const { isPending, isError, data, error } = useQuery<EventData[]>({
+        queryKey: eventContextQueryKey,
+        queryFn: fetchFn<EventData[]>("/api/events/all"),
+    })
+
+    // Todo: Add loading skeleton
+    if (isPending) {
+        return <div/>
+    }
+
+    if (isError) {
+        return `${error}`
+    }
+
+    return (
+        <Outlet context={data} />
     )
 }
 
