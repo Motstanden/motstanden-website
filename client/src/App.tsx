@@ -45,12 +45,13 @@ import { QuotesContext } from 'src/routes/quotes/Context';
 import QuoteListPage from "src/routes/quotes/ListPage";
 import NewQuotePage from "src/routes/quotes/NewPage";
 import { RumourContext } from 'src/routes/rumour/Context';
-import { NewRumourPage, RumourPage } from 'src/routes/rumour/RumourPage';
+import { RumourPage } from 'src/routes/rumour/RumourPage';
 import { SheetArchiveContext } from "src/routes/sheetArchive/Context";
 import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
 import { HistoryPage } from "./routes/history/HistoryPage";
 import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
+import { NewRumourPage } from "./routes/rumour/NewPage";
 
 function App() {
 	const { isLoggedIn } = usePotentialUser()

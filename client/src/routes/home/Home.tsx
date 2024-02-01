@@ -12,10 +12,11 @@ import { useTitle } from "src/hooks/useTitle";
 import { buildEventItemUrl } from "src/routes/event/Context";
 import { QuoteList } from "src/routes/quotes/ListPage";
 import { ListSkeleton as QuotesListSkeleton } from "src/routes/quotes/ListPage.skeleton";
-import { RumourList, ListSkeleton as RumourListSkeleton } from "src/routes/rumour/RumourPage";
+import { RumourList } from "src/routes/rumour/RumourPage";
 import { fetchFn } from "src/utils/fetchAsync";
 import { BoardPageUtils, RawProjectData } from "../boardWebsiteList/BoardWebsiteList";
 import { PollCard, PollSkeleton } from "../poll/Poll";
+import { RumourListSkeleton } from "../rumour/RumourPage.skeleton";
 
 
 export default function Home() {

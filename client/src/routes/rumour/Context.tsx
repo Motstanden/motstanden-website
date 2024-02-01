@@ -4,7 +4,7 @@ import { Outlet, useMatch } from "react-router-dom"
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
-import { PageSkeleton } from "./RumourPage"
+import { RumourPageSkeleton } from "./RumourPage.skeleton"
 
 const rumourQueryKey = ["FetchAllRumours"]
 
@@ -36,7 +36,7 @@ function RumourLoader() {
     const isRumourPage =useMatch("/rykter")
 
     if (isPending && isRumourPage) {
-        return <PageSkeleton />
+        return <RumourPageSkeleton />
     }
 
     if (isError) {

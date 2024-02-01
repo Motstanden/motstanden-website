@@ -1,14 +1,13 @@
-import { Divider, Skeleton, Stack, TextField } from "@mui/material";
-import { NewRumour, Rumour } from "common/interfaces";
-import { isNullOrWhitespace } from "common/utils";
+import { Divider, Stack } from "@mui/material";
+import { Rumour } from "common/interfaces";
 import dayjs from "dayjs";
-import { useState } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
-import { Form } from "src/components/form/Form";
+import { useOutletContext } from "react-router-dom";
 import { useTitle } from "src/hooks/useTitle";
 import { EditList, RenderEditFormProps } from "../quotes/components/EditList";
 import { NewlineText } from "../quotes/components/NewlineText";
 import { useContextInvalidator } from "./Context";
+import { RumourItemSkeleton } from "./RumourPage.skeleton";
+import { UpsertRumourForm } from "./components/UpsertRumourForm";
 
 export function RumourPage() {
     useTitle("Ryktebørsen")
@@ -27,39 +26,6 @@ export function RumourPage() {
     )
 }
 
-export function PageSkeleton() {
-    return (
-        <>
-            <h1>Ryktebørsen</h1>
-            <h3>Har du hørt at...</h3>
-            <div style={{ marginLeft: "10px" }}>
-                <ListSkeleton length={20} />
-            </div>
-        </>
-    )
-}
-
-export function ListSkeleton({ length }: { length: number }) {
-    return (
-        <ul style={{
-            paddingLeft: "5px",
-            listStyleType: "none",
-        }}>
-            {Array(length).fill(1).map((_, i) => <ItemSkeleton key={i} />)}
-        </ul>
-    )
-}
-
-
-function ItemSkeleton() {
-    return (
-        <li style={{ marginBottom: "30px" }}>
-            <Skeleton style={{ maxWidth: "700px", height: "2.5em" }} />
-            <Skeleton style={{ maxWidth: "95px", height: "1em", marginLeft: "25px" }} />
-        </li>
-    )
-}
-
 export function RumourList({ rumours, onItemChanged }: { rumours: Rumour[], onItemChanged: VoidFunction }) {
     const renderItem = (rumour: Rumour) => <ReadOnlyItem rumour={rumour} />
     const renderEditForm = (props: RenderEditFormProps<Rumour>) => <EditItem {...props} />
@@ -72,7 +38,7 @@ export function RumourList({ rumours, onItemChanged }: { rumours: Rumour[], onIt
             renderItem={renderItem}
             renderEditForm={renderEditForm}
             itemComparer={isEqual}
-            renderItemSkeleton={<ItemSkeleton />}
+            renderItemSkeleton={<RumourItemSkeleton />}
             deleteItemUrl="/api/rumours/delete"
             confirmDeleteItemText="Vil du permanent slette dette ryktet?"
             itemSpacing="15px"
@@ -109,84 +75,6 @@ function EditItem(props: RenderEditFormProps<Rumour>) {
                 onPostSuccess={props.onEditSuccess}
                 postUrl="/api/rumours/update"
             />
-        </div>
-    )
-}
-
-export function NewRumourPage() {
-    useTitle("Nytt rykte")
-    const navigate = useNavigate()
-    const contextInvalidator = useContextInvalidator()
-
-    const onAbort = () => navigate("/rykter")
-
-    const onSuccess = () => {
-        contextInvalidator()
-        navigate("/rykter")
-    }
-
-    return (
-        <>
-            <h1>Nytt rykte</h1>
-            <UpsertRumourForm
-                initialValue={{ rumour: "" }}
-                postUrl="/api/rumours/new"
-                onAbortClick={onAbort}
-                onPostSuccess={onSuccess}
-            />
-        </>
-    )
-}
-
-function UpsertRumourForm({
-    initialValue,
-    postUrl,
-    onAbortClick,
-    onPostSuccess,
-}: {
-    initialValue: NewRumour | Rumour,
-    postUrl: string,
-    onAbortClick: VoidFunction
-    onPostSuccess: VoidFunction
-}) {
-    const [newValue, setNewValue] = useState<NewRumour | Rumour>(initialValue)
-
-    const validateData = () => {
-        const isEmpty = isNullOrWhitespace(newValue.rumour)
-        const isEqual = newValue.rumour.trim() === initialValue.rumour.trim()
-        return !isEmpty && !isEqual
-    }
-
-    const getSubmitData = () => {
-        return { ...newValue, rumour: newValue.rumour.trim() }
-    }
-
-    const disabled = !validateData()
-
-    return (
-        <div style={{ maxWidth: "700px" }}>
-            <Form
-                value={getSubmitData}
-                postUrl={postUrl}
-                disabled={disabled}
-                onAbortClick={_ => onAbortClick()}
-                onPostSuccess={_ => onPostSuccess()}
-            >
-                <div style={{ marginBottom: "-1em" }}>
-                    <TextField
-                        label="Har du hørt at...?"
-                        name="rumour"
-                        type="text"
-                        required
-                        fullWidth
-                        autoComplete="off"
-                        value={newValue.rumour}
-                        onChange={(e) => setNewValue({ ...newValue, rumour: e.target.value })}
-                        multiline
-                        minRows={2}
-                    />
-                </div>
-            </Form>
         </div>
     )
 }
