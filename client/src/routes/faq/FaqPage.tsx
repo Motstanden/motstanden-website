@@ -1,7 +1,7 @@
 import { Skeleton } from "@mui/material";
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
 import { useTitle } from "src/hooks/useTitle";
-import { PageContainer } from "src/layout/PageContainer";
+import { PageContainer } from "src/layout/PageContainer/PageContainer";
 
 const simpleTextKey = "faq-page"
 

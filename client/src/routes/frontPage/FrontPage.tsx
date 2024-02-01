@@ -1,10 +1,10 @@
-import { Skeleton, Theme, useMediaQuery } from "@mui/material";
+import { Theme, useMediaQuery } from "@mui/material";
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
+import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton";
 import { useAppTheme } from "src/context/Themes";
 import May17Img from "../../assets/pictures/17mai2021.jpg";
 import { useTitle } from "../../hooks/useTitle";
-import { PageContainer, usePagePadding } from "../../layout/PageContainer";
-import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton";
+import { PageContainer, usePagePadding } from "../../layout/PageContainer/PageContainer";
 
 const simpleTextKey = "front-page"
 

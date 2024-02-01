@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { Navigate, Outlet, useLocation, useOutletContext, useParams } from "react-router-dom"
-import { TabbedPageContainer } from "src/layout/PageContainer"
+import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
 
 import { EventData } from "common/interfaces"

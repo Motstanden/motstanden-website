@@ -4,7 +4,7 @@ import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
 import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton";
 import { ThemeName, useAppTheme } from "../../context/Themes";
 import { useTitle } from "../../hooks/useTitle";
-import { PageContainer } from "../../layout/PageContainer";
+import { PageContainer } from "../../layout/PageContainer/PageContainer";
 
 const simpleTextKey = "become-member"
 

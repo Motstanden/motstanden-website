@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { usePotentialUser } from 'src/context/Authentication';
 import { useTitle } from '../../hooks/useTitle';
-import { PageContainer } from '../../layout/PageContainer';
+import { PageContainer } from '../../layout/PageContainer/PageContainer';
 import { AnimationAvatar } from './AnimationAvatar';
 import { EmailInfo, EmailLogin } from './EmailLogin';
 

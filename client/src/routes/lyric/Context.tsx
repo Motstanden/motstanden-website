@@ -3,7 +3,7 @@ import { SongLyric, StrippedSongLyric } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
 import { usePotentialUser } from "src/context/Authentication"
-import { TabbedPageContainer } from "src/layout/PageContainer"
+import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
 import { strToPrettyUrl } from "src/utils/strToPrettyUrl"
 

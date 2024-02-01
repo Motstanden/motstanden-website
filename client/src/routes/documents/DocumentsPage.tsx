@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { UrlList, UrlListItem } from "../../components/UrlList"
 import { useTitle } from "../../hooks/useTitle"
-import { PageContainer } from "../../layout/PageContainer"
+import { PageContainer } from "../../layout/PageContainer/PageContainer"
 import { fetchFn } from "../../utils/fetchAsync"
 
 export default function DocumentsPage() {

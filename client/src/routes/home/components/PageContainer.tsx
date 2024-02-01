@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { TabbedPageContainer } from "src/layout/PageContainer";
+import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer";
 
 export default function PageContainer({ children }: { children?: React.ReactNode }) { 
     return (

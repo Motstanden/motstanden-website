@@ -2,7 +2,7 @@ import { Divider, Link } from "@mui/material";
 import LicenseLogo from "src/assets/logos/license.png";
 import { linkStyle } from "src/assets/style/tableStyle";
 import { useTitle } from "src/hooks/useTitle";
-import { PageContainer } from "src/layout/PageContainer";
+import { PageContainer } from "src/layout/PageContainer/PageContainer";
 
 export function LicensePage() {
     useTitle("Lisens")

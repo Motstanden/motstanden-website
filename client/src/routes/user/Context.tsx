@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { User } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
-import { PageContainer } from "src/layout/PageContainer"
+import { PageContainer } from "src/layout/PageContainer/PageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
 import { UserPageHeader } from "./UserPage"
 

@@ -18,8 +18,8 @@ import { headerStyle, rowStyle } from "src/assets/style/tableStyle"
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher"
 import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton"
 import { useTitle } from "src/hooks/useTitle"
-import { PageContainer } from "src/layout/PageContainer"
-import { fetchAsync, fetchFn } from "src/utils/fetchAsync"
+import { PageContainer } from "src/layout/PageContainer/PageContainer"
+import { fetchFn } from "src/utils/fetchAsync"
 
 const topSimpleTextKey = "board-website-list-top"
 

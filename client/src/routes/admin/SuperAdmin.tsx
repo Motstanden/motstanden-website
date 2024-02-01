@@ -1,4 +1,4 @@
-import { PageContainer } from "src/layout/PageContainer";
+import { PageContainer } from "src/layout/PageContainer/PageContainer";
 
 export default function SuperAdminPage() {
     return (

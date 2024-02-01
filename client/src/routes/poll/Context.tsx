@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Poll } from "common/interfaces";
 import { Outlet } from "react-router-dom";
-import { TabbedPageContainer } from "src/layout/PageContainer";
-import { fetchAsync, fetchFn } from "src/utils/fetchAsync";
+import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer";
+import { fetchFn } from "src/utils/fetchAsync";
 import { PollPageSkeleton } from "./Poll";
 
 
