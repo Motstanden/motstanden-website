@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
 import { Quote as QuoteData } from "common/interfaces"
-import { Outlet, useLocation } from "react-router-dom"
+import { Outlet, useMatch } from "react-router-dom"
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
-import { matchUrl } from "src/utils/matchUrl"
 import { ListPageSkeleton } from "./ListPageSkeleton"
 
 const quotesQueryKey = ["FetchAllQuotes"]
@@ -34,8 +33,7 @@ function QuotesLoader() {
         queryFn: fetchFn<QuoteData[]>("/api/quotes"),
     })
 
-    const location = useLocation()
-    const isQuotesPage = matchUrl("/sitater", location)
+    const isQuotesPage = useMatch("/sitater")
 
     if (isPending && isQuotesPage) {
         return <ListPageSkeleton/>

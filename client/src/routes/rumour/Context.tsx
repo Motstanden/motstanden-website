@@ -1,11 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
 import { Quote as QuoteData } from "common/interfaces"
-import React from "react"
-import { Outlet, useLocation } from "react-router-dom"
+import { Outlet, useMatch } from "react-router-dom"
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
-import { matchUrl } from "src/utils/matchUrl"
 import { PageSkeleton } from "./RumourPage"
 
 const rumourQueryKey = ["FetchAllRumours"]
@@ -35,8 +33,7 @@ function RumourLoader() {
         queryFn: fetchFn<QuoteData[]>("/api/rumours"),
     })
 
-    const location = useLocation()
-    const isRumourPage = matchUrl("/rykter", location)
+    const isRumourPage =useMatch("/rykter")
 
     if (isPending && isRumourPage) {
         return <PageSkeleton />
