@@ -6,9 +6,9 @@ import { fetchFn } from "src/utils/fetchAsync"
 import { EventData } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { matchUrl } from "src/utils/matchUrl"
-import { EventEditPageSkeleton } from "./EditPage.skeleton"
-import { EventListPageSkeleton } from "./ListPage.skeleton"
-import { EventItemPageSkeleton } from "./itemPage.skeleton"
+import { EventEditPageSkeleton } from "./skeleton/EditPage"
+import { EventItemPageSkeleton } from "./skeleton/ItemPage"
+import { EventListPageSkeleton } from "./skeleton/ListPage"
 
 export const eventContextQueryKey = ["FetchEventContext"]
 
@@ -40,7 +40,7 @@ function EventContextLoader() {
     const { isListPage, isItemPage, isEditPage } = useEventUrlMatch()
 
     if (isPending) {
-        
+
         if(isListPage)
             return <EventListPageSkeleton/>
         

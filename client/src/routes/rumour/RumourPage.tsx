@@ -6,8 +6,8 @@ import { useTitle } from "src/hooks/useTitle";
 import { EditList, RenderEditFormProps } from "../quotes/components/EditList";
 import { NewlineText } from "../quotes/components/NewlineText";
 import { useContextInvalidator } from "./Context";
-import { RumourItemSkeleton } from "./RumourPage.skeleton";
 import { UpsertRumourForm } from "./components/UpsertRumourForm";
+import { RumourItemSkeleton } from "./skeleton/RumourPage";
 
 export function RumourPage() {
     useTitle("Ryktebørsen")

@@ -4,10 +4,10 @@ import dayjs from "dayjs";
 import { useOutletContext } from "react-router-dom";
 import { useTitle } from "src/hooks/useTitle";
 import { useContextInvalidator } from "./Context";
-import { QuotesItemSkeleton } from "./ListPage.skeleton";
 import { EditList, RenderEditFormProps } from "./components/EditList";
 import { NewlineText } from "./components/NewlineText";
 import { UpsertQuoteForm } from "./components/UpsertQuoteForm";
+import { QuotesItemSkeleton } from "./skeleton/ListPage";
 
 export default function ListPage() {
     useTitle("Sitater")
