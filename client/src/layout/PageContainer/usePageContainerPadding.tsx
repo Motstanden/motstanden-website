@@ -9,7 +9,19 @@ const smallPaddingInline = "min(70px, 2vw)"
 const mediumPaddingInline = "min(80px, 3vw)"
 const largePaddingInline = "min(100px, 4vw)"
 
-export function usePageContainerPadding() {
+interface PaddingProps { 
+    paddingTop: string,
+    paddingBottom: string,
+    paddingLeft: string,
+    paddingRight: string,
+    padding: string
+}
+
+/** 
+ * Custom hook to retrieve the padding for the page container.
+ * This hook is useful for pages where the PageContainer has disableGutters set to true.
+*/
+export function usePageContainerPadding(): PaddingProps {
     const { theme } = useAppTheme();
 
     const isTiny = useMediaQuery(theme.breakpoints.only('xs'));
