@@ -147,11 +147,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } as const
     }
 
+    if(contextValue.isLoggedIn) {
+        return (
+            <potentialUserContext.Provider value={contextValue}>
+                <authenticatedUserContext.Provider value={contextValue}>
+                    {children}
+                </authenticatedUserContext.Provider>
+            </potentialUserContext.Provider>
+        )
+    }
+
     return (
         <potentialUserContext.Provider value={contextValue}>
-            {children}
+            <AuthenticatedUserProvider>
+                {children}
+            </AuthenticatedUserProvider>
         </potentialUserContext.Provider>
     )
+}
+
+function AuthenticatedUserProvider({ children }: { children: React.ReactNode }) {
+    const auth = usePotentialUser();
+
+    // This hook should only be used when we know for a fact that the user is logged in.
+    // Prefer the app to break if a developer mistakenly calls this hook in a context where they don't know for sure that the user is logged in.
+    if(!auth.isLoggedIn)
+        return children
+    
+    return (
+        <authenticatedUserContext.Provider value={auth}>
+            {children}
+        </authenticatedUserContext.Provider>
+    )
+
 }
 
 /**
@@ -171,10 +199,7 @@ export function RequireAuth({ requiredGroup, children }: { children: React.React
         return <Navigate to="/" replace />;
     }
 
-    return (
-        <authenticatedUserContext.Provider value={auth}>
-            {children}
-        </authenticatedUserContext.Provider>)
+    return children
 }
 
 export function RequireAuthRouter({ requiredGroup }: { requiredGroup?: UserGroup }) {
