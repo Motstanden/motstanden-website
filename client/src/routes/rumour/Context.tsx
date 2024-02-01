@@ -8,44 +8,15 @@ import { fetchFn } from "src/utils/fetchAsync"
 import { matchUrl } from "src/utils/matchUrl"
 import { PageSkeleton } from "./RumourPage"
 
-
 const rumourQueryKey = ["FetchAllRumours"]
 
 export const useContextInvalidator = () => useQueryInvalidator(rumourQueryKey)
 
-export function RumourContext() {
-    
-    const location = useLocation()
-    const { isPending, isError, data, error } = useQuery<QuoteData[]>({
-        queryKey: rumourQueryKey,
-        queryFn: fetchFn<QuoteData[]>("/api/rumours"),
-    })
-
-    if (isPending) {
-
-        if (matchUrl("/rykter", location)) {
-            return (
-                <PageContainer>
-                    <PageSkeleton />
-                </PageContainer>
-            )
-        }
-
-        return <PageContainer />
-    }
-
-    if (isError) {
-        return <PageContainer>{`${error}`}</PageContainer>
-    }
-
-    return (
-        <PageContainer>
-            <Outlet context={data} />
-        </PageContainer>
-    )
+export {
+    RumourContainer as RumourContext
 }
 
-function PageContainer({ children }: { children?: React.ReactNode }) {
+function RumourContainer() {
     return (
         <TabbedPageContainer
             tabItems={[
@@ -53,7 +24,29 @@ function PageContainer({ children }: { children?: React.ReactNode }) {
                 { to: "/rykter/ny", label: "Ny" },
             ]}
         >
-            {children}
+            <RumourLoader/>
         </TabbedPageContainer>
+    )
+}
+
+function RumourLoader() {
+    const { isPending, isError, data, error } = useQuery<QuoteData[]>({
+        queryKey: rumourQueryKey,
+        queryFn: fetchFn<QuoteData[]>("/api/rumours"),
+    })
+
+    const location = useLocation()
+    const isRumourPage = matchUrl("/rykter", location)
+
+    if (isPending && isRumourPage) {
+        return <PageSkeleton />
+    }
+
+    if (isError) {
+        return `${error}`
+    }
+
+    return (
+        <Outlet context={data} />
     )
 }
