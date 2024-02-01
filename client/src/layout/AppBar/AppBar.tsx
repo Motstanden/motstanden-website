@@ -19,7 +19,7 @@ export function AppBar({
 
     const { isLoggedIn } = usePotentialUser()
 
-    const appBarStyle = useAppBarStyle()
+    const { appBarBoxShadow } = useAppBarStyle()
     
     const isMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
     const isSmallScreen = useMediaQuery("(max-width: 663px)");
@@ -29,7 +29,7 @@ export function AppBar({
         <MuiAppBar 
             position={position} 
             sx={{
-                boxShadow: appBarStyle.boxShadow,
+                boxShadow: appBarBoxShadow,
                 ...sx,
             }}>
             <Toolbar sx={{

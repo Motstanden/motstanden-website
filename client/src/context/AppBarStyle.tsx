@@ -2,9 +2,10 @@ import { useScrollTrigger } from "@mui/material"
 import { createContext, useContext, useState } from "react"
 
 interface AppBarStyleContextType { 
-    boxShadow: number,
-    removeBoxShadow: VoidFunction,
-    addBoxShadow: VoidFunction,
+    boxShadowValue: number,
+    appBarBoxShadow: number,
+    removeAppBarShadow: VoidFunction,
+    addAppBarShadow: VoidFunction,
 }
 
 const AppBarStyleContext = createContext<AppBarStyleContextType>(null!)
@@ -13,26 +14,29 @@ export function useAppBarStyle() {
     return useContext(AppBarStyleContext)
 }
 
-export const appBarBoxShadow = 4
+const defaultShadowValue = 4
 
 export function AppBarStyleProvider({ children }: { children: React.ReactNode }) {
  
-    const [boxShadow, setBoxShadow] = useState(appBarBoxShadow)
+    const [appBarHasShadow, setAppBarHasShadow] = useState(true)
 
-    const removeBoxShadow = () => setBoxShadow(0)
+    const removeAppBarShadow = () => setAppBarHasShadow(false)
 
-    const addBoxShadow = () => setBoxShadow(appBarBoxShadow)
+    const addAppBarShadow = () => setAppBarHasShadow(true)
 
     const trigger = useScrollTrigger({
         disableHysteresis: true,
         threshold: 0
     })    
-    const shadowValue = trigger ? boxShadow : 0
+    const boxShadowValue = trigger ? defaultShadowValue : 0
+    
+    const appBarBoxShadow = appBarHasShadow ? boxShadowValue : 0
 
     const contextValue: AppBarStyleContextType = { 
-        boxShadow: shadowValue,
-        removeBoxShadow: removeBoxShadow,
-        addBoxShadow: addBoxShadow,
+        boxShadowValue: boxShadowValue,
+        appBarBoxShadow: appBarBoxShadow, 
+        removeAppBarShadow: removeAppBarShadow,
+        addAppBarShadow: addAppBarShadow,
     }
 
     return (
