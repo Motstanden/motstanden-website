@@ -9,6 +9,7 @@ import dayjs from "dayjs"
 import { useLayoutEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
 import { LinkifiedText } from 'src/components/LinkifiedText'
+import { useAppBarStyle } from 'src/context/AppBarStyle'
 import { useAuthenticatedUser } from "src/context/Authentication"
 import { relativeTimeShortFormat } from 'src/context/Locale'
 import { fetchFn } from "src/utils/fetchAsync"
@@ -171,8 +172,9 @@ function CommentSection( {
     likeEntityType: LikeEntityType,
     variant?: CommentSectionVariant,
 }) {
-    const location = useLocation()
+    const { scrollMarginTop } = useAppBarStyle()
 
+    const location = useLocation()
     useLayoutEffect(() => {
         if(location.hash && location.hash.startsWith("#comment-")) {
             const element = document.getElementById(location.hash.substring(1))
@@ -194,13 +196,15 @@ function CommentSection( {
                     entityId={comment.id}
                     key={comment.id}
                 >
-                    <div id={`comment-${comment.id}`}>
+                    <div 
+                        id={`comment-${comment.id}`} 
+                        style={{
+                            scrollMarginTop: `${scrollMarginTop + 10}px`,
+                            marginBottom: "15px"
+                        }}>
                         <CommentItem 
                             comment={comment}
                             variant={variant ?? "normal"}
-                            style={{
-                                marginBottom: "15px",
-                            }}
                         />
                     </div>
                 </LikesContextProvider>
