@@ -1,11 +1,14 @@
 import { useQuery } from "@tanstack/react-query"
-import { Navigate, Outlet, useLocation, useOutletContext, useParams } from "react-router-dom"
+import { Navigate, Outlet, useLocation, useMatch, useOutletContext, useParams } from "react-router-dom"
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
 
 import { EventData } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { matchUrl } from "src/utils/matchUrl"
+import { EventEditPageSkeleton } from "./EditPage.skeleton"
+import { EventListPageSkeleton } from "./ListPage.skeleton"
+import { EventItemPageSkeleton } from "./itemPage.skeleton"
 
 export const eventContextQueryKey = ["FetchEventContext"]
 
@@ -34,9 +37,20 @@ function EventContextLoader() {
         queryFn: fetchFn<EventData[]>("/api/events/all"),
     })
 
-    // Todo: Add loading skeleton
+    const { isListPage, isItemPage, isEditPage } = useEventUrlMatch()
+
     if (isPending) {
-        return <div/>
+        
+        if(isListPage)
+            return <EventListPageSkeleton/>
+        
+        if(isItemPage)
+            return <EventItemPageSkeleton/>
+
+        if(isEditPage)
+            return <EventEditPageSkeleton/>
+
+        return <></>
     }
 
     if (isError) {
@@ -76,6 +90,31 @@ export function EventItemContext() {
     return (
         <Outlet context={event} />
     )
+}
+
+type EventUrlMatch = {
+    isListPage: boolean
+    isItemPage: boolean
+    isEditPage: boolean
+}
+
+function useEventUrlMatch(): EventUrlMatch {
+
+    const isList1 = useMatch("/arrangement")
+    const isList2 =  useMatch("/arrangement/tidligere") 
+    const isList3 = useMatch("/arrangement/kommende") 
+    
+    const isItem1 = useMatch("/arrangement/kommende/:id") 
+    const isitem2 = useMatch("/arrangement/tidligere/:id")
+    
+    const isEdit1 = useMatch("/arrangement/kommende/:id/rediger") 
+    const isEdit2 = useMatch("/arrangement/tidligere/:id/rediger")
+
+    return {
+        isListPage: !!(isList1 || isList2 || isList3),
+        isItemPage: !!(isItem1 || isitem2),
+        isEditPage: !!(isEdit1 || isEdit2)
+    }
 }
 
 export function buildEventItemUrl(event: EventData) {
