@@ -162,7 +162,7 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
             <ListItemDivider/>
 
             {isSuperAdmin && (
-                <ListItemExpander text="Medlem">
+                <ListItemExpander text="Medlem" dense={isMobile}>
                     <ListItemLink 
                         text="Ny" 
                         to="/medlem/ny" 
@@ -184,7 +184,7 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                     onLinkClick={onItemClick}/>
             )}
 
-            <ListItemExpander text="Om oss">
+            <ListItemExpander text="Om oss" dense={isMobile}>
                 <ListItemLink 
                     text="Framside" 
                     to="/framside" 

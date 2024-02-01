@@ -71,10 +71,12 @@ export function ListItemLink({
 
 export function ListItemExpander({ 
     text, 
+    dense,
     startsOpen, 
-    children 
+    children,
 }: { 
-    text: string, 
+    text: string,
+    dense: boolean, 
     startsOpen?: boolean, 
     children: React.ReactNode 
 }) {
@@ -122,6 +124,7 @@ export function ListItemExpander({
                     component="div" 
                     disablePadding 
                     sx={{ pl: 4}}
+                    dense={dense}
                     >
                     {children}
                 </List>
