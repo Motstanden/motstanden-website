@@ -145,8 +145,7 @@ function PreviousPolls( {polls}: { polls: Poll[] }) {
             <h2>Tidligere avstemninger</h2>
             {polls.map((poll) => (
                 <div key={poll.id}  >
-                    <Accordion 
-                        TransitionProps={{ unmountOnExit: true  }} 
+                    <Accordion
                         disableGutters
                         elevation={0}
                         style={{ 
@@ -154,7 +153,7 @@ function PreviousPolls( {polls}: { polls: Poll[] }) {
                             minWidth: "MIN(100%, 500px)",
                             borderBottomWidth: "0px",
                             borderBottomStyle: "solid",
-                            borderBottomColor: theme.palette.divider,
+                            backgroundColor: "transparent",
                             borderRadius: "0px",
                         }}
                         >
