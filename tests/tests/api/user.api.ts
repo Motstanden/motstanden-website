@@ -1,4 +1,4 @@
-import { APIRequestContext, expect, test } from '@playwright/test'
+import { APIRequestContext, TestInfo, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
 import { z } from "zod"
 import { apiLogIn, getUser } from '../../utils/auth.js'
@@ -33,47 +33,47 @@ const simplifiedUserSchema = z.object({
 
 const simplifiedUserArraySchema = z.array(simplifiedUserSchema)
 
-test.describe("GET requests sends correct types", () => {
+test.describe("GET api/member-list", () => {
+    
+    const getValues = async (request: APIRequestContext) => await request.get("/api/member-list")
 
-    test.beforeEach( async ({request}, workerInfo) => {
-        const user = getUser(workerInfo, UserGroup.Contributor)
-        await apiLogIn(request, user)
-    })
-
-    test("GET /member-list", async ({request}) => {
-        const res = await getMemberList(request)
+    test("Receives valid object", async ({request}, workerInfo) => {
+        await authenticate(request, workerInfo)
+        
+        const res = await getValues(request)
         expect(res.ok()).toBeTruthy()
-
+    
         const users = await res.json()
         expect( () => userArraySchema.parse(users)).not.toThrow()
     })
 
-    test("GET /simplified-member-list", async ({request}) => {
-        const res = await getSimplifiedMemberList(request)
+    test("Refuses unauthenticated requests", async ({request}) => { 
+        const res = await getValues(request)
+        expect(res.ok()).toBeFalsy()
+    })
+})
+
+test.describe("GET api/simplified-member-list", () => {
+
+    const getValues = async (request: APIRequestContext) => await request.get("/api/simplified-member-list")
+
+    test("Receives valid object", async ({request}, workerInfo) => {
+        await authenticate(request, workerInfo)
+
+        const res = await getValues(request)
         expect(res.ok()).toBeTruthy()
 
         const users = await res.json()
         expect(() => simplifiedUserArraySchema.parse(users)).not.toThrow()
     })
-})
 
-test.describe("GET refuse unauthenticated requests", () => { 
-
-    test("GET /member-list", async ({request}) => { 
-        const res = await getMemberList(request)
-        expect(res.ok()).toBeFalsy()
-    })
-
-    test("GET /simplified-member-list", async ({request}) => { 
-        const res = await getSimplifiedMemberList(request)
+    test("Refuses unauthenticated requests", async ({request}) => { 
+        const res = await getValues(request)
         expect(res.ok()).toBeFalsy()
     })
 })
 
-async function getMemberList(request: APIRequestContext) {
-    return await request.get("/api/member-list")
-}
-
-async function getSimplifiedMemberList(request: APIRequestContext) { 
-    return await request.get("/api/simplified-member-list")
+async function authenticate(request: APIRequestContext, workerInfo: TestInfo) { 
+    const user = getUser(workerInfo, UserGroup.Contributor)
+    await apiLogIn(request, user)
 }
