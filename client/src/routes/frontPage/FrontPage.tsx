@@ -2,9 +2,10 @@ import { Theme, useMediaQuery } from "@mui/material";
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
 import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton";
 import { useAppTheme } from "src/context/Themes";
+import { usePageContainerPadding } from "src/layout/PageContainer/usePageContainerPadding";
 import May17Img from "../../assets/pictures/17mai2021.jpg";
 import { useTitle } from "../../hooks/useTitle";
-import { PageContainer, usePagePadding } from "../../layout/PageContainer/PageContainer";
+import { PageContainer } from "../../layout/PageContainer/PageContainer";
 
 const simpleTextKey = "front-page"
 
@@ -18,7 +19,7 @@ export default function FrontPage() {
         paddingLeft: pagePaddingLeft,
         paddingRight: pagePaddingRight,
         paddingBottom: pagePaddingBottom,
-    } = usePagePadding()
+    } = usePageContainerPadding()
 
     return (
         <PageContainer disableGutters>
