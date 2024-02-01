@@ -18,7 +18,7 @@ git pull
 
 # Run deploy script
 cd server
-npm run serverdeploy
+npm run deploy
 
 # In rare cases, a reboot may be required
 sudo reboot
@@ -38,7 +38,7 @@ skal funke må innholdet fra din `id_rsa.pub` bli lagt inn i serverens `/home/ek
 # Feilsøking - Server
 For at sida skal funke må:
 * Kildekoden funke (funker den lokalt?)
-* Alle steg som er definert i `serverdeploy`-scriptet ha kjørt uten feil. Scriptet finner du i [server/package.json](/server/package.json)
+* Alle steg som er definert i `deploy`-scriptet ha kjørt uten feil. Scriptet finner du i [server/package.json](/server/package.json)
 * Pm2 må kjøre og fungere
 
 Vi har brukt *process-manageren* [**pm2**](https://pm2.keymetrics.io/). Sjekk om den kjører, f.eks med `htop` eller `pm2 status`. Dersom den allerede gjør det uten at *"motstanden.no"* funker er det noe galt med **pm2**s konfigurasjon. Sjekk dokumentasjon om pm2, config ligger bl.a. i `/etc/systemd/systed/pm2-root.service`.
