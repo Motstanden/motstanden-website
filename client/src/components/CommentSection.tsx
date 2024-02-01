@@ -172,7 +172,7 @@ function CommentSection( {
     variant?: CommentSectionVariant,
 }) {
     const location = useLocation()
-    
+
     useLayoutEffect(() => {
         if(location.hash && location.hash.startsWith("#comment-")) {
             const element = document.getElementById(location.hash.substring(1))
@@ -194,13 +194,15 @@ function CommentSection( {
                     entityId={comment.id}
                     key={comment.id}
                 >
-                    <CommentItem 
-                        comment={comment}
-                        variant={variant ?? "normal"}
-                        style={{
-                            marginBottom: "15px",
-                        }}
-                    />
+                    <div id={`comment-${comment.id}`}>
+                        <CommentItem 
+                            comment={comment}
+                            variant={variant ?? "normal"}
+                            style={{
+                                marginBottom: "15px",
+                            }}
+                        />
+                    </div>
                 </LikesContextProvider>
             ))}
         </>
@@ -217,98 +219,95 @@ function CommentItem( {
     variant?: CommentSectionVariant,
 }) {
     const theme = useTheme()
-
     return (
-        <div id={`comment-${comment.id}`}>
-            <Stack 
-                direction="row"
-                spacing={variant === "normal" ? 2 : 1 }
-                style={style}
-            >
-                <UserAvatar 
-                    userId={comment.createdBy}
+        <Stack 
+            direction="row"
+            spacing={variant === "normal" ? 2 : 1 }
+            style={style}
+        >
+            <UserAvatar 
+                userId={comment.createdBy}
+                style={{
+                    marginTop: "5px"
+                }}
+            />
+            <div style={{
+                width: variant === "normal" ? "100%" : undefined,
+            }}>
+                <div
                     style={{
-                        marginTop: "5px"
+                        backgroundColor: theme.palette.divider,
+                        minWidth: "130px",
+                        padding: variant === "normal" ? "12px" : "7px 14px 10px 14px",
+                        borderRadius: variant === "normal" ? "10px" : "16px",
+                        position: "relative"
                     }}
-                />
-                <div style={{
-                    width: variant === "normal" ? "100%" : undefined,
-                }}>
+                >
+                    <div>
+                        <UserFullName 
+                            userId={comment.createdBy}
+                            style={{
+                                fontSize: variant === "normal" ? "inherit" : "small",
+                            }}
+                        />
+                    </div>
+                    <div 
+                        style={{
+                            whiteSpace: "pre-line"
+                        }}>
+                        <LinkifiedText>
+                            {comment.comment}
+                        </LinkifiedText>
+                    </div>
                     <div
                         style={{
-                            backgroundColor: theme.palette.divider,
-                            minWidth: "130px",
-                            padding: variant === "normal" ? "12px" : "7px 14px 10px 14px",
-                            borderRadius: variant === "normal" ? "10px" : "16px",
-                            position: "relative"
+                            position: "absolute",
+                            right: "0px",
+                            zIndex: 1
                         }}
                     >
-                        <div>
-                            <UserFullName 
-                                userId={comment.createdBy}
-                                style={{
-                                    fontSize: variant === "normal" ? "inherit" : "small",
-                                }}
-                            />
-                        </div>
-                        <div 
+                        <Paper
                             style={{
-                                whiteSpace: "pre-line"
-                            }}>
-                            <LinkifiedText>
-                                {comment.comment}
-                            </LinkifiedText>
-                        </div>
-                        <div
-                            style={{
-                                position: "absolute",
-                                right: "0px",
-                                zIndex: 1
+                                borderRadius: "30px",
+                                lineHeight: "0px",
+                                padding: "0px",
+                                margin: "0px",
                             }}
+                            elevation={4}
                         >
-                            <Paper
+                            <LikeListIconButton 
+                                maxItems={2}
                                 style={{
                                     borderRadius: "30px",
-                                    lineHeight: "0px",
-                                    padding: "0px",
-                                    margin: "0px",
-                                }}
-                                elevation={4}
-                            >
-                                <LikeListIconButton 
-                                    maxItems={2}
-                                    style={{
-                                        borderRadius: "30px",
-                                        fontSize: "13pt",
-                                        lineHeight: "15pt",
-                                        padding: "0px 2px 1px 2px",
-                                    }}
-                                />
-                            </Paper>
-                        </div>
-                    </div>
-                    <div>
-                        <span>
-                            <LikeButton 
-                                style={{
-                                    fontSize: "small",
-                                    marginInline: "4px",
-                                    minWidth: "40px",
+                                    fontSize: "13pt",
+                                    lineHeight: "15pt",
+                                    padding: "0px 2px 1px 2px",
                                 }}
                             />
-                        </span>
-                        <span
-                            style={{
-                                fontSize: "small",
-                                opacity: "0.6",
-                            }}
-                            >
-                            {dayjs(comment.createdAt).utc(true).locale(relativeTimeShortFormat).fromNow()}
-                        </span>
+                        </Paper>
                     </div>
                 </div>
-            </Stack>
-        </div>
+                <div>
+                    <span>
+                        <LikeButton 
+                            style={{
+                                fontSize: "small",
+                                marginInline: "4px",
+                                minWidth: "40px",
+                            }}
+                        />
+                    </span>
+                    <span
+                        style={{
+                            fontSize: "small",
+                            opacity: "0.6",
+                        }}
+                        >
+                        {dayjs(comment.createdAt).utc(true).locale(relativeTimeShortFormat).fromNow()}
+                    </span>
+                </div>
+            </div>
+        </Stack>
     )
 }
 
