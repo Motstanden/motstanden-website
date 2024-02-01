@@ -111,7 +111,7 @@ export function ListItemExpander({
                         ? <ExpandLess /> 
                         : <ExpandMore />}
                     </ListItemIcon>
-                    <ListItemText primary={text} />
+                    <ListItemText primary={text} disableTypography/>
                 </ListItemButton>
             </ListItem>
             <Collapse 
