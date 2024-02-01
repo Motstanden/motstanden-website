@@ -4,7 +4,7 @@ import { Outlet, useMatch } from "react-router-dom"
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
-import { ListPageSkeleton } from "./ListPageSkeleton"
+import { ListPageSkeleton } from "./ListPage.skeleton"
 
 const quotesQueryKey = ["FetchAllQuotes"]
 
