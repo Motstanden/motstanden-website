@@ -5,13 +5,14 @@ import { UserListSkeleton } from "src/components/UserList";
 
 export {
     ItemPageSkeleton as EventItemPageSkeleton,
-    ParticipationContent as EventParticipationSkeleton
+    ItemContent as EventItemContentSkeleton,
+    ParticipationContent as EventParticipationSkeleton,
 };
 
 function ItemPageSkeleton() {
     return (
         <div style={{maxWidth: "1000px"}}>
-            <EventItemContent/>
+            <ItemContent/>
             <Divider sx={{my: 4}}/>
             <ParticipationContent/>
             <Divider sx={{my: 4}} />
@@ -20,7 +21,7 @@ function ItemPageSkeleton() {
     );
 }
 
-function EventItemContent() {
+function ItemContent() {
     return (
         <Skeleton
             variant="rounded"

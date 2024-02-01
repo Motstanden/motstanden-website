@@ -14,7 +14,7 @@ export default function EditEventPage() {
         description: event.description
     }
     return (
-        <div style={{ maxWidth: "900px" }}>
+        <div style={{ maxWidth: "1000px" }}>
             <h1>
                 <span>Redigerer </span>
                 <em><q>{event.title}</q></em>
