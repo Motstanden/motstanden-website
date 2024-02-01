@@ -22,6 +22,7 @@ import { MarkDownRenderer } from "../../components/MarkDownEditor";
 import { eventContextQueryKey } from "./Context";
 import { ItemMenu } from "./components/ItemMenu";
 import { KeyInfo } from "./components/KeyInfo";
+import { EventParticipationSkeleton } from "./skeleton/ItemPage";
 
 export default function ItemPage() {
     const event = useOutletContext<EventData>();
@@ -36,7 +37,7 @@ export default function ItemPage() {
     }
 
     return (
-        <div style={{ maxWidth: "900px" }}>
+        <div style={{ maxWidth: "1000px" }}>
 
             <Paper elevation={6} sx={{ p: 2, pt: 0, mt: 4 }}>
                 <Stack
@@ -93,7 +94,7 @@ function ParticipationContainer({ eventId }: { eventId: number }) {
     const { user } = useAuthenticatedUser()
 
     if (isPending) {
-        return <></>
+        return <EventParticipationSkeleton/>
     }
 
     if (isError) {

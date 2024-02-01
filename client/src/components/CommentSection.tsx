@@ -48,7 +48,7 @@ function CommentSectionContainer({
     return (
         <section
             style={{
-                maxWidth: "600px",
+                maxWidth: "700px",
                 ...style
             }}
         >
@@ -113,11 +113,11 @@ export function CommentSectionSkeleton( {
 }) {
     const length = variant === "normal" ? 4 : 2
     return (
-        <>
+        <div style={{maxWidth: "700px"}}>
             {Array(length).fill(1).map((_, i) => (
                 <CommentItemSkeleton key={i} variant={variant}/>
             ))}
-        </>
+        </div>
     )
 }
 
