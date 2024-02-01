@@ -2,10 +2,11 @@ import { useScrollTrigger } from "@mui/material"
 import { createContext, useContext, useState } from "react"
 
 interface AppBarStyleContextType { 
-    boxShadowValue: number,
-    appBarBoxShadow: number,
-    removeAppBarShadow: VoidFunction,
-    addAppBarShadow: VoidFunction,
+    tabBarShadow: number,
+    appBarShadow: number,
+
+    setHasFixedTabBar: React.Dispatch<React.SetStateAction<boolean>>
+    hasFixedTabBar: boolean
 }
 
 const AppBarStyleContext = createContext<AppBarStyleContextType>(null!)
@@ -17,26 +18,20 @@ export function useAppBarStyle() {
 const defaultShadowValue = 4
 
 export function AppBarStyleProvider({ children }: { children: React.ReactNode }) {
- 
-    const [appBarHasShadow, setAppBarHasShadow] = useState(true)
 
-    const removeAppBarShadow = () => setAppBarHasShadow(false)
-
-    const addAppBarShadow = () => setAppBarHasShadow(true)
+    const [ hasFixedTabBar, setHasFixedTabBar ] = useState(false)
 
     const trigger = useScrollTrigger({
         disableHysteresis: true,
         threshold: 0
     })    
-    const boxShadowValue = trigger ? defaultShadowValue : 0
-    
-    const appBarBoxShadow = appBarHasShadow ? boxShadowValue : 0
+    const calculatedShadow = trigger ? defaultShadowValue : 0
 
     const contextValue: AppBarStyleContextType = { 
-        boxShadowValue: boxShadowValue,
-        appBarBoxShadow: appBarBoxShadow, 
-        removeAppBarShadow: removeAppBarShadow,
-        addAppBarShadow: addAppBarShadow,
+        appBarShadow: hasFixedTabBar ? 0 : calculatedShadow,
+        tabBarShadow: hasFixedTabBar ? calculatedShadow : 0,
+        hasFixedTabBar: hasFixedTabBar,
+        setHasFixedTabBar: setHasFixedTabBar
     }
 
     return (

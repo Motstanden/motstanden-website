@@ -18,21 +18,17 @@ export function TabbedPageContainer({
     const { theme } = useAppTheme();
     const isMobile = useMediaQuery(theme.breakpoints.only('xs'));
 
-    const appBar = useAppBarStyle();
+    const { setHasFixedTabBar, hasFixedTabBar, tabBarShadow } = useAppBarStyle();
 
-    // If this component exists, the shadow should be on the tab bar instead of the app bar.
+    // We need to notify the AppBarStyleContext that we have a fixed tab bar.
+    // The tab bar should be fixed on desktop, but not on mobile.
     useEffect(() => {
-        appBar.removeAppBarShadow();
-        return () => appBar.addAppBarShadow();
+        setHasFixedTabBar(!isMobile);
+        return () => setHasFixedTabBar(false)
     }, []);
 
-    // If the screen is mobile, then the app bar should have a shadow because the tab bar is not fixed to the top
     useEffect(() => {
-        if (isMobile) {
-            appBar.addAppBarShadow();
-        } else {
-            appBar.removeAppBarShadow();
-        }
+        setHasFixedTabBar(!isMobile);
     }, [isMobile]);
 
     // Select current tab based on url
@@ -41,11 +37,11 @@ export function TabbedPageContainer({
 
     return (
         <>
-            <div style={ isMobile ? undefined : {
+            <div style={ hasFixedTabBar ? {
                     position: "fixed",
                     width: "100%",
                     zIndex: 1000,
-                }}>
+                } : undefined}>
                 <Tabs
                     value={currentTab.label}
                     textColor="secondary"
@@ -54,7 +50,7 @@ export function TabbedPageContainer({
                     scrollButtons="auto"
                     sx={{
                         height: `${tabBarHeight}px`,
-                        boxShadow: isMobile ? undefined : appBar.boxShadowValue,
+                        boxShadow: tabBarShadow,
                         backgroundColor: theme.palette.background.paper,
                     }}
                 >
@@ -72,7 +68,7 @@ export function TabbedPageContainer({
                 <Divider/>
             </div>
             <div style={{
-                paddingTop: isMobile ? undefined : `${tabBarHeight}px`
+                paddingTop: hasFixedTabBar ? `${tabBarHeight}px` : undefined,
             }}>
                 <PageContainer>
                     {children}
