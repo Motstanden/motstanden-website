@@ -11,7 +11,7 @@ import { UserFullName } from 'src/components/user/UserFullName';
 import { useTitle } from "src/hooks/useTitle";
 import { buildEventItemUrl } from "src/routes/event/Context";
 import { QuoteList } from "src/routes/quotes/ListPage";
-import { ListSkeleton as QuotesListSkeleton } from "src/routes/quotes/ListPage.skeleton";
+import { QuotesListSkeleton } from "src/routes/quotes/ListPage.skeleton";
 import { RumourList } from "src/routes/rumour/RumourPage";
 import { fetchFn } from "src/utils/fetchAsync";
 import { BoardPageUtils, RawProjectData } from "../boardWebsiteList/BoardWebsiteList";

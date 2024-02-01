@@ -1,7 +1,12 @@
 import { Skeleton } from "@mui/material";
 
+export {
+    ListPageSkeleton as QuotesListPageSkeleton,
+    ListSkeleton as QuotesListSkeleton,
+    ItemSkeleton as QuotesItemSkeleton
+}
 
-export function ListPageSkeleton() {
+function ListPageSkeleton() {
     return (
         <>
             <h1>Sitater</h1>
@@ -10,7 +15,7 @@ export function ListPageSkeleton() {
     );
 }
 
-export function ListSkeleton({ length }: { length: number }) {
+function ListSkeleton({ length }: { length: number }) {
     return (
         <ul style={{
             paddingLeft: "5px",
@@ -21,7 +26,7 @@ export function ListSkeleton({ length }: { length: number }) {
     )
 }
 
-export function ItemSkeleton() {
+function ItemSkeleton() {
     return (
         <li>
             <div>

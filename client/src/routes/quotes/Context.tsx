@@ -4,7 +4,7 @@ import { Outlet, useMatch } from "react-router-dom"
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
-import { ListPageSkeleton } from "./ListPage.skeleton"
+import { QuotesListPageSkeleton } from "./ListPage.skeleton"
 
 const quotesQueryKey = ["FetchAllQuotes"]
 
@@ -36,7 +36,7 @@ function QuotesLoader() {
     const isQuotesPage = useMatch("/sitater")
 
     if (isPending && isQuotesPage) {
-        return <ListPageSkeleton/>
+        return <QuotesListPageSkeleton/>
     }
 
     if (isError) {

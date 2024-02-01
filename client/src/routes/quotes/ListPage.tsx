@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { useOutletContext } from "react-router-dom";
 import { useTitle } from "src/hooks/useTitle";
 import { useContextInvalidator } from "./Context";
-import { ItemSkeleton } from "./ListPage.skeleton";
+import { QuotesItemSkeleton } from "./ListPage.skeleton";
 import { EditList, RenderEditFormProps } from "./components/EditList";
 import { NewlineText } from "./components/NewlineText";
 import { UpsertQuoteForm } from "./components/UpsertQuoteForm";
@@ -37,7 +37,7 @@ export function QuoteList({ quotes, onItemChanged }: { quotes: QuoteData[], onIt
             renderItem={renderItem}
             renderEditForm={renderEditForm}
             itemComparer={isEqual}
-            renderItemSkeleton={<ItemSkeleton />}
+            renderItemSkeleton={<QuotesItemSkeleton />}
             deleteItemUrl="/api/quotes/delete"
             confirmDeleteItemText="Vil du permanent slette dette sitatet?"
             itemSpacing="25px"
