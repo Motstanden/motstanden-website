@@ -1,12 +1,10 @@
-import { Divider, Tab, Tabs, useMediaQuery } from "@mui/material";
+import { Divider, Tab, Tabs } from "@mui/material";
 import React, { useEffect } from "react";
 import { Link as RouterLink, Location as RouterLocation, matchPath, useLocation } from "react-router-dom";
 import { useAppBarStyle } from "src/context/AppBarStyle";
 import { useAppTheme } from "src/context/Themes";
+import { useIsMobileScreen, useTabBarHeight } from "../useAppSizes";
 import { PageContainer } from "./PageContainer";
-
-
-export const tabBarHeight = 48
 
 export function TabbedPageContainer({
     children, tabItems, matchChildPath
@@ -16,7 +14,9 @@ export function TabbedPageContainer({
     matchChildPath?: boolean;
 }) {
     const { theme } = useAppTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.only('xs'));
+    
+    const isMobile = useIsMobileScreen()
+    const tabBarHeight = useTabBarHeight()
 
     const { setHasFixedTabBar, hasFixedTabBar, tabBarShadow } = useAppBarStyle();
 

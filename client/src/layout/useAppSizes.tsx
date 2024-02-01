@@ -9,15 +9,26 @@ const mobileDrawerWidth = 240
 const desktopAppBarHeight = 64;
 const mobileAppBarHeight = 57;
 
-interface AppSizesProps {
-    drawerWidth: number,
-    appBarHeight: number,
-    isMobileScreen: boolean,
+const tabBarHeight = 48
+
+export function useIsMobileScreen() {
+    const { theme } = useAppTheme()
+    const isMobile = useMediaQuery(theme.breakpoints.only('xs'))
+    return isMobile
 }
 
-export function useAppSizes(): AppSizesProps {
+export function useAppBarHeight() { 
+    const isMobile = useIsMobileScreen()    
+    return isMobile ? mobileAppBarHeight : desktopAppBarHeight
+}
+
+// This may be responsive in the future
+export function useTabBarHeight() {
+    return tabBarHeight
+}
+
+export function useDrawerWidth() {
     const {theme} = useAppTheme()
-    const isTiny = useMediaQuery(theme.breakpoints.only('xs'))
     const isSmall = useMediaQuery(theme.breakpoints.only('sm'))
     const isMedium = useMediaQuery(theme.breakpoints.only("md"))
     const isLarge = useMediaQuery(theme.breakpoints.up("lg"))
@@ -31,12 +42,27 @@ export function useAppSizes(): AppSizesProps {
         drawerWidth = largeDesktopDrawerWidth
     }
 
-    const appBarHeight = isTiny ? mobileAppBarHeight : desktopAppBarHeight
+    return drawerWidth
+}
+
+interface AppSizesProps {
+    drawerWidth: number,
+    appBarHeight: number,
+    tabBarHeight: number,
+    isMobileScreen: boolean,
+}
+
+export function useAppSizes(): AppSizesProps {
+    const isMobileScreen = useIsMobileScreen()
+    const drawerWidth = useDrawerWidth()
+    const appBarHeight = useAppBarHeight()
+    const tabBarHeight = useTabBarHeight()
 
     const appSizes: AppSizesProps = {
         drawerWidth: drawerWidth,
         appBarHeight: appBarHeight,
-        isMobileScreen: isTiny,
+        tabBarHeight: tabBarHeight,
+        isMobileScreen: isMobileScreen,
     }
 
     return appSizes
