@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { SheetArchiveFile, SheetArchiveTitle } from 'common/interfaces';
-import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom";
+import { Navigate, Outlet, useMatch, useOutletContext, useParams } from "react-router-dom";
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer";
 import { fetchFn } from "../../utils/fetchAsync";
 import { InstrumentPageSkeleton } from './skeleton/InstrumentPage';
@@ -32,10 +32,11 @@ function SheetArchiveLoader() {
         queryFn: fetchFn<SheetArchiveTitle[]>("/api/sheet_archive/song_title"),
     });
 
-
     if (isError) {
         return `${error}`
     }
+
+    const isAllPage = !!useMatch("/notearkiv/alle*")
 
     const context = isPending 
         ? { 
@@ -43,7 +44,7 @@ function SheetArchiveLoader() {
             sheetArchive: [] 
         } : { 
             isPending: false, 
-            sheetArchive: data.map( item => ({ ...item, url: buildSongUrl(item) })) 
+            sheetArchive: data.map( item => ({ ...item, url: buildSongUrl(item, isAllPage) })) 
         } 
 
     return (
@@ -113,6 +114,10 @@ export function useInstrumentContext(): InstrumentContextProps {
     return useOutletContext<InstrumentContextProps>()
 }
 
-function buildSongUrl(song: SheetArchiveTitle){
-    return `/notearkiv/${song.isRepertoire ? "repertoar" : "alle"}/${song.url}`
+function buildSongUrl(song: SheetArchiveTitle, isAllPage: boolean){
+    let part = song.isRepertoire ? "repertoar" : "alle"
+    if(isAllPage) {
+        part = "alle"
+    }
+    return `/notearkiv/${part}/${song.url}`
 }
