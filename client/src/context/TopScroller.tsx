@@ -16,10 +16,7 @@ export function TopScrollerProvider({ children }: { children: React.ReactNode })
 
     const location = useLocation();
     useLayoutEffect(() => {
-        const childHandlesScroll = !!location.hash
-
-        const shouldScroll = !childHandlesScroll && !preventNextScroll 
-        if (shouldScroll) {
+        if (!preventNextScroll) {
             window.scrollTo({ top: 0, left: 0})
         }
         setPreventNextScroll(false)
