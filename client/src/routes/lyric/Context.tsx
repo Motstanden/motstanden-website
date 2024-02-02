@@ -9,28 +9,11 @@ import { strToPrettyUrl } from "src/utils/strToPrettyUrl"
 
 export const lyricContextQueryKey = ["AllLyricData"]
 
-export function LyricContext() {
-
-    const { isPending, isError, data, error } = useQuery<StrippedSongLyric[]>({
-        queryKey: lyricContextQueryKey,
-        queryFn: fetchFn<StrippedSongLyric[]>("/api/song-lyric/simple-list"),
-    })
-
-    if (isPending) {
-        return <PageContainer/>
-    }
-
-    if (isError) {
-        return <PageContainer><span>{`${error}`}</span></PageContainer>
-    }
-    return (
-        <PageContainer>
-            <Outlet context={data} />
-        </PageContainer>
-    )
+export {
+    LyricContainer as LyricContext
 }
 
-function PageContainer( {children}: {children?: React.ReactNode} ) {
+function LyricContainer() {
     const { isLoggedIn } = usePotentialUser()
     
     let tabItems = [
@@ -47,8 +30,28 @@ function PageContainer( {children}: {children?: React.ReactNode} ) {
             tabItems={tabItems}
             matchChildPath={true}
         >
-            {children}
+            <LyricContextLoader/>
         </TabbedPageContainer>
+    )
+}
+
+function LyricContextLoader() {
+
+    const { isPending, isError, data, error } = useQuery<StrippedSongLyric[]>({
+        queryKey: lyricContextQueryKey,
+        queryFn: fetchFn<StrippedSongLyric[]>("/api/song-lyric/simple-list"),
+    })
+
+    if (isPending) {
+        return <></>
+    }
+
+    if (isError) {
+        return `${error}`
+    }
+    
+    return (
+        <Outlet context={data} />
     )
 }
 
