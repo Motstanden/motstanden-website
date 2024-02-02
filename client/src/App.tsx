@@ -46,8 +46,8 @@ import QuoteListPage from "src/routes/quotes/ListPage";
 import NewQuotePage from "src/routes/quotes/NewPage";
 import { RumourContext } from 'src/routes/rumour/Context';
 import { RumourPage } from 'src/routes/rumour/RumourPage';
-import { SheetArchiveContext } from "src/routes/sheetArchive/Context";
-import InstrumentPage from "src/routes/sheetArchive/InstrumentPage";
+import { InstrumentContext, SheetArchiveContext } from "src/routes/sheetArchive/Context";
+import { InstrumentPage } from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
 import { HistoryPage } from "./routes/history/HistoryPage";
 import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
@@ -110,10 +110,14 @@ function App() {
 					<Route element={<RequireAuthRouter/>}>
 						<Route path="/notearkiv" element={<SheetArchiveContext />}>
 							<Route path="" element={<Navigate to="repertoar" replace />} />
-							<Route path="repertoar" element={<SongPage mode='repertoire' />} />
-							<Route path="repertoar/:title" element={<InstrumentPage />} />
-							<Route path="alle" element={<SongPage />} />
-							<Route path="alle/:title" element={<InstrumentPage />} />
+							<Route path="repertoar" element={<SongPage mode='repertoire' />}/>
+							<Route path="repertoar/:title" element={<InstrumentContext/>}>
+								<Route index element={<InstrumentPage />} />
+							</Route>
+							<Route path="alle" element={<SongPage />}/>
+							<Route path="alle/:title" element={<InstrumentContext/>}>
+								<Route index element={<InstrumentPage />} />
+							</Route>
 						</Route>
 						<Route path="/sitater" element={<QuotesContext />}>
 							<Route index element={<QuoteListPage />} />

@@ -23,7 +23,7 @@ import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
 import { Form } from 'src/components/form/Form';
 import { useAuthenticatedUser } from "src/context/Authentication";
 import { useTitle } from "../../hooks/useTitle";
-import { sheetArchiveContextQueryKey } from './Context';
+import { sheetArchiveContextQueryKey, useSheetArchiveContext } from './Context';
 
 export default function SongPage({ mode }: { mode?: "repertoire" }) {
 
@@ -31,24 +31,31 @@ export default function SongPage({ mode }: { mode?: "repertoire" }) {
 
     useTitle(isRepertoire ? "Repertoar" : "Alle noter");
 
-    let data = useOutletContext<SheetArchiveTitle[]>()
-    if (isRepertoire)
-        data = data.filter(item => !!item.isRepertoire)
 
-        return (
+    const { isPending, sheetArchive: allSheets } = useSheetArchiveContext()
+
+    const sheetArchive = isRepertoire 
+        ? allSheets.filter(item => !!item.isRepertoire)
+        : allSheets 
+
+    return (
         <>
             <h1>Notearkiv</h1>
             <div style={{
                 maxWidth: "1300px"
             }}>
-                <TitleTable items={data}/>
+                <TitleTable 
+                    items={sheetArchive} 
+                    isLoading={isPending}
+                    skeletonLength={isRepertoire ? 14 : 40}
+                />
             </div>
         </>
     )
 }
 
-function TitleTable( { items }: { items: SheetArchiveTitle[]}) {
-    const {user, isAdmin} = useAuthenticatedUser()
+function TitleTable( { items, isLoading, skeletonLength }: { items: SheetArchiveTitle[], isLoading: boolean, skeletonLength: number}) {
+    const { isAdmin } = useAuthenticatedUser()
     
     return (
         <TableContainer component={Paper}>
@@ -63,7 +70,18 @@ function TitleTable( { items }: { items: SheetArchiveTitle[]}) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {items.map( song => <TitleTableRow key={song.id} song={song} canEdit={isAdmin} /> )}
+
+                    {isLoading && (
+                        <SkeletonRows length={skeletonLength} canEdit={isAdmin}/>
+                    )}
+
+                    {!isLoading && items.map( song => (
+                        <TitleTableRow 
+                            key={song.id} 
+                            song={song} 
+                            canEdit={isAdmin} /> 
+                    ))}
+
                 </TableBody>
             </Table>
         </TableContainer>
@@ -122,25 +140,32 @@ function ReadOnlyRow( {song, canEdit, onEditClick}: {song: SheetArchiveTitle, ca
     )
 }
 
+function SkeletonRows({length, canEdit}: {length: number, canEdit: boolean}) { 
+    return Array(length).fill(1).map( (_, i) => (
+        <SkeletonRow key={i} canEdit={canEdit}/>
+    ))
+}
+
 function SkeletonRow( {canEdit}: {canEdit: boolean}) {
 
     return (
         <TableRow sx={rowStyle}>
             <TableCell>
-                <Skeleton style={{maxWidth: "130px"}}/>
+                <Skeleton style={{width: "200px"}}/>
             </TableCell>
             <TableCell>
-                <Skeleton style={{maxWidth: "85px"}}/>
+                <Skeleton style={{width: "85px"}}/>
             </TableCell>
             {canEdit && 
-                <TableCell align="right" size="small">
-                    <Skeleton style={{
-                        // This is bad css. We do it like this because the time is 0400 and thus idgaf
-                        width: "25px",  
-                        height: "40px", 
-                        borderRadius: "50%",
-                        marginLeft: "5px"
-                        }} />
+                <TableCell align="right" width="1px" size="small">
+                    <Skeleton 
+                        style={{
+                            // This is bad css. We do it like this because the time is 0400 and thus idgaf
+                            width: "25px",  
+                            height: "40px", 
+                            borderRadius: "50%",
+                            marginLeft: "5px"
+                    }} />
                 </TableCell>
             }
         </TableRow>

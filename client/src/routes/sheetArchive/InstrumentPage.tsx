@@ -8,58 +8,31 @@ import {
     TableHead,
     TableRow
 } from "@mui/material";
-import { useQuery } from '@tanstack/react-query';
-import { SheetArchiveFile, SheetArchiveTitle } from "common/interfaces";
+import { SheetArchiveFile } from "common/interfaces";
 import {
-    Navigate,
-    Link as RouterLink,
-    useOutletContext,
-    useParams
+    Link as RouterLink
 } from "react-router-dom";
 import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
 import { useTitle } from "../../hooks/useTitle";
-import { fetchFn } from "../../utils/fetchAsync";
+import { useInstrumentContext } from "./Context";
 
-export default function InstrumentPage() {
-    const { title } = useParams();
-    const songData = useOutletContext<SheetArchiveTitle[]>();
-    const song = songData.find(item => title && item.url.endsWith(title))
-    useTitle(song?.title);
-    
-    if(!song)
-        return <Navigate to="/notearkiv" replace={true}  />
+export function InstrumentPage() {
+    const {song, files} = useInstrumentContext()
+    useTitle(song.title);
     
     return (
         <>
-            <h2>{song.title}</h2>
+            <h1>{song.title}</h1>
             <div style={{ 
                 maxWidth: "1300px",
                 marginBottom: "150px", 
                 marginTop: "30px" 
             }}>
-                <FileFetcher songTitle={song}/>
+                <FileTable files={files}/>
             </div>
 
         </>
     );
-}
-
-function FileFetcher( {songTitle}: {songTitle: SheetArchiveTitle}) {
-
-    const { isPending, isError, data } = useQuery<SheetArchiveFile[]>({
-        queryKey: ["FetchSheetArchiveFile", songTitle.url],
-        queryFn: fetchFn<SheetArchiveFile[]>(`/api/sheet_archive/song_files?id=${songTitle.id}`),
-    })
-
-    if (isPending) {
-        return <>Loading...</>;
-    }
-
-    if (isError) {
-        return <Navigate to="/notearkiv" replace={true} />;
-    }
-
-    return <FileTable files={data}/>
 }
 
 function FileTable({ files }: { files: SheetArchiveFile[]; }) {
