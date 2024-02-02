@@ -7,32 +7,12 @@ import { fetchFn } from "../../utils/fetchAsync";
 
 export const sheetArchiveContextQueryKey = ["FetchSheetArchiveTitles"]
 
-export function SheetArchiveContext() {
-
-    const { isPending, isError, data, error } = useQuery<SheetArchiveTitle[]>({
-        queryKey: sheetArchiveContextQueryKey,
-        queryFn: fetchFn<SheetArchiveTitle[]>("/api/sheet_archive/song_title"),
-    });
-
-    if (isPending) {
-        return <PageContainer><div /></PageContainer>;
-    }
-
-    if (isError) {
-        return <PageContainer><span>{`${error}`}</span></PageContainer>;
-    }
-
-    const newData = data.map( item => { return { ...item, url: buildSongUrl(item) } })
-
-    return (
-        <PageContainer>
-            <Outlet context={newData} />
-        </PageContainer>
-    );
+export {
+    SheetArchiveContainer as SheetArchiveContext
 }
 
+export function SheetArchiveContainer() {
 
-function PageContainer({ children }: { children?: React.ReactNode }) {
     return (
         <TabbedPageContainer
             tabItems={[
@@ -41,9 +21,30 @@ function PageContainer({ children }: { children?: React.ReactNode }) {
             ]}
             matchChildPath={true}
         >
-            {children}
+            <SheetArchiveLoader/>
         </TabbedPageContainer>
     )
+}
+
+function SheetArchiveLoader() {
+    const { isPending, isError, data, error } = useQuery<SheetArchiveTitle[]>({
+        queryKey: sheetArchiveContextQueryKey,
+        queryFn: fetchFn<SheetArchiveTitle[]>("/api/sheet_archive/song_title"),
+    });
+
+    if (isPending) {
+        return <></>
+    }
+
+    if (isError) {
+        return `${error}`
+    }
+
+    const newData = data.map( item => { return { ...item, url: buildSongUrl(item) } })
+
+    return (
+        <Outlet context={newData} />
+    );
 }
 
 function buildSongUrl(song: SheetArchiveTitle){
