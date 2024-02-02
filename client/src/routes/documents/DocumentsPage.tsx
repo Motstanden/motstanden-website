@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { UrlList, UrlListItem } from "../../components/UrlList"
+import { UrlList, UrlListItem, UrlListSkeleton } from "../../components/UrlList"
 import { useTitle } from "../../hooks/useTitle"
 import { PageContainer } from "../../layout/PageContainer/PageContainer"
 import { fetchFn } from "../../utils/fetchAsync"
@@ -22,11 +22,11 @@ function DocumentList() {
     })
 
     if (isPending) {
-        return <PageContainer><div /></PageContainer>
+        return <UrlListSkeleton length={3}/>
     }
 
     if (isError) {
-        return <PageContainer><span>{`${error}`}</span></PageContainer>
+        return `${error}`
     }
     return (
         <UrlList>
