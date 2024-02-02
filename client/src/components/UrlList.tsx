@@ -1,8 +1,8 @@
-import { Link } from "@mui/material";
+import { Link, Skeleton } from "@mui/material";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 
-export function UrlList({ children }: { children: React.ReactNode }) {
+export function UrlList({ children }: { children?: React.ReactNode }) {
     return (
         <ul style={{
             listStyle: "none",
@@ -43,5 +43,25 @@ export function UrlListItem({
                 {text}
             </Link>
         </li>
+    )
+}
+
+export function UrlListSkeleton( {length}: { length: number }) {
+    return (
+        <UrlList>
+            {Array(length).fill(1).map((_, index) => (
+                <li 
+                    key={index} 
+                    style={{
+                        marginBottom: "12.5px"
+                    }}>
+                    <Skeleton 
+                        variant="text"
+                        style={{fontSize: "x-large"}}
+                        width="200px"
+                    />
+                </li>
+            ))}
+        </UrlList>
     )
 }

@@ -1,6 +1,3 @@
-import { StrippedSongLyric } from 'common/interfaces'
-import { useOutletContext } from "react-router-dom"
-import { strToPrettyUrl } from 'src/utils/strToPrettyUrl'
 import { UrlList, UrlListItem } from "../../components/UrlList"
 import { useTitle } from "../../hooks/useTitle"
 import { buildLyricItemUrl, useLyricContext } from './Context'

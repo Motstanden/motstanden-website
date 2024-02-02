@@ -1,15 +1,18 @@
 import { NewSongLyric } from "common/interfaces";
-import { UpsertLyricForm } from "./components/UpsertLyricForm";
 import { useNavigate } from "react-router-dom";
-import { useLyricContext } from "./Context";
+import { usePendingLyricContext } from "./Context";
+import { UpsertLyricForm } from "./components/UpsertLyricForm";
+import { useTitle } from "src/hooks/useTitle";
 
 export function NewLyricPage() {
-    const allLyrics = useLyricContext()
-    const usedTitles = allLyrics.map(item => item.title);
+    useTitle("Ny")
+
+    const {lyrics, isPending} = usePendingLyricContext()
+    const usedTitles = isPending ? [] : lyrics.map(item => item.title)
 
     const navigate = useNavigate();
 
-    const onAbortClick = () => navigate("..");
+    const onAbortClick = () => navigate("/studenttraller/populaere");
 
     return (
         <div>
@@ -19,6 +22,7 @@ export function NewLyricPage() {
                 onAbortClick={onAbortClick}
                 postUrl="/api/song-lyric/new"
                 usedTitles={usedTitles}
+                disabled={isPending}
             />
         </div>
     )

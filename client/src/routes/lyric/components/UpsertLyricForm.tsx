@@ -13,13 +13,15 @@ export function UpsertLyricForm({
     postUrl, 
     onAbortClick, 
     usedTitles,
-    onPostSuccess
+    onPostSuccess,
+    disabled,
 }: {
     initialValue: NewSongLyric;
     postUrl: string;
     onAbortClick: VoidFunction;
-    usedTitles: string[];
+    usedTitles: string[]
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
+    disabled?: boolean
 }) {
     const [newValue, setNewValue] = useState<NewSongLyric>(initialValue);
     const [hasPosted, setHasPosted] = useState(false);
@@ -55,14 +57,14 @@ export function UpsertLyricForm({
 
     const titleInUse = usedTitles.find(title => title.toLocaleLowerCase().trim() === newValue.title.toLocaleLowerCase().trim()) !== undefined;
 
-    const disabled = !validateData() || titleInUse || hasPosted;
+    const isDisabled = disabled || !validateData() || titleInUse || hasPosted;
 
     return (
         <div style={{ maxWidth: "700px" }}>
             <Form
                 value={getSubmitData}
                 postUrl={postUrl}
-                disabled={disabled}
+                disabled={isDisabled}
                 onAbortClick={_ => onAbortClick()}
                 onPostSuccess={_onPostSuccess}
             >
