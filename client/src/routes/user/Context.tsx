@@ -5,6 +5,7 @@ import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
 import { PageContainer } from "src/layout/PageContainer/PageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
 import { UserPageHeader } from "./UserPage"
+import { UserPageSkeleton } from "./skeleton/UserPage"
 
 export const userListQueryKey = ["FetchAllUsers"]
 
@@ -26,21 +27,24 @@ function UserContextLoader() {
         queryFn: fetchFn<User[]>("/api/member-list"),
     })
 
-    if (isPending) {
-        return <></>
-    }
-
     if (isError) {
         return `${error}`
     }
 
+    const context: UsersContextProps = isPending 
+        ? { isPending: true, users: undefined }
+        : { isPending: false, users: data }
+
     return (
-        <Outlet context={data} />
+        <Outlet context={context} />
     )
 }
 
 export function UserProfileContext() {
-    const users = useOutletContext<User[]>()
+    const {users, isPending} = useUsersContext()
+
+    if(isPending)
+        return <UserPageSkeleton/>
 
     const params = useParams();
     const userId = strToNumber(params.userId)
@@ -60,15 +64,23 @@ export function UserProfileContext() {
     }
 
     return (
-        <>
+        <div style={{maxWidth: "1300px"}}>
             <UserPageHeader user={user}/>
             <Outlet context={context} />
-        </>
+        </div>
     )
 }
 
-export function useUserContext(): User[] {
-    return useOutletContext<User[]>()
+type UsersContextProps = {
+    isPending: true,
+    users: undefined
+} | {
+    isPending: false,
+    users: User[]
+}
+
+export function useUsersContext(): UsersContextProps {
+    return useOutletContext<UsersContextProps>()
 }
 
 type UserProfileContextProps = { users: User[], viewedUser: User }
