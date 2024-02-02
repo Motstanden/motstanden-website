@@ -8,24 +8,34 @@ import { UserPageHeader } from "./UserPage"
 
 export const userListQueryKey = ["FetchAllUsers"]
 
-export function UserContext() {
+export {
+    UserContainer as UserContext
+}
+
+function UserContainer() {
+    return (
+        <PageContainer>
+            <UserContextLoader/>
+        </PageContainer>
+    )
+}
+
+function UserContextLoader() {
     const { isPending, isError, data, error } = useQuery<User[]>({
         queryKey: userListQueryKey,
         queryFn: fetchFn<User[]>("/api/member-list"),
     })
 
     if (isPending) {
-        return <PageContainer><div /></PageContainer>
+        return <></>
     }
 
     if (isError) {
-        return <PageContainer><span>{`${error}`}</span></PageContainer>
+        return `${error}`
     }
 
     return (
-        <PageContainer>
-            <Outlet context={data} />
-        </PageContainer>
+        <Outlet context={data} />
     )
 }
 
@@ -44,10 +54,25 @@ export function UserProfileContext() {
         return <Navigate to="/medlem/liste" replace />
     }
 
+    const context: UserProfileContextProps = { 
+        users: users, 
+        viewedUser: user 
+    }
+
     return (
         <>
             <UserPageHeader user={user}/>
-            <Outlet context={user} />
+            <Outlet context={context} />
         </>
     )
+}
+
+export function useUserContext(): User[] {
+    return useOutletContext<User[]>()
+}
+
+type UserProfileContextProps = { users: User[], viewedUser: User }
+
+export function useUserProfileContext(): UserProfileContextProps {
+    return useOutletContext<UserProfileContextProps>()
 }

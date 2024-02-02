@@ -12,19 +12,19 @@ import { User } from "common/interfaces";
 import { isNtnuMail as checkIsNtnuMail, isNullOrWhitespace, strToNumber, userRankToPrettyStr } from "common/utils";
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate, useOutletContext } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { datePickerStyle } from "src/assets/style/timePickerStyles";
 import { HelpButton } from "src/components/HelpButton";
 import { Form } from "src/components/form/Form";
 import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
 import { Card, CardTextItem, groupTVPair, rankTVPair, statusTVPair } from "./Components";
-import { userListQueryKey } from "./Context";
+import { useUserProfileContext, userListQueryKey } from "./Context";
 import { AccountDetailsCard, PersonCard, formatExactDate } from "./UserPage";
 
 export default function EditUserPage() {
     const {user, isAdmin, isSuperAdmin} = useAuthenticatedUser()
-    const viewedUser = useOutletContext<User>()
+    const { viewedUser } = useUserProfileContext()
 
     const isSelfEditing = user.id === viewedUser.id
 

@@ -15,9 +15,10 @@ import { useAuthenticatedUser } from "src/context/Authentication";
 import { useTopScroller } from 'src/context/TopScroller';
 import { useTitle } from "src/hooks/useTitle";
 import { Card, CardTextItem } from "./Components";
+import { useUserProfileContext } from './Context';
 
 export default function UserPage() {
-    const user = useOutletContext<User>()
+    const { viewedUser: user } = useUserProfileContext()
     useTitle(user.firstName)
     return (
         <div>

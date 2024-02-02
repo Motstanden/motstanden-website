@@ -25,6 +25,7 @@ import { useState } from 'react';
 import { Link as RouterLink, useOutletContext } from 'react-router-dom';
 import { TitleCard } from 'src/components/TitleCard';
 import { useTitle } from 'src/hooks/useTitle';
+import { useUserContext } from "./Context";
 
 export default function UserListPage() {
     useTitle("Medlemsliste")
@@ -42,10 +43,10 @@ export default function UserListPage() {
 
     const [showBoard, setShowBoard] = useState(false)
 
-    const data = useOutletContext<User[]>()
+    const users = useUserContext()
 
-    const actualUsers = data.filter(user => !isMotstandenMail(user.email))
-    const boardUsers = data.filter(user => isMotstandenMail(user.email))
+    const actualUsers = users.filter(user => !isMotstandenMail(user.email))
+    const boardUsers = users.filter(user => isMotstandenMail(user.email))
 
     return (
         <>
