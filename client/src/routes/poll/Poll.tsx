@@ -60,7 +60,7 @@ export function PollPageSkeleton(){
         <div>
             <h1>Avstemning</h1>
             <div style={{
-                marginBlock: "40px",
+                marginBottom: "40px",
                 display: "inline-block",
                 minWidth: "MIN(100%, 500px)"
             }}>
