@@ -7,7 +7,7 @@ export {
 
 function PageSkeleton() {
     return (
-        <>
+        <div style={{maxWidth: "1300px"}}>
             <Skeleton 
                 variant="rounded" 
                 height="390px" 
@@ -33,7 +33,7 @@ function PageSkeleton() {
                 }}
             />
             <PostSectionSkeleton length={3}/>
-        </>
+        </div>
     )
 }
 
