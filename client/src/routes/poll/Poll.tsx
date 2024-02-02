@@ -57,12 +57,15 @@ export default function PollPage(){
 
 export function PollPageSkeleton(){
     return (
-        <div style={{
-            marginBlock: "40px",
-            display: "inline-block",
-            minWidth: "MIN(100%, 500px)"
-        }}>
-            <PollSkeleton/>
+        <div>
+            <h1>Avstemning</h1>
+            <div style={{
+                marginBlock: "40px",
+                display: "inline-block",
+                minWidth: "MIN(100%, 500px)"
+            }}>
+                <PollSkeleton/>
+            </div>
         </div>
     )
 }
