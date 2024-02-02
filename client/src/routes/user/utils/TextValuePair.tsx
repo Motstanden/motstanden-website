@@ -1,0 +1,33 @@
+import { UserGroup, UserRank, UserStatus } from "common/enums";
+import { userGroupToPrettyStr, userRankToPrettyStr, userStatusToPrettyStr } from "common/utils";
+
+type TextValuePair<T> = {
+    text: string;
+    value: T;
+};
+
+function enumToTextValuePair<T>(
+    enumObj: object, //TODO: Figure out the correct type of this argument
+    toStrCallback: (enumItem: T) => string): TextValuePair<T>[] {
+    return Object.keys(enumObj).map((itemStr) => {
+        const item = enumObj[itemStr as keyof typeof enumObj] as T;
+        return {
+            value: item,
+            text: toStrCallback(item)
+        } as TextValuePair<T>;
+    }
+    );
+}
+
+export const rankTVPair = enumToTextValuePair<UserRank>(UserRank, rank => userRankToPrettyStr(rank));
+export const groupTVPair = enumToTextValuePair<UserGroup>(UserGroup, group => userGroupToPrettyStr(group));
+export const statusTVPair = enumToTextValuePair<UserStatus>(UserStatus, status => userStatusToPrettyStr(status));
+export const profilePictureTVPair: TextValuePair<string>[] = [
+    {
+        text: "Gutt",
+        value: "files/private/profilbilder/boy.png"
+    }, {
+        text: "Jente",
+        value: "files/private/profilbilder/girl.png"
+    }
+];

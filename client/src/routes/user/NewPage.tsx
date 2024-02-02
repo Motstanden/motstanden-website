@@ -13,8 +13,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTitle } from 'src/hooks/useTitle';
 import { postJson } from 'src/utils/postJson';
-import { profilePictureTVPair } from './Components';
 import { userListQueryKey } from './Context';
+import { profilePictureTVPair } from "./utils/TextValuePair";
 
 export default function NewUserPage() {
     useTitle("Ny bruker")

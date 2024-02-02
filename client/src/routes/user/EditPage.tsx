@@ -18,9 +18,10 @@ import { HelpButton } from "src/components/HelpButton";
 import { Form } from "src/components/form/Form";
 import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
-import { Card, CardTextItem, groupTVPair, rankTVPair, statusTVPair } from "./Components";
 import { useUserProfileContext, userListQueryKey } from "./Context";
 import { AccountDetailsCard, PersonCard, formatExactDate } from "./UserPage";
+import { Card, CardTextItem } from "./components/Card";
+import { groupTVPair, rankTVPair, statusTVPair } from "./utils/TextValuePair";
 
 export default function EditUserPage() {
     const {user, isAdmin, isSuperAdmin} = useAuthenticatedUser()

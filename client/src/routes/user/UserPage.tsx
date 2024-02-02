@@ -9,13 +9,13 @@ import {
 import { User } from "common/interfaces";
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";
 import dayjs from "dayjs";
-import { Link as RouterLink, matchPath, useLocation, useOutletContext } from "react-router-dom";
+import { Link as RouterLink, matchPath, useLocation } from "react-router-dom";
 import { PostingWall } from "src/components/PostingWall";
 import { useAuthenticatedUser } from "src/context/Authentication";
 import { useTopScroller } from 'src/context/TopScroller';
 import { useTitle } from "src/hooks/useTitle";
-import { Card, CardTextItem } from "./Components";
 import { useUserProfileContext } from './Context';
+import { Card, CardTextItem } from "./components/Card";
 
 export default function UserPage() {
     const { viewedUser: user } = useUserProfileContext()
