@@ -1,3 +1,4 @@
+import LoginIcon from '@mui/icons-material/Login';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Box, Divider, IconButton, Link, AppBar as MuiAppBar, Stack, SxProps, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
@@ -6,6 +7,7 @@ import { useAppBarStyle } from 'src/context/AppBarStyle';
 import { usePotentialUser } from 'src/context/Authentication';
 import UserAvatar from 'src/layout/AppBar/UserAvatar';
 import { ThemeSwitchButton } from 'src/layout/ThemeSwitchButton';
+import { useIsMobileScreen } from '../useAppSizes';
 
 export function AppBar({ 
     onMenuClick, 
@@ -110,9 +112,20 @@ export function AppBar({
 
 function UserInfo() {
     const auth = usePotentialUser()
+    const isMobile = useIsMobileScreen()
 
     if(auth.user)
         return <UserAvatar/>
+
+    if(isMobile) 
+        return (
+            <IconButton
+                component={RouterLink}
+                to="/logg-inn"
+            >
+                <LoginIcon/>
+            </IconButton>
+    )
 
     return (
         <Link
