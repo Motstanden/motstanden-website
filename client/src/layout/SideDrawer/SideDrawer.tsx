@@ -97,6 +97,7 @@ function MobileHeader({
                     sx={{
                         height: buttonSize,
                         width: buttonSize,
+                        marginRight: "2px"
                     }}>
                     <MenuIcon sx={{ color: "primary.contrastText" }} fontSize={iconFontSize} />
                 </IconButton>
@@ -110,7 +111,7 @@ function MobileHeader({
                         textDecoration: 'none',
                     }}
                 >
-                    {"Motstanden"}
+                    Motstanden
                 </Typography>
             </Stack>
             <Divider orientation="horizontal"/>

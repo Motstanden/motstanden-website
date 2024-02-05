@@ -50,6 +50,7 @@ export function AppBar({
                             display: { sm: 'none' },
                             height: buttonSize,
                             width: buttonSize,
+                            marginRight: "2px"
                         }}
                         >
                             <MenuIcon sx={{ color: "primary.contrastText" }} fontSize={iconFontSize} />
