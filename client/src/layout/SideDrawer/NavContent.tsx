@@ -33,6 +33,7 @@ export function NavContent({onItemClick}: {onItemClick: VoidFunction}) {
 function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
     const matchesFrontPage = !!useMatch("/framside/*")
     const isMobile = useMediaQuery( (theme: Theme) => theme.breakpoints.only("xs"))
+    const iconSize = isMobile ? "small" : "medium"
 
     return (
         <List dense={isMobile}>
@@ -40,138 +41,138 @@ function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 text="Framside" 
                 to="/" 
                 onLinkClick={onItemClick} 
-                icon={<HomeIcon/>} 
+                icon={<HomeIcon fontSize={iconSize}/>} 
                 activate={matchesFrontPage} />
             <ListItemLink 
                 text="Bli Medlem" 
                 to="/bli-medlem" 
-                icon={<BecomeMemberIcon/>}
+                icon={<BecomeMemberIcon fontSize={iconSize}/>}
                 onLinkClick={onItemClick}/>
             <ListItemLink 
                 text="FAQ"
                 to="/faq"
-                icon={<FaqIcon/>}
+                icon={<FaqIcon fontSize={iconSize}/>}
                 onLinkClick={onItemClick}
             />
             <ListItemDivider/>
             <ListItemLink 
                 text="Traller" 
                 to="/studenttraller" 
-                icon={<LyricIcon/>} 
+                icon={<LyricIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
             <ListItemDivider/>
             <ListItemLink 
                 text="Dokumenter" 
                 to="/dokumenter" 
-                icon={<DocumentsIcon/>} 
+                icon={<DocumentsIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
             <ListItemLink 
                 text="Historie"
                 to="/historie"
-                icon={<HistoryIcon/>}
+                icon={<HistoryIcon fontSize={iconSize}/>}
                 onLinkClick={onItemClick}
             />
             <ListItemLink 
                 text="Styrets Nettsider" 
                 to="/styrets-nettsider" 
-                icon={<BoardWebsiteListIcon/>}
+                icon={<BoardWebsiteListIcon fontSize={iconSize}/>}
                 onLinkClick={onItemClick}/> 
             <ListItemLink 
                 externalRoute 
                 text="Wiki" 
                 to="https://wiki.motstanden.no/" 
-                icon={<WikiIcon/>} 
+                icon={<WikiIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
             <ListItemDivider/>
             <ListItemLink 
                 text="Lisens" 
                 to="/lisens" 
-                icon={<LicenseIcon/>} 
+                icon={<LicenseIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
         </List>
     )
 }
 
 function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
-    const { user, isSuperAdmin } = usePotentialUser();
+    const { isSuperAdmin } = usePotentialUser();
     
     const matchesFrontPage = !!useMatch("/hjem/*")
     const matchesWallPage = !!useMatch("/vegg/*")
 
     const isMobile = useMediaQuery( (theme: Theme) => theme.breakpoints.only("xs"))
-    
+    const iconSize = isMobile ? "small" : "medium"
     return (
         <List dense={isMobile} sx={{pb: "50px"}}>
             <ListItemLink 
                 text="Hjem" 
                 to="/" 
                 activate={matchesFrontPage || matchesWallPage} 
-                icon={<HomeIcon/>} 
+                icon={<HomeIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
             <ListItemLink 
                 text="Arrangement" 
                 to="/arrangement" 
-                icon={<EventIcon/>} 
+                icon={<EventIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick} 
                 />
             <ListItemDivider/>
             <ListItemLink 
                 text="Sitater" 
                 to="/sitater" 
-                icon={<QuotesIcon/>} 
+                icon={<QuotesIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
             <ListItemLink 
                 text="Rykter" 
                 to="/rykter" 
-                icon={<RumourIcon/>} 
+                icon={<RumourIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
             <ListItemLink 
                 text="Avstemninger" 
                 to="/avstemninger" 
-                icon={<PollIcon/>} 
+                icon={<PollIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick} 
             />
             <ListItemDivider/>
             <ListItemLink 
                 text="Noter" 
                 to="/notearkiv" 
-                icon={<SheetArchiveIcon/>} 
+                icon={<SheetArchiveIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick} />
             <ListItemLink
                 text="Traller" 
                 to="/studenttraller" 
-                icon={<LyricIcon/>} 
+                icon={<LyricIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
             <ListItemDivider/>
             <ListItemLink 
                 externalRoute 
                 text="Wiki" 
                 to="https://wiki.motstanden.no/" 
-                icon={<WikiIcon/>} 
+                icon={<WikiIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
             <ListItemLink 
                 text="Dokumenter" 
                 to="/dokumenter" 
-                icon={<DocumentsIcon />} 
+                icon={<DocumentsIcon fontSize={iconSize} />} 
                 onLinkClick={onItemClick}/>
             <ListItemLink 
                 text="Styrets Nettsider" 
                 to="/styrets-nettsider" 
-                icon={<BoardWebsiteListIcon/>} 
+                icon={<BoardWebsiteListIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
             <ListItemDivider/>
 
             {isSuperAdmin && (
-                <ListItemExpander text="Medlem" dense={isMobile}>
+                <ListItemExpander text="Medlem" dense={isMobile} iconFontSize={iconSize}>
                     <ListItemLink 
                         text="Ny" 
                         to="/medlem/ny" 
-                        icon={<MemberAddIcon/>} 
+                        icon={<MemberAddIcon fontSize={iconSize}/>} 
                         onLinkClick={onItemClick}/>
                     <ListItemLink 
                         text="Liste" 
                         to="/medlem/liste" 
-                        icon={<MemberListIcon/>} 
+                        icon={<MemberListIcon fontSize={iconSize}/>} 
                         onLinkClick={onItemClick}/>
                 </ListItemExpander>
             )}
@@ -180,37 +181,37 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 <ListItemLink 
                     text="Medlemmer" 
                     to="/medlem/liste" 
-                    icon={<MemberListIcon/>}
+                    icon={<MemberListIcon fontSize={iconSize}/>}
                     onLinkClick={onItemClick}/>
             )}
 
-            <ListItemExpander text="Om oss" dense={isMobile}>
+            <ListItemExpander text="Om oss" dense={isMobile} iconFontSize={iconSize}>
                 <ListItemLink 
                     text="Framside" 
                     to="/framside" 
-                    icon={<FrontPageIcon/>} 
+                    icon={<FrontPageIcon fontSize={iconSize}/>} 
                     onLinkClick={onItemClick}/>
                 <ListItemLink 
                     text="FAQ"
                     to="/faq"
-                    icon={<FaqIcon/>}
+                    icon={<FaqIcon fontSize={iconSize}/>}
                     onLinkClick={onItemClick}
                 />
                 <ListItemLink 
                     text="Historie"
                     to="/historie"
-                    icon={<HistoryIcon/>}
+                    icon={<HistoryIcon fontSize={iconSize}/>}
                     onLinkClick={onItemClick}
                 />
                 <ListItemLink 
                     text="Bli Medlem" 
                     to="/bli-medlem" 
-                    icon={<BecomeMemberIcon/>} 
+                    icon={<BecomeMemberIcon fontSize={iconSize}/>} 
                     onLinkClick={onItemClick}/>
                 <ListItemLink 
                     text="Lisens" 
                     to="/lisens" 
-                    icon={<LicenseIcon/>} 
+                    icon={<LicenseIcon fontSize={iconSize}/>} 
                     onLinkClick={onItemClick}/>
             </ListItemExpander>
         </List>

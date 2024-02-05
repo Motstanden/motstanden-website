@@ -8,7 +8,7 @@ import { isElementInViewport } from "src/utils/isElementInViewport";
 
 const listItemButtonSx = (theme: Theme): SxProps => ({
     borderRadius: "10px",
-    px: {xs: 1.15, sm: 2},
+    px: {xs: 1.25, sm: 2},
     "&.Mui-selected": {
         backgroundColor: theme.palette.primary.main,
         "&:hover": {
@@ -75,11 +75,13 @@ export function ListItemLink({
 export function ListItemExpander({ 
     text, 
     dense,
+    iconFontSize,
     startsOpen, 
     children,
 }: { 
     text: string,
-    dense: boolean, 
+    dense: boolean,
+    iconFontSize: "small" | "medium",
     startsOpen?: boolean, 
     children: React.ReactNode 
 }) {
@@ -113,8 +115,8 @@ export function ListItemExpander({
                 >
                     <ListItemIcon sx={{ minWidth: "0px", paddingRight: "10px" }}>
                         { isOpen 
-                        ? <ExpandLess /> 
-                        : <ExpandMore />}
+                        ? <ExpandLess fontSize={iconFontSize} /> 
+                        : <ExpandMore fontSize={iconFontSize} />}
                     </ListItemIcon>
                     <ListItemText primary={text} disableTypography/>
                 </ListItemButton>
