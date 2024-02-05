@@ -8,6 +8,7 @@ import { isElementInViewport } from "src/utils/isElementInViewport";
 
 const listItemButtonSx = (theme: Theme): SxProps => ({
     borderRadius: "10px",
+    px: {xs: 1.15, sm: 2},
     "&.Mui-selected": {
         backgroundColor: theme.palette.primary.main,
         "&:hover": {
@@ -42,7 +43,9 @@ export function ListItemLink({
     const isActive = activate || matchesPathTo
 
     return (
-        <ListItem>
+        <ListItem sx={{
+            px: {xs: 1.5, sm: 2}
+        }}>
             <ListItemButton
                 component={externalRoute ? "a" : RouterLink}
                 {...urlAttribute}
@@ -101,7 +104,9 @@ export function ListItemExpander({
 
     return (
         <>
-            <ListItem>
+            <ListItem sx={{
+                px: {xs: 1.5, sm: 2}
+            }}>
                 <ListItemButton 
                     onClick={() => setIsOpen(!isOpen)} 
                     sx={listItemButtonSx(theme)}
