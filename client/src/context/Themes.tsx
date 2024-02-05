@@ -181,7 +181,8 @@ function setDefaultTheme(theme: AppThemeProps) {
 }
 
 interface AppThemeContextProps extends AppThemeProps {
-    toggleTheme: VoidFunction
+    toggleTheme: VoidFunction,
+    setMode: (mode: ThemeName) => void,
     isDarkMode: boolean,    
 }
 
@@ -197,16 +198,20 @@ export function AppThemeProvider({ children }: { children: React.ReactNode }) {
 
     const isDarkMode = () => themeInfo.name === ThemeName.Dark;
 
+    const setMode = (mode: ThemeName) => { 
+        const theme = objectToTheme(mode)
+        setTheme(theme)
+        setDefaultTheme(theme)
+    }
+
     const toggleTheme = () => {
         const newTheme = isDarkMode() ? ThemeName.Light : ThemeName.Dark;
-        const newThemeInfo = objectToTheme(newTheme)
-
-        setTheme(newThemeInfo)
-        setDefaultTheme(newThemeInfo)
+        setMode(newTheme)
     }
 
     const contextValue: AppThemeContextProps = { 
         ...themeInfo, 
+        setMode: setMode,
         toggleTheme: toggleTheme,
         isDarkMode: isDarkMode()
     }

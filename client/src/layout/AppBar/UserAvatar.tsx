@@ -2,6 +2,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import {
     Avatar,
+    Box,
     Divider,
     ListItemIcon,
     ListItemText,
@@ -11,14 +12,14 @@ import {
 import { getFullName } from 'common/utils';
 import { Link as RouterLink } from 'react-router-dom';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
-import { usePotentialUser } from 'src/context/Authentication';
+import { useAuthenticatedUser } from 'src/context/Authentication';
+import { useAppBarIconSize } from '../useAppSizes';
 
 
 export default function UserAvatar() {
-    const { user, isLoggedIn, signOut, signOutAllDevices} = usePotentialUser()
-
-    if(!isLoggedIn) 
-        return <></>
+    const { buttonSize } = useAppBarIconSize()
+    
+    const { user, signOut, signOutAllDevices} = useAuthenticatedUser()
 
     const onSignOutClick = async () => {
         await signOut();
@@ -32,10 +33,42 @@ export default function UserAvatar() {
 
     return (
         <IconPopupMenu
+            aria-label="Profilmeny" 
+            style={{
+                padding: "0px",
+                color: "inherit",
+            }}
             icon={(
-                <Tooltip title={getFullName(user)} disableInteractive>
-                    <Avatar aria-label="Profilmeny" alt="Mitt profilbilde" src={`/${user.profilePicture}`}>{user.firstName[0]}</Avatar>
-                </Tooltip>
+                <div style={{position: "relative"}}>
+
+                    <Tooltip title={getFullName(user)} disableInteractive>
+                        <Avatar 
+                            src={`/${user.profilePicture}`}
+                            alt="Mitt profilbilde" 
+                            sx={{
+                                height: buttonSize, 
+                                width: buttonSize,
+                            }}>
+                            {user.firstName[0]}
+                        </Avatar>
+                    </Tooltip>
+                    
+                    {/* The sole purpose of this box is to create a white overlay over the avatar when it is hovered. */}
+                    <Box sx={{
+                        backgroundColor: "white",
+                        height: "100%",
+                        width: "100%",
+                        position: "absolute",
+                        top: "0px",
+                        left: "0px",
+                        borderRadius: "50%",
+                        opacity: 0,
+                        ":hover": {
+                            opacity: 0.1
+                        }
+                    }}/>
+
+                </div>
             )}
         >
             <MenuItem component={RouterLink} to={`/medlem/${user.id}`} >

@@ -1,8 +1,14 @@
-import CloseIcon from '@mui/icons-material/Close';
-import { Drawer, IconButton, SwipeableDrawer, SxProps, Toolbar } from "@mui/material";
-import { useAppTheme } from 'src/context/Themes';
-import { ThemeSwitchButton } from 'src/layout/ThemeSwitchButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Divider, Drawer, IconButton, Stack, SwipeableDrawer, SxProps, Toolbar, Typography } from "@mui/material";
+import { useAppBarHeight, useAppBarIconSize } from '../useAppSizes';
 import { NavContent } from './NavContent';
+
+export interface DrawerProps {
+    open: boolean,
+    onOpen: VoidFunction,
+    onClose: VoidFunction,
+    drawerWidth: number,
+}
 
 export function SideDrawer( {
     open: mobileOpen,
@@ -36,6 +42,7 @@ export function SideDrawer( {
                 onClose={onClose}
                 onOpen={onOpen}
                 swipeAreaWidth={400}
+                elevation={0}
                 disableSwipeToOpen={true}
                 ModalProps={{
                     keepMounted: true, // Better open performance on mobile.
@@ -64,35 +71,49 @@ function DrawerContent({ onClose }: { onClose: VoidFunction }) {
     )   
 }
 
-function MobileHeader({ onClose, sx }: {onClose?: VoidFunction, sx?: SxProps}) {
-    const { theme } = useAppTheme()
+function MobileHeader({ 
+    onClose, 
+    sx 
+}: {
+    onClose?: VoidFunction, 
+    sx?: SxProps
+}) {
+    const appBarHeight  = useAppBarHeight()
+    const { buttonSize, iconFontSize } = useAppBarIconSize()
 
     return (
         <Toolbar sx={{
             alignItems: "center", 
-            justifyContent: "space-between", 
-            paddingLeft: "25px",
-            paddingRight: "25px",
-            mb: "-13px",
+            paddingLeft: "16px",
+            paddingTop: "1px",
+            height: `${appBarHeight - 1}px`,
             ...sx
         }}>
-            <ThemeSwitchButton 
-                fontSize='medium' 
-                sx={{
-                    borderColor: `${theme.palette.action.hover}`,
-                    borderStyle: "solid", 
-                    borderWidth: "1px"
-                }}
-            />
-            <IconButton 
-                onClick={onClose}
-                sx={{
-                    borderColor: `${theme.palette.action.hover}`,
-                    borderStyle: "solid", 
-                    borderWidth: "1px"
-                }}>
-                <CloseIcon />
-            </IconButton>
+            <Stack 
+                alignItems="center" 
+                direction="row">
+                <IconButton 
+                    onClick={onClose}
+                    sx={{
+                        height: buttonSize,
+                        width: buttonSize,
+                    }}>
+                    <MenuIcon sx={{ color: "primary.contrastText" }} fontSize={iconFontSize} />
+                </IconButton>
+                <Typography
+                    noWrap
+                    variant="inherit"
+                    sx={{
+                        fontWeight: 700,
+                        marginLeft: "3px",
+                        color: 'inherit',
+                        textDecoration: 'none',
+                    }}
+                >
+                    {"Motstanden"}
+                </Typography>
+            </Stack>
+            <Divider orientation="horizontal"/>
         </Toolbar>
     )
 }

@@ -1,31 +1,33 @@
 import LoginIcon from '@mui/icons-material/Login';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Box, Divider, IconButton, Link, AppBar as MuiAppBar, Stack, SxProps, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
+import { Box, IconButton, AppBar as MuiAppBar, Stack, SxProps, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import MotstandenImg from "src/assets/logos/motstanden.png";
 import { useAppBarStyle } from 'src/context/AppBarStyle';
 import { usePotentialUser } from 'src/context/Authentication';
 import UserAvatar from 'src/layout/AppBar/UserAvatar';
-import { ThemeSwitchButton } from 'src/layout/ThemeSwitchButton';
-import { useIsMobileScreen } from '../useAppSizes';
+import { useAppBarIconSize } from '../useAppSizes';
+import { SettingsButton } from './SettingsButton';
 
 export function AppBar({ 
-    onMenuClick, 
+    onNavMenuClick, 
+    onSettingsMenuClick,
     sx,
     position = "fixed"
 }: { 
-    onMenuClick?: VoidFunction,
+    onNavMenuClick?: VoidFunction,
+    onSettingsMenuClick?: VoidFunction,
     sx?: SxProps,
     position?: "fixed" | "absolute" | "relative" | "static" | "sticky" 
 }) {
-
     const { isLoggedIn } = usePotentialUser()
 
     const { appBarShadow } = useAppBarStyle()
     
     const isMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
-    const isSmallScreen = useMediaQuery("(max-width: 663px)");
     const isMobileScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+
+    const { buttonSize, iconFontSize} = useAppBarIconSize()
 
     return (
         <MuiAppBar 
@@ -39,21 +41,24 @@ export function AppBar({
                 height: "100%",
                 justifyContent: "space-between",
             }}>
-                <IconButton
-                    sx={{ display: { sm: 'none' }, }}
-                    onClick={onMenuClick}>
-                    <MenuIcon sx={{ color: "primary.contrastText" }} />
-                </IconButton>
-
-                <Stack
-                    direction="row"
-                    alignItems="center"
-                    gap="15px"
-                >
+                <Stack direction="row" alignItems="center">
+                    <IconButton
+                        onClick={onNavMenuClick}
+                        sx={{ 
+                            display: { sm: 'none' },
+                            height: buttonSize,
+                            width: buttonSize,
+                        }}
+                        >
+                            <MenuIcon sx={{ color: "primary.contrastText" }} fontSize={iconFontSize} />
+                    </IconButton>
                     <Box
                         component={RouterLink}
                         to="/"
-                        sx={{ display: isSmallScreen ? "none" : "flex" }}>
+                        sx={{ 
+                            display: {xs: "none", sm: "flex"}, 
+                            marginRight: "8px"
+                        }}>
                         <img
                             src={MotstandenImg}
                             style={{ height: "48px" }}
@@ -66,43 +71,25 @@ export function AppBar({
                         variant={isMobileScreen ? "inherit" : "h5"}
                         sx={{
                             fontWeight: 700,
-                            letterSpacing: '.1rem',
+                            marginLeft: "3px",
                             color: 'inherit',
                             textDecoration: 'none',
                         }}
                     >
-                        {isMediumScreen ? "MOTSTANDEN" : "Den Ohmske Motstanden"}
+                        {isMediumScreen ? "Motstanden" : "Den Ohmske Motstanden"}
                     </Typography>
                 </Stack>
                 
-                <Stack
+                <Stack 
                     direction="row"
                     alignItems="center"
                     color="primary.contrastText"
                     style={{ height: "100%" }}
+                    gap={{xs: "5px", sm: "10px"}}
                 >
-                    <ThemeSwitchButton
-                        fontSize={isLoggedIn ? "large" : "medium"}
-                        sx={{
-                            width: isLoggedIn ? "42px" : "35px",
-                            height: isLoggedIn ? "42px" : "35px",
-                            display: { xs: "none", sm: "flex" },
-                            color: "inherit"
-                        }} />
-                    <Divider
-                        light={true}
-                        orientation='vertical'
-                        flexItem variant='middle'
-                        color="inherit"
-                        sx={{
-                            mx: 0.5,
-                            height: isLoggedIn ? "50%" : "35%",
-                            my: "auto",
-                            bgcolor: "primary.contrastText",
-                            opacity: 0.3,
-                            display: { xs: "none", sm: "flex" }
-                        }} />
-                    <UserInfo />
+                    <SettingsButton onClick={onSettingsMenuClick}/>
+                    {!isLoggedIn && <LoginButton/>}
+                    {isLoggedIn && <UserAvatar/> }
                 </Stack>
 
             </Toolbar>
@@ -110,35 +97,29 @@ export function AppBar({
     );
 }
 
-function UserInfo() {
-    const auth = usePotentialUser()
-    const isMobile = useIsMobileScreen()
-
-    if(auth.user)
-        return <UserAvatar/>
-
-    if(isMobile) 
-        return (
-            <IconButton
-                component={RouterLink}
-                to="/logg-inn"
-            >
-                <LoginIcon/>
-            </IconButton>
-    )
-
+function LoginButton() {
+    const { buttonSize, iconFontSize } = useAppBarIconSize()
     return (
-        <Link
+        <IconButton
             component={RouterLink}
             to="/logg-inn"
-            underline="hover"
             sx={{
+                width: buttonSize,
+                height: buttonSize,
+                p: "0px",
                 color: "inherit",
-                pl: 1,
-                fontWeight: 600
+                bgcolor: "#FFFFFF15",
+                ":hover": {
+                    bgcolor: "#FFFFFF30",
+                }
             }}
         >
-            LOGG INN
-        </Link>
+            <LoginIcon 
+                fontSize={iconFontSize}
+                sx={{
+                    marginRight: "2px"
+                }}
+            />
+        </IconButton>
     )
 }

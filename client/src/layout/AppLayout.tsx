@@ -4,23 +4,23 @@ import { Outlet } from "react-router-dom";
 import { FooterContent } from "src/layout/Footer";
 import { SideDrawer } from 'src/layout/SideDrawer/SideDrawer';
 import { AppBar } from "./AppBar/AppBar";
+import { SettingsDrawer } from "./SettingsDrawer/SettingsDrawer";
 import { useAppSizes } from "./useAppSizes";
 
 export function AppLayout() {
 
-    const { appBarHeight, drawerWidth } = useAppSizes()
-    const [isOpen, setIsOpen] = useState(false)
-
-    const closeDrawer = () => setIsOpen(false)
-    const openDrawer = () => setIsOpen(true)
-    const toggleDrawer = () => setIsOpen(prevValue => !prevValue)
+    const { appBarHeight, drawerWidth, settingsDrawerWidth } = useAppSizes()
+    
+    const navDrawer = useDrawer()
+    const settingsDrawer = useDrawer()
 
     return (
         <div style={{display: "flex"}}>
             
             <header>
                 <AppBar 
-                    onMenuClick={toggleDrawer}
+                    onNavMenuClick={navDrawer.toggle}
+                    onSettingsMenuClick={settingsDrawer.toggle}
                     position="fixed"
                     sx={{
                         width: { sm: `calc(100% - ${drawerWidth}px)` },
@@ -37,12 +37,19 @@ export function AppLayout() {
                     width: { sm: `${drawerWidth}px` },
                 }}>
                 <SideDrawer
-                    open={isOpen}
-                    onClose={closeDrawer}
-                    onOpen={openDrawer}
+                    open={navDrawer.isOpen}
+                    onClose={navDrawer.close}
+                    onOpen={navDrawer.open}
                     drawerWidth={drawerWidth} 
                 />
             </Box>
+
+            <SettingsDrawer 
+                open={settingsDrawer.isOpen}
+                onClose={settingsDrawer.close}
+                onOpen={settingsDrawer.open}
+                drawerWidth={settingsDrawerWidth}
+            />
 
             <Box sx={{ 
                 flexGrow: 1, 
@@ -58,4 +65,14 @@ export function AppLayout() {
             </Box>
         </div>
     )
+}
+
+function useDrawer() {
+    const [isOpen, setIsOpen] = useState(false)
+
+    const open = () => setIsOpen(true)
+    const close = () => setIsOpen(false)
+    const toggle = () => setIsOpen(prevValue => !prevValue)
+
+    return { isOpen, open, close, toggle }
 }
