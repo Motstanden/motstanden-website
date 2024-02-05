@@ -50,8 +50,8 @@ function Header( {
     return (
         <Toolbar sx={{
             alignItems: "center",
-            height: `${appBarHeight - 1}px`,
-            minHeight: 0,
+            minHeight: appBarHeight,
+            height: appBarHeight,
             display: "flex",
         }}>
             <Stack 

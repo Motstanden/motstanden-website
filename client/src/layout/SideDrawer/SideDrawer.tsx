@@ -85,8 +85,8 @@ function MobileHeader({
         <Toolbar sx={{
             alignItems: "center", 
             paddingLeft: "16px",
-            paddingTop: "1px",
-            height: `${appBarHeight - 1}px`,
+            minHeight: appBarHeight,
+            height: appBarHeight,
             ...sx
         }}>
             <Stack 

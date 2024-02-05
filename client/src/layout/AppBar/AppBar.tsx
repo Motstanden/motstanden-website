@@ -6,7 +6,7 @@ import MotstandenImg from "src/assets/logos/motstanden.png";
 import { useAppBarStyle } from 'src/context/AppBarStyle';
 import { usePotentialUser } from 'src/context/Authentication';
 import UserAvatar from 'src/layout/AppBar/UserAvatar';
-import { useAppBarIconSize } from '../useAppSizes';
+import { useAppBarHeight, useAppBarIconSize } from '../useAppSizes';
 import { SettingsButton } from './SettingsButton';
 
 export function AppBar({ 
@@ -27,6 +27,7 @@ export function AppBar({
     const isMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
     const isMobileScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
+    const appBarHeight = useAppBarHeight()
     const { buttonSize, iconFontSize} = useAppBarIconSize()
 
     return (
@@ -38,7 +39,8 @@ export function AppBar({
             }}>
             <Toolbar sx={{
                 bgcolor: "primary.main",
-                height: "100%",
+                minHeight: appBarHeight,
+                height: appBarHeight,
                 justifyContent: "space-between",
             }}>
                 <Stack direction="row" alignItems="center">

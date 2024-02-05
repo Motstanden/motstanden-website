@@ -9,7 +9,7 @@ const mobileDrawerWidth = 240
 const settingsDrawerWidth = 270
 
 const desktopAppBarHeight = 64;
-const mobileAppBarHeight = 57;
+const mobileAppBarHeight = 50;
 
 const mobileAppBarIconSize = 30
 const desktopAppBarIconSize = 35
@@ -60,7 +60,10 @@ export function useDrawerWidth() {
         drawerWidth = largeDesktopDrawerWidth
     }
 
-    return drawerWidth
+    return {
+        drawerWidth: drawerWidth,
+        settingsDrawerWidth: settingsDrawerWidth,
+    }
 }
 
 interface AppSizesProps {
@@ -78,8 +81,7 @@ export function useAppSizes(): AppSizesProps {
     const tabBarHeight = useTabBarHeight()
 
     const appSizes: AppSizesProps = {
-        drawerWidth: drawerWidth,
-        settingsDrawerWidth: settingsDrawerWidth,
+        ...drawerWidth,
         appBarHeight: appBarHeight,
         tabBarHeight: tabBarHeight,
         isMobileScreen: isMobileScreen,

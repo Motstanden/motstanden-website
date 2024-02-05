@@ -5,11 +5,12 @@ import { FooterContent } from "src/layout/Footer";
 import { SideDrawer } from 'src/layout/SideDrawer/SideDrawer';
 import { AppBar } from "./AppBar/AppBar";
 import { SettingsDrawer } from "./SettingsDrawer/SettingsDrawer";
-import { useAppSizes } from "./useAppSizes";
+import { useAppBarHeight, useAppSizes, useDrawerWidth } from "./useAppSizes";
 
 export function AppLayout() {
 
-    const { appBarHeight, drawerWidth, settingsDrawerWidth } = useAppSizes()
+    const { drawerWidth, settingsDrawerWidth } = useDrawerWidth()
+    const appBarHeight = useAppBarHeight()
     
     const navDrawer = useDrawer()
     const settingsDrawer = useDrawer()
@@ -25,7 +26,6 @@ export function AppLayout() {
                     sx={{
                         width: { sm: `calc(100% - ${drawerWidth}px)` },
                         ml: { sm: `${drawerWidth}px` },
-                        height: `${appBarHeight}px`,
                     }}
                 />
             </header>
