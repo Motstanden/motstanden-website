@@ -12,6 +12,7 @@ import { AppBarStyleProvider } from './context/AppBarStyle';
 import { AppThemeProvider } from './context/AppTheme';
 import { LikeEmojiProvider } from './context/LikeEmoji';
 import { LocaleProvider } from './context/Locale';
+import { TimeZoneProvider } from './context/TimeZone';
 import { TopScrollerProvider } from './context/TopScroller';
 import { UserReferenceProvider } from './context/UserReference';
 
@@ -26,22 +27,24 @@ root.render(
 		<QueryClientProvider client={queryClient}>
 			<BrowserRouter>
 				<LocaleProvider>
-					<AuthProvider>
-						<UserReferenceProvider>
-							<LikeEmojiProvider>
-								<AppThemeProvider>
-									<TopScrollerProvider>
-										<AppBarStyleProvider>
-											{/* Provides reasonable default css values from the material-ui framework */}
-											<CssBaseline />
+					<TimeZoneProvider>
+						<AuthProvider>
+							<UserReferenceProvider>
+								<LikeEmojiProvider>
+									<AppThemeProvider>
+										<TopScrollerProvider>
+											<AppBarStyleProvider>
+												{/* Provides reasonable default css values from the material-ui framework */}
+												<CssBaseline />
 
-											<App />
-										</AppBarStyleProvider>
-									</TopScrollerProvider>
-								</AppThemeProvider>
-							</LikeEmojiProvider>
-						</UserReferenceProvider>
-					</AuthProvider>
+												<App />
+											</AppBarStyleProvider>
+										</TopScrollerProvider>
+									</AppThemeProvider>
+								</LikeEmojiProvider>
+							</UserReferenceProvider>
+						</AuthProvider>
+					</TimeZoneProvider>
 				</LocaleProvider>
 			</BrowserRouter>
 			<ReactQueryDevtools />
