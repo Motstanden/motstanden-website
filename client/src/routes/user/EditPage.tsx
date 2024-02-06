@@ -253,9 +253,6 @@ function MemberForm({ value, onChange, editMode }: FormParams) {
                 maxDate={dayjs().add(6, "year")}
                 value={value.endDate ? dayjs(value.endDate) : null}
                 onChange={(newVal: Dayjs | null) => onChange({ ...value, endDate: newVal?.format("YYYY-MM-DD") ?? null })}
-                slotProps={{
-                    textField: { required: true }
-                }}
             />
         </Card>
     )
