@@ -31,9 +31,22 @@ export function SettingsDrawer( {
                 },
             }}
         >
-            <Header onClose={onClose} />
-            <Content />   
+            <DrawerContent onClose={onClose}/> 
         </SwipeableDrawer>
+    )
+}
+
+function DrawerContent( { onClose }: { onClose: VoidFunction }) {
+    return (
+        <>
+            <Header onClose={onClose} />
+            <div style={{
+                margin: "0px",
+                paddingInline: "18px",
+            }}>
+                <ThemeSection/>
+            </div>
+        </>
     )
 }
 
@@ -80,17 +93,6 @@ function Header( {
                 </IconButton>
             </Stack>
         </Toolbar>
-    )
-}
-
-function Content() {
-    return (
-        <div style={{
-            margin: "0px",
-            paddingInline: "18px",
-        }}>
-            <ThemeSection/>
-        </div>
     )
 }
 
