@@ -38,15 +38,12 @@ export function SettingsDrawer( {
 
 function DrawerContent( { onClose }: { onClose: VoidFunction }) {
     return (
-        <>
+        <div style={{
+            paddingInline: "17px"
+        }}>
             <Header onClose={onClose} />
-            <div style={{
-                margin: "0px",
-                paddingInline: "18px",
-            }}>
-                <ThemeSection/>
-            </div>
-        </>
+            <ThemeSection/>
+        </div>
     )
 }
 
@@ -58,12 +55,14 @@ function Header( {
     const { buttonSize, iconFontSize } = useAppBarIconSize()
     const appBarHeight  = useAppBarHeight()
     return (
-        <Toolbar sx={{
-            alignItems: "center",
-            minHeight: appBarHeight,
-            height: appBarHeight,
-            display: "flex",
-        }}>
+        <Toolbar 
+            disableGutters  
+            sx={{
+                alignItems: "center",
+                minHeight: appBarHeight,
+                height: appBarHeight,
+                display: "flex",
+            }}>
             <Stack 
                 direction="row" 
                 alignItems="center"
@@ -72,11 +71,11 @@ function Header( {
                 >
                 <Typography
                     noWrap
-                    variant="inherit"
+                    variant="body1"
                     sx={{
                         fontWeight: 700,
-                        marginLeft: "2px",
-                        color: 'inherit',
+                        color: theme => theme.palette.text.secondary,
+                        opacity: 0.95,
                         textDecoration: 'none',
                     }}
                     >
