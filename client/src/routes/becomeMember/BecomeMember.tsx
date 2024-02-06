@@ -2,7 +2,7 @@ import { Skeleton, useMediaQuery } from "@mui/material";
 import React, { useState } from "react";
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
 import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton";
-import { ThemeName, useAppTheme } from "../../context/Themes";
+import { useAppTheme } from "../../context/Themes";
 import { useTitle } from "../../hooks/useTitle";
 import { PageContainer } from "../../layout/PageContainer/PageContainer";
 
@@ -69,7 +69,7 @@ function GoogleForm({
     onLoad?: () => void,
     style?: React.CSSProperties
 }) {
-    const theme = useAppTheme();
+    const { isDarkMode } = useAppTheme();
 
     const isSmallScreen = useMediaQuery("(max-width: 600px)")
     const isMediumScreen = useMediaQuery("(max-width: 850px)")
@@ -82,7 +82,7 @@ function GoogleForm({
             { marginLeft: "-30px" } 
 
 
-    const invertProps = theme.name === ThemeName.Dark
+    const invertProps = isDarkMode
         ? { filter: "invert(100%) hue-rotate(180deg)" }
         : {}
         

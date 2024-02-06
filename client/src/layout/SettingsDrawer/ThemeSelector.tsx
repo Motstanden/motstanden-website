@@ -2,26 +2,25 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { ThemeName, useAppTheme } from "src/context/Themes";
+import { ThemeMode, useAppTheme } from "src/context/Themes";
 
 export function ThemeSelector() {
-    const { name, setMode } = useAppTheme();
+    const { mode, setMode } = useAppTheme();
     const borderRadius = 12;
 
     const onChange = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-        const value = e.currentTarget.getAttribute("value") as ThemeName;
+        const value = e.currentTarget.getAttribute("value") as ThemeMode;
         setMode(value);
     };
 
     return (
         <ToggleButtonGroup
             color="secondary"
-            value={name}
+            value={mode}
             exclusive
             fullWidth
             size='small'
             onChange={onChange}
-            // onChange={handleChange}
             aria-label="Platform"
             sx={{
                 ".MuiToggleButtonGroup-grouped": {
@@ -46,15 +45,15 @@ export function ThemeSelector() {
                 }
             }}
         >
-            <ToggleButton value={ThemeName.Light}>
+            <ToggleButton value={ThemeMode.Light}>
                 <LightModeIcon />
                 Dag
             </ToggleButton>
-            <ToggleButton value="system">
+            <ToggleButton value={ThemeMode.System}>
                 <SettingsBrightnessIcon />
                 System
             </ToggleButton>
-            <ToggleButton value={ThemeName.Dark}>
+            <ToggleButton value={ThemeMode.Dark}>
                 <DarkModeIcon />
                 Natt
             </ToggleButton>

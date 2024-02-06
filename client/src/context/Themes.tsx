@@ -1,4 +1,4 @@
-import { createTheme, Theme, ThemeProvider } from "@mui/material";
+import { createTheme, Theme, ThemeProvider, useMediaQuery } from "@mui/material";
 import React, { createContext, useContext, useState } from 'react';
 
 // This must be imported here to provide default styling for date pickers and components in mui lab. 
@@ -12,6 +12,12 @@ import type { } from '@mui/x-date-pickers/themeAugmentation';
 export enum ThemeName {
     Dark = "dark",
     Light = "light"
+}
+
+export enum ThemeMode {
+    Dark = ThemeName.Dark,
+    Light = ThemeName.Light,
+    System = "system"
 }
 
 type AppThemeProps = {
@@ -157,33 +163,39 @@ function osPreferDarkMode(): boolean {
     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
 
-function objectToTheme(name: string | ThemeName | null | undefined): AppThemeProps {
+function getTheme(name: ThemeMode ): AppThemeProps {
     switch (name?.trim().toLowerCase()) {
         case ThemeName.Light: 
             return lightTheme
         case ThemeName.Dark: 
             return darkTheme
-        default: 
+        case ThemeMode.System:
             return osPreferDarkMode() ? darkTheme : lightTheme
+        default: 
+            throw `Invalid theme mode: ${name}`
     }
 }
 
 const themeStorageKey = "AppTheme"
 
-function getDefaultTheme(): AppThemeProps {
+function getDefaultMode(): ThemeMode {
     const storedData = localStorage.getItem(themeStorageKey)
-    const theme = objectToTheme(storedData)
-    return theme;
+    const isValid = storedData && storedData in ThemeMode
+    
+    if(!isValid) 
+        return ThemeMode.System
+
+    return storedData as ThemeMode
 }
 
-function setDefaultTheme(theme: AppThemeProps) {
-    localStorage.setItem(themeStorageKey, theme.name)
+function setDefaultMode(mode: ThemeMode) {
+    localStorage.setItem(themeStorageKey, mode)
 }
 
 interface AppThemeContextProps extends AppThemeProps {
-    toggleTheme: VoidFunction,
-    setMode: (mode: ThemeName) => void,
-    isDarkMode: boolean,    
+    setMode: (mode: ThemeMode) => void,
+    mode: ThemeMode
+    isDarkMode: boolean
 }
 
 export const AppThemeContext = createContext<AppThemeContextProps>(null!)
@@ -193,27 +205,22 @@ export function useAppTheme() {
 }
 
 export function AppThemeProvider({ children }: { children: React.ReactNode }) {
+    const [mode, setMode] = useState<ThemeMode>(getDefaultMode())
+    
+    useMediaQuery('(prefers-color-scheme: dark)');  // Trigges a rerender when the OS theme changes
 
-    const [themeInfo, setTheme] = useState<AppThemeProps>(getDefaultTheme())
-
-    const isDarkMode = () => themeInfo.name === ThemeName.Dark;
-
-    const setMode = (mode: ThemeName) => { 
-        const theme = objectToTheme(mode)
-        setTheme(theme)
-        setDefaultTheme(theme)
+    const onModeChange = (newMode: ThemeMode) => { 
+        setMode(newMode)
+        setDefaultMode(newMode)
     }
-
-    const toggleTheme = () => {
-        const newTheme = isDarkMode() ? ThemeName.Light : ThemeName.Dark;
-        setMode(newTheme)
-    }
+    
+    const themeInfo = getTheme(mode)
 
     const contextValue: AppThemeContextProps = { 
-        ...themeInfo, 
-        setMode: setMode,
-        toggleTheme: toggleTheme,
-        isDarkMode: isDarkMode()
+        ...themeInfo,
+        mode: mode,
+        setMode: onModeChange,
+        isDarkMode: themeInfo.name === ThemeName.Dark
     }
 
     return (
