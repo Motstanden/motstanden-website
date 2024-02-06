@@ -1,6 +1,6 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { IconButton, Stack, SwipeableDrawer, Toolbar, Typography } from "@mui/material";
-import { DrawerProps } from "../SideDrawer/SideDrawer";
+import { DrawerProps } from "../NavDrawer/NavDrawer";
 import { useAppBarHeight, useAppBarIconSize } from '../useAppSizes';
 import { ThemeSelector } from './ThemeSelector';
 

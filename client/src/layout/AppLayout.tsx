@@ -2,10 +2,10 @@ import { Box } from "@mui/material";
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { FooterContent } from "src/layout/Footer";
-import { SideDrawer } from 'src/layout/SideDrawer/SideDrawer';
+import { NavDrawer } from 'src/layout/NavDrawer/NavDrawer';
 import { AppBar } from "./AppBar/AppBar";
 import { SettingsDrawer } from "./SettingsDrawer/SettingsDrawer";
-import { useAppBarHeight, useAppSizes, useDrawerWidth } from "./useAppSizes";
+import { useAppBarHeight, useDrawerWidth } from "./useAppSizes";
 
 export function AppLayout() {
 
@@ -36,7 +36,7 @@ export function AppLayout() {
                     display: { xs: 'none', sm: 'flex' },
                     width: { sm: `${drawerWidth}px` },
                 }}>
-                <SideDrawer
+                <NavDrawer
                     open={navDrawer.isOpen}
                     onClose={navDrawer.close}
                     onOpen={navDrawer.open}

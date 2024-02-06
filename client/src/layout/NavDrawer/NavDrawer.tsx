@@ -10,7 +10,7 @@ export interface DrawerProps {
     drawerWidth: number,
 }
 
-export function SideDrawer( {
+export function NavDrawer( {
     open: mobileOpen,
     onOpen,
     onClose,
