@@ -9,10 +9,10 @@ const mobileDrawerWidth = 240
 const settingsDrawerWidth = 270
 
 const desktopAppBarHeight = 64;
-const mobileAppBarHeight = 50;
+const mobileAppBarHeight = 54;
 
-const mobileAppBarIconSize = 30
-const desktopAppBarIconSize = 35
+const mobileAppBarIconSize = 33
+const desktopAppBarIconSize = 38
 
 const tabBarHeight = 48
 
@@ -40,7 +40,7 @@ export function useAppBarIconSize(): {
     const isMobile = useIsMobileScreen()    
 
     if(isMobile)
-        return { buttonSize: mobileAppBarIconSize, iconFontSize: "small" }
+        return { buttonSize: mobileAppBarIconSize, iconFontSize: "medium" }
 
     return { buttonSize: desktopAppBarIconSize, iconFontSize: "medium" }
 }

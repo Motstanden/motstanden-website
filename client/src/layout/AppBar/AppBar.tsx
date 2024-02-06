@@ -88,7 +88,7 @@ export function AppBar({
                     alignItems="center"
                     color="primary.contrastText"
                     style={{ height: "100%" }}
-                    gap={{xs: "5px", sm: "10px"}}
+                    gap={{xs: "8px", sm: "10px"}}
                 >
                     <SettingsButton onClick={onSettingsMenuClick}/>
                     {!isLoggedIn && <LoginButton/>}
