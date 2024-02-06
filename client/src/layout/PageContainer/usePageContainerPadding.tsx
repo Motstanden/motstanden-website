@@ -1,7 +1,8 @@
-import { useMediaQuery } from "@mui/material";
-import { useAppTheme } from "src/context/AppTheme";
+import { Theme, useMediaQuery } from "@mui/material";
 
-const paddingTop = "15px"
+const mediumPaddingTop = "0px"
+const largePaddingTop = "15px"
+
 const paddingBottom = "150px"
 
 const tinyPaddingInline = "15px"
@@ -22,12 +23,10 @@ interface PaddingProps {
  * This hook is useful for pages where the PageContainer has disableGutters set to true.
 */
 export function usePageContainerPadding(): PaddingProps {
-    const { theme } = useAppTheme();
-
-    const isTiny = useMediaQuery(theme.breakpoints.only('xs'));
-    const isSmall = useMediaQuery(theme.breakpoints.only('sm'));
-    const isMedium = useMediaQuery(theme.breakpoints.only('md'));
-    const isLarge = useMediaQuery(theme.breakpoints.up("lg"));
+    const isTiny = useMediaQuery<Theme>(theme => theme.breakpoints.only('xs'));
+    const isSmall = useMediaQuery<Theme>(theme => theme.breakpoints.only('sm'));
+    const isMedium = useMediaQuery<Theme>(theme => theme.breakpoints.only('md'));
+    const isLarge = useMediaQuery<Theme>(theme => theme.breakpoints.up("lg"));
 
     let inlinePadding = "0px";
     if (isTiny) {
@@ -38,6 +37,11 @@ export function usePageContainerPadding(): PaddingProps {
         inlinePadding = mediumPaddingInline;
     } else if (isLarge) {
         inlinePadding = largePaddingInline;
+    }
+
+    let paddingTop = mediumPaddingTop
+    if(isLarge) {
+        paddingTop = largePaddingTop
     }
 
     const pagePadding = {
