@@ -103,8 +103,8 @@ export const LightAppTheme: AppThemeProps = {
                 paper: "#F9F9F9"
             },
             text: {
-                primary: "#202020",
-                secondary: "#303030"
+                primary: "#292929",
+                secondary: "#353535"
             },
             action: {
                 hover: "#C3C3C377"
