@@ -1,10 +1,12 @@
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import { Collapse, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SxProps, Theme, } from "@mui/material";
+import LinkIcon from '@mui/icons-material/Link';
+import { Collapse, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SxProps, Theme } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { Link as RouterLink, useMatch } from 'react-router-dom';
 import { useAppTheme } from 'src/context/AppTheme';
 import { isElementInViewport } from "src/utils/isElementInViewport";
+import { useIsMobileScreen } from '../useAppSizes';
 
 const listItemButtonSx = (theme: Theme): SxProps => ({
     borderRadius: "10px",
@@ -38,10 +40,12 @@ export function ListItemLink({
 }) {
     const urlAttribute = externalRoute ? { href: to } : { to: to }
     const { theme } = useAppTheme()
-    
+
     const matchesPathTo = !!useMatch(to + "/*")
     const isActive = activate || matchesPathTo
 
+    const isMobile = useIsMobileScreen()
+    const iconSize = isMobile ? "small" : "medium"
     return (
         <ListItem sx={{
             px: {xs: 1.5, sm: 2}
@@ -67,6 +71,11 @@ export function ListItemLink({
                         fontWeight: isActive ? "bold" : undefined,
                     }}
                     />
+                {externalRoute && (
+                    <ListItemIcon sx={{minWidth: 0, opacity: 0.55}} >
+                        <LinkIcon fontSize={iconSize} />
+                    </ListItemIcon>                        
+                )}
             </ListItemButton>
         </ListItem>
     )
