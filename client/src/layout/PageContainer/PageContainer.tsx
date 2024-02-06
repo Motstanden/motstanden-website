@@ -3,11 +3,11 @@ import { usePageContainerPadding } from "./usePageContainerPadding";
 
 export function PageContainer({
     children,
-    props,
+    style,
     disableGutters,
 }: {
     children?: React.ReactNode,
-    props?: React.CSSProperties,
+    style?: React.CSSProperties,
     disableGutters?: boolean,
 }) {
     let { padding } = usePageContainerPadding()
@@ -19,7 +19,7 @@ export function PageContainer({
             minHeight: "100vh",
             width: "100%",
             padding: padding,
-            ...props,
+            ...style,
         }}>
             {children}
         </div>
