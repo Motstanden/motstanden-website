@@ -1,11 +1,8 @@
 import CloseIcon from '@mui/icons-material/Close';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LightModeIcon from '@mui/icons-material/LightMode';
-import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
-import { IconButton, Stack, SwipeableDrawer, ToggleButton, ToggleButtonGroup, Toolbar, Typography } from "@mui/material";
-import { ThemeName, useAppTheme } from "src/context/Themes";
+import { IconButton, Stack, SwipeableDrawer, Toolbar, Typography } from "@mui/material";
 import { DrawerProps } from "../SideDrawer/SideDrawer";
 import { useAppBarHeight, useAppBarIconSize } from '../useAppSizes';
+import { ThemeSelector } from './ThemeSelector';
 
 export function SettingsDrawer( {
     open,
@@ -114,60 +111,3 @@ function ThemeSection() {
     )
 }
 
-function ThemeSelector() {
-    const { theme, name, setMode } = useAppTheme()
-    const borderRadius = 12
-
-    const onChange = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-        const value = e.currentTarget.getAttribute("value") as ThemeName
-        setMode(value)
-    }
-
-    return (
-        <ToggleButtonGroup
-            color="secondary"
-            value={name}
-            exclusive
-            fullWidth
-            size='small'
-            onChange={onChange}
-            // onChange={handleChange}
-            aria-label="Platform"
-            sx={{
-                ".MuiToggleButtonGroup-grouped": {
-                    display: "flex",
-                    gap: "5px",
-                    textTransform: "capitalize",
-                    fontWeight: 550,
-                    fontSize: "9pt",
-                    // color: `${theme.palette.text.secondary}f5`,
-                },
-                ".Mui-selected": {
-                    // color: theme.palette.text.primary + " !important",
-                    // borderColor: theme.palette.secondary.dark,
-                },
-                ".MuiToggleButtonGroup-firstButton": {
-                    borderTopLeftRadius: `${borderRadius}px`,
-                    borderBottomLeftRadius: `${borderRadius}px`,
-                },
-                ".MuiToggleButtonGroup-lastButton": {
-                    borderTopRightRadius: `${borderRadius}px`,
-                    borderBottomRightRadius: `${borderRadius}px`,
-                }
-            }}
-        >
-            <ToggleButton value={ThemeName.Light} >
-                <LightModeIcon/>
-                Dag
-            </ToggleButton>
-            <ToggleButton value="system">
-                <SettingsBrightnessIcon/>
-                System
-            </ToggleButton>
-            <ToggleButton value={ThemeName.Dark}>
-                <DarkModeIcon/>
-                Natt
-            </ToggleButton>
-      </ToggleButtonGroup>
-    )
-}
