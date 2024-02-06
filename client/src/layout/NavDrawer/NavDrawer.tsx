@@ -97,17 +97,24 @@ function MobileHeader({
                     sx={{
                         height: buttonSize,
                         width: buttonSize,
-                        marginRight: "2px"
+                        marginRight: "2px",
                     }}>
-                    <MenuIcon sx={{ color: "primary.contrastText" }} fontSize={iconFontSize} />
+                    <MenuIcon 
+                        fontSize={iconFontSize} 
+                        sx={{ 
+                            opacity: 0.97,
+                            color: theme => theme.palette.text.secondary 
+                        }} 
+                    />
                 </IconButton>
                 <Typography
                     noWrap
-                    variant="inherit"
+                    variant='inherit'
                     sx={{
                         fontWeight: 700,
                         marginLeft: "3px",
-                        color: 'inherit',
+                        opacity: 0.97,
+                        color: theme => theme.palette.text.secondary,
                         textDecoration: 'none',
                     }}
                 >
