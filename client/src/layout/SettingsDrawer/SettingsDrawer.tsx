@@ -3,6 +3,7 @@ import { IconButton, Stack, SwipeableDrawer, Toolbar, Typography } from "@mui/ma
 import { DrawerProps } from "../NavDrawer/NavDrawer";
 import { useAppBarHeight, useAppBarIconSize } from '../useAppSizes';
 import { ThemeSelector } from './ThemeSelector';
+import { TimeZoneSelector } from './TimeZoneSelector';
 
 export function SettingsDrawer( {
     open,
@@ -42,7 +43,12 @@ function DrawerContent( { onClose }: { onClose: VoidFunction }) {
             paddingInline: "17px"
         }}>
             <Header onClose={onClose} />
-            <ThemeSection/>
+            
+            <SectionTitle title="Modus" style={{marginTop: "5px"}} />
+            <ThemeSelector/>
+
+            <SectionTitle title="Tidssone" />
+            <TimeZoneSelector/>
         </div>
     )
 }
@@ -95,20 +101,18 @@ function Header( {
     )
 }
 
-function ThemeSection() {
+function SectionTitle( { title, style, }: { title: string, style?: React.CSSProperties }) {
     return (
-        <>
-            <h6 
-                style={{
-                    opacity: 0.6, 
-                    marginTop: "5px",
-                    marginBottom: "5px",
-                    marginLeft: "1px"
-            }}>
-                MODUS
-            </h6>
-            <ThemeSelector/>
-        </>
+        <h6 
+            style={{
+                opacity: 0.6, 
+                marginTop: "25px",
+                marginBottom: "5px",
+                marginLeft: "1px",
+                textTransform: "uppercase",
+                ...style
+        }}>
+            {title}
+        </h6>
     )
 }
-
