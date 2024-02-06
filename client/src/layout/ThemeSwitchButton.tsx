@@ -6,7 +6,7 @@ import {
     Tooltip
 } from "@mui/material";
 import React from 'react';
-import { useAppTheme } from 'src/context/Themes';
+import { useAppTheme } from 'src/context/AppTheme';
 
 
 export function ThemeSwitchButton({

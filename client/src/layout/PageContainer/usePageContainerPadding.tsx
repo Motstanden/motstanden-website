@@ -1,5 +1,5 @@
 import { useMediaQuery } from "@mui/material";
-import { useAppTheme } from "src/context/Themes";
+import { useAppTheme } from "src/context/AppTheme";
 
 const paddingTop = "15px"
 const paddingBottom = "150px"

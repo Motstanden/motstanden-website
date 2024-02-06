@@ -1,5 +1,4 @@
-import { createTheme, Theme, ThemeProvider, useMediaQuery } from "@mui/material";
-import React, { createContext, useContext, useState } from 'react';
+import { createTheme, Theme } from "@mui/material";
 
 // This must be imported here to provide default styling for date pickers and components in mui lab. 
 // See documentation: 
@@ -8,25 +7,18 @@ import React, { createContext, useContext, useState } from 'react';
 import type { } from '@mui/lab/themeAugmentation';
 import type { } from '@mui/x-date-pickers/themeAugmentation';
 
-
-export enum ThemeName {
+export enum AppThemeName {
     Dark = "dark",
     Light = "light"
 }
 
-export enum ThemeMode {
-    Dark = ThemeName.Dark,
-    Light = ThemeName.Light,
-    System = "system"
+export type AppThemeProps = {
+    theme: Theme;
+    name: AppThemeName;
 }
 
-type AppThemeProps = {
-    theme: Theme,
-    name: ThemeName
-}
-
-const darkTheme: AppThemeProps = {
-    name: ThemeName.Dark,
+export const DarkAppTheme: AppThemeProps = {
+    name: AppThemeName.Dark,
     theme: createTheme({
         palette: {
             mode: 'dark',
@@ -56,7 +48,6 @@ const darkTheme: AppThemeProps = {
             //      * Uncomment to override    
             //      * Default colors can be found here: https://mui.com/material-ui/customization/palette/   
             // ---------------------------------
-
             // primary: {          
             //     main: "",        
             //     light: "",            
@@ -89,10 +80,9 @@ const darkTheme: AppThemeProps = {
             // }
         }
     })
-}
-
-const lightTheme: AppThemeProps = {
-    name: ThemeName.Light,
+};
+export const LightAppTheme: AppThemeProps = {
+    name: AppThemeName.Light,
     theme: createTheme({
         palette: {
             mode: 'light',
@@ -124,7 +114,6 @@ const lightTheme: AppThemeProps = {
             //      * Uncomment to override 
             //      * Default colors can be found here: https://mui.com/material-ui/customization/palette/   
             // ---------------------------------
-
             // primary: {           
             //     main: "",        
             //     light: "",            
@@ -157,77 +146,4 @@ const lightTheme: AppThemeProps = {
             // }
         },
     })
-}
-
-function osPreferDarkMode(): boolean {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
-
-function getTheme(name: ThemeMode ): AppThemeProps {
-    switch (name?.trim().toLowerCase()) {
-        case ThemeName.Light: 
-            return lightTheme
-        case ThemeName.Dark: 
-            return darkTheme
-        case ThemeMode.System:
-            return osPreferDarkMode() ? darkTheme : lightTheme
-        default: 
-            throw `Invalid theme mode: ${name}`
-    }
-}
-
-const themeStorageKey = "AppTheme"
-
-function getDefaultMode(): ThemeMode {
-    const storedData = localStorage.getItem(themeStorageKey)
-    const isValid = storedData && storedData in ThemeMode
-    
-    if(!isValid) 
-        return ThemeMode.System
-
-    return storedData as ThemeMode
-}
-
-function setDefaultMode(mode: ThemeMode) {
-    localStorage.setItem(themeStorageKey, mode)
-}
-
-interface AppThemeContextProps extends AppThemeProps {
-    setMode: (mode: ThemeMode) => void,
-    mode: ThemeMode
-    isDarkMode: boolean
-}
-
-export const AppThemeContext = createContext<AppThemeContextProps>(null!)
-
-export function useAppTheme() {
-    return useContext(AppThemeContext)
-}
-
-export function AppThemeProvider({ children }: { children: React.ReactNode }) {
-    const [mode, setMode] = useState<ThemeMode>(getDefaultMode())
-    
-    useMediaQuery('(prefers-color-scheme: dark)');  // Trigges a rerender when the OS theme changes
-
-    const onModeChange = (newMode: ThemeMode) => { 
-        setMode(newMode)
-        setDefaultMode(newMode)
-    }
-    
-    const themeInfo = getTheme(mode)
-
-    const contextValue: AppThemeContextProps = { 
-        ...themeInfo,
-        mode: mode,
-        setMode: onModeChange,
-        isDarkMode: themeInfo.name === ThemeName.Dark
-    }
-
-    return (
-        <AppThemeContext.Provider value={contextValue}>
-            <ThemeProvider theme={themeInfo.theme}>
-                {children}
-            </ThemeProvider>
-        </AppThemeContext.Provider>
-    )
-}
+};

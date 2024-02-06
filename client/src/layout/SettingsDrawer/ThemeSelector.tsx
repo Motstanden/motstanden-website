@@ -2,7 +2,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { ThemeMode, useAppTheme } from "src/context/Themes";
+import { ThemeMode, useAppTheme } from "src/context/AppTheme";
 
 export function ThemeSelector() {
     const { mode, setMode } = useAppTheme();

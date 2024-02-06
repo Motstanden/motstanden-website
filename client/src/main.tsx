@@ -8,12 +8,12 @@ import { AuthProvider } from "./context/Authentication";
 import './index.css';
 
 import { CssBaseline } from '@mui/material';
-import { LocaleProvider } from './context/Locale';
-import { AppThemeProvider } from './context/Themes';
-import { UserReferenceProvider } from './context/UserReference';
-import { LikeEmojiProvider } from './context/LikeEmoji';
-import { TopScrollerProvider } from './context/TopScroller';
 import { AppBarStyleProvider } from './context/AppBarStyle';
+import { AppThemeProvider } from './context/AppTheme';
+import { LikeEmojiProvider } from './context/LikeEmoji';
+import { LocaleProvider } from './context/Locale';
+import { TopScrollerProvider } from './context/TopScroller';
+import { UserReferenceProvider } from './context/UserReference';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement

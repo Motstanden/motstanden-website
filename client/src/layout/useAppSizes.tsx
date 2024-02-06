@@ -1,5 +1,5 @@
 import { useMediaQuery } from "@mui/material";
-import { useAppTheme } from "src/context/Themes";
+import { useAppTheme } from "src/context/AppTheme";
 
 const largeDesktopDrawerWidth = 335
 const mediumDesktopDrawerWidth = 270

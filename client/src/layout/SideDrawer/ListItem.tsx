@@ -3,7 +3,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import { Collapse, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SxProps, Theme, } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { Link as RouterLink, useMatch } from 'react-router-dom';
-import { useAppTheme } from 'src/context/Themes';
+import { useAppTheme } from 'src/context/AppTheme';
 import { isElementInViewport } from "src/utils/isElementInViewport";
 
 const listItemButtonSx = (theme: Theme): SxProps => ({

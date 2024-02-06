@@ -2,7 +2,7 @@ import { Skeleton, useMediaQuery } from "@mui/material";
 import React, { useState } from "react";
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
 import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton";
-import { useAppTheme } from "../../context/Themes";
+import { useAppTheme } from "../../context/AppTheme";
 import { useTitle } from "../../hooks/useTitle";
 import { PageContainer } from "../../layout/PageContainer/PageContainer";
 
