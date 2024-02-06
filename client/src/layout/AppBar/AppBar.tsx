@@ -1,4 +1,3 @@
-import LoginIcon from '@mui/icons-material/Login';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Box, IconButton, AppBar as MuiAppBar, Stack, SxProps, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
@@ -7,6 +6,7 @@ import { useAppBarStyle } from 'src/context/AppBarStyle';
 import { usePotentialUser } from 'src/context/Authentication';
 import UserAvatar from 'src/layout/AppBar/UserAvatar';
 import { useAppBarHeight, useAppBarIconSize } from '../useAppSizes';
+import { LoginButton } from './LoginButton';
 import { SettingsButton } from './SettingsButton';
 
 export function AppBar({ 
@@ -98,31 +98,4 @@ export function AppBar({
             </Toolbar>
         </MuiAppBar>
     );
-}
-
-function LoginButton() {
-    const { buttonSize, iconFontSize } = useAppBarIconSize()
-    return (
-        <IconButton
-            component={RouterLink}
-            to="/logg-inn"
-            sx={{
-                width: buttonSize,
-                height: buttonSize,
-                p: "0px",
-                color: "inherit",
-                bgcolor: "#FFFFFF15",
-                ":hover": {
-                    bgcolor: "#FFFFFF30",
-                }
-            }}
-        >
-            <LoginIcon 
-                fontSize={iconFontSize}
-                sx={{
-                    marginRight: "2px"
-                }}
-            />
-        </IconButton>
-    )
 }
