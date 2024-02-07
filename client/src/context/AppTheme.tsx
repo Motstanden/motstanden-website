@@ -52,8 +52,7 @@ const themeStorageKey = "AppTheme"
 
 function getDefaultMode(): ThemeMode {
     const storedData = localStorage.getItem(themeStorageKey)
-    const isValid = storedData && storedData in ThemeMode
-    
+    const isValid = storedData && Object.values(ThemeMode).includes(storedData as ThemeMode)
     if(!isValid) 
         return ThemeMode.System
 
