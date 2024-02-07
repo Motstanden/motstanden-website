@@ -11,7 +11,6 @@ import { useLocation } from "react-router-dom"
 import { LinkifiedText } from 'src/components/LinkifiedText'
 import { useAppBarStyle } from 'src/context/AppBarStyle'
 import { useAuthenticatedUser } from "src/context/Authentication"
-import { relativeTimeShortFormat } from 'src/context/Locale'
 import { fetchFn } from "src/utils/fetchAsync"
 import { postJson } from "src/utils/postJson"
 import { LikeButton } from './likes/LikeButton'
@@ -307,7 +306,7 @@ function CommentItem( {
                             opacity: "0.6",
                         }}
                         >
-                        {dayjs(comment.createdAt).utc(true).locale(relativeTimeShortFormat).fromNow()}
+                        {dayjs.utc(comment.createdAt).fromNow()}
                     </span>
                 </div>
             </div>

@@ -17,6 +17,7 @@ import { fetchFn } from "src/utils/fetchAsync";
 import { BoardPageUtils, RawProjectData } from "../boardWebsiteList/BoardWebsiteList";
 import { PollCard, PollSkeleton } from "../poll/Poll";
 import { RumourListSkeleton } from "../rumour/skeleton/RumourPage";
+import { useTimeZone } from "src/context/TimeZone";
 
 
 export default function Home() {
@@ -89,7 +90,6 @@ type RenderItemProps<T> = {
 }
 
 function RenderEventList(props: RenderItemProps<EventData[]>) {
-
     if(props.items.length <= 0)
         return <span style={{opacity: 0.75 }}>Ingen kommende arrangementer...</span>
 
@@ -115,7 +115,7 @@ function RenderEventList(props: RenderItemProps<EventData[]>) {
                         fontSize: "small"
                     }}
                     >
-                        {dayjs(event.startDateTime).utc(true).local().format("dddd D. MMM k[l]: HH:mm")}
+                        {dayjs.utc(event.startDateTime).tz().format("dddd D. MMM k[l]: HH:mm")}
                     </div>
                 </li>
             ))}
@@ -189,7 +189,7 @@ function RenderComments(props: RenderItemProps<EntityComment[]>) {
                                 opacity: "0.6"
                             }}
                         >
-                            {dayjs(comment.createdAt).utc(true).fromNow()}
+                            {dayjs.utc(comment.createdAt).fromNow()}
                         </div>
                     </div>
                 </Stack>
@@ -496,6 +496,8 @@ function ItemOfTheDay<T>({
     md?: number,
     display?: {xs?: string, sm?: string, md?: string, lg?: string, xl?: string}
 }) {
+    useTimeZone()   // Triggers rerender on time zone change 
+
     if(hide)
         return <></>
 

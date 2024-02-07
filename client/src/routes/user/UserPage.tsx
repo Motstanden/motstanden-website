@@ -12,6 +12,7 @@ import dayjs from "dayjs";
 import { Link as RouterLink, matchPath, useLocation } from "react-router-dom";
 import { PostingWall } from "src/components/PostingWall";
 import { useAuthenticatedUser } from "src/context/Authentication";
+import { useTimeZone } from 'src/context/TimeZone';
 import { useTopScroller } from 'src/context/TopScroller';
 import { useTitle } from "src/hooks/useTitle";
 import { useUserProfileContext } from './Context';
@@ -106,6 +107,7 @@ function EditButton({ user }: { user: User }) {
 }
 
 export function PersonCard({ user }: { user: User }) {
+    useTimeZone()
     return (
         <Card title="Personalia">
             <CardTextItem label="Navn" text={getFullName(user)} />
@@ -117,6 +119,7 @@ export function PersonCard({ user }: { user: User }) {
 }
 
 export function MemberCard({ user }: { user: User }) {
+    useTimeZone()
     return (
         <Card title="Medlemskap">
             <CardTextItem label="Kappe" text={user.capeName ? user.capeName : "-"} />
@@ -128,6 +131,7 @@ export function MemberCard({ user }: { user: User }) {
 }
 
 export function AccountDetailsCard({ user }: { user: User }) {
+    useTimeZone()
     return (
         <Card title="Brukerkonto">
             <CardTextItem label="Rolle" text={userGroupToPrettyStr(user.groupName)} />
@@ -139,17 +143,17 @@ export function AccountDetailsCard({ user }: { user: User }) {
 }
 
 export function formatExactDate(dateStr: string): string {
-    return dayjs(dateStr).utc(true).local().format("DD MMM YYYY HH:mm:ss")
+    return dayjs.utc(dateStr).tz().format("DD MMM YYYY HH:mm:ss")
 }
 
 function formatDateStr(dateStr: string | null): string {
     if (!dateStr)
         return "-"
-    return dayjs(dateStr).format("DD MMMM YYYY")
+    return dayjs.utc(dateStr).tz().format("DD MMMM YYYY")
 }
 
 function formatDateInterval(startDate: string, endDate: string | null): string {
-    let result = dayjs(startDate).format("MMMM YYYY") + " - "
-    result += endDate ? dayjs(endDate).format("MMMM YYYY") : "dags dato"
+    let result = dayjs.utc(startDate).tz().format("MMMM YYYY") + " - "
+    result += endDate ? dayjs.utc(endDate).tz().format("MMMM YYYY") : "dags dato"
     return result
 }

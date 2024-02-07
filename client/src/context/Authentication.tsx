@@ -82,7 +82,7 @@ function getPreviousUser(): User | undefined {
         return undefined
     }
 
-    const expiryTime = dayjs(user.expires)
+    const expiryTime = dayjs.utc(user.expires)
 
     if(!expiryTime.isValid())
         return undefined

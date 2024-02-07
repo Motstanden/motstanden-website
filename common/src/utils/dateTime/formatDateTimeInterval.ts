@@ -27,13 +27,13 @@ function isSimilarDate(a: Dayjs, b: Dayjs) {
 export function formatDateTimeInterval(start: string | Dayjs, end: string | Dayjs | null): string {
 
     if(typeof start === "string")
-        start = dayjs(start);
+        start = dayjs.utc(start);
 
     if (!end) 
         return getDateTimeStr(start);
 
     if(typeof end === "string")
-        end = dayjs(end);
+        end = dayjs.utc(end);
 
     if (isSameDate(start, end) || isSimilarDate(start, end)) 
         return `${getDateTimeStr(start)} – ${getTimeStr(end)}`;

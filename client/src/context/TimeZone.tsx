@@ -9,6 +9,7 @@ export enum TimeZone {
 interface TimeZoneContextType { 
     timeZone: TimeZone,
     setTimeZone: (timeZone: TimeZone) => void
+    datePickerTimeZone: "Europe/Oslo" | "system"
 }
 
 const TimeZoneContext = createContext<TimeZoneContextType>(null!)
@@ -29,9 +30,12 @@ export function TimeZoneProvider({ children }: { children: React.ReactNode }) {
     const tzName = getTimeZoneName(timeZone)
     dayjs.tz.setDefault(tzName)
 
+    const datePickerTz = getDatePickerTimeZone(timeZone)
+
     const contextValue: TimeZoneContextType = { 
         timeZone: timeZone,
-        setTimeZone: onTimeZoneChange
+        setTimeZone: onTimeZoneChange,
+        datePickerTimeZone: datePickerTz
     }
 
     return (
@@ -41,10 +45,18 @@ export function TimeZoneProvider({ children }: { children: React.ReactNode }) {
     )
 }
 
+
 function getTimeZoneName(timeZone: TimeZone): string | undefined {
     switch(timeZone) {
         case TimeZone.Norway: return "Europe/Oslo"
         case TimeZone.System: return undefined
+    }
+}
+
+function getDatePickerTimeZone(timeZone: TimeZone) {
+    switch(timeZone) {
+        case TimeZone.Norway: return "Europe/Oslo"
+        case TimeZone.System: return "system"
     }
 }
 

@@ -21,6 +21,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { dateTimePickerStyle } from 'src/assets/style/timePickerStyles';
 import { Form } from "src/components/form/Form";
+import { useTimeZone } from 'src/context/TimeZone';
 import { useTitle } from "src/hooks/useTitle";
 import { MarkDownEditor } from '../../../components/MarkDownEditor';
 import { eventContextQueryKey } from '../Context';
@@ -68,11 +69,12 @@ export function EventEditorForm({
         const serializedEvent: UpsertEventData = {
             eventId: eventId,
             title: event.title,
-            startDateTime: event.startTime!.utc(false).format("YYYY-MM-DD HH:mm:00"),
-            endDateTime: event.endTime?.utc(false).format("YYYY-MM-DD HH:mm:00") ?? null,
+            startDateTime: event.startTime!.utc().format("YYYY-MM-DD HH:mm:00"),
+            endDateTime: event.endTime?.utc().format("YYYY-MM-DD HH:mm:00") ?? null,
             keyInfo: event.keyInfo,
             description: event.description.trim(),
         };
+        console.log(serializedEvent.startDateTime, serializedEvent.endDateTime)
         return serializedEvent;
     };
 
@@ -165,8 +167,10 @@ function TitleForm(props: EventFormProps) {
 
 const beginningOfTime = dayjs("2018-09-11")  // Motstandens birth day
 
-function TimeForm(props: EventFormProps) {
-    const {value, onChange, sx} = props
+function TimeForm({value, onChange, sx}: EventFormProps) {
+
+    const { datePickerTimeZone } = useTimeZone()
+
     const textFieldProps: TextFieldProps = {
         autoComplete: "off",
         variant: "standard",
@@ -187,6 +191,7 @@ function TimeForm(props: EventFormProps) {
             </Box>
             <DateTimePicker
                 label="Starter"
+                timezone={datePickerTimeZone}
                 {...dateTimePickerStyle}
                 minDateTime={beginningOfTime}
                 value={value.startTime}
@@ -200,6 +205,7 @@ function TimeForm(props: EventFormProps) {
             </Box>
             <DateTimePicker
                 label="Slutter"
+                timezone={datePickerTimeZone}
                 {...dateTimePickerStyle}
                 disabled={!value.startTime}
                 minDateTime={value.startTime ?? beginningOfTime}

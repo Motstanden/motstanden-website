@@ -59,7 +59,7 @@ function ReadOnlyItem({ rumour }: { rumour: Rumour }) {
                 opacity: 0.6,
                 fontSize: "xx-small"
             }}>
-                {`${dayjs(rumour.createdAt).utc(true).local().format("D MMMM YYYY")}`}
+                {`${dayjs.utc(rumour.createdAt).tz().format("D MMMM YYYY")}`}
             </div>
         </div>
     )

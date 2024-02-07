@@ -8,8 +8,8 @@ export default function EditEventPage() {
     const event = useOutletContext<EventData>();
     const initialValue: EventEditorState = {
         title: event.title,
-        startTime: dayjs(event.startDateTime),
-        endTime: event.endDateTime ? dayjs(event.endDateTime) : null,
+        startTime: dayjs.utc(event.startDateTime),
+        endTime: event.endDateTime ? dayjs.utc(event.endDateTime) : null,
         keyInfo: event.keyInfo,
         description: event.description
     }

@@ -342,5 +342,5 @@ function isMotstandenMail(email: string): boolean {
 }
 
 function formatDate(dateStr: string | null) {
-    return dateStr ? dayjs(dateStr).format("MMM YYYY") : "-"
+    return dateStr ? dayjs.utc(dateStr).tz().format("MMM YYYY") : "-"
 }

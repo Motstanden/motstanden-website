@@ -213,7 +213,7 @@ export function PostSectionItem({
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
     const formatDate = (dateString: string): string => {
-        const date = dayjs(dateString).utc(true)
+        const date = dayjs.utc(dateString)
         const now = dayjs()
         if(date.isAfter(now.subtract(4, "day"))) {
             return date.fromNow()

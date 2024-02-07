@@ -1,6 +1,7 @@
 import { Link, Skeleton } from "@mui/material"
 import dayjs from "dayjs"
 import { Link as RouterLink } from "react-router-dom"
+import { useTimeZone } from "src/context/TimeZone"
 import { useUserReference } from "src/context/UserReference"
 
 export const authorInfoTextStyle: React.CSSProperties = { 
@@ -66,6 +67,7 @@ export function AuthorInfo({
 
 export function AuthorItem({ userId, dateTime }: { userId: number, dateTime: string }) {
     const { userReference, isPending, isError } = useUserReference()
+    useTimeZone()
 
     if(isPending)
         return <Skeleton variant="text" style={{display: "inline-block", width: "190px"}} />
@@ -76,7 +78,7 @@ export function AuthorItem({ userId, dateTime }: { userId: number, dateTime: str
     const user = userReference[userId]
     return (
         <span>
-            {`${dayjs(dateTime).utc(true).local().format("DD. MMM YYYY HH:mm")}, av `}
+            {`${dayjs.utc(dateTime).tz().format("DD. MMM YYYY HH:mm")}, av `}
             
             {user && (
                 <Link

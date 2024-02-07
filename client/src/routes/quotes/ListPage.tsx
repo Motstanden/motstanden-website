@@ -62,7 +62,7 @@ function ReadOnlyItem({ quote }: { quote: QuoteData }) {
                     –
                 </div>
                 <div>
-                    {`${quote.utterer}, ${dayjs(quote.createdAt).utc(true).local().format("D MMMM YYYY")}`}
+                    {`${quote.utterer}, ${dayjs.utc(quote.createdAt).tz().format("D MMMM YYYY")}`}
                 </div>
             </div>
         </div>
