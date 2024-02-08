@@ -33,7 +33,7 @@ export default function UserAvatar() {
 
     return (
         <IconPopupMenu
-            aria-label="Profilmeny" 
+            ariaLabel="Profilmeny" 
             style={{
                 padding: "0px",
                 color: "inherit",

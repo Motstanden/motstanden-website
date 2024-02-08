@@ -1,5 +1,5 @@
 import LoginIcon from '@mui/icons-material/Login';
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useAppBarIconSize } from '../useAppSizes';
 
@@ -9,6 +9,7 @@ export function LoginButton() {
         <IconButton
             component={RouterLink}
             to="/logg-inn"
+            aria-label="Logg inn"
             sx={{
                 width: buttonSize,
                 height: buttonSize,
@@ -20,11 +21,13 @@ export function LoginButton() {
                 }
             }}
         >
-            <LoginIcon
-                fontSize={iconFontSize}
-                sx={{
-                    marginRight: "2px"
-                }} />
+            <Tooltip title="Logg inn">
+                <LoginIcon
+                    fontSize={iconFontSize}
+                    sx={{
+                        marginRight: "2px"
+                    }} />
+            </Tooltip>
         </IconButton>
     );
 }

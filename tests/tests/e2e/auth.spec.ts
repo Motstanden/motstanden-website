@@ -139,8 +139,9 @@ test.describe( "User can log out", () => {
 
 async function testUserIsLoggedOut(page: Page) {
     await page.goto('/hjem');
-    await expect(page.getByRole('link', { name: 'Logg Inn' })).toBeVisible()
+    await page.waitForURL("/logg-inn")
     await expect(page).toHaveURL('/logg-inn');
+    await expect(page.getByRole('link', { name: 'Logg inn' })).toBeVisible()
     const cookies = await page.context().cookies()
     expect(cookies.length).toBe(0)
 }
