@@ -1,6 +1,6 @@
 import { expect, Page, test } from '@playwright/test';
 import { ParticipationStatus, UserGroup } from 'common/enums';
-import { NewEventData as NewEventApiData } from 'common/interfaces';
+import { NewEventData } from 'common/interfaces';
 import dayjs from "common/lib/dayjs";
 import { getFullName } from 'common/utils';
 import { formatDateTimeInterval } from "common/utils/dateTime";
@@ -42,8 +42,9 @@ test.describe("Contributors can update other events @smoke", async () => {
 	})
 })
 
-interface NewEventData extends Omit<NewEventApiData, "description" | "descriptionHtml"> {
-	description: string
+interface TestEvent extends NewEventData {
+	startDate: dayjs.Dayjs,
+	endDate?: dayjs.Dayjs
 }
 
 // crud -> create read update delete
@@ -63,8 +64,8 @@ async function testCrud(opts: CrudOptions) {
 	opts.updater ??= opts.creator
     opts.deleter ??= opts.updater
 
-    const event1: NewEventData = createRandomEvent()
-	const event2: NewEventData = createRandomEvent()
+    const event1: TestEvent = createRandomEvent()
+	const event2: TestEvent = createRandomEvent()
 
 	let eventUrl: string
 
@@ -150,12 +151,12 @@ async function testParticipation(page: Page,  user: TestUser) {
 	await expect(notAttendingHeading).not.toBeVisible();
 }
 
-async function testCreateNew(page: Page, event: NewEventData) {
+async function testCreateNew(page: Page, event: TestEvent) {
 	await submitForm(page, event)
 	await validateEventPage(page, event)
 }
 
-async function testUpdate(page: Page, oldEvent: NewEventData, newEvent: NewEventData) {
+async function testUpdate(page: Page, oldEvent: TestEvent, newEvent: TestEvent) {
 	await clickEdit(page)
 
 	await submitForm(page, newEvent)
@@ -168,17 +169,17 @@ async function testUpdate(page: Page, oldEvent: NewEventData, newEvent: NewEvent
 	}
 }
 
-async function testDelete(page: Page, event: NewEventData) {
+async function testDelete(page: Page, event: TestEvent) {
 	await clickDelete(page)
 	await expect(page.getByRole('link', { name: event.title })).not.toBeVisible()
 }
 
-async function submitForm(page: Page, event: NewEventData) {
+async function submitForm(page: Page, event: TestEvent) {
 	await fillForm(page, event)
 	await saveForm(page)
 }
 
-async function fillForm(page: Page, event: NewEventData) {
+async function fillForm(page: Page, event: TestEvent) {
 	await page.getByPlaceholder('Tittel på arrangement *').fill(event.title);
 	await selectDate(page, /Starter/, event.startDateTime, "TimeDayMonthYear")
 	await selectDate(page, /Slutter/, event.endDateTime, "TimeDayMonthYear")
@@ -203,7 +204,7 @@ async function saveForm(page: Page) {
 	await page.waitForURL(/\/arrangement\/(kommende|tidligere)\/[0-9]+/)
 }
 
-async function validateEventPage(page: Page, event: NewEventData) {
+async function validateEventPage(page: Page, event: TestEvent) {
 	const urlRegExp = isUpcoming(event) 
 		? /\/arrangement\/kommende\/[0-9]+/ 
 		: /\/arrangement\/tidligere\/[0-9]+/ 
@@ -212,7 +213,7 @@ async function validateEventPage(page: Page, event: NewEventData) {
 	await expect(page.getByText(event.title)).toBeVisible()
 	await expect(page.getByText(event.description)).toBeVisible()	
 
-	const timeText = formatDateTimeInterval(event.startDateTime, event.endDateTime)
+	const timeText = formatDateTimeInterval(event.startDate, event.endDate)
 	await expect(page.getByText(timeText)).toBeVisible()	
 
 	for(let i = 0; i < event.keyInfo.length; i++) {
@@ -270,7 +271,7 @@ function statusToString(status: ParticipationStatus): string {
 	return status.toString()
 }
 
-function createRandomEvent(): NewEventData {
+function createRandomEvent(): TestEvent {
 
 	const start = dayjs().add(randomInt(1, 100), "day")
 						 .add(randomInt(1, 100), "hour")
@@ -279,10 +280,14 @@ function createRandomEvent(): NewEventData {
 	const end = dayjs(start).add(randomInt(1, 100), "hour")
 							.add(randomInt(0, 59), "minute");
 
-	const event: NewEventData = {
+	const hasEndDate = randomBool()
+
+	const event: TestEvent = {
         title: randomString("title"),
         startDateTime: start.format("YYYY-MM.DD HH:mm:ss"),
-        endDateTime: randomBool() ? end.format("YYYY-MM.DD HH:mm:ss") : null,
+		startDate: start,
+        endDateTime: hasEndDate ? end.format("YYYY-MM.DD HH:mm:ss") : null,
+		endDate: hasEndDate ? end : undefined,
         keyInfo: [],
 		description: randomString("description")
     }
@@ -309,7 +314,7 @@ function randomString(name: string, maxChars?: number) {
 function randomBool(){
 	return Math.random() < 0.5;
 }
-function isUpcoming(event: NewEventData) {
+function isUpcoming(event: TestEvent) {
 	const now = dayjs()
 	
 	if(event.endDateTime) 
