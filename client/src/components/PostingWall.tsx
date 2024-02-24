@@ -338,6 +338,7 @@ function LikeList() {
     if(userReference && !isVeryTinyScreen) {
 
         const name = userReference[likes[0].userId].fullName
+        const maxLength = 35
 
         if(likes.length === 1)
             text = `${name}` 
@@ -345,10 +346,10 @@ function LikeList() {
         if(likes.length === 2) {
             text = `${name} og ${userReference[likes[1].userId].fullName}` 
 
-            if(text.length > 27 && isSmallScreen) {
+            if(text.length > maxLength && isSmallScreen) {
                 text = `${name} og 1 annen`
                 
-                if(text.length > 27) {
+                if(text.length > maxLength) {
                     text = `${name} + 1`
                 }
             }
@@ -356,19 +357,15 @@ function LikeList() {
 
         if(likes.length > 2) {
             text = `${name} og ${likes.length - 1} andre`
-            if(text.length > 27 && isSmallScreen) {
+            if(text.length > maxLength && isSmallScreen) {
                 text = `${name} + ${likes.length - 1}`
             }
-        }
-
-        if(isTinyScreen && text.length > 27) {  // some people have long names
-            text = ""
         }
     }
 
 
     return (
-        <div>
+        <>
             <Button 
                 color="secondary"
                 variant="text"
@@ -382,29 +379,24 @@ function LikeList() {
                     color: (theme) => theme.palette.text.primary
                 }}
             >
-                <span 
-                    style={{
-                        verticalAlign: "top",
-                    }}
-                    >
-                    <LikeListEmojiContent 
-                        maxItems={isSmallScreen && !isNullOrWhitespace(text) ? 2 : 3} 
-                        showCount={isNullOrWhitespace(text)}/>
-                </span>
-                {text &&(
-                    <span 
-                        style={{
-                            marginLeft: "3px",
-                            fontWeight: "bold",
-                            opacity: 0.6,
-                        }}
-                    >
+                <LikeListEmojiContent 
+                    maxItems={isSmallScreen && !isNullOrWhitespace(text) ? 2 : 3} 
+                    showCount={isNullOrWhitespace(text)}/>
+                {text && (
+                    <div style={{
+                        marginLeft: "3px",
+                        fontWeight: "bold",
+                        opacity: 0.6,
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                    }}>
                         {text}
-                    </span>
+                    </div>
                 )}
             </Button>
-            <UserLikesModal/>
-        </div>
+            <UserLikesModal/> 
+        </>
     )
 }
 
