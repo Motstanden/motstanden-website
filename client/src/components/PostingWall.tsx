@@ -369,6 +369,7 @@ function LikeList() {
                     textTransform: "none",
                     alignItems: "flex-start",
                     textAlign: "left",
+                    marginLeft: "15px"
                 }}
                 sx={{
                     color: (theme) => theme.palette.text.primary
