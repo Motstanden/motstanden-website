@@ -368,7 +368,6 @@ function LikeList() {
                     textTransform: "none",
                     alignItems: "flex-start",
                     textAlign: "left",
-                    marginLeft: "15px"
                 }}
                 sx={{
                     color: (theme) => theme.palette.text.primary
@@ -383,6 +382,7 @@ function LikeList() {
                             fontWeight: "bold",
                             marginLeft: "3px",
                             opacity: 0.6,
+                            wordBreak: "break-all"
                         }}>
                             {text}
                         </div>
