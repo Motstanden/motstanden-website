@@ -64,6 +64,7 @@ export function LikeButton(props: LikeButtonProps) {
                         margin: "0px",
                         textTransform: "capitalize",
                         fontWeight: "bold",
+                        whiteSpace: "nowrap",
                         ...addedStyle
                     }}
                     sx={{

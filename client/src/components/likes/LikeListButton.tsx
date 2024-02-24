@@ -43,7 +43,15 @@ export function LikeListIconButton( props: LikeListButtonProps) {
     )
 }
 
-export function LikeListEmojiContent( { maxItems, showCount}: {maxItems?: number, showCount?: boolean}) {
+export function LikeListEmojiContent( { 
+    maxItems, 
+    showCount,
+    style
+}: {
+    maxItems?: number, 
+    showCount?: boolean,
+    style?: React.CSSProperties
+}) {
     const { likes, groupedLikes } = useLikes()
     const { emojis } = useLikeEmoji()
 
@@ -52,7 +60,11 @@ export function LikeListEmojiContent( { maxItems, showCount}: {maxItems?: number
         : groupedLikes 
 
     return (
-        <>
+        <span style={{
+                whiteSpace: "nowrap",
+                ...style
+            }}
+        >
             {filteredLikes.map( item => (
                 <span key={item.emojiId}>
                     {emojis[item.emojiId].text}
@@ -69,7 +81,7 @@ export function LikeListEmojiContent( { maxItems, showCount}: {maxItems?: number
                     {likes.length + 1 >= 100 ? "99+" : likes.length}
                 </span>
             )}
-        </>
+        </span>
     )
 }
 
