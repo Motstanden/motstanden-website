@@ -12,6 +12,7 @@ import { useAuthenticatedUser } from "src/context/Authentication"
 import { useUserReference } from 'src/context/UserReference'
 import { fetchFn } from "src/utils/fetchAsync"
 import { postJson } from 'src/utils/postJson'
+import { softHypenate } from 'src/utils/softHyphenate'
 import { CommentSection, CommentSectionSkeleton } from "./CommentSection"
 import { LinkifiedText } from './LinkifiedText'
 import { LikeButton, LikeButtonSkeleton } from './likes/LikeButton'
@@ -320,7 +321,6 @@ function LikeList() {
     const { likes, isPending } = useLikes()
     const { userReference } = useUserReference()
     const isVeryTinyScreen = useMediaQuery("(max-width: 350px)");
-    const isTinyScreen = useMediaQuery("(max-width: 370px)");
     const isSmallScreen = useMediaQuery("(max-width: 430px)")
 
     const { openModal } = useLikesModal()
@@ -354,6 +354,7 @@ function LikeList() {
         if(likes.length > 2) {
             text = `${name} og ${likes.length - 1} andre`
         }
+        text = softHypenate(text)
     }
 
     return (
@@ -382,7 +383,6 @@ function LikeList() {
                             fontWeight: "bold",
                             marginLeft: "3px",
                             opacity: 0.6,
-                            wordBreak: "break-all"
                         }}>
                             {text}
                         </div>
