@@ -107,9 +107,6 @@ async function fetchCurrentUser(): Promise<User | null> {
 
 export const userQueryKey = ["GetCurrentUser"]
 
-/**
- * Provider for usePotentialUser hook.
- */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const [ previousUser ] = useState<User | undefined>(getPreviousUser())
@@ -147,16 +144,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } as const
     }
 
-    if(contextValue.isLoggedIn) {
-        return (
-            <potentialUserContext.Provider value={contextValue}>
-                <authenticatedUserContext.Provider value={contextValue}>
-                    {children}
-                </authenticatedUserContext.Provider>
-            </potentialUserContext.Provider>
-        )
-    }
-
     return (
         <potentialUserContext.Provider value={contextValue}>
             <AuthenticatedUserProvider>
@@ -169,7 +156,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 function AuthenticatedUserProvider({ children }: { children: React.ReactNode }) {
     const auth = usePotentialUser();
 
-    // This hook should only be used when we know for a fact that the user is logged in.
+    // useAuthenticatedUser hook should only be used when we know for a fact that the user is logged in.
     // Prefer the app to break if a developer mistakenly calls this hook in a context where they don't know for sure that the user is logged in.
     if(!auth.isLoggedIn)
         return children
@@ -182,9 +169,6 @@ function AuthenticatedUserProvider({ children }: { children: React.ReactNode }) 
 
 }
 
-/**
- * Provider for useAuthenticatedUser hook.
- */
 export function RequireAuth({ requiredGroup, children }: { children: React.ReactNode, requiredGroup?: UserGroup }) {
     const auth = usePotentialUser();
     const {isLoggedIn, user} = auth;
