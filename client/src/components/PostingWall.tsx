@@ -298,13 +298,15 @@ export function PostSectionItem({
                 </LinkifiedText>
             </div>
             <Stack direction="row" justifyContent="space-between">
-                <LikeButton
-                    style={{
-                        padding: "0px",
-                        paddingInline: "6px",
-                        minWidth: "0px",
-                    }}
-                />
+                <div style={{minWidth: "105px"}}>
+                    <LikeButton
+                        style={{
+                            padding: "0px",
+                            paddingInline: "6px",
+                            minWidth: "0px",
+                        }}
+                    />
+                </div>
                 <LikeList/>
             </Stack>
             <Divider sx={{mb: 3, mt: 1}} />
@@ -320,8 +322,8 @@ export function PostSectionItem({
 function LikeList() {
     const { likes, isPending } = useLikes()
     const { userReference } = useUserReference()
-    const isVeryTinyScreen = useMediaQuery("(max-width: 350px)");
-    const isSmallScreen = useMediaQuery("(max-width: 430px)")
+    const isTinyScreen = useMediaQuery("(max-width: 350px)");
+    const isSmallScreen = useMediaQuery("(max-width: 675px)")       // We will consider this a small screen because the side drawer is docked at this width
 
     const { openModal } = useLikesModal()
     const onClick = () => { 
@@ -335,7 +337,7 @@ function LikeList() {
         return <></>
     
     let text = ""
-    if(userReference && !isVeryTinyScreen) {
+    if(userReference && !isTinyScreen) {
 
         const name = userReference[likes[0].userId].fullName
 
@@ -369,7 +371,6 @@ function LikeList() {
                     textTransform: "none",
                     alignItems: "flex-start",
                     textAlign: "left",
-                    marginLeft: "35px"
                 }}
                 sx={{
                     color: (theme) => theme.palette.text.primary
