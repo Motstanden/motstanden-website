@@ -70,6 +70,7 @@ function EditItem(props: RenderEditFormProps<Rumour>) {
         <div style={{ marginRight: "10px" }}>
             <Divider sx={{ mb: 4 }} />
             <UpsertRumourForm
+                storageKey={["Rumours", "Edit", props.data.id]}
                 initialValue={props.data}
                 onAbortClick={props.onEditAbort}
                 onPostSuccess={props.onEditSuccess}

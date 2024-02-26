@@ -74,6 +74,7 @@ function EditItem(props: RenderEditFormProps<QuoteData>) {
         <div>
             <Divider sx={{ mb: 4 }} />
             <UpsertQuoteForm
+                storageKey={["Quotes", "Edit", props.data.id]}
                 initialValue={props.data}
                 postUrl="/api/quotes/update"
                 onAbortClick={props.onEditAbort}

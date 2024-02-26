@@ -1,19 +1,27 @@
 import { TextField } from "@mui/material";
 import { NewRumour, Rumour } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
-import { useState } from "react";
 import { Form } from "src/components/form/Form";
+import { useSessionStorage } from "src/hooks/useStorage";
 
 
 export function UpsertRumourForm({
-    initialValue, postUrl, onAbortClick, onPostSuccess,
+    initialValue, 
+    postUrl, 
+    storageKey,
+    onAbortClick, 
+    onPostSuccess,
 }: {
     initialValue: NewRumour | Rumour;
     postUrl: string;
+    storageKey: any[],
     onAbortClick: VoidFunction;
     onPostSuccess: VoidFunction;
 }) {
-    const [newValue, setNewValue] = useState<NewRumour | Rumour>(initialValue);
+    const [newValue, setNewValue, clearNewValue] = useSessionStorage<NewRumour | Rumour>({
+        key: storageKey,
+        initialValue: initialValue
+    });
 
     const validateData = () => {
         const isEmpty = isNullOrWhitespace(newValue.rumour);
@@ -25,6 +33,16 @@ export function UpsertRumourForm({
         return { ...newValue, rumour: newValue.rumour.trim() };
     };
 
+    const handlePostSuccess = () => {
+        clearNewValue();
+        onPostSuccess();
+    }
+
+    const handleAbortClick = () => {
+        clearNewValue();
+        onAbortClick();
+    }
+
     const disabled = !validateData();
 
     return (
@@ -33,8 +51,8 @@ export function UpsertRumourForm({
                 value={getSubmitData}
                 postUrl={postUrl}
                 disabled={disabled}
-                onAbortClick={_ => onAbortClick()}
-                onPostSuccess={_ => onPostSuccess()}
+                onAbortClick={handleAbortClick}
+                onPostSuccess={handlePostSuccess}
             >
                 <div style={{ marginBottom: "-1em" }}>
                     <TextField

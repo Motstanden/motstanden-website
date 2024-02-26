@@ -19,6 +19,7 @@ export function NewRumourPage() {
         <>
             <h1>Nytt rykte</h1>
             <UpsertRumourForm
+                storageKey={["Rumours", "New"]}
                 initialValue={{ rumour: "" }}
                 postUrl="/api/rumours/new"
                 onAbortClick={onAbort}

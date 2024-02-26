@@ -20,6 +20,7 @@ export default function NewPage() {
             <h1>Nytt sitat</h1>
             <UpsertQuoteForm
                 initialValue={{ quote: "", utterer: "" }}
+                storageKey={["Quotes", "New"]}
                 postUrl="/api/quotes/new"
                 onAbortClick={onAbort}
                 onPostSuccess={onSuccess} />
