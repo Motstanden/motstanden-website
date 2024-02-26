@@ -19,7 +19,11 @@ export default function EditEventPage() {
                 <span>Redigerer </span>
                 <em><q>{event.title}</q></em>
             </h1>
-            <EventEditorForm backUrl="/arrangement" postUrl="/api/events/update" initialValue={initialValue} eventId={event.eventId} />
+            <EventEditorForm 
+                storageKey={["Event", "Edit", event.eventId]}
+                postUrl="/api/events/update" 
+                initialValue={initialValue} eventId={event.eventId} 
+            />
         </div>
     );
 }

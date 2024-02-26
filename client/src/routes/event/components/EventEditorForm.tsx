@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { dateTimePickerStyle } from 'src/assets/style/timePickerStyles';
 import { Form } from "src/components/form/Form";
 import { useTimeZone } from 'src/context/TimeZone';
+import { useSessionStorage } from 'src/hooks/useStorage';
 import { useTitle } from "src/hooks/useTitle";
 import { MarkDownEditor } from '../../../components/MarkDownEditor';
 import { eventContextQueryKey } from '../Context';
@@ -41,18 +42,42 @@ function createValidState(initialValue: EventEditorState): EventEditorState {
     return newValue;
 }
 
+function serializeEventEditorState(event: EventEditorState): string {
+    return JSON.stringify({
+        ...event,
+        startTime: event.startTime?.toISOString(),
+        endTime: event.endTime?.toISOString()
+    })
+}
+
+function deserializeEventEditorState(serialized: string): EventEditorState {
+    const parsed = JSON.parse(serialized)
+    return {
+        ...parsed,
+        startTime: parsed.startTime ? dayjs(parsed.startTime) : null,
+        endTime: parsed.endTime ? dayjs(parsed.endTime) : null
+    } as EventEditorState
+}
+
+
 export function EventEditorForm({ 
-    backUrl, 
     postUrl, 
     initialValue, 
+    storageKey,
     eventId 
 }: { 
-    backUrl: string; 
     postUrl: string; 
-    initialValue: EventEditorState; 
+    initialValue: EventEditorState;
+    storageKey: any[], 
     eventId?: number; 
 }) {
-    const [event, setEvent] = useState(createValidState(initialValue));
+    const [event, setEvent, clearEvent] = useSessionStorage<EventEditorState>({
+        key: storageKey,
+        initialValue: createValidState(initialValue),
+        delay: 1000,
+        serialize: serializeEventEditorState,
+        deserialize: deserializeEventEditorState,
+    });
 
     const [hasPosted, setHasPosted] = useState(false);
 
@@ -65,7 +90,7 @@ export function EventEditorForm({
         setEvent(oldValues => ({ ...oldValues, ...newValues }))
     }
 
-    const serializeState = (): UpsertEventData => {
+    const getSubmitData = (): UpsertEventData => {
         const serializedEvent: UpsertEventData = {
             eventId: eventId,
             title: event.title,
@@ -74,7 +99,6 @@ export function EventEditorForm({
             keyInfo: event.keyInfo,
             description: event.description.trim(),
         };
-        console.log(serializedEvent.startDateTime, serializedEvent.endDateTime)
         return serializedEvent;
     };
 
@@ -82,8 +106,14 @@ export function EventEditorForm({
         setHasPosted(true)
         const data = await res.json();
         await queryClient.invalidateQueries({queryKey: eventContextQueryKey})
+        clearEvent()
         navigate(`/arrangement/${eventId ?? data.eventId ?? ""}`)
     };
+
+    const handleAbortClick = () => {
+        clearEvent()
+        navigate(-1)
+    }
 
     const editorHasContent = (): boolean => !isNullOrWhitespace(event.description)
 
@@ -100,9 +130,9 @@ export function EventEditorForm({
 
     return (
         <Form
-            value={() => serializeState()}
+            value={() => getSubmitData()}
             postUrl={postUrl}
-            onAbortClick={_ => navigate(backUrl)}
+            onAbortClick={handleAbortClick}
             onPostSuccess={onPostSuccess}
             disabled={disabled}
         >
