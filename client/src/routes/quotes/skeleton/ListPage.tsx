@@ -21,14 +21,18 @@ function ListSkeleton({ length }: { length: number }) {
             paddingLeft: "5px",
             listStyleType: "none"
         }}>
-            {Array(length).fill(1).map((_, i) => <ItemSkeleton key={i} />)}
+            {Array(length).fill(1).map((_, i) => (
+                <li key={i}>
+                    <ItemSkeleton />
+                </li>
+            ))}
         </ul>
     )
 }
 
 function ItemSkeleton() {
     return (
-        <li>
+        <>
             <div>
                 <Skeleton
                     style={{
@@ -46,6 +50,6 @@ function ItemSkeleton() {
                     }}
                 />
             </div>
-        </li>
+        </>
     )
 }

@@ -24,16 +24,20 @@ function ListSkeleton({ length }: { length: number; }) {
             paddingLeft: "5px",
             listStyleType: "none",
         }}>
-            {Array(length).fill(1).map((_, i) => <ItemSkeleton key={i} />)}
+            {Array(length).fill(1).map((_, i) => (
+                <li key={i}>
+                    <ItemSkeleton/>
+                </li>
+            ))}
         </ul>
     );
 }
 
 function ItemSkeleton() {
     return (
-        <li style={{ marginBottom: "30px" }}>
+        <div style={{ marginBottom: "30px" }}>
             <Skeleton style={{ maxWidth: "700px", height: "2.5em" }} />
             <Skeleton style={{ maxWidth: "95px", height: "1em", marginLeft: "25px" }} />
-        </li>
+        </div>
     )
 }
