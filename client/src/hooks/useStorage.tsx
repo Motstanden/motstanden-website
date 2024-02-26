@@ -8,21 +8,22 @@ type StorageType<T> = [
     VoidFunction
 ];
 
-interface StorageOptions { 
-    validateInitial?: (value: any) => boolean
+interface StorageProps<T> {
+    key: string,
+    initialValue: InitialValueType<T>,
+    validateStorage?: (value: any) => boolean
+}
+
+interface ExtendedStorageProps<T> extends StorageProps<T> { 
+    storage: Storage
 }
 
 // A custom hook that uses either localStorage or sessionStorage to store and retrieve data
-function useStorage<T>(
-    key: string, 
-    initialValue: InitialValueType<T>, 
-    storage: Storage,
-    options?: StorageOptions
-): StorageType<T> {
+function useStorage<T>( {key, initialValue, storage, ...options}: ExtendedStorageProps<T>): StorageType<T> {
 
     // Get the stored value from the storage or use the initial value
     const [storedValue, setStoredValue] = useState<T>(() => {
-        const item = getStoredItem(storage, key, options?.validateInitial)
+        const item = getStoredItem(storage, key, options?.validateStorage)
         if (item !== null){
             return item
         }
@@ -73,21 +74,13 @@ function getStoredItem(
 /**
  * A custom hook that uses localStorage to store and retrieve data. Works like useState but persists the state in localStorage.
  */
-export function useLocalStorage<T>(
-    key: string, 
-    initialValue: InitialValueType<T>,
-    options?: StorageOptions
-): StorageType<T> {
-    return useStorage(key, initialValue, window.localStorage, options);
+export function useLocalStorage<T>( props: StorageProps<T>): StorageType<T> {
+    return useStorage({ ...props, storage: window.localStorage });
 }
 
 /**
  * A custom hook that uses sessionStorage to store and retrieve data. Works like useState but persists the state in sessionStorage.
  */
-export function useSessionStorage<T>(
-    key: string, 
-    initialValue: InitialValueType<T>,
-    options?: StorageOptions
-): StorageType<T> {
-    return useStorage(key, initialValue, window.sessionStorage, options);
+export function useSessionStorage<T>(props: StorageProps<T>): StorageType<T> {
+    return useStorage({ ...props, storage: window.sessionStorage });
 }

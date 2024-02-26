@@ -24,8 +24,10 @@ export function useAppTheme() {
 
 export function AppThemeProvider({ children }: { children: React.ReactNode }) {
     
-    const [mode, setMode] = useLocalStorage<ThemeMode>("AppTheme", ThemeMode.System, {
-        validateInitial: (value) => isEnumValue(ThemeMode , value)
+    const [mode, setMode] = useLocalStorage<ThemeMode>({
+        key: "AppTheme",
+        initialValue: ThemeMode.System,
+        validateStorage: (value) => isEnumValue(ThemeMode , value)
     })
 
     useMediaQuery('(prefers-color-scheme: dark)');  // Trigges a rerender when the OS theme changes
