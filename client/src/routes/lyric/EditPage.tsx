@@ -30,7 +30,7 @@ export function EditLyricPage() {
                 initialValue={lyric}
                 onAbortClick={onAbortClick}
                 onPostSuccess={onPostSuccess}
-                storageKey={JSON.stringify(queryKey)}
+                storageKey={queryKey}
                 postUrl={`/api/song-lyric/${lyric.id}/update`}
                 usedTitles={usedTitles}
             />

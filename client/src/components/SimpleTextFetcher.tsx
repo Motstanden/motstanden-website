@@ -59,7 +59,7 @@ function SimpleTextEditor( {
     canEdit,
 }: {
     value: SimpleText,
-    contextQueryKey?: any[]
+    contextQueryKey: any[]
     canEdit?: boolean 
 }) {
 
@@ -86,7 +86,7 @@ function SimpleTextEditor( {
                 initialValue={{
                     text: value.text
                 }}
-                storageKey={JSON.stringify(contextQueryKey)}
+                storageKey={contextQueryKey}
                 onAbortClick={onAbortClick}
                 onPostSuccess={onPosted}
             />   
@@ -174,7 +174,7 @@ function SimpleTextForm( {
 }: {
     initialValue: UpdateSimpleText | SimpleText,
     postUrl: string
-    storageKey: string
+    storageKey: any[],
     onAbortClick?: VoidFunction,
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
 }){

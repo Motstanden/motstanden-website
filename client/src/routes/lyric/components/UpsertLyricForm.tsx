@@ -20,7 +20,7 @@ export function UpsertLyricForm({
 }: {
     initialValue: NewSongLyric
     postUrl: string
-    storageKey: string,
+    storageKey: any[],
     onAbortClick: VoidFunction
     usedTitles: string[]
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)

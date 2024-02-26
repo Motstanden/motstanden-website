@@ -1,8 +1,8 @@
 import { NewSongLyric } from "common/interfaces";
 import { useNavigate } from "react-router-dom";
+import { useTitle } from "src/hooks/useTitle";
 import { usePendingLyricContext } from "./Context";
 import { UpsertLyricForm } from "./components/UpsertLyricForm";
-import { useTitle } from "src/hooks/useTitle";
 
 export function NewLyricPage() {
     useTitle("Ny")
@@ -18,7 +18,7 @@ export function NewLyricPage() {
         <div>
             <h1>Ny Trall</h1>
             <UpsertLyricForm
-                storageKey={JSON.stringify(["LyricItem", "New"])}
+                storageKey={["LyricItem", "New"]}
                 initialValue={emptyLyricItem}
                 onAbortClick={onAbortClick}
                 postUrl="/api/song-lyric/new"

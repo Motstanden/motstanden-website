@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useDebounce } from "./useDebounce";
 
 type InitialValueType<T> = T | (() => T);
@@ -10,7 +10,7 @@ type StorageType<T> = [
 ];
 
 interface StorageProps<T> {
-    key: string,
+    key: string | any[],
     initialValue: InitialValueType<T>,
     validateStorage?: (value: any) => boolean,
     delay?: number 
@@ -23,7 +23,11 @@ interface ExtendedStorageProps<T> extends StorageProps<T> {
 const DEBOUNCE_DELAY = 500;
 
 // A custom hook that uses either localStorage or sessionStorage to store and retrieve data
-function useStorage<T>( {key, initialValue, storage, ...options}: ExtendedStorageProps<T>): StorageType<T> {
+function useStorage<T>( {key: rawKey, initialValue, storage, ...options}: ExtendedStorageProps<T>): StorageType<T> {
+
+    const key = useMemo(() => {
+        return Array.isArray(rawKey) ? JSON.stringify(rawKey) : rawKey;
+    }, [rawKey])
 
     const [isClearing, setIsClearing] = useState(false);
 
