@@ -77,9 +77,17 @@ function getStoredItem(
     const storageItem = storage.getItem(key);
     if (storageItem !== null) {
 
-        const item = deserialize ?
-            deserialize(storageItem) :
-            JSON.parse(storageItem);
+        let item: any;
+        try {
+            item = deserialize ? deserialize(storageItem) : JSON.parse(storageItem);
+        } catch(err) {
+            if(import.meta.env.PROD) {
+                console.error(err)
+                return null;
+            } else {
+                throw err;
+            }
+        }
 
         const isValid = validate ? validate(item) : true;
 
