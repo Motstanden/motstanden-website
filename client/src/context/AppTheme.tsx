@@ -1,5 +1,6 @@
 import { ThemeProvider, useMediaQuery } from "@mui/material";
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext } from 'react';
+import { useLocalStorage } from "src/hooks/useStorage";
 import { AppThemeName, AppThemeProps, DarkAppTheme, LightAppTheme } from "../AppTheme";
 
 export enum ThemeMode {
@@ -21,13 +22,13 @@ export function useAppTheme() {
 }
 
 export function AppThemeProvider({ children }: { children: React.ReactNode }) {
-    const [mode, setMode] = useState<ThemeMode>(getDefaultMode())
     
+    const [mode, setMode] = useLocalStorage<ThemeMode>("AppTheme", ThemeMode.System)
+
     useMediaQuery('(prefers-color-scheme: dark)');  // Trigges a rerender when the OS theme changes
 
     const onModeChange = (newMode: ThemeMode) => { 
         setMode(newMode)
-        setDefaultMode(newMode)
     }
     
     const themeInfo = getTheme(mode)
@@ -48,25 +49,6 @@ export function AppThemeProvider({ children }: { children: React.ReactNode }) {
     )
 }
 
-const themeStorageKey = "AppTheme"
-
-function getDefaultMode(): ThemeMode {
-    const storedData = localStorage.getItem(themeStorageKey)
-    const isValid = storedData && Object.values(ThemeMode).includes(storedData as ThemeMode)
-    if(!isValid) 
-        return ThemeMode.System
-
-    return storedData as ThemeMode
-}
-
-function setDefaultMode(mode: ThemeMode) {
-    localStorage.setItem(themeStorageKey, mode)
-}
-
-function osPreferDarkMode(): boolean {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
-
 function getTheme(name: ThemeMode ): AppThemeProps {
     switch (name?.trim().toLowerCase()) {
         case AppThemeName.Light: 
@@ -78,4 +60,8 @@ function getTheme(name: ThemeMode ): AppThemeProps {
         default: 
             throw `Invalid theme mode: ${name}`
     }
+}
+
+function osPreferDarkMode(): boolean {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
