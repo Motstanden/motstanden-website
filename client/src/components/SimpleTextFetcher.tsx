@@ -5,6 +5,7 @@ import { SimpleText, UpdateSimpleText } from "common/interfaces"
 import { hasGroupAccess, isNullOrWhitespace } from 'common/utils'
 import { useState } from "react"
 import { usePotentialUser } from 'src/context/Authentication'
+import { useSessionStorage } from 'src/hooks/useStorage'
 import { fetchFn } from "src/utils/fetchAsync"
 import { AuthorItem, authorInfoTextStyle } from './AuthorInfo'
 import { MarkDownEditor, MarkDownRenderer } from "./MarkDownEditor"
@@ -85,8 +86,9 @@ function SimpleTextEditor( {
                 initialValue={{
                     text: value.text
                 }}
+                storageKey={JSON.stringify(contextQueryKey)}
                 onAbortClick={onAbortClick}
-                onPosted={onPosted}
+                onPostSuccess={onPosted}
             />   
         )
     }
@@ -166,26 +168,36 @@ function LastEditInfo( {simpleText}: {simpleText: SimpleText} ) {
 function SimpleTextForm( {
     initialValue,
     postUrl,
+    storageKey,
     onAbortClick,
-    onPosted,
+    onPostSuccess,
 }: {
     initialValue: UpdateSimpleText | SimpleText,
     postUrl: string
+    storageKey: string
     onAbortClick?: VoidFunction,
-    onPosted?: ((res: Response) => Promise<void>) | ((res: Response) => void)
+    onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
 }){
-    const [newValue, setNewValue] = useState<UpdateSimpleText>({text: initialValue.text})
+    const [newValue, setNewValue, clearSessionValue] = useSessionStorage<UpdateSimpleText>({
+        key: storageKey,
+        initialValue: {text: initialValue.text},
+        delay: 1000
+    })
     const [hasPosted, setHasPosted] = useState(false)
 
     const validateData = () => {
         return newValue.text !== initialValue.text 
     }
 
-    const onPostSuccess = async (res: Response) => { 
+    const handlePostSuccess = async (res: Response) => { 
         setHasPosted(true)
-        if(onPosted){
-            await onPosted(res)
-        }
+        clearSessionValue()
+        onPostSuccess && await onPostSuccess(res)
+    }
+
+    const handleAbortClick = () => {
+        clearSessionValue()
+        onAbortClick && onAbortClick()
     }
 
     const disabled = !validateData() || hasPosted
@@ -195,8 +207,8 @@ function SimpleTextForm( {
             value={newValue}
             postUrl={postUrl}
             disabled={disabled}
-            onAbortClick={onAbortClick}
-            onPostSuccess={onPostSuccess}
+            onAbortClick={handleAbortClick}
+            onPostSuccess={handlePostSuccess}
         >
             <MarkDownEditor
                 value={newValue.text}
