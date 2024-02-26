@@ -13,12 +13,14 @@ interface StorageProps<T> {
     key: string,
     initialValue: InitialValueType<T>,
     validateStorage?: (value: any) => boolean,
-    delay: number 
+    delay?: number 
 }
 
 interface ExtendedStorageProps<T> extends StorageProps<T> { 
     storage: Storage
 }
+
+const DEBOUNCE_DELAY = 500;
 
 // A custom hook that uses either localStorage or sessionStorage to store and retrieve data
 function useStorage<T>( {key, initialValue, storage, ...options}: ExtendedStorageProps<T>): StorageType<T> {
@@ -51,7 +53,7 @@ function useStorage<T>( {key, initialValue, storage, ...options}: ExtendedStorag
         } else {
             setIsClearing(false);
         }
-    }, options.delay, [storedValue])
+    }, options.delay ?? DEBOUNCE_DELAY, [storedValue])
 
     const clearStorage = () => {
         setIsClearing(true)
@@ -84,18 +86,16 @@ function getStoredItem(
     return null;
 }
 
-const DEBOUNCE_DELAY = 500;
-
 /**
  * A custom hook that uses localStorage to store and retrieve data. Works like useState but persists the state in localStorage.
  */
-export function useLocalStorage<T>( {delay = DEBOUNCE_DELAY, ...props}: StorageProps<T>): StorageType<T> {
-    return useStorage({ delay: delay, ...props, storage: window.localStorage });
+export function useLocalStorage<T>(props: StorageProps<T>): StorageType<T> {
+    return useStorage({ ...props, storage: window.localStorage });
 }
 
 /**
  * A custom hook that uses sessionStorage to store and retrieve data. Works like useState but persists the state in sessionStorage.
  */
-export function useSessionStorage<T>({delay = DEBOUNCE_DELAY, ...props}: StorageProps<T>): StorageType<T> {
-    return useStorage({ delay: delay, ...props, storage: window.sessionStorage });
+export function useSessionStorage<T>(props: StorageProps<T>): StorageType<T> {
+    return useStorage({ ...props, storage: window.sessionStorage });
 }
