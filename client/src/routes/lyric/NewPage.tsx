@@ -18,6 +18,7 @@ export function NewLyricPage() {
         <div>
             <h1>Ny Trall</h1>
             <UpsertLyricForm
+                storageKey={JSON.stringify(["LyricItem", "New"])}
                 initialValue={emptyLyricItem}
                 onAbortClick={onAbortClick}
                 postUrl="/api/song-lyric/new"

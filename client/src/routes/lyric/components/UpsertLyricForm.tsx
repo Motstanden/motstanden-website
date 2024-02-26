@@ -6,24 +6,31 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MarkDownEditor } from "src/components/MarkDownEditor";
 import { Form } from "src/components/form/Form";
+import { useSessionStorage } from "src/hooks/useStorage";
 import { buildLyricItemUrl, lyricContextQueryKey } from "../Context";
 
 export function UpsertLyricForm({
     initialValue, 
     postUrl, 
+    storageKey,
     onAbortClick, 
     usedTitles,
     onPostSuccess,
     disabled,
 }: {
-    initialValue: NewSongLyric;
-    postUrl: string;
-    onAbortClick: VoidFunction;
+    initialValue: NewSongLyric
+    postUrl: string
+    storageKey: string,
+    onAbortClick: VoidFunction
     usedTitles: string[]
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
     disabled?: boolean
 }) {
-    const [newValue, setNewValue] = useState<NewSongLyric>(initialValue);
+    const [newValue, setNewValue, clearSessionValue] = useSessionStorage<NewSongLyric>({
+        key: storageKey,
+        initialValue: initialValue,
+        delay: 1000
+    });
     const [hasPosted, setHasPosted] = useState(false);
 
     const queryClient = useQueryClient();
@@ -46,14 +53,20 @@ export function UpsertLyricForm({
         };
     };
     
-    const _onPostSuccess = async (res: Response) => {
+    const handlePostSuccess = async (res: Response) => {
         setHasPosted(true);
         await queryClient.invalidateQueries({queryKey: lyricContextQueryKey})
         if(onPostSuccess){
             await onPostSuccess(res);
         }
+        clearSessionValue()
         navigate(buildLyricItemUrl(newValue.title, newValue.isPopular))
      };
+
+     const handleAbortClick = () => {
+        clearSessionValue();
+        onAbortClick();
+     }
 
     const titleInUse = usedTitles.find(title => title.toLocaleLowerCase().trim() === newValue.title.toLocaleLowerCase().trim()) !== undefined;
 
@@ -65,8 +78,8 @@ export function UpsertLyricForm({
                 value={getSubmitData}
                 postUrl={postUrl}
                 disabled={isDisabled}
-                onAbortClick={_ => onAbortClick()}
-                onPostSuccess={_onPostSuccess}
+                onAbortClick={handleAbortClick}
+                onPostSuccess={handlePostSuccess}
             >
                 <div>
                     <TextField 

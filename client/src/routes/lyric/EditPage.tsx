@@ -1,8 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useTitle } from "src/hooks/useTitle";
 import { getLyricItemContextQueryKey, useLyricItemContext } from "./Context";
 import { UpsertLyricForm } from "./components/UpsertLyricForm";
-import { useTitle } from "src/hooks/useTitle";
 
 export function EditLyricPage() {
     const [allLyrics, lyric] = useLyricItemContext()
@@ -15,9 +15,11 @@ export function EditLyricPage() {
 
     const onAbortClick = () => navigate("..");
 
+    const queryKey = getLyricItemContextQueryKey(lyric.id)
+
     const onPostSuccess = async () => {
         await queryClient.invalidateQueries({
-            queryKey: getLyricItemContextQueryKey(lyric.id)
+            queryKey: queryKey
         })
     }
 
@@ -28,6 +30,7 @@ export function EditLyricPage() {
                 initialValue={lyric}
                 onAbortClick={onAbortClick}
                 onPostSuccess={onPostSuccess}
+                storageKey={JSON.stringify(queryKey)}
                 postUrl={`/api/song-lyric/${lyric.id}/update`}
                 usedTitles={usedTitles}
             />
