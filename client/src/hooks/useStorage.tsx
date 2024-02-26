@@ -5,7 +5,7 @@ type InitialValueType<T> = T | (() => T);
 
 type StorageType<T> = [
     T, 
-    (value: InitialValueType<T>) => void, 
+    React.Dispatch<React.SetStateAction<T>>, 
     VoidFunction
 ];
 
@@ -40,12 +40,6 @@ function useStorage<T>( {key, initialValue, storage, ...options}: ExtendedStorag
         return initialValue;
     });
     
-    // Define a function that updates the stored value and the storage
-    const setValue = (newValue: T | (() => T)) => {
-        const value = newValue instanceof Function ? newValue() : newValue;
-        setStoredValue(value);
-    };
-
     // Save to storage when the stored value changes
     useDebounce(() => {
         if(!isClearing) {
@@ -61,7 +55,7 @@ function useStorage<T>( {key, initialValue, storage, ...options}: ExtendedStorag
     }
 
     // Return the stored value and the setter function
-    return [storedValue, setValue, clearStorage];
+    return [storedValue, setStoredValue, clearStorage];
 }
 
 /** 
