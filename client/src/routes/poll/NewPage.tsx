@@ -4,9 +4,9 @@ import { Button, Checkbox, IconButton, MenuItem, Radio, Stack, TextField } from 
 import { useQueryClient } from "@tanstack/react-query";
 import { NewPollWithOption, PollWithOption } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form } from "src/components/form/Form";
+import { useSessionStorage } from 'src/hooks/useStorage';
 import { useTitle } from "src/hooks/useTitle";
 import { pollListQueryKey } from "./Context";
 
@@ -60,7 +60,10 @@ function UpsertPollForm({
     onAbortClick: VoidFunction;
     onPostSuccess: VoidFunction;
 }) {
-    const [newValue, setNewValue] = useState<NewPollWithOption | PollWithOption>(initialValue);
+    const [newValue, setNewValue, clearNewValue] = useSessionStorage<NewPollWithOption | PollWithOption>({
+        key: ["PollItem", "New"],
+        initialValue: initialValue,
+    });
 
     const isValidData = () => {
         const isEmpty = isNullOrWhitespace(newValue.title);
@@ -79,6 +82,16 @@ function UpsertPollForm({
         return !isEmpty && !isEqual && correctType && hasOptions && !hasEmptyOption;
     };
 
+    const handlePostSuccess = () => {
+        clearNewValue();
+        onPostSuccess();
+    }
+
+    const handleAbortClick = () => { 
+        clearNewValue();
+        onAbortClick();
+    }
+
     const getSubmitData = () => {
         return { 
             ...newValue, 
@@ -96,8 +109,8 @@ function UpsertPollForm({
                 value={getSubmitData}
                 postUrl={postUrl}
                 disabled={disabled}
-                onAbortClick={_ => onAbortClick()}
-                onPostSuccess={_ => onPostSuccess()}
+                onAbortClick={handleAbortClick}
+                onPostSuccess={handlePostSuccess}
 
             >
                 <div>
