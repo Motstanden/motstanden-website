@@ -26,7 +26,7 @@ export function UpsertLyricForm({
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
     disabled?: boolean
 }) {
-    const [newValue, setNewValue, clearSessionValue] = useSessionStorage<NewSongLyric>({
+    const [newValue, setNewValue, clearNewValue] = useSessionStorage<NewSongLyric>({
         key: storageKey,
         initialValue: initialValue,
         delay: 1000
@@ -59,12 +59,12 @@ export function UpsertLyricForm({
         if(onPostSuccess){
             await onPostSuccess(res);
         }
-        clearSessionValue()
+        clearNewValue()
         navigate(buildLyricItemUrl(newValue.title, newValue.isPopular))
      };
 
      const handleAbortClick = () => {
-        clearSessionValue();
+        clearNewValue();
         onAbortClick();
      }
 

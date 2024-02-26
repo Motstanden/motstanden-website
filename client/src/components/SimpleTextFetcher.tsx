@@ -178,7 +178,7 @@ function SimpleTextForm( {
     onAbortClick?: VoidFunction,
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
 }){
-    const [newValue, setNewValue, clearSessionValue] = useSessionStorage<UpdateSimpleText>({
+    const [newValue, setNewValue, clearNewValue] = useSessionStorage<UpdateSimpleText>({
         key: storageKey,
         initialValue: {text: initialValue.text},
         delay: 1000
@@ -191,12 +191,12 @@ function SimpleTextForm( {
 
     const handlePostSuccess = async (res: Response) => { 
         setHasPosted(true)
-        clearSessionValue()
+        clearNewValue()
         onPostSuccess && await onPostSuccess(res)
     }
 
     const handleAbortClick = () => {
-        clearSessionValue()
+        clearNewValue()
         onAbortClick && onAbortClick()
     }
 
