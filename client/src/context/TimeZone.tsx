@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
+import { useLocalStorage } from "src/hooks/useStorage";
 
 export enum TimeZone {
     Norway = "norway",
@@ -20,11 +21,10 @@ export function useTimeZone() {
 
 export function TimeZoneProvider({ children }: { children: React.ReactNode }) {
 
-    const [timeZone, setTimeZone] = useState<TimeZone>(getDefaultTimeZone())
+    const [timeZone, setTimeZone] = useLocalStorage<TimeZone>("TimeZone", TimeZone.Norway)
 
     const onTimeZoneChange = (newTimeZone: TimeZone) => { 
         setTimeZone(newTimeZone)
-        setDefaultTimeZone(newTimeZone)
     }
     
     const tzName = getTimeZoneName(timeZone)
@@ -58,19 +58,4 @@ function getDatePickerTimeZone(timeZone: TimeZone) {
         case TimeZone.Norway: return "Europe/Oslo"
         case TimeZone.System: return "system"
     }
-}
-
-const timeZoneStorageKey = "TimeZone"
-
-function getDefaultTimeZone(): TimeZone {
-    const storedData = localStorage.getItem(timeZoneStorageKey)
-    const isValid = storedData && Object.values(TimeZone).includes(storedData as TimeZone)
-    if(!isValid) 
-        return TimeZone.Norway
-
-    return storedData as TimeZone
-}
-
-function setDefaultTimeZone(timeZone: TimeZone) {
-    localStorage.setItem(timeZoneStorageKey, timeZone)
 }
