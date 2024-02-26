@@ -1,6 +1,7 @@
 import { ThemeProvider, useMediaQuery } from "@mui/material";
 import React, { createContext, useContext } from 'react';
 import { useLocalStorage } from "src/hooks/useStorage";
+import { isEnumValue } from "src/utils/isStringEnum";
 import { AppThemeName, AppThemeProps, DarkAppTheme, LightAppTheme } from "../AppTheme";
 
 export enum ThemeMode {
@@ -23,7 +24,9 @@ export function useAppTheme() {
 
 export function AppThemeProvider({ children }: { children: React.ReactNode }) {
     
-    const [mode, setMode] = useLocalStorage<ThemeMode>("AppTheme", ThemeMode.System)
+    const [mode, setMode] = useLocalStorage<ThemeMode>("AppTheme", ThemeMode.System, {
+        validateInitial: (value) => isEnumValue(ThemeMode , value)
+    })
 
     useMediaQuery('(prefers-color-scheme: dark)');  // Trigges a rerender when the OS theme changes
 

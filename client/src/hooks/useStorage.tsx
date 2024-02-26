@@ -8,19 +8,24 @@ type StorageType<T> = [
     VoidFunction
 ];
 
+interface StorageOptions { 
+    validateInitial?: (value: any) => boolean
+}
+
 // A custom hook that uses either localStorage or sessionStorage to store and retrieve data
 function useStorage<T>(
     key: string, 
     initialValue: InitialValueType<T>, 
-    storage: Storage
+    storage: Storage,
+    options?: StorageOptions
 ): StorageType<T> {
-    
+
     // Get the stored value from the storage or use the initial value
     const [storedValue, setStoredValue] = useState<T>(() => {
-        const item = storage.getItem(key);
-
-        if (item !== null)
-            return JSON.parse(item);
+        const item = getStoredItem(storage, key, options?.validateInitial)
+        if (item !== null){
+            return item
+        }
 
         if (initialValue instanceof Function)
             return initialValue();
@@ -43,14 +48,37 @@ function useStorage<T>(
     return [storedValue, setValue, clearStorage];
 }
 
+/** 
+ * Utility function to get a stored item from localStorage or sessionStorage.
+ * @returns The stored item or null if it doesn't exist or is invalid. 
+*/
+function getStoredItem(
+    storage: Storage, 
+    key: string, 
+    validate?: ((value: any) => boolean
+)): any | null {
+    const storageItem = storage.getItem(key);
+    if (storageItem !== null) {
+        const item = JSON.parse(storageItem);
+
+        const isValid = validate ? validate(item) : true;
+
+        if (isValid) {
+            return item;
+        }
+    }
+    return null;
+}
+
 /**
  * A custom hook that uses localStorage to store and retrieve data. Works like useState but persists the state in localStorage.
  */
 export function useLocalStorage<T>(
     key: string, 
-    initialValue: InitialValueType<T>
+    initialValue: InitialValueType<T>,
+    options?: StorageOptions
 ): StorageType<T> {
-    return useStorage(key, initialValue, window.localStorage);
+    return useStorage(key, initialValue, window.localStorage, options);
 }
 
 /**
@@ -58,7 +86,8 @@ export function useLocalStorage<T>(
  */
 export function useSessionStorage<T>(
     key: string, 
-    initialValue: InitialValueType<T>
+    initialValue: InitialValueType<T>,
+    options?: StorageOptions
 ): StorageType<T> {
-    return useStorage(key, initialValue, window.sessionStorage);
+    return useStorage(key, initialValue, window.sessionStorage, options);
 }

@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { createContext, useContext } from "react";
 import { useLocalStorage } from "src/hooks/useStorage";
+import { isEnumValue } from "src/utils/isStringEnum";
 
 export enum TimeZone {
     Norway = "norway",
@@ -21,7 +22,9 @@ export function useTimeZone() {
 
 export function TimeZoneProvider({ children }: { children: React.ReactNode }) {
 
-    const [timeZone, setTimeZone] = useLocalStorage<TimeZone>("TimeZone", TimeZone.Norway)
+    const [timeZone, setTimeZone] = useLocalStorage<TimeZone>("TimeZone", TimeZone.Norway, {
+        validateInitial: (value) => isEnumValue(TimeZone , value)
+    })
 
     const onTimeZoneChange = (newTimeZone: TimeZone) => { 
         setTimeZone(newTimeZone)
