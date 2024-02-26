@@ -13,7 +13,9 @@ interface StorageProps<T> {
     key: string | any[],
     initialValue: InitialValueType<T>,
     validateStorage?: (value: any) => boolean,
-    delay?: number 
+    delay?: number,
+    serialize?: (value: T) => string,
+    deserialize?: (value: string) => T,
 }
 
 interface ExtendedStorageProps<T> extends StorageProps<T> { 
@@ -33,7 +35,7 @@ function useStorage<T>( {key: rawKey, initialValue, storage, ...options}: Extend
 
     // Get the stored value from the storage or use the initial value
     const [storedValue, setStoredValue] = useState<T>(() => {
-        const item = getStoredItem(storage, key, options?.validateStorage)
+        const item = getStoredItem(storage, key, options?.deserialize, options?.validateStorage)
         if (item !== null){
             return item
         }
@@ -47,7 +49,7 @@ function useStorage<T>( {key: rawKey, initialValue, storage, ...options}: Extend
     // Save to storage when the stored value changes
     useDebounce(() => {
         if(!isClearing) {
-            storage.setItem(key, JSON.stringify(storedValue));
+            setStorageItem(storage, key, storedValue, options?.serialize)
         } else {
             setIsClearing(false);
         }
@@ -68,12 +70,16 @@ function useStorage<T>( {key: rawKey, initialValue, storage, ...options}: Extend
 */
 function getStoredItem(
     storage: Storage, 
-    key: string, 
+    key: string,
+    deserialize?: (value: string) => any, 
     validate?: ((value: any) => boolean
 )): any | null {
     const storageItem = storage.getItem(key);
     if (storageItem !== null) {
-        const item = JSON.parse(storageItem);
+
+        const item = deserialize ?
+            deserialize(storageItem) :
+            JSON.parse(storageItem);
 
         const isValid = validate ? validate(item) : true;
 
@@ -82,6 +88,18 @@ function getStoredItem(
         }
     }
     return null;
+}
+
+function setStorageItem(
+    storage: Storage, 
+    key: string, 
+    value: any, 
+    serialize?: (value: any) => string
+) {
+    const item = serialize ? 
+        serialize(value) : 
+        JSON.stringify(value);
+    storage.setItem(key, item);
 }
 
 /**
