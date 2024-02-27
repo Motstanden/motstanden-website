@@ -21,6 +21,7 @@ import { LikesContextProvider, useLikes } from './likes/LikesContext'
 import { UserLikesModal, useLikesModal } from './likes/UserLikesModal'
 import { UserAvatar } from './user/UserAvatar'
 import { UserFullName } from './user/UserFullName'
+import { useSessionStorage } from 'src/hooks/useStorage'
 
 export function PostingWall({
     userId,
@@ -53,6 +54,7 @@ export function PostingWall({
         >
             <PostForm
                 onPostSuccess={onPostSuccess}
+                storageKey={queryKey}
                 initialValue={{
                     content: "",
                     wallUserId: userId ?? currentUser.id,
@@ -451,11 +453,13 @@ function useRandomLabel(isSelf: boolean, userFirstName?: string) {
 
 function PostForm({
     initialValue,
+    storageKey,
     style,
     onPostSuccess,
     userFirstName,
 }: {
     initialValue: NewWallPost,
+    storageKey: any[],
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void),
     style?: React.CSSProperties,
     userFirstName?: string
@@ -468,7 +472,10 @@ function PostForm({
     const isSelf = user.id === initialValue.wallUserId
     const label = useRandomLabel(isSelf, userFirstName)
 
-    const [value, setValue] = useState<NewWallPost>(initialValue)
+    const [value, setValue, clearValue] = useSessionStorage<NewWallPost>({
+        initialValue: initialValue,
+        key: storageKey
+    })
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const onSubmit = async (e: React.FormEvent) => { 
@@ -487,6 +494,7 @@ function PostForm({
             setValue(initialValue)
         }
 
+        clearValue()
         setIsSubmitting(false)
     }
 
