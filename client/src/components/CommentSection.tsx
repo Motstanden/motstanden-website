@@ -11,6 +11,7 @@ import { useLocation } from "react-router-dom"
 import { LinkifiedText } from 'src/components/LinkifiedText'
 import { useAppBarStyle } from 'src/context/AppBarStyle'
 import { useAuthenticatedUser } from "src/context/Authentication"
+import { useSessionStorage } from 'src/hooks/useStorage'
 import { fetchFn } from "src/utils/fetchAsync"
 import { postJson } from "src/utils/postJson"
 import { LikeButton } from './likes/LikeButton'
@@ -62,6 +63,7 @@ function CommentSectionContainer({
             <CommentForm 
                 entityType={entityType}
                 entityId={entityId}
+                storageKey={queryKey}
                 variant={variant ?? "normal"}
                 onPostSuccess={onPostSuccess}    
             />
@@ -317,17 +319,22 @@ function CommentItem( {
 function CommentForm({
     entityType,
     entityId,
+    storageKey,
     onPostSuccess,
     variant,
 }: {
     entityType: CommentEntityType,
     entityId: number,
+    storageKey: any[],
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void),
     variant?: CommentSectionVariant,
 }) {
     const { user } = useAuthenticatedUser()
-    const [value, setValue] = useState<NewComment>({ comment: "" })
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [value, setValue, clearValue] = useSessionStorage<NewComment>({
+        key: storageKey,
+        initialValue: { comment: "" },
+    })
 
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
@@ -346,6 +353,7 @@ function CommentForm({
             setValue({ comment: "" })
         }
 
+        clearValue()
         setIsSubmitting(false)
     }
 
