@@ -1,4 +1,4 @@
-import { PostingWall } from "src/components/PostingWall"
+import { PostingWall } from "src/components/wall/PostingWall"
 import { useTitle } from "src/hooks/useTitle"
 
 export default function WallPage() {

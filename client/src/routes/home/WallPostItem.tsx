@@ -5,8 +5,8 @@ import { LikeEntityType } from "common/enums";
 import { WallPost } from "common/interfaces";
 import { strToNumber } from "common/utils";
 import { Navigate, Link as RouterLink, useParams } from "react-router-dom";
-import { PostSectionItem, PostSectionSkeleton } from "src/components/PostingWall";
 import { LikesContextProvider } from 'src/components/likes/LikesContext';
+import { PostSectionItem, PostSectionSkeleton } from "src/components/wall/PostingWall";
 import { fetchFn } from "src/utils/fetchAsync";
 
 export {
@@ -91,12 +91,11 @@ function PostFetcher({
     }
 
     return (
-                <LikesContextProvider
-                   
-                    entityType={LikeEntityType.WallPost}
-                    entityId={data.id}
-                >
-        <PostSectionItem post={data} />
-                </LikesContextProvider>
+        <LikesContextProvider
+            entityType={LikeEntityType.WallPost}
+            entityId={data.id}
+        >
+            <PostSectionItem post={data} />
+        </LikesContextProvider>
     )
 }

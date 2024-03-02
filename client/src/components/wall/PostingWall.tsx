@@ -10,18 +10,18 @@ import dayjs from "dayjs"
 import { useState } from "react"
 import { useAuthenticatedUser } from "src/context/Authentication"
 import { useUserReference } from 'src/context/UserReference'
+import { useSessionStorage } from 'src/hooks/useStorage'
 import { fetchFn } from "src/utils/fetchAsync"
 import { postJson } from 'src/utils/postJson'
 import { softHypenate } from 'src/utils/softHyphenate'
-import { CommentSection, CommentSectionSkeleton } from "./CommentSection"
-import { LinkifiedText } from './LinkifiedText'
-import { LikeButton, LikeButtonSkeleton } from './likes/LikeButton'
-import { LikeListEmojiContent } from './likes/LikeListButton'
-import { LikesContextProvider, useLikes } from './likes/LikesContext'
-import { UserLikesModal, useLikesModal } from './likes/UserLikesModal'
-import { UserAvatar } from './user/UserAvatar'
-import { UserFullName } from './user/UserFullName'
-import { useSessionStorage } from 'src/hooks/useStorage'
+import { CommentSection, CommentSectionSkeleton } from "../CommentSection"
+import { LinkifiedText } from '../LinkifiedText'
+import { LikeButton, LikeButtonSkeleton } from '../likes/LikeButton'
+import { LikeListEmojiContent } from '../likes/LikeListButton'
+import { LikesContextProvider, useLikes } from '../likes/LikesContext'
+import { UserLikesModal, useLikesModal } from '../likes/UserLikesModal'
+import { UserAvatar } from '../user/UserAvatar'
+import { UserFullName } from '../user/UserFullName'
 
 export function PostingWall({
     userId,

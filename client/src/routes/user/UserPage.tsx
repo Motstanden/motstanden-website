@@ -10,7 +10,7 @@ import { User } from "common/interfaces";
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";
 import dayjs from "dayjs";
 import { Link as RouterLink, matchPath, useLocation } from "react-router-dom";
-import { PostingWall } from "src/components/PostingWall";
+import { PostingWall } from "src/components/wall/PostingWall";
 import { useAuthenticatedUser } from "src/context/Authentication";
 import { useTimeZone } from 'src/context/TimeZone';
 import { useTopScroller } from 'src/context/TopScroller';
