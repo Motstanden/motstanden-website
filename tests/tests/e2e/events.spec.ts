@@ -7,6 +7,7 @@ import { formatDateTimeInterval } from "common/utils/dateTime";
 import { randomInt, randomUUID } from 'crypto';
 import { disposeLogIn, logIn, TestUser } from '../../utils/auth.js';
 import { selectDate } from '../../utils/datePicker.js';
+import { randomString } from '../../utils/randomString.js';
 
 test.describe("Contributor can update and delete events they have created", async () => {
     testCrud({
@@ -224,7 +225,7 @@ async function validateEventPage(page: Page, event: TestEvent) {
 async function clickDelete(page: Page) {
 	await page.getByRole('button', { name: 'Arrangementmeny' }).click();
 	page.once('dialog', dialog => dialog.accept());
-	await  page.getByRole('menuitem', { name: "Slett" }).click();
+	await page.getByRole('menuitem', { name: "Slett" }).click();
 }
 
 async function clickEdit(page: Page) {
@@ -300,14 +301,6 @@ function createRandomEvent(): TestEvent {
 	}
 
 	return event
-}
-
-function randomString(name: string, maxChars?: number) {
-	let value = `${name} id: ${randomUUID()}`
-	if(maxChars) {
-		value = value.slice(Math.max(0, value.length - maxChars)) 	// Prioritize end of string
-	}
-	return value
 }
 
 function randomBool(){
