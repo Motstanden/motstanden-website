@@ -54,9 +54,9 @@ export function TabbedPageContainer({
                         backgroundColor: theme.palette.background.paper,
                     }}
                 >
-                    {tabItems.map(item => (
+                    {tabItems.map((item, i) => (
                         <Tab
-                            key={item.label}
+                            key={`${item.to}-${i}`}
                             component={RouterLink}
                             to={item.to}
                             value={item.label}
@@ -98,5 +98,5 @@ function findActiveTab(
 
 interface PageTabItem {
     to: string,
-    label: string
+    label: string | React.ReactNode
 }
