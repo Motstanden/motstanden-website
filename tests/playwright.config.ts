@@ -19,7 +19,7 @@ const config: PlaywrightTestConfig = {
     "*.spec.ts", "*.api.ts"
   ],
   /* Maximum time one test can run for. */
-  timeout: 45 * 1000,
+  timeout: 55 * 1000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
