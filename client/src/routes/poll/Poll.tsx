@@ -633,7 +633,7 @@ function PollMenu({
     onDeleteClick: React.MouseEventHandler<HTMLLIElement>,
 }) {
     return (
-        <IconPopupMenu icon={<MoreHorizIcon/>}>
+        <IconPopupMenu icon={<MoreHorizIcon/>} ariaLabel='Avstemningmeny'>
             <DeleteMenuItem onClick={onDeleteClick} />
         </IconPopupMenu>    
     )
