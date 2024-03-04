@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Count } from "common/interfaces";
 import { createContext, useContext, useState } from "react";
+import { useAuthenticatedUser } from "src/context/Authentication";
 import { useLocalStorage } from "src/hooks/useStorage";
 import { fetchFn } from "src/utils/fetchAsync";
 
@@ -24,14 +25,16 @@ const wallPostCountQueryKey = [ "wall-posts", "count" ]
 
 function useFetchWallPostCount() {
     return useQuery<Count>({
-        queryKey: [ "wall-posts", "count" ],
+        queryKey: wallPostCountQueryKey,
         queryFn: fetchFn("/api/wall-posts/all/count")
     })   
 }
 
 function useReadPosts() {
+    const { user } = useAuthenticatedUser()
+    const storageKey = [...wallPostCountQueryKey, "user-id", user.id]    // Support multiple users in same browser
     return useLocalStorage<undefined | number>({
-        key: wallPostCountQueryKey,
+        key: storageKey,     
         initialValue: undefined,
         validateStorage: (value) => typeof value === "number",
         delay: 0,
