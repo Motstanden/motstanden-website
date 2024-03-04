@@ -10,6 +10,7 @@ import dayjs from "dayjs"
 import { useState } from "react"
 import { useAuthenticatedUser } from "src/context/Authentication"
 import { useUserReference } from 'src/context/UserReference'
+import { useQuerySuccess } from 'src/hooks/useQuerySuccess'
 import { useSessionStorage } from 'src/hooks/useStorage'
 import { fetchFn } from "src/utils/fetchAsync"
 import { postJson } from 'src/utils/postJson'
@@ -26,23 +27,25 @@ import { UserFullName } from '../user/UserFullName'
 export function PostingWall({
     userId,
     style,
-    userFirstName
+    userFirstName,
+    onPostSuccess,
+    onLoadedPosts
 }: {
     userId?: number,
     userFirstName?: string,
     style?: React.CSSProperties
+    onPostSuccess?: (() => Promise<void>) | (() => void),
+    onLoadedPosts?: () => void
 }) {
     const { user: currentUser } = useAuthenticatedUser()
 
     const queryClient = useQueryClient()
 
-    const queryKey: any[] = ["wall-post"]
-    if (userId) {
-        queryKey.push(userId)
-    }
+    const queryKey: any[] = ["wall-post", userId ?? "all"]
 
-    const onPostSuccess = async () => {
+    const handlePostSuccess = async () => {
         await queryClient.invalidateQueries({queryKey: queryKey})
+        await onPostSuccess?.()
     }
 
     return (
@@ -53,7 +56,7 @@ export function PostingWall({
             }}
         >
             <PostForm
-                onPostSuccess={onPostSuccess}
+                onPostSuccess={handlePostSuccess}
                 storageKey={queryKey}
                 initialValue={{
                     content: "",
@@ -67,6 +70,7 @@ export function PostingWall({
             <PostSectionFetcher 
                 queryKey={queryKey}
                 userId={userId}
+                onLoadedPosts={onLoadedPosts}
             />
         </section>
     )
@@ -75,19 +79,23 @@ export function PostingWall({
 function PostSectionFetcher({
     queryKey,
     userId,
+    onLoadedPosts,
 }: {
     queryKey: any[]
-    userId?: number
+    userId?: number,
+    onLoadedPosts?: () => void
 }) {
     
     let url = "/api/wall-posts/all"
     if(userId)
         url += `?userId=${userId}`
 
-    const { isPending, isError, data, error } = useQuery<WallPost[]>({
+    const { isPending, isError, data, error, isSuccess } = useQuery<WallPost[]>({
         queryKey: queryKey,
         queryFn: fetchFn<WallPost[]>(url), 
     })
+
+    useQuerySuccess({isSuccess}, onLoadedPosts)
 
     if(isPending) {
         return <PostSectionSkeleton length={6} />
