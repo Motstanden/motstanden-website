@@ -21,6 +21,23 @@ export default function PageContainer() {
 
 function WallLabel(){
     const { unreadPosts } = useUnreadWallPosts()
+
+    if (unreadPosts <= 0)
+        return "Vegg"
+
+    let positionRight: number
+    let marginRight: number
+    if(unreadPosts < 10) {
+        positionRight = 20
+        marginRight = positionRight + 12
+    } else if (unreadPosts < 100) {
+        positionRight = 23
+        marginRight = positionRight + 14.5
+    } else {
+        positionRight = 25
+        marginRight = positionRight + 17
+    }
+
     return (
         <Badge 
             badgeContent={unreadPosts}
@@ -28,9 +45,10 @@ function WallLabel(){
             max={99}
             sx={{
                 ".MuiBadge-badge": {
-                    right: -20,
+                    right: `-${positionRight}px`,
                     top: "50%",
-                }
+                },
+                marginRight: `${marginRight}px`
             }}
             >
             Vegg
