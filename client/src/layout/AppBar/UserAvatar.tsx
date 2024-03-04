@@ -39,36 +39,36 @@ export default function UserAvatar() {
                 color: "inherit",
             }}
             icon={(
-                <div style={{position: "relative"}}>
+                <Tooltip title={getFullName(user)} disableInteractive>
+                    <div style={{position: "relative"}}>
 
-                    <Tooltip title={getFullName(user)} disableInteractive>
-                        <Avatar 
-                            src={`/${user.profilePicture}`}
-                            alt="Mitt profilbilde" 
-                            sx={{
-                                height: buttonSize, 
-                                width: buttonSize,
-                            }}>
-                            {user.firstName[0]}
-                        </Avatar>
-                    </Tooltip>
-                    
-                    {/* The sole purpose of this box is to create a white overlay over the avatar when it is hovered. */}
-                    <Box sx={{
-                        backgroundColor: "white",
-                        height: "100%",
-                        width: "100%",
-                        position: "absolute",
-                        top: "0px",
-                        left: "0px",
-                        borderRadius: "50%",
-                        opacity: 0,
-                        ":hover": {
-                            opacity: 0.1
-                        }
-                    }}/>
+                            <Avatar 
+                                src={`/${user.profilePicture}`}
+                                alt="Mitt profilbilde" 
+                                sx={{
+                                    height: buttonSize, 
+                                    width: buttonSize,
+                                }}>
+                                {user.firstName[0]}
+                            </Avatar>
+                        
+                        {/* The sole purpose of this box is to create a white overlay over the avatar when it is hovered. */}
+                        <Box sx={{
+                            backgroundColor: "white",
+                            height: "100%",
+                            width: "100%",
+                            position: "absolute",
+                            top: "0px",
+                            left: "0px",
+                            borderRadius: "50%",
+                            opacity: 0,
+                            ":hover": {
+                                opacity: 0.1
+                            }
+                        }}/>
 
-                </div>
+                    </div>
+                </Tooltip>
             )}
         >
             <MenuItem component={RouterLink} to={`/medlem/${user.id}`} >
