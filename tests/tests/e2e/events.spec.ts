@@ -9,15 +9,14 @@ import { disposeLogIn, logIn, TestUser } from '../../utils/auth.js';
 import { selectDate } from '../../utils/datePicker.js';
 
 test.describe("Contributor can update and delete events they have created", async () => {
-    await testCrud({
+    testCrud({
         creator: UserGroup.Contributor,
         testId: 1
-		
     })
 })
 
 test.describe("Admin can update and delete events other have created", async () => {
-	await testCrud({
+	testCrud({
 		creator: UserGroup.Contributor,
 		updater: UserGroup.Administrator,
 		testId: 2
@@ -25,7 +24,7 @@ test.describe("Admin can update and delete events other have created", async () 
 })
 
 test.describe("Super admin can update and delete events other have created", async () => {
-	await testCrud({
+	testCrud({
 		creator: UserGroup.Contributor,
 		updater: UserGroup.SuperAdministrator,
 		testId: 3
@@ -33,7 +32,7 @@ test.describe("Super admin can update and delete events other have created", asy
 })
 
 test.describe("Contributors can update other events @smoke", async () => {
-    await testCrud({
+    testCrud({
 		creator: UserGroup.Editor,
 		participator: UserGroup.Contributor,
 		updater: UserGroup.Contributor,
@@ -56,7 +55,7 @@ interface CrudOptions {
     testId: number
 }	
 
-async function testCrud(opts: CrudOptions) {
+function testCrud(opts: CrudOptions) {
 
 	test.describe.configure({mode: 'serial'})
 	test.slow()
