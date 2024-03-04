@@ -292,13 +292,15 @@ async function validateUserProfile(page: Page, user: UserWithoutDbData) {
     const fullName = getFullName(user)
     await expect(page.getByText(fullName).first()).toBeVisible()
 
-    const formatStartDate = (date: string) => dayjs(date).locale("nb").format("MMMM YYYY").toLowerCase()
+    const formatDate = (date: string): string => dayjs(date).locale("nb").format("MMMM YYYY").toLowerCase()
+
+    const startAndEndDate = `${formatDate(user.startDate)} - ${isNullOrWhitespace(user.endDate) ? "dags dato" : formatDate(user.endDate)}` 
 
     // We expect all items in this array to be visible on the user profile page (exactly once)
     const uniqueData: string[] = [
         user.email, 
         userRankToPrettyStr(user.rank),
-        formatStartDate(user.startDate),
+        startAndEndDate
     ]
 
     // The group is not unique on the page if it is contributor
@@ -318,9 +320,6 @@ async function validateUserProfile(page: Page, user: UserWithoutDbData) {
     if(!isNullOrWhitespace(user.birthDate))
         uniqueData.push(dayjs(user.birthDate).format("DD MMMM YYYY"))
     
-    if(user.endDate)
-        uniqueData.push(formatStartDate(user.endDate))
-
     for(let i = 0; i < uniqueData.length; i++) {
         await expect(page.getByText(uniqueData[i])).toBeVisible()
     }
