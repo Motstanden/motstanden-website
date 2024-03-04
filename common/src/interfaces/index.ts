@@ -1,4 +1,5 @@
 export * from "./Comment.js"
+export * from "./Count.js"
 export * from "./EventData.js"
 export * from "./EventParticipation.js"
 export * from "./KeyValuePair.js"

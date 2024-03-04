@@ -17,6 +17,20 @@ router.get("/wall-posts/all?:userId",
     }
 )
 
+router.get("/wall-posts/all/count",
+    AuthenticateUser(),
+    (req, res) => {
+        try {
+            const count = wallPostService.getCount()
+            res.send(count)
+        } catch (err) { 
+            console.error(err)
+            res.status(500).send("Failed to get post count from database")
+        }
+        res.end()
+    }
+)
+
 router.get("/wall-posts/:postId",
     AuthenticateUser(),
     validateNumber({

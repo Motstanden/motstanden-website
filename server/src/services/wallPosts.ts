@@ -1,5 +1,5 @@
 import Database from "better-sqlite3";
-import { NewWallPost, WallPost } from "common/interfaces";
+import { Count, NewWallPost, WallPost } from "common/interfaces";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
 
 function getAll(userId?: number): WallPost[] {
@@ -42,6 +42,16 @@ function get(postId: number): WallPost |undefined {
     return post
 }
 
+function getCount(): Count {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(`
+        SELECT count(*) as count FROM wall_post
+    `)
+    const data = stmt.get() as Count
+    db.close()
+    return data
+}
+
 function insertNew(post: NewWallPost, userId: number) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
     const stmt = db.prepare(`
@@ -57,5 +67,6 @@ function insertNew(post: NewWallPost, userId: number) {
 export const wallPostService = { 
     get: get,
     getAll: getAll,
+    getCount: getCount,
     insertNew: insertNew
 }
