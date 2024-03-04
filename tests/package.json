@@ -9,15 +9,15 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.41.1",
-    "@types/node": "^20.11.8"
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.11.24"
   },
   "dependencies": {
     "@types/crypto-js": "^4.2.2",
     "common": "file:../common",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.10",
-    "dotenv": "^16.4.1",
+    "dotenv": "^16.4.5",
     "zod": "^3.22.4"
   }
 }
