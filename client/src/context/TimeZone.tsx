@@ -25,7 +25,8 @@ export function TimeZoneProvider({ children }: { children: React.ReactNode }) {
     const [timeZone, setTimeZone] = useLocalStorage<TimeZone>({
         key: "TimeZone", 
         initialValue: TimeZone.Norway, 
-        validateStorage: (value) => isEnumValue(TimeZone , value)
+        validateStorage: (value) => isEnumValue(TimeZone , value),
+        delay: 0
     })
 
     const onTimeZoneChange = (newTimeZone: TimeZone) => { 
