@@ -7,7 +7,6 @@ import {
     Link,
     Paper,
     Skeleton,
-    Snackbar,
     Table,
     TableBody,
     TableCell,
@@ -25,6 +24,7 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { TitleCard } from 'src/components/TitleCard';
+import { useAppSnackBar } from "src/context/AppSnackBar";
 import { useTitle } from 'src/hooks/useTitle';
 import { useUsersContext } from "./Context";
 
@@ -159,19 +159,18 @@ function EmailLists( { users, isLoading }: { users: User[], isLoading?: boolean}
 }
 
 function EmailListItem({users, label }:{ users: User[], label: string }) {
-    const [open, setOpen] = useState(false)
+
+    const showSnackbar = useAppSnackBar()
 
     const onClick = () => {
         const data = users.map((user: User) => (user.email))
                           .join("\n")
         navigator.clipboard.writeText(data);
-        setOpen(true);
+        showSnackbar("Kopiert til skrivebord")
     }
 
-    if(users.length <= 0){
-        return <>
-        </>
-    }
+    if(users.length <= 0)
+        return <></>
 
     return (
         <li style={{marginBottom: "10px"}}>
@@ -185,13 +184,6 @@ function EmailListItem({users, label }:{ users: User[], label: string }) {
                 }}>
                 {label}
             </Button>
-            <Snackbar
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                open={open}
-                onClose={() => setOpen(false)}
-                autoHideDuration={2000}
-                message="Kopiert til skrivebord"
-            />
         </li>
     )
 }
