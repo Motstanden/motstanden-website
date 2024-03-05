@@ -1,7 +1,10 @@
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Accordion, AccordionDetails, AccordionSummary, Stack, Theme } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Paper, Stack, Theme } from "@mui/material";
+import { CommentEntityType } from "common/enums";
 import { Poll } from "common/interfaces";
 import { useState } from "react";
+import { CommentSection } from "src/components/CommentSection";
+import { useIsMobileScreen } from "src/layout/useAppSizes";
 import { usePolls } from "./Context";
 import { PollContent } from "./components/PollContent";
 import { PollMenu } from "./components/PollMenu";
@@ -33,8 +36,9 @@ export function AllPollsPage() {
 
 function AccordionItem( {poll}: {poll: Poll}) {
 
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const isMobile = useIsMobileScreen()
 
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const onMenuOpen = () => setIsMenuOpen(true);
     const onMenuClose = () => setIsMenuOpen(false);
 
@@ -55,7 +59,6 @@ function AccordionItem( {poll}: {poll: Poll}) {
                 disableGutters
                 elevation={0}
                 style={{
-                    display: "inline-block",
                     width: "100%",
                     borderBottomWidth: "0px",
                     borderBottomStyle: "solid",
@@ -64,13 +67,14 @@ function AccordionItem( {poll}: {poll: Poll}) {
                 }}
             >
                 <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
+                    expandIcon={<ExpandMoreIcon/>}
                     sx={{
                         backgroundColor: (theme: Theme) => isMenuOpen ? theme.palette.action.hover : "transparent",
                         flexDirection: "row-reverse",
-                        padding: "0px 10px",
-                        margin: "0px",
-                        fontSize: "large",
+                        py: "0px",
+                        px: {xs: "2px", sm: "6px", md: "10px"},
+                        ml: {xs: "-6px", md: "0px"},
+                        fontSize: isMobile ? "normal" : "large",
                         fontWeight: "bold",
                         borderRadius: "15px",
                         ":hover": { 
@@ -86,28 +90,43 @@ function AccordionItem( {poll}: {poll: Poll}) {
                             width: "100%",
                         }}
                     >
-                        <div style={{ marginLeft: "10px" }}>
+                        <Box sx={{ ml: { xs: "2px", sm: "6px", md: "10px"} }}>
                             {poll.title}
-                        </div>
+                        </Box>
                         <div onClick={onMenuClick}>
                             <PollMenu 
                                 poll={poll} 
                                 onDeleteClick={deletePoll}
                                 onMenuOpen={onMenuOpen}
                                 onMenuClose={onMenuClose}
+                                sx={{
+                                    p: {xs: "4px", md: "6px" },
+                                    my: {xs: "-2px", md: "-epx"},
+                                    mx: {xs: "4px", md: "10px"}
+                                }}
                             />
                         </div>
                     </Stack>
                 </AccordionSummary>
-                <AccordionDetails
-                    sx={{
-                        borderLeftWidth: "1px",
-                        borderLeftStyle: "solid",
-                        borderLeftColor: (theme: Theme) => theme.palette.divider,
-                        padding: "0px 10px 20px 30px",
-                        marginLeft: "22px",
-                    }}>  
-                    <PollContent poll={poll} />                    
+                <AccordionDetails 
+                    sx={{ 
+                        maxWidth: "600px",
+                        mx: {xs: 0, md: 4}
+                    }}>
+                    <Paper
+                        elevation={4} 
+                        sx={{
+                            p: {xs: 1, sm: 2},
+                            mt: 2,
+                    }}>
+                        <PollContent poll={poll} /> 
+                    </Paper>
+                    <Divider sx={{my: 4}}/>
+                    <CommentSection
+                        entityType={CommentEntityType.Poll}
+                        entityId={poll.id}
+                        variant="compact"
+                    />                   
                 </AccordionDetails>
             </Accordion>
         </div>

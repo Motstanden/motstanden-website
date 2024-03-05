@@ -1,4 +1,5 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { SxProps } from '@mui/material';
 import { UserGroup } from 'common/enums';
 import { Poll } from 'common/interfaces';
 import { hasGroupAccess } from 'common/utils';
@@ -13,11 +14,13 @@ export function PollMenu({
     poll,
     onMenuOpen,
     onMenuClose,
+    sx,
 }: {
     onDeleteClick: React.MouseEventHandler<HTMLLIElement>,
     poll: Poll,
     onMenuOpen?: VoidFunction,
     onMenuClose?: VoidFunction,
+    sx?: SxProps
 }) {
     const { user } = useAuthenticatedUser();
     const canDeletePoll = user.id === poll.createdBy || hasGroupAccess(user, UserGroup.Administrator);
@@ -25,10 +28,11 @@ export function PollMenu({
     const url = `${window.location.origin}/avstemninger/${poll.id}`;
     return (
         <IconPopupMenu 
-            icon={<MoreHorizIcon />} 
+            icon={<MoreHorizIcon/>} 
             ariaLabel='Avstemningmeny'
             onMenuOpen={onMenuOpen}
             onMenuClose={onMenuClose}
+            sx={sx}
             >
             <CopyLinkMenuItem linkValue={url} divider={canDeletePoll}/>
             {canDeletePoll && ( 
