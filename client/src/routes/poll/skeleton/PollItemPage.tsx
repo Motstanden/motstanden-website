@@ -1,4 +1,5 @@
 import { PollItemPageHeader } from "../PollItemPage";
+import { PollCommentSectionSkeleton } from "./CurrentPollPage";
 import { PollCardSkeleton } from "./PollCard";
 
 export { PollItemPage as PollItemPageSkeleton };
@@ -12,6 +13,7 @@ function PollItemPage() {
                 maxWidth: "800px"
             }}>
                 <PollCardSkeleton />
+                <PollCommentSectionSkeleton/>
             </div>
         </>
     );

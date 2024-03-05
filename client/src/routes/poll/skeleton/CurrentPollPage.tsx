@@ -1,6 +1,11 @@
+import { Divider } from "@mui/material";
 import { PollCardSkeleton } from "./PollCard";
+import { CommentSectionSkeleton } from "src/components/CommentSection";
 
-export { CurrentPollPage as CurrentPollPageSkeleton };
+export { 
+    CurrentPollPage as CurrentPollPageSkeleton,
+    CommentsSkeleton as PollCommentSectionSkeleton
+};
 
 function CurrentPollPage() {
     return (
@@ -11,7 +16,17 @@ function CurrentPollPage() {
                 maxWidth: "800px"
             }}>
                 <PollCardSkeleton />
+                <CommentsSkeleton/>
             </div>
         </div>
     );
+}
+
+function CommentsSkeleton(){
+    return (
+        <div style={{maxWidth: "700px"}}>
+            <Divider sx={{ my: 6 }} />
+            <CommentSectionSkeleton variant="normal" />
+        </div>
+    )
 }
