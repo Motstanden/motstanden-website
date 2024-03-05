@@ -58,6 +58,7 @@ function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
             <ListItemLink 
                 text="Traller" 
                 to="/studenttraller/populaere" 
+                matchPattern="/studenttraller/*"
                 icon={<LyricIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
             <ListItemDivider/>
@@ -111,7 +112,8 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 onLinkClick={onItemClick}/>
             <ListItemLink 
                 text="Arrangement" 
-                to="/arrangement/kommende" 
+                to="/arrangement/kommende"
+                matchPattern="/arrangement/*" 
                 icon={<EventIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick} 
                 />
@@ -129,6 +131,7 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
             <ListItemLink 
                 text="Avstemninger" 
                 to="/avstemninger/paagaaende" 
+                matchPattern="/avstemninger/*"
                 icon={<PollIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick} 
             />
@@ -141,6 +144,7 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
             <ListItemLink
                 text="Traller" 
                 to="/studenttraller/populaere" 
+                matchPattern="/studenttraller/*"
                 icon={<LyricIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
             <ListItemDivider/>
@@ -181,6 +185,7 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 <ListItemLink 
                     text="Medlemmer" 
                     to="/medlem/liste" 
+                    matchPattern="/medlem/*"
                     icon={<MemberListIcon fontSize={iconSize}/>}
                     onLinkClick={onItemClick}/>
             )}

@@ -30,18 +30,20 @@ export function ListItemLink({
     icon,
     onLinkClick,
     activate,
+    matchPattern,
 }: {
     to: string
     text: string
     onLinkClick: VoidFunction
     externalRoute?: boolean
     icon?: React.ReactNode
-    activate?: boolean
+    activate?: boolean,
+    matchPattern?: string
 }) {
     const urlAttribute = externalRoute ? { href: to } : { to: to }
     const { theme } = useAppTheme()
 
-    const matchesPathTo = !!useMatch(to + "/*")
+    const matchesPathTo = !!useMatch(matchPattern ?? `${to}/*`)
     const isActive = activate || matchesPathTo
 
     const isMobile = useIsMobileScreen()
