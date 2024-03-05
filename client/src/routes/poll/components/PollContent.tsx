@@ -21,12 +21,12 @@ export function PollContent({ poll }: { poll: Poll; }) {
                     updatedAt={poll.updatedAt}
                     updatedByUserId={poll.updatedBy} />
             </div>
-            <PollOptions poll={poll} />
+            <PollOptionsLoader poll={poll} />
         </div>
     );
 }
 
-function PollOptions({ poll }: { poll: Poll; }) {
+function PollOptionsLoader({ poll }: { poll: Poll; }) {
     const queryKey = ["FetchPollOptions", poll.id];
 
     const { isPending, isError, data, error } = useQuery<PollOption[]>({
@@ -58,7 +58,8 @@ function PollOptions({ poll }: { poll: Poll; }) {
 }
 
 function PollOptionsRenderer({
-    poll, onSubmitSuccess,
+    poll, 
+    onSubmitSuccess,
 }: {
     poll: PollWithOption;
     onSubmitSuccess: () => Promise<void>;
