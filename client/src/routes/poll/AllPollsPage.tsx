@@ -1,6 +1,7 @@
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Accordion, AccordionDetails, AccordionSummary, Stack, Theme } from "@mui/material";
 import { Poll } from "common/interfaces";
+import { useState } from "react";
 import { pollListQueryKey, usePolls } from "./Context";
 import { PollContent } from "./components/PollContent";
 import { PollMenu } from "./components/PollMenu";
@@ -32,6 +33,11 @@ export function AllPollsPage() {
 
 function AccordionItem( {poll}: {poll: Poll}) {
 
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const onMenuOpen = () => setIsMenuOpen(true);
+    const onMenuClose = () => setIsMenuOpen(false);
+
     const {deletePoll, isDeleting} = useDeletePollFunction(poll, pollListQueryKey);
 
     const onMenuClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -59,13 +65,17 @@ function AccordionItem( {poll}: {poll: Poll}) {
             >
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
-                    style={{
-                        backgroundColor: "transparent",
+                    sx={{
+                        backgroundColor: (theme: Theme) => isMenuOpen ? theme.palette.action.hover : "transparent",
                         flexDirection: "row-reverse",
-                        padding: "0px",
+                        padding: "0px 10px",
                         margin: "0px",
                         fontSize: "large",
                         fontWeight: "bold",
+                        borderRadius: "15px",
+                        ":hover": { 
+                            bgcolor: (theme: Theme) => theme.palette.action.hover,
+                        }
                     }}
                 >
                     <Stack
@@ -83,6 +93,8 @@ function AccordionItem( {poll}: {poll: Poll}) {
                             <PollMenu 
                                 poll={poll} 
                                 onDeleteClick={deletePoll}
+                                onMenuOpen={onMenuOpen}
+                                onMenuClose={onMenuClose}
                             />
                         </div>
                     </Stack>
@@ -93,7 +105,7 @@ function AccordionItem( {poll}: {poll: Poll}) {
                         borderLeftStyle: "solid",
                         borderLeftColor: (theme: Theme) => theme.palette.divider,
                         padding: "0px 10px 20px 30px",
-                        marginLeft: "12px",
+                        marginLeft: "22px",
                     }}>  
                     <PollContent poll={poll} />                    
                 </AccordionDetails>

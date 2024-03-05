@@ -11,16 +11,25 @@ import { useAuthenticatedUser } from 'src/context/Authentication';
 export function PollMenu({
     onDeleteClick,
     poll,
+    onMenuOpen,
+    onMenuClose,
 }: {
     onDeleteClick: React.MouseEventHandler<HTMLLIElement>,
-    poll: Poll
+    poll: Poll,
+    onMenuOpen?: VoidFunction,
+    onMenuClose?: VoidFunction,
 }) {
     const { user } = useAuthenticatedUser();
     const canDeletePoll = user.id === poll.createdBy || hasGroupAccess(user, UserGroup.Administrator);
 
     const url = `${window.location.origin}/avstemninger/${poll.id}`;
     return (
-        <IconPopupMenu icon={<MoreHorizIcon />} ariaLabel='Avstemningmeny'>
+        <IconPopupMenu 
+            icon={<MoreHorizIcon />} 
+            ariaLabel='Avstemningmeny'
+            onMenuOpen={onMenuOpen}
+            onMenuClose={onMenuClose}
+            >
             <CopyLinkMenuItem linkValue={url} divider={canDeletePoll}/>
             {canDeletePoll && ( 
                 <DeleteMenuItem onClick={onDeleteClick} />

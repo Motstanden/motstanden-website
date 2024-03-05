@@ -11,9 +11,7 @@ function AllPollsPage() {
             <h1>Avstemning</h1>
             <div style={{
                 marginBottom: "40px",
-                display: "inline-block",
-                minWidth: "MIN(100%, 500px)",
-                maxWidth: "900px",
+                maxWidth: "870px",
                 marginLeft: "1px"
             }}>
                 <PollList/>
@@ -36,7 +34,9 @@ function PollItem() {
                 alignItems="center"
                 gap="10px"
                 style={{
-                    marginBottom: "17px"
+                    marginBottom: "17px",
+                    marginLeft: "10px",
+                    width: "100%"
                 }}
                 >
                 <Skeleton 
