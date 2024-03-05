@@ -1,7 +1,7 @@
-import { APIRequestContext, TestInfo, expect, test } from '@playwright/test'
+import { APIRequestContext, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
 import { z } from "zod"
-import { apiLogIn, getUser } from '../../utils/auth.js'
+import { apiLogIn } from '../../utils/auth.js'
 
 const userSchema = z.object({ 
     firstName: z.string(),
@@ -38,7 +38,7 @@ test.describe("GET api/member-list", () => {
     const getValues = async (request: APIRequestContext) => await request.get("/api/member-list")
 
     test("Receives valid object", async ({request}, workerInfo) => {
-        await authenticate(request, workerInfo)
+        await apiLogIn(request, workerInfo)
         
         const res = await getValues(request)
         expect(res.ok()).toBeTruthy()
@@ -58,7 +58,7 @@ test.describe("GET api/simplified-member-list", () => {
     const getValues = async (request: APIRequestContext) => await request.get("/api/simplified-member-list")
 
     test("Receives valid object", async ({request}, workerInfo) => {
-        await authenticate(request, workerInfo)
+        await apiLogIn(request, workerInfo)
 
         const res = await getValues(request)
         expect(res.ok()).toBeTruthy()
@@ -72,8 +72,3 @@ test.describe("GET api/simplified-member-list", () => {
         expect(res.ok()).toBeFalsy()
     })
 })
-
-async function authenticate(request: APIRequestContext, workerInfo: TestInfo) { 
-    const user = getUser(workerInfo, UserGroup.Contributor)
-    await apiLogIn(request, user)
-}

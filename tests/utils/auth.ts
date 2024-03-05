@@ -6,8 +6,21 @@ export interface TestUser extends Omit<User, "groupId" | "createdAt" | "updatedA
     storageStatePath: string
 }
 
-export async function apiLogIn(apiContext: APIRequestContext, user: TestUser): Promise<void> {
-    return await unsafeApiLogIn(apiContext, user.email)
+
+export async function apiLogIn(apiContext: APIRequestContext, user: TestUser): Promise<void>;
+export async function apiLogIn(apiContext: APIRequestContext, info: TestInfo, group?: UserGroup): Promise<void>;
+export async function apiLogIn(apiContext: APIRequestContext, userOrInfo: TestUser | TestInfo, group?: UserGroup): Promise<void> {
+
+    const isUser = (user: any): user is TestUser => {
+        return user && typeof user === 'object' && 'email' in user
+    }
+
+    if (isUser(userOrInfo)) {
+        await unsafeApiLogIn(apiContext, userOrInfo.email);
+    } else {
+        const user = getUser(userOrInfo, group ?? UserGroup.Contributor);
+        await unsafeApiLogIn(apiContext, user.email);
+    }
 }
 
 export async function unsafeApiLogIn(apiContext: APIRequestContext, email: string): Promise<void> {
