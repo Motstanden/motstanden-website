@@ -53,6 +53,7 @@ import { HistoryPage } from "./routes/history/HistoryPage";
 import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
 import { AllPollsPage } from "./routes/poll/AllPollsPage";
 import { NewRumourPage } from "./routes/rumour/NewPage";
+import { PollItemPage } from "./routes/poll/PollItemPage";
 
 function App() {
 	const { isLoggedIn } = usePotentialUser()
@@ -133,6 +134,7 @@ function App() {
 							<Route path="paagaaende" element={<CurrentPollPage/>}/>
 							<Route path="alle" element={<AllPollsPage/>}/>
 							<Route path="ny" element={<NewPollPage/>}/>
+							<Route path=":pollId" element={<PollItemPage/>}/>
 						</Route>
 						<Route path="/medlem" element={<UserContext />}>
 							<Route path="" element={<Navigate to="liste" replace/>} />

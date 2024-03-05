@@ -5,6 +5,7 @@ import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContaine
 import { fetchFn } from "src/utils/fetchAsync";
 import { AllPollsPageSkeleton } from "./skeleton/AllPollsPage";
 import { CurrentPollPageSkeleton } from './skeleton/CurrentPollPage';
+import { PollItemPageSkeleton } from "./skeleton/PollItemPage";
 
 export const pollListQueryKey = ["FetchPollList"]
 
@@ -17,7 +18,7 @@ function PollsContainer() {
         <TabbedPageContainer
             tabItems={[
                 { to: "/avstemninger/paagaaende", label: "Pågående" },
-                { to: "/avstemninger/alle", label: "Alle" },
+                { to: "/avstemninger/alle", label: "Alle", isFallbackTab: true},
                 { to: "/avstemninger/ny", label: "ny" },
             ]}
         >
@@ -33,13 +34,16 @@ function PollLoader() {
         queryFn: fetchFn<Poll[]>("/api/polls/all")
     })
 
-    const {isCurrentPollPage, isAllPollsPage, isNewPollsPage} = usePollUrlMatch()
+    const {isCurrentPollPage, isAllPollsPage, isPollItemPage, isNewPollsPage} = usePollUrlMatch()
     if(isPending) {
         if(isCurrentPollPage)
             return <CurrentPollPageSkeleton/>
 
         if(isAllPollsPage)
             return <AllPollsPageSkeleton/>
+
+        if(isPollItemPage)
+            return <PollItemPageSkeleton/>        
 
         if(!isNewPollsPage)     // New page does not depend on the data
             return <></>
@@ -74,15 +78,18 @@ type PollUrlMatch = {
     isCurrentPollPage: boolean,
     isAllPollsPage: boolean,
     isNewPollsPage: boolean,
+    isPollItemPage: boolean
 }
 
 function usePollUrlMatch(): PollUrlMatch {
     const isCurrent = useMatch("/avstemninger/paagaaende")
     const isAll = useMatch("/avstemninger/alle")
     const isNew = useMatch("/avstemninger/ny")
+    const isItem = useMatch("/avstemninger/:pollId")
     return {
         isCurrentPollPage: !!isCurrent,
         isAllPollsPage: !!isAll,
         isNewPollsPage: !!isNew,
+        isPollItemPage: !!isItem
     }
 }

@@ -1,17 +1,18 @@
+import { PollItemPageHeader } from "../PollItemPage";
 import { PollCardSkeleton } from "./PollCard";
 
-export { CurrentPollPage as CurrentPollPageSkeleton };
+export { PollItemPage as PollItemPageSkeleton };
 
-function CurrentPollPage() {
+function PollItemPage() {
     return (
-        <div>
-            <h1>Avstemning</h1>
+        <>
+            <PollItemPageHeader/>
             <div style={{
                 minWidth: "MIN(100%, 500px)",
                 maxWidth: "800px"
             }}>
                 <PollCardSkeleton />
             </div>
-        </div>
+        </>
     );
 }
