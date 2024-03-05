@@ -15,7 +15,8 @@ export function AllPollsPage() {
         <>
             <h1>Avstemning</h1>
             <div style={{
-                maxWidth: "900px"
+                maxWidth: "900px",
+                marginTop: "-10px"
             }}>
                 {polls.map((poll) => (
                     <div key={poll.id}>

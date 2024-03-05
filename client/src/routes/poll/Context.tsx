@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { Poll } from "common/interfaces";
-import { Outlet, useOutletContext } from "react-router-dom";
+import { Outlet, useMatch, useOutletContext } from "react-router-dom";
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer";
 import { fetchFn } from "src/utils/fetchAsync";
-import { PollPageSkeleton } from './skeleton/PollPage';
+import { AllPollsPageSkeleton } from "./skeleton/AllPollsPage";
+import { CurrentPollPageSkeleton } from './skeleton/CurrentPollPage';
 
 export const pollListQueryKey = ["FetchPollList"]
 
@@ -25,7 +26,6 @@ function PollsContainer() {
     )
 }
 
-
 function PollLoader() {
 
     const {isPending, isError, data, error} = useQuery<Poll[]>({
@@ -33,17 +33,29 @@ function PollLoader() {
         queryFn: fetchFn<Poll[]>("/api/polls/all")
     })
 
-    if(isPending)
-        return <CurrentPollPageSkeleton/>
+    const {isCurrentPollPage, isAllPollsPage, isNewPollsPage} = usePollUrlMatch()
+    if(isPending) {
+        if(isCurrentPollPage)
+            return <CurrentPollPageSkeleton/>
+
+        if(isAllPollsPage)
+            return <AllPollsPageSkeleton/>
+
+        if(!isNewPollsPage)     // New page does not depend on the data
+            return <></>
+    }
 
     if(isError)
         return `${error}`
-
-    const contextValue: PollContextType = {
-        currentPoll: data.length > 0 ? data[0] : undefined,
-        polls: data
-    }
     
+    let contextValue: PollContextType | undefined = undefined
+    if(data) {
+        contextValue = {
+            currentPoll: data.length > 0 ? data[0] : undefined,
+            polls: data
+        }
+    }
+
     return (
         <Outlet context={contextValue}/>
     )
@@ -56,4 +68,21 @@ export function usePolls() {
 interface PollContextType {
     currentPoll?: Poll,
     polls: Poll[]
+}
+
+type PollUrlMatch = { 
+    isCurrentPollPage: boolean,
+    isAllPollsPage: boolean,
+    isNewPollsPage: boolean,
+}
+
+function usePollUrlMatch(): PollUrlMatch {
+    const isCurrent = useMatch("/avstemninger/paagaaende")
+    const isAll = useMatch("/avstemninger/alle")
+    const isNew = useMatch("/avstemninger/ny")
+    return {
+        isCurrentPollPage: !!isCurrent,
+        isAllPollsPage: !!isAll,
+        isNewPollsPage: !!isNew,
+    }
 }
