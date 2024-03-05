@@ -1,6 +1,9 @@
 import { Skeleton, Stack } from "@mui/material";
 
-export { AllPollsPage as AllPollsPageSkeleton };
+export { 
+    AllPollsPage as AllPollsPageSkeleton,
+    PollItem as PollAccordionItemSkeleton 
+};
 
 function AllPollsPage() {
     return (
@@ -21,7 +24,13 @@ function AllPollsPage() {
 
 function PollList( { length = 17 }: {length?: number}) {
     return Array(length).fill(1).map((_, index) => (
-        <div key={index}>
+        <PollItem key={index}/>
+    ))
+}
+
+function PollItem() {
+    return (
+        <div>
             <Stack 
                 direction="row" 
                 alignItems="center"
@@ -42,5 +51,5 @@ function PollList( { length = 17 }: {length?: number}) {
                     />
             </Stack>
         </div>
-    ))
+    )
 }
