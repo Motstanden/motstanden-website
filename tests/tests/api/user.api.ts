@@ -58,7 +58,7 @@ test.describe("GET api/simplified-member-list", () => {
 
     const getValues = async (request: APIRequestContext) => await request.get("/api/simplified-member-list")
 
-    test("Receives valid object", async ({request}, workerInfo) => {
+    test("Returns valid object", async ({request}, workerInfo) => {
         await apiLogIn(request, workerInfo)
 
         const res = await getValues(request)
@@ -68,7 +68,7 @@ test.describe("GET api/simplified-member-list", () => {
         expect(() => simplifiedUserArraySchema.parse(users)).not.toThrow()
     })
 
-    test("Refuses unauthenticated requests", async ({request}) => { 
+    test("Returns unauthenticated requests", async ({request}) => { 
         const res = await getValues(request)
         expect(res.ok()).toBeFalsy()
     })
