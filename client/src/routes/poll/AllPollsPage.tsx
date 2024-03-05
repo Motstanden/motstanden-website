@@ -111,7 +111,7 @@ function AccordionItem( {poll}: {poll: Poll}) {
                 <AccordionDetails 
                     sx={{ 
                         maxWidth: "600px",
-                        mx: {xs: -1, sm: 0, md: 4}
+                        mx: {xs: -1, sm: 0, md: 4},
                     }}>
                     <Paper
                         elevation={4} 
@@ -119,15 +119,16 @@ function AccordionItem( {poll}: {poll: Poll}) {
                             py: {xs: 2},
                             px: {xs: 2, md: 3},
                             mt: 2,
+                            mb: 6
                     }}>
                         <PollContent poll={poll} /> 
                     </Paper>
-                    <Divider sx={{my: 4}}/>
                     <CommentSection
                         entityType={CommentEntityType.Poll}
                         entityId={poll.id}
                         variant="compact"
                     />                   
+                    <Divider sx={{mt: 5, mb: 2}}/>
                 </AccordionDetails>
             </Accordion>
         </div>
