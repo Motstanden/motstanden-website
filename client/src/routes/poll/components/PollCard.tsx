@@ -5,7 +5,7 @@ import { UserGroup } from 'common/enums';
 import { Poll } from "common/interfaces";
 import { hasGroupAccess } from 'common/utils';
 import React, { useState } from "react";
-import { DeleteMenuItem } from 'src/components/menu/EditOrDeleteMenu';
+import { DeleteMenuItem } from 'src/components/menu/DeleteMenuItem';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 import { useAuthenticatedUser } from 'src/context/Authentication';
 import { postJson } from 'src/utils/postJson';

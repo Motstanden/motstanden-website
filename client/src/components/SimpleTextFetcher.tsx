@@ -10,7 +10,7 @@ import { fetchFn } from "src/utils/fetchAsync"
 import { AuthorItem, authorInfoTextStyle } from './AuthorInfo'
 import { MarkDownEditor, MarkDownRenderer } from "./MarkDownEditor"
 import { Form } from "./form/Form"
-import { EditMenuItem } from "./menu/EditOrDeleteMenu"
+import { EditMenuItem } from './menu/EditMenuItem'
 import { IconPopupMenu } from "./menu/IconPopupMenu"
 
 export function SimpleTextFetcher({

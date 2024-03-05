@@ -1,11 +1,10 @@
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import EditIcon from '@mui/icons-material/Edit';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { ListItemIcon, ListItemText, MenuItem } from "@mui/material";
 
 import React from "react";
 import { IconPopupMenu } from "src/components/menu/IconPopupMenu";
+import { DeleteMenuItem } from './DeleteMenuItem';
+import { EditMenuItem } from './EditMenuItem';
 
 export function EditOrDeleteMenu({
     onEditClick,
@@ -47,52 +46,3 @@ export function EditOrDeleteMenu({
     );
 }
 
-export function EditMenuItem({ 
-    onClick,
-    divider,
-    text
-}: { 
-    onClick?: React.MouseEventHandler<HTMLLIElement>,
-    divider?: boolean,
-    text?: string
-}) {
-    return (
-        <MenuItem 
-            style={{ minHeight: "50px", minWidth: "180px" }} 
-            divider={divider} 
-            onClick={onClick} >
-            <ListItemIcon>
-                <EditIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>
-                {text ?? "Rediger"}
-            </ListItemText>
-        </MenuItem>
-    )
-}
-
-
-export function DeleteMenuItem({ 
-    onClick,
-    divider,
-    text,
-}: { 
-    onClick?: React.MouseEventHandler<HTMLLIElement>,
-    divider?: boolean
-    text?: string
-}) {
-    return (
-        <MenuItem
-            onClick={onClick} 
-            divider={divider} 
-            style={{ minHeight: "50px", minWidth: "180px" }} 
-            sx={{ backgroundColor: "error"}}>
-            <ListItemIcon>
-                <DeleteForeverIcon fontSize="small" color="error" />
-            </ListItemIcon>
-            <ListItemText primaryTypographyProps={{ color: "error" }}>
-                {text ?? "Slett"} 
-            </ListItemText>
-        </MenuItem>
-    )
-}
