@@ -131,7 +131,7 @@ function RenderComments(props: RenderItemProps<EntityComment[]>) {
             case CommentEntityType.Event:
                 return `/arrangement/${comment.entityId}#comment-${comment.id}`
             case CommentEntityType.Poll:    
-                return ``   // TODO
+                return `/avstemninger/${comment.entityId}#comment-${comment.id}`   
             case CommentEntityType.SongLyric:
                 return `/studenttraller/${comment.entityId}#comment-${comment.id}`
             case CommentEntityType.WallPost:

@@ -1,9 +1,10 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { Icon, Link, Stack, Theme, useMediaQuery } from "@mui/material"
+import { Icon, Link, Theme, useMediaQuery } from "@mui/material"
 import { Poll } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { Navigate, Link as RouterLink, useParams } from "react-router-dom"
 import { pollListQueryKey, usePolls } from "./Context"
+import { PollCommentSection } from './CurrentPollPage'
 import { PollCard } from "./components/PollCard"
 
 export {
@@ -27,6 +28,7 @@ function PollItemPage() {
             }}>
                 <PollCard poll={poll} srcQueryKey={pollListQueryKey} />
             </div>
+            <PollCommentSection poll={poll}/>
         </>
     )
 }

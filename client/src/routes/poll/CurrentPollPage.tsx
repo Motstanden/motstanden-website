@@ -1,3 +1,7 @@
+import { Divider } from '@mui/material';
+import { CommentEntityType } from 'common/enums';
+import { Poll } from "common/interfaces";
+import { CommentSection } from 'src/components/CommentSection';
 import { useTitle } from 'src/hooks/useTitle';
 import { pollListQueryKey, usePolls } from './Context';
 import { PollCard } from './components/PollCard';
@@ -5,6 +9,7 @@ import { PollCard } from './components/PollCard';
 export default function CurrentPollPage(){
     useTitle("Avstemninger")
 
+    const { currentPoll } = usePolls()
 
     return(
         <div>
@@ -16,14 +21,7 @@ export default function CurrentPollPage(){
                 }}>
                 <Poll/>
             </div>
-
-            {/* This comment section is coming soon™ */}
-            {/* <Divider sx={{ my: 4 }} />
-            <CommentSection 
-                entityType={CommentEntityType.Poll}
-                entityId={currentPoll.id}            
-                />
-            <Divider sx={{ my: 4 }} /> */}
+            <PollCommentSection poll={currentPoll}/>
         </div>
     )
 }
@@ -44,5 +42,22 @@ function Poll() {
     
     return (
         <PollCard poll={currentPoll} srcQueryKey={pollListQueryKey}/>
+    )
+}
+
+export function PollCommentSection({poll}: {poll?: Poll}) {
+
+    if(poll === undefined) {
+        return <></>
+    }
+
+    return (
+        <div style={{maxWidth: "700px"}}>
+            <Divider sx={{ my: 6 }} />
+            <CommentSection 
+                entityType={CommentEntityType.Poll}
+                entityId={poll.id}            
+                />
+        </div>
     )
 }
