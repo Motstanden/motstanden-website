@@ -73,7 +73,7 @@ function AccordionItem( {poll}: {poll: Poll}) {
                         flexDirection: "row-reverse",
                         py: "0px",
                         px: {xs: "2px", sm: "6px", md: "10px"},
-                        ml: {xs: "-6px", md: "0px"},
+                        mx: {xs: "-5px", md: "0px"},
                         fontSize: isMobile ? "normal" : "large",
                         fontWeight: "bold",
                         borderRadius: "15px",
@@ -111,7 +111,7 @@ function AccordionItem( {poll}: {poll: Poll}) {
                 <AccordionDetails 
                     sx={{ 
                         maxWidth: "600px",
-                        mx: {xs: -1, sm: 0, md: 4},
+                        mx: {xs: "-11px", sm: 0, md: 4},
                     }}>
                     <Paper
                         elevation={4} 
