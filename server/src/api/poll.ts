@@ -36,6 +36,10 @@ router.get("/polls/:id/options",
         const user = req.user as AccessTokenData
         const id = strToNumber(req.params.id) as number
 
+        const isValid = pollService.isValidId(id)
+        if(!isValid)
+            return res.status(404).end()
+
         try {
             const options = pollService.getPollOptions(user.userId, id)
             res.send(options)

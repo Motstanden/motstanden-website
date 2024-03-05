@@ -36,6 +36,20 @@ function getPoll(pollId: number): Poll {
     return poll
 }
 
+function isValidPollId(pollId: number): boolean { 
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(`
+        SELECT 
+            poll_id as id
+        FROM poll 
+            WHERE poll_id = ?`
+        )
+    const result = stmt.get(pollId)
+    db.close()
+    return result !== undefined
+
+}
+
 function getPollWithOptions(userId: number, pollId: number): PollWithOption {
 
     const poll = getPoll(pollId)
@@ -281,6 +295,7 @@ function deletePoll(pollId: number) {
 export const pollService = {
     get: getPoll,
     getAll: getAllPolls,
+    isValidId: isValidPollId,
     delete: deletePoll,
     getNewest: getNewest,
     getPollWithOptions: getPollWithOptions,
