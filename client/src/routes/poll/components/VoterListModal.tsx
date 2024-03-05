@@ -70,11 +70,16 @@ export function VoterListModal({ poll }: { poll: PollWithOption; }) {
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
     const pollId = strToNumber(searchParams.get(voterParams.pollId));
-    const isOpen = pollId === poll.id;
-
-    const selectedIndex = optionIndex % poll.options.length;
-    const selectedOption = poll.options[selectedIndex];
-
+    
+    const selectedIndex = poll.options.length > 0 
+        ? optionIndex % poll.options.length
+        : undefined
+    const selectedOption = selectedIndex 
+        ? poll.options[selectedIndex]
+        : undefined
+    
+    const isOpen = pollId === poll.id && selectedIndex !== undefined && selectedOption !== undefined;
+    
     return (
         <Dialog
             open={isOpen}
@@ -98,24 +103,28 @@ export function VoterListModal({ poll }: { poll: PollWithOption; }) {
 
                 <Divider sx={{ pt: 2 }} />
             </DialogTitle>
-            <DialogContent style={{ height: isSmallScreen ? undefined : "70vh" }}>
-                <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                >
-                    <h3 style={{ marginTop: "5px", marginBottom: "20px", marginInline: "5px" }}>
-                        {selectedOption.text}
-                    </h3>
-                    <NavigationButtons
-                        onLeftClick={onNavigateLeft}
-                        onRightClick={onNavigateRight}
-                        currentIndex={selectedIndex + 1}
-                        maxIndex={poll.options.length} />
-                </Stack>
-                <VoterListLoader
-                    poll={poll}
-                    selectedOptionId={selectedOption.id} />
-            </DialogContent>
+                <DialogContent style={{ height: isSmallScreen ? undefined : "70vh" }}>
+                {isOpen && (
+                    <>
+                        <Stack
+                            direction="row"
+                            justifyContent="space-between"
+                        >
+                            <h3 style={{ marginTop: "5px", marginBottom: "20px", marginInline: "5px" }}>
+                                {selectedOption.text}
+                            </h3>
+                            <NavigationButtons
+                                onLeftClick={onNavigateLeft}
+                                onRightClick={onNavigateRight}
+                                currentIndex={selectedIndex + 1}
+                                maxIndex={poll.options.length} />
+                        </Stack>
+                        <VoterListLoader
+                            poll={poll}
+                            selectedOptionId={selectedOption.id} />
+                    </>
+                )}
+                </DialogContent>
         </Dialog>
     );
 }
