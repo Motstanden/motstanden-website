@@ -4,6 +4,8 @@ import { NewPollWithOption } from 'common/interfaces';
 import { disposeLogIn, logIn } from '../../utils/auth.js';
 import { randomString } from '../../utils/randomString.js';
 
+test.describe.configure({ mode: "serial"})
+
 test.describe("Contributor can create, vote on- and delete polls they have created", async () => {
     runTests({
         creator: UserGroup.Contributor,
@@ -18,7 +20,6 @@ test.describe("Admin can delete all events", async () => {
         deleter: UserGroup.Administrator,
         testId: 2
     })
-
 })
 
 interface TestOptions {
@@ -28,10 +29,13 @@ interface TestOptions {
 }
 
 function runTests(opts: TestOptions) {
-    test.describe.configure({ mode: "serial"})
-    
     const poll = createPoll()
     const { creator, deleter } = opts
+
+    test.describe.configure({ mode: "serial"})
+    test.beforeEach(async ({browserName}) => {
+        test.skip(browserName !== "firefox", "Theses tests can not be runned in parallel across browsers. We will therefore only support firefox for now") 
+    })
 
     test(`New ${opts.testId}`, async ({browser}, workerInfo) => { 
         const { page } = await logIn(browser, workerInfo, creator) 
