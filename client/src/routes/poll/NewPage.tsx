@@ -29,7 +29,7 @@ export default function NewPollPage() {
 
     const onSuccess = () => {
         queryClient.invalidateQueries({queryKey: pollListQueryKey})
-        navigate("/avstemninger");
+        navigate("/avstemninger/paagaaende");
     };
 
     return (
