@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Poll } from "common/interfaces";
-import { Outlet } from "react-router-dom";
+import { Outlet, useOutletContext } from "react-router-dom";
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer";
 import { fetchFn } from "src/utils/fetchAsync";
 import { PollPageSkeleton } from "./Poll";
@@ -21,11 +21,26 @@ export function PollContext() {
     if(isError)
         return <PageContainer>{`${error}`}</PageContainer>
 
+    const [currentPoll, ...rest] = data
+    const contextValue: PollContextType = {
+        currentPoll: currentPoll,
+        remainingPolls: rest
+    }
+    
     return (
         <PageContainer>
-            <Outlet context={data}/>
+            <Outlet context={contextValue}/>
         </PageContainer>
     )
+}
+
+export function usePolls() {
+    return useOutletContext<PollContextType>()
+}
+
+interface PollContextType {
+    currentPoll?: Poll,
+    remainingPolls: Poll[]
 }
 
 function PageContainer({ children }: { children?: React.ReactNode }) {

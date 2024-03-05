@@ -12,7 +12,7 @@ import { UserGroup } from 'common/enums';
 import { Poll, PollOption, PollOptionVoters, PollWithOption } from "common/interfaces";
 import { hasGroupAccess, strToNumber } from 'common/utils';
 import React, { useEffect, useState } from "react";
-import { Link as RouterLink, useOutletContext, useSearchParams } from "react-router-dom";
+import { Link as RouterLink, useSearchParams } from "react-router-dom";
 import { AuthorInfo } from 'src/components/AuthorInfo';
 import { CloseModalButton } from 'src/components/CloseModalButton';
 import { UserList, UserListSkeleton } from 'src/components/UserList';
@@ -22,14 +22,13 @@ import { useAuthenticatedUser } from 'src/context/Authentication';
 import { useTitle } from 'src/hooks/useTitle';
 import { fetchFn } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
-import { pollListQueryKey } from './Context';
+import { pollListQueryKey, usePolls } from './Context';
 
 export default function PollPage(){
     useTitle("Avstemninger")
-    const polls = useOutletContext<Poll[]>()
-    const [currentPoll, ...remainingPolls] = polls
+    const {currentPoll, remainingPolls} = usePolls()
 
-    if(polls.length <= 0)
+    if(currentPoll === undefined)
         return <div style={{marginBlock: "40px", opacity: 0.8}}>Ingen avsteminger funnet...</div>
 
     return(
