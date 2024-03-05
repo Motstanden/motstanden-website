@@ -74,7 +74,7 @@ export function VoterListModal({ poll }: { poll: PollWithOption; }) {
     const selectedIndex = poll.options.length > 0 
         ? optionIndex % poll.options.length
         : undefined
-    const selectedOption = selectedIndex 
+    const selectedOption = selectedIndex !== undefined
         ? poll.options[selectedIndex]
         : undefined
     
