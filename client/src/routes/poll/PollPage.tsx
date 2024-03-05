@@ -1,24 +1,19 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Accordion, AccordionDetails, AccordionSummary, Divider, Paper, Stack, useTheme } from "@mui/material";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { UserGroup } from 'common/enums';
-import { Poll, PollOption, PollWithOption } from "common/interfaces";
+import { Poll } from "common/interfaces";
 import { hasGroupAccess } from 'common/utils';
 import React, { useState } from "react";
-import { AuthorInfo } from 'src/components/AuthorInfo';
 import { DeleteMenuItem } from 'src/components/menu/EditOrDeleteMenu';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 import { useAuthenticatedUser } from 'src/context/Authentication';
 import { useTitle } from 'src/hooks/useTitle';
-import { fetchFn } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
 import { pollListQueryKey, usePolls } from './Context';
-import { VoteForm } from './components/VoteForm';
-import { PollResult } from './components/PollResult';
-import { VoterListModal } from './components/VoterListModal';
+import { PollContent } from './components/PollContent';
 import { PollCardSkeleton } from "./skeleton/PollCard";
-import { PollOptionsSkeleton } from './skeleton/PollOptions';
 
 export default function PollPage(){
     useTitle("Avstemninger")
@@ -156,91 +151,6 @@ function PreviousPolls( {polls}: { polls: Poll[] }) {
             ))}
         </>
     )
-}
-
-function PollContent( {poll }: {poll: Poll }) {
-    return (
-        <div>
-            <div style={{
-                marginBottom: "15px",
-            }}>
-                <AuthorInfo 
-                    createdAt={poll.createdAt}
-                    createdByUserId={poll.createdBy}
-                    updatedAt={poll.updatedAt}
-                    updatedByUserId={poll.updatedBy}
-                />
-            </div>
-            <PollOptions poll={poll}/>
-        </div>
-    )
-}
-
-function PollOptions( {poll }: {poll: Poll }) {
-    const queryKey = [ poll.id, "FetchPollOptions"]
-    
-    const {isPending, isError, data, error} = useQuery<PollOption[]>({
-        queryKey: queryKey,
-        queryFn: fetchFn<PollOption[]>(`/api/polls/${poll.id}/options`),
-    })
-    
-    const queryClient = useQueryClient()
-    const onSubmitSuccess = async () => await queryClient.invalidateQueries({queryKey: queryKey})
-
-    if(isPending)
-        return <PollOptionsSkeleton/>
-
-    if(isError)
-        return <div style={{minHeight: "300px"}}>{`${error}`}</div>
-
-    const pollData: PollWithOption = {
-        ...poll,
-        options: data
-    }
-
-    return (
-        <>
-            <PollOptionsRenderer poll={pollData} onSubmitSuccess={onSubmitSuccess}/>
-            <VoterListModal poll={pollData}/>
-        </>
-
-    ) 
-}
-
-function PollOptionsRenderer( {
-    poll, 
-    onSubmitSuccess, 
-}: {
-    poll: PollWithOption, 
-    onSubmitSuccess: () => Promise<void>, 
-}) {
-    const [showResult, setShowResult] = useState(poll.options.find(option => option.isVotedOnByUser) !== undefined) 
-
-    const onShowResultClick = () => setShowResult(true)
-    const onExitResultClick = () => setShowResult(false)
-
-    const onSubmit = async (selectedItems: PollOption[]) => { 
-
-        const url = `/api/polls/${poll.id}/vote/upsert`
-        const optionIds: number[] = selectedItems.map(item => item.id)
-
-        const response = await postJson(url, optionIds, { alertOnFailure: true})
-
-        if(response && response.ok)
-        {
-            await onSubmitSuccess()
-            setShowResult(true)
-        }
-    }
-
-    if(showResult)
-        return <PollResult poll={poll} onChangeVoteClick={onExitResultClick}  />
-
-    return <VoteForm 
-        poll={poll} 
-        onShowResultClick={onShowResultClick} 
-        onSubmit={onSubmit}
-        />
 }
 
 function PollMenu({
