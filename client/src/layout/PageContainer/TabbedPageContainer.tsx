@@ -33,7 +33,8 @@ export function TabbedPageContainer({
 
     // Select current tab based on url
     const location = useLocation()
-    const currentTab = findActiveTab(tabItems, location, {matchChildPath: matchChildPath}) ?? tabItems[0]
+    const fallbackTab = tabItems.find(item => !!item.isFallbackTab)
+    const currentTab = findActiveTab(tabItems, location, {matchChildPath: matchChildPath}) ?? fallbackTab ?? tabItems[0]
 
     return (
         <>
@@ -96,7 +97,8 @@ function findActiveTab(
     return undefined;
 }
 
-interface PageTabItem {
+export interface PageTabItem {
     to: string,
-    label: string | React.ReactNode
+    label: string | React.ReactNode,
+    isFallbackTab?: boolean 
 }

@@ -3,7 +3,7 @@ import { SongLyric, StrippedSongLyric } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { Navigate, Outlet, useMatch, useOutletContext, useParams } from "react-router-dom"
 import { usePotentialUser } from "src/context/Authentication"
-import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
+import { PageTabItem, TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
 import { strToPrettyUrl } from "src/utils/strToPrettyUrl"
 import { LyricEditPageSkeleton } from "./skeleton/EditPage"
@@ -19,9 +19,9 @@ export {
 function LyricContainer() {
     const { isLoggedIn } = usePotentialUser()
     
-    let tabItems = [
+    let tabItems: PageTabItem[] = [
         { to: "/studenttraller/populaere", label: "Populære" },
-        { to: "/studenttraller/alle", label: "Alle" },
+        { to: "/studenttraller/alle", label: "Alle", isFallbackTab: true },
     ]
 
     if(isLoggedIn) {
