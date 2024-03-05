@@ -12,7 +12,6 @@ function AllPollsPage() {
             <div style={{
                 marginBottom: "40px",
                 maxWidth: "870px",
-                marginLeft: "1px"
             }}>
                 <PollList/>
             </div>
@@ -33,10 +32,9 @@ function PollItem() {
                 direction="row" 
                 alignItems="center"
                 gap="10px"
-                style={{
-                    marginBottom: "17px",
-                    marginLeft: "10px",
-                    width: "100%"
+                sx={{
+                    mb: {xs: "9px", sm: "13px", md: "17px"},
+                    mx: {xs: "0px", md: "10px"}
                 }}
                 >
                 <Skeleton 
