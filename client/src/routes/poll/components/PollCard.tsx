@@ -1,39 +1,16 @@
 import { Divider, Paper, Stack } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
-import { UserGroup } from 'common/enums';
 import { Poll } from "common/interfaces";
-import { hasGroupAccess } from 'common/utils';
-import React, { useState } from "react";
-import { DeleteMenuItem } from 'src/components/menu/DeleteMenuItem';
-import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
-import { useAuthenticatedUser } from 'src/context/Authentication';
-import { postJson } from 'src/utils/postJson';
+import React from "react";
 import { PollCardSkeleton } from "../skeleton/PollCard";
 import { PollContent } from './PollContent';
 import { PollMenu } from './PollMenu';
+import { useDeletePollFunction } from "./useDeletePollFunction";
 
 export function PollCard({ poll, srcQueryKey, style, }: { poll: Poll; srcQueryKey: any[]; style?: React.CSSProperties; }) {
 
-    const [isLoading, setIsLoading] = useState(false);
-    const queryClient = useQueryClient();
+    const { isDeleting, deletePoll } = useDeletePollFunction(poll, srcQueryKey);
 
-    const onDeleteClick = async () => {
-        setIsLoading(true);
-        const response = await postJson(
-            "/api/polls/delete",
-            { id: poll.id },
-            {
-                alertOnFailure: true,
-                confirmText: "Vil du permanent slette denne avstemningen?"
-            }
-        );
-        if (response?.ok) {
-            await queryClient.invalidateQueries({ queryKey: srcQueryKey });
-        }
-        setIsLoading(false);
-    };
-
-    if (isLoading)
+    if (isDeleting)
         return <PollCardSkeleton />;
 
     return (
@@ -50,7 +27,7 @@ export function PollCard({ poll, srcQueryKey, style, }: { poll: Poll; srcQueryKe
                     {poll.title}
                 </h3>
                 <div style={{ marginRight: "-10px" }}>
-                    <PollMenu onDeleteClick={onDeleteClick} poll={poll} />
+                    <PollMenu onDeleteClick={deletePoll} poll={poll} />
                 </div>
             </Stack>
             <Divider sx={{ mt: 1 }} />
