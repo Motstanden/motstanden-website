@@ -91,7 +91,7 @@ async function fillForm(page: Page, poll: NewPollWithOption) {
 
 async function saveForm(page: Page) {
     await page.getByRole('button', { name: 'Lagre' }).click();
-    await page.waitForURL("/avstemninger")    
+    await page.waitForURL("/avstemninger/paagaaende")    
     await expect(page).not.toHaveURL("/avstemninger/ny")
 }
 
