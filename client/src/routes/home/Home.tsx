@@ -16,7 +16,7 @@ import { QuotesListSkeleton } from "src/routes/quotes/skeleton/ListPage";
 import { RumourList } from "src/routes/rumour/RumourPage";
 import { fetchFn } from "src/utils/fetchAsync";
 import { BoardPageUtils, RawProjectData } from "../boardWebsiteList/BoardWebsiteList";
-import { PollCard } from "../poll/PollPage";
+import { PollCard } from '../poll/components/PollCard';
 import { PollCardSkeleton } from '../poll/skeleton/PollCard';
 import { RumourListSkeleton } from "../rumour/skeleton/RumourPage";
 
