@@ -1,11 +1,14 @@
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Accordion, AccordionDetails, AccordionSummary, useTheme } from "@mui/material";
-import { usePolls } from "./Context";
+import { Accordion, AccordionDetails, AccordionSummary, Stack, Theme } from "@mui/material";
+import { Poll } from "common/interfaces";
+import { pollListQueryKey, usePolls } from "./Context";
 import { PollContent } from "./components/PollContent";
+import { PollMenu } from "./components/PollMenu";
+import { useDeletePollFunction } from "./components/useDeletePollFunction";
+import { useState } from "react";
 
 
 export function AllPollsPage() {
-    const theme = useTheme();
     const { polls } = usePolls()
 
     if (polls.length <= 0)
@@ -19,49 +22,78 @@ export function AllPollsPage() {
                 marginTop: "-10px"
             }}>
                 {polls.map((poll) => (
-                    <div key={poll.id}>
-                        <Accordion
-                            disableGutters
-                            elevation={0}
-                            style={{
-                                display: "inline-block",
-                                minWidth: "MIN(100%, 500px)",
-                                borderBottomWidth: "0px",
-                                borderBottomStyle: "solid",
-                                backgroundColor: "transparent",
-                                borderRadius: "0px",
-                            }}
-                        >
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                style={{
-                                    backgroundColor: "transparent",
-                                    flexDirection: "row-reverse",
-                                    padding: "0px",
-                                    margin: "0px",
-                                    fontSize: "large",
-                                    fontWeight: "bold",
-                                }}
-                            >
-                                <span style={{ marginLeft: "10px" }}>
-                                    {poll.title}
-                                </span>
-                            </AccordionSummary>
-                            <AccordionDetails
-                                style={{
-                                    borderLeftWidth: "1px",
-                                    borderLeftStyle: "solid",
-                                    borderLeftColor: theme.palette.divider,
-                                    padding: "0px 10px 20px 30px",
-                                    marginLeft: "12px"
-                                }}
-                            >
-                                <PollContent poll={poll} />
-                            </AccordionDetails>
-                        </Accordion>
-                    </div>
+                    <AccordionItem 
+                        key={poll.id} 
+                        poll={poll} />
                 ))}
             </div>
         </>
     );
+}
+
+function AccordionItem( {poll}: {poll: Poll}) {
+
+    const {deletePoll} = useDeletePollFunction(poll, pollListQueryKey);
+
+    const onMenuClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.stopPropagation() // Stop the click event from bubling and then toggle the expansion of the accordion
+    }
+
+    return (
+        <div>
+            <Accordion
+                disableGutters
+                elevation={0}
+                style={{
+                    display: "inline-block",
+                    width: "100%",
+                    borderBottomWidth: "0px",
+                    borderBottomStyle: "solid",
+                    backgroundColor: "transparent",
+                    borderRadius: "0px",
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    style={{
+                        backgroundColor: "transparent",
+                        flexDirection: "row-reverse",
+                        padding: "0px",
+                        margin: "0px",
+                        fontSize: "large",
+                        fontWeight: "bold",
+                    }}
+                >
+                    <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        style={{
+                            width: "100%",
+                        }}
+                    >
+                        <div style={{ marginLeft: "10px" }}>
+                            {poll.title}
+                        </div>
+                        <div onClick={onMenuClick}>
+                            <PollMenu 
+                                poll={poll} 
+                                onDeleteClick={deletePoll}
+                            />
+                        </div>
+                    </Stack>
+                </AccordionSummary>
+                <AccordionDetails
+                    sx={{
+                        borderLeftWidth: "1px",
+                        borderLeftStyle: "solid",
+                        borderLeftColor: (theme: Theme) => theme.palette.divider,
+                        padding: "0px 10px 20px 30px",
+                        marginLeft: "12px",
+                    }}>  
+                    <PollContent poll={poll} />                    
+                </AccordionDetails>
+            </Accordion>
+        </div>
+    )
 }
