@@ -15,7 +15,8 @@ function PollsContainer() {
     return (
         <TabbedPageContainer
             tabItems={[
-                { to: "/avstemninger", label: "avstemninger" },
+                { to: "/avstemninger/paagaaende", label: "Pågående" },
+                { to: "/avstemninger/alle", label: "Alle" },
                 { to: "/avstemninger/ny", label: "ny" },
             ]}
         >
@@ -38,10 +39,9 @@ function PollLoader() {
     if(isError)
         return `${error}`
 
-    const [currentPoll, ...rest] = data
     const contextValue: PollContextType = {
-        currentPoll: currentPoll,
-        remainingPolls: rest
+        currentPoll: data.length > 0 ? data[0] : undefined,
+        polls: data
     }
     
     return (
@@ -55,5 +55,5 @@ export function usePolls() {
 
 interface PollContextType {
     currentPoll?: Poll,
-    remainingPolls: Poll[]
+    polls: Poll[]
 }

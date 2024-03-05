@@ -9,7 +9,8 @@ function PollPage() {
             <div style={{
                 marginBottom: "40px",
                 display: "inline-block",
-                minWidth: "MIN(100%, 500px)"
+                minWidth: "MIN(100%, 500px)",
+                maxWidth: "800px"
             }}>
                 <PollCardSkeleton />
             </div>

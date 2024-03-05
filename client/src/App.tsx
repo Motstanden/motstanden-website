@@ -39,8 +39,8 @@ import { LyricListPage } from 'src/routes/lyric/ListPage';
 import { NewLyricPage } from "src/routes/lyric/NewPage";
 import NotFound from "src/routes/notFound/NotFound";
 import { PollContext } from "src/routes/poll/Context";
+import CurrentPollPage from "src/routes/poll/CurrentPollPage";
 import NewPollPage from "src/routes/poll/NewPage";
-import PollPage from "src/routes/poll/PollPage";
 import { QuotesContext } from 'src/routes/quotes/Context';
 import QuoteListPage from "src/routes/quotes/ListPage";
 import NewQuotePage from "src/routes/quotes/NewPage";
@@ -51,6 +51,7 @@ import { InstrumentPage } from "src/routes/sheetArchive/InstrumentPage";
 import SongPage from "src/routes/sheetArchive/SongPage";
 import { HistoryPage } from "./routes/history/HistoryPage";
 import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
+import { AllPollsPage } from "./routes/poll/AllPollsPage";
 import { NewRumourPage } from "./routes/rumour/NewPage";
 
 function App() {
@@ -128,7 +129,9 @@ function App() {
 							<Route path="ny" element={<NewRumourPage />} />
 						</Route>
 						<Route path="/avstemninger" element={<PollContext/>}>
-							<Route index element={<PollPage/>}/>
+							<Route index element={<Navigate to="paagaaende" replace/>}/>
+							<Route path="paagaaende" element={<CurrentPollPage/>}/>
+							<Route path="alle" element={<AllPollsPage/>}/>
 							<Route path="ny" element={<NewPollPage/>}/>
 						</Route>
 						<Route path="/medlem" element={<UserContext />}>
