@@ -21,6 +21,7 @@ function PollItemPage() {
         <>
             <Header/>
             <div style={{
+                display: "inline-block",
                 minWidth: "MIN(100%, 500px)",
                 maxWidth: "800px"
             }}>

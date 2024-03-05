@@ -14,7 +14,7 @@ export default function CurrentPollPage(){
                     minWidth: "MIN(100%, 500px)",
                     maxWidth: "800px"
                 }}>
-                    <Poll/>
+                <Poll/>
             </div>
 
             {/* This comment section is coming soon™ */}
