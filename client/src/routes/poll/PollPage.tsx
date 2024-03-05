@@ -6,7 +6,7 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { LoadingButton } from "@mui/lab";
-import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Dialog, DialogContent, DialogTitle, Divider, FormControlLabel, FormGroup, IconButton, Link, Paper, Radio, RadioGroup, Skeleton, Stack, Theme, useMediaQuery, useTheme } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Dialog, DialogContent, DialogTitle, Divider, FormControlLabel, FormGroup, IconButton, Link, Paper, Radio, RadioGroup, Stack, Theme, useMediaQuery, useTheme } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserGroup } from 'common/enums';
 import { Poll, PollOption, PollOptionVoters, PollWithOption } from "common/interfaces";
@@ -23,6 +23,8 @@ import { useTitle } from 'src/hooks/useTitle';
 import { fetchFn } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
 import { pollListQueryKey, usePolls } from './Context';
+import { PollCardSkeleton } from "./skeleton/PollCard";
+import { PollOptionsSkeleton } from './skeleton/PollOptions';
 
 export default function PollPage(){
     useTitle("Avstemninger")
@@ -54,21 +56,6 @@ export default function PollPage(){
     )
 }
 
-export function PollPageSkeleton(){
-    return (
-        <div>
-            <h1>Avstemning</h1>
-            <div style={{
-                marginBottom: "40px",
-                display: "inline-block",
-                minWidth: "MIN(100%, 500px)"
-            }}>
-                <PollSkeleton/>
-            </div>
-        </div>
-    )
-}
-
 export function PollCard( { poll, srcQueryKey, style, }: { poll: Poll, srcQueryKey: any[], style?: React.CSSProperties }){
 
     const { user } = useAuthenticatedUser()
@@ -94,7 +81,7 @@ export function PollCard( { poll, srcQueryKey, style, }: { poll: Poll, srcQueryK
      }
 
     if(isLoading)
-        return <PollSkeleton/>
+        return <PollCardSkeleton/>
 
     return(
         <Paper 
@@ -120,21 +107,6 @@ export function PollCard( { poll, srcQueryKey, style, }: { poll: Poll, srcQueryK
         </Paper>
     )
 }
-
-export function PollSkeleton( {style}: {style?: React.CSSProperties} ) {
-    return (
-        <Paper elevation={2} sx={{ p: 2 }} style={style}>
-            <Skeleton 
-                variant="text"
-                height="45px"
-                width="MIN(320px, 100%)"
-            />
-            <Divider sx={{mt: 1}}/>
-            <PollOptionsSkeleton length={3}/>
-        </Paper>
-    )
-}
-
 
 function PreviousPolls( {polls}: { polls: Poll[] }) {
     const theme = useTheme()
@@ -240,53 +212,6 @@ function PollOptions( {poll }: {poll: Poll }) {
 
     ) 
 }
-
-function PollOptionsSkeleton( { length }: {length?: number}) {
-    length = length ?? 3
-    return (
-        <div>
-            <div style={{marginBottom: "15px", marginTop: "10px"}}>
-                <Skeleton
-                    variant="text"
-                    height="15px"
-                    width="240px"
-                />
-            </div>
-            {Array(length).fill(1).map( (_, index) => (
-                <div 
-                    key={index}
-                    style={{
-                        marginBottom: "20px"
-                    }} 
-                >
-                    <Skeleton 
-                        variant="text"
-                        style={{
-                            width: "200px",
-                            height: "32px"
-                        }}
-                    />
-                    <Skeleton 
-                        variant="rounded"
-                        style={{
-                            height: "40px",
-                        }}
-                    />
-                </div> 
-            ))}
-            <Skeleton 
-                variant="rounded"
-                style={{
-                    height: "30px",
-                    width: "160px",
-                    marginTop: "30px",
-                    marginBottom: "15px"
-                }}
-            />
-        </div>
-    )
- }
-
 
 function PollOptionsRenderer( {
     poll, 

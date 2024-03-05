@@ -3,7 +3,7 @@ import { Poll } from "common/interfaces";
 import { Outlet, useOutletContext } from "react-router-dom";
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer";
 import { fetchFn } from "src/utils/fetchAsync";
-import { PollPageSkeleton } from "./Poll";
+import { PollPageSkeleton } from './skeleton/PollPage';
 
 
 export const pollListQueryKey = ["FetchPollList"]

@@ -40,7 +40,7 @@ import { NewLyricPage } from "src/routes/lyric/NewPage";
 import NotFound from "src/routes/notFound/NotFound";
 import { PollContext } from "src/routes/poll/Context";
 import NewPollPage from "src/routes/poll/NewPage";
-import PollPage from "src/routes/poll/Poll";
+import PollPage from "src/routes/poll/PollPage";
 import { QuotesContext } from 'src/routes/quotes/Context';
 import QuoteListPage from "src/routes/quotes/ListPage";
 import NewQuotePage from "src/routes/quotes/NewPage";

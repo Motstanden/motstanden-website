@@ -8,6 +8,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { TitleCard } from "src/components/TitleCard";
 import { UserAvatar, UserAvatarSkeleton } from 'src/components/user/UserAvatar';
 import { UserFullName } from 'src/components/user/UserFullName';
+import { useTimeZone } from "src/context/TimeZone";
 import { useTitle } from "src/hooks/useTitle";
 import { buildEventItemUrl } from "src/routes/event/Context";
 import { QuoteList } from "src/routes/quotes/ListPage";
@@ -15,9 +16,9 @@ import { QuotesListSkeleton } from "src/routes/quotes/skeleton/ListPage";
 import { RumourList } from "src/routes/rumour/RumourPage";
 import { fetchFn } from "src/utils/fetchAsync";
 import { BoardPageUtils, RawProjectData } from "../boardWebsiteList/BoardWebsiteList";
-import { PollCard, PollSkeleton } from "../poll/Poll";
+import { PollCard } from "../poll/PollPage";
+import { PollCardSkeleton } from '../poll/skeleton/PollCard';
 import { RumourListSkeleton } from "../rumour/skeleton/RumourPage";
-import { useTimeZone } from "src/context/TimeZone";
 
 
 export default function Home() {
@@ -262,7 +263,7 @@ function LatestPoll() {
 
     if(isPending) {
         return (
-            <PollSkeleton style={{height: "100%",  maxWidth: "600px"}}/>
+            <PollCardSkeleton style={{height: "100%",  maxWidth: "600px"}}/>
         )
     }
 
