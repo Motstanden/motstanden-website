@@ -57,7 +57,7 @@ function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
             <ListItemDivider/>
             <ListItemLink 
                 text="Traller" 
-                to="/studenttraller" 
+                to="/studenttraller/populaere" 
                 icon={<LyricIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
             <ListItemDivider/>
@@ -111,7 +111,7 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 onLinkClick={onItemClick}/>
             <ListItemLink 
                 text="Arrangement" 
-                to="/arrangement" 
+                to="/arrangement/kommende" 
                 icon={<EventIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick} 
                 />
@@ -128,19 +128,19 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 onLinkClick={onItemClick}/>
             <ListItemLink 
                 text="Avstemninger" 
-                to="/avstemninger" 
+                to="/avstemninger/paagaaende" 
                 icon={<PollIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick} 
             />
             <ListItemDivider/>
             <ListItemLink 
                 text="Noter" 
-                to="/notearkiv" 
+                to="/notearkiv/repertoar" 
                 icon={<SheetArchiveIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick} />
             <ListItemLink
                 text="Traller" 
-                to="/studenttraller" 
+                to="/studenttraller/populaere" 
                 icon={<LyricIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
             <ListItemDivider/>
