@@ -3,7 +3,7 @@ import { Icon, Link, Theme, useMediaQuery } from "@mui/material"
 import { Poll } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { Navigate, Link as RouterLink, useParams } from "react-router-dom"
-import { pollListQueryKey, usePolls } from "./Context"
+import { usePolls } from "./Context"
 import { PollCommentSection } from './CurrentPollPage'
 import { PollCard } from "./components/PollCard"
 
@@ -26,7 +26,7 @@ function PollItemPage() {
                 minWidth: "MIN(100%, 500px)",
                 maxWidth: "800px"
             }}>
-                <PollCard poll={poll} srcQueryKey={pollListQueryKey} />
+                <PollCard poll={poll}/>
             </div>
             <PollCommentSection poll={poll}/>
         </>

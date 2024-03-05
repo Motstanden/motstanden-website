@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AuthorInfo } from 'src/components/AuthorInfo';
 import { fetchFn } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
+import { pollBaseQueryKey } from "../Context";
 import { PollOptionsSkeleton } from '../skeleton/PollOptions';
 import { PollResult } from './PollResult';
 import { VoteForm } from './VoteForm';
@@ -27,7 +28,7 @@ export function PollContent({ poll }: { poll: Poll; }) {
 }
 
 function PollOptionsLoader({ poll }: { poll: Poll; }) {
-    const queryKey = ["FetchPollOptions", poll.id];
+    const queryKey = [...pollBaseQueryKey, poll.id, "options"];
 
     const { isPending, isError, data, error } = useQuery<PollOption[]>({
         queryKey: queryKey,

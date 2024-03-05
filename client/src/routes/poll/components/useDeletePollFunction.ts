@@ -2,8 +2,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Poll } from "common/interfaces";
 import { useState } from "react";
 import { postJson } from "src/utils/postJson";
+import { pollBaseQueryKey } from "../Context";
 
-export function useDeletePollFunction(poll: Poll, srcQueryKey: any[]) {
+export function useDeletePollFunction(poll: Poll) {
     const [isDeleting, setIsDeleting] = useState(false);
     const queryClient = useQueryClient();
 
@@ -18,7 +19,7 @@ export function useDeletePollFunction(poll: Poll, srcQueryKey: any[]) {
             }
         );
         if (response?.ok) {
-            await queryClient.invalidateQueries({ queryKey: srcQueryKey });
+            await queryClient.invalidateQueries({ queryKey: pollBaseQueryKey});
         }
         setIsDeleting(false);
     };

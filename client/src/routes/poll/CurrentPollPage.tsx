@@ -3,7 +3,7 @@ import { CommentEntityType } from 'common/enums';
 import { Poll } from "common/interfaces";
 import { CommentSection } from 'src/components/CommentSection';
 import { useTitle } from 'src/hooks/useTitle';
-import { pollListQueryKey, usePolls } from './Context';
+import { usePolls } from './Context';
 import { PollCard } from './components/PollCard';
 
 export default function CurrentPollPage(){
@@ -41,7 +41,7 @@ function Poll() {
     }
     
     return (
-        <PollCard poll={currentPoll} srcQueryKey={pollListQueryKey}/>
+        <PollCard poll={currentPoll}/>
     )
 }
 

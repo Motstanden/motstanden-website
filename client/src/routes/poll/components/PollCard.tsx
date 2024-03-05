@@ -6,9 +6,10 @@ import { PollContent } from './PollContent';
 import { PollMenu } from './PollMenu';
 import { useDeletePollFunction } from "./useDeletePollFunction";
 
-export function PollCard({ poll, srcQueryKey, style, }: { poll: Poll; srcQueryKey: any[]; style?: React.CSSProperties; }) {
+export function PollCard({ poll, style, }: { poll: Poll, style?: React.CSSProperties }) {
 
-    const { isDeleting, deletePoll } = useDeletePollFunction(poll, srcQueryKey);
+    const { isDeleting, deletePoll } = useDeletePollFunction(poll);
+
 
     if (isDeleting)
         return <PollCardSkeleton />;

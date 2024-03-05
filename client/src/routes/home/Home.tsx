@@ -16,6 +16,7 @@ import { QuotesListSkeleton } from "src/routes/quotes/skeleton/ListPage";
 import { RumourList } from "src/routes/rumour/RumourPage";
 import { fetchFn } from "src/utils/fetchAsync";
 import { BoardPageUtils, RawProjectData } from "../boardWebsiteList/BoardWebsiteList";
+import { pollBaseQueryKey } from "../poll/Context";
 import { PollCard } from '../poll/components/PollCard';
 import { PollCardSkeleton } from '../poll/skeleton/PollCard';
 import { RumourListSkeleton } from "../rumour/skeleton/RumourPage";
@@ -255,7 +256,7 @@ function RenderCommentsSkeleton({length}: {length: number}) {
  
 function LatestPoll() {
 
-    const queryKey = ["FetchLatestPoll"]
+    const queryKey = [...pollBaseQueryKey, "latest"]
     const {isPending, isError, data, error} = useQuery<Poll>({
         queryKey: queryKey,
         queryFn: fetchFn<Poll>("/api/polls/latest")
@@ -274,7 +275,6 @@ function LatestPoll() {
     return (
         <PollCard 
             poll={data} 
-            srcQueryKey={queryKey} 
             style={{
                 maxWidth: "600px",
                 height: "100%"

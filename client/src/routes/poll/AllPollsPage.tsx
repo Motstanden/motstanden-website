@@ -2,7 +2,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Accordion, AccordionDetails, AccordionSummary, Stack, Theme } from "@mui/material";
 import { Poll } from "common/interfaces";
 import { useState } from "react";
-import { pollListQueryKey, usePolls } from "./Context";
+import { usePolls } from "./Context";
 import { PollContent } from "./components/PollContent";
 import { PollMenu } from "./components/PollMenu";
 import { useDeletePollFunction } from "./components/useDeletePollFunction";
@@ -38,7 +38,7 @@ function AccordionItem( {poll}: {poll: Poll}) {
     const onMenuOpen = () => setIsMenuOpen(true);
     const onMenuClose = () => setIsMenuOpen(false);
 
-    const {deletePoll, isDeleting} = useDeletePollFunction(poll, pollListQueryKey);
+    const {deletePoll, isDeleting} = useDeletePollFunction(poll);
 
     const onMenuClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.stopPropagation() // Stop the click event from bubling and then toggle the expansion of the accordion

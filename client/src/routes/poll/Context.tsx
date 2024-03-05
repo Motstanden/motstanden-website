@@ -7,7 +7,9 @@ import { AllPollsPageSkeleton } from "./skeleton/AllPollsPage";
 import { CurrentPollPageSkeleton } from './skeleton/CurrentPollPage';
 import { PollItemPageSkeleton } from "./skeleton/PollItemPage";
 
-export const pollListQueryKey = ["FetchPollList"]
+export const pollBaseQueryKey = ["poll"]
+
+export const pollListQueryKey = [...pollBaseQueryKey, "all"]
 
 export {
     PollsContainer as PollContext

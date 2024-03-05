@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Form } from "src/components/form/Form";
 import { useSessionStorage } from 'src/hooks/useStorage';
 import { useTitle } from "src/hooks/useTitle";
-import { pollListQueryKey } from "./Context";
+import { pollBaseQueryKey } from "./Context";
 
 const emptyPoll: NewPollWithOption = {
     title: "",
@@ -28,7 +28,7 @@ export default function NewPollPage() {
     const onAbort = () => navigate("/avstemninger");
 
     const onSuccess = () => {
-        queryClient.invalidateQueries({queryKey: pollListQueryKey})
+        queryClient.invalidateQueries({queryKey: pollBaseQueryKey})
         navigate("/avstemninger/paagaaende");
     };
 
