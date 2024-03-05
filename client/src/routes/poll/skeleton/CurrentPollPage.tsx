@@ -1,8 +1,8 @@
 import { PollCardSkeleton } from "./PollCard";
 
-export { PollPage as PollPageSkeleton };
+export { CurrentPollPage as CurrentPollPageSkeleton };
 
-function PollPage() {
+function CurrentPollPage() {
     return (
         <div>
             <h1>Avstemning</h1>

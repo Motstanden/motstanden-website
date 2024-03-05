@@ -34,7 +34,7 @@ function PollLoader() {
     })
 
     if(isPending)
-        return <PollPageSkeleton/>
+        return <CurrentPollPageSkeleton/>
 
     if(isError)
         return `${error}`
