@@ -2,7 +2,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import { ListItemIcon, ListItemText, MenuItem } from "@mui/material";
 import React from "react";
 
-
 export function EditMenuItem({
     onClick, divider, text
 }: {
