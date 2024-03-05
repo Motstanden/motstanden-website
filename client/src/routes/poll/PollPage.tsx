@@ -2,20 +2,16 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { LoadingButton } from "@mui/lab";
-import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Dialog, DialogContent, DialogTitle, Divider, FormControlLabel, FormGroup, IconButton, Link, Paper, Radio, RadioGroup, Stack, Theme, useMediaQuery, useTheme } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Divider, FormControlLabel, FormGroup, Link, Paper, Radio, RadioGroup, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserGroup } from 'common/enums';
-import { Poll, PollOption, PollOptionVoters, PollWithOption } from "common/interfaces";
-import { hasGroupAccess, strToNumber } from 'common/utils';
-import React, { useEffect, useState } from "react";
-import { Link as RouterLink, useSearchParams } from "react-router-dom";
+import { Poll, PollOption, PollWithOption } from "common/interfaces";
+import { hasGroupAccess } from 'common/utils';
+import React, { useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import { AuthorInfo } from 'src/components/AuthorInfo';
-import { CloseModalButton } from 'src/components/CloseModalButton';
-import { UserList, UserListSkeleton } from 'src/components/UserList';
 import { DeleteMenuItem } from 'src/components/menu/EditOrDeleteMenu';
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
 import { useAuthenticatedUser } from 'src/context/Authentication';
@@ -23,6 +19,7 @@ import { useTitle } from 'src/hooks/useTitle';
 import { fetchFn } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
 import { pollListQueryKey, usePolls } from './Context';
+import { VoterListModal, buildUrlParams } from './components/VoterListModal';
 import { PollCardSkeleton } from "./skeleton/PollCard";
 import { PollOptionsSkeleton } from './skeleton/PollOptions';
 
@@ -456,13 +453,13 @@ function PollResultItem( {
     option, 
     totalVotes, 
     optionIndex,
-    style
+    style,
 }: {
     pollId: number, 
     option: PollOption, 
     totalVotes: number, 
     optionIndex: number,
-    style?: React.CSSProperties
+    style?: React.CSSProperties,
 }){
     const theme = useTheme()
     const percentage = totalVotes <= 0 ? 0 : option.voteCount / totalVotes * 100
@@ -492,13 +489,21 @@ function PollResultItem( {
             <BarChartItem 
                 percentage={percentage} 
                 voteCount={option.voteCount}
-                voterViewerUrl={`?${voterParams.pollId}=${pollId}&${voterParams.optionIndex}=${optionIndex}`}
+                voterListModalUrl={`?${buildUrlParams(pollId, optionIndex)}`}
                 />
         </div>
     )
 }
 
-function BarChartItem( {percentage, voteCount, voterViewerUrl}: {percentage: number, voteCount: number, voterViewerUrl: string}){
+function BarChartItem( {
+    percentage, 
+    voteCount, 
+    voterListModalUrl
+}: {
+    percentage: number, 
+    voteCount: number, 
+    voterListModalUrl: string
+}){
     const theme = useTheme();
     let newPercentage =  Math.max(Math.min(Math.round(percentage), 100))  // Round value to nearest integer between 0 and 100
     return (
@@ -541,7 +546,7 @@ function BarChartItem( {percentage, voteCount, voterViewerUrl}: {percentage: num
                 <Link
                     underline='hover'
                     color="secondary"
-                    to={voterViewerUrl}
+                    to={voterListModalUrl}
                     component={RouterLink}
                 >
                     {voteCount} {voteCount === 1 ? "stemme" : "stemmer"}
@@ -560,164 +565,5 @@ function PollMenu({
         <IconPopupMenu icon={<MoreHorizIcon/>} ariaLabel='Avstemningmeny'>
             <DeleteMenuItem onClick={onDeleteClick} />
         </IconPopupMenu>    
-    )
-}
-
-const voterParams = {
-    pollId: "poll-id",
-    optionIndex: "option-index"
-}
-
-function VoterListModal({poll}: {poll: PollWithOption}) {
-    
-    const [searchParams, setSearchParams] = useSearchParams()
-
-    // You may wonder why this is a state variable, and not a normal variable that is derived from the searchParams.
-    // The reason is that when we want to close the modal we want to remove the optionIndex from the url, but we don't want to re-render the modal.
-    // If we were to use a normal variable, the content in the modal will have time to re-render, 
-    // which furthermore will cause a slightly noticeable flicker in the exit animation.  
-    const [optionIndex, setOptionIndex] = useState<number>(0)   
-
-    useEffect(() => { 
-        const newOptionIndex = strToNumber(searchParams.get(voterParams.optionIndex) ?? undefined)
-        if(newOptionIndex !== undefined && newOptionIndex !== optionIndex) {
-            setOptionIndex(newOptionIndex)
-        }
-    }, [searchParams])
-
-    const onClose = () => {
-        const newParams = new URLSearchParams(searchParams);
-        newParams.delete(voterParams.pollId);
-        newParams.delete(voterParams.optionIndex);
-        setSearchParams(newParams);
-    }
-    
-    const onNavigateLeft = () => {
-        const nextIndex = (optionIndex - 1 + poll.options.length) % poll.options.length;
-        setOptionUrl(nextIndex)
-    }
-
-    const onNavigateRight = () => {
-        const nextIndex = (optionIndex + 1) % (poll.options.length)
-        setOptionUrl(nextIndex)
-    }
-
-    const setOptionUrl = (index: number) => {
-        const newParams = new URLSearchParams(searchParams)
-        newParams.set(voterParams.optionIndex, `${index}`)
-        setSearchParams(newParams, {replace: true})
-    }
-
-    const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        if(e.key === "ArrowRight"){
-            onNavigateRight()
-        } else if (e.key === "ArrowLeft") {
-            onNavigateLeft()
-        }
-    }
-
-    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
-
-    const pollId = strToNumber(searchParams.get(voterParams.pollId))
-    const isOpen = pollId === poll.id 
-    
-    const selectedIndex = optionIndex % poll.options.length
-    const selectedOption = poll.options[selectedIndex]
-
-    return (
-        <Dialog 
-            open={isOpen} 
-            onClose={onClose}
-            scroll="paper"
-            fullWidth
-            fullScreen={isSmallScreen}
-            onKeyDown={onKeyDown}
-            >
-            <DialogTitle>
-                <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                >
-                    <h3 style={{ margin: "0px"}}>
-                        {poll.title}
-                    </h3>
-                    <CloseModalButton onClick={onClose} style={{marginBottom: "2px"}}/>
-                </Stack>
-                
-                <Divider sx={{pt: 2}}/>
-            </DialogTitle>
-            <DialogContent style={{ height: isSmallScreen ? undefined : "70vh"}}>
-                <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                >
-                    <h3 style={{marginTop: "5px", marginBottom: "20px", marginInline: "5px"}}>
-                        {selectedOption.text}
-                    </h3>
-                    <NavigationButtons 
-                        onLeftClick={onNavigateLeft}
-                        onRightClick={onNavigateRight}
-                        currentIndex={selectedIndex + 1}
-                        maxIndex={poll.options.length}
-                    />
-                </Stack>
-                <VoterList 
-                    poll={poll} 
-                    selectedOptionId={selectedOption.id} 
-                />
-            </DialogContent>
-        </Dialog>
-    )
-}
-
-function VoterList( {poll, selectedOptionId}: {poll: PollWithOption, selectedOptionId: number}) {
-
-    const {isPending, isError, data, error} = useQuery<PollOptionVoters[]>({
-        queryKey: ["FetchPollVoters", poll.id],
-        queryFn: fetchFn<PollOptionVoters[]>(`/api/polls/${poll.id}/voter-list`),
-    })
-
-    if(isPending)
-        return <UserListSkeleton/>
-
-    if(isError)
-        return <div>{`${error}`}</div>
-
-    const selectedData = data?.find(voter => voter.optionId === selectedOptionId)
-        ?? { optionId: selectedOptionId, voters: [] }
-
-    return (
-        <UserList users={selectedData.voters} noUsersText="Ingen har stemt på dette..."/>
-    )
-}
-
-function NavigationButtons( {
-    onLeftClick,
-    onRightClick,
-    currentIndex,
-    maxIndex,
-}: {
-    onLeftClick?: VoidFunction,
-    onRightClick?: VoidFunction,
-    currentIndex: number,
-    maxIndex: number,
-}) {
-    return (
-        <div style={{whiteSpace: "nowrap"}}>
-            <IconButton onClick={onLeftClick}>
-                <KeyboardArrowLeftIcon/>
-            </IconButton>
-            <span style={{
-                fontSize: "x-small",
-                opacity: 0.5,
-                paddingInline: "2px",
-            }}>
-                {currentIndex}/{maxIndex}
-            </span>
-            <IconButton onClick={onRightClick}>
-                <KeyboardArrowRightIcon/>
-            </IconButton>
-        </div>
     )
 }
