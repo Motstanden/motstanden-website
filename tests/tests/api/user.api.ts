@@ -2,6 +2,7 @@ import { APIRequestContext, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
 import { z } from "zod"
 import { apiLogIn } from '../../utils/auth.js'
+import { dateTimeSchema } from '../../utils/zodtypes.js'
 
 const userSchema = z.object({ 
     firstName: z.string(),
@@ -16,11 +17,11 @@ const userSchema = z.object({
     capeName: z.string(),
     status: z.nativeEnum(UserStatus),
     phoneNumber: z.number().min(10000000).max(99999999).nullable(),
-    birthDate: z.coerce.date().nullable(),
-    startDate: z.coerce.date(),
-    endDate: z.coerce.date().nullable(),
-    createdAt: z.coerce.date(),
-    updatedAt: z.coerce.date(),
+    birthDate: dateTimeSchema.nullable(),
+    startDate: dateTimeSchema,
+    endDate: dateTimeSchema.nullable(),
+    createdAt: dateTimeSchema,
+    updatedAt: dateTimeSchema,
 })
 
 const userArraySchema = z.array(userSchema)
