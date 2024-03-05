@@ -5,7 +5,6 @@ import { pollListQueryKey, usePolls } from "./Context";
 import { PollContent } from "./components/PollContent";
 import { PollMenu } from "./components/PollMenu";
 import { useDeletePollFunction } from "./components/useDeletePollFunction";
-import { useState } from "react";
 
 
 export function AllPollsPage() {
@@ -33,11 +32,16 @@ export function AllPollsPage() {
 
 function AccordionItem( {poll}: {poll: Poll}) {
 
-    const {deletePoll} = useDeletePollFunction(poll, pollListQueryKey);
+    const {deletePoll, isDeleting} = useDeletePollFunction(poll, pollListQueryKey);
 
     const onMenuClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.stopPropagation() // Stop the click event from bubling and then toggle the expansion of the accordion
     }
+
+    // Delete optimisticly.
+    // Todo: Handle the case were the delete fails.
+    if(isDeleting)
+        return <></>
 
     return (
         <div>
