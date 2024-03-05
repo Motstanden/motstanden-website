@@ -21,7 +21,7 @@ export function PollMenu({
     const url = `${window.location.origin}/avstemninger/${poll.id}`;
     return (
         <IconPopupMenu icon={<MoreHorizIcon />} ariaLabel='Avstemningmeny'>
-            <CopyLinkMenuItem linkValue={url} divider/>
+            <CopyLinkMenuItem linkValue={url} divider={canDeletePoll}/>
             {canDeletePoll && ( 
                 <DeleteMenuItem onClick={onDeleteClick} />
             )}
