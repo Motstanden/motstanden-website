@@ -5,10 +5,27 @@ import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContaine
 import { fetchFn } from "src/utils/fetchAsync";
 import { PollPageSkeleton } from './skeleton/PollPage';
 
-
 export const pollListQueryKey = ["FetchPollList"]
 
-export function PollContext() {
+export {
+    PollsContainer as PollContext
+};
+
+function PollsContainer() {
+    return (
+        <TabbedPageContainer
+            tabItems={[
+                { to: "/avstemninger", label: "avstemninger" },
+                { to: "/avstemninger/ny", label: "ny" },
+            ]}
+        >
+            <PollLoader/>
+        </TabbedPageContainer>
+    )
+}
+
+
+function PollLoader() {
 
     const {isPending, isError, data, error} = useQuery<Poll[]>({
         queryKey: pollListQueryKey,
@@ -16,10 +33,10 @@ export function PollContext() {
     })
 
     if(isPending)
-        return <PageContainer><PollPageSkeleton/></PageContainer>
+        return <PollPageSkeleton/>
 
     if(isError)
-        return <PageContainer>{`${error}`}</PageContainer>
+        return `${error}`
 
     const [currentPoll, ...rest] = data
     const contextValue: PollContextType = {
@@ -28,9 +45,7 @@ export function PollContext() {
     }
     
     return (
-        <PageContainer>
-            <Outlet context={contextValue}/>
-        </PageContainer>
+        <Outlet context={contextValue}/>
     )
 }
 
@@ -41,17 +56,4 @@ export function usePolls() {
 interface PollContextType {
     currentPoll?: Poll,
     remainingPolls: Poll[]
-}
-
-function PageContainer({ children }: { children?: React.ReactNode }) {
-    return (
-        <TabbedPageContainer
-            tabItems={[
-                { to: "/avstemninger", label: "avstemninger" },
-                { to: "/avstemninger/ny", label: "ny" },
-            ]}
-        >
-            {children}
-        </TabbedPageContainer>
-    )
 }
