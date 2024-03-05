@@ -101,8 +101,8 @@ function AccordionItem( {poll}: {poll: Poll}) {
                                 onMenuClose={onMenuClose}
                                 sx={{
                                     p: {xs: "4px", md: "6px" },
-                                    my: {xs: "-2px", md: "-epx"},
-                                    mx: {xs: "4px", md: "10px"}
+                                    my: {xs: "-2px", md: "-3px"},
+                                    mx: {xs: "0px", md: "10px"}
                                 }}
                             />
                         </div>
@@ -111,12 +111,13 @@ function AccordionItem( {poll}: {poll: Poll}) {
                 <AccordionDetails 
                     sx={{ 
                         maxWidth: "600px",
-                        mx: {xs: 0, md: 4}
+                        mx: {xs: -1, sm: 0, md: 4}
                     }}>
                     <Paper
                         elevation={4} 
                         sx={{
-                            p: {xs: 1, sm: 2},
+                            py: {xs: 2},
+                            px: {xs: 2, md: 3},
                             mt: 2,
                     }}>
                         <PollContent poll={poll} /> 
