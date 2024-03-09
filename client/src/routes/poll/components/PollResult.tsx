@@ -3,7 +3,7 @@ import { Button, Grow, LinearProgress, Link, Stack } from "@mui/material";
 import { PollOption, PollWithOption } from "common/interfaces";
 import React, { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import useTimeout from 'src/hooks/useTimeout';
+import useOnScreen from 'src/hooks/useOnScreen';
 import { OptionItem } from './VoteForm';
 import { buildUrlParams } from './VoterListModal';
 
@@ -18,9 +18,16 @@ export function PollResult({
     const userHasVoted = poll.options.find(option => option.isVotedOnByUser) !== undefined;
     const totalVotes = poll.options.reduce((accumulated, option) => accumulated + option.voteCount, 0);
 
+    const optionsRef = React.useRef<HTMLDivElement>(null);
+    const startAnimation = useOnScreenAnimation(optionsRef, /*Delay: */ 200);
+
     return (
         <div>
-            <div style={{ marginLeft: "5px"}}>
+            <div 
+                ref={optionsRef}
+                style={{ 
+                    marginLeft: "5px"
+                }}>
                 {poll.options.map((option, index) => (
                     <PollResultItem
                         key={index}
@@ -29,6 +36,7 @@ export function PollResult({
                         totalVotes={totalVotes}
                         optionIndex={index}
                         variant={poll.type}
+                        startAnimation={startAnimation}
                         style={{
                             marginBottom: "10px",
                         }} />
@@ -56,6 +64,8 @@ function PollResultItem({
     optionIndex,
     variant,
     style,
+    startAnimation = true,
+    animationDuration = 500
 }: {
     pollId: number;
     option: PollOption;
@@ -63,19 +73,18 @@ function PollResultItem({
     optionIndex: number;
     variant: "single" | "multiple";
     style?: React.CSSProperties;
+    startAnimation: boolean;
+    animationDuration?: number;
 }) {
-    const [startAnimation, setStartAnimation] = useState(false);
-    useTimeout(() => setStartAnimation(true), 200)
 
     const exactPercentage = totalVotes <= 0 ? 0 : option.voteCount / totalVotes * 100;
     const percentage = Math.max(Math.min(Math.round(exactPercentage), 100));
-    const animationDuration = 500;
 
     return (
         <div style={style}>
             <OptionItem
                 option={option}
-                value={null}
+                value={""}
                 variant={variant}
                 checked={option.isVotedOnByUser}
                 disabled
@@ -140,6 +149,27 @@ function PollResultItem({
             )}
         </div>
     );
+}
+
+function useOnScreenAnimation(ref: React.RefObject<HTMLDivElement>, delay: number = 200) { 
+    const isVisible = useOnScreen(ref);
+
+    const [startAnimation, setStartAnimation] = useState(false);
+    useEffect(() => {
+        let timeout: NodeJS.Timeout | undefined;
+
+        if(!startAnimation) {
+            timeout = setTimeout(() => { 
+                if (isVisible) {
+                    setStartAnimation(true);
+                }
+            }, delay);
+        }
+
+        return () => timeout && clearTimeout(timeout);
+    }, [isVisible]);
+
+    return startAnimation
 }
 
 function AnimatedNumber({ value, duration }: { value: number, duration: number }) {
