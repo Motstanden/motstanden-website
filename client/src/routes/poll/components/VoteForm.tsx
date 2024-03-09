@@ -1,7 +1,7 @@
 import BarChartIcon from '@mui/icons-material/BarChart';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import { LoadingButton } from "@mui/lab";
-import { Button, Checkbox, FormControlLabel, FormGroup, Radio, RadioGroup, Stack, useMediaQuery } from "@mui/material";
+import { Button, Checkbox, FormControlLabel, FormGroup, Radio, RadioGroup, Stack, SxProps, useMediaQuery } from "@mui/material";
 import { PollOption, PollWithOption } from "common/interfaces";
 import React, { useState } from "react";
 
@@ -54,7 +54,10 @@ export function VoteForm({
                         option={option}
                         variant={poll.type}
                         checked={selectedItems.includes(option)}
-                        onClick={() => onItemClicked(option, index)} />
+                        onClick={() => onItemClicked(option, index)} 
+                        sx={{
+                            mb: "6px"
+                        }}/>
                 ))}
             </OptionItemGroup>
             <div style={{ marginTop: "30px", marginBottom: "15px" }}>
@@ -83,21 +86,29 @@ function OptionItemGroup({ children, variant, style }: { children: React.ReactNo
     );
 }
 
-function OptionItem({
-    option, value, variant, onClick, checked
+export function OptionItem({
+    option, 
+    value, 
+    variant, 
+    onClick, 
+    checked,
+    disabled,
+    sx,
+    controlSx,
 }: {
     option: PollOption;
     value: unknown;
     variant: "single" | "multiple";
     onClick?: React.MouseEventHandler<HTMLLabelElement>;
     checked?: boolean;
+    disabled?: boolean;
+    sx?: SxProps;
+    controlSx?: SxProps;
 }) {
 
-    const [isMouseOver, setIsMouseOver] = useState(false);
-
     const srcControl = variant === "single"
-        ? <Radio color="secondary" checked={checked} />
-        : <Checkbox color="secondary" checked={checked} />;
+        ? <Radio color="secondary" checked={checked} disabled={disabled} sx={controlSx}/>
+        : <Checkbox color="secondary" checked={checked} disabled={disabled} sx={controlSx}/>;
 
     const onControlClick = (e: React.MouseEvent<HTMLLabelElement>) => {
         e.preventDefault();
@@ -110,11 +121,22 @@ function OptionItem({
         <FormControlLabel
             value={value}
             label={option.text}
-            onMouseEnter={() => setIsMouseOver(true)}
-            onMouseLeave={() => setIsMouseOver(false)}
-            style={isMouseOver ? { textDecoration: "underline" } : {}}
+            disabled={disabled}
             onClick={onControlClick}
-            control={srcControl} />
+            control={srcControl} 
+            sx={{
+                ":hover": {
+                    textDecoration: "underline"
+                },
+                '&.Mui-disabled': {
+                    textDecoration: "none",
+                    '.MuiFormControlLabel-label': { 
+                        color: 'inherit' 
+                    },
+                },
+                ...sx
+            }}
+            />
     );
 }
 

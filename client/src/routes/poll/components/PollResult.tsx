@@ -1,17 +1,18 @@
-import HowToRegIcon from '@mui/icons-material/HowToReg';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
-import { Button, Link, useTheme } from "@mui/material";
+import { Button, Grow, LinearProgress, Link, Stack } from "@mui/material";
 import { PollOption, PollWithOption } from "common/interfaces";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
+import useTimeout from 'src/hooks/useTimeout';
+import { OptionItem } from './VoteForm';
 import { buildUrlParams } from './VoterListModal';
 
-export function PollResult({ 
-    poll, 
-    onChangeVoteClick 
-}: { 
-    poll: PollWithOption; 
-    onChangeVoteClick: React.MouseEventHandler<HTMLButtonElement>; 
+export function PollResult({
+    poll,
+    onChangeVoteClick
+}: {
+    poll: PollWithOption;
+    onChangeVoteClick: React.MouseEventHandler<HTMLButtonElement>;
 }) {
 
     const userHasVoted = poll.options.find(option => option.isVotedOnByUser) !== undefined;
@@ -19,7 +20,7 @@ export function PollResult({
 
     return (
         <div>
-            <div>
+            <div style={{ marginLeft: "5px"}}>
                 {poll.options.map((option, index) => (
                     <PollResultItem
                         key={index}
@@ -27,12 +28,13 @@ export function PollResult({
                         option={option}
                         totalVotes={totalVotes}
                         optionIndex={index}
+                        variant={poll.type}
                         style={{
-                            marginBottom: "25px",
+                            marginBottom: "10px",
                         }} />
                 ))}
             </div>
-            <div style={{ marginTop: "40px", marginBottom: "1em" }}>
+            <div style={{ marginTop: "30px", marginBottom: "15px" }}>
                 <Button
                     variant="outlined"
                     color="secondary"
@@ -48,102 +50,130 @@ export function PollResult({
 }
 
 function PollResultItem({
-    pollId, option, totalVotes, optionIndex, style,
+    pollId,
+    option,
+    totalVotes,
+    optionIndex,
+    variant,
+    style,
 }: {
     pollId: number;
     option: PollOption;
     totalVotes: number;
     optionIndex: number;
+    variant: "single" | "multiple";
     style?: React.CSSProperties;
 }) {
-    const theme = useTheme();
-    const percentage = totalVotes <= 0 ? 0 : option.voteCount / totalVotes * 100;
+    const [startAnimation, setStartAnimation] = useState(false);
+    useTimeout(() => setStartAnimation(true), 200)
+
+    const exactPercentage = totalVotes <= 0 ? 0 : option.voteCount / totalVotes * 100;
+    const percentage = Math.max(Math.min(Math.round(exactPercentage), 100));
+    const animationDuration = 500;
+
     return (
         <div style={style}>
-            <div style={{
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginBottom: "2px",
-            }}>
-                <span style={{
-                    marginLeft: "2px",
-                    fontSize: "1.1em",
+            <OptionItem
+                option={option}
+                value={null}
+                variant={variant}
+                checked={option.isVotedOnByUser}
+                disabled
+                controlSx={{py: "0px"}}
+            />
+            <Stack 
+                direction="row" 
+                alignItems="center"
+                sx={{
+                    ml: "32px",
+                    lineHeight: "100%",
+                }}
+                >
+                <LinearProgress
+                    variant='determinate'
+                    value={startAnimation ? percentage : 0}
+                    sx={{
+                        height: "7px",
+                        borderRadius: "20px",
+                        width: "100%",
+                        bgcolor: (theme) => theme.palette.action.hover,
+                        ".MuiLinearProgress-bar": {
+                            bgcolor: (theme) => theme.palette.primary.light,
+                        },
+                        '& .MuiLinearProgress-bar1Determinate': {
+                            transitionDuration: `${animationDuration}ms`, // Set your desired duration here
+                        },
+                        mr: "10px",
+                    }}
+                />
+                <Stack direction="column">
+                    <div style={{
+                        whiteSpace: "nowrap",
+                        fontSize: "x-small"
+                    }}>
+                        <AnimatedNumber value={startAnimation ? percentage : 0} duration={animationDuration}/>%
+                    </div>
+                </Stack>
+            </Stack>
+            {option.voteCount > 0 && ( 
+                <div style={{ 
+                    textAlign: "left", 
+                    lineHeight: "100%",
+                    marginLeft: "33px",
+                    marginTop: "-5px",
                 }}>
-                    {option.text}
-                </span>
-                {option.isVotedOnByUser && (
-                    <HowToRegIcon
+                    <Link
+                        underline='hover'
+                        color="secondary"
+                        to={`?${buildUrlParams(pollId, optionIndex)}`}
+                        component={RouterLink}
                         style={{
-                            color: theme.palette.primary.light,
-                            marginRight: "1px"
-                        }} />
-                )}
-            </div>
-            <BarChartItem
-                percentage={percentage}
-                voteCount={option.voteCount}
-                voterListModalUrl={`?${buildUrlParams(pollId, optionIndex)}`} />
+                            whiteSpace: "nowrap",
+                            fontSize: "x-small",
+                            width: "100%",
+                        }}
+                    >
+                        <AnimatedNumber value={startAnimation ? option.voteCount : 0} duration={animationDuration}/>
+                        {option.voteCount === 1 ? " stemme" : " stemmer"}
+                    </Link>
+                </div>
+            )}
         </div>
     );
 }
 
-function BarChartItem({
-    percentage, voteCount, voterListModalUrl
-}: {
-    percentage: number;
-    voteCount: number;
-    voterListModalUrl: string;
-}) {
-    const theme = useTheme();
-    let newPercentage = Math.max(Math.min(Math.round(percentage), 100)); // Round value to nearest integer between 0 and 100
+function AnimatedNumber({ value, duration }: { value: number, duration: number }) {
+    const [displayValue, setDisplayValue] = useState<number>(0);
+    const [checked, setChecked] = useState<boolean>(false);
+
+    useEffect(() => {
+        let start: number | null = null;
+        let frameId: number;
+
+        const step = (timestamp: number) => {
+            if (!start) start = timestamp;
+            const progress = timestamp - start;
+            setDisplayValue(Math.min(value * (progress / duration), value));
+            if (progress < duration) {
+                frameId = window.requestAnimationFrame(step);
+            }
+        };
+        frameId = window.requestAnimationFrame(step);
+
+        return () => {
+            window.cancelAnimationFrame(frameId);
+        };
+    }, [value, duration]);
+
+    useEffect(() => {
+        setChecked(true);
+    }, []);
+
     return (
-        <div style={{
-            height: "40px",
-            width: "100%",
-            borderWidth: "1px",
-            borderStyle: "solid",
-            borderColor: theme.palette.grey[600],
-            borderRadius: "4px",
-            position: "relative",
-        }}>
-            <div style={{
-                height: "100%",
-                width: `${newPercentage}%`,
-                backgroundColor: theme.palette.primary.light,
-                borderRadius: "3px",
-            }}>
-            </div>
-            <div style={{
-                position: "absolute",
-                top: "50%",
-                transform: "translateY(-50%)",
-                left: "10px",
-                fontWeight: "bold",
-                color: theme.palette.text.secondary,
-                fontSize: "1.1em"
-            }}>
-                {newPercentage}%
-            </div>
-            <div style={{
-                position: "absolute",
-                top: "50%",
-                transform: "translateY(-50%)",
-                right: "10px",
-                fontSize: "small",
-                fontWeight: "light",
-                color: theme.palette.text.secondary,
-            }}>
-                <Link
-                    underline='hover'
-                    color="secondary"
-                    to={voterListModalUrl}
-                    component={RouterLink}
-                >
-                    {voteCount} {voteCount === 1 ? "stemme" : "stemmer"}
-                </Link>
-            </div>
-        </div>
+        <Grow in={checked}>
+            <span>
+                {Math.round(displayValue)}
+            </span>
+        </Grow>
     );
-}
+};
