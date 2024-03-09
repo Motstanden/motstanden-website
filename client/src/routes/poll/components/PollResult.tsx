@@ -99,30 +99,50 @@ function PollResultItem({
                 }}
             />
             {option.voteCount > 0 && ( 
-                <div style={{ 
-                    textAlign: "left", 
-                    lineHeight: "100%",
-                    marginLeft: "33px",
-                    marginTop: "-5px",
-                }}>
-                    <Link
-                        underline='hover'
-                        color="secondary"
-                        to={`?${buildUrlParams(pollId, optionIndex)}`}
-                        component={RouterLink}
-                        style={{
-                            whiteSpace: "nowrap",
-                            fontSize: "x-small",
-                            width: "100%",
-                        }}
-                    >
-                        <AnimatedNumber value={startAnimation ? option.voteCount : 0} duration={animationDuration}/>
-                        {option.voteCount === 1 ? " stemme" : " stemmer"}
-                    </Link>
-                </div>
+                <VoteCountText  
+                    count={option.voteCount}
+                    url={`?${buildUrlParams(pollId, optionIndex)}`}
+                    animationDuration={animationDuration}
+                    startAnimation={startAnimation}
+                />
             )}
         </div>
     );
+}
+
+function VoteCountText({
+    url, 
+    animationDuration,
+    startAnimation = true,
+    count
+}: {
+    url: string,
+    count: number
+    animationDuration: number,
+    startAnimation: boolean,
+}) {
+    return (
+        <div style={{
+            lineHeight: "100%",
+            marginLeft: "33px",
+            marginTop: "-5px",
+        }}>
+            <Link
+                underline='hover'
+                color="secondary"
+                to={url}
+                component={RouterLink}
+                style={{
+                    whiteSpace: "nowrap",
+                    fontSize: "x-small",
+                    width: "100%",
+                }}
+            >
+                <AnimatedNumber value={startAnimation ? count : 0} duration={animationDuration} />
+                {count === 1 ? " stemme" : " stemmer"}
+            </Link>
+        </div>
+    )
 }
 
 function ProgressBar({
