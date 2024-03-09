@@ -1,5 +1,5 @@
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
-import { Button, Grow, LinearProgress, Link, Stack } from "@mui/material";
+import { Button, Grow, LinearProgress, Link, Stack, SxProps } from "@mui/material";
 import { PollOption, PollWithOption } from "common/interfaces";
 import React, { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
@@ -90,40 +90,14 @@ function PollResultItem({
                 disabled
                 controlSx={{py: "0px"}}
             />
-            <Stack 
-                direction="row" 
-                alignItems="center"
+            <ProgressBar 
+                animationDuration={animationDuration}
+                percentage={percentage}
+                startAnimation={startAnimation}
                 sx={{
                     ml: "32px",
-                    lineHeight: "100%",
                 }}
-                >
-                <LinearProgress
-                    variant='determinate'
-                    value={startAnimation ? percentage : 0}
-                    sx={{
-                        height: "7px",
-                        borderRadius: "20px",
-                        width: "100%",
-                        bgcolor: (theme) => theme.palette.action.hover,
-                        ".MuiLinearProgress-bar": {
-                            bgcolor: (theme) => theme.palette.primary.light,
-                        },
-                        '& .MuiLinearProgress-bar1Determinate': {
-                            transitionDuration: `${animationDuration}ms`, // Set your desired duration here
-                        },
-                        mr: "10px",
-                    }}
-                />
-                <Stack direction="column">
-                    <div style={{
-                        whiteSpace: "nowrap",
-                        fontSize: "x-small"
-                    }}>
-                        <AnimatedNumber value={startAnimation ? percentage : 0} duration={animationDuration}/>%
-                    </div>
-                </Stack>
-            </Stack>
+            />
             {option.voteCount > 0 && ( 
                 <div style={{ 
                     textAlign: "left", 
@@ -149,6 +123,54 @@ function PollResultItem({
             )}
         </div>
     );
+}
+
+function ProgressBar({
+    percentage, 
+    animationDuration,
+    startAnimation = true,
+    sx
+}: {
+    percentage: number, 
+    animationDuration: number
+    startAnimation?: boolean, 
+    sx?: SxProps
+}) {
+    return (
+        <Stack
+            direction="row"
+            alignItems="center"
+            sx={{
+                lineHeight: "100%",
+                ...sx
+            }}
+        >
+            <LinearProgress
+                variant='determinate'
+                value={startAnimation ? percentage : 0}
+                sx={{
+                    height: "7px",
+                    borderRadius: "20px",
+                    width: "100%",
+                    bgcolor: (theme) => theme.palette.action.hover,
+                    ".MuiLinearProgress-bar": {
+                        bgcolor: (theme) => theme.palette.primary.light,
+                    },
+                    '& .MuiLinearProgress-bar1Determinate': {
+                        transitionDuration: `${animationDuration}ms`, // Set your desired duration here
+                    },
+                    mr: "10px",
+                }} />
+            <Stack direction="column">
+                <div style={{
+                    whiteSpace: "nowrap",
+                    fontSize: "x-small"
+                }}>
+                    <AnimatedNumber value={startAnimation ? percentage : 0} duration={animationDuration} />%
+                </div>
+            </Stack>
+        </Stack>
+    )
 }
 
 function useOnScreenAnimation(ref: React.RefObject<HTMLDivElement>, delay: number = 200) { 
