@@ -165,7 +165,9 @@ function RenderComments(props: RenderItemProps<EntityComment[]>) {
                             marginTop: "5px"
                         }}
                     />
-                    <div>
+                    <div style={{
+                        overflow: "hidden",
+                    }}>
                         <div>
                             <UserFullName 
                                 userId={comment.createdBy} 
@@ -175,7 +177,11 @@ function RenderComments(props: RenderItemProps<EntityComment[]>) {
                                 }}
                                 />
                         </div>
-                        <div>
+                        <div style={{
+                            overflow: "hidden",
+                            whiteSpace: "nowrap",
+                            textOverflow: "ellipsis",
+                        }}>
                             <Link
                                 color="secondary"
                                 underline="hover"
@@ -183,7 +189,7 @@ function RenderComments(props: RenderItemProps<EntityComment[]>) {
                                 component={RouterLink}
                                 to={buildUrl(comment) ?? "#"}
                             >
-                                {comment.comment.substring(0, 75).trim() + (comment.comment.trim().length > 75 ? "..." : "")}
+                                {comment.comment}
                             </Link>
                         </div>
                         <div
