@@ -38,7 +38,7 @@ export function PollResult({
                         variant={poll.type}
                         startAnimation={startAnimation}
                         style={{
-                            marginBottom: "10px",
+                            marginBottom: "13px",
                         }} />
                 ))}
             </div>
@@ -125,7 +125,7 @@ function VoteCountText({
         <div style={{
             lineHeight: "100%",
             marginLeft: "33px",
-            marginTop: "-5px",
+            marginTop: "0px",
         }}>
             <Link
                 underline='hover'
@@ -134,7 +134,7 @@ function VoteCountText({
                 component={RouterLink}
                 style={{
                     whiteSpace: "nowrap",
-                    fontSize: "x-small",
+                    fontSize: "small",
                     width: "100%",
                 }}
             >
@@ -169,7 +169,7 @@ function ProgressBar({
                 variant='determinate'
                 value={startAnimation ? percentage : 0}
                 sx={{
-                    height: "7px",
+                    height: "12px",
                     borderRadius: "20px",
                     width: "100%",
                     bgcolor: (theme) => theme.palette.action.hover,
@@ -179,12 +179,13 @@ function ProgressBar({
                     '& .MuiLinearProgress-bar1Determinate': {
                         transitionDuration: `${animationDuration}ms`, // Set your desired duration here
                     },
-                    mr: "10px",
                 }} />
             <Stack direction="column">
                 <div style={{
                     whiteSpace: "nowrap",
-                    fontSize: "x-small"
+                    fontSize: "small",
+                    minWidth: "37px",
+                    textAlign: "right"
                 }}>
                     <AnimatedNumber value={startAnimation ? percentage : 0} duration={animationDuration} />%
                 </div>
