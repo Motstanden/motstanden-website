@@ -104,6 +104,9 @@ function PollResultItem({
                     url={`?${buildUrlParams(pollId, optionIndex)}`}
                     animationDuration={animationDuration}
                     startAnimation={startAnimation}
+                    style={{
+                        marginLeft: "33px"
+                    }}
                 />
             )}
         </div>
@@ -114,18 +117,20 @@ function VoteCountText({
     url, 
     animationDuration,
     startAnimation = true,
-    count
+    count,
+    style
 }: {
     url: string,
     count: number
     animationDuration: number,
     startAnimation: boolean,
+    style?: React.CSSProperties
 }) {
     return (
         <div style={{
             lineHeight: "100%",
-            marginLeft: "33px",
             marginTop: "0px",
+            ...style
         }}>
             <Link
                 underline='hover'
@@ -184,8 +189,8 @@ function ProgressBar({
                 <div style={{
                     whiteSpace: "nowrap",
                     fontSize: "small",
-                    minWidth: "37px",
-                    textAlign: "right"
+                    minWidth: "33px",
+                    textAlign: "right",
                 }}>
                     <AnimatedNumber value={startAnimation ? percentage : 0} duration={animationDuration} />%
                 </div>
