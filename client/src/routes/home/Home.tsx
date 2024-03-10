@@ -8,6 +8,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { TitleCard } from "src/components/TitleCard";
 import { UserAvatar, UserAvatarSkeleton } from 'src/components/user/UserAvatar';
 import { UserFullName } from 'src/components/user/UserFullName';
+import { relativeTimeShortFormat } from "src/context/Locale";
 import { useTimeZone } from "src/context/TimeZone";
 import { useTitle } from "src/hooks/useTitle";
 import { buildEventItemUrl } from "src/routes/event/Context";
@@ -191,7 +192,7 @@ function RenderComments(props: RenderItemProps<EntityComment[]>) {
                                 opacity: "0.6"
                             }}
                         >
-                            {dayjs.utc(comment.createdAt).fromNow()}
+                            {dayjs.utc(comment.createdAt).locale(relativeTimeShortFormat).fromNow()}
                         </div>
                     </div>
                 </Stack>
