@@ -6,15 +6,15 @@ import {
     Stack,
     TextField
 } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
-import { UserGroup, UserRank, UserStatus } from 'common/enums';
+import { useQueryClient } from '@tanstack/react-query';
 import { NewUser } from 'common/interfaces';
-import { isNullOrWhitespace, validateEmail } from 'common/utils';
-import dayjs, { Dayjs } from 'dayjs';
+import { isNtnuMail as checkIsNtnuMail, isNullOrWhitespace } from 'common/utils';
 import React, { useState } from 'react';
-import { datePickerStyle } from 'src/assets/style/timePickerStyles';
+import { useNavigate } from 'react-router-dom';
 import { useTitle } from 'src/hooks/useTitle';
-import { profilePictureTVPair } from './Components';
+import { postJson } from 'src/utils/postJson';
+import { userListQueryKey } from './Context';
+import { profilePictureTVPair } from "./utils/TextValuePair";
 
 export default function NewUserPage() {
     useTitle("Ny bruker")
@@ -40,41 +40,20 @@ function NewUserForm() {
     const [middleName, setMiddleName] = useState("")
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
-    const [startDate, setStartDate] = useState<Dayjs>(dayjs());
     const [profilePicture, setProfilePicture] = useState(profilePictureTVPair[0].value)
 
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [isValidEmail, setIsValidEmail] = useState(true)
 
-    const onEmailBlur = (_: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
-        if(!validateEmail(email) || isNtnuMail(email)) {
-            setIsValidEmail(false)
-        }
-    }
+    const queryClient = useQueryClient()
+    const navigate = useNavigate()
 
-    const onEmailChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setEmail(e.target.value)
-        if(!isValidEmail) 
-            setIsValidEmail(true)
-    }
-    
     const buildUser = (): NewUser => {
         return {
             email: email.trim().toLowerCase(),
             firstName: firstName.trim(),
             middleName: middleName.trim(),
             lastName: lastName.trim(),
-            startDate: startDate.format("YYYY-MM-DD"),
             profilePicture: profilePicture,
-            
-            // Fields not in the form
-            rank: UserRank.ShortCircuit,
-            status: UserStatus.Active,
-            groupName: UserGroup.Contributor,
-            endDate: null,
-            capeName: "",
-            phoneNumber: null,
-            birthDate: null
         }
     }
 
@@ -82,26 +61,24 @@ function NewUserForm() {
         event.preventDefault()
         setIsSubmitting(true)
         const user = buildUser()
-        const response = await fetch("/api/create-user", {
-            method: "POST",
-            body: JSON.stringify(user),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
+        
+        const response = await postJson("/api/create-user", user, {alertOnFailure: true})
+
+        if (response && response.ok) {
+            const data: {userId: number} = await response.json() 
+            await queryClient.resetQueries({queryKey: userListQueryKey})
+            navigate(`/medlem/${data.userId}`, {replace: true})
+        }
 
         setIsSubmitting(false)
-        if (response.ok) {
-            const data = await response.json()
-            window.location.href = `${window.location.origin}/medlem/${data.userId}`;   // Redirect to the profile page of the new user
-        }
     }
 
+    const isNtnuMail = checkIsNtnuMail(email)
     const isDisabled = isSubmitting ||
                        isNullOrWhitespace(firstName) || 
                        isNullOrWhitespace(lastName) ||
-                       isNtnuMail(email) ||
-                       !validateEmail(email)
+                       isNullOrWhitespace(email) ||
+                       isNtnuMail 
     return (
         <form onSubmit={onSubmit}>
             <Stack spacing={4} alignItems="center">
@@ -135,24 +112,21 @@ function NewUserForm() {
                     label="E-post"
                     name="email"
                     value={email}
-                    onChange={onEmailChange}
-                    error={!isValidEmail}
+                    onChange={e => setEmail(e.target.value)}
+                    error={isNtnuMail}
                     required
-                    onBlur={onEmailBlur}
                     autoComplete="off"
                     fullWidth
-                    helperText={isValidEmail ? null : (isNtnuMail(email) ? "Ntnu-e-post ikke tillat" : "Ugyldig e-post")}
+                    helperText={isNtnuMail ? "Ntnu-e-post ikke tillat" : null }
                 />
-                <DatePicker
-                    {...datePickerStyle}
-                    views={["year", "month"]}
-                    label="Startet"
-                    minDate={dayjs().year(2018).month(7)}
-                    maxDate={dayjs()}
-                    value={startDate}
-                    onChange={newVal => setStartDate(newVal ?? dayjs())}
-                    renderInput={(params) => <TextField {...params} required fullWidth />}
-                />
+                <img
+                    src={`${window.location.origin}/${profilePicture}`}
+                    alt={`Profilbilde for ny bruker: ${firstName}`}
+                    style={{
+                        maxWidth: "300px",
+                        borderRadius: "50%",
+                        textAlign: "center",
+                    }} />
                 <TextField
                     select
                     label="Profilbilde"
@@ -165,23 +139,17 @@ function NewUserForm() {
                 >
                     {profilePictureTVPair.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
                 </TextField>
-                <img
-                    src={`${window.location.origin}/${profilePicture}`}
-                    alt={`Profilbilde for ny bruker: ${firstName}`}
-                    style={{
-                        maxWidth: "300px",
-                        borderRadius: "50%",
-                        textAlign: "center",
-                    }} />
                 <Button
                     variant="contained"
                     size="large"
                     type="submit"
                     disabled={isDisabled}
-                    style={{marginTop: "3em"}}
+                    style={{marginTop: "7em"}}
                     sx={{ maxWidth: "300px"}}
                     endIcon={<PersonAddIcon />}
-                >Legg til bruker</Button>
+                >
+                    Legg til bruker
+                </Button>
             </Stack>
         </form>
     )

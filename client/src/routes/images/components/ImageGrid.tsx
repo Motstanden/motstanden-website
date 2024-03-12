@@ -30,7 +30,7 @@ export function ImageGridItem( {
     readOnlyItem,
     editItem,
     placeholderItem,
-    state
+    state,
 }: {
     canEdit?: boolean,
     readOnlyItem: React.ReactNode,
@@ -38,6 +38,14 @@ export function ImageGridItem( {
     placeholderItem: React.ReactNode,
     state: ComponentState
 }) {
+
+    const onDeleteClick = () => {
+        console.log("TODO")
+    }
+
+    const onEditClick = () => {
+        console.log("TODO")
+    }
 
     if(state === "read" && canEdit) {
         return (
@@ -52,7 +60,8 @@ export function ImageGridItem( {
                         top: "5px",
                         right: "5px",
                     }}
-                    sx={iconButtonStaticStyle}/>
+                    // sx={iconButtonStaticStyle}
+                    />
                 {readOnlyItem}
            </div> 
         )
@@ -68,7 +77,5 @@ export function ImageGridItem( {
     if(state === "fetching")
         return placeholderItem
 
-    return null
+    return <></>
 }
-
-function  

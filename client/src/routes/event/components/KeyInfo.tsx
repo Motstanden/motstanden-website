@@ -4,6 +4,8 @@ import { KeyValuePair } from "common/interfaces";
 import { formatDateTimeInterval } from "common/utils/dateTime";
 import dayjs from "dayjs";
 import React from "react";
+import { LinkifiedText } from "src/components/LinkifiedText";
+import { useTimeZone } from "src/context/TimeZone";
 
 export function KeyInfo({
     keyInfo,
@@ -16,8 +18,10 @@ export function KeyInfo({
     endTime?: string | null     // yyyy-mm-dd hh:mm:ss
     style?: React.CSSProperties
 }) {
-    const localStartTime = dayjs(startTime).utc(true).local()
-    const localEndTime = endTime ? dayjs(endTime).utc(true).local()  : null
+    useTimeZone()
+
+    const localStartTime = dayjs.utc(startTime).tz()
+    const localEndTime = endTime ? dayjs.utc(endTime).tz()  : null
     return (
         <KeyValueList
             style={style}
@@ -56,7 +60,7 @@ function KeyValueList({ items, style }: { items: KeyValuePair<string, string>[];
                         }}
                     >
                         <strong>{item.key + " "}</strong>
-                        <span>{item.value}</span>
+                        <span><LinkifiedText>{item.value}</LinkifiedText></span>
                     </div>
                 ))}
             </div>
@@ -81,7 +85,7 @@ function KeyValueList({ items, style }: { items: KeyValuePair<string, string>[];
                         <strong>{item.key}</strong>
                     </div>
                     <div>
-                        {item.value}
+                        <LinkifiedText>{item.value}</LinkifiedText>
                     </div>
                 </React.Fragment>
             ))}

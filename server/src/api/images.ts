@@ -60,6 +60,7 @@ router.post("/image-album/update",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
+        getId: (req) => req.body.id,
         getAuthorInfo: getAlbumAuthor
     }),
     (req, res) => {
@@ -78,7 +79,8 @@ router.post("/image-album/delete",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
-        getAuthorInfo: getAlbumAuthor
+        getId: (req) => req.body.id,
+        getAuthorInfo: getAlbumAuthor,
     }),
     (req, res) => {
     
@@ -106,7 +108,7 @@ function getAlbumAuthor(id: number): AuthoredItem | undefined {
     if(!album)
         return undefined
 
-    return { createdBy: album?.createdByUserId }
+    return { createdBy: album.createdByUserId }
 }
 
 export default router;

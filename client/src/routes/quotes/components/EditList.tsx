@@ -1,9 +1,7 @@
 import { Stack } from "@mui/material";
-import { UserGroup } from "common/enums";
-import { hasGroupAccess } from "common/utils";
 import { useState } from "react";
 import { EditOrDeleteMenu } from "src/components/menu/EditOrDeleteMenu";
-import { useAuth } from "src/context/Authentication";
+import { useAuthenticatedUser } from "src/context/Authentication";
 import { postJson } from "src/utils/postJson";
 
 interface EditListProps<T> {
@@ -154,8 +152,8 @@ function DefaultItem<T extends ItemBase>({
         }
     }
 
-    const user = useAuth().user!
-    const hasEditPrivilege = user.userId === data.createdBy || hasGroupAccess(user, UserGroup.Administrator)
+    const { user, isAdmin } = useAuthenticatedUser()
+    const canEdit = isAdmin || user.id === data.createdBy
 
     return (
         <Stack
@@ -172,7 +170,7 @@ function DefaultItem<T extends ItemBase>({
             <div>
                 {renderItem(data)}
             </div>
-            {hasEditPrivilege && (
+            {canEdit && (
                 <div onMouseLeave={onMouseLeave}>
                     <EditOrDeleteMenu
                         disabled={isDisabled}

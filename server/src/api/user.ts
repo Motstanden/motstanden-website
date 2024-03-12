@@ -8,11 +8,20 @@ import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
 const router = express.Router()
 
-router.get("/member-list", (req: Request, res: Response) => {
-    const users = userService.getAllUsers()
-    res.send(users)
+router.get("/member-list", 
+    AuthenticateUser(),
+    (req: Request, res: Response) => {
+        const users = userService.getAllUsers()
+        res.send(users)
 })
 
+router.get("/simplified-member-list",
+    AuthenticateUser(),
+    (req: Request, res: Response) => {
+        const users = userService.getAllUsersSimplified()
+        res.send(users)
+})
+    
 router.post("/super-admin/update-user", requiresGroup(UserGroup.SuperAdministrator), handleUserUpdate(UserEditMode.SuperAdmin))
 
 router.post("/admin/update-user", requiresGroup(UserGroup.Administrator), handleUserUpdate(UserEditMode.Admin))
@@ -40,7 +49,7 @@ function handleUserUpdate(updateMode: UserEditMode) {
 
         if (changeSuccess) {
             const currentUser = req.user as AccessTokenData
-            if (payload.userId === currentUser.userId) {
+            if (payload.id === currentUser.userId) {
                 updateAccessToken(req, res, () => { }, {})
             }
         }
@@ -52,7 +61,7 @@ function handleUserUpdate(updateMode: UserEditMode) {
 function RequireSelf(req: Request, res: Response, next: NextFunction) {
     const user = req.user as AccessTokenData
     const newUser = req.body as User | undefined
-    if (newUser?.userId && newUser.userId === user.userId) {
+    if (newUser?.id && newUser.id === user.userId) {
         next()
     }
     else {
@@ -68,7 +77,8 @@ router.post("/create-user", requiresGroup(UserGroup.SuperAdministrator), (req: R
     try {
         const userId = userService.createUser(user)
         res.json({userId: userId})
-    } catch {
+    } catch (err) {
+        console.log(err)
         res.status(400).send("Bad data")
     }
 

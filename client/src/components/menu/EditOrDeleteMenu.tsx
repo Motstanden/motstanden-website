@@ -1,11 +1,11 @@
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import EditIcon from '@mui/icons-material/Edit';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { ListItemIcon, ListItemText, MenuItem, SxProps, Theme } from "@mui/material";
 
+import { SxProps } from '@mui/material';
 import React from "react";
-import { IconPopupMenu, IconSize } from "src/components/menu/IconPopupMenu";
+import { IconPopupMenu } from "src/components/menu/IconPopupMenu";
+import { DeleteMenuItem } from './DeleteMenuItem';
+import { EditMenuItem } from './EditMenuItem';
 
 export function EditOrDeleteMenu({
     onEditClick,
@@ -18,7 +18,6 @@ export function EditOrDeleteMenu({
     onMenuClose,
     ariaLabel,
     style,
-    size,
     sx
 }: {
     onEditClick: React.MouseEventHandler<HTMLLIElement>,
@@ -29,40 +28,25 @@ export function EditOrDeleteMenu({
     onMouseLeave?: React.MouseEventHandler<HTMLButtonElement> | undefined,
     onMenuOpen?: VoidFunction,
     onMenuClose?: VoidFunction,
-    ariaLabel?: string,
+    ariaLabel?: string
     style?: React.CSSProperties,
-    size?: IconSize,   
-    sx?: SxProps<Theme> 
+    sx?: SxProps
 }) {
     return (
         <IconPopupMenu
             style={style}
-            icon={iconOrientation === "vertical" ? <MoreVertIcon /> : <MoreHorizIcon fontSize={size}/>}
+            sx={sx}
+            icon={iconOrientation === "vertical" ? <MoreVertIcon /> : <MoreHorizIcon/>}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
             onMenuOpen={onMenuOpen}
             onMenuClose={onMenuClose}
             disabled={disabled}
             ariaLabel={ariaLabel}
-            size={size}
-            sx={sx}
         >
-            <MenuItem style={{ minHeight: "50px", minWidth: "180px" }} divider={true} onClick={onEditClick} >
-                <ListItemIcon>
-                    <EditIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>
-                    Rediger
-                </ListItemText>
-            </MenuItem>
-            <MenuItem style={{ minHeight: "50px" }} sx={{ backgroundColor: "error" }} onClick={onDeleteClick}>
-                <ListItemIcon>
-                    <DeleteForeverIcon fontSize="small" color="error" />
-                </ListItemIcon>
-                <ListItemText primaryTypographyProps={{ color: "error" }}>
-                    Slett
-                </ListItemText>
-            </MenuItem>
+            <EditMenuItem onClick={onEditClick} divider={true} />
+            <DeleteMenuItem onClick={onDeleteClick} />
         </IconPopupMenu>
     );
 }
+

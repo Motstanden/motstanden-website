@@ -1,45 +1,20 @@
 import { useQuery } from "@tanstack/react-query"
 import { Quote as QuoteData } from "common/interfaces"
-import React from "react"
-import { Outlet, useLocation } from "react-router-dom"
+import { Outlet, useMatch } from "react-router-dom"
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
-import { TabbedPageContainer } from "src/layout/PageContainer"
-import { fetchAsync } from "src/utils/fetchAsync"
-import { matchUrl } from "src/utils/matchUrl"
-import { ListPageSkeleton } from "./ListPageSkeleton"
+import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
+import { fetchFn } from "src/utils/fetchAsync"
+import { QuotesListPageSkeleton } from "./skeleton/ListPage"
 
 const quotesQueryKey = ["FetchAllQuotes"]
 
 export const useContextInvalidator = () => useQueryInvalidator(quotesQueryKey)
 
-export function QuotesContext() {
-
-    const { isLoading, isError, data, error } = useQuery<QuoteData[]>(quotesQueryKey, () => fetchAsync<QuoteData[]>("/api/quotes"))
-    const location = useLocation()
-
-    if (isLoading) {
-
-        if (matchUrl("/sitater", location)) {
-            return (
-                <PageContainer>
-                    <ListPageSkeleton />
-                </PageContainer>
-            )
-        }
-    }
-
-    if (isError) {
-        return <PageContainer>{`${error}`}</PageContainer>
-    }
-
-    return (
-        <PageContainer>
-            <Outlet context={data} />
-        </PageContainer>
-    )
+export {
+    QuotesContainer as QuotesContext
 }
 
-function PageContainer({ children }: { children?: React.ReactNode }) {
+function QuotesContainer() {
     return (
         <TabbedPageContainer
             tabItems={[
@@ -47,7 +22,28 @@ function PageContainer({ children }: { children?: React.ReactNode }) {
                 { to: "/sitater/ny", label: "ny" },
             ]}
         >
-            {children}
+            <QuotesLoader/>
         </TabbedPageContainer>
+    )
+}
+
+function QuotesLoader() {
+    const { isPending, isError, data, error } = useQuery<QuoteData[]>({
+        queryKey: quotesQueryKey,
+        queryFn: fetchFn<QuoteData[]>("/api/quotes"),
+    })
+
+    const isQuotesPage = useMatch("/sitater")
+
+    if (isPending && isQuotesPage) {
+        return <QuotesListPageSkeleton/>
+    }
+
+    if (isError) {
+        return `${error}`
+    }
+
+    return (
+        <Outlet context={data} />
     )
 }

@@ -15,16 +15,15 @@ import {
     Theme,
     useMediaQuery
 } from "@mui/material";
-import { UserGroup } from "common/enums";
+import { useQueryClient } from '@tanstack/react-query';
 import { SheetArchiveTitle } from "common/interfaces";
-import { hasGroupAccess } from "common/utils";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link as RouterLink, useOutletContext } from "react-router-dom";
 import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
 import { Form } from 'src/components/form/Form';
-import { useAuth } from "src/context/Authentication";
+import { useAuthenticatedUser } from "src/context/Authentication";
 import { useTitle } from "../../hooks/useTitle";
-import { useContextInvalidator } from './Context';
+import { sheetArchiveContextQueryKey, useSheetArchiveContext } from './Context';
 
 export default function SongPage({ mode }: { mode?: "repertoire" }) {
 
@@ -32,21 +31,32 @@ export default function SongPage({ mode }: { mode?: "repertoire" }) {
 
     useTitle(isRepertoire ? "Repertoar" : "Alle noter");
 
-    let data = useOutletContext<SheetArchiveTitle[]>()
-    if (isRepertoire)
-        data = data.filter(item => !!item.isRepertoire)
 
-        return (
+    const { isPending, sheetArchive: allSheets } = useSheetArchiveContext()
+
+    const sheetArchive = isRepertoire 
+        ? allSheets.filter(item => !!item.isRepertoire)
+        : allSheets 
+
+    return (
         <>
             <h1>Notearkiv</h1>
-            <TitleTable items={data}/>
+            <div style={{
+                maxWidth: "1300px"
+            }}>
+                <TitleTable 
+                    items={sheetArchive} 
+                    isLoading={isPending}
+                    skeletonLength={isRepertoire ? 14 : 40}
+                />
+            </div>
         </>
     )
 }
 
-function TitleTable( { items }: { items: SheetArchiveTitle[]}) {
-    const user = useAuth().user
-    const isAdmin = !!user && hasGroupAccess(user, UserGroup.Administrator)
+function TitleTable( { items, isLoading, skeletonLength }: { items: SheetArchiveTitle[], isLoading: boolean, skeletonLength: number}) {
+    const { isAdmin } = useAuthenticatedUser()
+    
     return (
         <TableContainer component={Paper}>
             <Table>
@@ -60,7 +70,18 @@ function TitleTable( { items }: { items: SheetArchiveTitle[]}) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {items.map( song => <TitleTableRow key={song.id} song={song} canEdit={isAdmin} /> )}
+
+                    {isLoading && (
+                        <SkeletonRows length={skeletonLength} canEdit={isAdmin}/>
+                    )}
+
+                    {!isLoading && items.map( song => (
+                        <TitleTableRow 
+                            key={song.id} 
+                            song={song} 
+                            canEdit={isAdmin} /> 
+                    ))}
+
                 </TableBody>
             </Table>
         </TableContainer>
@@ -72,20 +93,16 @@ type TableRowState = "read" | "edit" | "changing"
 function TitleTableRow( {song, canEdit }: {song: SheetArchiveTitle, canEdit: boolean }) {
     
     const [mode, setMode] = useState<TableRowState>("read")
-    const [justPosted, setJustPosted ] = useState(false)
-    const contextInvalidator = useContextInvalidator()
-
-    useEffect(() => setMode("read"), [song.title, song.extraInfo, song.isRepertoire])
+    const queryClient = useQueryClient()
 
     const onEditClick = () => setMode("edit")
 
     const onAbortEditClick = () => setMode("read")
 
-    const onPostSuccess = () => {
+    const onPostSuccess = async () => {
         setMode("changing")
-        setJustPosted(true)
-        setTimeout( () => setJustPosted(() => false), 700)
-        contextInvalidator()
+        await queryClient.invalidateQueries({queryKey: sheetArchiveContextQueryKey})
+        setMode("read")
     }
 
     if(mode === "edit") 
@@ -94,7 +111,7 @@ function TitleTableRow( {song, canEdit }: {song: SheetArchiveTitle, canEdit: boo
             onAbort={onAbortEditClick} 
             onSuccess={onPostSuccess}/>
 
-    if(mode === "changing" || justPosted)
+    if(mode === "changing")
         return <SkeletonRow canEdit={canEdit}/>
 
     return <ReadOnlyRow song={song} canEdit={canEdit} onEditClick={onEditClick}/>
@@ -123,32 +140,47 @@ function ReadOnlyRow( {song, canEdit, onEditClick}: {song: SheetArchiveTitle, ca
     )
 }
 
+function SkeletonRows({length, canEdit}: {length: number, canEdit: boolean}) { 
+    return Array(length).fill(1).map( (_, i) => (
+        <SkeletonRow key={i} canEdit={canEdit}/>
+    ))
+}
+
 function SkeletonRow( {canEdit}: {canEdit: boolean}) {
 
     return (
         <TableRow sx={rowStyle}>
             <TableCell>
-                <Skeleton style={{maxWidth: "130px"}}/>
+                <Skeleton style={{width: "200px"}}/>
             </TableCell>
             <TableCell>
-                <Skeleton style={{maxWidth: "85px"}}/>
+                <Skeleton style={{width: "85px"}}/>
             </TableCell>
             {canEdit && 
-                <TableCell align="right" size="small">
-                    <Skeleton style={{
-                        // This is bad css. We do it like this because the time is 0400 and thus idgaf
-                        width: "25px",  
-                        height: "40px", 
-                        borderRadius: "50%",
-                        marginLeft: "5px"
-                        }} />
+                <TableCell align="right" width="1px" size="small">
+                    <Skeleton 
+                        style={{
+                            // This is bad css. We do it like this because the time is 0400 and thus idgaf
+                            width: "25px",  
+                            height: "40px", 
+                            borderRadius: "50%",
+                            marginLeft: "5px"
+                    }} />
                 </TableCell>
             }
         </TableRow>
     )
 }
 
-function EditRow( {song, onAbort, onSuccess}: {song: SheetArchiveTitle, onAbort: VoidFunction, onSuccess: VoidFunction} ) {
+function EditRow( {
+    song, 
+    onAbort, 
+    onSuccess
+}: {
+    song: SheetArchiveTitle, 
+    onAbort: VoidFunction, 
+    onSuccess: ((res: Response) => Promise<void>) | ((res: Response) => void) 
+} ) {
     const [newSong, setNewSong] = useState(song)
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
@@ -173,7 +205,7 @@ function EditRow( {song, onAbort, onSuccess}: {song: SheetArchiveTitle, onAbort:
                     value={getSubmitData} 
                     postUrl={`/api/sheet-archive/titles/update`}
                     onAbortClick={ _ => onAbort()}
-                    onPostSuccess={_ => onSuccess()}
+                    onPostSuccess={onSuccess}
                     disabled={isDisabled}
                     noDivider={true}
                     noPadding={true}>

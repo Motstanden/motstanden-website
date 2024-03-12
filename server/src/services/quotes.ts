@@ -17,7 +17,7 @@ export function getQuote(quoteId: number): Quote {
             quote 
         WHERE quote_id = ?
     `)
-    const quote: Quote | undefined = stmt.get(quoteId)
+    const quote = <Quote | undefined> stmt.get(quoteId)
     db.close()
 
     if (!quote)

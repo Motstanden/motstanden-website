@@ -2,47 +2,89 @@ import { useQuery } from "@tanstack/react-query"
 import { User } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
-import { PageContainer } from "src/layout/PageContainer"
-import { fetchAsync } from "src/utils/fetchAsync"
+import { PageContainer } from "src/layout/PageContainer/PageContainer"
+import { fetchFn } from "src/utils/fetchAsync"
 import { UserPageHeader } from "./UserPage"
+import { UserPageSkeleton } from "./skeleton/UserPage"
 
-export function UserContext() {
-    const { isLoading, isError, data, error } = useQuery<User[]>(["FetchAllUsers"], () => fetchAsync<User[]>("/api/member-list"))
+export const userListQueryKey = ["FetchAllUsers"]
 
-    if (isLoading) {
-        return <PageContainer><div /></PageContainer>
-    }
+export {
+    UserContainer as UserContext
+}
 
-    if (isError) {
-        return <PageContainer><span>{`${error}`}</span></PageContainer>
-    }
-
+function UserContainer() {
     return (
         <PageContainer>
-            <Outlet context={data} />
+            <UserContextLoader/>
         </PageContainer>
     )
 }
 
+function UserContextLoader() {
+    const { isPending, isError, data, error } = useQuery<User[]>({
+        queryKey: userListQueryKey,
+        queryFn: fetchFn<User[]>("/api/member-list"),
+    })
+
+    if (isError) {
+        return `${error}`
+    }
+
+    const context: UsersContextProps = isPending 
+        ? { isPending: true, users: undefined }
+        : { isPending: false, users: data }
+
+    return (
+        <Outlet context={context} />
+    )
+}
+
 export function UserProfileContext() {
-    const users = useOutletContext<User[]>()
+    const {users, isPending} = useUsersContext()
+
+    if(isPending)
+        return <UserPageSkeleton/>
 
     const params = useParams();
     const userId = strToNumber(params.userId)
     if (!userId) {
-        return <Navigate to="/medlem/liste" />
+        return <Navigate to="/medlem/liste" replace />
     }
 
-    const user = users.find(item => item.userId === userId)
+    const user = users.find(item => item.id === userId)
 
     if (!user) {
-        return <Navigate to="/medlem/liste" />
+        return <Navigate to="/medlem/liste" replace />
+    }
+
+    const context: UserProfileContextProps = { 
+        users: users, 
+        viewedUser: user 
     }
 
     return (
-        <>
+        <div style={{maxWidth: "1300px"}}>
             <UserPageHeader user={user}/>
-            <Outlet context={user} />
-        </>
+            <Outlet context={context} />
+        </div>
     )
+}
+
+type UsersContextProps = {
+    isPending: true,
+    users: undefined
+} | {
+    isPending: false,
+    users: User[]
+}
+
+export function useUsersContext(): UsersContextProps {
+    return useOutletContext<UsersContextProps>()
+}
+
+type UserProfileContextProps = { users: User[], viewedUser: User }
+
+export function useUserProfileContext(): UserProfileContextProps {
+    return useOutletContext<UserProfileContextProps>()
 }

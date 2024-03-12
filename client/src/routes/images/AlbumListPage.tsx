@@ -11,7 +11,6 @@ import { iconButtonStaticStyle } from 'src/assets/style/buttonStyle';
 import { EditOrDeleteMenu } from 'src/components/menu/EditOrDeleteMenu';
 import { postJson } from 'src/utils/postJson';
 import { ImageGrid } from './components/ImageGrid';
-import { ImageGridItem } from './components/ImageGridItem';
 import { useAlbumListInvalidator } from './Context';
 
 export default function AlbumListPage() {
@@ -29,16 +28,13 @@ function AlbumGrid({items}: {items: ImageAlbum[]}) {
         <ImageGrid>
             <AddNewAlbum/>
             {items.map( album => (
-                <ImageGridItem 
-                    key={album.id} />
+                <Album album={album} />
             ))}
         </ImageGrid>        
     )
 }
 
 type AlbumState = "read" | "edit" | "changing"
-
-
 
 function Album({album}: {album: ImageAlbum}) {
     const [mode, setMode] = useState<AlbumState>("read")

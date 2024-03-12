@@ -1,38 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
-import { SheetArchiveTitle } from 'common/interfaces';
-import React from "react";
-import { Outlet } from "react-router-dom";
-import { useQueryInvalidator } from 'src/hooks/useQueryInvalidator';
-import { TabbedPageContainer } from "src/layout/PageContainer";
-import { fetchAsync } from "../../utils/fetchAsync";
+import { SheetArchiveFile, SheetArchiveTitle } from 'common/interfaces';
+import { Navigate, Outlet, useMatch, useOutletContext, useParams } from "react-router-dom";
+import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer";
+import { fetchFn } from "../../utils/fetchAsync";
+import { InstrumentPageSkeleton } from './skeleton/InstrumentPage';
 
-const sheetArchiveQueryKey = ["FetchSheetArchiveTitles"]
+export const sheetArchiveContextQueryKey = ["FetchSheetArchiveTitles"]
 
-export const useContextInvalidator = () => useQueryInvalidator(sheetArchiveQueryKey)
+export {
+    InstrumentContainer as InstrumentContext, SheetArchiveContainer as SheetArchiveContext
+};
 
-export function SheetArchiveContext() {
+export function SheetArchiveContainer() {
 
-    const { isLoading, isError, data, error } = useQuery<SheetArchiveTitle[]>(sheetArchiveQueryKey, () => fetchAsync<SheetArchiveTitle[]>("/api/sheet_archive/song_title"));
-
-    if (isLoading) {
-        return <PageContainer><div /></PageContainer>;
-    }
-
-    if (isError) {
-        return <PageContainer><span>{`${error}`}</span></PageContainer>;
-    }
-
-    const newData = data.map( item => { return { ...item, url: buildSongUrl(item) } })
-
-    return (
-        <PageContainer>
-            <Outlet context={newData} />
-        </PageContainer>
-    );
-}
-
-
-function PageContainer({ children }: { children?: React.ReactNode }) {
     return (
         <TabbedPageContainer
             tabItems={[
@@ -41,11 +21,103 @@ function PageContainer({ children }: { children?: React.ReactNode }) {
             ]}
             matchChildPath={true}
         >
-            {children}
+            <SheetArchiveLoader/>
         </TabbedPageContainer>
     )
 }
 
-function buildSongUrl(song: SheetArchiveTitle){
-    return `/notearkiv/${song.isRepertoire ? "repertoar" : "alle"}/${song.url}`
+function SheetArchiveLoader() {
+    const { isPending, isError, data, error } = useQuery<SheetArchiveTitle[]>({
+        queryKey: sheetArchiveContextQueryKey,
+        queryFn: fetchFn<SheetArchiveTitle[]>("/api/sheet_archive/song_title"),
+    });
+
+    if (isError) {
+        return `${error}`
+    }
+
+    const isAllPage = !!useMatch("/notearkiv/alle*")
+
+    const context = isPending 
+        ? { 
+            isPending: true, 
+            sheetArchive: [] 
+        } : { 
+            isPending: false, 
+            sheetArchive: data.map( item => ({ ...item, url: buildSongUrl(item, isAllPage) })) 
+        } 
+
+    return (
+        <Outlet context={context} />
+    );
+}
+
+function InstrumentContainer() {
+    const { sheetArchive, isPending } = useSheetArchiveContext()
+
+    const { title } = useParams();
+
+    if(!title)
+        return <Navigate to="./.." replace={true}  />
+
+    if(isPending)
+        return <InstrumentPageSkeleton/>
+
+    const song = sheetArchive.find(item => item.url.endsWith(title))
+
+    if(!song)
+        return <Navigate to="./.." replace={true}  />
+
+    return (
+        <InstrumentLoader song={song}/>
+    )
+}
+
+
+export function InstrumentLoader( {song}: {song: SheetArchiveTitle} ) {
+
+    const { isPending, isError, error, data } = useQuery<SheetArchiveFile[]>({
+        queryKey: ["FetchSheetArchiveFile", song.url],
+        queryFn: fetchFn<SheetArchiveFile[]>(`/api/sheet_archive/song_files?id=${song.id}`),
+    })
+
+    if (isPending) {
+        return <InstrumentPageSkeleton title={song.title}/>
+    }
+
+    if (isError) {
+        return `${error}`;
+    }
+
+    const context: InstrumentContextProps = {
+        song: song,
+        files: data
+    }
+
+    return (
+        <Outlet context={context}/>
+    )
+}
+
+
+type SheetArchiveContextProps = 
+    { isPending: true, sheetArchive: never[] } |
+    { isPending: false, sheetArchive: SheetArchiveTitle[] }
+
+export function useSheetArchiveContext() { 
+    return useOutletContext<SheetArchiveContextProps>()
+}
+
+type InstrumentContextProps = { song: SheetArchiveTitle, files: SheetArchiveFile[] } 
+
+export function useInstrumentContext(): InstrumentContextProps {
+    return useOutletContext<InstrumentContextProps>()
+}
+
+function buildSongUrl(song: SheetArchiveTitle, isAllPage: boolean){
+    let part = song.isRepertoire ? "repertoar" : "alle"
+    if(isAllPage) {
+        part = "alle"
+    }
+    return `/notearkiv/${part}/${song.url}`
 }

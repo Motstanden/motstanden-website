@@ -1,11 +1,9 @@
 import Database from "better-sqlite3";
-import { EventData, NewEventData, UpsertEventData } from "common/interfaces";
-import { isValidRichText } from "common/richTextSchema";
-import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
-import domPurify from "../lib/DOMPurify.js"
-import { DbWriteAction } from "../ts/enums/DbWriteAction.js"
-import { UpsertDb } from "../ts/types/UpsertDb.js"
-import { isNullOrWhitespace } from "common/utils"
+import { EventData, KeyValuePair, NewEventData, UpsertEventData } from "common/interfaces";
+import { isNullOrWhitespace } from "common/utils";
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
+import { DbWriteAction } from "../ts/enums/DbWriteAction.js";
+import { UpsertDb } from "../ts/types/UpsertDb.js";
 
 const allEventColumns = `
     event_id as eventId, 
@@ -13,7 +11,7 @@ const allEventColumns = `
     start_date_time as startDateTime,
     end_date_time as endDateTime,
     key_info as keyInfo,
-    description_json as description,
+    description,
 
     created_by_user_id as createdByUserId,
     created_by_full_name as createdByName,
@@ -26,6 +24,10 @@ const allEventColumns = `
     is_upcoming as isUpcoming
 `
 
+interface DbEventData extends Omit<EventData, "keyInfo"> {
+    keyInfo: string
+}
+
 export function getEvent(eventId: number): EventData {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
@@ -35,13 +37,13 @@ export function getEvent(eventId: number): EventData {
             vw_event
         WHERE event_id = ?
     `)
-    const dbResult = stmt.get(eventId)
+    const dbResult = <DbEventData | undefined> stmt.get(eventId)
     db.close()
 
     if (!dbResult)
         throw "Bad data"
 
-    const event: EventData = { ...dbResult, keyInfo: JSON.parse(dbResult.keyInfo), description: JSON.parse(dbResult.description) }
+    const event: EventData = { ...dbResult, keyInfo: JSON.parse(dbResult.keyInfo) }
 
     return event
 }
@@ -55,34 +57,36 @@ export function getEvents({
 }): EventData[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
-    SELECT 
-        ${allEventColumns}
-    FROM 
-        vw_event 
-    WHERE is_upcoming = ?
-    ORDER BY start_date_time ${upcoming ? "ASC" : "DESC"}
-    ${!!limit ? "LIMIT ?" : ""}`)
+        SELECT 
+            ${allEventColumns}
+        FROM 
+            vw_event 
+        WHERE 
+            is_upcoming = ?
+        ORDER BY 
+            start_date_time ${upcoming ? "ASC" : "DESC"}
+        ${!!limit ? "LIMIT ?" : ""}
+    `)
 
     let args: any[] = [upcoming ? 1 : 0]
     if (!!limit)
         args.push(limit)
 
-    let events = stmt.all(args)
+    let events = <DbEventData[]> stmt.all(args)
     db.close()
 
     const parsedEvents: EventData[] = events.map(item => {
+        let keyInfo: KeyValuePair<string, string>[] = []
         try {
-            return {
-                ...item,
-                keyInfo: JSON.parse(item.keyInfo),
-                description: JSON.parse(item.description)
-            }
-        } catch {
-            // This should never happen. 
-            // But if there somehow is an error in the database we will simply filter the error out
-            return null
+            keyInfo = JSON.parse(item.keyInfo)
+        } catch (err) {
+            console.log(`Failed to parse keyinfo for eventId ${item.eventId}\nError: ${err}\nData: ${item}`)
         }
-    }).filter(item => !!item);
+        return { 
+            ...item, 
+            keyInfo 
+        }
+    })
 
     return parsedEvents
 }
@@ -112,25 +116,17 @@ function createValidEvent(event: NewEventData): NewEventData | undefined {
         isNullOrWhitespace(event.startDateTime) ||
         (isNullOrWhitespace(event.endDateTime) && event.endDateTime !== null) ||
         !isValidExtraInfo ||
-        isNullOrWhitespace(event.descriptionHtml) ||
-        !isValidRichText(event.description)
+        isNullOrWhitespace(event.description)
     ) {
         return undefined
     }
-
-    // THIS STEP IS SUPER IMPORTANT!!! It prevents xss attacks
-    const sanitizedHtml = domPurify.sanitize(event.descriptionHtml, { USE_PROFILES: { html: true } })
-
-    if (isNullOrWhitespace(sanitizedHtml))
-        return undefined
 
     const newEvent: NewEventData = {
         title: event.title.trim(),
         startDateTime: event.startDateTime.trim(),
         endDateTime: event.endDateTime?.trim() ?? null,
         keyInfo: event.keyInfo,
-        description: event.description,
-        descriptionHtml: sanitizedHtml.trim()
+        description: event.description.trim(),
     }
     return newEvent
 }
@@ -171,8 +167,7 @@ function buildUpsertSql(
         validEvent.startDateTime,
         validEvent.endDateTime,
         JSON.stringify(validEvent.keyInfo),
-        JSON.stringify(validEvent.description),
-        validEvent.descriptionHtml,
+        validEvent.description,
         modifiedBy,
     ]
 
@@ -188,8 +183,7 @@ function buildUpsertSql(
                     start_date_time = ?,
                     end_date_time = ?,
                     key_info = ?,
-                    description_json = ?,
-                    description_html = ?,
+                    description = ?,
                     updated_by = ?
                 WHERE 
                     event_id = ?;
@@ -201,9 +195,9 @@ function buildUpsertSql(
     return {
         stmt:
             `INSERT INTO 
-                event(title, start_date_time, end_date_time, key_info, description_json, description_html, created_by, updated_by)
+                event(title, start_date_time, end_date_time, key_info, description, created_by, updated_by)
             VALUES
-                (?, ?, ?, ?, ?, ?, ?, ?);`,
+                (?, ?, ?, ?, ?, ?, ?);`,
         args: [...commonArgs, modifiedBy]
     }
 }

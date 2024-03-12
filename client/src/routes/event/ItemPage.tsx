@@ -1,33 +1,43 @@
 import {
-    Avatar,
     Divider,
-    Link,
     MenuItem,
     Paper,
     Stack,
     TextField
 } from "@mui/material";
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ParticipationStatus } from "common/enums";
-import { EventData, Participant, ParticipationList, UpsertParticipant } from "common/interfaces";
-import { isNullOrWhitespace } from "common/utils";
-import dayjs from "dayjs";
+import { CommentEntityType, ParticipationStatus } from "common/enums";
+import { EventData, Participant, UpsertParticipant } from "common/interfaces";
 import { useState } from "react";
-import { Link as RouterLink, useOutletContext } from "react-router-dom";
-import { serialize } from "src/components/TextEditor/HtmlSerialize";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { AuthorInfo } from "src/components/AuthorInfo";
+import { CommentSection } from "src/components/CommentSection";
 import { TitleCard } from "src/components/TitleCard";
-import { useAuth } from "src/context/Authentication";
+import { UserList } from "src/components/UserList";
+import { useAuthenticatedUser } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
-import { fetchAsync } from "src/utils/fetchAsync";
+import { fetchFn } from "src/utils/fetchAsync";
 import { postJson } from "src/utils/postJson";
+import { MarkDownRenderer } from "../../components/MarkDownEditor";
+import { eventContextQueryKey } from "./Context";
 import { ItemMenu } from "./components/ItemMenu";
 import { KeyInfo } from "./components/KeyInfo";
+import { EventParticipationSkeleton } from "./skeleton/ItemPage";
 
 export default function ItemPage() {
     const event = useOutletContext<EventData>();
     useTitle(event.title)
+
+    const queryClient = useQueryClient()
+    const navigate = useNavigate()
+
+    const onDeleteSuccess = () => {
+        queryClient.invalidateQueries({queryKey: eventContextQueryKey})
+        navigate("./..")
+    }
+
     return (
-        <div style={{ maxWidth: "900px" }}>
+        <div style={{ maxWidth: "1000px" }}>
 
             <Paper elevation={6} sx={{ p: 2, pt: 0, mt: 4 }}>
                 <Stack
@@ -38,93 +48,64 @@ export default function ItemPage() {
                     paddingTop={2}
                 >
                     <h1 style={{ margin: 0 }}>{event.title}</h1>
-                    <ItemMenu event={event} iconOrientation="vertical" />
+                    <ItemMenu 
+                        event={event} 
+                        iconOrientation="vertical" 
+                        onDeleteSuccess={onDeleteSuccess}
+                    />
                 </Stack>
                 <Divider />
-                <AuthorList event={event} />
+                <AuthorInfo 
+                    createdAt={event.createdAt}
+                    createdByUserId={event.createdByUserId}
+                    updatedAt={event.updatedAt}
+                    updatedByUserId={event.updatedByUserId}
+                />
                 <KeyInfo
                     keyInfo={event.keyInfo}
                     startTime={event.startDateTime}
                     endTime={event.endDateTime}
                     style={{
                         margin: "0px",
-                        marginTop: "30px",
-                        marginBottom: "30px"
+                        marginTop: "20px",
+                        marginBottom: "20px"
                     }}
                 />
-                <div dangerouslySetInnerHTML={{ __html: serialize(event.description) }} />
+                <MarkDownRenderer value={event.description} />
             </Paper>
             <Divider sx={{ my: 4 }} />
             <ParticipationContainer eventId={event.eventId} />
+            <Divider sx={{ my: 4 }} />
+            <CommentSection 
+                entityType={CommentEntityType.Event}
+                entityId={event.eventId}            
+            />
         </div>
     );
 }
 
-function AuthorList({ event }: { event: EventData }) {
-    return (
-        <div style={{
-            fontSize: "xx-small",
-            opacity: 0.75,
-            paddingBlock: "10px",
-            display: "grid",
-            gridTemplateColumns: "min-content auto",
-            columnGap: "5px",
-            rowGap: "4px"
-        }}>
-            <div>
-                Opprettet:
-            </div>
-            <div>
-                <AuthorItem userName={event.createdByName} userId={event.createdByUserId} dateTime={event.createdAt} />
-            </div>
-            {event.createdAt !== event.updatedAt && (
-                <>
-                    <div>
-                        Redigert:
-                    </div>
-                    <div>
-                        <AuthorItem userName={event.updatedByName} userId={event.updatedByUserId} dateTime={event.updatedAt} />
-                    </div>
-                </>
-            )}
-        </div>
-    )
-}
-
-function AuthorItem({ userName, userId, dateTime }: { userName: string, userId: number, dateTime: string }) {
-    return (
-        <span>
-            {`${dayjs(dateTime).utc(true).local().format("DD. MMM YYYY HH:mm")}, av `}
-            <Link
-                color="secondary"
-                component={RouterLink}
-                to={`/medlem/${userId}`}
-                underline="hover"
-            >
-                {`${userName}`}
-            </Link>
-        </span>
-    )
-}
-
 function ParticipationContainer({ eventId }: { eventId: number }) {
     const queryKey = ["FetchEvenParticipants", eventId]
-    const { isLoading, isError, data, error } = useQuery<ParticipationList>(queryKey, () => fetchAsync<ParticipationList>(`/api/event-participants?eventId=${eventId}`))
-    const user = useAuth().user!
+    const { isPending, isError, data, error } = useQuery<Participant[]>({
+        queryKey: queryKey,
+        queryFn: fetchFn<Participant[]>(`/api/event-participants?eventId=${eventId}`),
+    })
+    
+    const { user } = useAuthenticatedUser()
 
-    if (isLoading) {
-        return <></>
+    if (isPending) {
+        return <EventParticipationSkeleton/>
     }
 
     if (isError) {
         return <div>{`${error}`}</div>
     }
 
-    const currentUserStatus = data.participants.find(participant => participant.userId === user.userId)
+    const currentUserStatus = data.find(participant => participant.id === user.id)
 
-    const attending = data.participants.filter(user => user.participationStatus === ParticipationStatus.Attending)
-    const maybeAttending = data.participants.filter(user => user.participationStatus === ParticipationStatus.Maybe)
-    const notAttending = data.participants.filter(user => user.participationStatus === ParticipationStatus.NotAttending)
+    const attending = data.filter(user => user.status === ParticipationStatus.Attending)
+    const maybeAttending = data.filter(user => user.status === ParticipationStatus.Maybe)
+    const notAttending = data.filter(user => user.status === ParticipationStatus.NotAttending)
 
     return (
         <>
@@ -137,7 +118,7 @@ function ParticipationContainer({ eventId }: { eventId: number }) {
 }
 
 function AttendingForm({ eventId, queryKey, user }: { eventId: number, queryKey: QueryKey, user?: Participant }) {
-    const attendingStatus = user?.participationStatus ?? ParticipationStatus.Unknown
+    const attendingStatus = user?.status ?? ParticipationStatus.Unknown
     const [isSubmitting, setIsSubmitting] = useState(false)
     const queryClient = useQueryClient()
 
@@ -150,13 +131,9 @@ function AttendingForm({ eventId, queryKey, user }: { eventId: number, queryKey:
         const response = await postJson("/api/event-participants/upsert", newVal, { alertOnFailure: true })
 
         if (response && response.ok) {
-            queryClient.invalidateQueries(queryKey)
-            setTimeout(() => {
-                setIsSubmitting(false)
-            }, (700));
-        } else {
-            setIsSubmitting(false)
+            await queryClient.invalidateQueries({ queryKey: queryKey })
         }
+        setIsSubmitting(false)
     }
 
     return (
@@ -188,28 +165,7 @@ function AttendingList({ title, items }: { title: string, items: Participant[] }
     }
     return (
         <TitleCard title={title} sx={{ my: 6 }}>
-            {items.map((user, index) => (
-                <Stack
-                    key={user.userId}
-                    direction="row"
-                    alignItems="center"
-                    sx={{ py: 1, pl: 1 }}
-                    spacing={2}
-                    borderRadius="7px"
-                    bgcolor={index % 2 === 1 ? "action.hover" : "transparent"}
-                >
-                    <Avatar>{user.firstName[0] + user.lastName[0]}</Avatar>
-                    <Link
-                        color="secondary"
-                        component={RouterLink}
-                        to={`/medlem/${user.userId}`}
-                        underline="hover"
-                    >
-                        {`${user.firstName} ${isNullOrWhitespace(user.middleName) ? user.lastName : user.middleName + " " + user.lastName}`}
-                    </Link>
-                </Stack>
-            )
-            )}
+            <UserList users={items}/>
         </TitleCard>
     )
 }

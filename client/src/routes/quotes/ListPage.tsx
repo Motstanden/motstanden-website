@@ -3,11 +3,11 @@ import { Quote as QuoteData } from "common/interfaces";
 import dayjs from "dayjs";
 import { useOutletContext } from "react-router-dom";
 import { useTitle } from "src/hooks/useTitle";
+import { useContextInvalidator } from "./Context";
 import { EditList, RenderEditFormProps } from "./components/EditList";
 import { NewlineText } from "./components/NewlineText";
 import { UpsertQuoteForm } from "./components/UpsertQuoteForm";
-import { useContextInvalidator } from "./Context";
-import { ItemSkeleton } from "./ListPageSkeleton";
+import { QuotesItemSkeleton } from "./skeleton/ListPage";
 
 export default function ListPage() {
     useTitle("Sitater")
@@ -37,7 +37,7 @@ export function QuoteList({ quotes, onItemChanged }: { quotes: QuoteData[], onIt
             renderItem={renderItem}
             renderEditForm={renderEditForm}
             itemComparer={isEqual}
-            renderItemSkeleton={<ItemSkeleton />}
+            renderItemSkeleton={<QuotesItemSkeleton />}
             deleteItemUrl="/api/quotes/delete"
             confirmDeleteItemText="Vil du permanent slette dette sitatet?"
             itemSpacing="25px"
@@ -62,7 +62,7 @@ function ReadOnlyItem({ quote }: { quote: QuoteData }) {
                     –
                 </div>
                 <div>
-                    {`${quote.utterer}, ${dayjs(quote.createdAt).utc(true).local().format("D MMMM YYYY")}`}
+                    {`${quote.utterer}, ${dayjs.utc(quote.createdAt).tz().format("D MMMM YYYY")}`}
                 </div>
             </div>
         </div>
@@ -74,6 +74,7 @@ function EditItem(props: RenderEditFormProps<QuoteData>) {
         <div>
             <Divider sx={{ mb: 4 }} />
             <UpsertQuoteForm
+                storageKey={["Quotes", "Edit", props.data.id]}
                 initialValue={props.data}
                 postUrl="/api/quotes/update"
                 onAbortClick={props.onEditAbort}

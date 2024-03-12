@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query"
 import { Image, ImageAlbum } from "common/interfaces"
 import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
 import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
-import { PageContainer } from "src/layout/PageContainer"
-import { fetchAsync } from "src/utils/fetchAsync"
+import { PageContainer } from "src/layout/PageContainer/PageContainer"
+import { fetchFn } from "src/utils/fetchAsync"
 
 const albumListQueryKey = ["FetchAllAlbums"]
 
@@ -11,7 +11,10 @@ export const useAlbumListInvalidator = () => useQueryInvalidator(albumListQueryK
 
 export function AlbumListContext() {
 
-    const {isLoading, isError, data, error} = useQuery<ImageAlbum[]>(albumListQueryKey, () => fetchAsync<ImageAlbum[]>("/api/image-album/all"))
+    const {isLoading, isError, data, error} = useQuery<ImageAlbum[]>({
+        queryKey: albumListQueryKey, 
+        queryFn: fetchFn("/api/image-album/all")
+    })
 
     if (isLoading) 
         return <PageContainer>Loading...</PageContainer> // TODO: Render a page skeleton here
@@ -45,9 +48,12 @@ export function AlbumContext() {
 }
 
 function FetchAlbumContext( {album}: { album: ImageAlbum}) {
-    const {isLoading, isError, data, error} = useQuery<Image[]>([albumListQueryKey, album.id], () => fetchAsync<Image[]>(`/api/image-album/${album.id}/images`))
+    const {isPending, isError, data, error} = useQuery<Image[]>({
+        queryKey: [albumListQueryKey, album.id],
+        queryFn: fetchFn(`/api/image-album/${album.id}/images`)
+    })
 
-    if (isLoading) 
+    if (isPending) 
         return <>Loading...</> // TODO: Render a page skeleton here
 
     if(isError)

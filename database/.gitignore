@@ -1,5 +1,6 @@
 # Generated sqlite db
 *.db
+*.db-journal
 
 # Ignore all debug files
 data/files/private/dokumenter/**/*

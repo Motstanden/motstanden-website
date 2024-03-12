@@ -1,6 +1,6 @@
 import LondonSpyImg from "../../assets/pictures/spyInLondon.png"
 import { useTitle } from "../../hooks/useTitle"
-import { PageContainer } from "../../layout/PageContainer"
+import { PageContainer } from "../../layout/PageContainer/PageContainer"
 
 export default function NotFound() {
     useTitle("404")

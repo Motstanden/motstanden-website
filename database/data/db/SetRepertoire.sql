@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 UPDATE 
 	song_title
 SET is_repertoire = 1
@@ -23,5 +25,6 @@ WHERE
 		'Norge i Rødt Hvitt og Blått',
 		'Nu Klinger',
 		'Olsenbanden',
-		'The Bare Necessities'
+		'The Bare Necessities',
+		'Through the Fire and Flames'
 	);

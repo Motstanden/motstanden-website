@@ -13,186 +13,182 @@ import {
     useMediaQuery
 } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers";
+import { useQueryClient } from '@tanstack/react-query';
 import { KeyValuePair, UpsertEventData } from "common/interfaces";
-import { isValidRichText } from "common/richTextSchema";
 import { isNullOrWhitespace } from "common/utils";
 import dayjs, { Dayjs } from "dayjs";
-import React, { Reducer, useCallback, useContext, useEffect, useMemo, useReducer } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createEditor, Descendant, Text } from "slate";
-import { withHistory } from "slate-history";
-import { Editable, RenderElementProps, RenderLeafProps, Slate, withReact } from "slate-react";
 import { dateTimePickerStyle } from 'src/assets/style/timePickerStyles';
 import { Form } from "src/components/form/Form";
-import { emptyRichText } from "src/components/TextEditor/Assets";
-import { Element } from "src/components/TextEditor/Element";
-import { handleAllFormatHotkeys } from "src/components/TextEditor/Hotkey";
-import { serialize } from "src/components/TextEditor/HtmlSerialize";
-import { Leaf } from "src/components/TextEditor/Leaf";
+import { useTimeZone } from 'src/context/TimeZone';
+import { useSessionStorage } from 'src/hooks/useStorage';
 import { useTitle } from "src/hooks/useTitle";
-import { EditorToolbar } from "./EditorToolbar";
+import { MarkDownEditor } from '../../../components/MarkDownEditor';
+import { eventContextQueryKey } from '../Context';
 
 export interface EventEditorState {
     title: string
     startTime: Dayjs | null,
     endTime: Dayjs | null,
     keyInfo: KeyValuePair<string, string>[]
-    description: Descendant[]
+    description: string
 }
 
 function createValidState(initialValue: EventEditorState): EventEditorState {
     const newValue = { ...initialValue };
-    if (!isValidRichText(initialValue.description)) {
-        console.group("Feil")
-        console.error("Klarte ikke tolke arrangementbeskrivelsen")
-        console.log(initialValue.description)
-        console.groupEnd()
-        newValue.description = emptyRichText
-    }
     newValue.startTime = initialValue.startTime?.utc(true).local() ?? null
     newValue.endTime = initialValue.endTime?.utc(true).local() ?? null
     return newValue;
 }
 
-export function EventEditorForm({ backUrl, postUrl, initialValue, eventId }: { backUrl: string; postUrl: string; initialValue: EventEditorState; eventId?: number; }) {
+function serializeEventEditorState(event: EventEditorState): string {
+    return JSON.stringify({
+        ...event,
+        startTime: event.startTime?.toISOString(),
+        endTime: event.endTime?.toISOString()
+    })
+}
 
-    const reducer = (state: EventEditorState, newVal: Partial<EventEditorState>): EventEditorState => {
-        return { ...state, ...newVal };
-    };
+function deserializeEventEditorState(serialized: string): EventEditorState {
+    const parsed = JSON.parse(serialized)
+    return {
+        ...parsed,
+        startTime: parsed.startTime ? dayjs(parsed.startTime) : null,
+        endTime: parsed.endTime ? dayjs(parsed.endTime) : null
+    } as EventEditorState
+}
+
+
+export function EventEditorForm({ 
+    postUrl, 
+    initialValue, 
+    storageKey,
+    eventId 
+}: { 
+    postUrl: string; 
+    initialValue: EventEditorState;
+    storageKey: any[], 
+    eventId?: number; 
+}) {
+    const [event, setEvent, clearEvent] = useSessionStorage<EventEditorState>({
+        key: storageKey,
+        initialValue: createValidState(initialValue),
+        delay: 1000,
+        serialize: serializeEventEditorState,
+        deserialize: deserializeEventEditorState,
+    });
+
+    const [hasPosted, setHasPosted] = useState(false);
 
     const navigate = useNavigate()
-    const validInitialState = useMemo(() => createValidState(initialValue), [])
-    const [state, dispatch] = useReducer<Reducer<EventEditorState, Partial<EventEditorState>>>(reducer, validInitialState);
+    const queryClient = useQueryClient()
 
-    useTitle(`${isNullOrWhitespace(state.title) ? "Ingen tittel" : state.title}*`)
+    useTitle(`${isNullOrWhitespace(event.title) ? "Ingen tittel" : event.title}*`)
 
-    const serializeState = (): UpsertEventData => {
+    const onValueChanged = (newValues: Partial<EventEditorState>) => {
+        setEvent(oldValues => ({ ...oldValues, ...newValues }))
+    }
+
+    const getSubmitData = (): UpsertEventData => {
         const serializedEvent: UpsertEventData = {
             eventId: eventId,
-            title: state.title,
-            startDateTime: state.startTime!.utc(false).format("YYYY-MM-DD HH:mm:00"),
-            endDateTime: state.endTime?.utc(false).format("YYYY-MM-DD HH:mm:00") ?? null,
-            keyInfo: state.keyInfo,
-            description: state.description,
-            descriptionHtml: serialize(state.description)
+            title: event.title,
+            startDateTime: event.startTime!.utc().format("YYYY-MM-DD HH:mm:00"),
+            endDateTime: event.endTime?.utc().format("YYYY-MM-DD HH:mm:00") ?? null,
+            keyInfo: event.keyInfo,
+            description: event.description.trim(),
         };
         return serializedEvent;
     };
 
     const onPostSuccess = async (res: Response) => {
+        setHasPosted(true)
         const data = await res.json();
-        window.location.href = `${window.location.origin}/arrangement/${eventId ?? data.eventId ?? ""}`;   // Will trigger a page reload
+        await queryClient.invalidateQueries({queryKey: eventContextQueryKey})
+        clearEvent()
+        navigate(`/arrangement/${eventId ?? data.eventId ?? ""}`)
     };
 
-    const editorHasContent = (): boolean => {
-
-        let queue: Descendant[] = [...state.description]
-        while (queue.length > 0) {
-            const child = queue.pop()
-
-            if (!child) {
-                continue
-            }
-
-            const isText = Text.isText(child)
-            if (isText && !isNullOrWhitespace(child.text)) {
-                return true
-            }
-
-            if (!isText) {
-                queue = queue.concat(child.children)
-            }
-        }
-        return false
+    const handleAbortClick = () => {
+        clearEvent()
+        navigate(-1)
     }
 
+    const editorHasContent = (): boolean => !isNullOrWhitespace(event.description)
+
     const validateState = () => {
-        const isValidTitle = !isNullOrWhitespace(state.title)
-        const isValidStartTime = state.startTime && state.startTime.isValid()
-        const isValidEndTime = state.endTime ? state.endTime.isValid() : true
-        const isValidKeyInfo = !state.keyInfo.find(item => item.key.length === 0 || item.value.length === 0)
+        const isValidTitle = !isNullOrWhitespace(event.title)
+        const isValidStartTime = event.startTime && event.startTime.isValid()
+        const isValidEndTime = event.endTime ? event.endTime.isValid() : true
+        const isValidKeyInfo = !event.keyInfo.find(item => item.key.length === 0 || item.value.length === 0)
 
         return isValidTitle && isValidStartTime && isValidEndTime && isValidKeyInfo && editorHasContent()
     }
 
-    const isStateValid = useMemo(() => validateState(), [{ ...state }])
+    const disabled = !validateState() || hasPosted
 
     return (
         <Form
-            value={() => serializeState()}
+            value={() => getSubmitData()}
             postUrl={postUrl}
-            onAbortClick={_ => navigate(backUrl)}
+            onAbortClick={handleAbortClick}
             onPostSuccess={onPostSuccess}
-            disabled={!isStateValid}
+            disabled={disabled}
         >
             <Paper elevation={6} sx={{ px: 2, pb: 4, pt: 3 }}>
-                <EventStateContext.Provider value={state}>
-                    <EventDispatchContext.Provider value={dispatch}>
-                        <EventEditor />
-                    </EventDispatchContext.Provider>
-                </EventStateContext.Provider>
+                <EventEditor value={event} onChange={onValueChanged} />
             </Paper>
         </Form>
     );
 }
 
-const EventStateContext = React.createContext<EventEditorState>(null!)
-const EventDispatchContext = React.createContext<React.Dispatch<Partial<EventEditorState>>>(null!)
-function useEvent(): [EventEditorState, React.Dispatch<Partial<EventEditorState>>] {
-    return [useContext(EventStateContext), useContext(EventDispatchContext)]
+interface EventFormProps {
+    value: EventEditorState, 
+    onChange: (newValues: Partial<EventEditorState>) => void
+    sx?: SxProps
 }
 
-function EventEditor() {
-    const editor = useMemo(() => withReact(withHistory(createEditor())), [])        // Production
-    // const [editor] = useState(withReact(withHistory(createEditor())))            // Development
-    const [event, dispatch] = useEvent()
-    const renderElement = useCallback((props: RenderElementProps) => <Element {...props} />, [])
-    const renderLeaf = useCallback((props: RenderLeafProps) => <Leaf {...props} />, [])
 
+function EventEditor( props: Omit<EventFormProps, "sx"> ) {
+    const {value, onChange} = props
     return (
-        <Slate editor={editor} value={event.description} onChange={newVal => dispatch({ description: newVal })}>
-            <EventInfoForm />
-            <div style={{ border: "1px solid gray" }}>
-                <div style={{ borderBottom: "1px solid #888888" }}>
-                    <EditorToolbar />
-                </div>
-                <div style={{ minHeight: "100px", padding: "10px" }}>
-                    <Editable
-                        data-testid="event-description-editor"
-                        renderElement={renderElement}
-                        renderLeaf={renderLeaf}
-                        spellCheck
-                        placeholder="Beskrivelse av arrangementet*"
-                        onKeyDown={event => handleAllFormatHotkeys(editor, event)}
-                    />
-                </div>
-            </div>
-        </Slate>
+        <section>
+            <EventInfoForm value={value} onChange={onChange} />
+            <MarkDownEditor
+                placeholder="Beskrivelse av arrangement *"
+                required
+                value={value.description}
+                onChange={newValue => onChange({ description: newValue })}
+                minRows={6}
+            />
+        </section>
     )
 }
 
-function EventInfoForm() {
+function EventInfoForm( props: Omit<EventFormProps, "sx">) {
     return (
         <Stack sx={{ mb: 6 }}>
-            <TitleForm sx={{ mb: 4 }} />
-            <TimeForm sx={{ mb: { xs: 4, sm: 2 } }} />
-            <KeyInfoForm />
+            <TitleForm {...props} sx={{ mb: 4 }} />
+            <TimeForm {...props}  sx={{ mb: { xs: 4, sm: 2 } }} />
+            <KeyInfoForm {...props} />
         </Stack>
     )
 }
 
-function TitleForm({ sx }: { sx?: SxProps }) {
-    const [event, dispatch] = useEvent()
+function TitleForm(props: EventFormProps) {
+    const {value, onChange, sx} = props
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     return (
         <TextField
             variant="standard"
-            placeholder="Tittel på arrangement*"
+            placeholder="Tittel på arrangement *"
             autoComplete="off"
+            color="secondary"
             required
             fullWidth
-            value={event.title}
-            onChange={e => dispatch({ title: e.target.value })}
+            value={value.title}
+            onChange={e => onChange({ title: e.target.value })}
             InputProps={{ style: { fontSize: isSmallScreen ? "1.25em" : "1.5em", fontWeight: "bolder" } }}
             sx={sx}
         />
@@ -201,8 +197,10 @@ function TitleForm({ sx }: { sx?: SxProps }) {
 
 const beginningOfTime = dayjs("2018-09-11")  // Motstandens birth day
 
-function TimeForm({ sx }: { sx?: SxProps }) {
-    const [event, dispatch] = useEvent()
+function TimeForm({value, onChange, sx}: EventFormProps) {
+
+    const { datePickerTimeZone } = useTimeZone()
+
     const textFieldProps: TextFieldProps = {
         autoComplete: "off",
         variant: "standard",
@@ -223,54 +221,55 @@ function TimeForm({ sx }: { sx?: SxProps }) {
             </Box>
             <DateTimePicker
                 label="Starter"
+                timezone={datePickerTimeZone}
                 {...dateTimePickerStyle}
                 minDateTime={beginningOfTime}
-                defaultCalendarMonth={dayjs()}
-                value={event.startTime}
-                onChange={(newVal: Dayjs | null) => dispatch({ startTime: newVal })}
-                renderInput={params => (
-                    <TextField {...params} {...textFieldProps} required />
-                )}
+                value={value.startTime}
+                onChange={(newVal: Dayjs | null) => onChange({ startTime: newVal })}
+                slotProps={{
+                    textField: { ...textFieldProps, required: true, color: "secondary" }
+                }}
             />
             <Box display={{ xs: "none", sm: "inline" }} style={{ marginInline: "20px", marginBottom: "5px" }}>
                 –
             </Box>
             <DateTimePicker
                 label="Slutter"
+                timezone={datePickerTimeZone}
                 {...dateTimePickerStyle}
-                disabled={!event.startTime}
-                minDateTime={event.startTime ?? beginningOfTime}
-                value={event.endTime}
-                onChange={(newVal: Dayjs | null) => dispatch({ endTime: newVal })}
-                renderInput={params => (
-                    <TextField {...params} {...textFieldProps} />
-                )}
+                disabled={!value.startTime}
+                minDateTime={value.startTime ?? beginningOfTime}
+                value={value.endTime}
+                onChange={(newVal: Dayjs | null) => onChange({ endTime: newVal })}
+                slotProps={{
+                    textField: { ...textFieldProps, color: "secondary" }
+                }}
             />
         </Stack>
     )
 }
 
-function KeyInfoForm() {
-    const [event, dispatch] = useEvent()
+function KeyInfoForm(props: EventFormProps) {
+    const {value, onChange, sx} = props
 
     const onAddClick = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        const newItems = [...event.keyInfo, { key: "", value: "" }]
-        dispatch({ keyInfo: newItems })
+        const newItems = [...value.keyInfo, { key: "", value: "" }]
+        onChange({ keyInfo: newItems })
     }
 
     const onDeleteClick = (i: number) => {
-        const newItems = [...event.keyInfo]
+        const newItems = [...value.keyInfo]
         newItems.splice(i, 1)
-        dispatch({ keyInfo: newItems })
+        onChange({ keyInfo: newItems })
     }
 
     const onValueChange = (i: number, newVal: KeyValuePair<string, string>) => {
-        const newItems = [...event.keyInfo]
+        const newItems = [...value.keyInfo]
         newItems[i] = newVal
-        dispatch({ keyInfo: newItems })
+        onChange({ keyInfo: newItems })
     }
 
-    if (event.keyInfo.length === 0) {
+    if (value.keyInfo.length === 0) {
         return (
             <div style={{ marginTop: "30px" }}>
                 <AddInfoButton onClick={onAddClick} />
@@ -280,7 +279,7 @@ function KeyInfoForm() {
 
     return (
         <Stack>
-            {event.keyInfo.map((item, index) => <KeyInfoItem
+            {value.keyInfo.map((item, index) => <KeyInfoItem
                 key={index}
                 value={item}
                 onChange={newVal => onValueChange(index, newVal)}
@@ -342,7 +341,7 @@ function KeyInfoItem({
                 value={value.key}
                 style={{ minWidth: "130px" }}
                 variant="standard"
-                placeholder="Tittel*"
+                placeholder="Tittel *"
                 onChange={e => onChange({ ...value, key: e.target.value })}
                 helperText={value.key.length === 0 ? `${randomExample.key}` : `${value.key.length}/${maxKeyChars}`}
                 inputProps={{
@@ -355,7 +354,7 @@ function KeyInfoItem({
             <TextField
                 {...sharedProps}
                 value={value.value}
-                placeholder="info*"
+                placeholder="info *"
                 style={{ width: "100%" }}
                 onChange={e => onChange({ ...value, value: e.target.value })}
                 helperText={value.value.length === 0 ? `${randomExample.value}` : `${value.value.length}/${maxValueChars}`}
@@ -406,6 +405,14 @@ const keyValueExample: KeyValuePair<string, string>[] = [
 
 function AddInfoButton({ onClick }: { onClick?: React.MouseEventHandler<HTMLButtonElement> }) {
     return (
-        <Button variant="contained" endIcon={<AddIcon />} size="small" onClick={onClick} >Nøkkelinformasjon</Button>
+        <Button 
+            variant="contained" 
+            endIcon={<AddIcon />} 
+            size="small" 
+            onClick={onClick} 
+            color="secondary"
+        >
+                Nøkkelinfo
+        </Button>
     )
 }

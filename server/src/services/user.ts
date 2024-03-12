@@ -1,7 +1,7 @@
 import Database, { Database as DatabaseType } from "better-sqlite3";
 import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
-import { NewUser, User } from "common/interfaces";
-import { isNtnuMail, isNullOrWhitespace, validateEmail } from "common/utils";
+import { NewUser, User, UserReference } from "common/interfaces";
+import { isNtnuMail, isNullOrWhitespace } from "common/utils";
 import jwt from 'jsonwebtoken';
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
 import { JwtTokenData } from "../middleware/jwtAuthenticate.js";
@@ -10,13 +10,13 @@ import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 export function userExists(unsafeEmail: string | undefined): boolean {
     const email = unsafeEmail?.trim().toLowerCase();
 
-    if (!email || !validateEmail(email))
+    if (isNullOrWhitespace(email))
         return false
 
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
         `SELECT 
-            user_id 
+            user_id
         FROM 
             user 
         WHERE email = ?`)
@@ -32,7 +32,7 @@ export function userExists(unsafeEmail: string | undefined): boolean {
 export function getAccessTokenData(unsafeEmail: string): AccessTokenData {
     const email = unsafeEmail?.trim().toLowerCase();
 
-    if (!email || !validateEmail(email))
+    if (isNullOrWhitespace(email))
         throw `The email is invalid.`
 
     const db = new Database(motstandenDB, dbReadOnlyConfig)
@@ -45,35 +45,11 @@ export function getAccessTokenData(unsafeEmail: string): AccessTokenData {
         FROM 
             vw_user 
         WHERE email = ?`)
-    const user = stmt.get(unsafeEmail)
+    const user = <AccessTokenData | undefined> stmt.get(unsafeEmail)
     db.close()
 
     if (!user)
         throw `The user does not exist in the database`
-
-    const accessToken = user as AccessTokenData;
-    if (!accessToken.userId || !accessToken.email || !accessToken.groupId || !accessToken.groupName)
-        throw `Database yielded invalid result.`
-
-    return accessToken
-}
-
-export function getTokenDataFromId(userId: number): AccessTokenData {
-    const db = new Database(motstandenDB, dbReadOnlyConfig)
-    const stmt = db.prepare(
-        `SELECT 
-            user_id as userId,
-            email,
-            user_group_id as groupId,
-            user_group as groupName
-        FROM 
-            vw_user 
-        WHERE user_id = ?`)
-    const user = stmt.get(userId) as AccessTokenData
-    db.close()
-
-    if (!user.userId || !user.email || !user.groupId || !user.groupName)
-        throw `Database yielded invalid result.`
 
     return user
 }
@@ -103,7 +79,7 @@ export function verifyLoginToken(loginToken: string, userId: number): boolean {
         WHERE user_id = ?
         `
     )
-    const tokens = stmt.all(userId)
+    const tokens = <{token: string}[]> stmt.all(userId)
     db.close()
     const tokenMatch = tokens.find(item => item.token === loginToken)
     return !!tokenMatch
@@ -131,11 +107,11 @@ export function removeAllLoginTokens(user: AccessTokenData) {
     db.close()
 }
 
-export function getUserData(userToken: AccessTokenData): User {
+export function getUser(id: number): User {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
         `SELECT 
-            user_id as userId,
+            user_id as id,
             email,
             user_group_id as groupId,
             user_group as groupName,
@@ -155,11 +131,11 @@ export function getUserData(userToken: AccessTokenData): User {
         FROM 
             vw_user 
         WHERE user_id = ?`)
-    const user = stmt.get(userToken.userId) as User
+    const user = stmt.get(id) as User
     db.close()
 
-    if (!user || user.email !== userToken.email)
-        throw `Database yielded invalid result.`
+    if (!user)
+        throw "User not found"
 
     return user
 }
@@ -169,7 +145,7 @@ export function getAllUsers(): User[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
         `SELECT 
-            user_id as userId,
+            user_id as id,
             email,
             user_group_id as groupId,
             user_group as groupName,
@@ -189,20 +165,34 @@ export function getAllUsers(): User[] {
         FROM 
             vw_user 
         ORDER BY 
-            first_name ASC`)
+            first_name COLLATE NOCASE ASC`)
     const user = stmt.all() as User[]
     db.close()
 
     return user
 }
 
+export function getAllUsersSimplified(): UserReference[] {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(
+        `SELECT 
+            user_id as id,
+            full_name as fullName,
+            SUBSTR(first_name, 1, 1) || SUBSTR(last_name, 1, 1) AS initials
+        FROM 
+            user;`)
+    const user = stmt.all() as UserReference[]
+    db.close()
+    return user   
+}
+
 export function createUser(user: NewUser): number | bigint {
     const dbRd = new Database(motstandenDB, dbReadOnlyConfig)   // Read only instance of db
 
     // Throws exceptions if not found
-    const groupId = getGroupId(user.groupName, dbRd)
-    const rankId = getRankId(user.rank, dbRd)
-    const statusId = getUserStatusId(user.status, dbRd)
+    const groupId = getGroupId(UserGroup.Contributor, dbRd)
+    const rankId = getRankId(UserRank.ShortCircuit, dbRd)
+    const statusId = getUserStatusId(UserStatus.Active, dbRd)
     dbRd.close()
 
     const dbWr = new Database(motstandenDB, dbReadWriteConfig)  // Read/Write instance of db
@@ -223,11 +213,10 @@ export function createUser(user: NewUser): number | bigint {
                 phone_number,
                 birth_date,
                 user_status_id,
-                start_date,
                 end_date
             )
             VALUES
-                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `)
         result = stmt.run(
             groupId,
@@ -237,12 +226,11 @@ export function createUser(user: NewUser): number | bigint {
             user.middleName,
             user.lastName,
             user.profilePicture,
-            user.capeName ?? "",
-            user.phoneNumber ?? null,
-            user.birthDate ?? null,
+            "",     // cape name
+            null,   // Phone number
+            null,   // Birth date
             statusId,
-            user.startDate,
-            user.endDate ?? null
+            null    // End date
         )
     })
 
@@ -264,7 +252,7 @@ function isValidDate(dateStr: string): boolean {
 function makeValidUser(user: User): User | undefined {
 
     if (
-        !validateEmail(user.email) ||
+        isNullOrWhitespace(user.email) ||
         isNtnuMail(user.email) ||
         !user.groupName ||
         !user.rank ||
@@ -372,7 +360,7 @@ function getUpdateUserSql(user: User, updateMode: UserEditMode): SqlHelper {
             ...selfDefault.params,
             rankId,
             groupId,
-            user.userId
+            user.id
         ]
     }
 
@@ -388,7 +376,7 @@ function getUpdateUserSql(user: User, updateMode: UserEditMode): SqlHelper {
                 `,
                 params: [
                     ...selfDefault.params,
-                    user.userId,
+                    user.id,
                 ]
             }
         case UserEditMode.Admin:
@@ -413,7 +401,7 @@ function getUpdateUserSql(user: User, updateMode: UserEditMode): SqlHelper {
                     user.startDate,
                     user.endDate,
                     groupId,
-                    user.userId
+                    user.id
                 ]
             }
         case UserEditMode.SelfAndAdmin: return superAdminOrSelfAdmin
@@ -469,7 +457,8 @@ function getUserStatusId(status: UserStatus, db?: DatabaseType): number {
 function dangerouslyGetStringEnumId(
     strEnum: StrEnum,
     dangerousInput: DangerousInput,
-    db?: DatabaseType): number {
+    db?: DatabaseType
+): number {
     db = db ?? new Database(motstandenDB, dbReadOnlyConfig)
 
     const tableName = dangerousInput.__dangerousTableName
@@ -482,7 +471,7 @@ function dangerouslyGetStringEnumId(
         + `  WHERE 
             ${columnName} = ?`         // DANGER!!!!
     )
-    const dbResult = stmt.get(strEnum.valueOf())
+    const dbResult = <{id: number} | undefined> stmt.get(strEnum.valueOf())
     if (!dbResult)
         throw `Failed to retrieve value from database`
     return dbResult.id

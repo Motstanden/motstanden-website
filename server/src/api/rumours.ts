@@ -2,11 +2,11 @@ import { UserGroup } from "common/enums";
 import { NewRumour, Rumour } from "common/interfaces";
 import { strToNumber } from "common/utils";
 import express, { Request, Response } from "express";
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
-import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
-import { rumourService } from "../services/rumours.js"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
-import dailyRandomInt from "../utils/dailyRandomInt.js"
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
+import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
+import { rumourService } from "../services/rumours.js";
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
+import dailyRandomInt from "../utils/dailyRandomInt.js";
 
 let router = express.Router()
 
@@ -50,6 +50,7 @@ router.post("/rumours/delete",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
+        getId: (req) => req.body.id,
         getAuthorInfo: (id) => rumourService.get(id)
     }),
     (req: Request, res: Response) => {
@@ -67,6 +68,7 @@ router.post("/rumours/update",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
+        getId: (req) => req.body.id,
         getAuthorInfo: id => rumourService.get(id)
     }),
     (req: Request, res: Response) => {

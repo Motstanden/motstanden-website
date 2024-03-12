@@ -1,26 +1,25 @@
 import Database from "better-sqlite3";
 import { ParticipationStatus } from "common/enums";
-import { ParticipationList } from "common/interfaces";
+import { Participant } from "common/interfaces";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
 
 
-export function getAll(eventId: number): ParticipationList {
+export function getAll(eventId: number): Participant[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig);
     const stmt = db.prepare(`
         SELECT 
-            event_id as eventId,
-            participants
+            user_id as id,
+            status,
+            full_name as fullName,
+            SUBSTR(first_name, 1, 1) || SUBSTR(last_name, 1, 1) AS initials
         FROM
             vw_event_participant
         WHERE event_id = ?
     `);
-    const dbResult: { eventId: number, participants: string } = stmt.get(eventId);
+    const participant = <Participant[]> stmt.all(eventId);
     db.close()
-    if (!dbResult) {
-        return { eventId: eventId, participants: [] }
-    }
 
-    return { ...dbResult, participants: JSON.parse(dbResult.participants) };
+    return participant
 }
 
 export function upsert(eventId: number, userId: number, newStatus: ParticipationStatus) {
@@ -56,12 +55,11 @@ function getStatusId(status: ParticipationStatus): number {
         WHERE 
             status = ?
     `)
-    const result = stmt.get(status.toString())
+    const result = <{statusId: number} | undefined> stmt.get(status.toString())
     db.close()
 
-    if (!result.statusId)
+    if (!result?.statusId)
         throw "Could not retrieve participation status id"
 
-
-    return result.statusId as number
+    return result.statusId
 }

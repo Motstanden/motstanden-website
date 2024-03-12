@@ -1,21 +1,78 @@
-import { Stack, useTheme } from "@mui/material";
+import { Box } from "@mui/material";
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import ResponsiveAppBar from "./appBar/ResponsiveAppBar";
-import { FooterContent } from "./Footer";
+import { FooterContent } from "src/layout/Footer";
+import { NavDrawer } from 'src/layout/NavDrawer/NavDrawer';
+import { AppBar } from "./AppBar/AppBar";
+import { SettingsDrawer } from "./SettingsDrawer/SettingsDrawer";
+import { useAppBarHeight, useDrawerWidth } from "./useAppSizes";
 
 export function AppLayout() {
-    const theme = useTheme()
+
+    const { drawerWidth, settingsDrawerWidth } = useDrawerWidth()
+    const appBarHeight = useAppBarHeight()
+    
+    const navDrawer = useDrawer()
+    const settingsDrawer = useDrawer()
+
     return (
-        <Stack direction="column" minHeight="100vh">
+        <div style={{display: "flex"}}>
+            
             <header>
-                <ResponsiveAppBar />
+                <AppBar 
+                    onNavMenuClick={navDrawer.toggle}
+                    onSettingsMenuClick={settingsDrawer.toggle}
+                    position="fixed"
+                    sx={{
+                        width: { sm: `calc(100% - ${drawerWidth}px)` },
+                        ml: { sm: `${drawerWidth}px` },
+                    }}
+                />
             </header>
-            <main style={{ minHeight: "100vh", color: theme.palette.text.secondary }}>
-                <Outlet />
-            </main>
-            <footer>
-                <FooterContent />
-            </footer>
-        </Stack>
+
+            <Box component="nav" 
+                sx={{ 
+                    flexShrink: { sm: 0 },
+                    display: { xs: 'none', sm: 'flex' },
+                    width: { sm: `${drawerWidth}px` },
+                }}>
+                <NavDrawer
+                    open={navDrawer.isOpen}
+                    onClose={navDrawer.close}
+                    onOpen={navDrawer.open}
+                    drawerWidth={drawerWidth} 
+                />
+            </Box>
+
+            <SettingsDrawer 
+                open={settingsDrawer.isOpen}
+                onClose={settingsDrawer.close}
+                onOpen={settingsDrawer.open}
+                drawerWidth={settingsDrawerWidth}
+            />
+
+            <Box sx={{ 
+                flexGrow: 1, 
+                pt: `${appBarHeight}px`,  
+                width: { xs: "100%", sm: `calc(100% - ${drawerWidth}px)` } }}
+            >   
+                <main style={{ minHeight: `calc(100vh - ${appBarHeight}px)` }}>
+                    <Outlet/>
+                </main>
+                <footer>
+                    <FooterContent/>
+                </footer>
+            </Box>
+        </div>
     )
+}
+
+function useDrawer() {
+    const [isOpen, setIsOpen] = useState(false)
+
+    const open = () => setIsOpen(true)
+    const close = () => setIsOpen(false)
+    const toggle = () => setIsOpen(prevValue => !prevValue)
+
+    return { isOpen, open, close, toggle }
 }

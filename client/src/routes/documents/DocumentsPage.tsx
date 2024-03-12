@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { UrlList, UrlListItem } from "../../components/UrlList"
+import { UrlList, UrlListItem, UrlListSkeleton } from "../../components/UrlList"
 import { useTitle } from "../../hooks/useTitle"
-import { PageContainer } from "../../layout/PageContainer"
-import { fetchAsync } from "../../utils/fetchAsync"
+import { PageContainer } from "../../layout/PageContainer/PageContainer"
+import { fetchFn } from "../../utils/fetchAsync"
 
 export default function DocumentsPage() {
     useTitle("Dokumenter")
@@ -16,19 +16,39 @@ export default function DocumentsPage() {
 
 function DocumentList() {
 
-    const { isLoading, isError, data, error } = useQuery<Document[]>(["FetchDocuments"], () => fetchAsync<Document[]>("/api/documents"))
+    const { isPending, isError, data, error } = useQuery<Document[]>({
+        queryKey: ["FetchDocuments"],
+        queryFn: fetchFn<Document[]>("/api/documents"),
+    })
 
-    if (isLoading) {
-        return <PageContainer><div /></PageContainer>
+    if (isPending) {
+        return <UrlListSkeleton length={3}/>
     }
 
     if (isError) {
-        return <PageContainer><span>{`${error}`}</span></PageContainer>
+        return `${error}`
     }
-
     return (
         <UrlList>
-            {data.map(doc => <UrlListItem key={doc.url} to={`/${doc.url}`} text={doc.title} type="application/pdf" reloadDocument />)}
+            <>
+                <UrlListItem
+                    externalRoute
+                    to="https://statutter.motstanden.no" 
+                    type="application/pdf"
+                    text="Motstandens Statutter"/>
+                <UrlListItem
+                    externalRoute
+                    to="https://manifest.motstanden.no" 
+                    type="application/pdf"
+                    text="Motstandens Propaganda 2023"/>
+                {data.map(doc => 
+                    <UrlListItem 
+                        key={doc.url} 
+                        to={`/${doc.url}`} 
+                        text={doc.title} 
+                        type="application/pdf" 
+                        reloadDocument />)}
+            </>
         </UrlList>
     )
 }

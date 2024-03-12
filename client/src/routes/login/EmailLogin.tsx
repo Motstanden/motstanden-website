@@ -1,28 +1,21 @@
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
-import { Button, FormHelperText, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { MagicLinkResponse } from 'common/interfaces';
-import { validateEmail } from 'common/utils';
 import React, { useState } from "react";
 import DevLogin from './DevLogin';
 
 export function EmailLogin({ onEmailSent }: { onEmailSent: (e: EmailInfo) => void }) {
 
     const [email, setEmail] = useState("")
-    const [isValidEmail, setIsValidEmail] = useState(true)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setIsSubmitting(true)
         const emailTrimmed = email.toLowerCase().trim()
-        if (!validateEmail(emailTrimmed)) {
-            setIsValidEmail(false)
-            setIsSubmitting(false)
-            return;
-        }
 
         // POST a request with the users email or phone number to the server
-        const res = await fetch("/api/auth/magic_login", {
+        const res = await fetch("/api/auth/magic-link/create", {
             method: `POST`,
             body: JSON.stringify({
                 destination: emailTrimmed,
@@ -39,31 +32,31 @@ export function EmailLogin({ onEmailSent }: { onEmailSent: (e: EmailInfo) => voi
         setIsSubmitting(false)
     }
 
-    function onEmailChanged(event: React.ChangeEvent<HTMLInputElement>) {
-        setIsValidEmail(true)
-        setEmail(event.target.value)
-    }
-
     return (
-        <form onSubmit={handleSubmit}>
-            <TextField
-                label="E-post"
-                type="email"
-                value={email}
-                onChange={onEmailChanged}
-                error={!isValidEmail}
-                required
-                fullWidth
-                style={{ maxWidth: "350px" }}
-            />
-            <br />
-            <br />
-            {!isValidEmail && (<><FormHelperText error={true} style={{ textAlign: "center" }}>Ugyldig E-postadresse</FormHelperText><br /></>)}
+        <form onSubmit={handleSubmit} method="post">
+            <div>
+                <TextField
+                    label="E-post"
+                    type="email"
+                    name='email'
+                    autoComplete='email'
+                    aria-label='email'
+                    spellCheck={false}
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    required
+                    fullWidth
+                    style={{ 
+                        maxWidth: "350px", 
+                        marginBottom: "35px"
+                    }}
+                />
+            </div>
             <Button
                 variant="contained"
                 size="large"
                 type="submit"
-                disabled={!isValidEmail || isSubmitting}
+                disabled={isSubmitting}
                 endIcon={<ForwardToInboxIcon />}>
                 Send E-post
             </Button>

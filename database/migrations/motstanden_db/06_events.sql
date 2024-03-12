@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 -- Insert current version into the DB.
 INSERT INTO version(migration) VALUES
     ('06_events.sql');
@@ -7,7 +9,7 @@ CREATE TABLE event (
     title TEXT NOT NULL,
     start_date_time TEXT NOT NULL CHECK(start_date_time is datetime(start_date_time)),                          -- yyyy-mm-dd hh:mm
     end_date_time TEXT DEFAULT NULL CHECK(end_date_time = NULL OR end_date_time is datetime(end_date_time)),    -- yyyy-mm-dd hh:mm
-    key_info TEXT NOT NULL DEFAULT "[]" CHECK(json_valid(key_info) = 1),                                                                        -- Json array    
+    key_info TEXT NOT NULL DEFAULT '[]' CHECK(json_valid(key_info) = 1),                                                                        -- Json array    
     description TEXT NOT NULL,                                                                                  -- Html
     created_by INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -38,10 +40,10 @@ CREATE TABLE participation_status (
 INSERT INTO 
     participation_status(participation_status_id, status)
 VALUES
-    (1, "Ukjent"),
-    (2, "Deltar"),
-    (3, "Deltar kanskje"),
-    (4, "Deltar ikke");
+    (1, 'Ukjent'),
+    (2, 'Deltar'),
+    (3, 'Deltar kanskje'),
+    (4, 'Deltar ikke');
 
 CREATE TABLE event_participant (
     event_id INTEGER NOT NULL,
@@ -72,17 +74,10 @@ SELECT
     key_info,
     description,
     created_by as created_by_user_id,
-    created_by.first_name || ' '
-        || IIF(length(trim(created_by.middle_name)) = 0, '', created_by.middle_name || ' ') 
-        || created_by.last_name 
-        as created_by_full_name,
+    created_by.full_name as created_by_full_name,
     e.created_at,
     updated_by as updated_by_user_id,
-    updated_by.first_name || ' '
-        || IIF(length(trim(updated_by.middle_name)) = 0, '', updated_by.middle_name || ' ') 
-        || updated_by.last_name 
-        as updated_by_full_name,
-    e.updated_at,
+    updated_by.full_name as updated_by_full_name,
     IIF( end_date_time is  NULL,
         IIF(datetime(start_date_time) < datetime('now'), 0, 1),
         IIF(datetime(end_date_time)   < datetime('now'), 0, 1)

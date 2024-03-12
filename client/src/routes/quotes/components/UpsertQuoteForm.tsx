@@ -3,16 +3,25 @@ import { NewQuote, Quote, Quote as QuoteData } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
 import { useState } from "react";
 import { Form } from "src/components/form/Form";
+import { useSessionStorage } from "src/hooks/useStorage";
 
 export function UpsertQuoteForm({
-    initialValue, postUrl, onAbortClick, onPostSuccess,
+    initialValue, 
+    postUrl,
+    storageKey, 
+    onAbortClick, 
+    onPostSuccess,
 }: {
     initialValue: NewQuote | QuoteData;
+    storageKey: any[];
     postUrl: string;
     onAbortClick: VoidFunction;
     onPostSuccess: VoidFunction;
 }) {
-    const [newValue, setNewValue] = useState<NewQuote | Quote>(initialValue);
+    const [newValue, setNewValue, clearNewValue] = useSessionStorage<NewQuote | Quote>({
+        key: storageKey,
+        initialValue: initialValue
+    });
 
     const validateData = () => {
         const isEmpty = isNullOrWhitespace(newValue.quote) || isNullOrWhitespace(newValue.utterer);
@@ -24,6 +33,16 @@ export function UpsertQuoteForm({
         return { ...newValue, quote: newValue.quote.trim(), utterer: newValue.utterer.trim() };
     };
 
+    const handlePostSuccess = () => {
+        clearNewValue();
+        onPostSuccess();
+    }
+
+    const handleAbortClick = () => {
+        clearNewValue();
+        onAbortClick();
+    }
+
     const disabled = !validateData();
 
     return (
@@ -32,8 +51,8 @@ export function UpsertQuoteForm({
                 value={getSubmitData}
                 postUrl={postUrl}
                 disabled={disabled}
-                onAbortClick={_ => onAbortClick()}
-                onPostSuccess={_ => onPostSuccess()}
+                onAbortClick={handleAbortClick}
+                onPostSuccess={handlePostSuccess}
 
             >
                 <div style={{ marginBottom: "-1em" }}>

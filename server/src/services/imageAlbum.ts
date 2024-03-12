@@ -36,12 +36,9 @@ function getAll(limit?: number): ImageAlbum[] {
             created_at DESC
         ${!!limit ? "LIMIT ?" : ""}
     `)
-    const dbAlbums: DbImageAlbum[] | undefined = !!limit ? stmt.all(limit) : stmt.all()
+    const dbAlbums = <DbImageAlbum[]> (!!limit ? stmt.all(limit) : stmt.all())
     db.close()
     
-    if(!dbAlbums)
-        throw "Bad data"
-        
     const albums = dbAlbums.map( item => ({
         ...item, 
         isPublic: item.isPublic === 1,
@@ -73,7 +70,7 @@ function get(albumId: number): ImageAlbum {
             vw_image_album 
         WHERE image_album_id = ?
     `)
-    const dbAlbum: DbImageAlbum | undefined = stmt.get(albumId)
+    const dbAlbum = <DbImageAlbum | undefined> stmt.get(albumId)
     db.close()
     
     if(!dbAlbum)
@@ -103,7 +100,7 @@ function getImages( albumId: number): Image[] {
             image
         WHERE image_album_id = ?
     `)
-    const dbResult: DbImage[] = stmt.all(albumId)
+    const dbResult  = <DbImage[]> stmt.all(albumId)
     db.close()
 
     if (!dbResult)

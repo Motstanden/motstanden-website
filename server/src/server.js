@@ -21,6 +21,7 @@ app.use(helmet({
     contentSecurityPolicy: {
         useDefaults: true,
         directives: {
+            defaultSrc: ["'self'", "styret.motstanden.no"],
             scriptSrc: ["'self'"],
             frameSrc: ["'self'", "https://docs.google.com"],
         }

@@ -1,9 +1,6 @@
-import { chromium, FullConfig } from "@playwright/test";
+import { FullConfig, firefox, request } from "@playwright/test";
 import { UserGroup } from "common/enums";
-import dayjs from "dayjs";
-import * as fs from "fs";
-import * as fsPromises from "fs/promises";
-import { getStoragePath, logIn } from "./utils/auth.js";
+import { testUserVariationsCount, unsafeApiLogIn, unsafeGetUser } from "./utils/auth.js";
 
 
 export default async function globalSetup(config: FullConfig) {
@@ -11,35 +8,42 @@ export default async function globalSetup(config: FullConfig) {
 }
 
 async function authSetup() {
-    const groups = await getGroups()
+    await setupBaseStorageState()
 
-    if(groups.length <= 0) 
-        return
-
-    const browser = await chromium.launch()
+    console.log("[Setup] Authenticating users...")
+    
+    const groups = Object.values(UserGroup)
+    const loginFunctions: Array<Promise<void>> = []
     for(let i = 0; i < groups.length; i++) {
-        const group = groups[i]
-        const page = await browser.newPage() 
-        await logIn(page, group)
-        await page.context().storageState({ path: getStoragePath(group) })
-        await page.context().close()
+        for(let j = 0; j < testUserVariationsCount; j++) {
+            loginFunctions.push(loginUser(groups[i], j))
+        }
     }
+    await Promise.all(loginFunctions)
 
-    await browser.close()
+    console.log("[Setup] Done")
 }
 
-async function getGroups(): Promise<UserGroup[]> {
-    const groups: UserGroup[] = Object.values(UserGroup)
-    const result: UserGroup[] = []
-    for(let i = 0; i < groups.length; i++) {
+async function loginUser(userGroup: UserGroup, variantIndex: number) {
+    const user = unsafeGetUser(userGroup, variantIndex)
+    const apiContext = await request.newContext({ baseURL: process.env.BASEURL, storageState: baseStorageState })
+    await unsafeApiLogIn(apiContext, user.email)
+    apiContext.storageState({ path: user.storageStatePath })
+    apiContext.dispose()
+}
 
-        const stat: fs.Stats | undefined = await fsPromises.stat(getStoragePath(groups[i]))
-                                                           .catch(err => undefined)
-        const fileExists = !!stat                                                   
-        const fileIsOld = fileExists && dayjs(stat.birthtime).add(1, "week").isBefore(dayjs())
-        if(!fileExists || fileIsOld) {
-            result.push(groups[i])
-        }         
-    }
-    return result
+const baseStorageState = "storage-state/base.json"
+
+async function setupBaseStorageState() {
+    console.log("[Setup] Setting time zone to match system time zone...")
+
+    const browser = await firefox.launch()
+    const page = await browser.newPage({ baseURL: process.env.BASEURL })
+    await page.goto("/")
+
+    await page.getByRole('button', { name: 'Innstillinger' }).click();
+    await page.getByRole('button', { name: 'System' }).nth(1).click();
+    await page.context().storageState({ path: baseStorageState })
+
+    await browser.close()
 }

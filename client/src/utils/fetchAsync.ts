@@ -7,3 +7,7 @@ export async function fetchAsync<Type>(url: string): Promise<Type> {
         return await res.json() as Type;
     }
 }
+
+export function fetchFn<Type>(url: string) {
+    return () => fetchAsync<Type>(url);
+}

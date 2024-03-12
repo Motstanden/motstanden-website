@@ -16,7 +16,7 @@ function get(rumourId: number): Rumour {
             rumour 
         WHERE rumour_id = ?
     `)
-    const rumour: Rumour | undefined = stmt.get(rumourId)
+    const rumour = <Rumour | undefined> stmt.get(rumourId)
     db.close()
 
     if (!rumour)

@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 -- Insert current version into the DB.
 INSERT INTO version(migration) VALUES
     ('09_vw_event_refactor.sql');
@@ -15,16 +17,10 @@ SELECT
     description_html,
     description_json,
     created_by as created_by_user_id,
-    created_by.first_name || ' '
-        || IIF(length(trim(created_by.middle_name)) = 0, '', created_by.middle_name || ' ')
-        || created_by.last_name
-        as created_by_full_name,
+    created_by.full_name as created_by_full_name,
     e.created_at,
     updated_by as updated_by_user_id,
-    updated_by.first_name || ' '
-        || IIF(length(trim(updated_by.middle_name)) = 0, '', updated_by.middle_name || ' ')
-        || updated_by.last_name
-        as updated_by_full_name,
+    updated_by.full_name as updated_by_full_name,
     e.updated_at,
     IIF( end_date_time is  NULL,
         IIF(datetime(start_date_time, 'start of day', '+1 day', '+6 hours') < datetime('now'), 0, 1),

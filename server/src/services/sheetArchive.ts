@@ -20,13 +20,10 @@ export function getTitles(): SheetArchiveTitle[] {
             url_title as url
         FROM 
             song_title 
-        ORDER BY title ASC`)
-    const dbResult: DbSheetArchiveTitle[] | undefined = stmt.all()
+        ORDER BY title COLLATE NOCASE ASC`)
+    const dbResult = <DbSheetArchiveTitle[]> stmt.all()
     db.close();
 
-    if(!dbResult)
-        throw "Bad data"
-        
     const sheets = dbResult.map( item => ({
         ...item, 
         isPublic: item.isPublic === 1, 
@@ -78,8 +75,8 @@ export function getFiles(titleId: number): SheetArchiveFile[] {
         FROM 
             vw_song_file 
         WHERE title_id = ?
-        ORDER BY instrument ASC`)
-    const sheets = stmt.all(titleId)
+        ORDER BY instrument COLLATE NOCASE ASC`)
+    const sheets = <SheetArchiveFile[]> stmt.all(titleId)
     db.close()
 
     if(!sheets)

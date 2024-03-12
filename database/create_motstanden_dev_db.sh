@@ -39,9 +39,49 @@ sqlite3 motstanden_dev.db < migrations/motstanden_db/08_rumours.sql;
 echo "Running: 09_vw_event_refactor.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/09_vw_event_refactor.sql;
 
+# Create poll table
+echo "Running: 10_poll.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/10_poll.sql;
+
+# Use markdown for event descriptions
+echo "Running: 11_poll_trigger_bugfixes.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/11_poll_trigger_bugfixes.sql;
+
+# Use markdown for event descriptions
+echo "Running: 12_event_md_description.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/12_event_md_description.sql;
+
+# Use markdown for song lyrics
+echo "Running: 13_lyric_md_content.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/13_lyric_md_content.sql;
+
+# Use markdown for song lyrics
+echo "Running: 14_simple_text.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/14_simple_text.sql;
+
+# Reimplement view of event participant table
+echo "Running: 15_vw_event_participant_refactor.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/15_vw_event_participant_refactor.sql;
+
+# Create comment section
+echo "Running: 16_comment_section.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/16_comment_section.sql;
+
+# Create a wall were users can post messages
+echo "Running: 17_wall_post.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/17_wall_post.sql;
+
+# Create a wall were users can post messages
+echo "Running: 18_likes.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/18_likes.sql;
+
+# Create a view to see what users have voted on in a poll.
+echo "Running: 19_poll_voters_view.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/19_poll_voters_view.sql;
+
 # Create image tables
-echo "Running: 10_image_album.sql"
-sqlite3 motstanden_dev.db < migrations/motstanden_db/10_image_album.sql;
+echo "Running: 20_image_album.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/20_image_album.sql;
 
 # Insert data that is representative for the current data in the database
 cd data/db

@@ -1,24 +1,22 @@
 import { useQuery } from "@tanstack/react-query"
-import { Navigate, Outlet, useLocation, useOutletContext, useParams } from "react-router-dom"
-import { TabbedPageContainer } from "src/layout/PageContainer"
-import { fetchAsync } from "src/utils/fetchAsync"
+import { Navigate, Outlet, useLocation, useMatch, useOutletContext, useParams } from "react-router-dom"
+import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
+import { fetchFn } from "src/utils/fetchAsync"
 
 import { EventData } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { matchUrl } from "src/utils/matchUrl"
+import { EventEditPageSkeleton } from "./skeleton/EditPage"
+import { EventItemPageSkeleton } from "./skeleton/ItemPage"
+import { EventListPageSkeleton } from "./skeleton/ListPage"
 
-export function EventContext() {
+export const eventContextQueryKey = ["FetchEventContext"]
 
-    const { isLoading, isError, data, error } = useQuery<EventData[]>(["FetchAllEvents"], () => fetchAsync<EventData[]>("/api/events/all"))
+export {
+    EventContainer as EventContext
+}
 
-    if (isLoading) {
-        return <div style={{ minHeight: "100px" }} />
-    }
-
-    if (isError) {
-        return <div style={{ minHeight: "100px" }}>{`${error}`}</div>
-    }
-
+function EventContainer() {
     return (
         <TabbedPageContainer
             tabItems={[
@@ -28,8 +26,39 @@ export function EventContext() {
             ]}
             matchChildPath={true}
         >
-            <Outlet context={data} />
+            <EventContextLoader/>
         </TabbedPageContainer>
+    )
+}
+
+function EventContextLoader() {
+    const { isPending, isError, data, error } = useQuery<EventData[]>({
+        queryKey: eventContextQueryKey,
+        queryFn: fetchFn<EventData[]>("/api/events/all"),
+    })
+
+    const { isListPage, isItemPage, isEditPage } = useEventUrlMatch()
+
+    if (isPending) {
+
+        if(isListPage)
+            return <EventListPageSkeleton/>
+        
+        if(isItemPage)
+            return <EventItemPageSkeleton/>
+
+        if(isEditPage)
+            return <EventEditPageSkeleton/>
+
+        return <></>
+    }
+
+    if (isError) {
+        return `${error}`
+    }
+
+    return (
+        <Outlet context={data} />
     )
 }
 
@@ -41,13 +70,13 @@ export function EventItemContext() {
     const params = useParams();
     const eventId = strToNumber(params.eventId)
     if (!eventId) {
-        return <Navigate to="/arrangement" />
+        return <Navigate to="/arrangement" replace />
     }
 
-    // Check if the provided parameter matches and even id
+    // Check if the provided parameter matches an eventId
     const event = allEvents.find(item => item.eventId === eventId)
     if (!event) {
-        return <Navigate to="/arrangement" />
+        return <Navigate to="/arrangement" replace/>
     }
 
     // Redirect to correct url if the pattern does not match '/arrangement/[kommende | tidligere]/:eventId'
@@ -55,12 +84,37 @@ export function EventItemContext() {
     const isBaseUrl = matchUrl(expectedUrlBase, location)
     const isEditUrl = matchUrl(`${expectedUrlBase}/rediger`, location) || matchUrl(`${expectedUrlBase}/rediger/`, location)
     if (!isBaseUrl && !isEditUrl) {
-        return <Navigate to={expectedUrlBase} />
+        return <Navigate to={expectedUrlBase + location.hash} replace />
     }
 
     return (
         <Outlet context={event} />
     )
+}
+
+type EventUrlMatch = {
+    isListPage: boolean
+    isItemPage: boolean
+    isEditPage: boolean
+}
+
+function useEventUrlMatch(): EventUrlMatch {
+
+    const isList1 = useMatch("/arrangement")
+    const isList2 =  useMatch("/arrangement/tidligere") 
+    const isList3 = useMatch("/arrangement/kommende") 
+    
+    const isItem1 = useMatch("/arrangement/kommende/:id") 
+    const isitem2 = useMatch("/arrangement/tidligere/:id")
+    
+    const isEdit1 = useMatch("/arrangement/kommende/:id/rediger") 
+    const isEdit2 = useMatch("/arrangement/tidligere/:id/rediger")
+
+    return {
+        isListPage: !!(isList1 || isList2 || isList3),
+        isItemPage: !!(isItem1 || isitem2),
+        isEditPage: !!(isEdit1 || isEdit2)
+    }
 }
 
 export function buildEventItemUrl(event: EventData) {

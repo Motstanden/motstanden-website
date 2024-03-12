@@ -6,27 +6,28 @@ import {
     TextField
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
+import { useQueryClient } from "@tanstack/react-query";
 import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
 import { User } from "common/interfaces";
-import { hasGroupAccess, isNtnuMail as checkIsNtnuMail, isNullOrWhitespace, strToNumber, userRankToPrettyStr, validateEmail } from "common/utils";
+import { isNtnuMail as checkIsNtnuMail, isNullOrWhitespace, strToNumber, userRankToPrettyStr } from "common/utils";
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate, useOutletContext } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { datePickerStyle } from "src/assets/style/timePickerStyles";
-import { Form } from "src/components/form/Form";
 import { HelpButton } from "src/components/HelpButton";
-import { useAuth } from "src/context/Authentication";
+import { Form } from "src/components/form/Form";
+import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication";
 import { useTitle } from "src/hooks/useTitle";
-import { Card, CardTextItem, groupTVPair, rankTVPair, statusTVPair } from "./Components";
-import { AccountDetailsCard, formatExactDate, PersonCard } from "./UserPage";
+import { useUserProfileContext, userListQueryKey } from "./Context";
+import { AccountDetailsCard, PersonCard, formatExactDate } from "./UserPage";
+import { Card, CardTextItem } from "./components/Card";
+import { groupTVPair, rankTVPair, statusTVPair } from "./utils/TextValuePair";
 
 export default function EditUserPage() {
-    const currentUser = useAuth().user!
-    const viewedUser = useOutletContext<User>()
+    const {user, isAdmin, isSuperAdmin} = useAuthenticatedUser()
+    const { viewedUser } = useUserProfileContext()
 
-    const isSelfEditing = currentUser.userId === viewedUser.userId
-    const isSuperAdmin = hasGroupAccess(currentUser, UserGroup.SuperAdministrator)
-    const isAdmin = hasGroupAccess(currentUser, UserGroup.Administrator)
+    const isSelfEditing = user.id === viewedUser.id
 
     let editMode: UserEditMode | undefined
     if (isSuperAdmin) {
@@ -46,12 +47,14 @@ export default function EditUserPage() {
         return <EditPage editMode={editMode} user={viewedUser} />
     }
 
-    return <Navigate to={`/medlem/${viewedUser.userId}`} />
+    return <Navigate to={`/medlem/${viewedUser.id}`} replace />
 }
 
 function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
     const [newUser, setNewUser] = useState<User>(user)
     const [disableSubmit, setDisableSubmit] = useState(false)
+    
+    const queryClient = useQueryClient()
 
     useTitle(user.firstName + `${isUserEqual(user, newUser) ? "" : "*"}`)
     const navigate = useNavigate()
@@ -59,16 +62,22 @@ function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
     const onChange = (user: User) => setNewUser(user);
     const onIsValidChange = (isValid: boolean) => setDisableSubmit(!isValid)
 
-    const onAbort = () => canExitPage(user, newUser) && navigate(`/medlem/${user.userId}`)
-    const onPostSuccess = (_: Response) => window.location.href = `${window.location.origin}/medlem/${user.userId}`    // Will trigger a reload of the page
-    const preventSubmit = () => false // TODO: Validate user here. Return true if user is invalid
+    const onAbort = () => {
+        if(canExitPage(user, newUser)){
+            navigate("..", {replace: true})
+        } 
+    }
+    const onPostSuccess = async (_: Response) => {
+        await queryClient.invalidateQueries({queryKey: userQueryKey})
+        await queryClient.invalidateQueries({queryKey: userListQueryKey})
+        navigate("..", {replace: true})
+    }
 
     return (
         <Form
             value={newUser}
             postUrl={getPostUrl(editMode)}
             disabled={isUserEqual(user, newUser) || disableSubmit}
-            preventSubmit={preventSubmit}
             onAbortClick={onAbort}
             onPostSuccess={onPostSuccess}
         >
@@ -92,10 +101,9 @@ function PersonForm({ value, onChange, onIsValidChange, editMode }: FormParams) 
     }
 
     const isNtnuMail = checkIsNtnuMail(value.email)
-    const isValidEmail = validateEmail(value.email)
     const isValidPhone = value.phoneNumber === null || (value.phoneNumber >= 10000000 && value.phoneNumber <= 99999999)
 
-    const userIsValid = !isNtnuMail && isValidEmail && isValidPhone && !isNullOrWhitespace(value.firstName) && !isNullOrWhitespace(value.lastName)
+    const userIsValid = !isNtnuMail && isValidPhone && !isNullOrWhitespace(value.firstName) && !isNullOrWhitespace(value.lastName)
     const validChanged = (userIsValid && !isValid) || (!userIsValid && isValid)
     if (validChanged) {
         setIsValid(prev => !prev)
@@ -132,7 +140,6 @@ function PersonForm({ value, onChange, onIsValidChange, editMode }: FormParams) 
                 maxDate={dayjs().subtract(18, "year")}
                 value={value.birthDate ? dayjs(value.birthDate) : null}
                 onChange={(newVal: Dayjs | null) => onChange({ ...value, birthDate: newVal?.format("YYYY-MM-DD") ?? null })}
-                renderInput={params => <TextField {...params} />}
             />
             <div>
                 <TextField
@@ -140,12 +147,11 @@ function PersonForm({ value, onChange, onIsValidChange, editMode }: FormParams) 
                     name="email"
                     value={value.email}
                     onChange={e => onChange({ ...value, email: e.target.value })}
-                    error={isNtnuMail || !isValidEmail}
+                    error={isNtnuMail}
                     fullWidth
                     required
                 />
                 {isNtnuMail && <div color="error.main">Ntnu mail ikke tillat</div>}
-                {!isValidEmail && <div color="error.main">Ugyldig E-post</div>}
             </div>
             <div>
                 <TextField
@@ -178,25 +184,14 @@ function MemberForm({ value, onChange, editMode }: FormParams) {
 
     return (
         <Card title="Medlemskap" spacing={4}>
-            <div style={{ position: "relative" }}>
-                <TextField
-                    label="Kappe"
-                    name="capeName"
-                    fullWidth
-                    value={value.capeName}
-                    onChange={e => onChange({ ...value, capeName: e.target.value })}
-                    sx={{ mt: 2 }}
-                />
-                {!isNullOrWhitespace(value.capeName) &&
-                    <span style={{
-                        fontSize: "xx-small",
-                        position: "absolute",
-                        bottom: -20,
-                        left: 5,
-                    }}>
-                        Den grønne <b>{value.capeName}</b>
-                    </span>}
-            </div>
+            <TextField
+                label="Kappe"
+                name="capeName"
+                fullWidth
+                value={value.capeName}
+                onChange={e => onChange({ ...value, capeName: e.target.value })}
+                sx={{ mt: 2 }}
+            />
             {isAdmin && (
                 <TextField
                     select
@@ -233,7 +228,9 @@ function MemberForm({ value, onChange, editMode }: FormParams) {
                     {userStatusSrc.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
                 </TextField>
                 <Box sx={{ ml: 2 }}>
-                    <HelpButton text={getStatusExplanation(value.status)} />
+                    <HelpButton>
+                        {getStatusExplanation(value.status)}
+                    </HelpButton>
                 </Box>
             </Stack>
             <DatePicker
@@ -244,7 +241,9 @@ function MemberForm({ value, onChange, editMode }: FormParams) {
                 maxDate={dayjs()}
                 value={dayjs(value.startDate)}
                 onChange={(newVal: Dayjs | null) => newVal && onChange({ ...value, startDate: newVal?.format("YYYY-MM-DD") })}
-                renderInput={(params) => <TextField {...params} required />}
+                slotProps={{
+                    textField: { required: true }
+                }}
             />
             <DatePicker
                 {...datePickerStyle}
@@ -254,7 +253,6 @@ function MemberForm({ value, onChange, editMode }: FormParams) {
                 maxDate={dayjs().add(6, "year")}
                 value={value.endDate ? dayjs(value.endDate) : null}
                 onChange={(newVal: Dayjs | null) => onChange({ ...value, endDate: newVal?.format("YYYY-MM-DD") ?? null })}
-                renderInput={(params) => <TextField {...params} />}
             />
         </Card>
     )

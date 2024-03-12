@@ -6,7 +6,7 @@ import {
     Grid,
     Link,
     Paper,
-    Snackbar,
+    Skeleton,
     Table,
     TableBody,
     TableCell,
@@ -22,9 +22,11 @@ import { User } from "common/interfaces";
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";
 import dayjs from 'dayjs';
 import { useState } from 'react';
-import { Link as RouterLink, useOutletContext } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { TitleCard } from 'src/components/TitleCard';
+import { useAppSnackBar } from "src/context/AppSnackBar";
 import { useTitle } from 'src/hooks/useTitle';
+import { useUsersContext } from "./Context";
 
 export default function UserListPage() {
     useTitle("Medlemsliste")
@@ -42,11 +44,11 @@ export default function UserListPage() {
 
     const [showBoard, setShowBoard] = useState(false)
 
-    const data = useOutletContext<User[]>()
+    let {users, isPending} = useUsersContext()
 
-    const actualUsers = data.filter(user => !isMotstandenMail(user.email))
-    const boardUsers = data.filter(user => isMotstandenMail(user.email))
-
+    const actualUsers = users?.filter(user => !isMotstandenMail(user.email)) || []
+    const boardUsers = users?.filter(user => isMotstandenMail(user.email)) || []
+    
     return (
         <>
             <h1>Medlemsliste</h1>
@@ -72,6 +74,8 @@ export default function UserListPage() {
                 </Grid>
             </Paper>
             <UserTable
+                isLoading={isPending}
+
                 users={actualUsers}
                 showName={showName}
                 showRank={showRank}
@@ -85,11 +89,13 @@ export default function UserListPage() {
                 showPhone={showPhone}
                 showBirth={showBirth}
             />
-            {showBoard && (
+            {showBoard && !isPending && (
                 <>
                     <Divider sx={{ mt: "60px", mb: "40px" }} />
                     <h1>Styrebrukere</h1>
                     <UserTable
+                        isLoading={isPending}
+                        
                         users={boardUsers}
                         showName={showName}
                         showRank={showRank}
@@ -103,11 +109,12 @@ export default function UserListPage() {
                         showPhone={showPhone}
                         showBirth={showBirth}
 
+
                     />
                 </>
             )}
             <Divider sx={{ mt: "60px", mb: "40px" }} />
-            <EmailLists users={actualUsers}/>
+            <EmailLists users={actualUsers} isLoading={isPending}/>
         </>
     )
 }
@@ -123,41 +130,47 @@ function FilterBox({ label, checked, onClick }: { label: string, checked: boolea
     )
 }
 
-function EmailLists( { users }: { users: User[]}) {
+function EmailLists( { users, isLoading }: { users: User[], isLoading?: boolean}) {
     const activeUsers = users.filter(user => user.status === UserStatus.Active)
     const veteranUsers = users.filter(user => user.status === UserStatus.Veteran)
     const retiredUsers = users.filter(user => user.status === UserStatus.Retired)
     const inactiveUsers = users.filter(user => user.status === UserStatus.Inactive)
 
     return (
-        <Grid container xs={12} sm={12} md={6}>
-            <TitleCard title='E-postlister' sx={{width: "100%", maxWidth: "600px"}}>
-                <ul style={{paddingLeft: "30px", listStyleType: `"-"`}}>
-                    <EmailListItem users={users} label="Alle"/>
-                    <EmailListItem users={activeUsers} label="Aktive"/>
-                    <EmailListItem users={veteranUsers} label="Veteraner"/>
-                    <EmailListItem users={retiredUsers} label="Pensjonister"/>
-                    <EmailListItem users={inactiveUsers} label="Inaktive"/>
-                </ul>
-            </TitleCard>
+        <Grid container> 
+            <Grid item xs={12} sm={8} md={5} >
+                <TitleCard title='E-postlister' sx={{width: "100%"}}>
+
+                    {isLoading && <Skeleton variant="rounded" width="100%" height="150px" />}
+
+                    {!isLoading && (
+                         <ul style={{paddingLeft: "30px", listStyleType: `"-"`}}>
+                            <EmailListItem users={users} label="Alle"/>
+                            <EmailListItem users={activeUsers} label="Aktive"/>
+                            <EmailListItem users={veteranUsers} label="Veteraner"/>
+                            <EmailListItem users={retiredUsers} label="Pensjonister"/>
+                            <EmailListItem users={inactiveUsers} label="Inaktive"/>
+                        </ul>
+                    )}
+                </TitleCard>
+            </Grid>
         </Grid>
     )
 }
 
 function EmailListItem({users, label }:{ users: User[], label: string }) {
-    const [open, setOpen] = useState(false)
+
+    const showSnackbar = useAppSnackBar()
 
     const onClick = () => {
         const data = users.map((user: User) => (user.email))
                           .join("\n")
         navigator.clipboard.writeText(data);
-        setOpen(true);
+        showSnackbar("Kopiert til utklippstavlen")
     }
 
-    if(users.length <= 0){
-        return <>
-        </>
-    }
+    if(users.length <= 0)
+        return <></>
 
     return (
         <li style={{marginBottom: "10px"}}>
@@ -171,13 +184,6 @@ function EmailListItem({users, label }:{ users: User[], label: string }) {
                 }}>
                 {label}
             </Button>
-            <Snackbar
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                open={open}
-                onClose={() => setOpen(false)}
-                autoHideDuration={2000}
-                message="Kopiert til skrivebord"
-            />
         </li>
     )
 }
@@ -194,6 +200,7 @@ function UserTable({
     showStart,
     showEnd,
     showRole,
+    isLoading,
 }: {
     users: User[],
     showName: boolean,
@@ -204,8 +211,9 @@ function UserTable({
     showPhone: boolean,
     showBirth: boolean,
     showStart: boolean,
-    showEnd: boolean
-    showRole: boolean
+    showEnd: boolean,
+    showRole: boolean,
+    isLoading: boolean,
 }) {
 
     const hideSx = { display: "none" }
@@ -238,12 +246,48 @@ function UserTable({
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {users.map((user: User) => (
+
+                    {isLoading && Array(40).fill(1).map( (_, index) => (
+                        <TableRow sx={rowStyle} key={index}>
+                            <TableCell sx={nameSx}>
+                                <Skeleton variant="text" width="185px" />
+                            </TableCell>
+                            <TableCell sx={rankSx}>
+                                <Skeleton variant="text" width="85px"/>
+                            </TableCell>
+                            <TableCell sx={capeSx}>
+                                <Skeleton variant="text" width="180px"/>
+                            </TableCell>
+                            <TableCell sx={statusSx}>
+                                <Skeleton variant="text" width="50px" />
+                            </TableCell>
+                            <TableCell sx={mailSx}>
+                                <Skeleton variant="text" width="200px"/>
+                            </TableCell>
+                            <TableCell sx={phoneSx}>
+                                <Skeleton variant="text" width="80px" />
+                            </TableCell>
+                            <TableCell sx={birthSx}>
+                                <Skeleton variant="text" width="70px"/>
+                            </TableCell>
+                            <TableCell sx={startSx}>
+                                <Skeleton variant="text" width="70px"/>                                
+                            </TableCell>
+                            <TableCell sx={endSx}>
+                                <Skeleton variant="text" width="70px"/>
+                            </TableCell>
+                            <TableCell sx={roleSx}>
+                                <Skeleton variant="text" width="80px" />                                
+                            </TableCell>
+                        </TableRow>
+                    ))}
+
+                    {!isLoading && users.map((user: User) => (
                         <TableRow sx={rowStyle} key={user.email}>
                             <TableCell sx={nameSx}>
                                 <Link
                                     component={RouterLink}
-                                    to={`/medlem/${user.userId}`}
+                                    to={`/medlem/${user.id}`}
                                     underline="hover"
                                     sx={noVisitedLinkStyle}
                                 >
@@ -254,7 +298,7 @@ function UserTable({
                                 {userRankToPrettyStr(user.rank)}
                             </TableCell>
                             <TableCell sx={capeSx}>
-                                {user.capeName ? <><i>Den grønne</i> {user.capeName}</> : <>-</>}
+                                {user.capeName ? user.capeName : "-"}
                             </TableCell>
                             <TableCell sx={statusSx}>
                                 {user.status}
@@ -290,5 +334,5 @@ function isMotstandenMail(email: string): boolean {
 }
 
 function formatDate(dateStr: string | null) {
-    return dateStr ? dayjs(dateStr).format("MMM YYYY") : "-"
+    return dateStr ? dayjs.utc(dateStr).tz().format("MMM YYYY") : "-"
 }

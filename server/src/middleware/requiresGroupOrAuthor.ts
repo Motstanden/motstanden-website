@@ -3,14 +3,14 @@ import { NextFunction, Request, Response } from "express"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { hasGroupAccess } from "../utils/accessTokenUtils.js"
 
-export function requiresGroupOrAuthor({
-    requiredGroup,
-    getAuthorInfo,
-}: {
+interface requiresGroupOrAuthorProps {
     requiredGroup: UserGroup,
-    getAuthorInfo: (id: number) => AuthoredItem | undefined
-}) {
-    return (req: Request, res: Response, next: NextFunction) => authenticatePermission(req, res, next, requiredGroup, getAuthorInfo)
+    getId: ((req: Request) => number | unknown | undefined),
+    getAuthorInfo: ((id: number) => AuthoredItem | undefined)   
+}
+
+export function requiresGroupOrAuthor(options: requiresGroupOrAuthorProps) {
+    return (req: Request, res: Response, next: NextFunction) => authenticatePermission(req, res, next, options)
 }
 
 // Check if:
@@ -20,13 +20,12 @@ function authenticatePermission(
     req: Request,
     res: Response,
     next: NextFunction,
-    requiredGroup: UserGroup,
-    getAuthorInfo: (id: number) => AuthoredItem | undefined
+    { requiredGroup, getId, getAuthorInfo }: requiresGroupOrAuthorProps
 ) {
 
     // Check if the posted quoteId is valid
-    let id: number | unknown | undefined = req.body.id
-    if ( (!id && id !== 0) || typeof id !== "number") {
+    let id: number | unknown | undefined = getId(req)
+    if (!id || typeof id !== "number") {
         return res.status(400).send("Bad data")
     }
     let item: AuthoredItem | undefined

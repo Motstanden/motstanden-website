@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 -- Insert current version into the DB.
 INSERT INTO version(migration) VALUES
     ('03_user_accounts.sql');
@@ -20,10 +22,10 @@ CREATE TABLE user_group (
 INSERT INTO 
     user_group(user_group_id, name)
 VALUES
-    (1, "contributor"),
-    (2, "editor"),
-    (3, "administrator"),
-    (4, "super administrator");
+    (1, 'contributor'),
+    (2, 'editor'),
+    (3, 'administrator'),
+    (4, 'super administrator');
 
 
 CREATE TABLE user_rank (
@@ -34,12 +36,12 @@ CREATE TABLE user_rank (
 INSERT INTO
     user_rank(user_rank_id, name)
 VALUES
-    (1, "kortslutning"),
-    (2, "ohm"),
-    (3, "kiloohm"),
-    (4, "megaohm"),
-    (5, "gigaohm"),
-    (6, "høyimpedant");
+    (1, 'kortslutning'),
+    (2, 'ohm'),
+    (3, 'kiloohm'),
+    (4, 'megaohm'),
+    (5, 'gigaohm'),
+    (6, 'høyimpedant');
 
 
 CREATE TABLE semester_name (
@@ -55,10 +57,10 @@ CREATE TABLE user_status(
 INSERT INTO
     user_status(user_status_id, status)
 VALUES
-    (1, "Aktiv"),
-    (3, "Veteran"),
-    (2, "Pensjonist"),
-    (4, "Inaktiv");
+    (1, 'Aktiv'),
+    (3, 'Veteran'),
+    (2, 'Pensjonist'),
+    (4, 'Inaktiv');
 
 CREATE TABLE user (
     user_id INTEGER PRIMARY KEY NOT NULL,
@@ -66,15 +68,20 @@ CREATE TABLE user (
     user_rank_id INTEGER NOT NULL DEFAULT 1,
     email TEXT UNIQUE NOT NULL,
     first_name TEXT NOT NULL,
-    middle_name TEXT NOT NULL DEFAULT "",
+    middle_name TEXT NOT NULL DEFAULT '',
     last_name TEXT NOT NULL,
-    cape_name TEXT NOT NULL DEFAULT "",
+    full_name TEXT NOT NULL GENERATED ALWAYS AS (
+        first_name || ' '
+        || IIF(length(trim(middle_name)) = 0, '', middle_name || ' ')
+        || last_name
+    ) STORED,
+    cape_name TEXT NOT NULL DEFAULT '',
     phone_number INTEGER DEFAULT NULL CHECK(phone_number >= 10000000 AND phone_number <= 99999999),     -- Ensure number has 8 digits
     birth_date TEXT DEFAULT NULL CHECK(birth_date IS date(birth_date, '+0 days')),                      -- Check that format is 'YYYY-MM-DD'
     user_status_id INTEGER NOT NULL DEFAULT 1,
     start_date TEXT NOT NULL DEFAULT CURRENT_DATE CHECK(start_date IS date(start_date, '+0 days')),     -- Check that format is 'YYYY-MM-DD'
     end_date TEXT DEFAULT NULL CHECK(end_date IS date(end_date, '+0 days')),                            -- Check that format is 'YYYY-MM-DD'
-    profile_picture TEXT NOT NULL CHECK(like('files/private/profilbilder/%_._%', profile_picture)) DEFAULT "files/private/profilbilder/boy.png",
+    profile_picture TEXT NOT NULL CHECK(like('files/private/profilbilder/%_._%', profile_picture)) DEFAULT 'files/private/profilbilder/boy.png',
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_group_id)
@@ -114,6 +121,7 @@ SELECT
     first_name,
     middle_name,
     last_name,
+    full_name,
     cape_name,
     profile_picture,
     phone_number,

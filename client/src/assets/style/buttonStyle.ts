@@ -1,6 +1,6 @@
-import { SxProps, Theme } from "@mui/material";
+import { SxProps } from "@mui/material";
 
-export const iconButtonStaticStyle: SxProps<Theme> = {
+export const iconButtonStaticStyle: SxProps = {
     color: "#FFF",
     bgcolor: "rgba(45, 45, 45, 0.65)",
     "&:hover": {

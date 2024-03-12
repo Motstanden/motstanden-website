@@ -8,8 +8,14 @@ import { AuthProvider } from "./context/Authentication";
 import './index.css';
 
 import { CssBaseline } from '@mui/material';
+import { AppBarStyleProvider } from './context/AppBarStyle';
+import { AppThemeProvider } from './context/AppTheme';
+import { LikeEmojiProvider } from './context/LikeEmoji';
 import { LocaleProvider } from './context/Locale';
-import { AppThemeProvider } from './context/Themes';
+import { TimeZoneProvider } from './context/TimeZone';
+import { TopScrollerProvider } from './context/TopScroller';
+import { UserReferenceProvider } from './context/UserReference';
+import { AppSnackBarProvider } from './context/AppSnackBar';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
@@ -22,14 +28,26 @@ root.render(
 		<QueryClientProvider client={queryClient}>
 			<BrowserRouter>
 				<LocaleProvider>
-					<AuthProvider>
-						<AppThemeProvider>
-							{/* Provides reasonable default css values from the material-ui framework */}
-							<CssBaseline />
+					<TimeZoneProvider>
+						<AuthProvider>
+							<UserReferenceProvider>
+								<LikeEmojiProvider>
+									<AppThemeProvider>
+										<TopScrollerProvider>
+											<AppBarStyleProvider>
+												<AppSnackBarProvider>
+													{/* Provides reasonable default css values from the material-ui framework */}
+													<CssBaseline />
 
-							<App />
-						</AppThemeProvider>
-					</AuthProvider>
+													<App />
+												</AppSnackBarProvider>
+											</AppBarStyleProvider>
+										</TopScrollerProvider>
+									</AppThemeProvider>
+								</LikeEmojiProvider>
+							</UserReferenceProvider>
+						</AuthProvider>
+					</TimeZoneProvider>
 				</LocaleProvider>
 			</BrowserRouter>
 			<ReactQueryDevtools />

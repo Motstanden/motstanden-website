@@ -4,13 +4,11 @@ import { strToNumber } from "common/utils";
 import express, { Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
-import * as quoteService from "../services/quotes.js"
+import * as quoteService from "../services/quotes.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 import dailyRandomInt from "../utils/dailyRandomInt.js";
 
 let router = express.Router()
-
-
 
 router.get("/quotes?:limit",
     AuthenticateUser(),
@@ -52,6 +50,7 @@ router.post("/quotes/delete",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
+        getId: (req) => req.body.id,
         getAuthorInfo: id => quoteService.getQuote(id)
     }),
     (req: Request, res: Response) => {
@@ -69,6 +68,7 @@ router.post("/quotes/update",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
+        getId: (req) => req.body.id,
         getAuthorInfo: id => quoteService.getQuote(id)
     }),
     (req: Request, res: Response) => {
@@ -81,7 +81,5 @@ router.post("/quotes/update",
         res.end();
     }
 )
-
-
 
 export default router
