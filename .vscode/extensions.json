@@ -1,6 +1,7 @@
 {
     "recommendations": [
         "ms-playwright.playwright",
+        "dbaeumer.vscode-eslint",
         "streetsidesoftware.code-spell-checker"
     ],
     "unwantedRecommendations": [
