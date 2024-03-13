@@ -1,4 +1,4 @@
-// Run script: node InsertSheetArchiveFiles.js ../../sheet_archive_dev.db  ../../../server/files/private/notearkiv/
+// Run script: node insertSheetArchiveFiles.js ../../../sheet_archive_dev.db  ../../../../server/files/private/notearkiv/
 
 "use strict"
 const fs = require('fs')
