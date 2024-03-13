@@ -9,6 +9,11 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
-    "better-sqlite3": "^9.3.0"
+    "better-sqlite3": "^9.4.3"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/better-sqlite3": "^7.6.9",
+    "typescript": "^5.4.2"
   }
 }
