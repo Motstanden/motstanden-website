@@ -1,7 +1,7 @@
 import SendIcon from '@mui/icons-material/Send'
 import { LoadingButton } from "@mui/lab"
 import { Paper, Skeleton, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query"
 import { CommentEntityType, LikeEntityType } from "common/enums"
 import { Comment, NewComment } from "common/interfaces"
 import { isNullOrWhitespace } from "common/utils"
@@ -12,7 +12,7 @@ import { LinkifiedText } from 'src/components/LinkifiedText'
 import { useAppBarStyle } from 'src/context/AppBarStyle'
 import { useAuthenticatedUser } from "src/context/Authentication"
 import { relativeTimeShortFormat } from 'src/context/Locale'
-import { useSessionStorage } from 'src/hooks/useStorage'
+import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage'
 import { fetchFn } from "src/utils/fetchAsync"
 import { postJson } from "src/utils/postJson"
 import { LikeButton } from './likes/LikeButton'
@@ -80,7 +80,7 @@ function CommentSectionFetcher({
 }: {
     entityType: CommentEntityType,
     entityId: number,
-    queryKey: any[],
+    queryKey: QueryKey,
     variant?: CommentSectionVariant,
 }) {
 
@@ -326,7 +326,7 @@ function CommentForm({
 }: {
     entityType: CommentEntityType,
     entityId: number,
-    storageKey: any[],
+    storageKey: StorageKeyArray,
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void),
     variant?: CommentSectionVariant,
 }) {

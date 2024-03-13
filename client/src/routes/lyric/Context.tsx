@@ -19,7 +19,7 @@ export {
 function LyricContainer() {
     const { isLoggedIn } = usePotentialUser()
     
-    let tabItems: PageTabItem[] = [
+    const tabItems: PageTabItem[] = [
         { to: "/studenttraller/populaere", label: "Populære" },
         { to: "/studenttraller/alle", label: "Alle", isFallbackTab: true },
     ]

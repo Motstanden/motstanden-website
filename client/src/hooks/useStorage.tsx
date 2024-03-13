@@ -9,10 +9,17 @@ type StorageType<T> = [
     VoidFunction
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ValidateStorageFunction = (value: any) => boolean;
+
+export type StorageKeyArray = (string | number)[];
+
+export type StorageKey = string | StorageKeyArray;
+
 interface StorageProps<T> {
-    key: string | any[],
+    key: StorageKey,
     initialValue: InitialValueType<T>,
-    validateStorage?: (value: any) => boolean,
+    validateStorage?: ValidateStorageFunction,
     delay?: number,
     serialize?: (value: T) => string,
     deserialize?: (value: string) => T,
@@ -68,16 +75,16 @@ function useStorage<T>( {key: rawKey, initialValue, storage, ...options}: Extend
  * Utility function to get a stored item from localStorage or sessionStorage.
  * @returns The stored item or null if it doesn't exist or is invalid. 
 */
-function getStoredItem(
+function getStoredItem<T>(
     storage: Storage, 
     key: string,
-    deserialize?: (value: string) => any, 
-    validate?: ((value: any) => boolean
-)): any | null {
+    deserialize?: (value: string) => T, 
+    validate?: ValidateStorageFunction
+): T | null {
     const storageItem = storage.getItem(key);
     if (storageItem !== null) {
 
-        let item: any;
+        let item: unknown;                          
         try {
             item = deserialize ? deserialize(storageItem) : JSON.parse(storageItem);
         } catch(err) {
@@ -92,17 +99,17 @@ function getStoredItem(
         const isValid = validate ? validate(item) : true;
 
         if (isValid) {
-            return item;
+            return item as T;
         }
     }
     return null;
 }
 
-function setStorageItem(
+function setStorageItem<T>(
     storage: Storage, 
     key: string, 
-    value: any, 
-    serialize?: (value: any) => string
+    value: T, 
+    serialize?: (value: T) => string
 ) {
     const item = serialize ? 
         serialize(value) : 

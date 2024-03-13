@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MarkDownEditor } from "src/components/MarkDownEditor";
 import { Form } from "src/components/form/Form";
-import { useSessionStorage } from "src/hooks/useStorage";
+import { StorageKeyArray, useSessionStorage } from "src/hooks/useStorage";
 import { buildLyricItemUrl, lyricContextQueryKey } from "../Context";
 
 export function UpsertLyricForm({
@@ -20,7 +20,7 @@ export function UpsertLyricForm({
 }: {
     initialValue: NewSongLyric
     postUrl: string
-    storageKey: any[],
+    storageKey: StorageKeyArray,
     onAbortClick: VoidFunction
     usedTitles: string[]
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)

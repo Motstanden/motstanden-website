@@ -22,7 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { dateTimePickerStyle } from 'src/assets/style/timePickerStyles';
 import { Form } from "src/components/form/Form";
 import { useTimeZone } from 'src/context/TimeZone';
-import { useSessionStorage } from 'src/hooks/useStorage';
+import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage';
 import { useTitle } from "src/hooks/useTitle";
 import { MarkDownEditor } from '../../../components/MarkDownEditor';
 import { eventContextQueryKey } from '../Context';
@@ -68,7 +68,7 @@ export function EventEditorForm({
 }: { 
     postUrl: string; 
     initialValue: EventEditorState;
-    storageKey: any[], 
+    storageKey: StorageKeyArray, 
     eventId?: number; 
 }) {
     const [event, setEvent, clearEvent] = useSessionStorage<EventEditorState>({
@@ -250,7 +250,7 @@ function TimeForm({value, onChange, sx}: EventFormProps) {
 }
 
 function KeyInfoForm(props: EventFormProps) {
-    const {value, onChange, sx} = props
+    const {value, onChange } = props
 
     const onAddClick = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         const newItems = [...value.keyInfo, { key: "", value: "" }]

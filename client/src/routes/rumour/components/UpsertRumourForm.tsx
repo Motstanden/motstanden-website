@@ -2,7 +2,7 @@ import { TextField } from "@mui/material";
 import { NewRumour, Rumour } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
 import { Form } from "src/components/form/Form";
-import { useSessionStorage } from "src/hooks/useStorage";
+import { StorageKeyArray, useSessionStorage } from "src/hooks/useStorage";
 
 
 export function UpsertRumourForm({
@@ -14,7 +14,7 @@ export function UpsertRumourForm({
 }: {
     initialValue: NewRumour | Rumour;
     postUrl: string;
-    storageKey: any[],
+    storageKey: StorageKeyArray,
     onAbortClick: VoidFunction;
     onPostSuccess: VoidFunction;
 }) {

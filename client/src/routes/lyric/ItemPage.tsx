@@ -16,7 +16,7 @@ import { useTitle } from "../../hooks/useTitle";
 import { lyricContextQueryKey, useLyricItemContext } from './Context';
 
 export function LyricItemPage() {
-    const [allLyrics, lyric] = useLyricItemContext()
+    const [_allLyrics, lyric] = useLyricItemContext()
     const { isLoggedIn } = usePotentialUser()
     useTitle(lyric.title);
 

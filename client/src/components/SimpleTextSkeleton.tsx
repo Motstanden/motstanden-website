@@ -8,7 +8,7 @@ export function SimpleTextSkeleton({
     style?: React.CSSProperties
 }) {
     return (
-        <div>
+        <div style={style}>
             {Array(numberOfSections).fill(1).map((_, i) => ( 
                 <SectionSkeleton key={i}/>
             ))}

@@ -2,7 +2,7 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import SendIcon from '@mui/icons-material/Send'
 import { LoadingButton } from "@mui/lab"
 import { Button, Divider, Paper, Skeleton, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query"
 import { CommentEntityType, LikeEntityType } from "common/enums"
 import { NewWallPost, WallPost } from "common/interfaces"
 import { isNullOrWhitespace } from 'common/utils'
@@ -11,7 +11,7 @@ import { useState } from "react"
 import { useAuthenticatedUser } from "src/context/Authentication"
 import { useUserReference } from 'src/context/UserReference'
 import { useQuerySuccess } from 'src/hooks/useQuerySuccess'
-import { useSessionStorage } from 'src/hooks/useStorage'
+import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage'
 import { fetchFn } from "src/utils/fetchAsync"
 import { postJson } from 'src/utils/postJson'
 import { softHypenate } from 'src/utils/softHyphenate'
@@ -41,7 +41,7 @@ export function PostingWall({
 
     const queryClient = useQueryClient()
 
-    const queryKey: any[] = ["wall-post", userId ?? "all"]
+    const queryKey: StorageKeyArray = ["wall-post", userId ?? "all"]
 
     const handlePostSuccess = async () => {
         await queryClient.invalidateQueries({queryKey: queryKey})
@@ -81,7 +81,7 @@ function PostSectionFetcher({
     userId,
     onLoadedPosts,
 }: {
-    queryKey: any[]
+    queryKey: QueryKey
     userId?: number,
     onLoadedPosts?: () => void
 }) {
@@ -408,7 +408,7 @@ function LikeList() {
 function LikeListSkeleton() {
     const isTinyScreen = useMediaQuery("(max-width: 370px)")
     const isSmallScreen = useMediaQuery("(max-width: 430px)")
-    let width = isTinyScreen 
+    const width = isTinyScreen 
         ? 60 
         : isSmallScreen ? 160 : 240
     return ( 
@@ -449,13 +449,17 @@ const friendGreetLabels = (name: string) : string[] => [
 ]
 
 function useRandomLabel(isSelf: boolean, userFirstName?: string) {
-    const labels = !isSelf && userFirstName 
-        ? friendGreetLabels(userFirstName)
-        : selfGreetLabels 
+    const [value] = useState(() => {
 
-    const label = labels[Math.floor(Math.random() * labels.length)]
-    const [value, setValue] = useState(label)
+        const labels = !isSelf && userFirstName 
+            ? friendGreetLabels(userFirstName)
+            : selfGreetLabels 
+    
+        const label = labels[Math.floor(Math.random() * labels.length)]
 
+        return label
+    })
+    
     return value
 }
 
@@ -467,7 +471,7 @@ function PostForm({
     userFirstName,
 }: {
     initialValue: NewWallPost,
-    storageKey: any[],
+    storageKey: StorageKeyArray,
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void),
     style?: React.CSSProperties,
     userFirstName?: string

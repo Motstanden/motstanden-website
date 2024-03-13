@@ -221,7 +221,7 @@ export function MarkDownRenderer( {value}: {value?: string}){
         <Markdown 
             remarkPlugins={[remarkGfm]}
             components={{
-                a: ({href, children, ...props}) => ( 
+                a: ({href, children, ..._props}) => ( 
                     <Link
                         href={href}
                         color="secondary" 

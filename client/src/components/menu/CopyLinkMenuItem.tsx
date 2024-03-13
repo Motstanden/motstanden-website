@@ -1,5 +1,5 @@
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { ListItemIcon, ListItemText, MenuItem, Snackbar } from "@mui/material";
+import { ListItemIcon, ListItemText, MenuItem } from "@mui/material";
 import React from "react";
 import { useAppSnackBar } from 'src/context/AppSnackBar';
 

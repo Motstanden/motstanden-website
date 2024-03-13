@@ -5,7 +5,7 @@ import { SimpleText, UpdateSimpleText } from "common/interfaces"
 import { hasGroupAccess, isNullOrWhitespace } from 'common/utils'
 import { useState } from "react"
 import { usePotentialUser } from 'src/context/Authentication'
-import { useSessionStorage } from 'src/hooks/useStorage'
+import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage'
 import { fetchFn } from "src/utils/fetchAsync"
 import { AuthorItem, authorInfoTextStyle } from './AuthorInfo'
 import { MarkDownEditor, MarkDownRenderer } from "./MarkDownEditor"
@@ -19,7 +19,7 @@ export function SimpleTextFetcher({
     skeleton,
 }: {
     textKey: string,
-    queryKeyModifier?: any[]
+    queryKeyModifier?: (string | number)[]
     skeleton?: React.ReactNode
 }) {
     const { user, isLoggedIn } = usePotentialUser()
@@ -46,8 +46,8 @@ export function SimpleTextFetcher({
     )
 }
 
-function buildQueryKey(textKey: string, otherKeys?: any[]): any[] {
-    const queryKey = ["get", "/api/simple-text/:key", textKey ]
+function buildQueryKey(textKey: string, otherKeys?: (string | number)[]): (string | number)[] {
+    const queryKey: (string | number)[] = ["get", "/api/simple-text/:key", textKey ]
     if(otherKeys)
         queryKey.push(...otherKeys)
     return queryKey
@@ -59,7 +59,7 @@ function SimpleTextEditor( {
     canEdit,
 }: {
     value: SimpleText,
-    contextQueryKey: any[]
+    contextQueryKey: (string | number)[]
     canEdit?: boolean 
 }) {
 
@@ -174,7 +174,7 @@ function SimpleTextForm( {
 }: {
     initialValue: UpdateSimpleText | SimpleText,
     postUrl: string
-    storageKey: any[],
+    storageKey: StorageKeyArray,
     onAbortClick?: VoidFunction,
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
 }){

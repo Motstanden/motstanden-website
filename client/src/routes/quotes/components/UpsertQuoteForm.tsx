@@ -1,9 +1,8 @@
 import { TextField } from "@mui/material";
 import { NewQuote, Quote, Quote as QuoteData } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
-import { useState } from "react";
 import { Form } from "src/components/form/Form";
-import { useSessionStorage } from "src/hooks/useStorage";
+import { StorageKeyArray, useSessionStorage } from "src/hooks/useStorage";
 
 export function UpsertQuoteForm({
     initialValue, 
@@ -13,7 +12,7 @@ export function UpsertQuoteForm({
     onPostSuccess,
 }: {
     initialValue: NewQuote | QuoteData;
-    storageKey: any[];
+    storageKey: StorageKeyArray;
     postUrl: string;
     onAbortClick: VoidFunction;
     onPostSuccess: VoidFunction;
