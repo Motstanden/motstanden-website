@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { QueryKey, useQuery } from "@tanstack/react-query"
 import { LikeEntityType } from "common/enums"
 import { Like } from "common/interfaces"
 import React, { useEffect, useState } from "react"
@@ -15,7 +15,7 @@ export interface LikesContextType {
     isError: boolean
     entityType: LikeEntityType
     entityId: number
-    queryKey: any[]
+    queryKey: QueryKey
     likes: Like[]
     groupedLikes: GroupedLike[]
     selfLike?: Like
@@ -58,7 +58,7 @@ export function LikesContextProvider( {
         queryKey: queryKey
     })
 
-    const { isPending, isError, data, error } = useQuery<Like[]>({
+    const { isPending, isError, data } = useQuery<Like[]>({
         queryKey: queryKey,
         queryFn: fetchFn<Like[]>(url)
     })

@@ -10,6 +10,7 @@ export function LinkifiedText({ children }: {children: string}) {
     );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function RenderLink({ attributes, content }: { [attributes: string]: any, content: string }) {
     return (
         <Link 

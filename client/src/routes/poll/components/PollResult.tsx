@@ -254,4 +254,4 @@ function AnimatedNumber({ value, duration }: { value: number, duration: number }
             </span>
         </Grow>
     );
-};
+}

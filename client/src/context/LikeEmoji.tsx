@@ -32,7 +32,7 @@ export function LikeEmojiProvider( {children}: {children: React.ReactNode} ) {
     useEffect(() => { 
         const likeEmojiLookUpTable: Record<number, LikeEmoji> = {}
         if(data) {
-            for(let emoji of data) {
+            for(const emoji of data) {
                 likeEmojiLookUpTable[emoji.id] = emoji
             }
         }

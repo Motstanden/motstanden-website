@@ -1,12 +1,12 @@
-import { Box, Divider, Paper, Skeleton } from "@mui/material";
+import { Divider, Skeleton } from "@mui/material";
 import { CommentSectionSkeleton } from "src/components/CommentSection";
 import { TitleCardSkeleton } from "src/components/TitleCard";
 import { UserListSkeleton } from "src/components/UserList";
 
 export {
-    ItemPageSkeleton as EventItemPageSkeleton,
     ItemContent as EventItemContentSkeleton,
-    ParticipationContent as EventParticipationSkeleton,
+    ItemPageSkeleton as EventItemPageSkeleton,
+    ParticipationContent as EventParticipationSkeleton
 };
 
 function ItemPageSkeleton() {

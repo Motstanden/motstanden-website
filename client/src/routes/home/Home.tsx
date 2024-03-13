@@ -148,7 +148,7 @@ function RenderComments(props: RenderItemProps<EntityComment[]>) {
 
     return (
         <>
-        {props.items.map((comment, index) => (
+        {props.items.map(comment => (
             <div 
                 key={`${comment.entityId}-${comment.id}`}
                 style={{
@@ -264,7 +264,7 @@ function RenderCommentsSkeleton({length}: {length: number}) {
 function LatestPoll() {
 
     const queryKey = [...pollBaseQueryKey, "latest"]
-    const {isPending, isError, data, error} = useQuery<Poll>({
+    const {isPending, isError, data} = useQuery<Poll>({
         queryKey: queryKey,
         queryFn: fetchFn<Poll>("/api/polls/latest")
     })
@@ -344,6 +344,7 @@ function RenderQuotesList(props: RenderItemProps<Quote[]>) {
     )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function NoItem( { hide }: { hide?: boolean }) {
     if(hide)
         return <></>

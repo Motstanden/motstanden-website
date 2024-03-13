@@ -44,7 +44,7 @@ export default function UserListPage() {
 
     const [showBoard, setShowBoard] = useState(false)
 
-    let {users, isPending} = useUsersContext()
+    const {users, isPending} = useUsersContext()
 
     const actualUsers = users?.filter(user => !isMotstandenMail(user.email)) || []
     const boardUsers = users?.filter(user => isMotstandenMail(user.email)) || []

@@ -28,7 +28,7 @@ export function UserReferenceProvider( {children}: {children: React.ReactNode} )
  
     const { isLoggedIn } = usePotentialUser()
 
-    let initialValue: UserReferenceContextType = emptyUserReference
+    const initialValue: UserReferenceContextType = emptyUserReference
     if(!isLoggedIn) {
         initialValue.isError = false
         initialValue.isPending = false
@@ -37,7 +37,7 @@ export function UserReferenceProvider( {children}: {children: React.ReactNode} )
 
     const [userReference, setUserReference] = React.useState<UserReferenceContextType>(initialValue)
 
-    const { isPending, isError, data, error } = useQuery<UserReference[]>({
+    const { isPending, isError, data } = useQuery<UserReference[]>({
         queryKey: ["user-reference"],
         queryFn: fetchFn<UserReference[]>("/api/simplified-member-list"),
         enabled: isLoggedIn
@@ -47,7 +47,7 @@ export function UserReferenceProvider( {children}: {children: React.ReactNode} )
 
         const userLookUpTable: Record<number, UserReference> = {}
         if(data) {
-            for(let userRef of data) {
+            for(const userRef of data) {
                 userLookUpTable[userRef.id] = userRef
             }
         }

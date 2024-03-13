@@ -25,7 +25,7 @@ export function VoteForm({
         setIsLoading(false);
     };
 
-    const onItemClicked = (item: PollOption, index: number) => {
+    const onItemClicked = (item: PollOption, _index: number) => {
         if (poll.type === "single") {
             setSelectedItems([item]);
             return;

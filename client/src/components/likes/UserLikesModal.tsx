@@ -1,13 +1,13 @@
-import { Badge, Dialog, DialogContent, DialogTitle, IconButton, Stack, Tab, Tabs, Theme, useMediaQuery } from "@mui/material";
+import { Badge, Dialog, DialogContent, DialogTitle, Stack, Tab, Tabs, Theme, useMediaQuery } from "@mui/material";
 import { LikeEntityType } from 'common/enums';
 import { Like } from 'common/interfaces';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLikeEmoji } from "src/context/LikeEmoji";
+import { CloseModalButton } from "../CloseModalButton";
 import { UserAvatar } from "../user/UserAvatar";
 import { UserFullName } from "../user/UserFullName";
 import { useLikes } from "./LikesContext";
-import { CloseModalButton } from "../CloseModalButton";
 
 
 type Size = "small" | "normal"
@@ -135,7 +135,7 @@ function EmojiTabs({
     size?: Size
 }) {
 
-    const { likes, groupedLikes } = useLikes()
+    const { groupedLikes } = useLikes()
     const { emojis } = useLikeEmoji()
 
     const tabStyle: React.CSSProperties = {

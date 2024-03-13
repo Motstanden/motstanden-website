@@ -143,9 +143,8 @@ type SortDirection = "asc" | "desc"
 
 type SortableColumn = "year" | "isUpdated" | "created" | "updated"
 
-function BoardPageTable( {data} : {data: PageData[]}) {
-
-    const [pages, setPages] = useState<PageData[]>(data)
+function BoardPageTable( {data: pages} : {data: PageData[]}) {
+    
     const [sortedColumn, setSortedColumn] = useState<SortableColumn>("year")
     const [sortDirection, setSortDirection] = useState<SortDirection>("desc")
 
@@ -162,7 +161,7 @@ function BoardPageTable( {data} : {data: PageData[]}) {
         }
     }
 
-    let sortedPages: PageData[] = [...pages]
+    const sortedPages: PageData[] = [...pages]
     if (sortedColumn === "year") {
         sortedPages.sort((a, b) => compareByNumber(a.year, b.year, sortDirection));
     } 
@@ -185,7 +184,7 @@ function BoardPageTable( {data} : {data: PageData[]}) {
                             <TableSortLabel
                                 active={sortedColumn === "year"}
                                 direction={sortedColumn === "year" ? sortDirection : "desc"}
-                                onClick={(e) => onColumnClick("year")}
+                                onClick={() => onColumnClick("year")}
                             >
                                 År
                             </TableSortLabel>
@@ -194,7 +193,7 @@ function BoardPageTable( {data} : {data: PageData[]}) {
                             <TableSortLabel
                                 active={sortedColumn === "isUpdated"}
                                 direction={sortedColumn === "isUpdated" ? sortDirection : "asc"}
-                                onClick={(e) => onColumnClick("isUpdated")}
+                                onClick={() => onColumnClick("isUpdated")}
                             >
                                 Redigert
                             </TableSortLabel>
@@ -203,7 +202,7 @@ function BoardPageTable( {data} : {data: PageData[]}) {
                             <TableSortLabel
                                 active={sortedColumn === "updated"}
                                 direction={sortedColumn === "updated" ? sortDirection : "desc"}
-                                onClick={(e) => onColumnClick("updated")}
+                                onClick={() => onColumnClick("updated")}
                             >
                                 Oppdatert
                             </TableSortLabel>
@@ -212,7 +211,7 @@ function BoardPageTable( {data} : {data: PageData[]}) {
                             <TableSortLabel
                                 active={sortedColumn === "created"}
                                 direction={sortedColumn === "created" ? sortDirection : "desc"}
-                                onClick={(e) => onColumnClick("created")}
+                                onClick={() => onColumnClick("created")}
                             >
                                 Opprettet
                             </TableSortLabel>
