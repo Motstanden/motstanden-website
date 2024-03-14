@@ -1,45 +1,20 @@
-import Database from 'better-sqlite3';
 import express from "express";
-import { dbReadOnlyConfig, motstandenDB } from "../config/databaseConfig.js";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
+import { documentService } from '../services/documents.js';
 
 const router = express.Router()
 
 router.get("/documents",
-    AuthenticateUser({ failureRedirect: "documents_public" }),
+    AuthenticateUser({ failureRedirect: "public/documents" }),
     (req, res) => {
-        const db = new Database(motstandenDB, dbReadOnlyConfig)
-        const stmt = db.prepare(`
-            SELECT 
-                title, 
-                filename AS url 
-            FROM 
-                document 
-            ORDER BY 
-                document_id DESC
-            `)
-        const documents = stmt.all();
+        const documents = documentService.getAll()
         res.send(documents)
-        db.close()
     }
 )
 
-router.get("/documents_public", (req, res) => {
-    const db = new Database(motstandenDB, dbReadOnlyConfig)
-    const stmt = db.prepare(`
-        SELECT 
-            title, 
-            filename AS url 
-        FROM 
-            document 
-        WHERE 
-            is_public=1
-        ORDER BY 
-            document_id DESC`
-        )
-    const documents = stmt.all();
+router.get("/public/documents", (req, res) => {
+    const documents = documentService.getAllPublic()
     res.send(documents)
-    db.close()
 })
 
 export default router;

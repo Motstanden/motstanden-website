@@ -3,6 +3,7 @@ import { UrlList, UrlListItem, UrlListSkeleton } from "../../components/UrlList"
 import { useTitle } from "../../hooks/useTitle"
 import { PageContainer } from "../../layout/PageContainer/PageContainer"
 import { fetchFn } from "../../utils/fetchAsync"
+import { Document } from 'common/interfaces'
 
 export default function DocumentsPage() {
     useTitle("Dokumenter")
@@ -51,9 +52,4 @@ function DocumentList() {
             </>
         </UrlList>
     )
-}
-
-interface Document {
-    title: string,
-    url: string
 }
