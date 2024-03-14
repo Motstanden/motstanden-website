@@ -27,6 +27,7 @@ app.use(helmet({
         }
     }
 }))
+
 // We need this in order to load google forms on our site
 app.use((req, res, next) => {
     res.header("Cross-Origin-Embedder-Policy", "cross-origin")
