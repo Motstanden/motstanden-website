@@ -108,5 +108,5 @@
 		"node_modules",
 		"build/**/*",
 	]
-    
+
 }

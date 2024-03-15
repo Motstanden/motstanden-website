@@ -9,7 +9,7 @@ sqlite3 sheet_archive_dev.db < migrations/sheet_archive_db/02_insert_sheet_archi
 
 # Insert data:
 cd tools/ts/src/insertSheetArchiveFiles
-npx ts-node insertSheetArchiveFiles.ts ../../../../../server/files/private/notearkiv/
+npx tsx insertSheetArchiveFiles.ts ../../../../../server/files/private/notearkiv/
 cd ../../../..
 
 # Update the data:
