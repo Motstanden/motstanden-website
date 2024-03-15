@@ -37,13 +37,6 @@
 		"resolveJsonModule": true, 							 /* Enable importing .json files. */
 		// "noResolve": true,                                /* Disallow 'import's, 'require's or '<reference>'s from expanding the number of files TypeScript should add to a project. */
 
-		/* JavaScript Support */
-		// -------- NB --------
-		// Comment out this when the entire src folder is converted to typescript 
-		"allowJs": true, /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
-		"checkJs": true, /* Enable error reporting in type-checked JavaScript files. */
-		// "maxNodeModuleJsDepth": 1,                        /* Specify the maximum folder depth used for checking JavaScript files from 'node_modules'. Only applicable with 'allowJs'. */
-
 		/* Emit */
 		// "declaration": true,                              /* Generate .d.ts files from TypeScript and JavaScript files in your project. */
 		// "declarationMap": true,                           /* Create sourcemaps for d.ts files. */
@@ -74,10 +67,10 @@
 		"allowSyntheticDefaultImports": true,             	 /* Allow 'import x from y' when a module doesn't have a default export. */
 		"esModuleInterop": true, 							 /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
 		// "preserveSymlinks": true,                         /* Disable resolving symlinks to their realpath. This correlates to the same flag in node. */
-		"forceConsistentCasingInFileNames": true, /* Ensure that casing is correct in imports. */
+		"forceConsistentCasingInFileNames": true, 			 /* Ensure that casing is correct in imports. */
 
 		/* Type Checking */
-		"strict": true, /* Enable all strict type-checking options. */
+		"strict": true, 									 /* Enable all strict type-checking options. */
 		// "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */
 		// "strictNullChecks": true,                         /* When type checking, take into account 'null' and 'undefined'. */
 		// "strictFunctionTypes": true,                      /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */

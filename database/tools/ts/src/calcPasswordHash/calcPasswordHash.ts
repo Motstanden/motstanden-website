@@ -8,11 +8,10 @@
 //      2.  node CalcPasswordHash
 // *******************************************************
 
+import bcrypt from "bcrypt"
+import readline from "readline"
 
-const bcrypt = require("bcrypt")
-const readline = require("readline")
-
-const CalcHash = input => {
+function CalcHash(input: string) {
     const saltRounds = 15
     const salt = bcrypt.genSaltSync(saltRounds)
     console.log(`Calculating hash with random salt, and ${saltRounds} salt rounds...`)

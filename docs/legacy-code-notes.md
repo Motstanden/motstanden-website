@@ -1,13 +1,8 @@
 # Notes about legacy code
-## Server
-### Typescript
-The first version of the server was written in plain JavaScript. At a later stage in the project we decided to migrate the server to TypeScript. The migrations is still a work in progress and you will therefore find that: 
- - Plain JavaScript files still exists in [server/src](/server/src/). 
- - The power of TypeScript is in many cases not utilized.
 
 ## Database
 ### Tools
-The [database tools](/database/tools/js/) is in dire need of refactoring. This code was originally written with a *"quick-and-dirty" mindset*, and it has not been updated since it was authored. The tooling does however work perfectly fine, and it is unlikely that we will need to change or extend it anytime soon, so there is no reason to update it – except from the fact that the code is extremely ugly, and not written in TypeScript.
+The [database tools](/database/tools/ts/) is in dire need of refactoring. This code was originally written with a *"quick-and-dirty" mindset*, and it has hardly been updated since it was authored. The tooling does however work perfectly fine, and it is unlikely that we will need to change or extend it anytime soon, so there is no reason to update it – except from the fact that the code is extremely ugly.
 
 ## Git history
 ### Blobs

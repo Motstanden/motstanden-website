@@ -1,5 +1,6 @@
 export * from "./Comment.js"
 export * from "./Count.js"
+export * from "./Document.js"
 export * from "./EventData.js"
 export * from "./EventParticipation.js"
 export * from "./ImageAlbum.js"
