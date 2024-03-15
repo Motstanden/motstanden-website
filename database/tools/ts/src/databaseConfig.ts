@@ -4,8 +4,8 @@ export const motstandenDBName = 'motstanden_dev.db'
 
 export const sheetArchiveDBName = 'sheet_archive_dev.db'
 
-export const motstandenDB = path.join(__dirname, "..", "..", "..", motstandenDBName)
-export const sheetArchiveDB = path.join(__dirname, "..", "..", "..", sheetArchiveDBName)
+export const motstandenDB = path.join(import.meta.dirname, "..", "..", "..", motstandenDBName)
+export const sheetArchiveDB = path.join(import.meta.dirname, "..", "..", "..", sheetArchiveDBName)
 
 export const dbReadOnlyConfig = {
     readonly: true,

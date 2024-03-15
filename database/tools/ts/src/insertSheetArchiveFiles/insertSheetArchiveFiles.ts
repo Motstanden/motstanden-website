@@ -1,7 +1,7 @@
 // Run script: node insertSheetArchiveFiles.js ../../../../server/files/private/notearkiv/
 import fs from 'fs'
 import path from 'path'
-import { insertSongFile, insertSongTitle } from "./insertSong"
+import { insertSongFile, insertSongTitle } from "./insertSong.js"
 
 type PartSystemType = "7 part system" | "5 part system" | null
 
@@ -291,7 +291,7 @@ const DbInsertSongArray = (songArray: Song[]) => {
 const RunScript = () => {
     let dirs = fs.readdirSync(RootDir, { withFileTypes: true })
         .filter(fsItem => fsItem.isDirectory())
-        .map(dir => path.join(__dirname, RootDir, dir.name))
+        .map(dir => path.join(import.meta.dirname, RootDir, dir.name))
 
     let songArray = dirs.map(dir => new Song(dir));
 

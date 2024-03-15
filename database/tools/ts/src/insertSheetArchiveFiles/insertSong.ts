@@ -1,5 +1,5 @@
 import Database, { Database as DatabaseType } from 'better-sqlite3';
-import { dbReadWriteConfig, sheetArchiveDB } from "../databaseConfig";
+import { dbReadWriteConfig, sheetArchiveDB } from "../databaseConfig.js";
 
 type ObjectWithId = { id: number }
 
