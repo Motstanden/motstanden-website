@@ -1,21 +1,22 @@
 {
-  "name": "scripts",
-  "version": "1.0.0",
-  "description": "",
-  "type": "module",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "bcrypt": "^5.1.1",
-    "better-sqlite3": "^9.4.3"
-  },
-  "devDependencies": {
-    "tsx": "^4.7.1",
-    "@types/bcrypt": "^5.0.2",
-    "@types/better-sqlite3": "^7.6.9",
-    "typescript": "^5.4.2"
-  }
+    "name": "scripts",
+    "version": "1.0.0",
+    "description": "",
+    "type": "module",
+    "scripts": {
+        "calcPasswordHash": "npx tsc -b src/calcPasswordHash && node ./build/calcPasswordHash/calcPasswordHash.js",
+        "insertSheetArchiveFiles": "npx tsc -b src/insertSheetArchiveFiles && node ./build/insertSheetArchiveFiles/insertSheetArchiveFiles.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^5.1.1",
+        "better-sqlite3": "^9.4.3"
+    },
+    "devDependencies": {
+        "tsx": "^4.7.1",
+        "@types/bcrypt": "^5.0.2",
+        "@types/better-sqlite3": "^7.6.9",
+        "typescript": "^5.4.2"
+    }
 }
