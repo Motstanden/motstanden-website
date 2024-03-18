@@ -255,7 +255,10 @@ class SongFile {
     }
 }
 
-const RootDir = process.argv[2];
+const RootDir = process.argv[2]
+if (!RootDir) {
+    throw "No root directory provided"
+}
 
 let successCount = 0
 let failCount = 0
