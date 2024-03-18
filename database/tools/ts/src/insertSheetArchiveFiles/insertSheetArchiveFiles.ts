@@ -255,7 +255,10 @@ class SongFile {
     }
 }
 
-const RootDir = process.argv[2];
+const RootDir = process.argv[2]
+if (!RootDir) {
+    throw "No root directory provided"
+}
 
 let successCount = 0
 let failCount = 0
@@ -291,7 +294,7 @@ const DbInsertSongArray = (songArray: Song[]) => {
 const RunScript = () => {
     let dirs = fs.readdirSync(RootDir, { withFileTypes: true })
         .filter(fsItem => fsItem.isDirectory())
-        .map(dir => path.join(import.meta.dirname, RootDir, dir.name))
+        .map(dir => path.join(RootDir, dir.name))
 
     let songArray = dirs.map(dir => new Song(dir));
 

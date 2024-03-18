@@ -8,8 +8,8 @@ echo "Running: 02_insert_sheet_archive_data.sql"
 sqlite3 sheet_archive_dev.db < migrations/sheet_archive_db/02_insert_sheet_archive_data.sql;
 
 # Insert data:
-cd tools/ts/src/insertSheetArchiveFiles
-npx tsx insertSheetArchiveFiles.ts ../../../../../server/files/private/notearkiv/
+cd tools/ts/
+npm run insertSheetArchiveFiles -- ../../../server/files/private/notearkiv/
 cd ../../../..
 
 # Update the data:
