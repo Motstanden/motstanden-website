@@ -291,7 +291,7 @@ const DbInsertSongArray = (songArray: Song[]) => {
 const RunScript = () => {
     let dirs = fs.readdirSync(RootDir, { withFileTypes: true })
         .filter(fsItem => fsItem.isDirectory())
-        .map(dir => path.join(import.meta.dirname, RootDir, dir.name))
+        .map(dir => path.join(RootDir, dir.name))
 
     let songArray = dirs.map(dir => new Song(dir));
 
