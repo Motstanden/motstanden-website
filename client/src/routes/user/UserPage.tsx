@@ -23,7 +23,7 @@ export default function UserPage() {
     useTitle(user.firstName)
     return (
         <div>
-            <Grid container alignItems="top" spacing={4}>
+            <Grid container alignItems="top" spacing={{xs: 2, md: 2, lg: 4}}>
                 <PersonCard user={user} />
                 <MemberCard user={user} />
                 <AccountDetailsCard user={user} />

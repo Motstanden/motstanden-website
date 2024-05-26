@@ -1,4 +1,4 @@
-import { Divider, Grid, Paper, Skeleton, SxProps } from "@mui/material";
+import { Divider, Paper, Skeleton, SxProps } from "@mui/material";
 
 export type TitleCardProps = {
     title: string,
@@ -32,17 +32,5 @@ export function TitleCardSkeleton({
             <Divider sx={{ mt: 1.5, mb: paddingTop ?? 2 }} />
             {children}
         </Paper>
-    )
-}
-
-export function ResponsiveTitleCard(props: TitleCardProps) {
-    const { children, ...titleCardProps } = props
-
-    return (
-        <Grid item xs={12} sm={6}>
-            <TitleCard {...titleCardProps}>
-                {children}
-            </TitleCard>
-        </Grid>
     )
 }

@@ -1,31 +1,37 @@
 import { Grid, Stack } from "@mui/material";
-import { ResponsiveTitleCard, TitleCardProps } from "src/components/TitleCard";
+import { TitleCard } from "src/components/TitleCard";
 
 export function Card({
     title,
     children,
     spacing
-}:
-    TitleCardProps & {
-        spacing?: number
-    }) {
+}:{
+    title: string,
+    spacing?: number
+    children: React.ReactNode
+}) {
     return (
-        <ResponsiveTitleCard title={title} sx={{ height: "100%" }}>
-            <Stack spacing={spacing ?? 2}>
-                {children}
-            </Stack>
-        </ResponsiveTitleCard>
+
+        <Grid item xs={12} md={6}>
+            <TitleCard title={title} sx={{ height: "100%" }}>
+                <Stack spacing={spacing ?? 2}>
+                    {children}
+                </Stack>
+            </TitleCard>
+        </Grid>
     )
 }
 
 export function CardTextItem({ label, text }: { label: string, text: string }) {
     return (
         <Grid container>
-            <Grid item xs={3} sm={12} md={3} >
+            <Grid item xs={3}>
                 <b>{label}</b>
             </Grid>
-            <Grid item xs={9} sm={12} md={9}>
-                {text}
+            <Grid item xs={8}>
+                <span style={{ overflowWrap: "anywhere"}}>
+                    {text}
+                </span>
             </Grid>
         </Grid>
     )
