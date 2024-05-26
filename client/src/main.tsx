@@ -16,6 +16,7 @@ import { TimeZoneProvider } from './context/TimeZone';
 import { TopScrollerProvider } from './context/TopScroller';
 import { UserReferenceProvider } from './context/UserReference';
 import { AppSnackBarProvider } from './context/AppSnackBar';
+import { AppBarHeaderProvider } from './context/AppBarHeader';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
@@ -36,10 +37,12 @@ root.render(
 										<TopScrollerProvider>
 											<AppBarStyleProvider>
 												<AppSnackBarProvider>
-													{/* Provides reasonable default css values from the material-ui framework */}
-													<CssBaseline />
+													<AppBarHeaderProvider>
+														{/* Provides reasonable default css values from the material-ui framework */}
+														<CssBaseline />
 
-													<App />
+														<App />
+													</AppBarHeaderProvider>
 												</AppSnackBarProvider>
 											</AppBarStyleProvider>
 										</TopScrollerProvider>

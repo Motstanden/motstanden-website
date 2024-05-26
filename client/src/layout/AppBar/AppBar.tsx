@@ -1,7 +1,6 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import { Box, IconButton, AppBar as MuiAppBar, Stack, SxProps, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
-import MotstandenImg from "src/assets/logos/motstanden.png";
+import { IconButton, AppBar as MuiAppBar, Stack, SxProps, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
+import { useAppBarHeader } from 'src/context/AppBarHeader';
 import { useAppBarStyle } from 'src/context/AppBarStyle';
 import { usePotentialUser } from 'src/context/Authentication';
 import UserAvatar from 'src/layout/AppBar/UserAvatar';
@@ -24,9 +23,6 @@ export function AppBar({
 
     const { appBarShadow } = useAppBarStyle()
     
-    const isMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
-    const isMobileScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
-
     const appBarHeight = useAppBarHeight()
     const { buttonSize, iconFontSize} = useAppBarIconSize()
 
@@ -53,34 +49,9 @@ export function AppBar({
                             marginRight: "2px"
                         }}
                         >
-                            <MenuIcon sx={{ color: "primary.contrastText" }} fontSize={iconFontSize} />
+                        <MenuIcon sx={{ color: "primary.contrastText" }} fontSize={iconFontSize} />
                     </IconButton>
-                    <Box
-                        component={RouterLink}
-                        to="/"
-                        sx={{ 
-                            display: {xs: "none", sm: "flex"}, 
-                            marginRight: "8px"
-                        }}>
-                        <img
-                            src={MotstandenImg}
-                            style={{ height: "48px" }}
-                            loading="lazy" />
-                    </Box>
-                    <Typography
-                        component={RouterLink}
-                        to="/"
-                        noWrap
-                        variant={isMobileScreen ? "inherit" : "h5"}
-                        sx={{
-                            fontWeight: 700,
-                            marginLeft: "3px",
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        {isMediumScreen ? "Motstanden" : "Den Ohmske Motstanden"}
-                    </Typography>
+                    <HeaderTitle/>
                 </Stack>
                 
                 <Stack 
@@ -98,4 +69,24 @@ export function AppBar({
             </Toolbar>
         </MuiAppBar>
     );
+}
+
+function HeaderTitle() {
+    const isMobileScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+    const headerText = useAppBarHeader()
+    return (
+        <Typography
+            noWrap
+            variant={isMobileScreen ? "inherit" : "h5"}
+            sx={{
+                fontWeight: 700,
+                marginLeft: "3px",
+                color: 'inherit',
+                textDecoration: 'none',
+                textTransform: "capitalize",
+            }}
+        >
+            {headerText}
+        </Typography>
+    )
 }
