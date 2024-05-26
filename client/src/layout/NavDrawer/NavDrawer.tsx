@@ -65,6 +65,7 @@ function DrawerContent({ onClose }: { onClose: VoidFunction }) {
                 onClose={onClose}
                 sx={{ 
                     display: { xs: "flex", sm: "none" },
+                    marginBottom: {xs: "-7px", sm: undefined}
                 }}/>
             <NavContent onItemClick={onClose}/>
         </>
@@ -121,7 +122,6 @@ function MobileHeader({
                     Motstanden
                 </Typography>
             </Stack>
-            <Divider orientation="horizontal"/>
         </Toolbar>
     )
 }

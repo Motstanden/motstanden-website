@@ -9,6 +9,7 @@ import { isElementInViewport } from "src/utils/isElementInViewport";
 
 const listItemButtonSx = (theme: Theme): SxProps => ({
     borderRadius: "10px",
+    py: {xs: 0.35, sm: 0.65},
     px: {xs: 1.25, sm: 2},
     "&.Mui-selected": {
         backgroundColor: theme.palette.primary.main,
@@ -158,7 +159,7 @@ export function ListItemHeader( {title}: {title?: string}) {
                 fontWeight: "bold",
                 opacity: 0.6,
                 textTransform: "uppercase",
-                marginTop: "15px",
+                marginTop: {xs: "8px", sm: "16px"},
                 px: {xs: 0.75, sm: 2},
                 mx: 2,
             }}
