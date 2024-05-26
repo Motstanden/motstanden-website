@@ -56,7 +56,8 @@ function KeyValueList({ items, style }: { items: KeyValuePair<string, string>[];
                     <div
                         key={`${index} ${item.key} ${item.value}`}
                         style={{
-                            marginBottom: "10px"
+                            marginBottom: "10px",
+                            overflowWrap: "anywhere"
                         }}
                     >
                         <strong>{item.key + " "}</strong>
