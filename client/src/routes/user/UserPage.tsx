@@ -16,7 +16,7 @@ import { useTimeZone } from 'src/context/TimeZone';
 import { useTopScroller } from 'src/context/TopScroller';
 import { useTitle } from "src/hooks/useTitle";
 import { useUserProfileContext } from './Context';
-import { Card, CardTextItem } from "./components/Card";
+import { Card, CardTextItem, CardTextList } from "./components/Card";
 
 export default function UserPage() {
     const { viewedUser: user } = useUserProfileContext()
@@ -110,10 +110,12 @@ export function PersonCard({ user }: { user: User }) {
     useTimeZone()
     return (
         <Card title="Personalia">
-            <CardTextItem label="Navn" text={getFullName(user)} />
-            <CardTextItem label="Bursdag" text={formatDateStr(user.birthDate)} />
-            <CardTextItem label="E-post" text={user.email} />
-            <CardTextItem label="Tlf" text={user.phoneNumber?.toString() ?? "-"} />
+            <CardTextList>
+                <CardTextItem label="Navn" text={getFullName(user)} />
+                <CardTextItem label="Bursdag" text={formatDateStr(user.birthDate)} />
+                <CardTextItem label="E-post" text={user.email} />
+                <CardTextItem label="Tlf" text={user.phoneNumber?.toString() ?? "-"} />
+            </CardTextList>
         </Card>
     )
 }
@@ -122,10 +124,12 @@ export function MemberCard({ user }: { user: User }) {
     useTimeZone()
     return (
         <Card title="Medlemskap">
-            <CardTextItem label="Kappe" text={user.capeName ? user.capeName : "-"} />
-            <CardTextItem label="Rang" text={userRankToPrettyStr(user.rank)} />
-            <CardTextItem label="Status" text={user.status} />
-            <CardTextItem label="Aktiv periode" text={formatDateInterval(user.startDate, user.endDate)} />
+            <CardTextList>
+                <CardTextItem label="Kappe" text={user.capeName ? user.capeName : "-"} />
+                <CardTextItem label="Rang" text={userRankToPrettyStr(user.rank)} />
+                <CardTextItem label="Status" text={user.status} />
+                <CardTextItem label="Aktiv periode" text={formatDateInterval(user.startDate, user.endDate)} />
+            </CardTextList>
         </Card>
     )
 }
@@ -134,9 +138,11 @@ export function AccountDetailsCard({ user }: { user: User }) {
     useTimeZone()
     return (
         <Card title="Brukerkonto">
-            <CardTextItem label="Rolle" text={userGroupToPrettyStr(user.groupName)} />
-            <CardTextItem label="Laget" text={formatExactDate(user.createdAt)} />
-            <CardTextItem label="Oppdatert" text={formatExactDate(user.updatedAt)} />
+            <CardTextList>
+                <CardTextItem label="Rolle" text={userGroupToPrettyStr(user.groupName)} />
+                <CardTextItem label="Laget" text={formatExactDate(user.createdAt)} />
+                <CardTextItem label="Oppdatert" text={formatExactDate(user.updatedAt)} />
+            </CardTextList>
         </Card>
     )
 

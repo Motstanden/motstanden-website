@@ -22,17 +22,31 @@ export function Card({
     )
 }
 
+export function CardTextList( { children }: { children: React.ReactNode }) { 
+    return (
+        <div style={{
+            display: "grid",
+            gridTemplateColumns: "min-content auto",
+            columnGap: "20px",
+            rowGap: "18px",
+        }}>
+            {children}
+        </div>
+    
+    )
+}
+
 export function CardTextItem({ label, text }: { label: string, text: string }) {
     return (
-        <Grid container>
-            <Grid item xs={3}>
+        <>
+            <div style={{whiteSpace: "nowrap" }}>
                 <b>{label}</b>
-            </Grid>
-            <Grid item xs={8}>
+            </div>
+            <div>
                 <span style={{ overflowWrap: "anywhere"}}>
                     {text}
                 </span>
-            </Grid>
-        </Grid>
+            </div>
+        </>
     )
 }
