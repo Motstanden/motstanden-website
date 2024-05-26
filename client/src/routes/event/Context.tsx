@@ -9,6 +9,7 @@ import { matchUrl } from "src/utils/matchUrl"
 import { EventEditPageSkeleton } from "./skeleton/EditPage"
 import { EventItemPageSkeleton } from "./skeleton/ItemPage"
 import { EventListPageSkeleton } from "./skeleton/ListPage"
+import { useAppBarHeader } from "src/context/AppBarHeader"
 
 export const eventContextQueryKey = ["FetchEventContext"]
 
@@ -17,6 +18,7 @@ export {
 }
 
 function EventContainer() {
+    useAppBarHeader("Arrangement")
     return (
         <TabbedPageContainer
             tabItems={[

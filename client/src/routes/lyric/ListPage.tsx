@@ -9,7 +9,6 @@ export function LyricListPage( {filterPopular}: {filterPopular?: boolean}  ) {
 
     return (
         <>
-            <h1>Studenttraller</h1>
             <UrlList>
                 {lyrics.map(lyric => (
                     <UrlListItem 

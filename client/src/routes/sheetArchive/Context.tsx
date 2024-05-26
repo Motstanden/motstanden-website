@@ -4,15 +4,17 @@ import { Navigate, Outlet, useMatch, useOutletContext, useParams } from "react-r
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer";
 import { fetchFn } from "../../utils/fetchAsync";
 import { InstrumentPageSkeleton } from './skeleton/InstrumentPage';
+import { useAppBarHeader } from 'src/context/AppBarHeader';
 
 export const sheetArchiveContextQueryKey = ["FetchSheetArchiveTitles"]
 
 export {
-    InstrumentContainer as InstrumentContext, SheetArchiveContainer as SheetArchiveContext
+    InstrumentContainer as InstrumentContext, 
+    SheetArchiveContainer as SheetArchiveContext
 };
 
 export function SheetArchiveContainer() {
-
+    useAppBarHeader("Notearkiv")
     return (
         <TabbedPageContainer
             tabItems={[

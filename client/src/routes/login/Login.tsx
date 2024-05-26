@@ -6,11 +6,13 @@ import { useTitle } from '../../hooks/useTitle';
 import { PageContainer } from '../../layout/PageContainer/PageContainer';
 import { AnimationAvatar } from './AnimationAvatar';
 import { EmailInfo, EmailLogin } from './EmailLogin';
+import { useAppBarHeader } from 'src/context/AppBarHeader';
 
 export default function LoginPage() {
 	const [mailInfo, setMailInfo] = useState<EmailInfo | undefined>(undefined)
 
 	useTitle("Logg inn")
+	useAppBarHeader("Logg Inn")
 	const { isLoggedIn } = usePotentialUser()
 	const location = useLocation()
 
@@ -29,7 +31,7 @@ export default function LoginPage() {
 					margin: "0px",
 					paddingBlock: "20px"
 				}}>
-					Logg inn
+					Logg Inn
 				</h1>
 				<AnimationAvatar isAnimating={!!mailInfo} />
 				<br />

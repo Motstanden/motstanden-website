@@ -27,7 +27,6 @@ export default function Home() {
     useTitle("Hjem")
     return (
         <>
-            <h1>Hjem</h1>
             <Grid 
                 container 
                 spacing={4} 

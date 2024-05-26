@@ -19,7 +19,6 @@ export function AllPollsPage() {
 
     return (
         <>
-            <h1>Avstemning</h1>
             <div style={{
                 maxWidth: "900px",
                 marginTop: "-10px"
@@ -119,7 +118,7 @@ function AccordionItem( {poll}: {poll: Poll}) {
                             py: {xs: 2},
                             px: {xs: 2, md: 3},
                             mt: 2,
-                            mb: 6
+                            mb: "50px"
                     }}>
                         <PollContent poll={poll} /> 
                     </Paper>

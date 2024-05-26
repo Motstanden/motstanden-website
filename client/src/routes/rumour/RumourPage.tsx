@@ -17,7 +17,6 @@ export function RumourPage() {
     const onItemChanged = () => contextInvalidator()
     return (
         <>
-            <h1>Ryktebørsen</h1>
             <h3>Har du hørt at...</h3>
             <div style={{ marginLeft: "10px" }}>
                 <RumourList rumours={data} onItemChanged={onItemChanged} />

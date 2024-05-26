@@ -1,6 +1,8 @@
+import { useAppBarHeader } from "src/context/AppBarHeader";
 import { PageContainer } from "src/layout/PageContainer/PageContainer";
 
 export default function AdminPage() {
+    useAppBarHeader("Admin")
     return (
         <PageContainer>
             <h1>Admin</h1>

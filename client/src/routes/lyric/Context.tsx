@@ -9,6 +9,7 @@ import { strToPrettyUrl } from "src/utils/strToPrettyUrl"
 import { LyricEditPageSkeleton } from "./skeleton/EditPage"
 import { LyricItemPageSkeleton } from "./skeleton/ItemPage"
 import { LyricListPageSkeleton } from "./skeleton/ListPage"
+import { useAppBarHeader } from "src/context/AppBarHeader"
 
 export const lyricContextQueryKey = ["AllLyricData"]
 
@@ -17,8 +18,10 @@ export {
 }
 
 function LyricContainer() {
-    const { isLoggedIn } = usePotentialUser()
+    useAppBarHeader("Studenttraller")
     
+    const { isLoggedIn } = usePotentialUser()
+
     const tabItems: PageTabItem[] = [
         { to: "/studenttraller/populaere", label: "Populære" },
         { to: "/studenttraller/alle", label: "Alle", isFallbackTab: true },

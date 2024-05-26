@@ -15,9 +15,11 @@ import { useTitle } from 'src/hooks/useTitle';
 import { postJson } from 'src/utils/postJson';
 import { userListQueryKey } from './Context';
 import { profilePictureTVPair } from "./utils/TextValuePair";
+import { useAppBarHeader } from 'src/context/AppBarHeader';
 
 export default function NewUserPage() {
-    useTitle("Ny bruker")
+    useTitle("Ny Bruker")
+    useAppBarHeader("Ny Bruker")
     return (
         <Paper elevation={6}
             sx={{

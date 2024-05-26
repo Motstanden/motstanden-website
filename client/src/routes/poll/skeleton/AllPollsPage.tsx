@@ -1,14 +1,13 @@
 import { Skeleton, Stack } from "@mui/material";
 
-export { 
+export {
     AllPollsPage as AllPollsPageSkeleton,
-    PollItem as PollAccordionItemSkeleton 
+    PollItem as PollAccordionItemSkeleton
 };
 
 function AllPollsPage() {
     return (
         <div>
-            <h1>Avstemning</h1>
             <div style={{
                 marginBottom: "40px",
                 maxWidth: "870px",

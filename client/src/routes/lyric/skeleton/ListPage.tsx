@@ -10,7 +10,6 @@ function ListPageSkeleton( {numItems} : { numItems: number }) {
     useTitle("Studenttraller")
     return (
         <>
-            <h1>Studenttraller</h1>
             <UrlListSkeleton length={numItems} />
         </>
     )

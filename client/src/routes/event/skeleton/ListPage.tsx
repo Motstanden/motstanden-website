@@ -9,7 +9,6 @@ function ListPageSkeleton() {
     useTitle("Arrangement")
     return (
         <>
-            <h1>Arrangement</h1>
             <div style={{ maxWidth: "750px" }}>
                 {Array(4).fill(1).map( (_, index) => (
                     <EventItemSkeleton key={index} />

@@ -2,13 +2,15 @@ import { Badge } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer";
 import { UnreadWallPostsProvider, useUnreadWallPosts } from "../context/UnreadWallPosts";
+import { useAppBarHeader } from "src/context/AppBarHeader";
 
 export default function PageContainer() { 
+    useAppBarHeader("Hjem")
     return (
         <UnreadWallPostsProvider>
             <TabbedPageContainer
                 tabItems={[
-                    { to: "/hjem", label: "Hjem" },
+                    { to: "/hjem", label: "Oversikt" },
                     { to: "/vegg", label: <WallLabel/>}
                 ]}
                 matchChildPath={true}

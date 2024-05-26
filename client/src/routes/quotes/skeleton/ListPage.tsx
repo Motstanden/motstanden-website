@@ -9,7 +9,6 @@ export {
 function ListPageSkeleton() {
     return (
         <>
-            <h1>Sitater</h1>
             <ListSkeleton length={20} />
         </>
     );

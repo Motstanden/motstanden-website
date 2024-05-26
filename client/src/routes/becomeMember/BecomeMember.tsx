@@ -5,11 +5,13 @@ import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton";
 import { useAppTheme } from "../../context/AppTheme";
 import { useTitle } from "../../hooks/useTitle";
 import { PageContainer } from "../../layout/PageContainer/PageContainer";
+import { useAppBarHeader } from "src/context/AppBarHeader";
 
 const simpleTextKey = "become-member"
 
 export default function BecomeMemberPage() {
     useTitle("Bli medlem!")
+    useAppBarHeader("Bli medlem")
     
     return (
         <PageContainer  >

@@ -17,7 +17,6 @@ export default function WallPage() {
 
     return (
         <>
-            <h1>Vegg</h1>
             <PostingWall onPostSuccess={onPostSuccess} onLoadedPosts={onLoadedPosts}/>
         </>
     )

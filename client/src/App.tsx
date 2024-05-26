@@ -169,7 +169,7 @@ function App() {
 					</Route>
 
 					<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator} />}>
-						<Route path="/super-admin" element={<SuperAdminPage />} />
+						<Route path="/superadmin" element={<SuperAdminPage />} />
 					</Route>
 
 					{/* 404: no matching routes */}

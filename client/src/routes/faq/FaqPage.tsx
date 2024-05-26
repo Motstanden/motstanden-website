@@ -1,5 +1,6 @@
 import { Skeleton } from "@mui/material";
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
+import { useAppBarHeader } from "src/context/AppBarHeader";
 import { useTitle } from "src/hooks/useTitle";
 import { PageContainer } from "src/layout/PageContainer/PageContainer";
 
@@ -7,6 +8,7 @@ const simpleTextKey = "faq-page"
 
 export function FaqPage() {
     useTitle("FAQ")
+    useAppBarHeader("FAQ")
 
     return (
         <PageContainer>

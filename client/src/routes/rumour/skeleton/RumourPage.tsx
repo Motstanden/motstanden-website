@@ -1,15 +1,14 @@
 import { Skeleton } from "@mui/material";
 
 export {
-    PageSkeleton as RumourPageSkeleton,
-    ListSkeleton as RumourListSkeleton,
     ItemSkeleton as RumourItemSkeleton,
-}
+    ListSkeleton as RumourListSkeleton,
+    PageSkeleton as RumourPageSkeleton
+};
 
 function PageSkeleton() {
     return (
         <>
-            <h1>Ryktebørsen</h1>
             <h3>Har du hørt at...</h3>
             <div style={{ marginLeft: "10px" }}>
                 <ListSkeleton length={20} />

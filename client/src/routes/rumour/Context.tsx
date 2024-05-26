@@ -5,6 +5,7 @@ import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
 import { RumourPageSkeleton } from "./skeleton/RumourPage"
+import { useAppBarHeader } from "src/context/AppBarHeader"
 
 const rumourQueryKey = ["FetchAllRumours"]
 
@@ -15,6 +16,7 @@ export {
 }
 
 function RumourContainer() {
+    useAppBarHeader("Rykter")
     return (
         <TabbedPageContainer
             tabItems={[

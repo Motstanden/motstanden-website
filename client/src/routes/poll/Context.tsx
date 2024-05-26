@@ -6,6 +6,7 @@ import { fetchFn } from "src/utils/fetchAsync";
 import { AllPollsPageSkeleton } from "./skeleton/AllPollsPage";
 import { CurrentPollPageSkeleton } from './skeleton/CurrentPollPage';
 import { PollItemPageSkeleton } from "./skeleton/PollItemPage";
+import { useAppBarHeader } from "src/context/AppBarHeader";
 
 export const pollBaseQueryKey = ["poll"]
 
@@ -16,6 +17,7 @@ export {
 };
 
 function PollsContainer() {
+    useAppBarHeader("Avstemninger")
     return (
         <TabbedPageContainer
             tabItems={[

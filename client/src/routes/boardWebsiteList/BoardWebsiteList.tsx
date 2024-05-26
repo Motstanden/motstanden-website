@@ -17,6 +17,7 @@ import { useState } from "react"
 import { headerStyle, rowStyle } from "src/assets/style/tableStyle"
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher"
 import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton"
+import { useAppBarHeader } from "src/context/AppBarHeader"
 import { useTitle } from "src/hooks/useTitle"
 import { PageContainer } from "src/layout/PageContainer/PageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
@@ -27,6 +28,7 @@ const bottomSimpleTextKey = "board-website-list-bottom"
 
 export default function BoardWebsiteListPage() {
     useTitle("Styrets nettsider")
+    useAppBarHeader("Styrets Nettsider")
 
     return (
         <PageContainer>

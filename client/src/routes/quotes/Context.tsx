@@ -5,6 +5,7 @@ import { useQueryInvalidator } from "src/hooks/useQueryInvalidator"
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
 import { QuotesListPageSkeleton } from "./skeleton/ListPage"
+import { useAppBarHeader } from "src/context/AppBarHeader"
 
 const quotesQueryKey = ["FetchAllQuotes"]
 
@@ -15,10 +16,11 @@ export {
 }
 
 function QuotesContainer() {
+    useAppBarHeader("Sitater")
     return (
         <TabbedPageContainer
             tabItems={[
-                { to: "/sitater", label: "sitater" },
+                { to: "/sitater", label: "alle" },
                 { to: "/sitater/ny", label: "ny" },
             ]}
         >

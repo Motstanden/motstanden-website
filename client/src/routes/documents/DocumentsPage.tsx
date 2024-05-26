@@ -4,12 +4,13 @@ import { useTitle } from "../../hooks/useTitle"
 import { PageContainer } from "../../layout/PageContainer/PageContainer"
 import { fetchFn } from "../../utils/fetchAsync"
 import { Document } from 'common/interfaces'
+import { useAppBarHeader } from 'src/context/AppBarHeader'
 
 export default function DocumentsPage() {
     useTitle("Dokumenter")
+    useAppBarHeader("Dokumenter")
     return (
         <PageContainer>
-            <h1>Dokumenter</h1>
             <DocumentList />
         </PageContainer>
     )

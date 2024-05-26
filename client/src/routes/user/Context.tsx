@@ -6,6 +6,7 @@ import { PageContainer } from "src/layout/PageContainer/PageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
 import { UserPageHeader } from "./UserPage"
 import { UserPageSkeleton } from "./skeleton/UserPage"
+import { useAppBarHeader } from "src/context/AppBarHeader"
 
 export const userListQueryKey = ["FetchAllUsers"]
 
@@ -42,6 +43,7 @@ function UserContextLoader() {
 
 export function UserProfileContext() {
     const {users, isPending} = useUsersContext()
+    useAppBarHeader("Medlem")
 
     if(isPending)
         return <UserPageSkeleton/>

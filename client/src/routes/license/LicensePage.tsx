@@ -1,11 +1,13 @@
 import { Divider, Link } from "@mui/material";
 import LicenseLogo from "src/assets/logos/license.png";
 import { linkStyle } from "src/assets/style/tableStyle";
+import { useAppBarHeader } from "src/context/AppBarHeader";
 import { useTitle } from "src/hooks/useTitle";
 import { PageContainer } from "src/layout/PageContainer/PageContainer";
 
 export function LicensePage() {
     useTitle("Lisens")
+    useAppBarHeader("Lisens")
     return (
         <PageContainer>
             <div style={{ maxWidth: "700px"}}>
@@ -19,6 +21,7 @@ export function LicensePage() {
 
 export function LicenseOnlyPage() {
     useTitle("Måkesodd")
+    useAppBarHeader("Måkesodd")
     return (
         <PageContainer>
             <div style={{ maxWidth: "700px"}}>

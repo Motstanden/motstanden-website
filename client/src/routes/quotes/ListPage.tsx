@@ -18,7 +18,6 @@ export default function ListPage() {
 
     return (
         <>
-            <h1>Sitater</h1>
             <QuoteList quotes={data} onItemChanged={onItemChanged} />
         </>
     )

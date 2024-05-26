@@ -3,13 +3,13 @@ import {
     Paper,
     Stack
 } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { EventData } from "common/interfaces";
 import { Link as RouterLink, useOutletContext } from "react-router-dom";
 import { useTitle } from "src/hooks/useTitle";
 import { buildEventItemUrl, eventContextQueryKey } from "./Context";
 import { ItemMenu } from "./components/ItemMenu";
 import { KeyInfo } from "./components/KeyInfo";
-import { useQueryClient } from "@tanstack/react-query";
 
 export default function EventListPage({ mode }: { mode?: "upcoming" | "previous" | "all" }) {
     useTitle("Arrangement")
@@ -23,7 +23,6 @@ export default function EventListPage({ mode }: { mode?: "upcoming" | "previous"
 
     return (
         <>
-            <h1>Arrangement</h1>
             <div style={{ maxWidth: "750px" }}>
                 {events.map( e => (
                     <EventItem key={e.eventId} event={e} />

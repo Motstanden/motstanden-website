@@ -10,7 +10,6 @@ export {
 function CurrentPollPage() {
     return (
         <div>
-            <h1>Avstemning</h1>
             <div style={{
                 minWidth: "MIN(100%, 500px)",
                 maxWidth: "800px"
@@ -24,8 +23,7 @@ function CurrentPollPage() {
 
 function CommentsSkeleton(){
     return (
-        <div style={{maxWidth: "700px"}}>
-            <Divider sx={{ my: 6 }} />
+        <div style={{maxWidth: "700px", marginTop: "60px"}}>
             <CommentSectionSkeleton variant="normal" />
         </div>
     )

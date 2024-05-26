@@ -40,7 +40,6 @@ export default function SongPage({ mode }: { mode?: "repertoire" }) {
 
     return (
         <>
-            <h1>Notearkiv</h1>
             <div style={{
                 maxWidth: "1300px"
             }}>

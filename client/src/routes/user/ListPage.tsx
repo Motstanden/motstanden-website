@@ -27,9 +27,11 @@ import { TitleCard } from 'src/components/TitleCard';
 import { useAppSnackBar } from "src/context/AppSnackBar";
 import { useTitle } from 'src/hooks/useTitle';
 import { useUsersContext } from "./Context";
+import { useAppBarHeader } from "src/context/AppBarHeader";
 
 export default function UserListPage() {
     useTitle("Medlemsliste")
+    useAppBarHeader("Medlemsliste")
 
     const [showName, setShowName] = useState(true)
     const [showRank, setShowRank] = useState(true)
@@ -51,7 +53,6 @@ export default function UserListPage() {
     
     return (
         <>
-            <h1>Medlemsliste</h1>
             <Paper sx={{
                 mb: 4,
                 pt: 2,

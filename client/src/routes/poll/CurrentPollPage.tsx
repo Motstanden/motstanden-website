@@ -13,20 +13,19 @@ export default function CurrentPollPage(){
 
     return(
         <div>
-            <h1>Avstemning</h1>
             <div style={{
                     display: "inline-block",
                     minWidth: "MIN(100%, 500px)",
                     maxWidth: "800px"
                 }}>
-                <Poll/>
+                <CurrentPoll/>
             </div>
             <PollCommentSection poll={currentPoll}/>
         </div>
     )
 }
 
-function Poll() {
+function CurrentPoll() {
     const { currentPoll } = usePolls()
 
     if(currentPoll === undefined) {
@@ -52,8 +51,7 @@ export function PollCommentSection({poll}: {poll?: Poll}) {
     }
 
     return (
-        <div style={{maxWidth: "700px"}}>
-            <Divider sx={{ my: 6 }} />
+        <div style={{maxWidth: "700px", marginTop: "60px"}}>
             <CommentSection 
                 entityType={CommentEntityType.Poll}
                 entityId={poll.id}            
