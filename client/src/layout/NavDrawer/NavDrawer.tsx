@@ -1,5 +1,5 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import { Divider, Drawer, IconButton, Stack, SwipeableDrawer, SxProps, Toolbar, Typography } from "@mui/material";
+import { Drawer, IconButton, Stack, SwipeableDrawer, SxProps, Toolbar, Typography } from "@mui/material";
 import { useAppBarHeight, useAppBarIconSize } from '../useAppSizes';
 import { NavContent } from './NavContent';
 
