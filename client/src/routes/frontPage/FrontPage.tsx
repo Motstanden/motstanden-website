@@ -1,8 +1,9 @@
 import { Theme, useMediaQuery } from "@mui/material";
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
 import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton";
+import { useAppBarHeader } from "src/context/AppBarHeader";
 import { useAppTheme } from "src/context/AppTheme";
-import { usePageContainerPadding } from "src/layout/PageContainer/usePageContainerPadding";
+import { usePageContainerMargin } from "src/layout/PageContainer/usePageContainerMargin";
 import May17Img from "../../assets/pictures/17mai2021.jpg";
 import { useTitle } from "../../hooks/useTitle";
 import { PageContainer } from "../../layout/PageContainer/PageContainer";
@@ -11,23 +12,24 @@ const simpleTextKey = "front-page"
 
 export default function FrontPage() {
     useTitle("Framside")
+    useAppBarHeader("Den ohmske Motstanden")
 
     const { theme } = useAppTheme()
     const isLargeScreen = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'))
 
     const { 
-        paddingLeft: pagePaddingLeft,
-        paddingRight: pagePaddingRight,
-        paddingBottom: pagePaddingBottom,
-    } = usePageContainerPadding()
+        left: pageMarginLeft,
+        right: pageMaringRight,
+        bottom: pageMarginBottom,
+    } = usePageContainerMargin()
 
     return (
         <PageContainer disableGutters>
             <div style={
                 isLargeScreen ? {
-                    paddingTop: "50px",
-                    paddingLeft: pagePaddingLeft,
-                    paddingRight: pagePaddingRight,
+                    marginTop: "50px",
+                    paddingLeft: pageMarginLeft,
+                    paddingRight: pageMaringRight,
                 } : undefined}
             >
                 <img src={May17Img}
@@ -45,9 +47,9 @@ export default function FrontPage() {
                 />
             </div>
             <div style={{ 
-                paddingLeft: pagePaddingLeft,
-                paddingRight: pagePaddingRight,
-                paddingBottom: pagePaddingBottom,
+                marginLeft: pageMarginLeft,
+                marginRight: pageMaringRight,
+                marginBottom: pageMarginBottom,
                 maxWidth: "700px",
                 fontSize: "14pt",
                 lineHeight: "1.6",

@@ -1,5 +1,5 @@
 import React from "react";
-import { usePageContainerPadding } from "./usePageContainerPadding";
+import { usePageContainerMargin } from "./usePageContainerMargin";
 
 export function PageContainer({
     children,
@@ -10,15 +10,25 @@ export function PageContainer({
     style?: React.CSSProperties,
     disableGutters?: boolean,
 }) {
-    let { padding } = usePageContainerPadding()
-    if(disableGutters)
-        padding = "0px"
-
+    let {top, left, right, bottom} = usePageContainerMargin()
+    if(disableGutters) {
+        top = "0px"
+        left = "0px"
+        right = "0px"
+        bottom = "0px"
+    }
+    
     return (
         <div style={{
             minHeight: "100vh",
             width: "100%",
-            padding: padding,
+            
+            marginTop: top,
+            marginBottom: bottom,
+
+            paddingLeft: left,
+            paddingRight: right,
+
             ...style,
         }}>
             {children}
