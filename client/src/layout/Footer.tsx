@@ -64,18 +64,22 @@ function MotstandenInfo() {
             rowSpacing={2}
             justifyContent="center"
             alignItems="center"
-            textAlign="center">
-            <Grid item xs={12} sm={4} md={3}>
+            textAlign="center"
+            style={{
+                maxWidth: "900px"
+            }}
+            >
+            <Grid item xs={12} md={4}>
                 <Typography>
                     Studentorchesteret <wbr />
                     <NoBr>den Ohmske</NoBr> <wbr />
                     Motstanden
                 </Typography>
             </Grid>
-            <Grid item xs={12} sm={4} md={3}>
+            <Grid item xs={12} md={4}>
                 <MotstandenLogo />
             </Grid>
-            <Grid item xs={12} sm={4} md={3} sx={{ whiteSpace: "nowrap" }}>
+            <Grid item xs={12} md={4} sx={{ whiteSpace: "nowrap" }}>
                 <Typography>styret@motstanden.no</Typography>
                 <Typography>Org: 929095618</Typography>
                 <br />
@@ -91,19 +95,47 @@ function SponsorInfo() {
     return (
         <Grid
             container
-            direction="row"
             textAlign="center"
-            columnSpacing={{ sm: 4 }}
+            alignItems="center"
             justifyContent="center"
+            rowGap={1}
+            style={{
+                maxWidth: "1200px"
+            }}
         >
-            <Grid item xs={12} sm={6} marginBottom={{ xs: 4, sm: 0 }}>
-                <Typography pb={2}>Linjeforeningen Elektra</Typography>
+            <Grid item xs={12} md={6}>
                 <ElektraLogo />
             </Grid>
-            <Grid item xs={12} sm={6} >
-                <Typography pb={4} >Studentsamskipnaden<wbr /> i Trondheim</Typography>
-                <SitLogo />
+
+            <Grid 
+                item md={12} 
+                display={{xs: "block", md: "none"}} 
+                sx={{mb: 4}}>
+                <Typography>Linjeforeningen Elektra</Typography>
             </Grid>
+
+            <Grid item xs={12} md={6}>
+                <SitLogo/>
+            </Grid>
+
+            <Grid 
+                item md={12} 
+                display={{xs: "block", md: "none"}}>
+                <Typography>Studentsamskipnaden<wbr /> i Trondheim</Typography>
+            </Grid>
+
+            <Grid 
+                item md={6} 
+                display={{xs: "none", md: "block"}}>
+                <Typography>Linjeforeningen Elektra</Typography>
+            </Grid>
+
+            <Grid 
+                item md={6} 
+                display={{xs: "none", md: "block"}}>
+                <Typography>Studentsamskipnaden<wbr /> i Trondheim</Typography>
+            </Grid>
+        
         </Grid>
     )
 }
