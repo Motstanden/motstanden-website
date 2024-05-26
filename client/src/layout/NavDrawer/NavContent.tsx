@@ -1,7 +1,7 @@
 import { List, Theme, useMediaQuery } from "@mui/material";
 import { useMatch } from "react-router-dom";
 import { usePotentialUser } from "src/context/Authentication";
-import { ListItemDivider, ListItemExpander, ListItemLink } from './ListItem';
+import { ListItemExpander, ListItemHeader, ListItemLink } from './ListItem';
 
 // Icons. See https://mui.com/components/material-icons/ for more icons
 // The icons are renamed to be more semantic.
@@ -54,14 +54,14 @@ function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 icon={<FaqIcon fontSize={iconSize}/>}
                 onLinkClick={onItemClick}
             />
-            <ListItemDivider/>
+
+            <ListItemHeader title="Resurser"/>
             <ListItemLink 
                 text="Traller" 
                 to="/studenttraller/populaere" 
                 matchPattern="/studenttraller/*"
                 icon={<LyricIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
-            <ListItemDivider/>
             <ListItemLink 
                 text="Dokumenter" 
                 to="/dokumenter" 
@@ -73,6 +73,8 @@ function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 icon={<HistoryIcon fontSize={iconSize}/>}
                 onLinkClick={onItemClick}
             />
+
+            <ListItemHeader title="Eksternt"/>
             <ListItemLink 
                 text="Styrets Nettsider" 
                 to="/styrets-nettsider" 
@@ -84,7 +86,8 @@ function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 to="https://wiki.motstanden.no/" 
                 icon={<WikiIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
-            <ListItemDivider/>
+            
+            <ListItemHeader title="Annet"/>
             <ListItemLink 
                 text="Lisens" 
                 to="/lisens" 
@@ -117,7 +120,6 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 icon={<EventIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick} 
                 />
-            <ListItemDivider/>
             <ListItemLink 
                 text="Sitater" 
                 to="/sitater" 
@@ -135,7 +137,7 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 icon={<PollIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick} 
             />
-            <ListItemDivider/>
+            <ListItemHeader title="Musikk"/>
             <ListItemLink 
                 text="Noter" 
                 to="/notearkiv/repertoar" 
@@ -147,24 +149,13 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 matchPattern="/studenttraller/*"
                 icon={<LyricIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick}/>
-            <ListItemDivider/>
-            <ListItemLink 
-                externalRoute 
-                text="Wiki" 
-                to="https://wiki.motstanden.no/" 
-                icon={<WikiIcon fontSize={iconSize}/>} 
-                onLinkClick={onItemClick}/>
+
+            <ListItemHeader title="Resurser" />
             <ListItemLink 
                 text="Dokumenter" 
                 to="/dokumenter" 
                 icon={<DocumentsIcon fontSize={iconSize} />} 
                 onLinkClick={onItemClick}/>
-            <ListItemLink 
-                text="Styrets Nettsider" 
-                to="/styrets-nettsider" 
-                icon={<BoardWebsiteListIcon fontSize={iconSize}/>} 
-                onLinkClick={onItemClick}/>
-            <ListItemDivider/>
 
             {isSuperAdmin && (
                 <ListItemExpander text="Medlem" dense={isMobile} iconFontSize={iconSize}>
@@ -183,13 +174,28 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
 
             {!isSuperAdmin && (
                 <ListItemLink 
-                    text="Medlemmer" 
-                    to="/medlem/liste" 
-                    matchPattern="/medlem/*"
-                    icon={<MemberListIcon fontSize={iconSize}/>}
-                    onLinkClick={onItemClick}/>
+                text="Medlemmer" 
+                to="/medlem/liste" 
+                matchPattern="/medlem/*"
+                icon={<MemberListIcon fontSize={iconSize}/>}
+                onLinkClick={onItemClick}/>
             )}
 
+            <ListItemHeader title="Eksternt"/>
+            <ListItemLink 
+                externalRoute 
+                text="Wiki" 
+                to="https://wiki.motstanden.no/" 
+                icon={<WikiIcon fontSize={iconSize}/>} 
+                onLinkClick={onItemClick}/>
+            <ListItemLink 
+                text="Styrets Nettsider" 
+                to="/styrets-nettsider" 
+                icon={<BoardWebsiteListIcon fontSize={iconSize}/>} 
+                onLinkClick={onItemClick}/>
+
+                
+            <ListItemHeader title="Annet"/>
             <ListItemExpander text="Om oss" dense={isMobile} iconFontSize={iconSize}>
                 <ListItemLink 
                     text="Framside" 

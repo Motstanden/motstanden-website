@@ -1,7 +1,7 @@
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import LinkIcon from '@mui/icons-material/Link';
-import { Collapse, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SxProps, Theme } from "@mui/material";
+import { Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SxProps, Theme, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { Link as RouterLink, useMatch } from 'react-router-dom';
 import { useAppTheme } from 'src/context/AppTheme';
@@ -50,7 +50,8 @@ export function ListItemLink({
     const iconSize = isMobile ? "small" : "medium"
     return (
         <ListItem sx={{
-            px: {xs: 1.5, sm: 2}
+            px: {xs: 1.5, sm: 2},
+            py: "2px"
         }}>
             <ListItemButton
                 component={externalRoute ? "a" : RouterLink}
@@ -118,7 +119,8 @@ export function ListItemExpander({
     return (
         <>
             <ListItem sx={{
-                px: {xs: 1.5, sm: 2}
+                px: {xs: 1.5, sm: 2},
+                py: "2px"
             }}>
                 <ListItemButton 
                     onClick={() => setIsOpen(!isOpen)} 
@@ -151,6 +153,20 @@ export function ListItemExpander({
     )
 }
 
-export function ListItemDivider( {sx}: {sx?: SxProps}) {
-    return <Divider sx={{ opacity: 1, ...sx }} />   
+export function ListItemHeader( {title}: {title?: string}) {
+    return (
+        <Typography
+            sx={{
+                fontSize: "8pt",
+                fontWeight: "bold",
+                opacity: 0.6,
+                textTransform: "uppercase",
+                marginTop: "15px",
+                px: {xs: 0.75, sm: 2},
+                mx: 2,
+            }}
+        >
+            {title}
+        </Typography>
+    )
 }
