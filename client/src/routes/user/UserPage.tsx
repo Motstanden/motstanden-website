@@ -140,7 +140,7 @@ export function AccountDetailsCard({ user }: { user: User }) {
         <Card title="Brukerkonto">
             <CardTextList>
                 <CardTextItem label="Rolle" text={userGroupToPrettyStr(user.groupName)} />
-                <CardTextItem label="Laget" text={formatExactDate(user.createdAt)} />
+                <CardTextItem label="Opprettet" text={formatExactDate(user.createdAt)} />
                 <CardTextItem label="Oppdatert" text={formatExactDate(user.updatedAt)} />
             </CardTextList>
         </Card>
