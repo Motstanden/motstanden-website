@@ -51,7 +51,10 @@ export function AppBar({
                         >
                         <MenuIcon sx={{ color: "primary.contrastText" }} fontSize={iconFontSize} />
                     </IconButton>
-                    <HeaderTitle/>
+                    <HeaderTitle sx={{
+                        ml: {xs: "3px", sm: "-9px"},
+                    }}
+                    />
                 </Stack>
                 
                 <Stack 
@@ -71,7 +74,7 @@ export function AppBar({
     );
 }
 
-function HeaderTitle() {
+function HeaderTitle( {sx}: {sx?: SxProps}) {
     const isMobileScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const headerText = useAppBarHeader()
     return (
@@ -84,6 +87,7 @@ function HeaderTitle() {
                 color: 'inherit',
                 textDecoration: 'none',
                 textTransform: "capitalize",
+                ...sx,
             }}
         >
             {headerText}
