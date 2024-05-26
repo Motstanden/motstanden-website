@@ -85,7 +85,7 @@ function KeyValueList({ items, style }: { items: KeyValuePair<string, string>[];
                     <div style={{ whiteSpace: "nowrap" }}>
                         <strong>{item.key}</strong>
                     </div>
-                    <div>
+                    <div style={{ overflowWrap: "anywhere" }}>
                         <LinkifiedText>{item.value}</LinkifiedText>
                     </div>
                 </React.Fragment>
