@@ -29,7 +29,12 @@ export function NavDrawer( {
                 variant="permanent"
                 sx={{
                     display: { xs: 'none', sm: 'block' },
-                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth},
+                    '& .MuiDrawer-paper': { 
+                        boxSizing: 'border-box', 
+                        width: drawerWidth,
+                        scrollbarWidth: "thin",
+                        scrollbarColor: `#959595 transparent`,
+                    },
                 }}
                 >
                 <DrawerContent onClose={onClose} />
