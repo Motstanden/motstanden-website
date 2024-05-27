@@ -10,7 +10,7 @@ import { isElementInViewport } from "src/utils/isElementInViewport";
 const listItemButtonSx = (theme: Theme): SxProps => ({
     borderRadius: "10px",
     py: {xs: 0.35, sm: 0.65},
-    px: {xs: 1.25, sm: 2},
+    px: {xs: 1.25, sm: 1.5, md: 2},
     "&.Mui-selected": {
         backgroundColor: theme.palette.primary.main,
         "&:hover": {
@@ -48,7 +48,7 @@ export function ListItemLink({
 
     return (
         <ListItem sx={{
-            px: {xs: 1.5, sm: 2},
+            px: {xs: 1.5,  md: 2},
             py: "2px"
         }}>
             <ListItemButton
@@ -117,7 +117,7 @@ export function ListItemExpander({
     return (
         <>
             <ListItem sx={{
-                px: {xs: 1.5, sm: 2},
+                px: {xs: 1.5, md: 2},
                 py: "2px"
             }}>
                 <ListItemButton 
@@ -160,7 +160,7 @@ export function ListItemHeader( {title}: {title?: string}) {
                 opacity: 0.6,
                 textTransform: "uppercase",
                 marginTop: {xs: "8px", sm: "16px"},
-                px: {xs: 0.75, sm: 2},
+                px: {xs: 0.75, sm: 0.95,  md: 2},
                 mx: 2,
             }}
         >
