@@ -22,6 +22,7 @@ import LyricIcon from '@mui/icons-material/Nightlife';
 import MemberAddIcon from '@mui/icons-material/PersonAdd';
 import PollIcon from '@mui/icons-material/Poll';
 import FaqIcon from '@mui/icons-material/QuestionMark';
+import { strToNumber } from "common/utils";
 
 export function NavContent({onItemClick}: {onItemClick: VoidFunction}) {
     const { isLoggedIn } = usePotentialUser()
@@ -103,6 +104,9 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
     const matchesFrontPage = !!useMatch("/hjem/*")
     const matchesWallPage = !!useMatch("/vegg/*")
 
+    const userPageMatch = useMatch("/medlem/:id/*")
+    const matchesUserPage = userPageMatch !== null && !!strToNumber(userPageMatch.params.id)  
+
     const isMobile = useMediaQuery( (theme: Theme) => theme.breakpoints.only("xs"))
     const iconSize = isMobile ? "small" : "medium"
     return (
@@ -141,6 +145,7 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
             <ListItemLink 
                 text="Noter" 
                 to="/notearkiv/repertoar" 
+                matchPattern="/notearkiv/*"
                 icon={<SheetArchiveIcon fontSize={iconSize}/>} 
                 onLinkClick={onItemClick} />
             <ListItemLink
@@ -167,6 +172,7 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                     <ListItemLink 
                         text="Liste" 
                         to="/medlem/liste" 
+                        activate={matchesUserPage}
                         icon={<MemberListIcon fontSize={iconSize}/>} 
                         onLinkClick={onItemClick}/>
                 </ListItemExpander>
