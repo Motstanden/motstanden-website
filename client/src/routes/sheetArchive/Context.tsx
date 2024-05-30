@@ -38,7 +38,7 @@ function SheetArchiveLoader() {
         return `${error}`
     }
 
-    const isAllPage = !!useMatch("/notearkiv/alle*")
+    const isAllPage = !!useMatch("/notearkiv/alle/*")
 
     const context = isPending 
         ? { 
