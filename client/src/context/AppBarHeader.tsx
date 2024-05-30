@@ -1,4 +1,4 @@
-import { createContext, useState, useContext} from "react";
+import { createContext, useContext, useLayoutEffect, useState } from "react";
 
 
 interface AppBarHeaderContextType { 
@@ -24,9 +24,11 @@ export function AppBarHeaderProvider({ children }: { children: React.ReactNode }
 export function useAppBarHeader(newTitle?: string): string {
     const {title, setTitle} = useContext(AppBarHeaderContext) as AppBarHeaderContextType
 
-    if(newTitle !== undefined && newTitle !== title) {
-        setTitle(newTitle)
-    }
+    useLayoutEffect(() => {
+        if(newTitle !== title) {
+            setTitle(newTitle ?? "")
+        }
+    }, [newTitle])
 
     return title
 }
