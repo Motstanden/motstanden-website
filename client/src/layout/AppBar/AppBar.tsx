@@ -7,6 +7,7 @@ import UserAvatar from 'src/layout/AppBar/UserAvatar';
 import { useAppBarHeight, useAppBarIconSize } from '../useAppSizes';
 import { LoginButton } from './LoginButton';
 import { SettingsButton } from './SettingsButton';
+import { CommentsButton } from './CommentsButton';
 
 export function AppBar({ 
     onNavMenuClick, 
@@ -64,6 +65,7 @@ export function AppBar({
                     style={{ height: "100%" }}
                     gap={{xs: "8px", sm: "10px"}}
                 >
+                    {isLoggedIn && <CommentsButton/>}
                     <SettingsButton onClick={onSettingsMenuClick}/>
                     {!isLoggedIn && <LoginButton/>}
                     {isLoggedIn && <UserAvatar/> }
