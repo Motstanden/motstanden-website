@@ -1,11 +1,11 @@
 import { CommentEntityType } from "common/enums";
+import { Count, NewComment } from "common/interfaces";
 import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express, { Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { validateNumber } from "../middleware/validateNumber.js";
 import { commentsService } from "../services/comments.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
-import { NewComment } from "common/interfaces";
 
 const router = express.Router()
 
@@ -122,5 +122,32 @@ function tryCreateValidComment(obj: unknown): NewComment | undefined {
         comment: comment.comment.trim()
     }
 }
+
+// ---- Manage the count of unread comments ---- 
+
+router.get("/comments/unread", 
+    AuthenticateUser(),
+    (req, res) => {
+        const user = req.user as AccessTokenData
+
+        const unreadCount = commentsService.getUnreadCount(user.userId)
+        if(unreadCount === undefined) {
+            commentsService.resetUnreadCount(user.userId)
+        }
+        const result: Count = {
+            count: unreadCount ?? 0
+        }
+        res.send(result)
+    }
+)
+
+router.post("/comments/unread/reset", 
+    AuthenticateUser(),
+    (req, res) => {
+        const user = req.user as AccessTokenData
+        commentsService.resetUnreadCount(user.userId)
+        res.end()
+    }
+)
 
 export default router;

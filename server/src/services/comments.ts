@@ -1,6 +1,6 @@
 import Database from "better-sqlite3"
 import { CommentEntityType } from "common/enums"
-import { Comment, EntityComment, NewComment } from "common/interfaces"
+import { Comment, Count, EntityComment, NewComment } from "common/interfaces"
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
 
 // This function exposes the database for sql injection attack.
@@ -142,9 +142,55 @@ function insertNew(entityType: CommentEntityType, entityId: number,  comment: Ne
     db.close()
 }
 
+function getUnreadCount(userId: number): number | undefined {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(`
+    SELECT 
+        count
+    FROM
+        vw_unread_comments_count
+    WHERE
+        user_id = ?
+    `)
+    const data = stmt.get(userId) as Partial<Count>
+    db.close()
+    return data.count
+}
+
+function getTotalCount(): number {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(`
+    SELECT 
+        count
+    FROM
+        vw_comments_count
+    `)
+    const data = stmt.get() as Count
+    db.close()
+    return data.count
+}
+
+function resetUnreadCount(userId: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const totalCount = getTotalCount()
+    const stmt = db.prepare(`
+        INSERT INTO 
+            read_comments_count (user_id, count)
+        VALUES 
+            (?, ?)
+        ON CONFLICT 
+            (user_id) 
+        DO UPDATE
+            SET count = ?
+    `)
+    stmt.run(userId, totalCount, totalCount)
+    db.close()
+}
 
 export const commentsService = {
     getAll: getAll,
     getAllUnion: getAllUnion,
     insertNew: insertNew,
+    getUnreadCount: getUnreadCount,
+    resetUnreadCount: resetUnreadCount
 }
