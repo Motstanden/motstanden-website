@@ -54,6 +54,7 @@ import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
 import { AllPollsPage } from "./routes/poll/AllPollsPage";
 import { NewRumourPage } from "./routes/rumour/NewPage";
 import { PollItemPage } from "./routes/poll/PollItemPage";
+import { CommentsPage } from "./routes/comments/CommentsPage";
 
 function App() {
 	const { isLoggedIn } = usePotentialUser()
@@ -162,6 +163,7 @@ function App() {
 							</Route>
 							<Route path="ny" element={<NewEventPage/>} />
 						</Route>
+						<Route path="/kommentarer" element={<CommentsPage/>} />
 					</Route>
 
 					<Route element={<RequireAuthRouter requiredGroup={UserGroup.Administrator} />}>
