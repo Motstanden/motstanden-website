@@ -557,7 +557,7 @@ LEFT JOIN user USING(user_id)
 /* vw_poll_voter(poll_vote_id,vote_updated_at,poll_id,poll_option_id,poll_option_text,user_id,first_name,middle_name,last_name,full_name) */;
 CREATE TABLE read_comments_count (
     read_comments_count_id INTEGER PRIMARY KEY,
-    user_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL UNIQUE,
     count INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -6,7 +6,7 @@ INSERT INTO version(migration) VALUES
 
 CREATE TABLE read_comments_count (
     read_comments_count_id INTEGER PRIMARY KEY,
-    user_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL UNIQUE,
     count INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
