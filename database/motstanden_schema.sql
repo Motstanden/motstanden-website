@@ -555,3 +555,32 @@ FROM
 LEFT JOIN poll_option USING (poll_option_id)
 LEFT JOIN user USING(user_id)
 /* vw_poll_voter(poll_vote_id,vote_updated_at,poll_id,poll_option_id,poll_option_text,user_id,first_name,middle_name,last_name,full_name) */;
+CREATE TABLE read_comments_count (
+    read_comments_count_id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    count INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+CREATE TRIGGER trig_read_comments_count_updated_at
+    AFTER UPDATE ON read_comments_count FOR EACH ROW
+BEGIN
+    UPDATE read_comments_count SET updated_at = current_timestamp
+        WHERE read_comments_count_id = old.read_comments_count_id;
+END;
+CREATE VIEW vw_comments_count AS
+SELECT
+    (SELECT COUNT(*) FROM event_comment) +
+    (SELECT COUNT(*) FROM poll_comment) +
+    (SELECT COUNT(*) FROM song_lyric_comment) +
+    (SELECT COUNT(*) FROM wall_post_comment)
+AS count
+/* vw_comments_count(count) */;
+CREATE VIEW vw_unread_comments_count AS
+SELECT 
+    user_id,
+    (SELECT count FROM vw_comments_count) - count AS count
+FROM 
+    read_comments_count
+/* vw_unread_comments_count(user_id,count) */;
