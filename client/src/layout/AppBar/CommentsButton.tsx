@@ -1,5 +1,5 @@
 import ForumIcon from '@mui/icons-material/Forum';
-import { Divider, Link, Skeleton, Stack } from '@mui/material';
+import { Divider, IconButton, Link, Skeleton, Stack } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { CommentEntityType } from 'common/enums';
 import { EntityComment } from 'common/interfaces';
@@ -10,9 +10,29 @@ import { UserAvatar, UserAvatarSkeleton } from 'src/components/user/UserAvatar';
 import { UserFullName } from 'src/components/user/UserFullName';
 import { relativeTimeShortFormat } from 'src/context/Locale';
 import { fetchFn } from 'src/utils/fetchAsync';
+import { useIsMobileScreen } from '../useAppSizes';
 import { ToolbarButtonIcon, toolbarButtonSx } from './ToolbarButton';
 
 export function CommentsButton() {
+    const isMobile = useIsMobileScreen()
+    return isMobile 
+        ? <MobileCommentsButton/> 
+        : <DesktopCommentsButton/>
+}
+
+function MobileCommentsButton() { 
+    return (
+        <IconButton
+            sx={toolbarButtonSx}
+            component={RouterLink}
+            to="/kommentarer"
+        >
+            <CommentsButtonIcon />
+        </IconButton>
+    )
+}
+
+function DesktopCommentsButton() {
     return(
         <IconPopupMenu 
             icon={<CommentsButtonIcon />}
