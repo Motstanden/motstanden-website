@@ -187,10 +187,25 @@ function resetUnreadCount(userId: number) {
     db.close()
 }
 
+function incrementUnreadCount(userId: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(`
+    UPDATE 
+        read_comments_count 
+    SET 
+        count = count + 1
+    WHERE
+        user_id = ?
+    `)
+    stmt.run(userId)
+    db.close()
+}
+
 export const commentsService = {
     getAll: getAll,
     getAllUnion: getAllUnion,
     insertNew: insertNew,
     getUnreadCount: getUnreadCount,
-    resetUnreadCount: resetUnreadCount
+    resetUnreadCount: resetUnreadCount,
+    incrementUnreadCount: incrementUnreadCount
 }

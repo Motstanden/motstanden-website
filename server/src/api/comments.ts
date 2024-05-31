@@ -99,6 +99,7 @@ function postCommentHandler( {
 
         try {
             commentsService.insertNew(entityType, entityId, comment, user.userId)
+            commentsService.incrementUnreadCount(user.userId)
         } catch (err) {
             console.error(err)
             res.status(500).send(`Failed to insert ${entityType} comment into the database`)
