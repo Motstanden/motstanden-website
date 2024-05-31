@@ -152,9 +152,9 @@ function getUnreadCount(userId: number): number | undefined {
     WHERE
         user_id = ?
     `)
-    const data = stmt.get(userId) as Partial<Count>
+    const data = stmt.get(userId) as Count | undefined
     db.close()
-    return data.count
+    return data?.count
 }
 
 function getTotalCount(): number {
