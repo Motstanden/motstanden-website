@@ -68,8 +68,6 @@ function DesktopCommentsButton({
                 marginTop: "5px",
                 marginBottom: "-30px",
                 minHeight: "100vh",
-                width: "MIN(515px, 65vw)",
-
             }}
             transformOrigin={{horizontal: 'center', vertical: 'top'}}
             elevation={16}
@@ -79,6 +77,7 @@ function DesktopCommentsButton({
                     paddingInline: "15px",
                     paddingTop: "10px",
                     paddingBottom: "20px",
+                    width: "MIN(500px, 60vw)",
                 }}>
                 <h3 style={{ margin: 0 }}>Kommentarer</h3>
                 <Divider sx={{mt: 1.5, mb: 2}}/>
