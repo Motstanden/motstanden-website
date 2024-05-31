@@ -9,6 +9,8 @@ import { NewComment } from "common/interfaces";
 
 const router = express.Router()
 
+// ---- GET all comments ----
+
 router.get("/comments/all?:limit", 
     AuthenticateUser(),
     validateNumber({
@@ -20,49 +22,25 @@ router.get("/comments/all?:limit",
     }
 )
 
-router.get("/event/:entityId/comments",
-    AuthenticateUser(),
-    validateNumber({
-        getValue: (req: Request) => req.params.entityId,
-    }),
-    getCommentsHandler({
-        entityType: CommentEntityType.Event,
-        getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
-    })
-)
+// ---- GET comments ----
 
-router.get("/poll/:entityId/comments",
-    AuthenticateUser(),
-    validateNumber({
-        getValue: (req: Request) => req.params.entityId,
-    }),
-    getCommentsHandler({
-        entityType: CommentEntityType.Poll,
-        getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
-    })
-)
+router.get("/event/:entityId/comments",getCommentsPipeline(CommentEntityType.Event))
+router.get("/poll/:entityId/comments", getCommentsPipeline(CommentEntityType.Poll))
+router.get("/song-lyric/:entityId/comments", getCommentsPipeline(CommentEntityType.SongLyric))
+router.get("/wall-post/:entityId/comments", getCommentsPipeline(CommentEntityType.WallPost))
 
-router.get("/song-lyric/:entityId/comments",
-    AuthenticateUser(),
-    validateNumber({
-        getValue: (req: Request) => req.params.entityId,
-    }),
-    getCommentsHandler({
-        entityType: CommentEntityType.SongLyric,
-        getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
-    })
-)
-
-router.get("/wall-post/:entityId/comments",
-    AuthenticateUser(),
-    validateNumber({
-        getValue: (req: Request) => req.params.entityId,
-    }),
-    getCommentsHandler({
-        entityType: CommentEntityType.WallPost,
-        getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
-    })
-)
+function getCommentsPipeline(entityType: CommentEntityType) {
+    return [
+        AuthenticateUser(),
+        validateNumber({
+            getValue: (req: Request) => req.params.entityId,
+        }),
+        getCommentsHandler({
+            entityType: entityType,
+            getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
+        })
+    ]
+}
 
 function getCommentsHandler( {
     entityType,
@@ -84,49 +62,25 @@ function getCommentsHandler( {
     }
 }
 
-router.post("/event/:entityId/comments/new",
-    AuthenticateUser(),
-    validateNumber({
-        getValue: (req: Request) => req.params.entityId,
-    }),
-    postCommentHandler({
-        entityType: CommentEntityType.Event,
-        getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
-    })
-)
+// ---- POST comments ----
 
-router.post("/poll/:entityId/comments/new", 
-    AuthenticateUser(),
-    validateNumber({
-        getValue: (req: Request) => req.params.entityId,
-    }),
-    postCommentHandler({
-        entityType: CommentEntityType.Poll,
-        getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
-    })
-)
+router.post("/event/:entityId/comments/new", postCommentPipeline(CommentEntityType.Event))
+router.post("/poll/:entityId/comments/new", postCommentPipeline(CommentEntityType.Poll))
+router.post("/song-lyric/:entityId/comments/new", postCommentPipeline(CommentEntityType.SongLyric))
+router.post("/wall-post/:entityId/comments/new", postCommentPipeline(CommentEntityType.WallPost))
 
-router.post("/song-lyric/:entityId/comments/new", 
-    AuthenticateUser(),
-    validateNumber({
-        getValue: (req: Request) => req.params.entityId,
-    }),
-    postCommentHandler({
-        entityType: CommentEntityType.SongLyric,
-        getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
-    })
-)
-
-router.post("/wall-post/:entityId/comments/new", 
-    AuthenticateUser(),
-    validateNumber({
-        getValue: (req: Request) => req.params.entityId,
-    }),
-    postCommentHandler({
-        entityType: CommentEntityType.WallPost,
-        getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
-    })
-)
+function postCommentPipeline(entityType: CommentEntityType) { 
+    return [
+        AuthenticateUser(),
+        validateNumber({
+            getValue: (req: Request) => req.params.entityId,
+        }),
+        postCommentHandler({
+            entityType: entityType,
+            getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
+        })
+    ]
+}
 
 function postCommentHandler( {
     entityType,
