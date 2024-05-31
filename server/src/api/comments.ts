@@ -125,7 +125,7 @@ function tryCreateValidComment(obj: unknown): NewComment | undefined {
 
 // ---- Manage the count of unread comments ---- 
 
-router.get("/comments/unread", 
+router.get("/comments/unread/count", 
     AuthenticateUser(),
     (req, res) => {
         const user = req.user as AccessTokenData
@@ -141,7 +141,7 @@ router.get("/comments/unread",
     }
 )
 
-router.post("/comments/unread/reset", 
+router.post("/comments/unread/count/reset", 
     AuthenticateUser(),
     (req, res) => {
         const user = req.user as AccessTokenData
