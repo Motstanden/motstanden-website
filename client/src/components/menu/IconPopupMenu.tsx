@@ -9,6 +9,7 @@ export function IconPopupMenu({
     onMouseLeave,
     onMenuOpen,
     onMenuClose,
+    onClick,
     ariaLabel,
     style,
     sx,
@@ -24,6 +25,7 @@ export function IconPopupMenu({
     onMouseLeave?: React.MouseEventHandler<HTMLButtonElement>,
     onMenuOpen?: VoidFunction,
     onMenuClose?: VoidFunction,
+    onClick?: React.MouseEventHandler<HTMLButtonElement>,
     ariaLabel?: string
     style?: React.CSSProperties
     sx?: SxProps,
@@ -43,12 +45,17 @@ export function IconPopupMenu({
         }
     }, [isOpen])
 
+    const onClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => { 
+        setIsOpen(prevValue => !prevValue)
+        onClick?.(event)
+    }
+
     return (
         <>
             <ClickAwayListener onClickAway={() => setIsOpen(false)}>
                 <IconButton
                     ref={anchorEl}
-                    onClick={() => setIsOpen(prevValue => !prevValue)}
+                    onClick={onClickHandler}
                     disabled={disabled}
                     onMouseEnter={onMouseEnter}
                     onMouseLeave={onMouseLeave}
