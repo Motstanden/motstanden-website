@@ -1,49 +1,74 @@
 import ForumIcon from '@mui/icons-material/Forum';
-import { Divider, IconButton, Link, Skeleton, Stack } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import { CommentEntityType } from 'common/enums';
-import { EntityComment } from 'common/interfaces';
-import dayjs from 'dayjs';
+import { Badge, Divider, IconButton } from '@mui/material';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Count } from 'common/interfaces';
 import { Link as RouterLink } from "react-router-dom";
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
-import { UserAvatar, UserAvatarSkeleton } from 'src/components/user/UserAvatar';
-import { UserFullName } from 'src/components/user/UserFullName';
-import { relativeTimeShortFormat } from 'src/context/Locale';
+import { LatestCommentsList } from 'src/routes/comments/components/LatestCommentsList';
 import { fetchFn } from 'src/utils/fetchAsync';
 import { useIsMobileScreen } from '../useAppSizes';
 import { ToolbarButtonIcon, toolbarButtonSx } from './ToolbarButton';
-import { LatestCommentsList } from 'src/routes/comments/components/LatestCommentsList';
 
 export function CommentsButton() {
     const isMobile = useIsMobileScreen()
+    
+    const queryClient = useQueryClient()
+    const queryKey = ["comments", "unread", "count"]
+    const { data } = useQuery<Count>({
+        queryKey: queryKey,
+        queryFn: fetchFn(`/api/comments/unread/count`),
+        refetchOnWindowFocus: "always",
+        refetchOnMount: "always",
+        refetchOnReconnect: "always",
+    })
+    const unreadComments = data?.count ?? 0
+
+    const onClick = async () => { 
+        await fetch(`/api/comments/unread/count/reset`, { method: "POST" })
+        await queryClient.invalidateQueries({queryKey: queryKey})
+    }
+
     return isMobile 
-        ? <MobileCommentsButton/> 
-        : <DesktopCommentsButton/>
+        ? <MobileCommentsButton badgeContent={unreadComments} onClick={onClick}/> 
+        : <DesktopCommentsButton badgeContent={unreadComments} onClick={onClick}/>
 }
 
-function MobileCommentsButton() { 
+function MobileCommentsButton({
+    badgeContent,
+    onClick
+}: {
+    badgeContent?: number,
+    onClick?: () => void
+}) { 
     return (
         <IconButton
             sx={toolbarButtonSx}
             component={RouterLink}
             to="/kommentarer"
+            onClick={onClick}
         >
-            <CommentsButtonIcon />
+            <CommentsButtonIcon badgeContent={badgeContent} />
         </IconButton>
     )
 }
 
-function DesktopCommentsButton() {
+function DesktopCommentsButton({
+    badgeContent,
+    onClick
+}: {
+    badgeContent?: number,
+    onClick?: () => void
+}) { 
     return(
         <IconPopupMenu 
-            icon={<CommentsButtonIcon />}
+            icon={<CommentsButtonIcon badgeContent={badgeContent} />}
             sx={toolbarButtonSx}
+            onClick={onClick}
             menuSx={{
                 marginTop: "5px",
                 marginBottom: "-30px",
                 minHeight: "100vh",
-                minWidth: "300px",
-                maxWidth: "MIN(550px, 65vw)",
+                width: "MIN(550px, 65vw)",
 
             }}
             transformOrigin={{horizontal: 'left', vertical: 'top'}}
@@ -63,15 +88,31 @@ function DesktopCommentsButton() {
     )
 }
 
-function CommentsButtonIcon() {
+function CommentsButtonIcon({badgeContent}: {badgeContent?: number }) {
     return (
-        <ToolbarButtonIcon tooltip='Kommentarer'>
-            <ForumIcon 
-                fontSize="small"
-                sx={{
-                    color: "primary.contrastText",
-                }}
-                />
-        </ToolbarButtonIcon>
+        <Badge 
+            badgeContent={badgeContent}
+            max={9}
+            color='error'
+            sx={{
+                ".MuiBadge-badge": {
+                    top: "5px",
+                    right: "5px",
+                    fontSize: "9pt",
+                    minWidth: "0px",
+                    minHeight: "0px",
+                    fontWeight: "600"
+                },
+            }}
+        >
+            <ToolbarButtonIcon tooltip='Kommentarer'>
+                <ForumIcon 
+                    fontSize="small"
+                    sx={{
+                        color: "primary.contrastText",
+                    }}
+                    />
+            </ToolbarButtonIcon>
+        </Badge>
     )
 }
