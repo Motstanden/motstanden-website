@@ -1,5 +1,5 @@
-import { Grid, Link, Skeleton } from "@mui/material";
-import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Grid, Link, Skeleton, Theme, useMediaQuery } from "@mui/material";
+import { UseQueryResult, useQuery, useQueryClient } from "@tanstack/react-query";
 import { EventData, Poll, Quote, Rumour } from "common/interfaces";
 import dayjs, { Dayjs } from "dayjs";
 import React from "react";
@@ -21,6 +21,12 @@ import { RumourListSkeleton } from "../rumour/skeleton/RumourPage";
 
 export default function Home() {
     useTitle("Hjem")
+    const isSingleColumn = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"))
+
+    const hideEventFn = (data: EventData[] | undefined) => { 
+        return isSingleColumn && (!data || data.length <= 0)
+    }
+
     return (
         <>
             <Grid 
@@ -34,6 +40,7 @@ export default function Home() {
                     renderSkeleton={<TitleAndSubtitleSkeleton length={5} />}
                     renderItems={RenderEventList}
                     md={6}
+                    hideFn={hideEventFn}
                 />
                 <Grid item xs={0} md={6} sx={{display: {xs: "none", md: "block"} }}>
                     <LatestPoll/>
@@ -350,7 +357,8 @@ function ItemOfTheDay<T>({
     xs,
     sm,
     md,
-    display
+    display,
+    hideFn,
 }: {
     title: string,
     fetchUrl: string,
@@ -361,10 +369,23 @@ function ItemOfTheDay<T>({
     sm?: number,
     md?: number,
     display?: {xs?: string, sm?: string, md?: string, lg?: string, xl?: string}
+    hideFn?: (data: T | undefined) => boolean
 }) {
     useTimeZone()   // Triggers rerender on time zone change 
 
+    const queryClient = useQueryClient()
+    const queryKey = [`${title}: ${fetchUrl}`]
+    const onRefetchItems = () => queryClient.invalidateQueries({queryKey: queryKey})
+    
+    const query = useQuery<T>({
+        queryKey: queryKey,
+        queryFn: fetchFn<T>(fetchUrl),
+    })
+    
     if(hide)
+        return <></>
+
+    if(hideFn?.(query.data))
         return <></>
 
     return (
@@ -372,52 +393,34 @@ function ItemOfTheDay<T>({
             <TitleCard
                 title={title}
                 sx={{ maxWidth: "600px", height: "100%" }}>
-                <ItemLoader<T>
-                    queryKey={[`${title}: ${fetchUrl}`]}
-                    fetchUrl={fetchUrl}
+                <QueryLoader<T>
+                    query={query}
                     renderSkeleton={renderSkeleton}
-                    renderItems={renderItems}
-                />
+                    renderItems={renderItems} 
+                    onRefetchItems={onRefetchItems}/>
             </TitleCard>
         </Grid>
     )
 }
 
-function ItemLoader<T>({
-    queryKey,
-    fetchUrl,
+function QueryLoader<T>({
+    query,
     renderSkeleton,
-    renderItems
+    renderItems,
+    onRefetchItems
 }: {
-    queryKey: QueryKey,
-    fetchUrl: string,
+    query: UseQueryResult<T, Error>
     renderSkeleton: React.ReactElement,
-    renderItems: (props: RenderItemProps<T>) => React.ReactElement
+    renderItems: (props: RenderItemProps<T>) => React.ReactElement,
+    onRefetchItems: VoidFunction
 }) {
+    const {isPending, isError, error, data } = query
 
-    const queryClient = useQueryClient()
-    const onRefetchItems = () => queryClient.invalidateQueries({queryKey: queryKey})
+    if (isPending) 
+        return <>{renderSkeleton}</>
 
-    const { isPending, isError, data, error } = useQuery<T>({
-        queryKey: queryKey,
-        queryFn: fetchFn<T>(fetchUrl),
-    })
-
-    if (isPending) {
-        return (
-            <>
-                {renderSkeleton}
-            </>
-        )
-    }
-
-    if (isError) {
+    if (isError) 
         return <div style={{ minHeight: "100px" }}>{`${error}`}</div>
-    }
 
-    return (
-        <>
-            {renderItems({ items: data, refetchItems: onRefetchItems })}
-        </>
-    )
+    return <>{renderItems({ items: data, refetchItems: onRefetchItems })} </>
 }
