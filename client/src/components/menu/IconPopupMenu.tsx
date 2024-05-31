@@ -1,4 +1,4 @@
-import { ClickAwayListener, IconButton, Menu, SxProps } from "@mui/material";
+import { ClickAwayListener, IconButton, Menu, PopoverOrigin, SxProps } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 
 export function IconPopupMenu({
@@ -12,6 +12,10 @@ export function IconPopupMenu({
     ariaLabel,
     style,
     sx,
+    menuSx,
+    transformOrigin = { horizontal: 'right', vertical: 'top' },
+    anchorOrigin = { horizontal: 'right', vertical: 'bottom' },
+    elevation,
 }: {
     children: React.ReactNode,
     icon: React.ReactNode,
@@ -22,7 +26,11 @@ export function IconPopupMenu({
     onMenuClose?: VoidFunction,
     ariaLabel?: string
     style?: React.CSSProperties
-    sx?: SxProps
+    sx?: SxProps,
+    menuSx?: SxProps,
+    transformOrigin?: PopoverOrigin,
+    anchorOrigin?: PopoverOrigin,
+    elevation?: number
 }) {
     const [isOpen, setIsOpen] = useState(false)
     const anchorEl = useRef(null)
@@ -52,12 +60,19 @@ export function IconPopupMenu({
                 </IconButton>
             </ClickAwayListener>
             <Menu
-                style={{ margin: 0, padding: 0 }}
                 anchorEl={anchorEl.current}
                 open={!disabled && isOpen}
                 onClose={() => setIsOpen(false)}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                transformOrigin={transformOrigin}
+                anchorOrigin={anchorOrigin}
+                elevation={elevation}
+                sx={{
+                    ".MuiMenu-paper": {
+                        scrollbarWidth: "thin",
+                        scrollbarColor: `#959595 transparent`,
+                    },
+                    ...menuSx
+                }}
             >
                 {children}
             </Menu>
