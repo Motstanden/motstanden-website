@@ -1,14 +1,10 @@
-import { Grid, Link, Skeleton, Stack } from "@mui/material";
+import { Grid, Link, Skeleton } from "@mui/material";
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CommentEntityType } from "common/enums";
-import { EntityComment, EventData, Poll, Quote, Rumour } from "common/interfaces";
+import { EventData, Poll, Quote, Rumour } from "common/interfaces";
 import dayjs, { Dayjs } from "dayjs";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { TitleCard } from "src/components/TitleCard";
-import { UserAvatar, UserAvatarSkeleton } from 'src/components/user/UserAvatar';
-import { UserFullName } from 'src/components/user/UserFullName';
-import { relativeTimeShortFormat } from "src/context/Locale";
 import { useTimeZone } from "src/context/TimeZone";
 import { useTitle } from "src/hooks/useTitle";
 import { buildEventItemUrl } from "src/routes/event/Context";
@@ -44,12 +40,6 @@ export default function Home() {
                     fetchUrl="/api/quotes?limit=3"
                     renderSkeleton={<QuotesListSkeleton length={3} />}
                     renderItems={RenderQuotesList}
-                />
-                <ItemOfTheDay 
-                    title="Nyeste kommentarer"
-                    fetchUrl="/api/comments/all?limit=5"
-                    renderItems={RenderComments}
-                    renderSkeleton={<RenderCommentsSkeleton length={5}/>}
                 />
                 <Grid item xs={12} sm={12} md={6}>
                     <LatestPoll/>
@@ -125,141 +115,6 @@ function RenderEventList(props: RenderItemProps<EventData[]>) {
     )
 }
 
-function RenderComments(props: RenderItemProps<EntityComment[]>) {
-
-    const buildUrl = (comment: EntityComment): string  => {
-        switch(comment.type) {
-            case CommentEntityType.Event:
-                return `/arrangement/${comment.entityId}#comment-${comment.id}`
-            case CommentEntityType.Poll:    
-                return `/avstemninger/${comment.entityId}#comment-${comment.id}`   
-            case CommentEntityType.SongLyric:
-                return `/studenttraller/${comment.entityId}#comment-${comment.id}`
-            case CommentEntityType.WallPost:
-                return `/vegg/${comment.entityId}#comment-${comment.id}`
-            default:
-                return ``
-        }
-    }
-
-    if(props.items.length <= 0)
-        return <span style={{opacity: 0.75 }}>Ingen nye kommentarer...</span>
-
-    return (
-        <>
-        {props.items.map(comment => (
-            <div 
-                key={`${comment.entityId}-${comment.id}`}
-                style={{
-                    marginBottom: "15px",
-                }}
-            >
-                <Stack 
-                    direction="row"
-                    spacing={2}
-                >
-                    <UserAvatar
-                        userId={comment.createdBy}
-                        style={{
-                            marginTop: "5px"
-                        }}
-                    />
-                    <div style={{
-                        overflow: "hidden",
-                    }}>
-                        <div>
-                            <UserFullName 
-                                userId={comment.createdBy} 
-                                style={{
-                                    opacity: "0.75",
-                                    fontSize: "small"
-                                }}
-                                />
-                        </div>
-                        <div style={{
-                            overflow: "hidden",
-                            whiteSpace: "nowrap",
-                            textOverflow: "ellipsis",
-                        }}>
-                            <Link
-                                color="secondary"
-                                underline="hover"
-                                fontSize="large"
-                                component={RouterLink}
-                                to={buildUrl(comment) ?? "#"}
-                            >
-                                {comment.comment}
-                            </Link>
-                        </div>
-                        <div
-                            style={{
-                                fontSize: "small",
-                                opacity: "0.6"
-                            }}
-                        >
-                            {dayjs.utc(comment.createdAt).locale(relativeTimeShortFormat).fromNow()}
-                        </div>
-                    </div>
-                </Stack>
-            </div>
-        ))}
-        </>
-    )
-}
-
-function RenderCommentsSkeleton({length}: {length: number}) {
-    return (
-        <div>
-            {Array(length).fill(1).map((_, i) => (
-                <div
-                    key={i}
-                    style={{
-                        marginBottom: "15px",
-                    }}
-                >
-                    <Stack
-                        direction="row"
-                        spacing={2}
-                    >
-                        <UserAvatarSkeleton 
-                            style={{
-                                marginTop: "5px"
-                            }}
-                        />
-                        <div style={{width: "80%"}}>
-                            <div>
-                                <Skeleton 
-                                    variant="text" 
-                                    style={{ 
-                                        fontSize: "small",
-                                        maxWidth: "100px",
-                                    }} />
-                            </div>
-                            <div>
-                                <Skeleton 
-                                    variant="text" 
-                                    style={{ 
-                                        fontSize: "larger",
-                                    }} />
-                            </div>
-                            <div>
-                                <Skeleton
-                                    variant="text"
-                                    style={{
-                                        fontSize: "small",
-                                        maxWidth: "80px"
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </Stack>
-                </div>
-            ))}
-
-        </div>
-    )
-}
- 
 function LatestPoll() {
 
     const queryKey = [...pollBaseQueryKey, "latest"]
