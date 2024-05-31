@@ -35,13 +35,16 @@ export default function Home() {
                     renderItems={RenderEventList}
                     md={6}
                 />
+                <Grid item xs={0} md={6} sx={{display: {xs: "none", md: "block"} }}>
+                    <LatestPoll/>
+                </Grid>
                 <ItemOfTheDay
                     title="Nyeste sitater"
                     fetchUrl="/api/quotes?limit=3"
                     renderSkeleton={<QuotesListSkeleton length={3} />}
                     renderItems={RenderQuotesList}
                 />
-                <Grid item xs={12} sm={12} md={6}>
+                <Grid item xs={12} sx={{display: {xs: "block", md: "none"} }}>
                     <LatestPoll/>
                 </Grid>
                 <ItemOfTheDay
@@ -49,12 +52,6 @@ export default function Home() {
                     fetchUrl="/api/rumours?limit=3"
                     renderSkeleton={<RumourListSkeleton length={3} />}
                     renderItems={RenderRumourList}
-                />
-                <ItemOfTheDay 
-                    title="Sist oppdaterte styrenettsider"
-                    fetchUrl="https://styret.motstanden.no/projectData.json"
-                    renderItems={RenderBoardPageList}
-                    renderSkeleton={<TitleAndSubtitleSkeleton length={5}/>}
                 />
                 <ItemOfTheDay
                     title="Dagens sitater"
@@ -67,6 +64,12 @@ export default function Home() {
                     fetchUrl="/api/rumours/daily-rumour"
                     renderSkeleton={<RumourListSkeleton length={3} />}
                     renderItems={RenderRumourList}
+                />
+                <ItemOfTheDay 
+                    title="Sist oppdaterte styrenettsider"
+                    fetchUrl="https://styret.motstanden.no/projectData.json"
+                    renderItems={RenderBoardPageList}
+                    renderSkeleton={<TitleAndSubtitleSkeleton length={5}/>}
                 />
                 <InfoCard
                     title="Nyttige lenker"
