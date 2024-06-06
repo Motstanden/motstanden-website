@@ -190,12 +190,12 @@ function resetUnreadCount(userId: number) {
 function incrementUnreadCount(userId: number) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
     const stmt = db.prepare(`
-    UPDATE 
-        read_comments_count 
-    SET 
-        count = count + 1
-    WHERE
-        user_id = ?
+        UPDATE 
+            read_comments_count 
+        SET 
+            count = count + 1
+        WHERE
+            user_id = ?
     `)
     stmt.run(userId)
     db.close()
