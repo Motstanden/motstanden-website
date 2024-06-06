@@ -54,7 +54,7 @@ function insertNew(post: NewWallPost, userId: number) {
     db.close()
 }
 
-function getTotalCount(): Count {
+function getTotalCount(): number {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT 
@@ -64,10 +64,10 @@ function getTotalCount(): Count {
     `)
     const data = stmt.get() as Count
     db.close()
-    return data
+    return data.count
 }
 
-function getUnreadCount(userId: number): Count | undefined { 
+function getUnreadCount(userId: number): number | undefined { 
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT 
@@ -79,7 +79,7 @@ function getUnreadCount(userId: number): Count | undefined {
     `)
     const data = stmt.get(userId) as Count | undefined
     db.close()
-    return data
+    return data?.count
 }
 
 function resetUnreadCount(userId: number) {
