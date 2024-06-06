@@ -83,6 +83,10 @@ sqlite3 motstanden_dev.db < migrations/motstanden_db/19_poll_voters_view.sql;
 echo "Running: 20_unread_comments_count.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/20_unread_comments_count.sql;
 
+# Create table for storing the count of read wall posts each user
+echo "Running: 21_unread_wall_posts_count.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/21_unread_wall_posts_count.sql;
+
 # Insert data that is representative for the current data in the database
 cd data/db
 sh motstanden-db-data.sh 
