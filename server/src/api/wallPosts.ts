@@ -1,4 +1,4 @@
-import { NewWallPost } from "common/interfaces";
+import { Count, NewWallPost } from "common/interfaces";
 import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
@@ -77,6 +77,49 @@ function tryCreateValidPost(obj: unknown): NewWallPost | undefined {
         content: post.content.trim()
     }
 }
+
+router.get("/wall-posts/unread/count", 
+    AuthenticateUser(),
+    (req, res) => {
+        const user = req.user as AccessTokenData
+        
+        const unreadCount = wallPostService.getUnreadCount(user.userId)
+        if(unreadCount === undefined) { 
+            wallPostService.resetUnreadCount(user.userId)
+        }
+        const result: Count = {
+            count: unreadCount ?? 0
+        }
+
+        res.send(result)
+    }
+)
+
+router.post("/wall-posts/unread/count/reset", 
+    AuthenticateUser(),
+    (req, res) => {
+        const user = req.user as AccessTokenData
+        wallPostService.resetUnreadCount(user.userId)
+        res.end()
+    }
+)
+
+router.post("/wall-posts/unread/count/increment", 
+    AuthenticateUser(),
+    (req, res) => {
+        const user = req.user as AccessTokenData
+        
+        const unreadCount = wallPostService.getUnreadCount(user.userId)
+        if(unreadCount === undefined) {
+            wallPostService.resetUnreadCount(user.userId)
+        }
+        else if (unreadCount > 0) {
+            wallPostService.incrementUnreadCount(user.userId)
+        }
+
+        res.end()
+    }
+)
 
 
 export default router
