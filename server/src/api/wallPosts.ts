@@ -49,6 +49,7 @@ router.post("/wall-posts/new",
 
         try {
             wallPostService.insertNew(newPost, user.userId)
+            wallPostService.incrementUnreadCount(user.userId)
         } catch (err) {
             console.error(err)
             res.status(500).send("Failed to inser post into database")
