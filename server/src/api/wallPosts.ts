@@ -21,7 +21,7 @@ router.get("/wall-posts/all/count",
     AuthenticateUser(),
     (req, res) => {
         try {
-            const count = wallPostService.getCount()
+            const count = wallPostService.getTotalCount()
             res.send(count)
         } catch (err) { 
             console.error(err)

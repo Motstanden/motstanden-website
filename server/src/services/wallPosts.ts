@@ -42,16 +42,6 @@ function get(postId: number): WallPost |undefined {
     return post
 }
 
-function getCount(): Count {
-    const db = new Database(motstandenDB, dbReadOnlyConfig)
-    const stmt = db.prepare(`
-        SELECT count(*) as count FROM wall_post
-    `)
-    const data = stmt.get() as Count
-    db.close()
-    return data
-}
-
 function insertNew(post: NewWallPost, userId: number) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
     const stmt = db.prepare(`
@@ -64,9 +54,71 @@ function insertNew(post: NewWallPost, userId: number) {
     db.close()
 }
 
+function getTotalCount(): Count {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(`
+        SELECT 
+            count(*) as count 
+        FROM 
+            wall_post
+    `)
+    const data = stmt.get() as Count
+    db.close()
+    return data
+}
+
+function getUnreadCount(userId: number): Count | undefined { 
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(`
+        SELECT 
+            count
+        FROM
+            vw_unread_wall_posts_count
+        WHERE
+            user_id = ?
+    `)
+    const data = stmt.get(userId) as Count | undefined
+    db.close()
+    return data
+}
+
+function resetUnreadCount(userId: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const totalCount = getTotalCount()
+    const stmt = db.prepare(`
+        INSERT INTO 
+            read_wall_posts_count (user_id, count)
+        VALUES 
+            (?, ?)
+        ON CONFLICT 
+            (user_id) 
+        DO UPDATE
+            SET count = ?
+    `)
+    stmt.run(userId, totalCount, totalCount)
+    db.close()
+}
+
+function incrementUnreadCount(userId: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(`
+        UPDATE 
+            read_wall_posts_count 
+        SET 
+            count = count + 1
+        WHERE
+            user_id = ?
+    `)
+    stmt.run(userId)
+    db.close()
+}
+
 export const wallPostService = { 
     get: get,
     getAll: getAll,
-    getCount: getCount,
-    insertNew: insertNew
+    insertNew: insertNew,
+    getTotalCount: getTotalCount,
+    getUnreadCount: getUnreadCount,
+    resetUnreadCount: resetUnreadCount,
+    incrementUnreadCount: incrementUnreadCount
 }
