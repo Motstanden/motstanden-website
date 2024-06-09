@@ -34,7 +34,7 @@ function runTests(opts: TestOptions) {
 
     test.describe.configure({ mode: "serial"})
     test.beforeEach(async ({browserName}) => {
-        test.skip(browserName !== "firefox", "Theses tests can not be runned in parallel across browsers. We will therefore only support firefox for now") 
+    test.skip(browserName !== "firefox", "Firefox only! \nThis test can not be runned in parallel across browsers.") 
     })
 
     test(`New ${opts.testId}`, async ({browser}, workerInfo) => { 
