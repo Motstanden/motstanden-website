@@ -10,7 +10,7 @@ sqlite3 sheet_archive_dev.db < migrations/sheet_archive_db/02_insert_sheet_archi
 # Insert data:
 cd tools/ts/
 npm run insertSheetArchiveFiles -- ../../../server/files/private/notearkiv/
-cd ../../../..
+cd ../..
 
 # Update the data:
 cd data/db
