@@ -14,7 +14,6 @@ import { useQuerySuccess } from 'src/hooks/useQuerySuccess'
 import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage'
 import { fetchFn } from "src/utils/fetchAsync"
 import { postJson } from 'src/utils/postJson'
-import { softHypenate } from 'src/utils/softHyphenate'
 import { CommentSection, CommentSectionSkeleton } from "../CommentSection"
 import { LinkifiedText } from '../LinkifiedText'
 import { LikeButton, LikeButtonSkeleton } from '../likes/LikeButton'
@@ -308,7 +307,7 @@ export function PostSectionItem({
                 </LinkifiedText>
             </div>
             <Stack direction="row" justifyContent="space-between">
-                <div style={{minWidth: "105px"}}>
+                <div>
                     <LikeButton
                         style={{
                             padding: "0px",
@@ -332,7 +331,6 @@ export function PostSectionItem({
 function LikeList() {
     const { likes, isPending } = useLikes()
     const { userReference } = useUserReference()
-    const isTinyScreen = useMediaQuery("(max-width: 350px)");
     const isSmallScreen = useMediaQuery("(max-width: 675px)")       // We will consider this a small screen because the side drawer is docked at this width
 
     const { openModal } = useLikesModal()
@@ -347,7 +345,7 @@ function LikeList() {
         return <></>
     
     let text = ""
-    if(userReference && !isTinyScreen) {
+    if(userReference) {
 
         const name = userReference[likes[0].userId].shortFullName
 
@@ -366,7 +364,6 @@ function LikeList() {
         if(likes.length > 2) {
             text = `${name} og ${likes.length - 1} andre`
         }
-        text = softHypenate(text)
     }
 
     return (
@@ -395,6 +392,9 @@ function LikeList() {
                             fontWeight: "bold",
                             marginLeft: "3px",
                             opacity: 0.6,
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
                         }}>
                             {text}
                         </div>
@@ -406,13 +406,8 @@ function LikeList() {
 }
 
 function LikeListSkeleton() {
-    const isTinyScreen = useMediaQuery("(max-width: 370px)")
-    const isSmallScreen = useMediaQuery("(max-width: 430px)")
-    const width = isTinyScreen 
-        ? 60 
-        : isSmallScreen ? 160 : 240
     return ( 
-        <Skeleton width={width} />
+        <Skeleton width={130} />
     )
 }
 
