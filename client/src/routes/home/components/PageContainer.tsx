@@ -1,19 +1,20 @@
 import { Badge } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Count } from "common/interfaces";
+import { useEffect } from "react";
 import { Outlet, useMatch } from "react-router-dom";
 import { useAppBarHeader } from "src/context/AppBarHeader";
+import { useAuthenticatedUser } from "src/context/Authentication";
 import { useDebounce } from "src/hooks/useDebounce";
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer";
 import { fetchFn } from "src/utils/fetchAsync";
 
 export default function PageContainer() { 
     useAppBarHeader("Hjem")
+    useLocalStorageCleaner()    // Remove obsolete legacy data from local storage
 
     const { unreadCount, isUpdating, clearUnreadCount } = useUnreadWallPosts()
-
     const isWallPage = !!useMatch("/vegg")
-
     useDebounce(() => {
         if(unreadCount > 0 && !isUpdating && isWallPage) {
             clearUnreadCount()
@@ -94,4 +95,15 @@ function WallLabel( {unreadPostsCount}: {unreadPostsCount: number}){
             Vegg
         </Badge>
     )
+}
+
+// This hook removes obsolete legacy data from local storage.
+// This hook can be deleted at some point in the future...
+function useLocalStorageCleaner() {
+    const { user } = useAuthenticatedUser()
+    useEffect(() => {
+        const keyData = ["wall-posts", "count", "user-id", user.id]
+        const storageKey = JSON.stringify(keyData)
+        window.localStorage.removeItem(storageKey)   
+    }, [])
 }
