@@ -1,7 +1,6 @@
 import { Badge } from "@mui/material";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Count } from "common/interfaces";
-import { useState } from "react";
 import { Outlet, useMatch } from "react-router-dom";
 import { useAppBarHeader } from "src/context/AppBarHeader";
 import { useDebounce } from "src/hooks/useDebounce";
@@ -15,11 +14,11 @@ export default function PageContainer() {
 
     const isWallPage = !!useMatch("/vegg")
 
-    useDebounce( async () => {
+    useDebounce(() => {
         if(unreadCount > 0 && !isUpdating && isWallPage) {
-            await clearUnreadCount()
+            clearUnreadCount()
         }
-    }, 1000, [unreadCount, isUpdating, isWallPage])
+    }, 1500, [unreadCount, isUpdating, isWallPage])
 
     return (
         <TabbedPageContainer
@@ -42,25 +41,22 @@ function useUnreadWallPosts() {
         queryFn: fetchFn("/api/wall-posts/unread/count"),
     })
     const unreadCount = data?.count ?? 0
-    const isSuccess = !isPending && !isError
 
     const queryClient = useQueryClient()
     
-    const [isPosting, setIsPosting] = useState(false)
-
-    const clearUnreadCount = async () => { 
-        if(isSuccess && unreadCount > 0 && !isPosting) {
-            setIsPosting(true)
-            await fetch("/api/wall-posts/unread/count/reset", { method: "POST" })
-            await queryClient.invalidateQueries({queryKey: queryKey})
-            setIsPosting(false)
+    const resetCount = useMutation({
+        mutationFn: async () => {
+            return await fetch("/api/wall-posts/unread/count/reset", { method: "POST" })
+        },
+        onSettled: async () => {
+            return await queryClient.invalidateQueries({queryKey: queryKey})
         }
-    }
+    })
 
     return {
         unreadCount,
-        isUpdating: isPosting || !isSuccess,
-        clearUnreadCount,
+        isUpdating: resetCount.isPending || isPending || isError,
+        clearUnreadCount: resetCount.mutate,
     }
 }
 
