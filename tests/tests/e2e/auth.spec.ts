@@ -26,7 +26,7 @@ test.describe("Login tokens are created and persisted", () => {
     test("AccessToken and RefreshTokens is defined", async ({page}) => {
 
         const cookies = await page.context().cookies()
-        expect(cookies.length).toBe(3)
+        expect(cookies.length).toBe(2)
         
         const accessToken = cookies.find(c => c.name === "AccessToken")
         expect(accessToken).toBeDefined()
@@ -34,15 +34,11 @@ test.describe("Login tokens are created and persisted", () => {
         const refreshToken = cookies.find(c => c.name === "RefreshToken")
         expect(refreshToken).toBeDefined()
 
-        const userInfo = cookies.find(c => c.name === PublicCookieName.UnsafeUserInfo)
-        expect(userInfo).toBeDefined()
-
         // Test that AccessToken expires within 15 minutes
         expect(accessToken.expires * 1000).toBeLessThanOrEqual(Date.now() + 1000*60*15)
     })
 
-    test("AccessToken is renewed if browser only has RefreshToken", async ({page}, workerInfo) => {
-        
+    test("AccessToken is renewed if browser only has RefreshToken", async ({page}) => {
         await expireCookie(page, CookieName.AccessToken)
 
         const oldAccessToken = await getCookie(page, CookieName.AccessToken)
@@ -54,29 +50,6 @@ test.describe("Login tokens are created and persisted", () => {
         await waitForCookie(page, CookieName.AccessToken)
 
         const newAccessToken = await getCookie(page, CookieName.AccessToken)
-        expect(newAccessToken).toBeDefined()
-    })
-
-    test("UnsafeUserInfo is renewed if browser only has RefreshToken", async ({page}) => {
-        
-        await expireCookie(page, CookieName.UnsafeUserInfo)
-        await expireCookie(page, CookieName.AccessToken)
-
-        const oldUserInfo = await getCookie(page, CookieName.UnsafeUserInfo)
-        const oldAccessToken = await getCookie(page, CookieName.AccessToken)
-        
-        expect(oldUserInfo).not.toBeDefined()
-        expect(oldAccessToken).not.toBeDefined()
-    
-        // Refresh the tokens by navigating to a page that requires authentication
-        // Note: To avoid race conditions, it is important that we do not navigate to a page before expireCookie() is called. See comment in expireCookie()
-        await page.goto("/sitater", { waitUntil: "load" })
-        await waitForCookie(page, CookieName.AccessToken)
-
-        const newUserInfo = await getCookie(page, CookieName.UnsafeUserInfo)
-        const newAccessToken = await getCookie(page, CookieName.AccessToken)
-
-        expect(newUserInfo).toBeDefined()
         expect(newAccessToken).toBeDefined()
     })
 })
