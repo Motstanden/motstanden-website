@@ -7,6 +7,7 @@ import {
 export interface UserReference {
     id: number;
     fullName: string;
+    shortFullName: string;        // Format: 'First M. L.' (for )
     initials: string;
 }
 

@@ -178,7 +178,12 @@ export function getAllUsersSimplified(): UserReference[] {
         `SELECT 
             user_id as id,
             full_name as fullName,
-            SUBSTR(first_name, 1, 1) || SUBSTR(last_name, 1, 1) AS initials
+            SUBSTR(first_name, 1, 1) || SUBSTR(last_name, 1, 1) AS initials,
+            CASE 
+                WHEN COUNT(first_name) OVER (PARTITION BY first_name) > 1 THEN 
+                    first_name || ' ' || SUBSTR(last_name, 1, 1) || '.'
+                ELSE first_name
+            END AS shortFullName
         FROM 
             user;`)
     const user = stmt.all() as UserReference[]

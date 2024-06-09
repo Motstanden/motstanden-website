@@ -349,13 +349,13 @@ function LikeList() {
     let text = ""
     if(userReference && !isTinyScreen) {
 
-        const name = userReference[likes[0].userId].fullName
+        const name = userReference[likes[0].userId].shortFullName
 
         if(likes.length === 1)
             text = `${name}` 
 
         if(likes.length === 2) {
-            text = `${name} og ${userReference[likes[1].userId].fullName}` 
+            text = `${name} og ${userReference[likes[1].userId].shortFullName}` 
 
             const maxLength = 40
             if(text.length > maxLength && isSmallScreen) {
