@@ -20,7 +20,7 @@ function RumourContainer() {
     return (
         <TabbedPageContainer
             tabItems={[
-                { to: "/rykter", label: "Rykter" },
+                { to: "/rykter", label: "Alle" },
                 { to: "/rykter/ny", label: "Ny" },
             ]}
         >
