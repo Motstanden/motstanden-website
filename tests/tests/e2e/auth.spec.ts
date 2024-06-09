@@ -1,5 +1,4 @@
 import { TestInfo, expect, test, type Page } from '@playwright/test';
-import { PublicCookieName } from 'common/enums';
 import { unsafeApiLogIn } from '../../utils/auth.js';
 
 function getReservedMail(workerInfo: TestInfo) {
@@ -160,5 +159,4 @@ async function expireCookie(page: Page, cookieName: CookieName) {
 enum CookieName {
     AccessToken = "AccessToken",
     RefreshToken = "RefreshToken",
-    UnsafeUserInfo = PublicCookieName.UnsafeUserInfo
 }

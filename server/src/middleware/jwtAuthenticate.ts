@@ -1,4 +1,3 @@
-import { PublicCookieName } from "common/enums";
 import { User } from "common/interfaces";
 import crypto from "crypto";
 import { CookieOptions, NextFunction, Request, Response } from 'express';
@@ -115,7 +114,7 @@ function getRefreshToken(req: Request): {
     return result
 }
 
-function getCookie(req: Request, tokenType: JwtToken | PublicCookieName.UnsafeUserInfo): string | undefined {
+function getCookie(req: Request, tokenType: JwtToken): string | undefined {
     let token = undefined
     if (req && req.cookies) {
         token = req.cookies[tokenType.toString()]
