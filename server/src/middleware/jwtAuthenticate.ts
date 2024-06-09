@@ -1,5 +1,5 @@
 import { PublicCookieName } from "common/enums";
-import { UnsafeUserCookie, User } from "common/interfaces";
+import { User } from "common/interfaces";
 import crypto from "crypto";
 import { CookieOptions, NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
@@ -28,7 +28,6 @@ function onAuthenticateRequest(req: Request, res: Response, next: NextFunction, 
 }
 
 export function updateAccessToken(req: Request, res: Response, next: NextFunction, options: AuthenticateOptions) {
-
     const onFailure = () => {
         clearAllAuthCookies(res)
         if (options.failureRedirect) {
@@ -43,16 +42,10 @@ export function updateAccessToken(req: Request, res: Response, next: NextFunctio
         return onFailure()
     }
 
-    const { accessTokenData, userData } = refreshToken
-
     // Sign and save access token
+    const { accessTokenData } = refreshToken
     const signedAccessToken = signToken(JwtToken.AccessToken, refreshToken.accessTokenData)
     saveToCookie(res, JwtToken.AccessToken, signedAccessToken)
-
-    // Save unsafe user info
-    const userInfo: UnsafeUserCookie = {...userData, expires: refreshToken.expires}
-    const userInfoToken = JSON.stringify(userInfo)
-    saveToCookie(res, PublicCookieName.UnsafeUserInfo, userInfoToken, { httpOnly: false, expires: new Date(refreshToken.expires)})
 
     req.user = accessTokenData
     next()
@@ -152,32 +145,20 @@ function signRefreshToken(user: AccessTokenData): string {
 export function loginUser(req: Request, res: Response) {
 
     const accessTokenContent = req.user as AccessTokenData
-    const refreshTokenExpiry = getCookieExpiry(JwtToken.RefreshToken)    
-
 
     // -- Save access token --
     const accessToken = signToken(JwtToken.AccessToken, accessTokenContent)
     saveToCookie(res, JwtToken.AccessToken, accessToken)
 
-
     // -- Save refresh token --
     const refreshToken = signToken(JwtToken.RefreshToken, accessTokenContent)
     userService.insertLoginToken(refreshToken)
-    saveToCookie(res, JwtToken.RefreshToken, refreshToken, { expires: refreshTokenExpiry })
-
-
-    // -- Save 'unsafe' user info
-    const userData: UnsafeUserCookie = {
-        ...userService.getUser(accessTokenContent.userId),
-        expires: refreshTokenExpiry
-    }
-    const userInfoToken = JSON.stringify(userData)
-    saveToCookie(res, PublicCookieName.UnsafeUserInfo, userInfoToken, { expires: refreshTokenExpiry, httpOnly: false})   
+    saveToCookie(res, JwtToken.RefreshToken, refreshToken)
 }
 
 function saveToCookie(
     res: Response, 
-    tokenType: JwtToken |  PublicCookieName.UnsafeUserInfo,
+    tokenType: JwtToken,
     tokenData: string,
     opts?: CookieOptions
 ) {
@@ -194,17 +175,13 @@ function saveToCookie(
         })
 }
 
-function getCookieExpiry(tokenType: JwtToken | PublicCookieName.UnsafeUserInfo ): Date {
-
+function getCookieExpiry(tokenType: JwtToken ): Date {
     let maxAge: number
     switch(tokenType) {
         case JwtToken.AccessToken:
             maxAge = 1000 * 60 * 15                 // 15 min
             break
         case JwtToken.RefreshToken:
-            maxAge = 1000 * 60 * 60 * 24 * 365      // 365 days
-            break
-        case PublicCookieName.UnsafeUserInfo:
             maxAge = 1000 * 60 * 60 * 24 * 365      // 365 days
             break
     }
@@ -231,7 +208,6 @@ export function logOutAllUnits(req: Request, res: Response) {
 function clearAllAuthCookies(res: Response) {
     res.clearCookie(JwtToken.AccessToken.toString(), {sameSite: "strict"})
     res.clearCookie(JwtToken.RefreshToken.toString(), {sameSite: "strict"})
-    res.clearCookie(PublicCookieName.UnsafeUserInfo.toString(), {sameSite: "strict"})
 }
 
 export interface JwtTokenData extends AccessTokenData, jwt.JwtPayload {
