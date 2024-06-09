@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { PublicCookieName, UserGroup } from "common/enums";
-import { UnsafeUserCookie, User } from "common/interfaces";
-import { hasGroupAccess, isNullOrWhitespace } from "common/utils";
-import dayjs from 'dayjs';
-import React, { useContext, useState } from "react";
+import { UserGroup } from "common/enums";
+import { User } from "common/interfaces";
+import { hasGroupAccess } from "common/utils";
+import React, { useContext, useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useLocalStorage } from 'src/hooks/useStorage';
 
 type LoggedOutContextType = { 
     user: undefined,
@@ -64,36 +64,6 @@ async function signOutAllDevices(): Promise<void> {
     }
 }
 
-// Gets the user from the previous session if it exists.
-// Nb: Never trust the user object from this cookie, it can be tampered with.
-function getPreviousUser(): User | undefined {
-    const cookieValue = document.cookie
-        .split(";")
-        .find((item) => item.trim().startsWith(`${PublicCookieName.UnsafeUserInfo}=`))
-        ?.split("=")[1]
-    
-    if(!cookieValue || isNullOrWhitespace(cookieValue))
-        return undefined
-
-    let user: UnsafeUserCookie
-    try {
-        user = JSON.parse(cookieValue)
-    } catch {
-        return undefined
-    }
-
-    const expiryTime = dayjs.utc(user.expires)
-
-    if(!expiryTime.isValid())
-        return undefined
-
-    const currentTime = dayjs()
-    if(currentTime.isAfter(expiryTime))
-        return undefined
-
-    return user
-}
-
 async function fetchCurrentUser(): Promise<User | null> {
     const res = await fetch("/api/auth/current-user")
     if(!res.ok)
@@ -105,20 +75,27 @@ async function fetchCurrentUser(): Promise<User | null> {
     return await res.json()
 }
 
-export const userQueryKey = ["GetCurrentUser"]
+export const userQueryKey = ["user", "current"]
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
-    const [ previousUser ] = useState<User | undefined>(getPreviousUser())
-
-    const { isPending, data } = useQuery<User | null>({
-        queryKey: userQueryKey,
-        queryFn: fetchCurrentUser
+    const [previousUser, setPreviousUser ] = useLocalStorage<User | null>({
+        key: userQueryKey,
+        initialValue: null,
     })
 
-    const user = isPending 
-        ? previousUser 
-        : data ?? undefined
+    const { isPending, data: user, dataUpdatedAt, isPlaceholderData } = useQuery<User | null>({
+        queryKey: userQueryKey,
+        queryFn: fetchCurrentUser,
+        placeholderData: previousUser,
+    })
+
+    useEffect(() => { 
+        if(!isPlaceholderData) {
+            setPreviousUser(user ?? null)
+        } 
+    }, [dataUpdatedAt, user, isPlaceholderData])
+
     let contextValue: AuthContextType
     if(user) {
         contextValue = {
