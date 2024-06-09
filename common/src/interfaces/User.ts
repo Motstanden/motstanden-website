@@ -34,9 +34,3 @@ export interface User extends NewUser {
     createdAt: string;              // Format: 'YYYY-MM-DD HH-MM-SS'
     updatedAt: string;              // Format: 'YYYY-MM-DD HH-MM-SS'
 }
-
-// The structure of the user data that is stored in a 'unsafe' cookie.
-// By unsafe, I mean that the data in the cookie can be modified by the client.
-export interface UnsafeUserCookie extends User {
-    expires: Date;                // Format: Seconds since epoch
-}
