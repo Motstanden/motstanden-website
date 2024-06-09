@@ -117,7 +117,6 @@ export const wallPostService = {
     get: get,
     getAll: getAll,
     insertNew: insertNew,
-    getTotalCount: getTotalCount,
     getUnreadCount: getUnreadCount,
     resetUnreadCount: resetUnreadCount,
     incrementUnreadCount: incrementUnreadCount

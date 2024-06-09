@@ -105,22 +105,4 @@ router.post("/wall-posts/unread/count/reset",
     }
 )
 
-router.post("/wall-posts/unread/count/increment", 
-    AuthenticateUser(),
-    (req, res) => {
-        const user = req.user as AccessTokenData
-        
-        const unreadCount = wallPostService.getUnreadCount(user.userId)
-        if(unreadCount === undefined) {
-            wallPostService.resetUnreadCount(user.userId)
-        }
-        else if (unreadCount > 0) {
-            wallPostService.incrementUnreadCount(user.userId)
-        }
-
-        res.end()
-    }
-)
-
-
 export default router
