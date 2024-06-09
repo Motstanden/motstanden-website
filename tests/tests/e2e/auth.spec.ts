@@ -132,6 +132,7 @@ async function waitForCookie(page: Page, cookieName: CookieName) {
 }
 
 // **** This function is prone to a race condition. Use it carefully!! ****
+// Date: 2024-06-10
 //
 // The following race condition costed me so many hours of debugging.
 // Here is the scenario:
@@ -142,15 +143,18 @@ async function waitForCookie(page: Page, cookieName: CookieName) {
 //      5. The server receives the request in step 3 and responds by deleting all cookies.
 //      6. Now the browser has zero cookies :-( 
 //
+// Update: 2024-06-10 
+// The function has now been updated.
+//
+// It now uses clearCookies with a filter option that was just introduced in Playwright 1.43
+// https://playwright.dev/docs/release-notes#version-143
+//
+// The aforementioned race condition is now possibly fixed. 
+// But I am not sure. 
+//
 async function expireCookie(page: Page, cookieName: CookieName) {
     const context = page.context()
-    
-    const oldCookies = await context.cookies()
-    const newCookies = oldCookies.filter( c => c.name !== cookieName)
-    
-    // These lines may cause a race condition.
-    await context.clearCookies()
-    await context.addCookies(newCookies)
+    await context.clearCookies( { name: cookieName } )
 }
 
 enum CookieName {
