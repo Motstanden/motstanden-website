@@ -1,15 +1,19 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
 import { devices } from '@playwright/test';
-
+import dotenv from 'dotenv';
 import { createRequire } from 'module';
+import path from 'path';
+import { getDirname } from './utils/getDirname.js';
+
 const require = createRequire(import.meta.url);
 
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-import dotenv from "dotenv";
-dotenv.config();
+const __dirname = getDirname(import.meta.url);
+dotenv.config({ path: path.join(__dirname, '.env') });
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -49,7 +53,7 @@ const config: PlaywrightTestConfig = {
     },
 
     /* Run a global setup script that applies to all tests */
-    globalSetup: require.resolve("./global-setup"),
+    globalSetup: require.resolve(path.join(__dirname, 'global-setup')),
 
     /* Configure projects for major browsers */
     projects: [

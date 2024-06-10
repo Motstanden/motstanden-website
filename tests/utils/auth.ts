@@ -1,6 +1,8 @@
 import { APIRequestContext, Browser, Page, TestInfo } from "@playwright/test";
 import { UserGroup, UserRank, UserStatus } from "common/enums";
 import { User } from "common/interfaces";
+import path from "path";
+import { getDirname } from "./getDirname.js";
 
 export interface TestUser extends Omit<User, "groupId" | "createdAt" | "updatedAt"> { 
     storageStatePath: string
@@ -65,6 +67,9 @@ export function getUser(workerInfo: TestInfo, group: UserGroup): TestUser {
     return unsafeGetUser(group, workerInfo.parallelIndex);
 }
 
+const __dirname = getDirname(import.meta.url)
+const storageStateDir = path.join(__dirname, "..", "storage-state")
+
 export function unsafeGetUser(group: UserGroup, variantIndex: number): TestUser {
 
     if(variantIndex < 0 || variantIndex >= testUserVariationsCount) 
@@ -76,8 +81,8 @@ export function unsafeGetUser(group: UserGroup, variantIndex: number): TestUser 
     // If you change this, make sure to also update the test user data in the database
     switch (group) {
         case UserGroup.Contributor: 
-            return  {
-                storageStatePath: `storage-state/contributor-${variantId}.json`,
+            return {
+                storageStatePath: path.join(storageStateDir, `contributor-${variantId}.json`),
 
                 id: contributorStartId + variantId,
                 email: `test-contributor-${variantId}@motstanden.no`,
@@ -96,7 +101,7 @@ export function unsafeGetUser(group: UserGroup, variantIndex: number): TestUser 
             }
         case UserGroup.Editor: 
             return {
-                storageStatePath: `storage-state/editor-${variantId}.json`,
+                storageStatePath: path.join(storageStateDir, `editor-${variantId}.json`),
 
                 id: editorStartId + variantId,
                 email: `test-editor-${variantId}@motstanden.no`,
@@ -115,7 +120,7 @@ export function unsafeGetUser(group: UserGroup, variantIndex: number): TestUser 
             }
         case UserGroup.Administrator: 
             return {
-                storageStatePath: `storage-state/admin-${variantId}.json`,
+                storageStatePath: path.join(storageStateDir, `admin-${variantId}.json`),
 
                 id: adminStartId + variantId,
                 email: `test-admin-${variantId}@motstanden.no`,
@@ -134,7 +139,7 @@ export function unsafeGetUser(group: UserGroup, variantIndex: number): TestUser 
             }
         case UserGroup.SuperAdministrator: 
             return {
-                storageStatePath: `storage-state/superAdmin-${variantId}.json`,
+                storageStatePath: path.join(storageStateDir, `superAdmin-${variantId}.json`),
 
                 id: superAdminStartId + variantId,
                 email: `test-superadmin-${variantId}@motstanden.no`,

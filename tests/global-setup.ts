@@ -1,6 +1,8 @@
 import { FullConfig, firefox, request } from "@playwright/test";
 import { UserGroup } from "common/enums";
+import path from "path";
 import { testUserVariationsCount, unsafeApiLogIn, unsafeGetUser } from "./utils/auth.js";
+import { getDirname } from "./utils/getDirname.js";
 
 
 export default async function globalSetup(config: FullConfig) {
@@ -32,7 +34,8 @@ async function loginUser(userGroup: UserGroup, variantIndex: number) {
     apiContext.dispose()
 }
 
-const baseStorageState = "storage-state/base.json"
+const __dirname = getDirname(import.meta.url)
+const baseStorageState = path.join(__dirname, "storage-state", "base.json" ) 
 
 async function setupBaseStorageState() {
     console.log("[Setup] Setting time zone to match system time zone...")
