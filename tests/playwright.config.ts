@@ -1,11 +1,8 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
 import { devices } from '@playwright/test';
 import dotenv from 'dotenv';
-import { createRequire } from 'module';
 import path from 'path';
 import { getDirname } from './utils/getDirname.js';
-
-const require = createRequire(import.meta.url);
 
 /**
  * Read environment variables from file.
@@ -52,16 +49,20 @@ const config: PlaywrightTestConfig = {
         trace: 'on-first-retry',
     },
 
-    /* Run a global setup script that applies to all tests */
-    globalSetup: require.resolve(path.join(__dirname, 'global-setup')),
-
     /* Configure projects for major browsers */
     projects: [
+        {
+            name: "global setup",
+            testMatch: /global\.setup\.ts/,
+            testDir: "."
+        },
+
         {
             name: 'firefox',
             use: {
                 ...devices['Desktop Firefox'],
             },
+            dependencies: ['global setup'],
         },
 
         {
@@ -69,6 +70,7 @@ const config: PlaywrightTestConfig = {
             use: {
                 ...devices['Desktop Chrome'],
             },
+            dependencies: ['global setup'],
         },
 
         {
@@ -76,6 +78,7 @@ const config: PlaywrightTestConfig = {
             use: {
                 ...devices['Desktop Safari'],
             },
+            dependencies: ['global setup'],
         },
 
         /* Test against mobile viewports. */
