@@ -252,30 +252,7 @@ export function PostSectionItem({
                 onDeleteClick={onDeleteClick}
                 onEditClick={onEditClick}
             />
-            <div 
-                style={{
-                    marginTop: "15px",
-                    marginLeft: "5px",
-                    whiteSpace: "pre-line",
-                    marginBottom: "15px"
-                }}
-            >
-                <LinkifiedText>
-                    {post.content}
-                </LinkifiedText>
-            </div>
-            <Stack direction="row" justifyContent="space-between">
-                <div>
-                    <LikeButton
-                        style={{
-                            padding: "0px",
-                            paddingInline: "6px",
-                            minWidth: "0px",
-                        }}
-                    />
-                </div>
-                <LikeList/>
-            </Stack>
+            <PostItemContent post={post} />
             <Divider sx={{mb: 3, mt: 1}} />
             <CommentSection
                 entityType={CommentEntityType.WallPost}
@@ -426,6 +403,37 @@ function HeaderMenu( {
                 <DeleteMenuItem onClick={onDeleteClick}/>
             )}
         </IconPopupMenu>
+    )
+}
+
+function PostItemContent({ post }: { post: WallPost }) {
+    return (
+        <>
+            <div 
+                style={{
+                    marginTop: "15px",
+                    marginLeft: "5px",
+                    whiteSpace: "pre-line",
+                    marginBottom: "15px"
+                }}
+            >
+                <LinkifiedText>
+                    {post.content}
+                </LinkifiedText>
+            </div>
+            <Stack direction="row" justifyContent="space-between">
+                <div>
+                    <LikeButton
+                        style={{
+                            padding: "0px",
+                            paddingInline: "6px",
+                            minWidth: "0px",
+                        }}
+                    />
+                </div>
+                <LikeList/>
+            </Stack>
+        </>
     )
 }
 
