@@ -3,7 +3,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import SendIcon from '@mui/icons-material/Send';
 import { LoadingButton } from "@mui/lab";
 import { Button, Divider, Paper, Skeleton, Stack, SxProps, TextField, Theme, useMediaQuery, useTheme } from "@mui/material";
-import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryKey, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CommentEntityType, LikeEntityType } from "common/enums";
 import { NewWallPost, WallPost } from "common/interfaces";
 import { isNullOrWhitespace } from 'common/utils';
@@ -110,7 +110,7 @@ function PostSectionFetcher({
     }
 
     return (
-        <PostSection posts={data}/>
+        <PostSection posts={data} queryKey={queryKey}/>
     )
 }
 
@@ -194,7 +194,7 @@ function PostSectionItemSkeleton( {
     )
 }
 
-function PostSection( {posts}: {posts: WallPost[]}) {
+function PostSection( {posts, queryKey}: {posts: WallPost[], queryKey: QueryKey}) {
     return (
         <>
             {posts.map((post) => (
@@ -205,6 +205,7 @@ function PostSection( {posts}: {posts: WallPost[]}) {
                 >
                     <PostSectionItem
                         post={post}
+                        queryKey={queryKey}
                         style={{
                             marginBottom: "20px"
                         }}
@@ -217,33 +218,68 @@ function PostSection( {posts}: {posts: WallPost[]}) {
 
 export function PostSectionItem({
     post,
+    queryKey,
     style
 }: {
     post: WallPost,
+    queryKey: QueryKey,
     style?: React.CSSProperties
 }) {
+    const queryClient = useQueryClient()
 
-    const theme = useTheme()
+    const editItem = useMutation({
+        mutationFn: async (newPost: WallPost) => { 
+            // todo
+        },
+        onError: () => {
+            // todo
+        },
+        onSuccess: async () => { 
+            return await queryClient.invalidateQueries({queryKey: queryKey})
+        },
+        retry: 3,
+    })
 
-    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+    const deleteItem = useMutation({
+        mutationFn: async () => { 
+            // todo
+        },
+        onError: () => {
+            // todo
+        },
+        onSuccess: async () => { 
+            return await queryClient.invalidateQueries({queryKey: queryKey})
+        },
+        retry: 3,
+    })
 
-    const onEditClick = () => { 
-        // TODO
+    const [isEditing, setIsEditing] = useState(false)
+
+    const onEditClick = () => {
+        setIsEditing(true)
+    }
+
+    const onPostEdit = (newPost: WallPost) => { 
+        editItem.mutate(newPost)
+        setIsEditing(false) 
     }
 
     const onDeleteClick = () => { 
-        // TODO
+        deleteItem.mutate()
     }
+
+    if(deleteItem.isPending)
+        return <></>
 
     return (
         <Paper 
             elevation={2}
-            style={{
+            sx={{
                 paddingBlock: "20px",
-                paddingInline: isSmallScreen ? "10px" : "20px",
+                paddingInline: {xs: "10px", sm: "20px"},
                 borderWidth: "1px",
                 borderStyle: "solid",
-                borderColor: theme.palette.divider,
+                borderColor: theme => theme.palette.divider,
                 ...style,
             }}
         >
@@ -252,7 +288,12 @@ export function PostSectionItem({
                 onDeleteClick={onDeleteClick}
                 onEditClick={onEditClick}
             />
-            <PostItemContent post={post} />
+            {!isEditing && ( 
+                <PostItemContent post={editItem.isPending ? editItem.variables : post}/>
+            )}
+            {isEditing && (
+                <></>  // todo
+            )}
             <Divider sx={{mb: 3, mt: 1}} />
             <CommentSection
                 entityType={CommentEntityType.WallPost}
