@@ -1,27 +1,30 @@
-import ArrowRightIcon from '@mui/icons-material/ArrowRight'
-import SendIcon from '@mui/icons-material/Send'
-import { LoadingButton } from "@mui/lab"
-import { Button, Divider, Paper, Skeleton, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material"
-import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query"
-import { CommentEntityType, LikeEntityType } from "common/enums"
-import { NewWallPost, WallPost } from "common/interfaces"
-import { isNullOrWhitespace } from 'common/utils'
-import dayjs from "dayjs"
-import { useState } from "react"
-import { useAuthenticatedUser } from "src/context/Authentication"
-import { useUserReference } from 'src/context/UserReference'
-import { useQuerySuccess } from 'src/hooks/useQuerySuccess'
-import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage'
-import { fetchFn } from "src/utils/fetchAsync"
-import { postJson } from 'src/utils/postJson'
-import { CommentSection, CommentSectionSkeleton } from "../CommentSection"
-import { LinkifiedText } from '../LinkifiedText'
-import { LikeButton, LikeButtonSkeleton } from '../likes/LikeButton'
-import { LikeListEmojiContent } from '../likes/LikeListButton'
-import { LikesContextProvider, useLikes } from '../likes/LikesContext'
-import { UserLikesModal, useLikesModal } from '../likes/UserLikesModal'
-import { UserAvatar } from '../user/UserAvatar'
-import { UserFullName } from '../user/UserFullName'
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import SendIcon from '@mui/icons-material/Send';
+import { LoadingButton } from "@mui/lab";
+import { Button, Divider, Paper, Skeleton, Stack, SxProps, TextField, Theme, useMediaQuery, useTheme } from "@mui/material";
+import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CommentEntityType, LikeEntityType } from "common/enums";
+import { NewWallPost, WallPost } from "common/interfaces";
+import { isNullOrWhitespace } from 'common/utils';
+import dayjs from "dayjs";
+import { useState } from "react";
+import { useAuthenticatedUser } from "src/context/Authentication";
+import { useUserReference } from 'src/context/UserReference';
+import { useQuerySuccess } from 'src/hooks/useQuerySuccess';
+import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage';
+import { fetchFn } from "src/utils/fetchAsync";
+import { postJson } from 'src/utils/postJson';
+import { CommentSection, CommentSectionSkeleton } from "../CommentSection";
+import { LinkifiedText } from '../LinkifiedText';
+import { LikeButton, LikeButtonSkeleton } from '../likes/LikeButton';
+import { LikeListEmojiContent } from '../likes/LikeListButton';
+import { LikesContextProvider, useLikes } from '../likes/LikesContext';
+import { UserLikesModal, useLikesModal } from '../likes/UserLikesModal';
+import { CopyLinkMenuItem } from '../menu/CopyLinkMenuItem';
+import { IconPopupMenu } from '../menu/IconPopupMenu';
+import { UserAvatar } from '../user/UserAvatar';
+import { UserFullName } from '../user/UserFullName';
 
 export function PostingWall({
     userId,
@@ -222,20 +225,6 @@ export function PostSectionItem({
 
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
-    const formatDate = (dateString: string): string => {
-        const date = dayjs.utc(dateString)
-        const now = dayjs()
-        if(date.isAfter(now.subtract(4, "day"))) {
-            return date.fromNow()
-        }
-
-        if(date.isSame(now, "year")) {
-            return date.format("D MMMM")
-        }
-
-        return date.format("D MMMM, YYYY")
-    }
-
     return (
         <Paper 
             elevation={2}
@@ -248,52 +237,7 @@ export function PostSectionItem({
                 ...style,
             }}
         >
-            <Stack 
-                direction="row"
-                spacing={1.5}
-                alignItems="center"
-            >
-                <UserAvatar
-                    userId={post.createdBy}
-                    style={{
-                        
-                    }}
-                />
-                <div>
-                    <div>
-                        <UserFullName 
-                            userId={post.createdBy} 
-                            style={{
-                                marginRight: "3px"
-                            }}
-                        />
-                        {post.createdBy !== post.wallUserId && (
-                            <>
-                                <ArrowRightIcon 
-                                    style={{
-                                        fontSize: "16pt",
-                                        opacity: 0.5,
-                                        marginBottom: "-5px",
-                                        marginRight: "3px"
-                                    }}
-                                />
-                                <UserFullName 
-                                    userId={post.wallUserId}
-                                    style={{marginTop: "-10px"
-
-                                    }}
-                                />
-                            </>   
-                        )}
-                    </div>
-                    <div style={{
-                        fontSize: "small",
-                        opacity: 0.6,
-                    }}>
-                        {formatDate(post.createdAt)}
-                    </div>
-                </div>
-            </Stack>
+            <PostItemHeader post={post}/>
             <div 
                 style={{
                     marginTop: "15px",
@@ -325,6 +269,121 @@ export function PostSectionItem({
                 variant="compact"
             />
         </Paper>
+    )
+}
+
+function PostItemHeader({post}: {post: WallPost}) {
+    return (
+        <Stack 
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"                
+            >
+            <HeaderText
+                createdBy={post.createdBy}
+                wallId={post.wallUserId}
+                createdAt={post.createdAt}
+            />
+            <HeaderMenu 
+                postId={post.id}
+                sx={{
+                    marginRight: "-5px"
+                }}    
+            />
+        </Stack>
+    )
+}
+
+function HeaderText( {
+    createdBy,
+    wallId,
+    createdAt,
+}: {
+    createdBy: number,
+    wallId: number,
+    createdAt: string
+}) {
+
+    const formatDate = (dateString: string): string => {
+        const date = dayjs.utc(dateString)
+        const now = dayjs()
+        if(date.isAfter(now.subtract(4, "day"))) {
+            return date.fromNow()
+        }
+
+        if(date.isSame(now, "year")) {
+            return date.format("D MMMM")
+        }
+
+        return date.format("D MMMM, YYYY")
+    }
+
+    return (
+        <Stack 
+            direction="row"
+            spacing={1.5}
+            alignItems="center"
+        >
+            <UserAvatar
+                userId={createdBy}
+                style={{
+                    
+                }}
+            />
+            <div>
+                <div>
+                    <UserFullName 
+                        userId={createdBy} 
+                        style={{
+                            marginRight: "3px"
+                        }}
+                    />
+                    {createdBy !== wallId && (
+                        <>
+                            <ArrowRightIcon 
+                                style={{
+                                    fontSize: "16pt",
+                                    opacity: 0.5,
+                                    marginBottom: "-5px",
+                                    marginRight: "3px"
+                                }}
+                            />
+                            <UserFullName 
+                                userId={wallId}
+                                style={{
+                                    marginTop: "-10px"
+                                }}
+                            />
+                        </>   
+                    )}
+                </div>
+                <div style={{
+                    fontSize: "small",
+                    opacity: 0.6,
+                }}>
+                    {formatDate(createdAt)}
+                </div>
+            </div>
+        </Stack>
+    )
+}
+
+function HeaderMenu( {
+    postId, 
+    sx
+}: {
+    postId: number, 
+    sx: SxProps
+}) {
+    return (
+        <IconPopupMenu
+            icon={<MoreHorizIcon/>}
+            sx={{
+                ...sx
+            }}
+        >
+            <CopyLinkMenuItem linkValue={`${window.location.origin}/vegg/${postId}`} />
+        </IconPopupMenu>
     )
 }
 
