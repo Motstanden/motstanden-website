@@ -17,6 +17,7 @@ import { fetchFn } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
 import { CommentSection, CommentSectionSkeleton } from "../CommentSection";
 import { LinkifiedText } from '../LinkifiedText';
+import SubmitFormButtons from '../form/SubmitButtons';
 import { LikeButton, LikeButtonSkeleton } from '../likes/LikeButton';
 import { LikeListEmojiContent } from '../likes/LikeListButton';
 import { LikesContextProvider, useLikes } from '../likes/LikesContext';
@@ -229,7 +230,8 @@ export function PostSectionItem({
 
     const editItem = useMutation({
         mutationFn: async (newPost: WallPost) => { 
-            // todo
+            // Simulate long post
+            await new Promise(resolve => setTimeout(resolve, 3000))
         },
         onError: () => {
             // todo
@@ -242,7 +244,8 @@ export function PostSectionItem({
 
     const deleteItem = useMutation({
         mutationFn: async () => { 
-            // todo
+            // Simulate long post
+            await new Promise(resolve => setTimeout(resolve, 3000))
         },
         onError: () => {
             // todo
@@ -262,6 +265,10 @@ export function PostSectionItem({
     const onPostEdit = (newPost: WallPost) => { 
         editItem.mutate(newPost)
         setIsEditing(false) 
+    }
+
+    const onAbortEditClick = () => { 
+        setIsEditing(false)
     }
 
     const onDeleteClick = () => { 
@@ -292,7 +299,11 @@ export function PostSectionItem({
                 <PostItemContent post={editItem.isPending ? editItem.variables : post}/>
             )}
             {isEditing && (
-                <></>  // todo
+                <EditPostForm 
+                    initialValue={post}
+                    onAbortClick={onAbortEditClick}
+                    onSubmit={onPostEdit}
+                />
             )}
             <Divider sx={{mb: 3, mt: 1}} />
             <CommentSection
@@ -717,5 +728,69 @@ function PostForm({
                 </Stack>
             </form>
         </Paper>
+    )
+}
+
+function EditPostForm( {
+    initialValue,
+    onAbortClick,
+    onSubmit,
+}: {
+    initialValue: WallPost,
+    onAbortClick?: VoidFunction,
+    onSubmit?: (editedPost: WallPost) => void
+}) {
+    const { user } = useAuthenticatedUser()
+
+    const [value, setValue, clearValue] = useSessionStorage<WallPost>({
+        initialValue: initialValue,
+        key: ["wall-post", "edit", `${initialValue.id}`, `${user.id}`]
+     })
+
+    const handleSubmit = async (e: React.FormEvent) => { 
+        e.preventDefault()
+        const newValue: WallPost = {
+            ...value,
+            content: value.content.trim()
+        }
+        onSubmit?.(newValue)
+        clearValue()
+    }
+
+    const handleAbortClick = () => { 
+        clearValue()
+        onAbortClick?.()
+    }
+
+    const disabled = isNullOrWhitespace(value.content) || value.content.trim() === initialValue.content.trim()
+
+    return (
+        <form 
+            onSubmit={handleSubmit}
+            style={{
+                marginTop: "25px",
+                marginBottom: "25px"
+            }}
+        >
+            <TextField 
+                type="text"
+                label="Rediger post..."
+                required
+                fullWidth
+                multiline
+                autoComplete="off"
+                minRows={1}
+                value={value.content}
+                onChange={(e) => setValue(oldVal => ({...oldVal, content: e.target.value}))}
+                sx={{
+                    mb: 3
+                }}
+            />
+            <SubmitFormButtons 
+                loading={false}
+                onAbort={handleAbortClick}
+                disabled={disabled}
+            />
+        </form>
     )
 }
