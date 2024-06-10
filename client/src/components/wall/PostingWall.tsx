@@ -22,6 +22,8 @@ import { LikeListEmojiContent } from '../likes/LikeListButton';
 import { LikesContextProvider, useLikes } from '../likes/LikesContext';
 import { UserLikesModal, useLikesModal } from '../likes/UserLikesModal';
 import { CopyLinkMenuItem } from '../menu/CopyLinkMenuItem';
+import { DeleteMenuItem } from '../menu/DeleteMenuItem';
+import { EditMenuItem } from '../menu/EditMenuItem';
 import { IconPopupMenu } from '../menu/IconPopupMenu';
 import { UserAvatar } from '../user/UserAvatar';
 import { UserFullName } from '../user/UserFullName';
@@ -225,6 +227,14 @@ export function PostSectionItem({
 
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
+    const onEditClick = () => { 
+        // TODO
+    }
+
+    const onDeleteClick = () => { 
+        // TODO
+    }
+
     return (
         <Paper 
             elevation={2}
@@ -237,7 +247,11 @@ export function PostSectionItem({
                 ...style,
             }}
         >
-            <PostItemHeader post={post}/>
+            <PostItemHeader 
+                post={post}
+                onDeleteClick={onDeleteClick}
+                onEditClick={onEditClick}
+            />
             <div 
                 style={{
                     marginTop: "15px",
@@ -272,7 +286,15 @@ export function PostSectionItem({
     )
 }
 
-function PostItemHeader({post}: {post: WallPost}) {
+function PostItemHeader({
+    post,
+    onEditClick,
+    onDeleteClick
+}: {
+    post: WallPost,
+    onEditClick?: VoidFunction,
+    onDeleteClick?: VoidFunction
+}) {
     return (
         <Stack 
             direction="row"
@@ -285,7 +307,9 @@ function PostItemHeader({post}: {post: WallPost}) {
                 createdAt={post.createdAt}
             />
             <HeaderMenu 
-                postId={post.id}
+                post={post}
+                onEditClick={onEditClick}
+                onDeleteClick={onDeleteClick}
                 sx={{
                     marginRight: "-5px"
                 }}    
@@ -369,20 +393,38 @@ function HeaderText( {
 }
 
 function HeaderMenu( {
-    postId, 
-    sx
+    post, 
+    sx,
+    onEditClick,
+    onDeleteClick
 }: {
-    postId: number, 
-    sx: SxProps
+    post: WallPost, 
+    sx: SxProps,
+    onEditClick?: VoidFunction
+    onDeleteClick?: VoidFunction
 }) {
+
+    const { isAdmin, user } = useAuthenticatedUser()
+    const canEdit = user.id === post.createdBy
+    const canDelete = canEdit || isAdmin || user.id === post.wallUserId  
+
     return (
         <IconPopupMenu
-            icon={<MoreHorizIcon/>}
+            icon={<MoreHorizIcon />}
             sx={{
-                ...sx
+                p: {xs: 0.65, sm: 1},
+                ...sx,
             }}
         >
-            <CopyLinkMenuItem linkValue={`${window.location.origin}/vegg/${postId}`} />
+            <CopyLinkMenuItem linkValue={`${window.location.origin}/vegg/${post.id}`} 
+                divider={canEdit || canDelete}
+            />
+            {canEdit && ( 
+                <EditMenuItem divider={canDelete} onClick={onEditClick}/>
+            )}
+            {canDelete && (
+                <DeleteMenuItem onClick={onDeleteClick}/>
+            )}
         </IconPopupMenu>
     )
 }
