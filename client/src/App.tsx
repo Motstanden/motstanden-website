@@ -69,6 +69,17 @@ function App() {
 					<Route element={<Outlet/>}>
 						<Route path="/framside" element={<FrontPage />} />
 						<Route path="/logg-inn" element={<LoginPage />} />
+						<Route path="/dokumenter" element={<DocumentsPage />} />
+						<Route path="/bli-medlem" element={<BecomeMemberPage />} />
+						<Route path="/historie" element={<HistoryPage/>} />
+						<Route path="/faq" element={<FaqPage/>} />
+						<Route path="/styrets-nettsider" element={<BoardWebsiteListPage/>} />
+						<Route path="/lisens" element={<LicensePage />} />
+						<Route path="/maakesodd" element={<LicenseOnlyPage />} />
+					</Route>
+
+					{/* Routes with both public and private urls */}
+					<Route element={<Outlet/>}>
 						<Route path="/studenttraller" element={<LyricContext/>}>
 							<Route path="" element={<Navigate to="populaere" replace />} />
 							<Route path="populaere" element={<LyricListPage filterPopular/>}/>
@@ -87,13 +98,6 @@ function App() {
 								<Route path="rediger" element={<RequireAuth><EditLyricPage/></RequireAuth>} />
 							</Route>
 						</Route>
-						<Route path="/dokumenter" element={<DocumentsPage />} />
-						<Route path="/bli-medlem" element={<BecomeMemberPage />} />
-						<Route path="/historie" element={<HistoryPage/>} />
-						<Route path="/faq" element={<FaqPage/>} />
-						<Route path="/styrets-nettsider" element={<BoardWebsiteListPage/>} />
-						<Route path="/lisens" element={<LicensePage />} />
-						<Route path="/maakesodd" element={<LicenseOnlyPage />} />
 					</Route>
 
 					{!isLoggedIn && (
