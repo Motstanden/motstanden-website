@@ -28,6 +28,7 @@ import { EditMenuItem } from '../menu/EditMenuItem';
 import { IconPopupMenu } from '../menu/IconPopupMenu';
 import { UserAvatar } from '../user/UserAvatar';
 import { UserFullName } from '../user/UserFullName';
+import { deleteRequest } from 'src/utils/deleteRequest';
 
 export function PostingWall({
     userId,
@@ -244,11 +245,11 @@ export function PostSectionItem({
 
     const deleteItem = useMutation({
         mutationFn: async () => { 
-            // Simulate long post
-            await new Promise(resolve => setTimeout(resolve, 3000))
-        },
-        onError: () => {
-            // todo
+            return await deleteRequest(`/api/wall-posts/${post.id}`, {
+                alertOnFailure: true,
+                confirmText: "Vil du permanent slette denne posten?",
+                failureText: "Fikk ikke til å slette posten.\nSi ifra til webansvarlig!"
+            })
         },
         onSuccess: async () => { 
             return await queryClient.invalidateQueries({queryKey: queryKey})
