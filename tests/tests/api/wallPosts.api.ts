@@ -2,6 +2,7 @@ import { APIRequestContext, expect, request, test } from '@playwright/test'
 import { UserGroup } from 'common/enums'
 import { Count, NewWallPost, WallPost } from 'common/interfaces'
 import { testUserVariationsCount, unsafeGetUser } from '../../utils/auth.js'
+import { randomString } from '../../utils/randomString.js'
 
 test.describe.serial("api/wall-posts/unread", () => {
     const user1 = unsafeGetUser(UserGroup.Contributor, testUserVariationsCount - 1)
@@ -10,7 +11,7 @@ test.describe.serial("api/wall-posts/unread", () => {
     let api1: APIRequestContext
     let api2: APIRequestContext
 
-    let postId: number | undefined
+    let post: WallPost | undefined
 
     test.beforeEach( async () => {
         api1 = await request.newContext( { storageState: user1.storageStatePath } )
@@ -34,11 +35,11 @@ test.describe.serial("api/wall-posts/unread", () => {
     })
         
     test("New post increases count", async ({ }) => { 
-        const post: NewWallPost = { 
+        const newPost: NewWallPost = { 
             wallUserId: user1.id,
-            content: "Test post"
+            content: randomString("[API tests] Wall post")
         }            
-        await createPost(api1, post)
+        await createPost(api1, newPost)
 
         const count1 = await getUnreadCount(api1)
         const count2 = await getUnreadCount(api2)
@@ -46,7 +47,19 @@ test.describe.serial("api/wall-posts/unread", () => {
         expect(count1).toBe(0)
         expect(count2).toBe(1)
 
-        postId = await getPostId(api1, post)
+        post = await getMatchingPost(api1, newPost)
+    })
+
+    test("Deleting post decreases count", async ({ }) => { 
+        await deletePost(api1, post.id)
+
+        const deletedPost = await getMatchingPost(api1, post)
+        const count1 = await getUnreadCount(api1)
+        const count2 = await getUnreadCount(api2)
+        
+        expect(deletedPost).toBeUndefined()
+        expect(count1).toBe(0)
+        expect(count2).toBe(0)
     })
 })
 
@@ -68,16 +81,22 @@ async function createPost(request: APIRequestContext, post: NewWallPost) {
         throw new Error("Failed to create post")
 }
 
-async function getPostId(request: APIRequestContext, post: NewWallPost) {
+async function deletePost(request: APIRequestContext, postId: number) {
+    const res = await request.delete(`/api/wall-posts/${postId}`)
+    if(!res.ok()) 
+        throw new Error("Failed to delete post")
+}
+
+async function getAllPosts(request: APIRequestContext) { 
     const res = await request.get("/api/wall-posts/all")
     if(!res.ok()) 
         throw new Error("Failed to get all posts")
+    const data = await res.json() as WallPost[]
+    return data
+}
 
-    const data = <WallPost[]>await res.json()
-    const matchingPost = data.find(p => p.content === post.content)
-    if (!matchingPost) {
-        throw new Error("Post not found")
-    }
-
-    return matchingPost.id
+async function getMatchingPost(request: APIRequestContext, post: NewWallPost): Promise<WallPost | undefined>{
+    const allPosts = await getAllPosts(request)
+    const matchingPost = allPosts.find(p => p.content === post.content)
+    return matchingPost
 }
