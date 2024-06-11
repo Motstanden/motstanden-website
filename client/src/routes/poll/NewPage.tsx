@@ -45,7 +45,7 @@ export default function NewPollPage() {
 }
 
 
-// This may seem overly convoluted, ant that take would be correct!! :O
+// This may seem overly convoluted, and that take would be correct!! :O
 // I wrote it this way because I am trying to predict the future.
 // In the future we may want to reuse this form for editing preexisting polls as well.
 // This pattern is similar to what you will find in ../quotes and ../rumours
@@ -120,6 +120,7 @@ function UpsertPollForm({
                         type="text"
                         required
                         fullWidth
+                        multiline
                         autoComplete="off"
                         value={newValue.title}
                         onChange={(e) => setNewValue({ ...newValue, title: e.target.value })}
@@ -156,6 +157,7 @@ function UpsertPollForm({
                                 type="text"
                                 required
                                 fullWidth
+                                multiline
                                 autoComplete="off"
                                 value={option.text}
                                 onChange={(e) => {
