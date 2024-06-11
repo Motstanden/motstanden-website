@@ -25,7 +25,7 @@ router.get("/wall-posts/:id",
         getValue: req => req.params.id,
     }),
     (req, res) => {
-        const postId = strToNumber(req.params.postId) as number         // Validated by middleware
+        const postId = strToNumber(req.params.id) as number         // Validated by middleware
         try {
             const post = wallPostService.get(postId)
             if (!post) {
@@ -71,7 +71,7 @@ router.delete("/wall-posts/:id",
         getAuthorInfo: (id) => wallPostService.get(id)
     }),
     (req, res) => {
-        const postId = strToNumber(req.params.postId) as number     // is validated by middleware
+        const postId = strToNumber(req.params.id) as number     // is validated by middleware
         try {
             wallPostService.delete(postId)
             wallPostService.decrementAllUnreadCount()
@@ -80,7 +80,6 @@ router.delete("/wall-posts/:id",
         }
         res.end()
     }
-    
 )
 
 function tryCreateValidPost(obj: unknown): NewWallPost | undefined {
