@@ -57,11 +57,11 @@ test.describe( "User can log out", () => {
     
     test("Log out in current browser", async ({ page }, workerInfo) => {        
         await logIntoReservedUser(page, workerInfo)
-        await page.goto("/hjem")
+        await page.goto("/sitater")
 
         await page.getByRole('button', { name: 'Profilmeny' }).click();
         await page.getByRole('menuitem', { name: 'Logg ut', exact: true }).click()
-        await page.waitForURL("/")
+        await page.waitForURL("/framside")
 
         await testUserIsLoggedOut(page)
     });
@@ -72,7 +72,7 @@ test.describe( "User can log out", () => {
             const context = await browser.newContext()
             const page = await context.newPage()
             await logIntoReservedUser(page, workerInfo)
-            await page.goto("/hjem")    
+            await page.goto("/sitater")    
             return page
         }
 
@@ -90,7 +90,7 @@ test.describe( "User can log out", () => {
             page2.once('dialog', dialog => dialog.accept());
             await page2.getByRole('button', { name: 'Profilmeny' }).click();
             await page2.getByRole('menuitem', { name: 'Logg ut alle enheter' }).click()
-            await page2.waitForURL("/")
+            await page2.waitForURL("/framside")
 
             await testUserIsLoggedOut(page2)
 
@@ -98,21 +98,21 @@ test.describe( "User can log out", () => {
         })
 
         await test.step("Test that the user is logged out of other browser", async () => {
-
             // The user should be logged out when the AccessToken expires.
             await expireCookie(page1, CookieName.AccessToken)
+
+            page1.reload()
+            await page1.waitForURL("/logg-inn")
 
             await testUserIsLoggedOut(page1)
 
             await disposePage(page1)
-        })  
+        })
+        
     })
 });
 
 async function testUserIsLoggedOut(page: Page) {
-    await page.goto('/hjem');
-    await page.waitForURL("/logg-inn")
-    await expect(page).toHaveURL('/logg-inn');
     await expect(page.getByRole('link', { name: 'Logg inn' })).toBeVisible()
     const cookies = await page.context().cookies()
     expect(cookies.length).toBe(0)

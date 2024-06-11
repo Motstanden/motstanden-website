@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { UserGroup } from "common/enums";
 import { User } from "common/interfaces";
 import { hasGroupAccess } from "common/utils";
 import React, { useContext, useEffect, useState } from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useLocalStorage } from 'src/hooks/useStorage';
 
 type LoggedOutContextType = { 
@@ -50,17 +50,21 @@ export function useAuthenticatedUser(): LoggedInContextType {
     return useContext(authenticatedUserContext)
 }
 
-async function signOutCurrentUser(): Promise<void> {
-    const response = await fetch("/api/auth/logout", { method: "POST" })
-    if(response.ok) {
-        window.location.href = `${window.location.origin}` // Do a full page refresh
+function signOutCurrentUser( {onSuccess}: { onSuccess?: () => void | Promise<void> } ) { 
+    return async () => { 
+        const response = await fetch("/api/auth/logout", { method: "POST" })
+        if(response.ok) {
+            await onSuccess?.()
+        }
     }
 }
 
-async function signOutAllDevices(): Promise<void> {
-    const response = await fetch("/api/auth/logout/all-devices", { method: "POST" })
-    if(response.ok) {
-        window.location.href = `${window.location.origin}` // Do a full page refresh
+function signOutAllDevices( {onSuccess}: { onSuccess?: () => void | Promise<void> } ) { 
+    return async () => { 
+        const response = await fetch("/api/auth/logout/all-devices", { method: "POST" })
+        if(response.ok) {
+            await onSuccess?.()
+        }
     }
 }
 
@@ -98,6 +102,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } 
     }, [dataUpdatedAt, user, isPlaceholderData])
 
+    const queryClient = useQueryClient()
+    const navigate = useNavigate()
+    const onSignOutSuccess = async () => { 
+        navigate("/framside")
+        setPreviousUser(null)
+        await queryClient.invalidateQueries({ queryKey: userQueryKey })
+    }
+
     let contextValue: AuthContextType
     if(user) {
         contextValue = {
@@ -107,8 +119,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             isEditor: hasGroupAccess(user, UserGroup.Editor),
             isAdmin: hasGroupAccess(user, UserGroup.Administrator),
             isSuperAdmin: hasGroupAccess(user, UserGroup.SuperAdministrator),
-            signOut: signOutCurrentUser,
-            signOutAllDevices: signOutAllDevices
+            signOut: signOutCurrentUser({ 
+                onSuccess: onSignOutSuccess 
+            }),
+            signOutAllDevices: signOutAllDevices({ 
+                onSuccess: onSignOutSuccess 
+            })
         } as const
     } else {
         contextValue = {
@@ -155,6 +171,7 @@ export function RequireAuth({ requiredGroup, children }: { children: React.React
     const [ initialLocation ] = useState(useLocation())
 
     if(!isLoggedIn) {
+        console.log("Navigating to /logg-inn")
         return <Navigate to="/logg-inn" state={{ from: initialLocation }} replace />;
     }
 
