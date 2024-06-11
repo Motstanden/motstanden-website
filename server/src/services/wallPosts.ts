@@ -1,4 +1,4 @@
-import Database from "better-sqlite3";
+import Database, { Database as DatabaseType } from "better-sqlite3";
 import { Count, NewWallPost, WallPost } from "common/interfaces";
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
 
@@ -56,6 +56,11 @@ function insertNew(post: NewWallPost, userId: number) {
 
 function deletePost(postId: number) { 
     const db = new Database(motstandenDB, dbReadWriteConfig)
+    executeDeletePost(postId, db)
+    db.close()
+}
+
+function executeDeletePost(postId:number, db: DatabaseType) {
     const stmt = db.prepare(`
         DELETE FROM 
             wall_post
@@ -63,6 +68,14 @@ function deletePost(postId: number) {
             wall_post_id = ?
     `)
     stmt.run(postId)
+}
+
+function deletePostTransaction(postId: number) { 
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    db.transaction(() => {
+        executeDeletePost(postId, db)
+        executeDecrementAllUnreadCount(db)
+    })()
     db.close()
 }
 
@@ -127,6 +140,11 @@ function incrementUnreadCount(userId: number) {
 
 function decrementAllUnreadCount() {
     const db = new Database(motstandenDB, dbReadWriteConfig)
+    executeDecrementAllUnreadCount(db)
+    db.close()
+}
+
+function executeDecrementAllUnreadCount(db: DatabaseType) {
     const stmt = db.prepare(`
         UPDATE 
             read_wall_posts_count 
@@ -138,15 +156,13 @@ function decrementAllUnreadCount() {
         END
     `)
     stmt.run()
-    db.close()
 }
-
 
 export const wallPostService = { 
     get: get,
     getAll: getAll,
     insertNew: insertNew,
-    delete: deletePost,
+    delete: deletePostTransaction,
     getUnreadCount: getUnreadCount,
     resetUnreadCount: resetUnreadCount,
     incrementUnreadCount: incrementUnreadCount,

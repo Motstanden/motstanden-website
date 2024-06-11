@@ -74,7 +74,6 @@ router.delete("/wall-posts/:id",
         const postId = strToNumber(req.params.id) as number     // is validated by middleware
         try {
             wallPostService.delete(postId)
-            wallPostService.decrementAllUnreadCount()
         } catch (err) {
             res.status(500).send("Failed to delete post from the database")
         }
