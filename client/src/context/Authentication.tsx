@@ -75,6 +75,8 @@ async function fetchCurrentUser(): Promise<User | null> {
     return await res.json()
 }
 
+// NB: If you change this, make sure to also change the key in the global playwright test setup file:
+//     tests/global.setup.ts
 export const userQueryKey = ["user", "current"]
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
