@@ -703,6 +703,7 @@ function PostForm({
                             fullWidth
                             multiline
                             autoComplete="off"
+                            aria-label='Skriv en ny veggpost...'
                             minRows={1}
                             value={value.content}
                             onChange={(e) => setValue(oldVal => ({...oldVal, content: e.target.value}))}

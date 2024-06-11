@@ -7,57 +7,77 @@ test.describe("Contributor can create, edit and delete wall posts they have crea
 
     test.describe.configure({ mode: "serial"})
 
+    let postContent: string
+
     test("New wall post", async ({browser}, workerInfo) => { 
         const { page } = await logIn(browser, workerInfo, UserGroup.Contributor)
 
+        // Arrange
         await gotoWallPostPage(page)
-        await createWallPost()
+        postContent = randomString("Vegg post")
 
-        // TODO: Test wall post exists
+        // Act
+        await Promise.all([
+            createWallPost(page, postContent),
+            page.waitForResponse(allWallPostsApi)
+        ])
+
+        // Assert
+        await expect(page.getByText(postContent)).toBeVisible()
 
         await disposeLogIn(page)
     })
 
     test("Edit wall post", async ({browser}, workerInfo) => { 
         // TODO
+        test.fail(true, "Not implemented")
     })
 
     test("Delete wall post", async ({browser}, workerInfo) => { 
-        await testDeleteWallPost(browser, workerInfo, UserGroup.Contributor)
+        await testDeleteWallPost(browser, workerInfo, UserGroup.Contributor, postContent)
     })
 
 })
 
 test.describe("Admin can delete all wall posts", async () => { 
 
+    let postContent = randomString("Vegg post")
+
     test.beforeAll( async ({browser}, workerInfo) => { 
         const { page } = await logIn(browser, workerInfo, UserGroup.Contributor)
 
-        await gotoWallPostPage(page)
-        await createWallPost()
+        await page.goto("/vegg"),
+        await createWallPost(page, postContent)
 
         await disposeLogIn(page)
     })
     
     test("Delete wall post", async ({browser}, workerInfo) => {
-        await testDeleteWallPost(browser, workerInfo, UserGroup.Administrator)
+        await testDeleteWallPost(browser, workerInfo, UserGroup.Administrator, postContent)
     })
 })
 
-async function testDeleteWallPost(browser: Browser, workerInfo: TestInfo, group: UserGroup) { 
+async function testDeleteWallPost(browser: Browser, workerInfo: TestInfo, group: UserGroup, postContent: string) { 
     const { page } = await logIn(browser, workerInfo, group)
 
     // TODO
+    test.fail(true, "Not implemented")
 
     await disposeLogIn(page)
 }
-    
+
+const allWallPostsApi = '/api/wall-posts/all'
 
 async function gotoWallPostPage(page: Page) {
-    await page.goto("/vegg")
-    // Wait for api response
+    await Promise.all([
+        page.goto("/vegg"),
+        page.waitForResponse(allWallPostsApi)
+    ])
 }
 
-async function createWallPost() {
-
+async function createWallPost(page: Page, content: string) {
+    await page.getByLabel('Skriv en ny veggpost...')
+        .getByRole('textbox')
+        .fill(content)
+    await page.getByRole('button', { name: 'Post' }).click()
 }
