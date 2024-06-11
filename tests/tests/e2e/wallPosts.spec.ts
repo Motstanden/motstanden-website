@@ -3,9 +3,7 @@ import { UserGroup } from 'common/enums';
 import { disposeLogIn, logIn } from '../../utils/auth.js';
 import { randomString } from '../../utils/randomString.js';
 
-test.describe("Contributor can create, edit and delete wall posts they have created", async () => { 
-
-    test.describe.configure({ mode: "serial"})
+test.describe.serial("Contributor can create, edit and delete wall posts they have created", async () => { 
 
     let postContent: string
 
@@ -30,7 +28,7 @@ test.describe("Contributor can create, edit and delete wall posts they have crea
 
     test("Edit wall post", async ({browser}, workerInfo) => { 
         // TODO
-        test.fail(true, "Not implemented")
+        test.skip(true, "Not implemented")
     })
 
     test("Delete wall post", async ({browser}, workerInfo) => { 
@@ -60,8 +58,18 @@ test.describe("Admin can delete all wall posts", async () => {
 async function testDeleteWallPost(browser: Browser, workerInfo: TestInfo, group: UserGroup, postContent: string) { 
     const { page } = await logIn(browser, workerInfo, group)
 
-    // TODO
-    test.fail(true, "Not implemented")
+    // Arrange
+    await gotoWallPostPage(page)
+    
+    // Act
+    await clickMenuButton(page, postContent)
+    await Promise.all([
+        clickDelete(page),
+        page.waitForResponse(allWallPostsApi)
+    ])
+
+    // Assert
+    await expect(page.getByText(postContent)).not.toBeVisible()
 
     await disposeLogIn(page)
 }
@@ -79,5 +87,17 @@ async function createWallPost(page: Page, content: string) {
     await page.getByLabel('Skriv en ny veggpost...')
         .getByRole('textbox')
         .fill(content)
-    await page.getByRole('button', { name: 'Post' }).click()
+    await page.getByRole('button', { name: 'Post', exact: true }).click()
+}
+
+async function clickDelete(page: Page) {
+    page.once('dialog', dialog => dialog.accept());
+    await page.getByRole("menuitem", { name: "Slett" }).click()
+}
+
+async function clickMenuButton(page: Page, postContent: string) {
+    const menuButton = page.getByLabel("Veggpost")
+        .filter( {hasText: postContent})
+        .getByRole("button", { name: "Veggpostmeny" })
+    await menuButton.click()
 }

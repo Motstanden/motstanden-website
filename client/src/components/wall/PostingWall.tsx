@@ -281,6 +281,7 @@ export function PostSectionItem({
     return (
         <Paper 
             elevation={2}
+            aria-label='Veggpost'
             sx={{
                 paddingBlock: "20px",
                 paddingInline: {xs: "10px", sm: "20px"},
@@ -440,6 +441,7 @@ function HeaderMenu( {
     return (
         <IconPopupMenu
             icon={<MoreHorizIcon />}
+            ariaLabel='Veggpostmeny'
             sx={{
                 p: {xs: 0.65, sm: 1},
                 ...sx,
