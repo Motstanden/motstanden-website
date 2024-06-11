@@ -1,22 +1,7 @@
-export async function deleteRequest(url: string, opts?: deleteRequestOpts) {
-    
-    if (opts?.confirmText && !window.confirm(opts.confirmText)) {
-        return undefined
+export async function deleteRequest(url: string) { 
+    const res = await fetch(url, { method: "DELETE" })
+    if(!res.ok) {
+        throw new Error(`HTTP error ${res.status} ${res.statusText}`)
     }
-
-    const response = await fetch(url, { method: "DELETE" })
-
-    if (!response.ok) {
-        console.error(response)
-        if (opts?.alertOnFailure && !response.ok) {
-            const txt = opts.failureText ?? "Noe gikk galt\nSi ifra til webansvarlig"
-            window.alert(txt)
-        }
-    }
-}
-
-type deleteRequestOpts = {
-    confirmText?: string,
-    alertOnFailure?: boolean,
-    failureText?: string
+    return res
 }

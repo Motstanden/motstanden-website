@@ -13,6 +13,7 @@ import { useAuthenticatedUser } from "src/context/Authentication";
 import { useUserReference } from 'src/context/UserReference';
 import { useQuerySuccess } from 'src/hooks/useQuerySuccess';
 import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage';
+import { deleteRequest } from 'src/utils/deleteRequest';
 import { fetchFn } from "src/utils/fetchAsync";
 import { postJson } from 'src/utils/postJson';
 import { CommentSection, CommentSectionSkeleton } from "../CommentSection";
@@ -28,7 +29,6 @@ import { EditMenuItem } from '../menu/EditMenuItem';
 import { IconPopupMenu } from '../menu/IconPopupMenu';
 import { UserAvatar } from '../user/UserAvatar';
 import { UserFullName } from '../user/UserFullName';
-import { deleteRequest } from 'src/utils/deleteRequest';
 
 export function PostingWall({
     userId,
@@ -245,16 +245,14 @@ export function PostSectionItem({
 
     const deleteItem = useMutation({
         mutationFn: async () => { 
-            return await deleteRequest(`/api/wall-posts/${post.id}`, {
-                alertOnFailure: true,
-                confirmText: "Vil du permanent slette denne posten?",
-                failureText: "Fikk ikke til å slette posten.\nSi ifra til webansvarlig!"
-            })
+            return await deleteRequest(`/api/wall-posts/${post.id}`)
+        },
+        onError: () => {
+            window.alert("Fikk ikke til å slette posten.\nSi ifra til webansvarlig!")
         },
         onSuccess: async () => { 
             return await queryClient.invalidateQueries({queryKey: queryKey})
         },
-        retry: 3,
     })
 
     const [isEditing, setIsEditing] = useState(false)
@@ -273,7 +271,9 @@ export function PostSectionItem({
     }
 
     const onDeleteClick = () => { 
-        deleteItem.mutate()
+        if(window.confirm("Vil du permanent slette denne posten?")) {
+            deleteItem.mutate()
+        }
     }
 
     if(deleteItem.isPending)
