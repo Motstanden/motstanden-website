@@ -22,7 +22,7 @@ function getAll(userId?: number): WallPost[] {
     return posts
 }
 
-function get(postId: number): WallPost |undefined {
+function get(postId: number): WallPost | undefined {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT
@@ -51,6 +51,18 @@ function insertNew(post: NewWallPost, userId: number) {
             (?, ?, ?)
     `)
     stmt.run(post.content, post.wallUserId, userId)
+    db.close()
+}
+
+function deletePost(postId: number) { 
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(`
+        DELETE FROM 
+            wall_post
+        WHERE
+            wall_post_id = ?
+    `)
+    stmt.run(postId)
     db.close()
 }
 
@@ -113,11 +125,30 @@ function incrementUnreadCount(userId: number) {
     db.close()
 }
 
+function decrementAllUnreadCount() {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(`
+        UPDATE 
+            read_wall_posts_count 
+        SET 
+            count = CASE 
+                WHEN count > 0 
+                THEN count - 1
+                ELSE 0
+        END
+    `)
+    stmt.run()
+    db.close()
+}
+
+
 export const wallPostService = { 
     get: get,
     getAll: getAll,
     insertNew: insertNew,
+    delete: deletePost,
     getUnreadCount: getUnreadCount,
     resetUnreadCount: resetUnreadCount,
-    incrementUnreadCount: incrementUnreadCount
+    incrementUnreadCount: incrementUnreadCount,
+    decrementAllUnreadCount: decrementAllUnreadCount
 }

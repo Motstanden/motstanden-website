@@ -1,7 +1,9 @@
+import { UserGroup } from "common/enums";
 import { Count, NewWallPost } from "common/interfaces";
 import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
+import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
 import { validateNumber } from "../middleware/validateNumber.js";
 import { wallPostService } from "../services/wallPosts.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
@@ -11,16 +13,16 @@ const router = express.Router()
 router.get("/wall-posts/all?:userId",
     AuthenticateUser(),
     (req, res) => {
-        const userId = strToNumber(req.query.userId?.toString() ?? "")
+        const userId = strToNumber(req.query.userId?.toString())
         const posts = wallPostService.getAll(userId)
         res.send(posts)
     }
 )
 
-router.get("/wall-posts/:postId",
+router.get("/wall-posts/:id",
     AuthenticateUser(),
     validateNumber({
-        getValue: req => req.params.postId,
+        getValue: req => req.params.id,
     }),
     (req, res) => {
         const postId = strToNumber(req.params.postId) as number         // Validated by middleware
@@ -52,10 +54,33 @@ router.post("/wall-posts/new",
             wallPostService.incrementUnreadCount(user.userId)
         } catch (err) {
             console.error(err)
-            res.status(500).send("Failed to inser post into database")
+            res.status(500).send("Failed to insert post into database")
         }
         res.end()
     }
+)
+
+router.delete("/wall-posts/:id",
+    AuthenticateUser(),
+    validateNumber({
+        getValue: req => req.params.id,
+    }),
+    requiresGroupOrAuthor({
+        requiredGroup: UserGroup.Administrator,
+        getId: (req) => strToNumber(req.params.id),
+        getAuthorInfo: (id) => wallPostService.get(id)
+    }),
+    (req, res) => {
+        const postId = strToNumber(req.params.postId) as number     // is validated by middleware
+        try {
+            wallPostService.delete(postId)
+            wallPostService.decrementAllUnreadCount()
+        } catch (err) {
+            res.status(500).send("Failed to delete post from the database")
+        }
+        res.end()
+    }
+    
 )
 
 function tryCreateValidPost(obj: unknown): NewWallPost | undefined {
