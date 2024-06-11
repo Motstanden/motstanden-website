@@ -53,6 +53,37 @@ test.describe("Login tokens are created and persisted", () => {
     })
 })
 
+test.describe("Routes that require authentication are protected", () => { 
+
+    // Same order as in the side drawer
+    testRoute("/hjem")
+    testRoute("/vegg")
+    testRoute("/arrangement")
+    testRoute("/sitater")
+    testRoute("/rykter")
+    testRoute("/avstemninger")
+
+    testRoute("/notearkiv")
+    testRoute("/studenttraller/populaere/asbest/rediger")
+    testRoute("/studenttraller/alle/asbest/rediger")
+    testRoute("/studenttraller/1/rediger")
+    testRoute("/studenttraller/ny")
+
+    testRoute("/medlem")
+
+    testRoute("/kommentarer")
+    testRoute("/admin")
+    testRoute("/superadmin")
+
+    function testRoute(route: string) {
+        return test(route, async ({page}) => { 
+            page.goto(route);
+            await page.waitForURL("/logg-inn")
+            await expect(page).toHaveURL('/logg-inn');
+        })
+    }
+})
+
 test.describe( "User can log out", () => {
     
     test("Log out in current browser", async ({ page }, workerInfo) => {        
