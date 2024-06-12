@@ -4,6 +4,7 @@ import { Count, NewComment } from "common/interfaces"
 import { testUserVariationsCount, unsafeGetUser } from "../../utils/auth.js"
 import { randomString } from "../../utils/randomString.js"
 import { Comment } from 'common/interfaces'
+import exp from 'constants'
 
 test.describe.serial("Comments test suite", () => {
     const user1 = unsafeGetUser(UserGroup.Contributor, testUserVariationsCount - 1)
@@ -71,8 +72,15 @@ test.describe.serial("Comments test suite", () => {
         await deleteComment(api1, entityType, postedComment.entityId, actualComment.id)
 
         const deletedComment = await getMatchingComment(api1, entityType, postedComment.entityId, postedComment.comment)
+        const count1 = await getUnreadCount(api1)
+        const count2 = await getUnreadCount(api2)
 
         expect(deletedComment).toBeUndefined()
+        expect(count1).toBe(0)
+        expect(count2).toBe(unreadCount - 1)
+
+        unreadComments = unreadComments.filter(c => c !== postedComment)
+        unreadCount--
     }
 
     test("POST Event comment increases unread count", async () => testCommentIncreasesCounter(CommentEntityType.Event))
