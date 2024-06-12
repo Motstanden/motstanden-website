@@ -48,6 +48,7 @@ test.describe.serial("api/wall-posts/unread", () => {
         expect(count2).toBe(1)
 
         post = await getMatchingPost(api1, newPost)
+        expect(post).toBeDefined()
     })
 
     test("Deleting post decreases count", async ({ }) => { 
