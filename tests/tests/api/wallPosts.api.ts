@@ -24,8 +24,8 @@ test.describe.serial("api/wall-posts/unread", () => {
     })
 
     test("Initial count is 0", async ({ }) => { 
-        resetUnreadCount(api1)
-        resetUnreadCount(api2)
+        await resetUnreadCount(api1)
+        await resetUnreadCount(api2)
 
         const count1 = await getUnreadCount(api1)
         const count2 = await getUnreadCount(api2)
