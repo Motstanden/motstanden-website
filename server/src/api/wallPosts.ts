@@ -50,8 +50,7 @@ router.post("/wall-posts/new",
             return res.status(400).send("Could not parse post data")
 
         try {
-            wallPostService.insertNew(newPost, user.userId)
-            // wallPostService.incrementUnreadCount(user.userId)    // todo fix
+            wallPostService.insertPostAndMarkUnread(newPost, user.userId)
         } catch (err) {
             console.error(err)
             res.status(500).send("Failed to insert post into database")
