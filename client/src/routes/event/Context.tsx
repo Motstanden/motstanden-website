@@ -5,11 +5,11 @@ import { fetchFn } from "src/utils/fetchAsync"
 
 import { EventData } from "common/interfaces"
 import { strToNumber } from "common/utils"
+import { useAppBarHeader } from "src/context/AppBarHeader"
 import { matchUrl } from "src/utils/matchUrl"
 import { EventEditPageSkeleton } from "./skeleton/EditPage"
 import { EventItemPageSkeleton } from "./skeleton/ItemPage"
 import { EventListPageSkeleton } from "./skeleton/ListPage"
-import { useAppBarHeader } from "src/context/AppBarHeader"
 
 export const eventContextQueryKey = ["FetchEventContext"]
 
@@ -76,7 +76,7 @@ export function EventItemContext() {
     }
 
     // Check if the provided parameter matches an eventId
-    const event = allEvents.find(item => item.eventId === eventId)
+    const event = allEvents.find(item => item.id === eventId)
     if (!event) {
         return <Navigate to="/arrangement" replace/>
     }
@@ -120,5 +120,5 @@ function useEventUrlMatch(): EventUrlMatch {
 }
 
 export function buildEventItemUrl(event: EventData) {
-    return `/arrangement/${event.isUpcoming ? "kommende" : "tidligere"}/${event.eventId}`
+    return `/arrangement/${event.isUpcoming ? "kommende" : "tidligere"}/${event.id}`
 }

@@ -92,7 +92,7 @@ export function EventEditorForm({
 
     const getSubmitData = (): UpsertEventData => {
         const serializedEvent: UpsertEventData = {
-            eventId: eventId,
+            id: eventId,
             title: event.title,
             startDateTime: event.startTime!.utc().format("YYYY-MM-DD HH:mm:00"),
             endDateTime: event.endTime?.utc().format("YYYY-MM-DD HH:mm:00") ?? null,

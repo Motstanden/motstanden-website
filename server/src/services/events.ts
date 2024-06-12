@@ -6,18 +6,18 @@ import { DbWriteAction } from "../ts/enums/DbWriteAction.js";
 import { UpsertDb } from "../ts/types/UpsertDb.js";
 
 const allEventColumns = `
-    event_id as eventId, 
+    event_id as id, 
     title, 
     start_date_time as startDateTime,
     end_date_time as endDateTime,
     key_info as keyInfo,
     description,
 
-    created_by_user_id as createdByUserId,
+    created_by_user_id as createdBy,
     created_by_full_name as createdByName,
     created_at as createdAt,
 
-    updated_by_user_id as updatedByUserId,
+    updated_by_user_id as updatedBy,
     updated_by_full_name as updatedByName,
     updated_at as updatedAt,
 
@@ -80,7 +80,7 @@ export function getEvents({
         try {
             keyInfo = JSON.parse(item.keyInfo)
         } catch (err) {
-            console.log(`Failed to parse keyinfo for eventId ${item.eventId}\nError: ${err}\nData: ${item}`)
+            console.log(`Failed to parse keyinfo for eventId ${item.id}\nError: ${err}\nData: ${item}`)
         }
         return { 
             ...item, 
@@ -136,7 +136,7 @@ export function upsertEvent(unsafeEvent: UpsertEventData, modifiedBy: number, ac
     if (!validEvent)
         throw "Bad data"
 
-    const sql = buildUpsertSql({ ...validEvent, eventId: unsafeEvent.eventId }, modifiedBy, action)
+    const sql = buildUpsertSql({ ...validEvent, id: unsafeEvent.id }, modifiedBy, action)
     const db = new Database(motstandenDB, dbReadWriteConfig)
     let result: Database.RunResult | undefined
     const startTransaction = db.transaction(() => {
@@ -172,7 +172,7 @@ function buildUpsertSql(
     ]
 
     if (action === DbWriteAction.Update) {
-        if (!validEvent.eventId)
+        if (!validEvent.id)
             throw `Requires eventId`
 
         return {
@@ -188,7 +188,7 @@ function buildUpsertSql(
                 WHERE 
                     event_id = ?;
                 `,
-            args: [...commonArgs, validEvent.eventId]
+            args: [...commonArgs, validEvent.id]
         }
     }
 

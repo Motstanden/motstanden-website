@@ -84,7 +84,7 @@ router.post("/events/delete",
         // Delete the event if the user is admin, or if the user is the original author of the event
         const user = req.user as AccessTokenData
         const isAdmin = hasGroupAccess(user, UserGroup.Administrator)
-        const isEventAuthor = event.createdByUserId === user.userId
+        const isEventAuthor = event.createdBy === user.userId
         if (isAdmin || isEventAuthor) {
             events.deleteEvent(eventId)
             return res.end()

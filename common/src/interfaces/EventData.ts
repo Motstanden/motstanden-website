@@ -8,16 +8,16 @@ export interface NewEventData {
     description: string
 }
 
-export interface UpsertEventData extends NewEventData, Partial<Pick<EventData, "eventId">> { }
+export interface UpsertEventData extends NewEventData, Partial<Pick<EventData, "id">> { }
 
 export interface EventData extends NewEventData {
-    eventId: number;
+    id: number;
 
-    createdByUserId: number
+    createdBy: number
     createdByName: string
     createdAt: string;          // Format: 'YYYY-MM-DD HH-MM-SS'
 
-    updatedByUserId: number
+    updatedBy: number
     updatedByName: string
     updatedAt: string          // Format: 'YYYY-MM-DD HH-MM-SS'
 

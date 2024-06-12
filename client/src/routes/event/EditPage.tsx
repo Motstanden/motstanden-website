@@ -20,9 +20,9 @@ export default function EditEventPage() {
                 <em><q>{event.title}</q></em>
             </h1>
             <EventEditorForm 
-                storageKey={["Event", "Edit", event.eventId]}
+                storageKey={["Event", "Edit", event.id]}
                 postUrl="/api/events/update" 
-                initialValue={initialValue} eventId={event.eventId} 
+                initialValue={initialValue} eventId={event.id} 
             />
         </div>
     );

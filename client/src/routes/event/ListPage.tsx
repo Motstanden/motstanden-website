@@ -25,7 +25,7 @@ export default function EventListPage({ mode }: { mode?: "upcoming" | "previous"
         <>
             <div style={{ maxWidth: "750px" }}>
                 {events.map( e => (
-                    <EventItem key={e.eventId} event={e} />
+                    <EventItem key={e.id} event={e} />
                 ))}
                 
                 {events.length <= 0 && 

@@ -27,7 +27,7 @@ export function ItemMenu({
     const onDeleteClick = async () => {
         const res = await postJson(
             "/api/events/delete",
-            { eventId: event.eventId },
+            { eventId: event.id },
             {
                 confirmText: `Vil du permanent slette:\n«${event.title}»`,
                 alertOnFailure: true
@@ -38,7 +38,7 @@ export function ItemMenu({
             onDeleteSuccess && onDeleteSuccess()
     }
 
-    if (!hasGroupAccess(user, UserGroup.Administrator) && user.id !== event.createdByUserId) {
+    if (!hasGroupAccess(user, UserGroup.Administrator) && user.id !== event.createdBy) {
         return (
             <Tooltip title="Rediger">
                 <IconButton onClick={onEditClick}>

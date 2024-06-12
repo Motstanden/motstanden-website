@@ -57,9 +57,9 @@ export default function ItemPage() {
                 <Divider />
                 <AuthorInfo 
                     createdAt={event.createdAt}
-                    createdByUserId={event.createdByUserId}
+                    createdByUserId={event.createdBy}
                     updatedAt={event.updatedAt}
-                    updatedByUserId={event.updatedByUserId}
+                    updatedByUserId={event.updatedBy}
                 />
                 <KeyInfo
                     keyInfo={event.keyInfo}
@@ -74,11 +74,11 @@ export default function ItemPage() {
                 <MarkDownRenderer value={event.description} />
             </Paper>
             <Divider sx={{ my: 4 }} />
-            <ParticipationContainer eventId={event.eventId} />
+            <ParticipationContainer eventId={event.id} />
             <Divider sx={{ my: 4 }} />
             <CommentSection 
                 entityType={CommentEntityType.Event}
-                entityId={event.eventId}            
+                entityId={event.id}            
             />
         </div>
     );
