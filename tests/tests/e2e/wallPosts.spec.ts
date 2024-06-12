@@ -1,18 +1,20 @@
 import { Browser, Page, TestInfo, expect, test } from '@playwright/test';
 import { UserGroup } from 'common/enums';
-import { disposeLogIn, logIn } from '../../utils/auth.js';
+import { TestUser, disposeLogIn, logIn, storageLogIn } from '../../utils/auth.js';
 import { randomString } from '../../utils/randomString.js';
 
 test.describe.serial("Contributor can create, edit and delete wall posts they have created", async () => { 
 
+    let initialUser: TestUser
     let postContent: string
 
     test("New wall post", async ({browser}, workerInfo) => { 
-        const { page } = await logIn(browser, workerInfo, UserGroup.Contributor)
+        const { user, page } = await logIn(browser, workerInfo, UserGroup.Contributor)
+        initialUser = user
 
         // Arrange
         await gotoWallPostPage(page)
-        postContent = randomString("Vegg post")
+        postContent = randomString("Ny veggpost")
 
         // Act
         await Promise.all([
@@ -26,9 +28,28 @@ test.describe.serial("Contributor can create, edit and delete wall posts they ha
         await disposeLogIn(page)
     })
 
-    test("Edit wall post", async ({browser}, workerInfo) => { 
-        // TODO
-        test.skip(true, "Not implemented")
+    test("Edit wall post", async ({browser}) => { 
+        const page = await storageLogIn(browser, initialUser)
+
+        // Start editing
+        await gotoWallPostPage(page)
+        await clickMenuButton(page, postContent)
+        await clickEdit(page)
+
+        // Fill in new content
+        postContent = randomString("Redigert veggpost")
+        await page.getByLabel('Rediger post... *').fill(postContent)
+
+        // Save and wait for db to server updated content
+        await Promise.all([
+            page.getByRole('button', { name: 'Lagre', exact: true }).click(),
+            page.waitForResponse(allWallPostsApi)
+        ])
+
+        // Assert
+        await expect(page.getByText(postContent)).toBeVisible()
+
+        await disposeLogIn(page)
     })
 
     test("Delete wall post", async ({browser}, workerInfo) => { 
@@ -39,13 +60,15 @@ test.describe.serial("Contributor can create, edit and delete wall posts they ha
 
 test.describe("Admin can delete all wall posts", async () => { 
 
-    let postContent = randomString("Vegg post")
+    let postContent = randomString("Ny veggpost")
 
     test.beforeAll( async ({browser}, workerInfo) => { 
         const { page } = await logIn(browser, workerInfo, UserGroup.Contributor)
 
         await page.goto("/vegg"),
         await createWallPost(page, postContent)
+        await clickEdit(page)
+
 
         await disposeLogIn(page)
     })
@@ -88,6 +111,10 @@ async function createWallPost(page: Page, content: string) {
         .getByRole('textbox')
         .fill(content)
     await page.getByRole('button', { name: 'Post', exact: true }).click()
+}
+
+async function clickEdit(page: Page) {
+    await page.getByRole("menuitem", { name: "Rediger" }).click()
 }
 
 async function clickDelete(page: Page) {
