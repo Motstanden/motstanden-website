@@ -77,9 +77,11 @@ test.describe("Routes that require authentication are protected", () => {
 
     function testRoute(route: string) {
         return test(route, async ({page}) => { 
-            page.goto(route);
-            await page.waitForURL("/logg-inn")
-            await expect(page).toHaveURL('/logg-inn');
+            await Promise.all([
+                page.waitForURL("/logg-inn"),
+                page.goto(route)
+            ])
+            await expect(page).toHaveURL('/logg-inn')
         })
     }
 })
