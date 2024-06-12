@@ -54,6 +54,21 @@ function getEntityIdColumnName(entityType: CommentEntityType): string {
     }
 }
 
+function getUnreadCommentTableName(entityType: CommentEntityType): string { 
+    switch (entityType) {
+        case CommentEntityType.Event:
+            return "unread_event_comment"
+        case CommentEntityType.Poll:
+            return "unread_poll_comment"
+        case CommentEntityType.SongLyric:
+            return "unread_song_lyric_comment"
+        case CommentEntityType.WallPost:
+            return "unread_wall_post_comment"
+        default:
+            throw `Unknown entity type: ${entityType}`
+    }
+}
+
 function getAllUnion(limit?: number): EntityComment[]{
     const db = new Database(motstandenDB, dbReadOnlyConfig)
 
@@ -178,58 +193,38 @@ function getUnreadCount(userId: number): number | undefined {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
     SELECT 
-        count
-    FROM
-        vw_unread_comments_count
-    WHERE
-        user_id = ?
+        (SELECT COUNT(*) FROM ${getUnreadCommentTableName(CommentEntityType.Event)} WHERE user_id = @userId) +
+        (SELECT COUNT(*) FROM ${getUnreadCommentTableName(CommentEntityType.Poll)} WHERE user_id = @userId) +
+        (SELECT COUNT(*) FROM ${getUnreadCommentTableName(CommentEntityType.SongLyric)} WHERE user_id = @userId) +
+        (SELECT COUNT(*) FROM ${getUnreadCommentTableName(CommentEntityType.WallPost)} WHERE user_id = @userId) 
+    AS count
     `)
-    const data = stmt.get(userId) as Count | undefined
+    const data = stmt.get({userId: userId}) as Count | undefined
     db.close()
     return data?.count
 }
 
-function getTotalCount(): number {
-    const db = new Database(motstandenDB, dbReadOnlyConfig)
-    const stmt = db.prepare(`
-    SELECT 
-        count
-    FROM
-        vw_comments_count
-    `)
-    const data = stmt.get() as Count
-    db.close()
-    return data.count
-}
-
 function resetUnreadCount(userId: number) {
+    
     const db = new Database(motstandenDB, dbReadWriteConfig)
-    const totalCount = getTotalCount()
-    const stmt = db.prepare(`
-        INSERT INTO 
-            read_comments_count (user_id, count)
-        VALUES 
-            (?, ?)
-        ON CONFLICT 
-            (user_id) 
-        DO UPDATE
-            SET count = ?
-    `)
-    stmt.run(userId, totalCount, totalCount)
-    db.close()
-}
 
-function incrementUnreadCount(userId: number) {
-    const db = new Database(motstandenDB, dbReadWriteConfig)
-    const stmt = db.prepare(`
-        UPDATE 
-            read_comments_count 
-        SET 
-            count = count + 1
-        WHERE
-            user_id = ?
-    `)
-    stmt.run(userId)
+    const deleteFn = (entityType: CommentEntityType) => { 
+        const stmt = db.prepare(`
+            DELETE FROM 
+                ${getUnreadCommentTableName(entityType)} 
+            WHERE
+                user_id = ?`)
+        stmt.run(userId)
+    }
+
+    const transaction = db.transaction(() => { 
+        deleteFn(CommentEntityType.Event)
+        deleteFn(CommentEntityType.Poll)
+        deleteFn(CommentEntityType.SongLyric)
+        deleteFn(CommentEntityType.WallPost)
+    })
+    transaction()
+
     db.close()
 }
 
@@ -241,5 +236,4 @@ export const commentsService = {
     delete: deleteComment,
     getUnreadCount: getUnreadCount,
     resetUnreadCount: resetUnreadCount,
-    incrementUnreadCount: incrementUnreadCount
 }

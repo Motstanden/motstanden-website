@@ -100,7 +100,7 @@ function postCommentHandler( {
 
         try {
             commentsService.insertNew(entityType, entityId, comment, user.userId)
-            commentsService.incrementUnreadCount(user.userId)
+            // commentsService.incrementUnreadCount(user.userId)
         } catch (err) {
             console.error(err)
             res.status(500).send(`Failed to insert ${entityType} comment into the database`)
@@ -177,12 +177,10 @@ router.get("/comments/unread/count",
         const user = req.user as AccessTokenData
 
         const unreadCount = commentsService.getUnreadCount(user.userId)
-        if(unreadCount === undefined) {
-            commentsService.resetUnreadCount(user.userId)
-        }
         const result: Count = {
             count: unreadCount ?? 0
         }
+
         res.send(result)
     }
 )
