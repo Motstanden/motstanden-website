@@ -54,13 +54,8 @@ function insertNew(post: NewWallPost, userId: number) {
     db.close()
 }
 
-function deletePost(postId: number) { 
+function deletePost(postId:number) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
-    executeDeletePost(postId, db)
-    db.close()
-}
-
-function executeDeletePost(postId:number, db: DatabaseType) {
     const stmt = db.prepare(`
         DELETE FROM 
             wall_post
@@ -68,14 +63,6 @@ function executeDeletePost(postId:number, db: DatabaseType) {
             wall_post_id = ?
     `)
     stmt.run(postId)
-}
-
-function deletePostTransaction(postId: number) { 
-    const db = new Database(motstandenDB, dbReadWriteConfig)
-    db.transaction(() => {
-        executeDeletePost(postId, db)
-        executeDecrementAllUnreadCount(db)
-    })()
     db.close()
 }
 
@@ -91,20 +78,6 @@ function setContent(postId: number, content: string) {
     `)
     stmt.run(content, postId)
     db.close()
-}
-
-
-function getTotalCount(): number {
-    const db = new Database(motstandenDB, dbReadOnlyConfig)
-    const stmt = db.prepare(`
-        SELECT 
-            count(*) as count 
-        FROM 
-            wall_post
-    `)
-    const data = stmt.get() as Count
-    db.close()
-    return data.count
 }
 
 function getUnreadCount(userId: number): number | undefined { 
@@ -133,48 +106,12 @@ function resetUnreadCount(userId: number) {
     db.close()
 }
 
-function incrementUnreadCount(userId: number) {
-    const db = new Database(motstandenDB, dbReadWriteConfig)
-    const stmt = db.prepare(`
-        UPDATE 
-            read_wall_posts_count 
-        SET 
-            count = count + 1
-        WHERE
-            user_id = ?
-    `)
-    stmt.run(userId)
-    db.close()
-}
-
-function decrementAllUnreadCount() {
-    const db = new Database(motstandenDB, dbReadWriteConfig)
-    executeDecrementAllUnreadCount(db)
-    db.close()
-}
-
-function executeDecrementAllUnreadCount(db: DatabaseType) {
-    const stmt = db.prepare(`
-        UPDATE 
-            read_wall_posts_count 
-        SET 
-            count = CASE 
-                WHEN count > 0 
-                THEN count - 1
-                ELSE 0
-        END
-    `)
-    stmt.run()
-}
-
 export const wallPostService = { 
     get: get,
     getAll: getAll,
     insertNew: insertNew,
     setContent: setContent,
-    delete: deletePostTransaction,
+    delete: deletePost,
     getUnreadCount: getUnreadCount,
     resetUnreadCount: resetUnreadCount,
-    incrementUnreadCount: incrementUnreadCount,
-    decrementAllUnreadCount: decrementAllUnreadCount
 }
