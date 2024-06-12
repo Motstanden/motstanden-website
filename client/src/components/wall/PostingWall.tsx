@@ -15,6 +15,7 @@ import { useQuerySuccess } from 'src/hooks/useQuerySuccess';
 import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage';
 import { deleteRequest } from 'src/utils/deleteRequest';
 import { fetchFn } from "src/utils/fetchAsync";
+import { patchRequest } from 'src/utils/patchRequest';
 import { postJson } from 'src/utils/postJson';
 import { CommentSection, CommentSectionSkeleton } from "../CommentSection";
 import { LinkifiedText } from '../LinkifiedText';
@@ -231,16 +232,17 @@ export function PostSectionItem({
 
     const editItem = useMutation({
         mutationFn: async (newPost: WallPost) => { 
-            // Simulate long post
-            await new Promise(resolve => setTimeout(resolve, 3000))
+            const data: Pick<WallPost, "content"> = { 
+                content: newPost.content
+            }
+            return await patchRequest(`/api/wall-posts/${post.id}`, data)
         },
         onError: () => {
-            // todo
+            window.alert("Fikk ikke til å redigere veggposten.\nSi ifra til webansvarlig!")
         },
         onSuccess: async () => { 
             return await queryClient.invalidateQueries({queryKey: queryKey})
         },
-        retry: 3,
     })
 
     const deleteItem = useMutation({
@@ -248,7 +250,7 @@ export function PostSectionItem({
             return await deleteRequest(`/api/wall-posts/${post.id}`)
         },
         onError: () => {
-            window.alert("Fikk ikke til å slette posten.\nSi ifra til webansvarlig!")
+            window.alert("Fikk ikke til å slette veggposten.\nSi ifra til webansvarlig!")
         },
         onSuccess: async () => { 
             return await queryClient.invalidateQueries({queryKey: queryKey})
