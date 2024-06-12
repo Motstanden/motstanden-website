@@ -555,35 +555,6 @@ FROM
 LEFT JOIN poll_option USING (poll_option_id)
 LEFT JOIN user USING(user_id)
 /* vw_poll_voter(poll_vote_id,vote_updated_at,poll_id,poll_option_id,poll_option_text,user_id,first_name,middle_name,last_name,full_name) */;
-CREATE TABLE read_comments_count (
-    read_comments_count_id INTEGER PRIMARY KEY,
-    user_id INTEGER NOT NULL UNIQUE,
-    count INTEGER NOT NULL DEFAULT 0,
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE CASCADE
-);
-CREATE TRIGGER trig_read_comments_count_updated_at
-    AFTER UPDATE ON read_comments_count FOR EACH ROW
-BEGIN
-    UPDATE read_comments_count SET updated_at = current_timestamp
-        WHERE read_comments_count_id = old.read_comments_count_id;
-END;
-CREATE VIEW vw_comments_count AS
-SELECT
-    (SELECT COUNT(*) FROM event_comment) +
-    (SELECT COUNT(*) FROM poll_comment) +
-    (SELECT COUNT(*) FROM song_lyric_comment) +
-    (SELECT COUNT(*) FROM wall_post_comment)
-AS count
-/* vw_comments_count(count) */;
-CREATE VIEW vw_unread_comments_count AS
-SELECT 
-    user_id,
-    (SELECT count FROM vw_comments_count) - count AS count
-FROM 
-    read_comments_count
-/* vw_unread_comments_count(user_id,count) */;
 CREATE TABLE unread_wall_post (
     unread_wall_post_id INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL,
@@ -599,4 +570,68 @@ CREATE TRIGGER trig_unread_wall_post_updated_at
 BEGIN
     UPDATE unread_wall_post SET updated_at = current_timestamp
         WHERE unread_wall_post_id = old.unread_wall_post_id;
+END;
+CREATE TABLE unread_event_comment (
+    unread_event_comment_id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    event_comment_id INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (event_comment_id) REFERENCES event_comment (event_comment_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    UNIQUE (user_id, event_comment_id)
+);
+CREATE TRIGGER trig_unread_event_comment_updated_at
+    AFTER UPDATE ON unread_event_comment FOR EACH ROW
+BEGIN
+    UPDATE unread_event_comment SET updated_at = current_timestamp
+        WHERE unread_event_comment_id = old.unread_event_comment_id;
+END;
+CREATE TABLE unread_poll_comment (
+    unread_poll_comment_id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    poll_comment_id INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (poll_comment_id) REFERENCES poll_comment (poll_comment_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    UNIQUE (user_id, poll_comment_id)
+);
+CREATE TRIGGER trig_unread_poll_comment_updated_at
+    AFTER UPDATE ON unread_poll_comment FOR EACH ROW
+BEGIN
+    UPDATE unread_poll_comment SET updated_at = current_timestamp
+        WHERE unread_poll_comment_id = old.unread_poll_comment_id;
+END;
+CREATE TABLE unread_song_lyric_comment (
+    unread_song_lyric_comment_id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    song_lyric_comment_id INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (song_lyric_comment_id) REFERENCES song_lyric_comment (song_lyric_comment_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    UNIQUE (user_id, song_lyric_comment_id)
+);
+CREATE TRIGGER trig_unread_song_lyric_comment_updated_at
+    AFTER UPDATE ON unread_song_lyric_comment FOR EACH ROW
+BEGIN
+    UPDATE unread_song_lyric_comment SET updated_at = current_timestamp
+        WHERE unread_song_lyric_comment_id = old.unread_song_lyric_comment_id;
+END;
+CREATE TABLE unread_wall_post_comment (
+    unread_wall_post_comment_id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    wall_post_comment_id INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (wall_post_comment_id) REFERENCES wall_post_comment (wall_post_comment_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    UNIQUE (user_id, wall_post_comment_id)
+);
+CREATE TRIGGER trig_unread_wall_post_comment_updated_at
+    AFTER UPDATE ON unread_wall_post_comment FOR EACH ROW
+BEGIN
+    UPDATE unread_wall_post_comment SET updated_at = current_timestamp
+        WHERE unread_wall_post_comment_id = old.unread_wall_post_comment_id;
 END;
