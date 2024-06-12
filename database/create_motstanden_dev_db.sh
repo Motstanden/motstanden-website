@@ -87,6 +87,10 @@ sqlite3 motstanden_dev.db < migrations/motstanden_db/20_unread_comments_count.sq
 echo "Running: 21_unread_wall_posts_count.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/21_unread_wall_posts_count.sql;
 
+# Change strategy for counting unread wall posts
+echo "Running: 22_unread_wall_posts_rewrite.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/22_unread_wall_posts_rewrite.sql;
+
 # Insert data that is representative for the current data in the database
 cd data/db
 sh motstanden-db-data.sh 

@@ -584,24 +584,19 @@ SELECT
 FROM 
     read_comments_count
 /* vw_unread_comments_count(user_id,count) */;
-CREATE TABLE read_wall_posts_count (
-    read_wall_posts_count_id INTEGER PRIMARY KEY,
-    user_id INTEGER NOT NULL UNIQUE,
-    count INTEGER NOT NULL DEFAULT 0,
+CREATE TABLE unread_wall_post (
+    unread_wall_post_id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    wall_post_id INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES user (user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (wall_post_id) REFERENCES wall_post (wall_post_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    UNIQUE (user_id, wall_post_id)
 );
-CREATE TRIGGER trig_read_wall_posts_count_updated_at
-    AFTER UPDATE ON read_wall_posts_count FOR EACH ROW
+CREATE TRIGGER trig_unread_wall_post_updated_at
+    AFTER UPDATE ON unread_wall_post FOR EACH ROW
 BEGIN
-    UPDATE read_wall_posts_count SET updated_at = current_timestamp
-        WHERE read_wall_posts_count_id = old.read_wall_posts_count_id;
+    UPDATE unread_wall_post SET updated_at = current_timestamp
+        WHERE unread_wall_post_id = old.unread_wall_post_id;
 END;
-CREATE VIEW vw_unread_wall_posts_count AS
-SELECT 
-    user_id,
-    (SELECT COUNT(*) FROM wall_post) - count AS count
-FROM
-    read_wall_posts_count
-/* vw_unread_wall_posts_count(user_id,count) */;
