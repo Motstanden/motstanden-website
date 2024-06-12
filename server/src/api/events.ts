@@ -3,12 +3,12 @@ import { Participant, UpsertEventData, UpsertParticipant } from "common/interfac
 import { strToNumber } from "common/utils";
 import express, { NextFunction, Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
+import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
 import * as eventParticipant from "../services/eventParticipant.js";
 import * as events from "../services/events.js";
 import { DbWriteAction } from "../ts/enums/DbWriteAction.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 import { UpsertDb } from "../ts/types/UpsertDb.js";
-import { hasGroupAccess } from "../utils/accessTokenUtils.js";
 
 let router = express.Router()
 
@@ -64,33 +64,22 @@ function handleUpsert(writeAction: UpsertDb, req: Request, res: Response) {
     res.end()
 }
 
-
 router.post("/events/delete",
     AuthenticateUser(),
+    requiresGroupOrAuthor({
+        getId: req => req.body.eventId,
+        getAuthorInfo: id => events.getEvent(id),
+        requiredGroup: UserGroup.Administrator
+    }),
     (req: Request, res: Response, next: NextFunction) => {
-
-        // Check if the posted eventId is valid
-        const eventId: number | unknown = req.body.eventId
-        if (!eventId || typeof eventId !== "number") {
-            return res.status(400).send("Bad data")
-        }
-        let event
+        const id = req.body.eventId as number       // This is already validated by requiresGroupOrAuthor
         try {
-            event = events.getEvent(eventId)
-        } catch {
-            return res.status(400).send("bad data")
+            events.deleteEvent(id)
+        } catch (err) {
+            console.log(err)
+            return res.status(500).send("Failed to delete event")
         }
-
-        // Delete the event if the user is admin, or if the user is the original author of the event
-        const user = req.user as AccessTokenData
-        const isAdmin = hasGroupAccess(user, UserGroup.Administrator)
-        const isEventAuthor = event.createdBy === user.userId
-        if (isAdmin || isEventAuthor) {
-            events.deleteEvent(eventId)
-            return res.end()
-        }
-
-        res.status(401).send("Unauthorized")
+        res.end()
     }
 )
 
