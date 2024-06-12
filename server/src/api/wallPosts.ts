@@ -3,7 +3,7 @@ import { Count, NewWallPost } from "common/interfaces";
 import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
-import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
+import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
 import { validateNumber } from "../middleware/validateNumber.js";
 import { wallPostService } from "../services/wallPosts.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
@@ -62,20 +62,41 @@ router.post("/wall-posts/new",
 
 router.delete("/wall-posts/:id",
     AuthenticateUser(),
-    validateNumber({
-        getValue: req => req.params.id,
-    }),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => strToNumber(req.params.id),
         getAuthorInfo: (id) => wallPostService.get(id)
-    }),
+        }),
     (req, res) => {
         const postId = strToNumber(req.params.id) as number     // is validated by middleware
         try {
             wallPostService.delete(postId)
         } catch (err) {
             res.status(500).send("Failed to delete post from the database")
+        }
+        res.end()
+    }
+)
+
+router.patch("/wall-posts/:id",
+    AuthenticateUser(),
+    requiresAuthor( {
+        getId: req => strToNumber(req.params.id),
+        getAuthorInfo: id => wallPostService.get(id)
+    }),
+    (req, res) => {
+        const id = strToNumber(req.params.id) as number         // Is validated by middleware 
+
+        const newContent = req.body.content
+        if (typeof newContent !== "string" || isNullOrWhitespace(newContent)) {
+            return res.status(400).send("Invalid content")
+        }
+            
+        try {
+            wallPostService.setContent(id, newContent)
+        } catch (err) {
+            console.error(err)
+            res.status(500).send("Failed to update post in database")
         }
         res.end()
     }

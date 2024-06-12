@@ -79,6 +79,21 @@ function deletePostTransaction(postId: number) {
     db.close()
 }
 
+function setContent(postId: number, content: string) { 
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(`
+        UPDATE
+            wall_post
+        SET
+            content = ?
+        WHERE
+            wall_post_id = ?
+    `)
+    stmt.run(content, postId)
+    db.close()
+}
+
+
 function getTotalCount(): number {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
@@ -162,6 +177,7 @@ export const wallPostService = {
     get: get,
     getAll: getAll,
     insertNew: insertNew,
+    setContent: setContent,
     delete: deletePostTransaction,
     getUnreadCount: getUnreadCount,
     resetUnreadCount: resetUnreadCount,
