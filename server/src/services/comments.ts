@@ -1,4 +1,4 @@
-import Database from "better-sqlite3"
+import Database, { Database as DatabaseType } from "better-sqlite3"
 import { CommentEntityType } from "common/enums"
 import { Comment, Count, EntityComment, NewComment } from "common/interfaces"
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
@@ -64,6 +64,36 @@ function getUnreadCommentTableName(entityType: CommentEntityType): string {
             return "unread_song_lyric_comment"
         case CommentEntityType.WallPost:
             return "unread_wall_post_comment"
+        default:
+            throw `Unknown entity type: ${entityType}`
+    }
+}
+
+function getUnreadCommentIdColumnName(entityType: CommentEntityType): string { 
+    switch (entityType) {
+        case CommentEntityType.Event:
+            return "unread_event_comment_id"
+        case CommentEntityType.Poll:
+            return "unread_poll_comment_id"
+        case CommentEntityType.SongLyric:
+            return "unread_song_lyric_comment_id"
+        case CommentEntityType.WallPost:
+            return "unread_wall_post_comment_id"
+        default:
+            throw `Unknown entity type: ${entityType}`
+    }
+}
+
+function getUnreadCommentEntityIdColumnName(entityType: CommentEntityType): string { 
+    switch (entityType) {
+        case CommentEntityType.Event:
+            return "event_comment_id"
+        case CommentEntityType.Poll:
+            return "poll_comment_id"
+        case CommentEntityType.SongLyric:
+            return "song_lyric_comment_id"
+        case CommentEntityType.WallPost:
+            return "wall_post_comment_id"
         default:
             throw `Unknown entity type: ${entityType}`
     }
@@ -162,20 +192,59 @@ function get(entityType: CommentEntityType, commentId: number): Comment | undefi
     return comment
 }
 
-function insertNew(entityType: CommentEntityType, entityId: number,  comment: NewComment, createdBy: number) {
-    const db = new Database(motstandenDB, dbReadWriteConfig)
-
+function insertComment(entityType: CommentEntityType, entityId: number,  comment: NewComment, createdBy: number, db: DatabaseType) {
     const stmt = db.prepare(`
-    INSERT INTO ${getTableName(entityType)} (
-        ${getEntityIdColumnName(entityType)},
-        comment,
-        created_by) 
-    VALUES 
-        (?, ?, ?)
-    `)
-    stmt.run(entityId, comment.comment, createdBy)
-    db.close()
+        INSERT INTO ${getTableName(entityType)} (
+            ${getEntityIdColumnName(entityType)},
+            comment,
+            created_by) 
+        VALUES 
+            (?, ?, ?)
+        `)
+    return stmt.run(entityId, comment.comment, createdBy)
 }
+
+function insertUnreadComment(entityType: CommentEntityType, commentId: number | bigint, userId: number, db: DatabaseType) {
+    const stmt = db.prepare(`
+        INSERT INTO 
+            ${getUnreadCommentTableName(entityType)} (${getUnreadCommentEntityIdColumnName(entityType)}, user_id)
+        VALUES
+            (?, ?)
+    `)
+    return stmt.run(commentId, userId)
+}
+
+function insertCommentAndMarkUnread(entityType: CommentEntityType, entityId: number, comment: NewComment, createdBy: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const startTransaction = db.transaction(() => { 
+
+        // Insert new comment
+        const { lastInsertRowid } = insertComment(entityType, entityId, comment, createdBy, db)
+
+        const userIds = getAllUserIds(db)
+            .filter(id => id.id !== createdBy)
+
+        // Insert unread comment for all users
+        for(const { id } of userIds) { 
+            insertUnreadComment(entityType, lastInsertRowid, id, db)
+        }
+    })
+    startTransaction()
+    db.close()
+
+}
+
+function getAllUserIds(db: DatabaseType) {
+    const stmt = db.prepare(`
+        SELECT
+            user_id as id
+        FROM
+            user
+    `)
+    const userIds = stmt.all() as { id: number }[]
+    return userIds
+}
+
 
 function deleteComment(entityType: CommentEntityType, commentId: number) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
@@ -232,7 +301,7 @@ export const commentsService = {
     get: get,
     getAll: getAll,
     getAllUnion: getAllUnion,
-    insertNew: insertNew,
+    insertNew: insertCommentAndMarkUnread,
     delete: deleteComment,
     getUnreadCount: getUnreadCount,
     resetUnreadCount: resetUnreadCount,
