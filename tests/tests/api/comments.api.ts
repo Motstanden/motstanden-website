@@ -1,8 +1,9 @@
-import { CommentEntityType, UserGroup } from "common/enums"
-import { testUserVariationsCount, unsafeGetUser } from "../../utils/auth.js"
 import { APIRequestContext, expect, request, test } from '@playwright/test'
+import { CommentEntityType, UserGroup } from "common/enums"
 import { Count, NewComment } from "common/interfaces"
+import { testUserVariationsCount, unsafeGetUser } from "../../utils/auth.js"
 import { randomString } from "../../utils/randomString.js"
+import { Comment } from 'common/interfaces'
 
 test.describe.serial("Comments test suite", () => {
     const user1 = unsafeGetUser(UserGroup.Contributor, testUserVariationsCount - 1)
@@ -55,10 +56,34 @@ test.describe.serial("Comments test suite", () => {
         unreadCount++
     }
 
-    test("Event comment increases unread count", async () => testCommentIncreasesCounter(CommentEntityType.Event))
-    test("Poll comment increases unread count", async () => testCommentIncreasesCounter(CommentEntityType.Poll))
-    test("Song lyric comment increases unread count", async () => testCommentIncreasesCounter(CommentEntityType.SongLyric))
-    test("Wall post comment increases unread count", async () => testCommentIncreasesCounter(CommentEntityType.WallPost))
+    const testDeleteCommentDecreasesCounter = async (entityType: CommentEntityType) => { 
+        const postedComment = unreadComments.find(c => c.entityType === entityType)
+        if(!postedComment) {
+            throw new Error(`No unread comments for ${entityType}`)
+        }
+
+        const actualComment = await getMatchingComment(api1, entityType, postedComment.entityId, postedComment.comment)
+        if(!actualComment) {
+            throw new Error(`Comment not found for ${entityType} ${postedComment.entityId}`)
+        }
+        expect(actualComment).toBeDefined()
+
+        await deleteComment(api1, entityType, postedComment.entityId, actualComment.id)
+
+        const deletedComment = await getMatchingComment(api1, entityType, postedComment.entityId, postedComment.comment)
+
+        expect(deletedComment).toBeUndefined()
+    }
+
+    test("POST Event comment increases unread count", async () => testCommentIncreasesCounter(CommentEntityType.Event))
+    test("POST Poll comment increases unread count", async () => testCommentIncreasesCounter(CommentEntityType.Poll))
+    test("POST Song lyric comment increases unread count", async () => testCommentIncreasesCounter(CommentEntityType.SongLyric))
+    test("POST Wall post comment increases unread count", async () => testCommentIncreasesCounter(CommentEntityType.WallPost))
+
+    test("DELETE event comment decreases unread count", async () => testDeleteCommentDecreasesCounter(CommentEntityType.Event))
+    test("DELETE poll comment decreases unread count", async () => testDeleteCommentDecreasesCounter(CommentEntityType.Poll))
+    test("DELETE song lyric comment decreases unread count", async () => testDeleteCommentDecreasesCounter(CommentEntityType.SongLyric))
+    test("DELETE wall post comment decreases unread count", async () => testDeleteCommentDecreasesCounter(CommentEntityType.WallPost))
 })
 
 async function getUnreadCount(api:APIRequestContext) {
@@ -83,4 +108,26 @@ async function createComment(api: APIRequestContext, entityType: CommentEntityTy
     if(!res.ok()) {
         throw new Error(`Failed to create ${entityType} comment.\n${await res.text()}`)
     }
+}
+
+async function deleteComment(api: APIRequestContext, entityType: CommentEntityType, entityId: number, commentId: number) { 
+    const res = await api.delete(`/api/${entityType}/${entityId}/comments/${commentId}`)
+    if(!res.ok()) {
+        throw new Error(`Failed to delete ${entityType} comment ${commentId}`)
+    }
+}
+
+async function getAllComments(api: APIRequestContext, entityType: CommentEntityType, entityId: number): Promise<Comment[]> {
+    const res = await api.get(`/api/${entityType}/${entityId}/comments`)
+    if(!res.ok()) {
+        throw new Error(`Failed to get comments for ${entityType} ${entityId}`)
+    }
+    const data = (await res.json()) as Comment[]
+    return data
+}
+
+async function getMatchingComment(api: APIRequestContext, entityType: CommentEntityType, entityId: number, comment: string): Promise<Comment | undefined>{
+    const comments = await getAllComments(api, entityType, entityId)
+    const matchingComment = comments.find(c => c.comment === comment)
+    return matchingComment
 }
