@@ -129,9 +129,6 @@ router.get("/wall-posts/unread/count",
         const user = req.user as AccessTokenData
         
         const unreadCount = wallPostService.getUnreadCount(user.userId)
-        if(unreadCount === undefined) { 
-            wallPostService.resetUnreadCount(user.userId)
-        }
         const result: Count = {
             count: unreadCount ?? 0
         }

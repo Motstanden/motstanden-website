@@ -111,9 +111,9 @@ function getUnreadCount(userId: number): number | undefined {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT 
-            count
+            count(*) as count
         FROM
-            vw_unread_wall_posts_count
+            unread_wall_post
         WHERE
             user_id = ?
     `)
@@ -124,18 +124,12 @@ function getUnreadCount(userId: number): number | undefined {
 
 function resetUnreadCount(userId: number) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
-    const totalCount = getTotalCount()
     const stmt = db.prepare(`
-        INSERT INTO 
-            read_wall_posts_count (user_id, count)
-        VALUES 
-            (?, ?)
-        ON CONFLICT 
-            (user_id) 
-        DO UPDATE
-            SET count = ?
+        DELETE FROM 
+            unread_wall_post 
+        WHERE user_id = ?
     `)
-    stmt.run(userId, totalCount, totalCount)
+    stmt.run(userId)
     db.close()
 }
 
