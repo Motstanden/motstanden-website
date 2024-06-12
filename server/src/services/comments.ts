@@ -3,102 +3,6 @@ import { CommentEntityType } from "common/enums"
 import { Comment, Count, EntityComment, NewComment } from "common/interfaces"
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js"
 
-// This function exposes the database for sql injection attack.
-// This is dangerous, so don't touch it unless you know what you are doing
-function getTableName(entityType: CommentEntityType): string {
-    switch (entityType) {
-        case CommentEntityType.Event:
-            return "event_comment"
-        case CommentEntityType.Poll:
-            return "poll_comment"
-        case CommentEntityType.SongLyric:
-            return "song_lyric_comment"
-        case CommentEntityType.WallPost:
-            return "wall_post_comment"
-        default:
-            throw `Unknown entity type: ${entityType}`
-    }
-}
-
-// This function exposes the database for sql injection attack.
-// This is dangerous, so don't touch it unless you know what you are doing
-function getIdColumnName(entityType: CommentEntityType): string {
-    switch (entityType) {
-        case CommentEntityType.Event:
-            return "event_comment_id"
-        case CommentEntityType.Poll:
-            return "poll_comment_id"
-        case CommentEntityType.SongLyric:
-            return "song_lyric_comment_id"
-        case CommentEntityType.WallPost:
-            return "wall_post_comment_id"
-        default:
-            throw `Unknown entity type: ${entityType}`
-    }
-}
-
-// This function exposes the database for sql injection attack.
-// This is dangerous, so don't touch it unless you know what you are doing
-function getEntityIdColumnName(entityType: CommentEntityType): string {
-    switch (entityType) {
-        case CommentEntityType.Event:
-            return "event_id"
-        case CommentEntityType.Poll:
-            return "poll_id"
-        case CommentEntityType.SongLyric:
-            return "song_lyric_id"
-        case CommentEntityType.WallPost:
-            return "wall_post_id"
-        default:
-            throw `Unknown entity type: ${entityType}`
-    }
-}
-
-function getUnreadCommentTableName(entityType: CommentEntityType): string { 
-    switch (entityType) {
-        case CommentEntityType.Event:
-            return "unread_event_comment"
-        case CommentEntityType.Poll:
-            return "unread_poll_comment"
-        case CommentEntityType.SongLyric:
-            return "unread_song_lyric_comment"
-        case CommentEntityType.WallPost:
-            return "unread_wall_post_comment"
-        default:
-            throw `Unknown entity type: ${entityType}`
-    }
-}
-
-function getUnreadCommentIdColumnName(entityType: CommentEntityType): string { 
-    switch (entityType) {
-        case CommentEntityType.Event:
-            return "unread_event_comment_id"
-        case CommentEntityType.Poll:
-            return "unread_poll_comment_id"
-        case CommentEntityType.SongLyric:
-            return "unread_song_lyric_comment_id"
-        case CommentEntityType.WallPost:
-            return "unread_wall_post_comment_id"
-        default:
-            throw `Unknown entity type: ${entityType}`
-    }
-}
-
-function getUnreadCommentEntityIdColumnName(entityType: CommentEntityType): string { 
-    switch (entityType) {
-        case CommentEntityType.Event:
-            return "event_comment_id"
-        case CommentEntityType.Poll:
-            return "poll_comment_id"
-        case CommentEntityType.SongLyric:
-            return "song_lyric_comment_id"
-        case CommentEntityType.WallPost:
-            return "wall_post_comment_id"
-        default:
-            throw `Unknown entity type: ${entityType}`
-    }
-}
-
 function getAllUnion(limit?: number): EntityComment[]{
     const db = new Database(motstandenDB, dbReadOnlyConfig)
 
@@ -157,14 +61,14 @@ function getAll(entityType: CommentEntityType, entityId: number): Comment[] {
 
     const stmt = db.prepare(`
     SELECT 
-        ${getIdColumnName(entityType)} as id,
+        ${commentsTable.id(entityType)} as id,
         comment,
         created_by as createdBy,
         created_at as createdAt
     FROM
-        ${getTableName(entityType)}
+        ${commentsTable.name(entityType)}
     WHERE
-        ${getEntityIdColumnName(entityType)} = ?
+        ${commentsTable.entityId(entityType)} = ?
     `)
 
     const comments = <Comment[]> stmt.all(entityId)
@@ -177,14 +81,14 @@ function get(entityType: CommentEntityType, commentId: number): Comment | undefi
 
     const stmt = db.prepare(`
     SELECT 
-        ${getIdColumnName(entityType)} as id,
+        ${commentsTable.id(entityType)} as id,
         comment,
         created_by as createdBy,
         created_at as createdAt
     FROM
-        ${getTableName(entityType)}
+        ${commentsTable.name(entityType)}
     WHERE
-        ${getIdColumnName(entityType)} = ?
+        ${commentsTable.id(entityType)} = ?
     `)
 
     const comment = stmt.get(commentId) as Comment | undefined
@@ -194,8 +98,8 @@ function get(entityType: CommentEntityType, commentId: number): Comment | undefi
 
 function insertComment(entityType: CommentEntityType, entityId: number,  comment: NewComment, createdBy: number, db: DatabaseType) {
     const stmt = db.prepare(`
-        INSERT INTO ${getTableName(entityType)} (
-            ${getEntityIdColumnName(entityType)},
+        INSERT INTO ${commentsTable.name(entityType)} (
+            ${commentsTable.entityId(entityType)},
             comment,
             created_by) 
         VALUES 
@@ -206,8 +110,9 @@ function insertComment(entityType: CommentEntityType, entityId: number,  comment
 
 function insertUnreadComment(entityType: CommentEntityType, commentId: number | bigint, userId: number, db: DatabaseType) {
     const stmt = db.prepare(`
-        INSERT INTO 
-            ${getUnreadCommentTableName(entityType)} (${getUnreadCommentEntityIdColumnName(entityType)}, user_id)
+        INSERT INTO ${unreadCommentsTable.name(entityType)} (
+            ${unreadCommentsTable.commentId(entityType)}, 
+            user_id)
         VALUES
             (?, ?)
     `)
@@ -250,9 +155,9 @@ function deleteComment(entityType: CommentEntityType, commentId: number) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
     const stmt = db.prepare(`
     DELETE FROM 
-        ${getTableName(entityType)}
+        ${commentsTable.name(entityType)}
     WHERE
-        ${getIdColumnName(entityType)} = ?
+        ${commentsTable.id(entityType)} = ?
     `)
     stmt.run(commentId)
     db.close()
@@ -262,10 +167,10 @@ function getUnreadCount(userId: number): number | undefined {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
     SELECT 
-        (SELECT COUNT(*) FROM ${getUnreadCommentTableName(CommentEntityType.Event)} WHERE user_id = @userId) +
-        (SELECT COUNT(*) FROM ${getUnreadCommentTableName(CommentEntityType.Poll)} WHERE user_id = @userId) +
-        (SELECT COUNT(*) FROM ${getUnreadCommentTableName(CommentEntityType.SongLyric)} WHERE user_id = @userId) +
-        (SELECT COUNT(*) FROM ${getUnreadCommentTableName(CommentEntityType.WallPost)} WHERE user_id = @userId) 
+        (SELECT COUNT(*) FROM ${unreadCommentsTable.name(CommentEntityType.Event)} WHERE user_id = @userId) +
+        (SELECT COUNT(*) FROM ${unreadCommentsTable.name(CommentEntityType.Poll)} WHERE user_id = @userId) +
+        (SELECT COUNT(*) FROM ${unreadCommentsTable.name(CommentEntityType.SongLyric)} WHERE user_id = @userId) +
+        (SELECT COUNT(*) FROM ${unreadCommentsTable.name(CommentEntityType.WallPost)} WHERE user_id = @userId) 
     AS count
     `)
     const data = stmt.get({userId: userId}) as Count | undefined
@@ -280,7 +185,7 @@ function resetUnreadCount(userId: number) {
     const deleteFn = (entityType: CommentEntityType) => { 
         const stmt = db.prepare(`
             DELETE FROM 
-                ${getUnreadCommentTableName(entityType)} 
+                ${unreadCommentsTable.name(entityType)} 
             WHERE
                 user_id = ?`)
         stmt.run(userId)
@@ -305,4 +210,116 @@ export const commentsService = {
     delete: deleteComment,
     getUnreadCount: getUnreadCount,
     resetUnreadCount: resetUnreadCount,
+}
+
+// *************************************************************************
+//                    Table names for sql query building  
+// *************************************************************************
+
+// Comments table names
+const commentsTable = {
+ 
+    // *************************************************************************
+    // These function exposes the database for sql injection attack.
+    // This is dangerous, so don't touch it unless you know what you are doing
+    // *************************************************************************
+    
+    name: (entityType: CommentEntityType): string => {
+        switch (entityType) {
+            case CommentEntityType.Event:
+                return "event_comment"
+            case CommentEntityType.Poll:
+                return "poll_comment"
+            case CommentEntityType.SongLyric:
+                return "song_lyric_comment"
+            case CommentEntityType.WallPost:
+                return "wall_post_comment"
+            default:
+                throw `Unknown entity type: ${entityType}`
+        }
+    },
+
+    id: (entityType: CommentEntityType): string => { 
+        switch (entityType) {
+            case CommentEntityType.Event:
+                return "event_comment_id"
+            case CommentEntityType.Poll:
+                return "poll_comment_id"
+            case CommentEntityType.SongLyric:
+                return "song_lyric_comment_id"
+            case CommentEntityType.WallPost:
+                return "wall_post_comment_id"
+            default:
+                throw `Unknown entity type: ${entityType}`
+        }
+    },
+
+    entityId: (entityType: CommentEntityType): string => { 
+        switch (entityType) {
+            case CommentEntityType.Event:
+                return "event_id"
+            case CommentEntityType.Poll:
+                return "poll_id"
+            case CommentEntityType.SongLyric:
+                return "song_lyric_id"
+            case CommentEntityType.WallPost:
+                return "wall_post_id"
+            default:
+                throw `Unknown entity type: ${entityType}`
+        }
+    }
+}
+
+// Unread comments table names
+const unreadCommentsTable = {
+    
+    // *************************************************************************
+    // These function exposes the database for sql injection attack.
+    // This is dangerous, so don't touch it unless you know what you are doing
+    // *************************************************************************
+    
+    name: (entityType: CommentEntityType): string => { 
+        switch (entityType) {
+            case CommentEntityType.Event:
+                return "unread_event_comment"
+            case CommentEntityType.Poll:
+                return "unread_poll_comment"
+            case CommentEntityType.SongLyric:
+                return "unread_song_lyric_comment"
+            case CommentEntityType.WallPost:
+                return "unread_wall_post_comment"
+            default:
+                throw `Unknown entity type: ${entityType}`
+        }
+    },
+
+    id: (entityType: CommentEntityType): string => { 
+        switch (entityType) {
+            case CommentEntityType.Event:
+                return "unread_event_comment_id"
+            case CommentEntityType.Poll:
+                return "unread_poll_comment_id"
+            case CommentEntityType.SongLyric:
+                return "unread_song_lyric_comment_id"
+            case CommentEntityType.WallPost:
+                return "unread_wall_post_comment_id"
+            default:
+                throw `Unknown entity type: ${entityType}`
+        }
+    },
+
+    commentId: (entityType: CommentEntityType): string => { 
+        switch (entityType) {
+            case CommentEntityType.Event:
+                return "event_comment_id"
+            case CommentEntityType.Poll:
+                return "poll_comment_id"
+            case CommentEntityType.SongLyric:
+                return "song_lyric_comment_id"
+            case CommentEntityType.WallPost:
+                return "wall_post_comment_id"
+            default:
+                throw `Unknown entity type: ${entityType}`
+        }
+    },
 }
