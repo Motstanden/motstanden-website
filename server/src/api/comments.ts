@@ -1,8 +1,9 @@
-import { CommentEntityType } from "common/enums";
+import { CommentEntityType, UserGroup } from "common/enums";
 import { Count, NewComment } from "common/interfaces";
 import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express, { Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
+import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
 import { validateNumber } from "../middleware/validateNumber.js";
 import { commentsService } from "../services/comments.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
@@ -121,6 +122,50 @@ function tryCreateValidComment(obj: unknown): NewComment | undefined {
 
     return {
         comment: comment.comment.trim()
+    }
+}
+
+// ---- DELETE comment ----
+
+router.delete("/event/:entityId/comments/:commentId", deleteCommentPipeline(CommentEntityType.Event))
+router.delete("/poll/:entityId/comments/:commentId", deleteCommentPipeline(CommentEntityType.Poll))
+router.delete("/song-lyric/:entityId/comments/:commentId", deleteCommentPipeline(CommentEntityType.SongLyric))
+router.delete("/wall-post/:entityId/comments/:commentId", deleteCommentPipeline(CommentEntityType.WallPost))
+
+function deleteCommentPipeline(entityType: CommentEntityType) { 
+    return [
+        AuthenticateUser(),
+        validateNumber({
+            getValue: (req: Request) => req.params.entityId,
+        }),
+        requiresGroupOrAuthor({
+            requiredGroup: UserGroup.Administrator,
+            getId: (req) => strToNumber(req.params.commentId),
+            getAuthorInfo: (id) => commentsService.get(entityType, id)
+        }),
+        deleteCommentHandler({
+            entityType: entityType,
+            getCommentId: (req: Request) => strToNumber(req.params.commentId) as number
+        })
+    ]
+}
+
+function deleteCommentHandler( {
+    entityType,
+    getCommentId,
+}: {
+    entityType: CommentEntityType,
+    getCommentId: (req: Request) => number
+}) {
+    return (req: Request, res: Response) => {
+        console.log("Entered delete comment handler")
+        const id = getCommentId(req)
+        try {
+            commentsService.delete(entityType, id)
+        } catch (err) {
+            res.status(500).send(`Failed to delete ${entityType} comment from the database`)
+        }
+        res.end()
     }
 }
 

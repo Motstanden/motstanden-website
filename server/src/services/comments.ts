@@ -127,6 +127,26 @@ function getAll(entityType: CommentEntityType, entityId: number): Comment[] {
     return comments
 }
 
+function get(entityType: CommentEntityType, commentId: number): Comment | undefined {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+
+    const stmt = db.prepare(`
+    SELECT 
+        ${getIdColumnName(entityType)} as id,
+        comment,
+        created_by as createdBy,
+        created_at as createdAt
+    FROM
+        ${getTableName(entityType)}
+    WHERE
+        ${getIdColumnName(entityType)} = ?
+    `)
+
+    const comment = stmt.get(commentId) as Comment | undefined
+    db.close()
+    return comment
+}
+
 function insertNew(entityType: CommentEntityType, entityId: number,  comment: NewComment, createdBy: number) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
 
@@ -139,6 +159,18 @@ function insertNew(entityType: CommentEntityType, entityId: number,  comment: Ne
         (?, ?, ?)
     `)
     stmt.run(entityId, comment.comment, createdBy)
+    db.close()
+}
+
+function deleteComment(entityType: CommentEntityType, commentId: number) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(`
+    DELETE FROM 
+        ${getTableName(entityType)}
+    WHERE
+        ${getIdColumnName(entityType)} = ?
+    `)
+    stmt.run(commentId)
     db.close()
 }
 
@@ -202,9 +234,11 @@ function incrementUnreadCount(userId: number) {
 }
 
 export const commentsService = {
+    get: get,
     getAll: getAll,
     getAllUnion: getAllUnion,
     insertNew: insertNew,
+    delete: deleteComment,
     getUnreadCount: getUnreadCount,
     resetUnreadCount: resetUnreadCount,
     incrementUnreadCount: incrementUnreadCount
