@@ -67,8 +67,6 @@ test.describe("Admin can delete all wall posts", async () => {
 
         await page.goto("/vegg"),
         await createWallPost(page, postContent)
-        await clickEdit(page)
-
 
         await disposeLogIn(page)
     })
