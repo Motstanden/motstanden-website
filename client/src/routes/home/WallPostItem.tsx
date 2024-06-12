@@ -95,7 +95,7 @@ function PostFetcher({
             entityType={LikeEntityType.WallPost}
             entityId={data.id}
         >
-            <PostSectionItem post={data} />
+            <PostSectionItem post={data} queryKey={queryKey}/>
         </LikesContextProvider>
     )
 }
