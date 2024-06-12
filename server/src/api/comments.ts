@@ -139,7 +139,7 @@ function deleteCommentPipeline(entityType: CommentEntityType) {
             getValue: (req: Request) => req.params.entityId,
         }),
         requiresGroupOrAuthor({
-            requiredGroup: UserGroup.Administrator,
+            requiredGroup: UserGroup.SuperAdministrator,
             getId: (req) => strToNumber(req.params.commentId),
             getAuthorInfo: (id) => commentsService.get(entityType, id)
         }),
