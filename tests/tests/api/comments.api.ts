@@ -76,7 +76,7 @@ test.describe.serial("Comments test suite", () => {
         }
         expect(actualComment).toBeDefined()
 
-        await deleteComment(api1, entityType, postedComment.entityId, actualComment.id)
+        await deleteComment(api1, entityType, actualComment.id)
 
         const deletedComment = await getMatchingComment(api1, entityType, postedComment.entityId, postedComment.comment)
         const count1 = await getUnreadCount(api1)
@@ -125,10 +125,10 @@ async function createComment(api: APIRequestContext, entityType: CommentEntityTy
     }
 }
 
-async function deleteComment(api: APIRequestContext, entityType: CommentEntityType, entityId: number, commentId: number) { 
-    const res = await api.delete(`/api/${entityType}/${entityId}/comments/${commentId}`)
+async function deleteComment(api: APIRequestContext, entityType: CommentEntityType, commentId: number) { 
+    const res = await api.delete(`/api/${entityType}/comments/${commentId}`)
     if(!res.ok()) {
-        throw new Error(`Failed to delete ${entityType} comment ${commentId}`)
+        throw new Error(`Failed to delete ${entityType} comment ${commentId}.\n${await res.text()}`)
     }
 }
 

@@ -127,19 +127,16 @@ function tryCreateValidComment(obj: unknown): NewComment | undefined {
 
 // ---- DELETE comment ----
 
-router.delete("/event/:entityId/comments/:commentId", deleteCommentPipeline(CommentEntityType.Event))
-router.delete("/poll/:entityId/comments/:commentId", deleteCommentPipeline(CommentEntityType.Poll))
-router.delete("/song-lyric/:entityId/comments/:commentId", deleteCommentPipeline(CommentEntityType.SongLyric))
-router.delete("/wall-post/:entityId/comments/:commentId", deleteCommentPipeline(CommentEntityType.WallPost))
+router.delete("/event/comments/:commentId", deleteCommentPipeline(CommentEntityType.Event))
+router.delete("/poll/comments/:commentId", deleteCommentPipeline(CommentEntityType.Poll))
+router.delete("/song-lyric/comments/:commentId", deleteCommentPipeline(CommentEntityType.SongLyric))
+router.delete("/wall-post/comments/:commentId", deleteCommentPipeline(CommentEntityType.WallPost))
 
 function deleteCommentPipeline(entityType: CommentEntityType) { 
     return [
         AuthenticateUser(),
-        validateNumber({
-            getValue: (req: Request) => req.params.entityId,
-        }),
         requiresGroupOrAuthor({
-            requiredGroup: UserGroup.SuperAdministrator,
+            requiredGroup: UserGroup.Administrator,
             getId: (req) => strToNumber(req.params.commentId),
             getAuthorInfo: (id) => commentsService.get(entityType, id)
         }),
@@ -158,7 +155,6 @@ function deleteCommentHandler( {
     getCommentId: (req: Request) => number
 }) {
     return (req: Request, res: Response) => {
-        console.log("Entered delete comment handler")
         const id = getCommentId(req)
         try {
             commentsService.delete(entityType, id)
