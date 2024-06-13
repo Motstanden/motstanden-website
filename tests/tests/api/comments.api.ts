@@ -1,10 +1,17 @@
 import { APIRequestContext, expect, request, test } from '@playwright/test'
 import { CommentEntityType, UserGroup } from "common/enums"
-import { Count, NewComment } from "common/interfaces"
+import { Comment, Count, NewComment } from "common/interfaces"
 import { testUserVariationsCount, unsafeGetUser } from "../../utils/auth.js"
 import { randomString } from "../../utils/randomString.js"
-import { Comment } from 'common/interfaces'
-import exp from 'constants'
+
+// WARNING:
+// These tests may fail if they are run in parallel with e2e/comments.spec.ts
+// The tests share the same database, and the tests in e2e/wallPosts.spec.ts 
+// will modify the unread wall posts counter.
+//
+// TODO:
+// Create a global thread-safe lock to prevent parallel execution between the two test files
+//
 
 test.describe.serial("Comments test suite", () => {
     const user1 = unsafeGetUser(UserGroup.Contributor, testUserVariationsCount - 1)
