@@ -15,20 +15,16 @@ import { relativeTimeShortFormat } from 'src/context/Locale'
 import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage'
 import { fetchFn } from "src/utils/fetchAsync"
 import { postJson } from "src/utils/postJson"
-import { LikeButton } from './likes/LikeButton'
-import { LikeListIconButton } from './likes/LikeListButton'
-import { LikesContextProvider } from './likes/LikesContext'
-import { LikeUtils } from './likes/utils'
-import { UserAvatar, UserAvatarSkeleton } from './user/UserAvatar'
-import { UserFullName } from './user/UserFullName'
-
-export {
-    CommentSectionContainer as CommentSection
-}
+import { LikeButton } from '../likes/LikeButton'
+import { LikeListIconButton } from '../likes/LikeListButton'
+import { LikesContextProvider } from '../likes/LikesContext'
+import { LikeUtils } from '../likes/utils'
+import { UserAvatar, UserAvatarSkeleton } from '../user/UserAvatar'
+import { UserFullName } from '../user/UserFullName'
 
 type CommentSectionVariant = "compact" | "normal"
 
-function CommentSectionContainer({
+export function CommentSectionContainer({
     entityType,
     entityId,
     variant,

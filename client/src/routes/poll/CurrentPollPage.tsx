@@ -1,4 +1,3 @@
-import { Divider } from '@mui/material';
 import { CommentEntityType } from 'common/enums';
 import { Poll } from "common/interfaces";
 import { CommentSection } from 'src/components/CommentSection';
