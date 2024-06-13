@@ -9,7 +9,7 @@ import { useAuthenticatedUser } from "src/context/Authentication";
 import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage';
 import { postJson } from "src/utils/postJson";
 import { UserAvatar } from '../user/UserAvatar';
-import { CommentSectionVariant } from './CommentSectionRoot';
+import { CommentSectionVariant } from './CommentSection';
 
 export function NewCommentForm({
     entityType, 

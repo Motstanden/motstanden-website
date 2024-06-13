@@ -7,7 +7,7 @@ import { LikeButton } from '../likes/LikeButton';
 import { LikeListIconButton } from '../likes/LikeListButton';
 import { UserAvatar } from '../user/UserAvatar';
 import { UserFullName } from '../user/UserFullName';
-import { CommentSectionVariant } from "./CommentSectionRoot";
+import { CommentSectionVariant } from "./CommentSection";
 
 export function CommentItem({
     comment, style, variant,

@@ -1,19 +1,15 @@
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query"
-import { CommentEntityType, LikeEntityType } from "common/enums"
+import { CommentEntityType } from "common/enums"
 import { Comment } from "common/interfaces"
-import { useLayoutEffect } from "react"
-import { useLocation } from "react-router-dom"
-import { useAppBarStyle } from 'src/context/AppBarStyle'
 import { fetchFn } from "src/utils/fetchAsync"
-import { LikesContextProvider } from '../likes/LikesContext'
 import { LikeUtils } from '../likes/utils'
-import { CommentItem } from "./CommentItem"
+import { CommentList } from "./CommentList"
 import { NewCommentForm } from './NewCommentForm'
 import { CommentSectionSkeleton } from "./Skeleton"
 
 export type CommentSectionVariant = "compact" | "normal"
 
-export function CommentSectionRoot({
+export function CommentSection({
     entityType,
     entityId,
     variant,
@@ -84,61 +80,10 @@ function CommentSectionFetcher({
     }
 
     return (
-        <CommentSection 
+        <CommentList 
             comments={data} 
             variant={variant} 
             likeEntityType={LikeUtils.convertToLikeEntity(entityType)}
         />
-    )
-    
-}
-
-function CommentSection( {
-    comments,
-    likeEntityType,
-    variant,
-}: {
-    comments: Comment[],
-    likeEntityType: LikeEntityType,
-    variant?: CommentSectionVariant,
-}) {
-    const { scrollMarginTop } = useAppBarStyle()
-
-    const location = useLocation()
-    useLayoutEffect(() => {
-        if(location.hash && location.hash.startsWith("#comment-")) {
-            const element = document.getElementById(location.hash.substring(1))
-            if(element) {
-                window.scrollTo({ top: 0, left: 0, behavior: "auto" })
-                
-                setTimeout(() => {
-                    element.scrollIntoView({ behavior: "smooth" })
-                }, 600);
-            }
-        }
-    }, [])
-
-    return (
-        <>
-            {comments.map(comment => (
-                <LikesContextProvider
-                    entityType={likeEntityType} 
-                    entityId={comment.id}
-                    key={comment.id}
-                >
-                    <div 
-                        id={`comment-${comment.id}`} 
-                        style={{
-                            scrollMarginTop: `${scrollMarginTop + 10}px`,
-                            marginBottom: "15px"
-                        }}>
-                        <CommentItem 
-                            comment={comment}
-                            variant={variant ?? "normal"}
-                        />
-                    </div>
-                </LikesContextProvider>
-            ))}
-        </>
     )
 }
