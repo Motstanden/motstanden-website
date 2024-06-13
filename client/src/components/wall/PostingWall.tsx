@@ -439,7 +439,8 @@ function HeaderMenu( {
 
     const { isAdmin, user } = useAuthenticatedUser()
     const canEdit = user.id === post.createdBy
-    const canDelete = canEdit || isAdmin || user.id === post.wallUserId  
+    const canDelete = canEdit || isAdmin 
+        // || user.id === post.wallUserId   // TODO: Modify backend to allow this!
 
     return (
         <IconPopupMenu
