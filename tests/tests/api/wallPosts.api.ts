@@ -4,6 +4,15 @@ import { Count, NewWallPost, WallPost } from 'common/interfaces'
 import { testUserVariationsCount, unsafeGetUser } from '../../utils/auth.js'
 import { randomString } from '../../utils/randomString.js'
 
+// WARNING:
+// These tests may fail if they are run in parallel with e2e/wallPosts.spec.ts
+// The tests share the same database, and the tests in e2e/wallPosts.spec.ts 
+// will modify the unread wall posts counter.
+//
+// TODO:
+// Create a global thread-safe lock to prevent parallel execution between the two test files
+//
+
 test.describe.serial("api/wall-posts/unread", () => {
     const user1 = unsafeGetUser(UserGroup.Contributor, testUserVariationsCount - 1)
     const user2 = unsafeGetUser(UserGroup.Administrator, testUserVariationsCount - 1)
