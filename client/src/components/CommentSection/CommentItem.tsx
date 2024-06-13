@@ -14,8 +14,10 @@ export function CommentItem({
     comment, 
     style, 
     variant,
+    queryKey,
 }: {
     comment: Comment,
+    queryKey: QueryKey,
     style?: React.CSSProperties,
     variant?: CommentSectionVariant,
 }) {

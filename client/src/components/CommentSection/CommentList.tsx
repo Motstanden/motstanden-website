@@ -1,3 +1,4 @@
+import { QueryKey } from "@tanstack/react-query";
 import { LikeEntityType } from "common/enums";
 import { Comment } from "common/interfaces";
 import { useLayoutEffect } from "react";
@@ -8,11 +9,15 @@ import { CommentItem } from "./CommentItem";
 import { CommentSectionVariant } from "./types";
 
 export function CommentList({
-    comments, likeEntityType, variant,
+    comments, 
+    queryKey,
+    likeEntityType, 
+    variant,
 }: {
-    comments: Comment[];
-    likeEntityType: LikeEntityType;
-    variant?: CommentSectionVariant;
+    comments: Comment[],
+    queryKey: QueryKey,
+    likeEntityType: LikeEntityType,
+    variant?: CommentSectionVariant,
 }) {
     const { scrollMarginTop } = useAppBarStyle();
 
@@ -46,7 +51,9 @@ export function CommentList({
                         }}>
                         <CommentItem
                             comment={comment}
-                            variant={variant ?? "normal"} />
+                            variant={variant ?? "normal"} 
+                            queryKey={queryKey}
+                            />
                     </div>
                 </LikesContextProvider>
             ))}
