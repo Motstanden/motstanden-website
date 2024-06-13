@@ -1,8 +1,8 @@
-import { CommentSectionContainer } from "./CommentSection";
+import { CommentSectionRoot } from "./CommentSectionRoot";
 import { CommentSectionSkeleton } from "./Skeleton";
 
 export {
-    CommentSectionContainer as CommentSection,
+    CommentSectionRoot as CommentSection,
     CommentSectionSkeleton
 };
 

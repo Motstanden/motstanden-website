@@ -13,7 +13,7 @@ import { CommentSectionSkeleton } from "./Skeleton"
 
 export type CommentSectionVariant = "compact" | "normal"
 
-export function CommentSectionContainer({
+export function CommentSectionRoot({
     entityType,
     entityId,
     variant,
