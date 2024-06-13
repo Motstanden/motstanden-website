@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 import { useAppBarStyle } from 'src/context/AppBarStyle';
 import { LikesContextProvider } from '../likes/LikesContext';
 import { CommentItem } from "./CommentItem";
-import { CommentSectionVariant } from "./CommentSection";
+import { CommentSectionVariant } from "./types";
 
 export function CommentList({
     comments, likeEntityType, variant,

@@ -6,8 +6,7 @@ import { LikeUtils } from '../likes/utils'
 import { CommentList } from "./CommentList"
 import { NewCommentForm } from './NewCommentForm'
 import { CommentSectionSkeleton } from "./Skeleton"
-
-export type CommentSectionVariant = "compact" | "normal"
+import { CommentSectionVariant } from "./types"
 
 export function CommentSection({
     entityType,

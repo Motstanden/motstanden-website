@@ -1,6 +1,6 @@
 import { Skeleton, Stack } from "@mui/material";
 import { UserAvatarSkeleton } from '../user/UserAvatar';
-import { CommentSectionVariant } from "./CommentSection";
+import { CommentSectionVariant } from "./types";
 
 
 export function CommentSectionSkeleton({
