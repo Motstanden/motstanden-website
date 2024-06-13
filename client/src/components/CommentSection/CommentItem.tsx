@@ -1,12 +1,14 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Paper, Stack, useTheme } from "@mui/material";
 import { QueryKey, useMutation, useQueryClient } from "@tanstack/react-query";
+import { CommentEntityType } from 'common/enums';
 import { Comment } from "common/interfaces";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { LinkifiedText } from 'src/components/LinkifiedText';
 import { useAuthenticatedUser } from "src/context/Authentication";
 import { relativeTimeShortFormat } from 'src/context/Locale';
+import { deleteRequest } from 'src/utils/deleteRequest';
 import { LikeButton } from '../likes/LikeButton';
 import { LikeListIconButton } from '../likes/LikeListButton';
 import { DeleteMenuItem } from "../menu/DeleteMenuItem";
@@ -18,12 +20,14 @@ import { CommentSectionVariant } from "./types";
 
 export function CommentItem({
     comment, 
+    queryKey,
+    entityType,
     style, 
     variant,
-    queryKey,
 }: {
     comment: Comment,
     queryKey: QueryKey,
+    entityType: CommentEntityType,
     style?: React.CSSProperties,
     variant?: CommentSectionVariant,
 }) {
@@ -43,7 +47,7 @@ export function CommentItem({
 
     const deleteItem = useMutation({
         mutationFn: async () => {
-            await new Promise(resolve => setTimeout(resolve, 3000))
+            return await deleteRequest(`/api/${entityType}/comments/${comment.id}`)
         },
         onError: () => {
             window.alert("Fikk ikke til å slette kommentaren.\nSi ifra til webansvarlig!")
@@ -74,6 +78,9 @@ export function CommentItem({
         }
     }
 
+    if(deleteItem.isPending)
+        return <></>
+
     return (
         <Stack
             direction="row"
@@ -89,7 +96,10 @@ export function CommentItem({
             {!isEditing && (
                 <ReadOnlyComment 
                     comment={editItem.isPending ? editItem.variables : comment} 
-                    variant={variant}/>
+                    variant={variant}
+                    onEditClick={onEditClick}
+                    onDeleteClick={onDeleteClick}
+                    />
             )}
             {isEditing && ( 
                 <EditCommentForm/>
@@ -101,9 +111,13 @@ export function CommentItem({
 function ReadOnlyComment({
     variant,
     comment,
+    onEditClick,
+    onDeleteClick,
 }: {
     comment: Comment,
     variant?: CommentSectionVariant,
+    onEditClick?: () => void,
+    onDeleteClick?: () => void,
 }) {
     return (
         <div style={{
@@ -111,7 +125,11 @@ function ReadOnlyComment({
         }}>
             <Stack direction="row" alignItems="center" gap={{xs: 0.2, sm: 0.8}}>
                 <CommentBubble comment={comment} variant={variant} />
-                <CommentMenu comment={comment} />
+                <CommentMenu 
+                    comment={comment}
+                    onEditClick={onEditClick}
+                    onDeleteClick={onDeleteClick}
+                    />
             </Stack>
             <div>
                 <span>
@@ -199,9 +217,15 @@ function EditCommentForm() {
 }
 
 function CommentMenu({
-    comment
+    comment,
+    sx,
+    onEditClick,
+    onDeleteClick,
 }: {
-    comment: Comment
+    comment: Comment,
+    sx?: React.CSSProperties,
+    onEditClick?: () => void,
+    onDeleteClick?: () => void,
 }) {
 
     const {isAdmin, user} = useAuthenticatedUser()
@@ -215,12 +239,15 @@ function CommentMenu({
         <IconPopupMenu
             icon={<MoreHorizIcon />}
             ariaLabel="Kommentarmeny"
+            sx={{
+                ...sx,
+            }}
         >
             {canEdit && (
-                <EditMenuItem divider={canDelete}/>
+                <EditMenuItem divider={canDelete} onClick={onEditClick}/>
             )}
             {canDelete && (
-                <DeleteMenuItem/>
+                <DeleteMenuItem onClick={onDeleteClick}/>
             )}
         </IconPopupMenu>
     )

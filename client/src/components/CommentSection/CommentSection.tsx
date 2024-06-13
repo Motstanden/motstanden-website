@@ -82,6 +82,7 @@ function CommentSectionFetcher({
         <CommentList 
             comments={data} 
             variant={variant} 
+            commentEntityType={entityType}
             likeEntityType={LikeUtils.convertToLikeEntity(entityType)}
             queryKey={queryKey}
         />

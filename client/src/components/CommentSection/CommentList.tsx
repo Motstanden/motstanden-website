@@ -1,5 +1,5 @@
 import { QueryKey } from "@tanstack/react-query";
-import { LikeEntityType } from "common/enums";
+import { CommentEntityType, LikeEntityType } from "common/enums";
 import { Comment } from "common/interfaces";
 import { useLayoutEffect } from "react";
 import { useLocation } from "react-router-dom";
@@ -12,10 +12,12 @@ export function CommentList({
     comments, 
     queryKey,
     likeEntityType, 
+    commentEntityType,
     variant,
 }: {
     comments: Comment[],
     queryKey: QueryKey,
+    commentEntityType: CommentEntityType
     likeEntityType: LikeEntityType,
     variant?: CommentSectionVariant,
 }) {
@@ -51,6 +53,7 @@ export function CommentList({
                         }}>
                         <CommentItem
                             comment={comment}
+                            entityType={commentEntityType}
                             variant={variant ?? "normal"} 
                             queryKey={queryKey}
                             />
