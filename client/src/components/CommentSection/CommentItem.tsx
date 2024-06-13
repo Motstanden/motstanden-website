@@ -22,6 +22,7 @@ export function CommentItem({
             direction="row"
             spacing={variant === "normal" ? 2 : 1}
             style={style}
+            aria-label='Kommentar'
         >
             <UserAvatar
                 userId={comment.createdBy}
