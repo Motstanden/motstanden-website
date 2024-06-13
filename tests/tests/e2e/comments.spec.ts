@@ -1,8 +1,8 @@
 import { APIRequestContext, Browser, Page, TestInfo, expect, test } from "@playwright/test";
 import { CommentEntityType, UserGroup } from "common/enums";
+import { NewComment } from "common/interfaces";
 import { TestUser, disposeLogIn, logIn } from "../../utils/auth.js";
 import { randomString } from "../../utils/randomString.js";
-import { NewComment } from "common/interfaces";
 
 
 runTestSuite({ 
@@ -110,8 +110,8 @@ async function runDeleteTest({
     await clickMenuButton(page, comment)    // Assume we are already on the page
 
     await Promise.all([
-        page.waitForResponse(buildApiUrl(entityType, entityId)),
-        clickDelete(page)
+        clickDelete(page),
+        waitForCommentsResponse(page, entityType)
     ])
 
     const commentLocator = getCommentLocator(page, comment)
@@ -170,8 +170,8 @@ async function clickMenuButton(page: Page, comment: string) {
 } 
 
 async function clickDelete(page: Page) {
-    const button = page.getByRole("menuitem", {name: "Slett"})
-    await button.click()
+    page.once('dialog', dialog => dialog.accept());
+    await page.getByRole("menuitem", {name: "Slett"}).click()
 }
 
 async function clickEdit(page: Page) {
@@ -194,8 +194,10 @@ function buildPageUrl(entityType: CommentEntityType, entityId: number): string {
     }
 }
 
-function buildApiUrl(entityType: CommentEntityType, entityId: number): string { 
-    return `/api/${entityType}/${entityId}/comments`
+
+async function waitForCommentsResponse(page: Page, entityType: CommentEntityType) {
+    const urlPattern = new RegExp(`/api/${entityType}/comments/\\d+`)
+    return await page.waitForResponse(urlPattern)
 }
 
 // Posting a comment through the api is significantly faster than through the UI
