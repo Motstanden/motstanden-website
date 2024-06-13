@@ -15,38 +15,45 @@ function runTestSuite(opts: TestOptions) {
     test.describe.serial(`Comments on ${testName(opts.entityType)}`, () => {  
 
         test.describe.serial("Author can update, edit and delete", () => { 
-    
-            test(`New `, async ({page}) => {    
-                // TODO    
-                test.skip()
-            })
-    
-            test(`Edit `, async ({page}) => {    
-                // TODO    
-                test.skip()
-            })
-    
-            test(`Delete `, async ({page}) => {    
-                // TODO    
-                test.skip()
-            })
+            testAuthorCanUpdateEditAndDelete(opts.entityType)
         })
     
-        test("Admin can delete", async () => {
-            await testExternalDelete(opts.entityType, UserGroup.Administrator)
-        })
-
-        test("Superadmin can delete", async () => {
-            await testExternalDelete(opts.entityType, UserGroup.SuperAdministrator)
-        })
-
-        async function testExternalDelete(entityType: CommentEntityType, deleter: UserGroup) {
-            // TODO
-            test.skip()
-        }
+        testExternalDelete(opts.entityType)
     })
 }
 
+function testAuthorCanUpdateEditAndDelete( entityType: CommentEntityType ) { 
+    test(`New `, async ({page}) => {    
+        // TODO    
+        test.skip()
+    })
+
+    test(`Edit `, async ({page}) => {    
+        // TODO    
+        test.skip()
+    })
+
+    test(`Delete `, async ({page}) => {    
+        // TODO    
+        test.skip()
+    })
+}
+
+function testExternalDelete(entityType: CommentEntityType) { 
+
+    test("Admin can delete", async () => {
+        await testDelete(entityType, UserGroup.Administrator)
+    })
+
+    test("Superadmin can delete", async () => {
+        await testDelete(entityType, UserGroup.SuperAdministrator)
+    })
+
+    async function testDelete(entityType: CommentEntityType, deleter: UserGroup) {
+        // TODO
+        test.skip()
+    }
+}
 
 async function gotoPage(page: Page, entityType: CommentEntityType) {
     const id = 1
