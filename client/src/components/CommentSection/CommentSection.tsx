@@ -1,28 +1,23 @@
-import SendIcon from '@mui/icons-material/Send'
-import { LoadingButton } from "@mui/lab"
-import { Paper, Skeleton, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material"
+import { Paper, Skeleton, Stack, useTheme } from "@mui/material"
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query"
 import { CommentEntityType, LikeEntityType } from "common/enums"
-import { Comment, NewComment } from "common/interfaces"
-import { isNullOrWhitespace } from "common/utils"
+import { Comment } from "common/interfaces"
 import dayjs from "dayjs"
-import { useLayoutEffect, useState } from "react"
+import { useLayoutEffect } from "react"
 import { useLocation } from "react-router-dom"
 import { LinkifiedText } from 'src/components/LinkifiedText'
 import { useAppBarStyle } from 'src/context/AppBarStyle'
-import { useAuthenticatedUser } from "src/context/Authentication"
 import { relativeTimeShortFormat } from 'src/context/Locale'
-import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage'
 import { fetchFn } from "src/utils/fetchAsync"
-import { postJson } from "src/utils/postJson"
 import { LikeButton } from '../likes/LikeButton'
 import { LikeListIconButton } from '../likes/LikeListButton'
 import { LikesContextProvider } from '../likes/LikesContext'
 import { LikeUtils } from '../likes/utils'
 import { UserAvatar, UserAvatarSkeleton } from '../user/UserAvatar'
 import { UserFullName } from '../user/UserFullName'
+import { NewCommentForm } from './NewCommentForm'
 
-type CommentSectionVariant = "compact" | "normal"
+export type CommentSectionVariant = "compact" | "normal"
 
 export function CommentSectionContainer({
     entityType,
@@ -57,7 +52,7 @@ export function CommentSectionContainer({
                     variant={variant ?? "normal"}
                 />
             </div>
-            <CommentForm 
+            <NewCommentForm 
                 entityType={entityType}
                 entityId={entityId}
                 storageKey={queryKey}
@@ -313,97 +308,3 @@ function CommentItem( {
     )
 }
 
-function CommentForm({
-    entityType,
-    entityId,
-    storageKey,
-    onPostSuccess,
-    variant,
-}: {
-    entityType: CommentEntityType,
-    entityId: number,
-    storageKey: StorageKeyArray,
-    onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void),
-    variant?: CommentSectionVariant,
-}) {
-    const { user } = useAuthenticatedUser()
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [value, setValue, clearValue] = useSessionStorage<NewComment>({
-        key: storageKey,
-        initialValue: { comment: "" },
-    })
-
-    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
-
-    const onSubmit = async (e: React.FormEvent) => { 
-        e.preventDefault()
-        setIsSubmitting(true)
-
-        const newValue: NewComment = {
-            comment: value.comment.trim()
-        }
-
-        const response = await postJson(`/api/${entityType}/${entityId}/comments/new`, newValue, { alertOnFailure: true })
-
-        if (response && response.ok) {
-            onPostSuccess && await onPostSuccess(response)
-            setValue({ comment: "" })
-        }
-
-        clearValue()
-        setIsSubmitting(false)
-    }
-
-    const disabled = isNullOrWhitespace(value.comment)
-
-    return (
-        <form onSubmit={onSubmit}>
-            <Stack 
-                direction="row"
-            >
-                <UserAvatar
-                    userId={user.id}
-                    style={{
-                        display: isSmallScreen ? "none" : "inherit",
-                        marginRight: variant === "normal" ? "17px" : "11px"
-                    }}
-                />
-                <div 
-                    style={{
-                        width: "100%"
-                    }}>
-                    <TextField 
-                        type="text"
-                        label="Skriv en kommentar..."
-                        required
-                        fullWidth
-                        multiline
-                        autoComplete="off"
-                        value={value.comment}
-                        onChange={(e) => setValue({ comment: e.target.value })}
-                        disabled={isSubmitting}
-                        minRows={variant === "normal" ? 2 : 1}
-                        sx={{mb: variant === "normal" ? 4 : 2}}
-                        style={{
-                            marginTop: variant === "normal" ? "0px" : "-6px"
-                        }}
-                    />
-                    <LoadingButton
-                        type="submit"
-                        loading={isSubmitting}
-                        variant="contained"
-                        loadingPosition="end"
-                        endIcon={<SendIcon />}
-                        disabled={disabled}
-                        style={{
-                            minWidth: "120px"
-                        }}
-                        size={variant === "normal" ? "medium" : "small"}
-                    >
-                        Kommenter
-                    </LoadingButton>
-                </div>
-            </Stack>
-        </form>
-    )
-}
