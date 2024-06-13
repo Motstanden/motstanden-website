@@ -1,21 +1,15 @@
-import { Paper, Skeleton, Stack, useTheme } from "@mui/material"
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query"
 import { CommentEntityType, LikeEntityType } from "common/enums"
 import { Comment } from "common/interfaces"
-import dayjs from "dayjs"
 import { useLayoutEffect } from "react"
 import { useLocation } from "react-router-dom"
-import { LinkifiedText } from 'src/components/LinkifiedText'
 import { useAppBarStyle } from 'src/context/AppBarStyle'
-import { relativeTimeShortFormat } from 'src/context/Locale'
 import { fetchFn } from "src/utils/fetchAsync"
-import { LikeButton } from '../likes/LikeButton'
-import { LikeListIconButton } from '../likes/LikeListButton'
 import { LikesContextProvider } from '../likes/LikesContext'
 import { LikeUtils } from '../likes/utils'
-import { UserAvatar, UserAvatarSkeleton } from '../user/UserAvatar'
-import { UserFullName } from '../user/UserFullName'
+import { CommentItem } from "./CommentItem"
 import { NewCommentForm } from './NewCommentForm'
+import { CommentSectionSkeleton } from "./Skeleton"
 
 export type CommentSectionVariant = "compact" | "normal"
 
@@ -99,63 +93,6 @@ function CommentSectionFetcher({
     
 }
 
-export function CommentSectionSkeleton( {
-    variant,
-}: {
-    variant?: CommentSectionVariant,
-}) {
-    const length = variant === "normal" ? 4 : 2
-    return (
-        <div style={{maxWidth: "700px"}}>
-            {Array(length).fill(1).map((_, i) => (
-                <CommentItemSkeleton key={i} variant={variant}/>
-            ))}
-        </div>
-    )
-}
-
-function CommentItemSkeleton( {variant}: {variant?: CommentSectionVariant}) { 
-
-    const commentBubbleStyle: React.CSSProperties = 
-        variant === "normal" ? {
-            height: "70px",
-            borderRadius: "10px",
-        } : {
-            height: "60px",
-            borderRadius: "16px",
-        }   
-
-    return (
-        <Stack
-            direction="row"
-            spacing={variant === "normal" ? 2 : 1}
-            marginBottom="15px"
-        >
-            <UserAvatarSkeleton style={{marginTop: "5px"}}/>
-            <div 
-                style={{ 
-                    width: "100%",
-                }}>
-                <Skeleton 
-                    variant="rounded"
-                    height="70px"
-                    style={{
-                        ...commentBubbleStyle
-                    }}
-                />
-                <Skeleton 
-                    variant="text"
-                    style={{
-                        marginLeft: "5px",
-                        maxWidth: "100px",
-                        fontSize: "small"
-                    }}
-                />
-            </div>
-        </Stack>
-    )
-}
-
 function CommentSection( {
     comments,
     likeEntityType,
@@ -205,106 +142,3 @@ function CommentSection( {
         </>
     )
 }
-
-function CommentItem( {
-    comment,
-    style,
-    variant,
-}: {
-    comment: Comment,
-    style?: React.CSSProperties,
-    variant?: CommentSectionVariant,
-}) {
-    const theme = useTheme()
-    return (
-        <Stack 
-            direction="row"
-            spacing={variant === "normal" ? 2 : 1 }
-            style={style}
-        >
-            <UserAvatar 
-                userId={comment.createdBy}
-                style={{
-                    marginTop: "5px"
-                }}
-            />
-            <div style={{
-                width: variant === "normal" ? "100%" : undefined,
-            }}>
-                <div
-                    style={{
-                        backgroundColor: theme.palette.divider,
-                        minWidth: "130px",
-                        padding: variant === "normal" ? "12px" : "7px 14px 10px 14px",
-                        borderRadius: variant === "normal" ? "10px" : "16px",
-                        position: "relative"
-                    }}
-                >
-                    <div>
-                        <UserFullName 
-                            userId={comment.createdBy}
-                            style={{
-                                fontSize: variant === "normal" ? "inherit" : "small",
-                            }}
-                        />
-                    </div>
-                    <div 
-                        style={{
-                            whiteSpace: "pre-line"
-                        }}>
-                        <LinkifiedText>
-                            {comment.comment}
-                        </LinkifiedText>
-                    </div>
-                    <div
-                        style={{
-                            position: "absolute",
-                            right: "0px",
-                            zIndex: 1
-                        }}
-                    >
-                        <Paper
-                            style={{
-                                borderRadius: "30px",
-                                lineHeight: "0px",
-                                padding: "0px",
-                                margin: "0px",
-                            }}
-                            elevation={4}
-                        >
-                            <LikeListIconButton 
-                                maxItems={2}
-                                style={{
-                                    borderRadius: "30px",
-                                    fontSize: "13pt",
-                                    lineHeight: "15pt",
-                                    padding: "0px 2px 1px 2px",
-                                }}
-                            />
-                        </Paper>
-                    </div>
-                </div>
-                <div>
-                    <span>
-                        <LikeButton 
-                            style={{
-                                fontSize: "small",
-                                marginInline: "4px",
-                                minWidth: "40px",
-                            }}
-                        />
-                    </span>
-                    <span
-                        style={{
-                            fontSize: "small",
-                            opacity: "0.6",
-                        }}
-                        >
-                        {dayjs.utc(comment.createdAt).locale(relativeTimeShortFormat).fromNow()}
-                    </span>
-                </div>
-            </div>
-        </Stack>
-    )
-}
-
