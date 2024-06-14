@@ -1,6 +1,6 @@
-import { Page, expect, test } from '@playwright/test';
+import { APIRequestContext, Page, expect, test } from '@playwright/test';
 import { UserGroup } from 'common/enums';
-import { NewPollWithOption } from 'common/interfaces';
+import { NewPollWithOption, Poll } from 'common/interfaces';
 import { disposeLogIn, logIn } from '../../utils/auth.js';
 import { randomString } from '../../utils/randomString.js';
 
@@ -14,7 +14,7 @@ test.describe("Contributor can create, vote on- and delete polls they have creat
     })
 })
 
-test.describe("Admin can delete all events", async () => {
+test.describe("Admin can delete all polls", async () => {
     runTests({
         creator: UserGroup.Contributor,
         deleter: UserGroup.Administrator,
@@ -30,12 +30,10 @@ interface TestOptions {
 
 function runTests(opts: TestOptions) {
     const poll = createPoll()
+    let pollUrl: string
     const { creator, deleter } = opts
 
     test.describe.configure({ mode: "serial"})
-    test.beforeEach(async ({browserName}) => {
-    test.skip(browserName !== "firefox", "Firefox only! \nThis test can not be runned in parallel across browsers.") 
-    })
 
     test(`New ${opts.testId}`, async ({browser}, workerInfo) => { 
         const { page } = await logIn(browser, workerInfo, creator) 
@@ -43,6 +41,11 @@ function runTests(opts: TestOptions) {
 
         await fillForm(page, poll)
         await saveForm(page)
+        
+        
+        pollUrl = await getPollUrl(page.request, poll)
+        await page.goto(pollUrl)
+
         await validatePoll(page, poll)
 
         await disposeLogIn(page)
@@ -58,7 +61,8 @@ function runTests(opts: TestOptions) {
 
     test(`Delete ${opts.testId}`, async ({browser}, workerInfo) => {
         const { page } = await logIn(browser, workerInfo, deleter)
-        await page.goto("/avstemninger")
+
+        await page.goto(pollUrl)
 
         await clickDelete(page)
 
@@ -124,4 +128,27 @@ function createPoll(): NewPollWithOption {
             { text: randomString("Option D") }
         ]
     }
+}
+
+async function getPollUrl(api: APIRequestContext, poll: NewPollWithOption): Promise<string> { 
+    const dbPoll = await getPoll(api, poll)
+    if(!dbPoll) {
+        throw new Error("Poll not found")
+    }
+    return `/avstemninger/${dbPoll.id}`
+}
+
+async function getPoll(api: APIRequestContext, poll: NewPollWithOption): Promise<Poll | undefined> {
+    const allPolls = await getAllPolls(api)
+    const dbPoll = allPolls.find(p => p.title === poll.title)
+    return dbPoll
+}
+
+async function getAllPolls(api: APIRequestContext): Promise<Poll[]> {
+    const res = await api.get("/api/polls/all")
+    if(!res.ok()) {
+        throw new Error(`Failed to get all polls.\n${await res.text()}`)
+    }
+    const data = await res.json() as Poll[]
+    return data
 }
