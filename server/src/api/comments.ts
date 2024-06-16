@@ -134,6 +134,9 @@ router.delete("/wall-post/comments/:commentId", deleteCommentPipeline(CommentEnt
 function deleteCommentPipeline(entityType: CommentEntityType) { 
     return [
         AuthenticateUser(),
+        validateNumber({
+            getValue: req => req.params.commentId
+        }),
         requiresGroupOrAuthor({
             requiredGroup: UserGroup.Administrator,
             getId: (req) => strToNumber(req.params.commentId),
@@ -174,6 +177,9 @@ router.patch("/wall-post/comments/:commentId", patchCommentPipeline(CommentEntit
 function patchCommentPipeline(entityType: CommentEntityType) {
     return [
         AuthenticateUser(),
+        validateNumber({
+            getValue: req => req.params.commentId
+        }),
         requiresAuthor({
             getId: req => strToNumber(req.params.commentId),
             getAuthorInfo: id => commentsService.get(entityType, id)
