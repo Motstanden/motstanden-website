@@ -30,7 +30,6 @@ interface TestOptions {
 
 function runTests(opts: TestOptions) {
     const poll = createPoll()
-    let pollUrl: string
     const { creator, deleter } = opts
 
     test.describe.configure({ mode: "serial"})
@@ -42,9 +41,8 @@ function runTests(opts: TestOptions) {
         await fillForm(page, poll)
         await saveForm(page)
         
-        
-        pollUrl = await getPollUrl(page.request, poll)
-        await page.goto(pollUrl)
+        await clickAllPollsTab(page)
+        await expandPollItem(page, poll)
 
         await validatePoll(page, poll)
 
@@ -62,6 +60,7 @@ function runTests(opts: TestOptions) {
     test(`Delete ${opts.testId}`, async ({browser}, workerInfo) => {
         const { page } = await logIn(browser, workerInfo, deleter)
 
+        const pollUrl = await getPollUrl(page.request, poll)
         await page.goto(pollUrl)
 
         await clickDelete(page)
@@ -101,7 +100,7 @@ async function saveForm(page: Page) {
 
 async function validatePoll(page: Page, poll: NewPollWithOption) {
     // Title
-    const title = page.getByRole('heading', { name: poll.title })
+    const title = page.getByText(poll.title)
     await expect(title).toBeVisible()
 
     // Validate options
@@ -115,6 +114,21 @@ async function clickDelete(page: Page) {
     await page.getByRole("button", {name: "Avstemningmeny"}).click()
     page.once('dialog', dialog => dialog.accept());
     await page.getByRole("menuitem", { name: "Slett" }).click()
+}
+
+async function clickAllPollsTab(page: Page) {
+    await Promise.all([
+        page.getByRole('tab', { name: 'Alle' }).click(),
+        page.waitForURL("/avstemninger/alle")
+    ])
+}
+
+async function expandPollItem(page: Page, poll: NewPollWithOption | Poll) { 
+    await getPollListItem(page, poll).click()
+}
+
+function getPollListItem(page: Page, poll: NewPollWithOption | Poll) { 
+    return page.getByRole('button', { name: poll.title })
 }
 
 function createPoll(): NewPollWithOption {
