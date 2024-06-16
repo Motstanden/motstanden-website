@@ -30,7 +30,7 @@ interface TestOptions {
 function runTestSuite(opts: TestOptions) {
     test.describe.serial(`Comment on ${testName(opts.entityType)}`, () => {  
 
-        test.describe.serial("Author can update, edit and delete", () => { 
+        test.describe.serial("Author can create, edit and delete", () => { 
             testAuthorCanUpdateEditAndDelete(opts)
         })
     
@@ -87,8 +87,23 @@ function testAuthorCanUpdateEditAndDelete( {entityId, entityType}: TestOptions) 
     })
 
     test(`Edit `, async () => {    
-        // TODO    
-        test.skip()
+        // Arrange
+        const newComment = randomString("Edited comment")
+        await clickMenuButton(page, comment)
+        await clickEdit(page)
+
+        // Act
+        await page.getByLabel('Rediger kommentar... *').fill(newComment)
+        await Promise.all([
+            page.getByRole('button', { name: 'Lagre', exact: true }).click(),
+            waitForCommentsResponse(page, entityType)
+        ])
+
+        // Assert
+        await expect(getCommentLocator(page, newComment)).toBeVisible()
+        await expect(getCommentLocator(page, comment)).not.toBeVisible()
+
+        comment = newComment
     })
 
     test(`Delete `, async () => {    
@@ -99,7 +114,6 @@ function testAuthorCanUpdateEditAndDelete( {entityId, entityType}: TestOptions) 
 async function runDeleteTest({
     page, 
     entityType, 
-    entityId, 
     comment
 }: {
     page: Page,
