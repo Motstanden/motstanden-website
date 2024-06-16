@@ -92,6 +92,10 @@ export function CommentItem({
             spacing={variant === "normal" ? 2 : 1}
             style={style}
             aria-label='Kommentar'
+            sx={{
+                mt: isEditing ? 5 : undefined,
+                mb: isEditing ? 5 : undefined,
+            }}
         >
             <UserAvatar
                 userId={comment.createdBy}

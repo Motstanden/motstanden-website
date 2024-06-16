@@ -1,4 +1,4 @@
-import { TextField } from "@mui/material";
+import { Divider, TextField } from "@mui/material";
 import { CommentEntityType } from "common/enums";
 import { Comment } from "common/interfaces";
 import { isNullOrWhitespace } from "common/utils";
@@ -47,6 +47,7 @@ export function EditCommentForm({
         <form
             onSubmit={handleSubmit}
             style={{
+                width: "100%",
                 ...style
             }}
         >
@@ -60,6 +61,9 @@ export function EditCommentForm({
                 minRows={1}
                 value={value.comment}
                 onChange={(e) => setValue({ ...value, comment: e.target.value })}
+                sx={{
+                    mb: 3
+                }}
             />
             <SubmitFormButtons
                 loading={false}
