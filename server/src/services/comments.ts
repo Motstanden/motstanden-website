@@ -163,6 +163,20 @@ function deleteComment(entityType: CommentEntityType, commentId: number) {
     db.close()
 }
 
+function setComment(entityType: CommentEntityType, commentId: number, comment: string) {
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(`
+        UPDATE 
+            ${commentsTable.name(entityType)}
+        SET
+            comment = ?
+        WHERE
+            ${commentsTable.id(entityType)} = ?
+    `)
+    stmt.run(comment, commentId)
+    db.close()
+}
+
 function getUnreadCount(userId: number): number | undefined {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
@@ -208,6 +222,7 @@ export const commentsService = {
     getAllUnion: getAllUnion,
     insertNew: insertCommentAndMarkUnread,
     delete: deleteComment,
+    setComment: setComment,
     getUnreadCount: getUnreadCount,
     resetUnreadCount: resetUnreadCount,
 }

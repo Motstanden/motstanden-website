@@ -3,7 +3,7 @@ import { Count, NewComment } from "common/interfaces";
 import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express, { Request, Response } from "express";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
-import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
+import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
 import { validateNumber } from "../middleware/validateNumber.js";
 import { commentsService } from "../services/comments.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
@@ -92,7 +92,7 @@ function postCommentHandler( {
 }) {
     return (req: Request, res: Response) => {
         const user = req.user as AccessTokenData
-        const comment = tryCreateValidComment(req.body)
+        const comment = tryCreateValidCommentField(req.body)
         const entityId = getEntityId(req)
 
         if(!comment)
@@ -100,7 +100,6 @@ function postCommentHandler( {
 
         try {
             commentsService.insertNew(entityType, entityId, comment, user.userId)
-            // commentsService.incrementUnreadCount(user.userId)
         } catch (err) {
             console.error(err)
             res.status(500).send(`Failed to insert ${entityType} comment into the database`)
@@ -110,7 +109,7 @@ function postCommentHandler( {
     }
 }
 
-function tryCreateValidComment(obj: unknown): NewComment | undefined {
+function tryCreateValidCommentField(obj: unknown): NewComment | undefined {
     if (typeof obj !== "object" || obj === null) {
         return undefined
     }
@@ -164,6 +163,51 @@ function deleteCommentHandler( {
         res.end()
     }
 }
+
+// ---- PATCH comment ----
+
+router.patch("/event/comments/:commentId", patchCommentPipeline(CommentEntityType.Event))
+router.patch("/poll/comments/:commentId", patchCommentPipeline(CommentEntityType.Poll))
+router.patch("/song-lyric/comments/:commentId", patchCommentPipeline(CommentEntityType.SongLyric))
+router.patch("/wall-post/comments/:commentId", patchCommentPipeline(CommentEntityType.WallPost))
+
+function patchCommentPipeline(entityType: CommentEntityType) {
+    return [
+        AuthenticateUser(),
+        requiresAuthor({
+            getId: req => strToNumber(req.params.commentId),
+            getAuthorInfo: id => commentsService.get(entityType, id)
+        }),
+        patchCommentHandler({
+            entityType: entityType,
+            getCommentId: (req: Request) => strToNumber(req.params.commentId) as number
+        })
+    ]
+}
+
+function patchCommentHandler( {
+    entityType,
+    getCommentId,
+}: {
+    entityType: CommentEntityType,
+    getCommentId: (req: Request) => number
+}) {
+    return (req: Request, res: Response) => {
+        const id = getCommentId(req)
+        const comment = tryCreateValidCommentField(req.body)
+        
+        if(!comment)
+            return res.status(400).send("Could not parse comment data")
+
+        try {
+            commentsService.setComment(entityType, id, comment.comment)
+        } catch (err) {
+            res.status(500).send(`Failed to update ${entityType} comment in the database`)
+        }
+        res.end()
+    }
+}
+
 
 // ---- Manage the count of unread comments ---- 
 
