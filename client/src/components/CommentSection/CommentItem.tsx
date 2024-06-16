@@ -9,6 +9,7 @@ import { LinkifiedText } from 'src/components/LinkifiedText';
 import { useAuthenticatedUser } from "src/context/Authentication";
 import { relativeTimeShortFormat } from 'src/context/Locale';
 import { deleteRequest } from 'src/utils/deleteRequest';
+import { patchRequest } from 'src/utils/patchRequest';
 import { LikeButton } from '../likes/LikeButton';
 import { LikeListIconButton } from '../likes/LikeListButton';
 import { DeleteMenuItem } from "../menu/DeleteMenuItem";
@@ -16,9 +17,8 @@ import { EditMenuItem } from "../menu/EditMenuItem";
 import { IconPopupMenu } from "../menu/IconPopupMenu";
 import { UserAvatar } from '../user/UserAvatar';
 import { UserFullName } from '../user/UserFullName';
-import { CommentSectionVariant } from "./types";
 import { EditCommentForm } from './EditCommentForm';
-import { patchRequest } from 'src/utils/patchRequest';
+import { CommentSectionVariant } from "./types";
 
 export function CommentItem({
     comment, 
@@ -137,7 +137,11 @@ function ReadOnlyComment({
         <div style={{
             width: variant === "normal" ? "100%" : undefined,
         }}>
-            <Stack direction="row" alignItems="center" gap={{xs: 0.2, sm: 0.8}}>
+            <Stack 
+                direction="row" 
+                alignItems="center" 
+                gap={{xs: 0.2, sm: 0.8}}
+            >
                 <CommentBubble comment={comment} variant={variant} />
                 <CommentMenu 
                     comment={comment}
@@ -176,7 +180,8 @@ function CommentBubble({ comment, variant }: {comment: Comment, variant?: Commen
                 minWidth: "130px",
                 padding: variant === "normal" ? "12px" : "7px 14px 10px 14px",
                 borderRadius: variant === "normal" ? "10px" : "16px",
-                position: "relative"
+                position: "relative",
+                width: "100%",
             }}
         >
             <div>
