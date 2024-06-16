@@ -17,6 +17,8 @@ import { IconPopupMenu } from "../menu/IconPopupMenu";
 import { UserAvatar } from '../user/UserAvatar';
 import { UserFullName } from '../user/UserFullName';
 import { CommentSectionVariant } from "./types";
+import { EditCommentForm } from './EditCommentForm';
+import { patchRequest } from 'src/utils/patchRequest';
 
 export function CommentItem({
     comment, 
@@ -35,7 +37,10 @@ export function CommentItem({
 
     const editItem = useMutation({
         mutationFn: async (comment: Comment) => {
-            await new Promise(resolve => setTimeout(resolve, 3000))
+            const data: Pick<Comment, "comment"> = { 
+                comment: comment.comment
+            }
+            return await patchRequest(`/api/${entityType}/comments/${comment.id}`, data)
         },
         onError: () => {
             window.alert("Fikk ikke til å redigere kommentaren.\nSi ifra til webansvarlig!")
@@ -102,7 +107,12 @@ export function CommentItem({
                     />
             )}
             {isEditing && ( 
-                <EditCommentForm/>
+                <EditCommentForm
+                    initialValue={comment}
+                    onAbortClick={onAbortEditClick}
+                    onSubmit={onPostEdit}
+                    entityType={entityType}
+                />
             )}
         </Stack>
     );
@@ -207,12 +217,6 @@ function CommentBubble({ comment, variant }: {comment: Comment, variant?: Commen
                 </Paper>
             </div>
         </div>
-    )
-}
-
-function EditCommentForm() {
-    return (
-        <>Todo: Create edit comment form...</>
     )
 }
 
