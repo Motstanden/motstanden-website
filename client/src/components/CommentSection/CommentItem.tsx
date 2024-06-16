@@ -1,5 +1,5 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Paper, Stack, useTheme } from "@mui/material";
+import { Paper, Stack, SxProps, useTheme } from "@mui/material";
 import { QueryKey, useMutation, useQueryClient } from "@tanstack/react-query";
 import { CommentEntityType } from 'common/enums';
 import { Comment } from "common/interfaces";
@@ -8,6 +8,7 @@ import { useState } from "react";
 import { LinkifiedText } from 'src/components/LinkifiedText';
 import { useAuthenticatedUser } from "src/context/Authentication";
 import { relativeTimeShortFormat } from 'src/context/Locale';
+import { useIsMobileScreen } from 'src/layout/useAppSizes';
 import { deleteRequest } from 'src/utils/deleteRequest';
 import { patchRequest } from 'src/utils/patchRequest';
 import { LikeButton } from '../likes/LikeButton';
@@ -133,6 +134,9 @@ function ReadOnlyComment({
     onEditClick?: () => void,
     onDeleteClick?: () => void,
 }) {
+    const isMobile = useIsMobileScreen()
+    const isCompact = variant === "compact" || isMobile
+
     return (
         <div style={{
             width: variant === "normal" ? "100%" : undefined,
@@ -140,13 +144,20 @@ function ReadOnlyComment({
             <Stack 
                 direction="row" 
                 alignItems="center" 
-                gap={{xs: 0.2, sm: 0.8}}
             >
                 <CommentBubble comment={comment} variant={variant} />
                 <CommentMenu 
                     comment={comment}
                     onEditClick={onEditClick}
                     onDeleteClick={onDeleteClick}
+                    fontSize={isCompact ? "small" : "medium"}
+                    sx={{
+                        ml: {
+                            xs: 0, 
+                            sm: variant === "normal" ? 0.8 : 0.5,
+                        },
+                        p: isCompact ? 0.5 : 0.8,
+                    }}
                     />
             </Stack>
             <div>
@@ -231,16 +242,17 @@ function CommentBubble({ comment, variant }: {comment: Comment, variant?: Commen
 
 function CommentMenu({
     comment,
-    sx,
     onEditClick,
     onDeleteClick,
+    sx,
+    fontSize = "medium",
 }: {
     comment: Comment,
-    sx?: React.CSSProperties,
     onEditClick?: () => void,
     onDeleteClick?: () => void,
+    sx?: SxProps,
+    fontSize?: "small" | "medium",
 }) {
-
     const {isAdmin, user} = useAuthenticatedUser()
     const canEdit = user.id === comment.createdBy
     const canDelete = canEdit || isAdmin 
@@ -250,7 +262,7 @@ function CommentMenu({
 
     return (
         <IconPopupMenu
-            icon={<MoreHorizIcon />}
+            icon={ <MoreHorizIcon fontSize={fontSize} />}
             ariaLabel="Kommentarmeny"
             sx={{
                 ...sx,
