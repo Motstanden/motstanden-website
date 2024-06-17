@@ -1,5 +1,5 @@
 import { Divider, Grid, Skeleton } from "@mui/material"
-import { PostSectionSkeleton } from "src/components/PostingWall"
+import { PostListSkeleton } from "src/components/PostingWall"
 
 export {
     PageSkeleton as UserPageSkeleton
@@ -32,7 +32,7 @@ function PageSkeleton() {
                     mb: "20px"
                 }}
             />
-            <PostSectionSkeleton length={3}/>
+            <PostListSkeleton length={3}/>
         </div>
     )
 }

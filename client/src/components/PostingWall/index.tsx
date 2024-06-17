@@ -1,7 +1,9 @@
-import { PostSectionItem, PostSectionSkeleton, PostingWall } from "./PostingWall";
+import { PostSectionItem, PostingWall } from "./PostingWall";
+import { PostListSkeleton } from './Skeleton';
 
 export {
-    PostingWall,
+    PostListSkeleton,
     PostSectionItem,
-    PostSectionSkeleton
-}
+    PostingWall
+};
+

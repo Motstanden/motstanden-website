@@ -9,7 +9,7 @@ import { NewWallPost, WallPost } from "common/interfaces";
 import { isNullOrWhitespace } from 'common/utils';
 import dayjs from "dayjs";
 import { useState } from "react";
-import { CommentSection, CommentSectionSkeleton } from "src/components/CommentSection";
+import { CommentSection } from "src/components/CommentSection";
 import { useAuthenticatedUser } from "src/context/Authentication";
 import { useUserReference } from 'src/context/UserReference';
 import { useQuerySuccess } from 'src/hooks/useQuerySuccess';
@@ -20,7 +20,7 @@ import { patchRequest } from 'src/utils/patchRequest';
 import { postJson } from 'src/utils/postJson';
 import { LinkifiedText } from '../LinkifiedText';
 import SubmitFormButtons from '../form/SubmitButtons';
-import { LikeButton, LikeButtonSkeleton } from '../likes/LikeButton';
+import { LikeButton } from '../likes/LikeButton';
 import { LikeListEmojiContent } from '../likes/LikeListButton';
 import { LikesContextProvider, useLikes } from '../likes/LikesContext';
 import { UserLikesModal, useLikesModal } from '../likes/UserLikesModal';
@@ -30,6 +30,7 @@ import { EditMenuItem } from '../menu/EditMenuItem';
 import { IconPopupMenu } from '../menu/IconPopupMenu';
 import { UserAvatar } from '../user/UserAvatar';
 import { UserFullName } from '../user/UserFullName';
+import { PostListSkeleton } from './Skeleton';
 
 export function PostingWall({
     userId,
@@ -105,7 +106,7 @@ function PostSectionFetcher({
     useQuerySuccess({isSuccess}, onLoadedPosts)
 
     if(isPending) {
-        return <PostSectionSkeleton length={6} />
+        return <PostListSkeleton length={6} />
     }
 
     if(isError) {
@@ -114,86 +115,6 @@ function PostSectionFetcher({
 
     return (
         <PostSection posts={data} queryKey={queryKey}/>
-    )
-}
-
-export function PostSectionSkeleton({length}: {length: number}) {
-    return(
-        <>
-            {Array(length).fill(1).map((_, index) => (
-                <PostSectionItemSkeleton 
-                    key={index} 
-                    style={{
-                        marginBottom: "20px"
-                    }}
-                />
-
-            ))}
-        </>
-    )
-}
-
-function PostSectionItemSkeleton( {
-    style
-}: {
-    style?: React.CSSProperties
-}) {
-    const theme = useTheme()
-    const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
-    return (
-        <Paper
-            elevation={2}
-            style={{
-                paddingBlock: "20px",
-                paddingInline: isSmallScreen ? "10px" : "20px",
-                borderWidth: "1px",
-                borderStyle: "solid",
-                borderColor: theme.palette.divider,
-                ...style
-            }}
-        >
-            <Stack
-                direction="row"
-                spacing={1.5}
-                alignItems="center"
-            >
-                <Skeleton 
-                    variant="circular"
-                    height="40px"
-                    width="40px"
-                />
-                <div>
-                    <Skeleton 
-                        variant="text"
-                        style={{
-                            width: "150px",
-                        }}
-                    />
-                    <Skeleton 
-                        variant="text"
-                        style={{
-                            width: "100px",
-                            fontSize: "small"
-                        }}
-                    />
-                </div>
-            </Stack>
-            <Skeleton 
-                variant="rounded"
-                style={{
-                    marginTop: "15px",
-                    height: "80px",
-                    marginBottom: "15px"
-                }}
-            />
-            <Stack direction="row" justifyContent="space-between">
-                <LikeButtonSkeleton/>
-                <LikeListSkeleton/>
-            </Stack>
-
-            <Divider sx={{mb: 3, mt: 1}} />
-            <CommentSectionSkeleton variant="compact" />
-        </Paper>
     )
 }
 
@@ -572,7 +493,7 @@ function LikeList() {
     )
 }
 
-function LikeListSkeleton() {
+export function LikeListSkeleton() {
     return ( 
         <Skeleton width={130} />
     )
