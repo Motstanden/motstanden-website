@@ -1,9 +1,10 @@
-import { PostSectionItem, PostingWall } from "./PostingWall";
+import { PostingWall } from "./PostingWall";
+import { PostItem } from './PostItem';
 import { PostListSkeleton } from './Skeleton';
 
 export {
+    PostingWall,
     PostListSkeleton,
-    PostSectionItem,
-    PostingWall
+    PostItem as PostSectionItem
 };
 
