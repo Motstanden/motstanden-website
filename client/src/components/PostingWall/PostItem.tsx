@@ -18,7 +18,8 @@ import { EditMenuItem } from "../menu/EditMenuItem";
 import { IconPopupMenu } from "../menu/IconPopupMenu";
 import { UserAvatar } from "../user/UserAvatar";
 import { UserFullName } from "../user/UserFullName";
-import { EditPostForm, LikeList } from './PostingWall';
+import { EditPostForm } from './EditPostForm';
+import { LikeList } from './PostingWall';
 
 
 export function PostItem({
