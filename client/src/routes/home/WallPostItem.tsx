@@ -6,7 +6,7 @@ import { WallPost } from "common/interfaces";
 import { strToNumber } from "common/utils";
 import { Navigate, Link as RouterLink, useParams } from "react-router-dom";
 import { LikesContextProvider } from 'src/components/likes/LikesContext';
-import { PostSectionItem, PostSectionSkeleton } from "src/components/wall/PostingWall";
+import { PostSectionItem, PostSectionSkeleton } from "src/components/PostingWall";
 import { fetchFn } from "src/utils/fetchAsync";
 
 export {

@@ -1,5 +1,5 @@
 import { Divider, Grid, Skeleton } from "@mui/material"
-import { PostSectionSkeleton } from "src/components/wall/PostingWall"
+import { PostSectionSkeleton } from "src/components/PostingWall"
 
 export {
     PageSkeleton as UserPageSkeleton
