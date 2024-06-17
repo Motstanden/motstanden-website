@@ -1,8 +1,6 @@
 import { Divider, Paper, Skeleton, Stack, Theme, useMediaQuery, useTheme } from "@mui/material";
 import { CommentSectionSkeleton } from "src/components/CommentSection";
 import { LikeButtonSkeleton } from '../likes/LikeButton';
-import { LikeListSkeleton } from './PostingWall';
-
 
 export function PostListSkeleton({ length }: { length: number; }) {
     return (
@@ -70,7 +68,7 @@ function PostItemSkeleton({
                 }} />
             <Stack direction="row" justifyContent="space-between">
                 <LikeButtonSkeleton />
-                <LikeListSkeleton />
+                <PostItemLikesSkeleton />
             </Stack>
 
             <Divider sx={{ mb: 3, mt: 1 }} />
@@ -78,3 +76,10 @@ function PostItemSkeleton({
         </Paper>
     );
 }
+
+export function PostItemLikesSkeleton() {
+    return (
+        <Skeleton width={130} />
+    )
+}
+

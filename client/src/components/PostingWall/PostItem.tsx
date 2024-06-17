@@ -19,7 +19,7 @@ import { IconPopupMenu } from "../menu/IconPopupMenu";
 import { UserAvatar } from "../user/UserAvatar";
 import { UserFullName } from "../user/UserFullName";
 import { EditPostForm } from './EditPostForm';
-import { LikeList } from './PostingWall';
+import { PostItemLikes } from "./PostItemLikes";
 
 
 export function PostItem({
@@ -278,7 +278,7 @@ function Content({ post }: { post: WallPost; }) {
                             minWidth: "0px",
                         }} />
                 </div>
-                <LikeList />
+                <PostItemLikes />
             </Stack>
         </>
     );
