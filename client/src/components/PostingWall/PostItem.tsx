@@ -173,7 +173,7 @@ function Header({
                 onEditClick={onEditClick}
                 onDeleteClick={onDeleteClick}
                 sx={{
-                    marginRight: "-5px"
+                    marginRight: "-2px"
                 }} />
         </Stack>
     );
@@ -263,12 +263,13 @@ function HeaderMenu({
     const canEdit = user.id === post.createdBy;
     const canDelete = canEdit || isAdmin;
     // || user.id === post.wallUserId   // TODO: Modify backend to allow this!
+
     return (
         <IconPopupMenu
-            icon={<MoreHorizIcon />}
+            icon={<MoreHorizIcon fontSize="small" />}
             ariaLabel='Veggpostmeny'
             sx={{
-                p: { xs: 0.65, sm: 1 },
+                p: { xs: 0.5 },
                 ...sx,
             }}
         >
