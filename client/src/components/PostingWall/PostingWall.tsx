@@ -51,7 +51,7 @@ export function PostingWall({
                 }} 
                 userFirstName={userFirstName}
             />
-            <PostSectionFetcher 
+            <PostingWallFetcher 
                 queryKey={queryKey}
                 userId={userId}
                 onLoadedPosts={onLoadedPosts}
@@ -60,7 +60,7 @@ export function PostingWall({
     )
 }
 
-function PostSectionFetcher({
+function PostingWallFetcher({
     queryKey,
     userId,
     onLoadedPosts,
