@@ -102,7 +102,7 @@ export function PostItem({
                 onDeleteClick={onDeleteClick}
                 onEditClick={onEditClick} />
             {!isEditing && (
-                <Content post={editItem.isPending ? editItem.variables : post} />
+                <ContentBody post={editItem.isPending ? editItem.variables : post} />
             )}
             {isEditing && (
                 <EditPostForm
@@ -117,6 +117,36 @@ export function PostItem({
                 variant="compact" />
         </Paper>
     );
+}
+
+function ContentBody({ post }: { post: WallPost; }) {
+    return (
+        <>
+            <div
+                style={{
+                    marginTop: "15px",
+                    marginLeft: "5px",
+                    whiteSpace: "pre-line",
+                    marginBottom: "15px"
+                }}
+            >
+                <LinkifiedText>
+                    {post.content}
+                </LinkifiedText>
+            </div>
+            <Stack direction="row" justifyContent="space-between">
+                <div>
+                    <LikeButton
+                        style={{
+                            padding: "0px",
+                            paddingInline: "6px",
+                            minWidth: "0px",
+                        }} />
+                </div>
+                <PostItemLikes />
+            </Stack>
+        </>
+    )
 }
 
 function Header({
@@ -253,34 +283,3 @@ function HeaderMenu({
         </IconPopupMenu>
     );
 }
-
-function Content({ post }: { post: WallPost; }) {
-    return (
-        <>
-            <div
-                style={{
-                    marginTop: "15px",
-                    marginLeft: "5px",
-                    whiteSpace: "pre-line",
-                    marginBottom: "15px"
-                }}
-            >
-                <LinkifiedText>
-                    {post.content}
-                </LinkifiedText>
-            </div>
-            <Stack direction="row" justifyContent="space-between">
-                <div>
-                    <LikeButton
-                        style={{
-                            padding: "0px",
-                            paddingInline: "6px",
-                            minWidth: "0px",
-                        }} />
-                </div>
-                <PostItemLikes />
-            </Stack>
-        </>
-    );
-}
-
