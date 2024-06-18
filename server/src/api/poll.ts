@@ -2,10 +2,10 @@ import { UserGroup } from "common/enums";
 import { NewPollWithOption } from "common/interfaces";
 import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express from "express";
+import { pollService, pollVoteService } from "../db/poll.js";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
 import { validateNumber } from "../middleware/validateNumber.js";
-import { pollService, pollVoteService } from "../services/poll.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 
 let router = express.Router() 

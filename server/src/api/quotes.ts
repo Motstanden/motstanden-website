@@ -2,9 +2,9 @@ import { UserGroup } from "common/enums";
 import { NewQuote, Quote } from "common/interfaces";
 import { strToNumber } from "common/utils";
 import express, { Request, Response } from "express";
+import * as quoteService from "../db/quotes.js";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
-import * as quoteService from "../services/quotes.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 import dailyRandomInt from "../utils/dailyRandomInt.js";
 

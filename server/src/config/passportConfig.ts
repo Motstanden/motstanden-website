@@ -5,7 +5,7 @@ import passport, { PassportStatic } from 'passport';
 import { Strategy as JWTStrategy } from 'passport-jwt';
 import MagicLoginStrategy from 'passport-magic-login';
 import { magicLinkVerifyPath } from "../api/auth.js";
-import * as user from "../services/user.js";
+import * as user from "../db/user.js";
 import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload.js";
 import * as Mail from './mailConfig.js';
 

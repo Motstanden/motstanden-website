@@ -1,9 +1,9 @@
 import { UserEditMode, UserGroup } from "common/enums"
 import { NewUser, User } from "common/interfaces"
 import express, { NextFunction, Request, Response } from "express"
+import * as userService from "../db/user.js"
 import { AuthenticateUser, updateAccessToken } from "../middleware/jwtAuthenticate.js"
 import { requiresGroup } from "../middleware/requiresGroup.js"
-import * as userService from "../services/user.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
 const router = express.Router()

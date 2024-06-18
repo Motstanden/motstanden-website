@@ -1,6 +1,6 @@
 import express from "express";
+import { documentService } from '../db/documents.js';
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
-import { documentService } from '../services/documents.js';
 
 const router = express.Router()
 

@@ -2,9 +2,9 @@ import { UserGroup } from "common/enums";
 import { SheetArchiveTitle } from "common/interfaces";
 import { strToNumber } from "common/utils";
 import express, { Request, Response } from "express";
+import * as SheetArchive from "../db/sheetArchive.js";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { requiresGroup } from "../middleware/requiresGroup.js";
-import * as SheetArchive from "../services/sheetArchive.js";
 
 let router = express.Router()
 

@@ -2,10 +2,10 @@ import { UserGroup } from "common/enums";
 import { UpdateSimpleText } from "common/interfaces";
 import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express, { Request, Response } from "express";
+import { simpleTextService } from "../db/simpleText.js";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { requiresGroup } from "../middleware/requiresGroup.js";
 import { validateNumber } from "../middleware/validateNumber.js";
-import { simpleTextService } from "../services/simpleText.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 
 const router = express.Router();

@@ -2,10 +2,10 @@ import { UserGroup } from "common/enums";
 import { NewSongLyric } from "common/interfaces";
 import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express, { Request, Response } from "express";
+import { songLyricService } from "../db/songLyric.js";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
 import { validateNumber } from "../middleware/validateNumber.js";
-import { songLyricService } from "../services/songLyric.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 
 const router = express.Router()

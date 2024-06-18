@@ -3,8 +3,8 @@ import crypto from "crypto";
 import { CookieOptions, NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import { loginTokenService } from "../services/loginToken.js";
-import * as userService from '../services/user.js';
+import { loginTokenService } from "../db/loginToken.js";
+import * as userService from '../db/user.js';
 import { AccessTokenData } from '../ts/interfaces/AccessTokenData.js';
 import { RefreshTokenData } from '../ts/interfaces/RefreshTokenData.js';
 

@@ -1,11 +1,11 @@
 import { LikeEntityType } from "common/enums";
+import { NewLike } from "common/interfaces";
 import { strToNumber } from "common/utils";
 import express, { Request, Response } from "express";
+import { emojiService, likesService } from "../db/likes.js";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { validateNumber } from "../middleware/validateNumber.js";
-import { emojiService, likesService } from "../services/likes.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
-import { NewLike } from "common/interfaces";
 
 const router = express.Router()
 

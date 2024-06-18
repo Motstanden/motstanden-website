@@ -2,10 +2,10 @@ import { UserGroup } from "common/enums";
 import { Count, NewWallPost } from "common/interfaces";
 import { isNullOrWhitespace, strToNumber } from "common/utils";
 import express from "express";
+import { wallPostService } from "../db/wallPosts.js";
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
 import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
 import { validateNumber } from "../middleware/validateNumber.js";
-import { wallPostService } from "../services/wallPosts.js";
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
 
 const router = express.Router()
