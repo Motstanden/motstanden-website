@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { CookieOptions, NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
+import { loginTokenService } from "../services/loginToken.js";
 import * as userService from '../services/user.js';
 import { AccessTokenData } from '../ts/interfaces/AccessTokenData.js';
 import { RefreshTokenData } from '../ts/interfaces/RefreshTokenData.js';
@@ -83,7 +84,7 @@ function getRefreshToken(req: Request): {
     }
 
     // Check if the token is active. The token is considered active if it is in the database.
-    const isActiveToken = userService.verifyLoginToken(srcToken, srcPayload.userId)
+    const isActiveToken = loginTokenService.exists(srcToken, srcPayload.userId)
     if (!isActiveToken) {
         return invalidResult
     }
@@ -151,7 +152,7 @@ export function loginUser(req: Request, res: Response) {
 
     // -- Save refresh token --
     const refreshToken = signToken(JwtToken.RefreshToken, accessTokenContent)
-    userService.insertLoginToken(refreshToken)
+    loginTokenService.insert(refreshToken)
     saveToCookie(res, JwtToken.RefreshToken, refreshToken)
 }
 
@@ -191,7 +192,7 @@ function getCookieExpiry(tokenType: JwtToken ): Date {
 export function logOut(req: Request, res: Response) {
     const refreshToken = getCookie(req, JwtToken.RefreshToken)
     if (refreshToken) {
-        userService.removeLoginToken(refreshToken)
+        loginTokenService.delete(refreshToken)
     }
     clearAllAuthCookies(res)
     res.end()
@@ -199,7 +200,7 @@ export function logOut(req: Request, res: Response) {
 
 export function logOutAllUnits(req: Request, res: Response) {
     const userData = req.user as AccessTokenData
-    userService.removeAllLoginTokens(userData)
+    loginTokenService.deleteAllUserTokens(userData)
     clearAllAuthCookies(res)
     res.end()
 }
