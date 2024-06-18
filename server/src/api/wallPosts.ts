@@ -1,12 +1,12 @@
-import { UserGroup } from "common/enums";
-import { Count, NewWallPost } from "common/interfaces";
-import { isNullOrWhitespace, strToNumber } from "common/utils";
-import express from "express";
-import { wallPostService } from "../db/wallPosts.js";
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
-import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
-import { validateNumber } from "../middleware/validateNumber.js";
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
+import { UserGroup } from "common/enums"
+import { Count, NewWallPost } from "common/interfaces"
+import { isNullOrWhitespace, strToNumber } from "common/utils"
+import express from "express"
+import { wallPostDb } from "../db/wallPosts/index.js"
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
+import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
+import { validateNumber } from "../middleware/validateNumber.js"
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
 const router = express.Router()
 
@@ -14,7 +14,7 @@ router.get("/wall-posts/all?:userId",
     AuthenticateUser(),
     (req, res) => {
         const userId = strToNumber(req.query.userId?.toString())
-        const posts = wallPostService.getAll(userId)
+        const posts = wallPostDb.getAll(userId)
         res.send(posts)
     }
 )
@@ -27,7 +27,7 @@ router.get("/wall-posts/:id",
     (req, res) => {
         const postId = strToNumber(req.params.id) as number         // Validated by middleware
         try {
-            const post = wallPostService.get(postId)
+            const post = wallPostDb.get(postId)
             if (!post) {
                 return res.status(404).send("Post not found")
             }
@@ -50,7 +50,7 @@ router.post("/wall-posts/new",
             return res.status(400).send("Could not parse post data")
 
         try {
-            wallPostService.insertPostAndMarkUnread(newPost, user.userId)
+            wallPostDb.insertPostAndMarkUnread(newPost, user.userId)
         } catch (err) {
             console.error(err)
             res.status(500).send("Failed to insert post into database")
@@ -64,12 +64,12 @@ router.delete("/wall-posts/:id",
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => strToNumber(req.params.id),
-        getAuthorInfo: (id) => wallPostService.get(id)
+        getAuthorInfo: (id) => wallPostDb.get(id)
         }),
     (req, res) => {
         const postId = strToNumber(req.params.id) as number     // is validated by middleware
         try {
-            wallPostService.delete(postId)
+            wallPostDb.delete(postId)
         } catch (err) {
             res.status(500).send("Failed to delete post from the database")
         }
@@ -81,7 +81,7 @@ router.patch("/wall-posts/:id",
     AuthenticateUser(),
     requiresAuthor( {
         getId: req => strToNumber(req.params.id),
-        getAuthorInfo: id => wallPostService.get(id)
+        getAuthorInfo: id => wallPostDb.get(id)
     }),
     (req, res) => {
         const id = strToNumber(req.params.id) as number         // Is validated by middleware 
@@ -92,7 +92,7 @@ router.patch("/wall-posts/:id",
         }
             
         try {
-            wallPostService.setContent(id, newContent)
+            wallPostDb.updateContent(id, newContent)
         } catch (err) {
             console.error(err)
             res.status(500).send("Failed to update post in database")
@@ -127,7 +127,7 @@ router.get("/wall-posts/unread/count",
     (req, res) => {
         const user = req.user as AccessTokenData
         
-        const unreadCount = wallPostService.getUnreadCount(user.userId)
+        const unreadCount = wallPostDb.getUnreadCount(user.userId)
         const result: Count = {
             count: unreadCount ?? 0
         }
@@ -140,7 +140,7 @@ router.post("/wall-posts/unread/count/reset",
     AuthenticateUser(),
     (req, res) => {
         const user = req.user as AccessTokenData
-        wallPostService.resetUnreadCount(user.userId)
+        wallPostDb.resetUnreadCount(user.userId)
         res.end()
     }
 )
