@@ -1,12 +1,12 @@
-import { CommentEntityType, UserGroup } from "common/enums";
-import { Count, NewComment } from "common/interfaces";
-import { isNullOrWhitespace, strToNumber } from "common/utils";
-import express, { Request, Response } from "express";
-import { commentsService } from "../db/comments.js";
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
-import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
-import { validateNumber } from "../middleware/validateNumber.js";
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
+import { CommentEntityType, UserGroup } from "common/enums"
+import { Count, NewComment } from "common/interfaces"
+import { isNullOrWhitespace, strToNumber } from "common/utils"
+import express, { Request, Response } from "express"
+import { commentsDb } from "../db/comments/index.js"
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
+import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
+import { validateNumber } from "../middleware/validateNumber.js"
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
 const router = express.Router()
 
@@ -19,7 +19,7 @@ router.get("/comments/all?:limit",
     }),
     (req, res) => {
         const limit = strToNumber(req.query.limit?.toString()) as number
-        res.send(commentsService.getAllUnion(limit))
+        res.send(commentsDb.getAllUnion(limit))
     }
 )
 
@@ -53,7 +53,7 @@ function getCommentsHandler( {
     return (req: Request, res: Response) => {
         const id = getEntityId(req)
         try {
-            const comments = commentsService.getAll(entityType, id)
+            const comments = commentsDb.getAll(entityType, id)
             res.send(comments)
         } catch (err) {
             console.error(err)
@@ -99,7 +99,7 @@ function postCommentHandler( {
             return res.status(400).send("Could not parse comment data")
 
         try {
-            commentsService.insertNew(entityType, entityId, comment, user.userId)
+            commentsDb.insertNew(entityType, entityId, comment, user.userId)
         } catch (err) {
             console.error(err)
             res.status(500).send(`Failed to insert ${entityType} comment into the database`)
@@ -140,7 +140,7 @@ function deleteCommentPipeline(entityType: CommentEntityType) {
         requiresGroupOrAuthor({
             requiredGroup: UserGroup.Administrator,
             getId: (req) => strToNumber(req.params.commentId),
-            getAuthorInfo: (id) => commentsService.get(entityType, id)
+            getAuthorInfo: (id) => commentsDb.get(entityType, id)
         }),
         deleteCommentHandler({
             entityType: entityType,
@@ -159,7 +159,7 @@ function deleteCommentHandler( {
     return (req: Request, res: Response) => {
         const id = getCommentId(req)
         try {
-            commentsService.delete(entityType, id)
+            commentsDb.delete(entityType, id)
         } catch (err) {
             res.status(500).send(`Failed to delete ${entityType} comment from the database`)
         }
@@ -182,7 +182,7 @@ function patchCommentPipeline(entityType: CommentEntityType) {
         }),
         requiresAuthor({
             getId: req => strToNumber(req.params.commentId),
-            getAuthorInfo: id => commentsService.get(entityType, id)
+            getAuthorInfo: id => commentsDb.get(entityType, id)
         }),
         patchCommentHandler({
             entityType: entityType,
@@ -206,7 +206,7 @@ function patchCommentHandler( {
             return res.status(400).send("Could not parse comment data")
 
         try {
-            commentsService.setComment(entityType, id, comment.comment)
+            commentsDb.update(entityType, id, comment.comment)
         } catch (err) {
             res.status(500).send(`Failed to update ${entityType} comment in the database`)
         }
@@ -222,7 +222,7 @@ router.get("/comments/unread/count",
     (req, res) => {
         const user = req.user as AccessTokenData
 
-        const unreadCount = commentsService.getUnreadCount(user.userId)
+        const unreadCount = commentsDb.getUnreadCount(user.userId)
         const result: Count = {
             count: unreadCount ?? 0
         }
@@ -235,7 +235,7 @@ router.post("/comments/unread/count/reset",
     AuthenticateUser(),
     (req, res) => {
         const user = req.user as AccessTokenData
-        commentsService.resetUnreadCount(user.userId)
+        commentsDb.resetUnreadCount(user.userId)
         res.end()
     }
 )
