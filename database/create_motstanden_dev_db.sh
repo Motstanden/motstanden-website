@@ -95,6 +95,10 @@ sqlite3 motstanden_dev.db < migrations/motstanden_db/22_unread_wall_posts_rewrit
 echo "Running: 23_unread_comments_rewrite.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/23_unread_comments_rewrite.sql;
 
+# Add soft delete column to user table
+echo "Running: 24_delete_user.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/24_delete_user.sql;
+
 # Insert data that is representative for the current data in the database
 cd data/db
 sh motstanden-db-data.sh 
