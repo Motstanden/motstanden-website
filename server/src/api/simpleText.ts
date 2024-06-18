@@ -1,12 +1,12 @@
-import { UserGroup } from "common/enums";
-import { UpdateSimpleText } from "common/interfaces";
-import { isNullOrWhitespace, strToNumber } from "common/utils";
-import express, { Request, Response } from "express";
-import { simpleTextService } from "../db/simpleText.js";
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
-import { requiresGroup } from "../middleware/requiresGroup.js";
-import { validateNumber } from "../middleware/validateNumber.js";
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
+import { UserGroup } from "common/enums"
+import { UpdateSimpleText } from "common/interfaces"
+import { isNullOrWhitespace, strToNumber } from "common/utils"
+import express, { Request, Response } from "express"
+import { simpleTextDb } from "../db/simpleText/index.js"
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
+import { requiresGroup } from "../middleware/requiresGroup.js"
+import { validateNumber } from "../middleware/validateNumber.js"
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
 const router = express.Router();
 
@@ -18,7 +18,7 @@ router.get("/simple-text/:key", (req, res) => {
     }
 
     try {
-        const text = simpleTextService.get(key)
+        const text = simpleTextDb.get(key)
         if(text === undefined) {
             return res.status(404).send(`No simple text found for key: ${key}`)
         }
@@ -45,7 +45,7 @@ router.post("/simple-text/:id/update",
             return res.status(400).send("Invalid data for UpdateSimpleText object")
 
         try {
-            simpleTextService.update(newSimpleText, id, user.userId)
+            simpleTextDb.update(newSimpleText, id, user.userId)
         } catch (err) {
             console.error(err)
             return res.status(500).send("Failed to update simple text in the database")
