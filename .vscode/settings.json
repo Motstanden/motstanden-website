@@ -20,7 +20,8 @@
         "Studentorchesterets",
         "studenttraller",
         "tanstack",
-        "Upsert"
+        "Upsert",
+        "motstanden"
     ],
     "editor.codeActionsOnSave": {
         "source.organizeImports": "explicit"
@@ -32,4 +33,6 @@
         "**/playwright-report": true,
         "**/storage-state": true
     },
+    "javascript.format.semicolons": "remove",
+    "typescript.format.semicolons": "remove"
 }
