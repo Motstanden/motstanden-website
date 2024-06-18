@@ -1,19 +1,19 @@
-import express from "express";
-import { documentService } from '../db/documents.js';
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
+import express from "express"
+import { documentsDb } from '../db/documents/index.js'
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 
 const router = express.Router()
 
 router.get("/documents",
     AuthenticateUser({ failureRedirect: "public/documents" }),
     (req, res) => {
-        const documents = documentService.getAll()
+        const documents = documentsDb.getAll()
         res.send(documents)
     }
 )
 
 router.get("/public/documents", (req, res) => {
-    const documents = documentService.getAllPublic()
+    const documents = documentsDb.getAllPublic()
     res.send(documents)
 })
 
