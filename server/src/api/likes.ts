@@ -1,11 +1,11 @@
-import { LikeEntityType } from "common/enums";
-import { NewLike } from "common/interfaces";
-import { strToNumber } from "common/utils";
-import express, { Request, Response } from "express";
-import { emojiService, likesService } from "../db/likes.js";
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
-import { validateNumber } from "../middleware/validateNumber.js";
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
+import { LikeEntityType } from "common/enums"
+import { NewLike } from "common/interfaces"
+import { strToNumber } from "common/utils"
+import express, { Request, Response } from "express"
+import { emojiDb, likesDb } from "../db/likes/index.js"
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
+import { validateNumber } from "../middleware/validateNumber.js"
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
 const router = express.Router()
 
@@ -14,7 +14,7 @@ const router = express.Router()
 router.get("/likes/emojis/all",
     AuthenticateUser(),
     (req, res) => {
-        const emojis = emojiService.getAll()
+        const emojis = emojiDb.getAll()
         res.send(emojis)
     }
 )
@@ -51,7 +51,7 @@ function getLikesHandler( {
     return async (req: Request, res: Response) => {
         const id = getEntityId(req)
         try {
-            const likes =  likesService.getAll(entityType, id)
+            const likes =  likesDb.getAll(entityType, id)
             res.send(likes)
         } catch (err) {
             console.error(err)
@@ -98,12 +98,12 @@ function upsertLikeHandler({
             return res.status(400).send("Failed to parse like object")
         }
 
-        if(!emojiService.exists(like.emojiId)) {
+        if(!emojiDb.exists(like.emojiId)) {
             return res.status(400).send(`Emoji with id '${like.emojiId}' does not exist`)
         }
 
         try {
-            likesService.upsert(entityType, entityId, like, user.userId)
+            likesDb.upsert(entityType, entityId, like, user.userId)
         } catch (err) {
             console.error(err)
             res.status(500).send(`Failed to upsert ${entityType} with id '${entityId}' from database`)
@@ -159,7 +159,7 @@ function deleteLikeHandler({
         const user = req.user as AccessTokenData
         const entityId = getEntityId(req)
         try {
-            likesService.delete(entityType, entityId, user.userId)
+            likesDb.delete(entityType, entityId, user.userId)
         } catch (err) {
             console.error(err)
             res.status(500).send(`Failed to delete ${entityType} with id '${entityId}' from database`)
