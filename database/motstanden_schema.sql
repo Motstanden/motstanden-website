@@ -46,7 +46,7 @@ CREATE TABLE user (
     end_date TEXT DEFAULT NULL CHECK(end_date IS date(end_date, '+0 days')),                            -- Check that format is 'YYYY-MM-DD'
     profile_picture TEXT NOT NULL CHECK(like('files/private/profilbilder/%_._%', profile_picture)) DEFAULT 'files/private/profilbilder/boy.png',
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, is_deleted BOOLEAN NOT NULL DEFAULT 0, deleted_at DEFAULT NULL CHECK(deleted_at = NULL OR deleted_at is datetime(deleted_at)),
     FOREIGN KEY (user_group_id)
          REFERENCES user_group (user_group_id)
          ON UPDATE CASCADE
@@ -60,12 +60,6 @@ CREATE TABLE user (
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
-CREATE TRIGGER trig_user_updated_at
-    AFTER UPDATE ON user FOR EACH ROW
-BEGIN
-    UPDATE user SET updated_at = current_timestamp
-        WHERE user_id = old.user_id;
-END;
 CREATE VIEW vw_user 
 AS
 SELECT
@@ -634,4 +628,37 @@ CREATE TRIGGER trig_unread_wall_post_comment_updated_at
 BEGIN
     UPDATE unread_wall_post_comment SET updated_at = current_timestamp
         WHERE unread_wall_post_comment_id = old.unread_wall_post_comment_id;
+END;
+CREATE TRIGGER trig_user_updated_at
+    AFTER UPDATE ON user FOR EACH ROW
+BEGIN
+    UPDATE user 
+    SET updated_at = current_timestamp
+    WHERE 
+        user_id = OLD.user_id
+        AND OLD.is_deleted = 0
+        AND NEW.is_deleted = 0;
+END;
+CREATE TRIGGER trig_user_deleted
+    AFTER UPDATE OF is_deleted ON user FOR EACH ROW
+BEGIN
+    UPDATE user
+    SET 
+        deleted_at = current_timestamp
+    WHERE
+        user_id = OLD.user_id
+        AND OLD.is_deleted = 0
+        AND NEW.is_deleted = 1;
+END;
+CREATE TRIGGER trig_user_restored
+    AFTER UPDATE OF is_deleted ON user FOR EACH ROW
+BEGIN
+    UPDATE user 
+    SET 
+        deleted_at = NULL,
+        updated_at = current_timestamp
+    WHERE 
+        user_id = OLD.user_id
+        AND OLD.is_deleted = 1
+        AND NEW.is_deleted = 0;
 END;
