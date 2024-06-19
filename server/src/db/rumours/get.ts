@@ -2,7 +2,7 @@ import Database from "better-sqlite3"
 import { Rumour } from "common/interfaces"
 import { dbReadOnlyConfig, motstandenDB } from "../../config/databaseConfig.js"
 
-export function get(rumourId: number): Rumour {
+export function get(rumourId: number): Rumour | undefined {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT 
@@ -17,10 +17,6 @@ export function get(rumourId: number): Rumour {
     `)
     const rumour = <Rumour | undefined>stmt.get(rumourId)
     db.close()
-
-    if (!rumour)
-        throw "Bad data"
-
     return rumour
 }
 

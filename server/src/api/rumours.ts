@@ -8,7 +8,7 @@ import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import dailyRandomInt from "../utils/dailyRandomInt.js"
 
-let router = express.Router()
+const router = express.Router()
 
 router.get("/rumours?:limit",
     AuthenticateUser(),
@@ -74,7 +74,7 @@ router.post("/rumours/update",
     (req: Request, res: Response) => {
         const rumour: Rumour = req.body
         try {
-            rumourDb.update(rumour)
+            rumourDb.update(rumour.id, rumour.rumour)
         } catch (err) {
             res.status(400).send("Bad data")
         }
