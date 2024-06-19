@@ -5,15 +5,14 @@ export function tokenExists(token: string, userId: number): boolean {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT
-            token
+            1
         FROM 
             login_token
         WHERE 
-            user_id = ?
-        `
-    )
-    const tokens = <{ token: string} []>stmt.all(userId)
+            user_id = ? AND token = ?
+        LIMIT 1
+    `)
+    const tokenMatch = stmt.get(userId, token)
     db.close()
-    const tokenMatch = tokens.find(item => item.token === token)
     return !!tokenMatch
 }
