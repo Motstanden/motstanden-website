@@ -1,10 +1,10 @@
-import { UserGroup } from "common/enums";
-import { SheetArchiveTitle } from "common/interfaces";
-import { strToNumber } from "common/utils";
-import express, { Request, Response } from "express";
-import * as SheetArchive from "../db/sheetArchive.js";
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
-import { requiresGroup } from "../middleware/requiresGroup.js";
+import { UserGroup } from "common/enums"
+import { SheetArchiveTitle } from "common/interfaces"
+import { strToNumber } from "common/utils"
+import express, { Request, Response } from "express"
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
+import { requiresGroup } from "../middleware/requiresGroup.js"
+import { sheetArchiveDb } from "../db/sheetArchive/index.js"
 
 let router = express.Router()
 
@@ -12,7 +12,7 @@ router.get("/sheet_archive/song_title",
     AuthenticateUser(),
     (req, res) => {
         try {
-            const sheets = SheetArchive.getTitles();
+            const sheets = sheetArchiveDb.titles.getAll()
             res.send(sheets);
         } catch (err) {
             console.log(err)
@@ -38,7 +38,7 @@ router.get("/sheet_archive/song_files",
         }
 
         try {
-            const sheets = SheetArchive.getFiles(id);
+            const sheets = sheetArchiveDb.files.getAll(id);
             res.send(sheets);
         } catch (err) {
             console.log(err)
@@ -53,7 +53,7 @@ router.post("/sheet-archive/titles/update",
     (req: Request, res: Response) => {
         const title: SheetArchiveTitle = req.body
         try {
-            SheetArchive.updateTitle(title)
+            sheetArchiveDb.titles.update(title)
         } catch(err) {
             console.log(err)
             return res.status(400).send("bad data")
