@@ -144,15 +144,17 @@ function signRefreshToken(user: AccessTokenData): string {
 
 export function loginUser(req: Request, res: Response) {
 
-    const accessTokenContent = req.user as AccessTokenData
+    const user = req.user as AccessTokenData
 
-    // -- Save access token --
-    const accessToken = signToken(JwtToken.AccessToken, accessTokenContent)
+    // -- Sign and save access token --
+    const accessToken = signToken(JwtToken.AccessToken, user)
     saveToCookie(res, JwtToken.AccessToken, accessToken)
 
-    // -- Save refresh token --
-    const refreshToken = signToken(JwtToken.RefreshToken, accessTokenContent)
-    loginTokenDb.insert(refreshToken)
+    // -- Sign and save refresh token --
+    const refreshToken = signToken(JwtToken.RefreshToken, user)
+    const refreshPayload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET) as JwtTokenData
+    
+    loginTokenDb.insert(user.userId, refreshToken, refreshPayload.iat, refreshPayload.exp)
     saveToCookie(res, JwtToken.RefreshToken, refreshToken)
 }
 
