@@ -17,7 +17,7 @@ export function updateSongTitle(song: SheetArchiveTitle) {
         SET
             title = @title,
             extra_info = @extraInfo,
-            is_repertoire = @isRepertoire,
+            is_repertoire = @isRepertoire
         WHERE 
             song_title_id = @id`
     )
