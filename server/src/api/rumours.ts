@@ -1,12 +1,12 @@
-import { UserGroup } from "common/enums";
-import { NewRumour, Rumour } from "common/interfaces";
-import { strToNumber } from "common/utils";
-import express, { Request, Response } from "express";
-import { rumourService } from "../db/rumours.js";
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
-import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
-import dailyRandomInt from "../utils/dailyRandomInt.js";
+import { UserGroup } from "common/enums"
+import { NewRumour, Rumour } from "common/interfaces"
+import { strToNumber } from "common/utils"
+import express, { Request, Response } from "express"
+import { rumourDb } from "../db/rumours/index.js"
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
+import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import dailyRandomInt from "../utils/dailyRandomInt.js"
 
 let router = express.Router()
 
@@ -14,14 +14,14 @@ router.get("/rumours?:limit",
     AuthenticateUser(),
     (req, res) => {
         const limit = strToNumber(req.query.limit?.toString())
-        res.send(rumourService.getAll(limit))
+        res.send(rumourDb.getAll(limit))
     })
 
 router.get("/rumours/daily-rumour",
     AuthenticateUser(),
     (req, res) => {
         const limit = 100
-        const rumours = rumourService.getAll(limit)
+        const rumours = rumourDb.getAll(limit)
         const i = dailyRandomInt(limit)
         const mod = Math.min(limit, rumours.length)
         res.send([
@@ -37,7 +37,7 @@ router.post("/rumours/new",
     (req, res) => {
         const user = req.user as AccessTokenData
         try {
-            rumourService.insertNew(req.body as NewRumour, user.userId)
+            rumourDb.insert(req.body as NewRumour, user.userId)
         } catch (err) {
             console.log(err)
             res.status(400).send("Bad data")
@@ -51,12 +51,12 @@ router.post("/rumours/delete",
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
-        getAuthorInfo: (id) => rumourService.get(id)
+        getAuthorInfo: (id) => rumourDb.get(id)
     }),
     (req: Request, res: Response) => {
         const id: number = req.body.id
         try {
-            rumourService.delete(id)
+            rumourDb.delete(id)
         } catch {
             res.status(400).send("Bad data")
         }
@@ -69,12 +69,12 @@ router.post("/rumours/update",
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
-        getAuthorInfo: id => rumourService.get(id)
+        getAuthorInfo: id => rumourDb.get(id)
     }),
     (req: Request, res: Response) => {
         const rumour: Rumour = req.body
         try {
-            rumourService.update(rumour)
+            rumourDb.update(rumour)
         } catch (err) {
             res.status(400).send("Bad data")
         }
