@@ -4,7 +4,7 @@ import { CookieOptions, NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import passport from 'passport'
 import { loginTokenDb } from "../db/loginToken/index.js"
-import * as userService from '../db/user.js'
+import * as userService from '../db/users/user.js'
 import { AccessTokenData } from '../ts/interfaces/AccessTokenData.js'
 import { RefreshTokenData } from '../ts/interfaces/RefreshTokenData.js'
 

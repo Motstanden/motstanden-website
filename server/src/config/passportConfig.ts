@@ -1,13 +1,13 @@
-import dotenv from "dotenv";
-import { Request } from 'express';
-import fs from "fs/promises";
-import passport, { PassportStatic } from 'passport';
-import { Strategy as JWTStrategy } from 'passport-jwt';
-import MagicLoginStrategy from 'passport-magic-login';
-import { magicLinkVerifyPath } from "../api/auth.js";
-import * as user from "../db/user.js";
-import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload.js";
-import * as Mail from './mailConfig.js';
+import dotenv from "dotenv"
+import { Request } from 'express'
+import fs from "fs/promises"
+import passport, { PassportStatic } from 'passport'
+import { Strategy as JWTStrategy } from 'passport-jwt'
+import MagicLoginStrategy from 'passport-magic-login'
+import { magicLinkVerifyPath } from "../api/auth.js"
+import * as user from "../db/users/user.js"
+import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload.js"
+import * as Mail from './mailConfig.js'
 
 // Ensure .env is loaded
 dotenv.config()

@@ -1,13 +1,13 @@
-import { MagicLinkResponse } from "common/interfaces";
-import express from "express";
-import passport from "passport";
-import * as passportConfig from "../config/passportConfig.js";
-import * as userService from "../db/user.js";
-import { AuthenticateUser, loginUser, logOut, logOutAllUnits } from "../middleware/jwtAuthenticate.js";
-import { requiresDevEnv } from "../middleware/requiresDevEnv.js";
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
-import { getRandomInt } from "../utils/getRandomInt.js";
-import { sleepAsync } from "../utils/sleepAsync.js";
+import { MagicLinkResponse } from "common/interfaces"
+import express from "express"
+import passport from "passport"
+import * as passportConfig from "../config/passportConfig.js"
+import * as userService from "../db/users/user.js"
+import { AuthenticateUser, loginUser, logOut, logOutAllUnits } from "../middleware/jwtAuthenticate.js"
+import { requiresDevEnv } from "../middleware/requiresDevEnv.js"
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { getRandomInt } from "../utils/getRandomInt.js"
+import { sleepAsync } from "../utils/sleepAsync.js"
 
 const router = express.Router()
 

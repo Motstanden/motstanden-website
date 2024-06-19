@@ -1,9 +1,12 @@
-import Database, { Database as DatabaseType } from "better-sqlite3";
-import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
-import { NewUser, User, UserReference } from "common/interfaces";
-import { isNtnuMail, isNullOrWhitespace } from "common/utils";
-import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
+import Database, { Database as DatabaseType } from "better-sqlite3"
+import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums"
+import { NewUser, User, UserReference } from "common/interfaces"
+import { isNtnuMail, isNullOrWhitespace } from "common/utils"
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../../config/databaseConfig.js"
+import { AccessTokenData } from "../../ts/interfaces/AccessTokenData.js"
+import { userGroupsDb } from "./groups/index.js"
+import { userRanksDb } from "./ranks/index.js"
+import { userStatusDb } from "./status/index.js"
 
 export function userExists(unsafeEmail: string | undefined): boolean {
     const email = unsafeEmail?.trim().toLowerCase();
@@ -140,9 +143,9 @@ export function createUser(user: NewUser): number | bigint {
     const dbRd = new Database(motstandenDB, dbReadOnlyConfig)   // Read only instance of db
 
     // Throws exceptions if not found
-    const groupId = getGroupId(UserGroup.Contributor, dbRd)
-    const rankId = getRankId(UserRank.ShortCircuit, dbRd)
-    const statusId = getUserStatusId(UserStatus.Active, dbRd)
+    const groupId = userGroupsDb.getId(UserGroup.Contributor, dbRd)
+    const rankId = userRanksDb.getId(UserRank.ShortCircuit, dbRd)
+    const statusId = userStatusDb.getId(UserStatus.Active, dbRd)
     dbRd.close()
 
     const dbWr = new Database(motstandenDB, dbReadWriteConfig)  // Read/Write instance of db
@@ -264,9 +267,9 @@ export function updateUser(newUser: User, updateMode: UserEditMode) {
 function getUpdateUserSql(user: User, updateMode: UserEditMode): SqlHelper {
 
     const db = new Database(motstandenDB, dbReadOnlyConfig)   // Read only instance of db
-    const groupId = getGroupId(user.groupName, db)
-    const rankId = getRankId(user.rank, db)
-    const statusId = getUserStatusId(user.status, db)
+    const groupId = userGroupsDb.getId(user.groupName, db)
+    const rankId = userRanksDb.getId(user.rank, db)
+    const statusId = userStatusDb.getId(user.status, db)
     db.close()
 
     const selfDefault: SqlHelper = {
@@ -362,76 +365,4 @@ function getUpdateUserSql(user: User, updateMode: UserEditMode): SqlHelper {
 interface SqlHelper {
     stmt: string,
     params: any[]
-}
-
-
-
-function getGroupId(group: UserGroup, db?: DatabaseType): number {
-    return dangerouslyGetStringEnumId(
-        group,
-        {
-            __dangerousTableName: "user_group",
-            __dangerousColumnName: "name"
-        },
-        db
-    )
-}
-
-function getRankId(rank: UserRank, db?: DatabaseType): number {
-    return dangerouslyGetStringEnumId(
-        rank,
-        {
-            __dangerousTableName: "user_rank",
-            __dangerousColumnName: "name"
-        },
-        db
-    )
-}
-
-function getUserStatusId(status: UserStatus, db?: DatabaseType): number {
-    return dangerouslyGetStringEnumId(
-        status,
-        {
-            __dangerousTableName: "user_status",
-            __dangerousColumnName: "status"
-        },
-        db
-    )
-}
-
-// ---------------------------------------------------------
-//                      WARNING
-// ---------------------------------------------------------
-// This method is super dangerous to use because it is vulnerable to sql injections attacks.
-// USE WITH GREAT CAUTION!
-function dangerouslyGetStringEnumId(
-    strEnum: StrEnum,
-    dangerousInput: DangerousInput,
-    db?: DatabaseType
-): number {
-    db = db ?? new Database(motstandenDB, dbReadOnlyConfig)
-
-    const tableName = dangerousInput.__dangerousTableName
-    const columnName = dangerousInput.__dangerousColumnName
-    const stmt = db.prepare(`
-        SELECT 
-            ${tableName}_id as id`      // DANGER!!!!
-        + `  FROM 
-            ${tableName}`               // DANGER!!!!
-        + `  WHERE 
-            ${columnName} = ?`         // DANGER!!!!
-    )
-    const dbResult = <{id: number} | undefined> stmt.get(strEnum.valueOf())
-    if (!dbResult)
-        throw `Failed to retrieve value from database`
-    return dbResult.id
-}
-
-interface StrEnum {
-    valueOf(): string
-}
-
-interface DangerousInput {
-    __dangerousTableName: string,
-    __dangerousColumnName: string
 }
