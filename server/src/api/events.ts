@@ -1,22 +1,21 @@
-import { UserGroup } from "common/enums";
-import { Participant, UpsertEventData, UpsertParticipant } from "common/interfaces";
-import { strToNumber } from "common/utils";
-import express, { NextFunction, Request, Response } from "express";
-import * as eventParticipant from "../db/eventParticipant.js";
-import * as events from "../db/events.js";
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
-import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
-import { DbWriteAction } from "../ts/enums/DbWriteAction.js";
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
-import { UpsertDb } from "../ts/types/UpsertDb.js";
+import { UserGroup } from "common/enums"
+import { Participant, UpsertEventData, UpsertParticipant } from "common/interfaces"
+import { strToNumber } from "common/utils"
+import express, { NextFunction, Request, Response } from "express"
+import { eventsDb } from "../db/events/events.js"
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
+import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
+import { DbWriteAction } from "../ts/enums/DbWriteAction.js"
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { UpsertDb } from "../ts/types/UpsertDb.js"
 
-let router = express.Router()
+const router = express.Router()
 
 router.get("/events/upcoming",
     AuthenticateUser(),
     (req, res) => {
         const limit = strToNumber(req.query.limit?.toString())
-        res.send(events.getEvents({ upcoming: true, limit: limit }))
+        res.send(eventsDb.getAll({ upcoming: true, limit: limit }))
     }
 )
 
@@ -24,7 +23,7 @@ router.get("/events/previous",
     AuthenticateUser(),
     (req, res) => {
         const limit = strToNumber(req.query.limit?.toString())
-        res.send(events.getEvents({ upcoming: true, limit: limit }))
+        res.send(eventsDb.getAll({ upcoming: true, limit: limit }))
     }
 )
 
@@ -32,8 +31,8 @@ router.get("/events/all",
     AuthenticateUser(),
     (req, res) => res.send(
         [
-            ...events.getEvents({ upcoming: true }),
-            ...events.getEvents({ upcoming: false })
+            ...eventsDb.getAll({ upcoming: true }),
+            ...eventsDb.getAll({ upcoming: false })
         ]
 
     )
@@ -55,7 +54,7 @@ function handleUpsert(writeAction: UpsertDb, req: Request, res: Response) {
     }
 
     try {
-        const eventId = events.upsertEvent(payload, user.userId, writeAction)
+        const eventId = eventsDb.upsert(payload, user.userId, writeAction)
         res.json({ eventId: eventId })
     } catch (err) {
         console.log(err)
@@ -68,13 +67,13 @@ router.post("/events/delete",
     AuthenticateUser(),
     requiresGroupOrAuthor({
         getId: req => req.body.eventId,
-        getAuthorInfo: id => events.getEvent(id),
+        getAuthorInfo: id => eventsDb.get(id),
         requiredGroup: UserGroup.Administrator
     }),
     (req: Request, res: Response, next: NextFunction) => {
         const id = req.body.eventId as number       // This is already validated by requiresGroupOrAuthor
         try {
-            events.deleteEvent(id)
+            eventsDb.delete(id)
         } catch (err) {
             console.log(err)
             return res.status(500).send("Failed to delete event")
@@ -101,7 +100,7 @@ router.get("/event-participants",
 
         let participants: Participant[]
         try {
-            participants = eventParticipant.getAll(eventId)
+            participants = eventsDb.participants.getAll(eventId)
             res.json(participants)
         } catch {
             return res.status(400).send("Bad data")
@@ -115,7 +114,7 @@ router.post("/event-participants/upsert",
         const user = req.user as AccessTokenData
         const newData: UpsertParticipant = req.body
         try {
-            eventParticipant.upsert(newData.eventId, user.userId, newData.participationStatus)
+            eventsDb.participants.upsert(newData.eventId, user.userId, newData.participationStatus)
         } catch (err) {
             console.log(err)
             return res.status(400).send("bad data")

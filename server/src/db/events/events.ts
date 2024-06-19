@@ -1,9 +1,12 @@
-import Database from "better-sqlite3";
-import { EventData, KeyValuePair, NewEventData, UpsertEventData } from "common/interfaces";
-import { isNullOrWhitespace } from "common/utils";
-import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../config/databaseConfig.js";
-import { DbWriteAction } from "../ts/enums/DbWriteAction.js";
-import { UpsertDb } from "../ts/types/UpsertDb.js";
+// TODO: This file is in dire need of refactoring!
+
+import Database from "better-sqlite3"
+import { EventData, KeyValuePair, NewEventData, UpsertEventData } from "common/interfaces"
+import { isNullOrWhitespace } from "common/utils"
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../../config/databaseConfig.js"
+import { DbWriteAction } from "../../ts/enums/DbWriteAction.js"
+import { UpsertDb } from "../../ts/types/UpsertDb.js"
+import { participantsDb } from "./participants/index.js"
 
 const allEventColumns = `
     event_id as id, 
@@ -214,4 +217,15 @@ export function deleteEvent(eventId: number) {
     })
     startTransaction()
     db.close()
+}
+
+export const eventsDb = {
+    get: getEvent,
+    getAll: getEvents,
+    upsert: upsertEvent,
+    delete: deleteEvent,
+    
+    participants: {
+        ...participantsDb
+    }
 }
