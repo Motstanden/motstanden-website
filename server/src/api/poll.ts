@@ -1,19 +1,19 @@
-import { UserGroup } from "common/enums";
-import { NewPollWithOption } from "common/interfaces";
-import { isNullOrWhitespace, strToNumber } from "common/utils";
-import express from "express";
-import { pollService, pollVoteService } from "../db/poll.js";
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js";
-import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js";
-import { validateNumber } from "../middleware/validateNumber.js";
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js";
+import { UserGroup } from "common/enums"
+import { NewPollWithOption } from "common/interfaces"
+import { isNullOrWhitespace, strToNumber } from "common/utils"
+import express from "express"
+import { pollsDb } from "../db/polls/index.js"
+import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
+import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
+import { validateNumber } from "../middleware/validateNumber.js"
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
 let router = express.Router() 
 
 router.get("/polls/latest",
     AuthenticateUser(),
     (req, res) => {
-        const poll = pollService.getNewest()
+        const poll = pollsDb.getNewest()
         res.send(poll)
     }
 )
@@ -21,7 +21,7 @@ router.get("/polls/latest",
 router.get("/polls/all",
     AuthenticateUser(),
     (req, res) => {
-        const pollList = pollService.getAll()
+        const pollList = pollsDb.getAll()
         res.send(pollList)
     }
 )
@@ -36,12 +36,12 @@ router.get("/polls/:id/options",
         const user = req.user as AccessTokenData
         const id = strToNumber(req.params.id) as number
 
-        const isValid = pollService.isValidId(id)
+        const isValid = pollsDb.exists(id)
         if(!isValid)
             return res.status(404).end()
 
         try {
-            const options = pollService.getPollOptions(user.userId, id)
+            const options = pollsDb.options.getAll(user.userId, id)
             res.send(options)
         }
         catch (e){
@@ -61,7 +61,7 @@ router.get("/polls/:id/voter-list",
         const pollId = strToNumber(req.params.id) as number
         
         try {
-            const voters = pollService.getPollVoters(pollId)
+            const voters = pollsDb.votes.get(pollId)
             res.send(voters)
         }
         catch (e){
@@ -82,7 +82,7 @@ router.post("/polls/new",
             return res.status(400).send("Could not parse poll data")
 
         try {
-            pollService.insertNew(newPoll, user.userId)
+            pollsDb.insert(newPoll, user.userId)
         } catch (err) {
             console.log(err)
             res.status(500).send("Failed to insert poll into database")
@@ -96,12 +96,12 @@ router.post("/polls/delete",
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
-        getAuthorInfo: (id) => pollService.get(id)
+        getAuthorInfo: (id) => pollsDb.get(id)
     }),
     (req, res) => {
         const id = req.body.id as number    // This is already validated by requiresGroupOrAuthor 
         try {
-            pollService.delete(id)
+            pollsDb.delete(id)
         } catch (err) {
             res.status(500).send("Failed to delete poll from database")
         }
@@ -124,12 +124,12 @@ router.post("/polls/:id/vote/upsert",
         if(optionIds.length <= 0)
             return res.status(400).send("Could not parse option ids")
 
-        if(!pollVoteService.isValidCombination(pollId, optionIds)){
+        if(!pollsDb.options.allIdsMatchesPollId(pollId, optionIds)){
             return res.status(400).send("Invalid combination of poll id and option ids")
         }
 
         try {
-            pollVoteService.upsertVotes(user.userId, pollId, optionIds);
+            pollsDb.votes.upsert(user.userId, pollId, optionIds);
         }
         catch (e){
             console.log(e)
