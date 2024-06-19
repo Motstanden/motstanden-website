@@ -1,12 +1,12 @@
-import { User } from "common/interfaces";
-import crypto from "crypto";
-import { CookieOptions, NextFunction, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
-import passport from 'passport';
-import { loginTokenService } from "../db/loginToken.js";
-import * as userService from '../db/user.js';
-import { AccessTokenData } from '../ts/interfaces/AccessTokenData.js';
-import { RefreshTokenData } from '../ts/interfaces/RefreshTokenData.js';
+import { User } from "common/interfaces"
+import crypto from "crypto"
+import { CookieOptions, NextFunction, Request, Response } from 'express'
+import jwt from 'jsonwebtoken'
+import passport from 'passport'
+import { loginTokenDb } from "../db/loginToken/loginToken.js"
+import * as userService from '../db/user.js'
+import { AccessTokenData } from '../ts/interfaces/AccessTokenData.js'
+import { RefreshTokenData } from '../ts/interfaces/RefreshTokenData.js'
 
 enum JwtToken {
     AccessToken = "AccessToken",
@@ -84,7 +84,7 @@ function getRefreshToken(req: Request): {
     }
 
     // Check if the token is active. The token is considered active if it is in the database.
-    const isActiveToken = loginTokenService.exists(srcToken, srcPayload.userId)
+    const isActiveToken = loginTokenDb.exists(srcToken, srcPayload.userId)
     if (!isActiveToken) {
         return invalidResult
     }
@@ -152,7 +152,7 @@ export function loginUser(req: Request, res: Response) {
 
     // -- Save refresh token --
     const refreshToken = signToken(JwtToken.RefreshToken, accessTokenContent)
-    loginTokenService.insert(refreshToken)
+    loginTokenDb.insert(refreshToken)
     saveToCookie(res, JwtToken.RefreshToken, refreshToken)
 }
 
@@ -192,15 +192,15 @@ function getCookieExpiry(tokenType: JwtToken ): Date {
 export function logOut(req: Request, res: Response) {
     const refreshToken = getCookie(req, JwtToken.RefreshToken)
     if (refreshToken) {
-        loginTokenService.delete(refreshToken)
+        loginTokenDb.delete(refreshToken)
     }
     clearAllAuthCookies(res)
     res.end()
 }
 
 export function logOutAllUnits(req: Request, res: Response) {
-    const userData = req.user as AccessTokenData
-    loginTokenService.deleteAllUserTokens(userData)
+    const user = req.user as AccessTokenData
+    loginTokenDb.deleteAllMatches(user.userId)
     clearAllAuthCookies(res)
     res.end()
 }
