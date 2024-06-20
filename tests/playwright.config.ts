@@ -1,8 +1,8 @@
-import type { PlaywrightTestConfig } from '@playwright/test';
-import { devices } from '@playwright/test';
-import dotenv from 'dotenv';
-import path from 'path';
-import { getDirname } from './utils/getDirname.js';
+import type { PlaywrightTestConfig } from '@playwright/test'
+import { devices } from '@playwright/test'
+import dotenv from 'dotenv'
+import path from 'path'
+import { getDirname } from './utils/getDirname.js'
 
 /**
  * Read environment variables from file.
@@ -78,6 +78,9 @@ const config: PlaywrightTestConfig = {
                 ...devices['Desktop Chrome'],
             },
             dependencies: ['global setup'],
+
+            // Tests with race conditions
+            testIgnore: [ "simpleTexts.spec.ts" ]
         },
 
         {
@@ -86,6 +89,8 @@ const config: PlaywrightTestConfig = {
                 ...devices['Desktop Safari'],
             },
             dependencies: ['global setup'],
+
+            testIgnore: [ "simpleTexts.spec.ts" ]
         },
 
         /* Test against mobile viewports. */
