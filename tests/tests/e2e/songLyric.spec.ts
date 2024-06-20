@@ -29,9 +29,18 @@ test.describe.serial("Contributor can create, edit and delete authored song lyri
     })
 
     test("Edit song lyric", async ({browser}, workerInfo) => { 
+        const newLyric = createRandomData()
+        await openMenu(page)
+        await clickEdit(page, lyric)
 
-        // TODO
-        test.skip()
+        await fillAndSaveForm(page, newLyric)
+
+        await expect(page.getByText(newLyric.title)).toBeVisible()
+        await expect(page.getByText(newLyric.content)).toBeVisible()
+        await expect(page.getByText(lyric.title)).not.toBeVisible()
+        await expect(page.getByText(lyric.content)).not.toBeVisible()
+
+        lyric = newLyric
     })
 
     test("Delete song lyric", async () => { 
@@ -90,6 +99,14 @@ async function clickSave(page: Page, songLyric: NewSongLyric) {
 
 async function openMenu(page: Page) {
     await page.getByLabel('Trallmeny').click()
+}
+
+async function clickEdit(page: Page, songLyric: NewSongLyric) { 
+    const expectedUrl = `${buildUrl(songLyric)}/rediger`
+    await Promise.all([
+        page.getByRole("menuitem", { name: "Rediger" }).click(),
+        page.waitForURL(expectedUrl)
+    ])
 }
 
 async function clickDelete(page: Page, songLyric: NewSongLyric) { 
