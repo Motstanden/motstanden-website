@@ -1,5 +1,5 @@
 import Database from "better-sqlite3"
-import { dbReadOnlyConfig, motstandenDB } from "../../config/databaseConfig.js"
+import { dbReadOnlyConfig, motstandenDB } from "../../../config/databaseConfig.js"
 
 export function tokenExists(token: string, userId: number): boolean {
     const db = new Database(motstandenDB, dbReadOnlyConfig)

@@ -1,5 +1,5 @@
 import Database from "better-sqlite3"
-import { dbReadWriteConfig, motstandenDB } from "../../config/databaseConfig.js"
+import { dbReadWriteConfig, motstandenDB } from "../../../config/databaseConfig.js"
 
 export function deleteToken(loginToken: string) {
     const db = new Database(motstandenDB, dbReadWriteConfig)

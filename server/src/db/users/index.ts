@@ -1,5 +1,6 @@
 import { getAllAsUserReference, getAllUsers, getUser, getUserByMail, userExists } from "./get.js"
 import { insertUser } from "./insert.js"
+import { refreshTokensDb } from "./refreshTokens/index.js"
 import { updateUser } from "./update.js"
 
 export const usersDb = {
@@ -10,5 +11,9 @@ export const usersDb = {
     exists: userExists,
 
     insert: insertUser,
-    update: updateUser
+    update: updateUser,
+
+    refreshTokens: {
+        ...refreshTokensDb
+    }
 }

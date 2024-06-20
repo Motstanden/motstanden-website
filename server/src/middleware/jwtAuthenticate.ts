@@ -83,7 +83,7 @@ function getRefreshToken(req: Request): {
     }
 
     // Check if the token is active. The token is considered active if it is in the database.
-    const isActiveToken = db.loginTokens.exists(srcToken, srcPayload.userId)
+    const isActiveToken = db.users.refreshTokens.exists(srcToken, srcPayload.userId)
     if (!isActiveToken) {
         return invalidResult
     }
@@ -153,7 +153,7 @@ export function loginUser(req: Request, res: Response) {
     const refreshToken = signToken(JwtToken.RefreshToken, user)
     const refreshPayload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET) as JwtTokenData
     
-    db.loginTokens.insert(user.userId, refreshToken, refreshPayload.iat, refreshPayload.exp)
+    db.users.refreshTokens.insert(user.userId, refreshToken, refreshPayload.iat, refreshPayload.exp)
     saveToCookie(res, JwtToken.RefreshToken, refreshToken)
 }
 
@@ -193,7 +193,7 @@ function getCookieExpiry(tokenType: JwtToken ): Date {
 export function logOut(req: Request, res: Response) {
     const refreshToken = getCookie(req, JwtToken.RefreshToken)
     if (refreshToken) {
-        db.loginTokens.delete(refreshToken)
+        db.users.refreshTokens.delete(refreshToken)
     }
     clearAllAuthCookies(res)
     res.end()
@@ -201,7 +201,7 @@ export function logOut(req: Request, res: Response) {
 
 export function logOutAllUnits(req: Request, res: Response) {
     const user = req.user as AccessTokenData
-    db.loginTokens.deleteAllMatches(user.userId)
+    db.users.refreshTokens.deleteAllMatches(user.userId)
     clearAllAuthCookies(res)
     res.end()
 }

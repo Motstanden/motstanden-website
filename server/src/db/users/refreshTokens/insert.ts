@@ -1,5 +1,5 @@
 import Database from "better-sqlite3"
-import { dbReadWriteConfig, motstandenDB } from "../../config/databaseConfig.js"
+import { dbReadWriteConfig, motstandenDB } from "../../../config/databaseConfig.js"
 
 export function insert(userId: number, token: string, issuedAt: number, expireAt: number) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
