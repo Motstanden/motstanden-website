@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { SongLyric, StrippedSongLyric } from "common/interfaces"
 import { strToNumber } from "common/utils"
-import { Navigate, Outlet, useMatch, useOutletContext, useParams } from "react-router-dom"
+import { Navigate, Outlet, useLocation, useMatch, useOutletContext, useParams } from "react-router-dom"
 import { usePotentialUser } from "src/context/Authentication"
 import { PageTabItem, TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
@@ -76,7 +76,8 @@ function LyricContextLoader() {
 export function LyricItemContext() {
     const allLyrics = useOutletContext<StrippedSongLyric[]>()
     const params = useParams();
-    
+    const location = useLocation()
+
     const urlTitle = params.title;
     let lyricId = allLyrics.find(item => strToPrettyUrl(item.title) === urlTitle)?.id
 
@@ -86,7 +87,7 @@ export function LyricItemContext() {
     }
 
     if(!lyricId) 
-        return <Navigate to="/studenttraller" replace={true} />
+        return <Navigate to={`${location.pathname}/..`} replace={true} />
 
     return <LyricItemLoader id={lyricId} />
 }
@@ -104,6 +105,7 @@ export function LyricItemLoader( {id}: {id: number}){
         queryFn: fetchFn<SongLyric>(url),
     })
     const {isItemPage, isEditPage} = useLyricItemUrlMatch()
+    const location = useLocation()
 
     if (isPending) {
         if(isItemPage)
@@ -116,7 +118,7 @@ export function LyricItemLoader( {id}: {id: number}){
     }
 
     if (isError) {
-        return <Navigate to="/studenttraller/populaere" replace={true} />
+        return <Navigate to={`${location.pathname}/..`} replace={true} />
     }
 
     const context = [allLyrics, data]
