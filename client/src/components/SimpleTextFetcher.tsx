@@ -1,4 +1,5 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import { Stack } from '@mui/material'
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { UserGroup } from 'common/enums'
 import { SimpleText, UpdateSimpleText } from "common/interfaces"
@@ -111,26 +112,46 @@ function SimpleTextReader( {
     canEdit?: boolean,
     onEditClick?: VoidFunction
 }) {
-    const isEmpty = isNullOrWhitespace(value.text)
     return (
-        <div 
-            style={{
-                position: "relative"
-            }}
-        >
-            <LastEditInfo simpleText={value} />
+        <>
+            <Header canEdit={canEdit} onEditClick={onEditClick} simpleText={value} />
             <MarkDownRenderer value={value.text} />
+        </>
+    )
+}
+
+function Header( {
+    canEdit,
+    onEditClick,
+    simpleText,
+}: {
+    canEdit?: boolean,
+    onEditClick?: VoidFunction,
+    simpleText: SimpleText   
+}) {
+    const { isLoggedIn } = usePotentialUser()
+
+    if(!isLoggedIn)
+        return <></>
+
+    const isEmpty = isNullOrWhitespace(simpleText.text)
+
+    return (
+        <Stack 
+            direction="row" 
+            alignItems="center" 
+            justifyContent="space-between"
+            sx={{
+                mt: canEdit ? "-28px" : "-15px",
+                mb: canEdit ? "-23px" : "-10px"
+            }}
+            >
+            <LastEditInfo simpleText={simpleText} />
             {canEdit && (
                 <IconPopupMenu 
-                    icon={<MoreHorizIcon/>} 
-                    style={
-                        isEmpty ? {
-
-                        } :{
-                        position: 'absolute',
-                        top: -14,
-                        right: 10,
-                    }}
+                    icon={<MoreHorizIcon/>}
+                    sx={{
+                    }} 
                 > 
                     <EditMenuItem 
                         onClick={onEditClick} 
@@ -138,21 +159,15 @@ function SimpleTextReader( {
                     />
                 </IconPopupMenu>
             )}
-        </div>
+        </Stack>
     )
 }
 
+
 function LastEditInfo( {simpleText}: {simpleText: SimpleText} ) {
-    const { isLoggedIn } = usePotentialUser()
-
-    if(!isLoggedIn)
-        return <></>
-
     return (
         <div style={{
             ...authorInfoTextStyle,
-            marginTop: "-15px",
-            marginBottom: "-10px"
         }}>
             <span style={{paddingRight: "4px"}}>
                 Redigert:
