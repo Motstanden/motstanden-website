@@ -1,6 +1,7 @@
 import { APIRequestContext, expect, request, test } from '@playwright/test'
 import { CommentEntityType, UserGroup } from "common/enums"
-import { Comment, Count, NewComment } from "common/interfaces"
+import { Comment, Count } from "common/interfaces"
+import { api as API } from "../../utils/api/index.js"
 import { testUserVariationsCount, unsafeGetUser } from "../../utils/auth.js"
 import { randomString } from "../../utils/randomString.js"
 
@@ -28,7 +29,7 @@ test.describe.serial("Comments test suite", () => {
     let unreadCount = 0
 
     test.beforeEach( async () => {
-        api1 = await request.newContext( { storageState: user1.storageStatePath } )
+        api1 = await request.newContext( {storageState: user1.storageStatePath } )
         api2 = await request.newContext( {storageState: user2.storageStatePath })
     })
 
@@ -52,7 +53,7 @@ test.describe.serial("Comments test suite", () => {
         const entityId = 1
         const comment = randomString(`Comment on ${entityType} ${entityId}`)
 
-        await createComment(api1, entityType, entityId, comment)
+        await API.comments.new(api1, entityType, entityId, comment)
 
         const count1 = await getUnreadCount(api1)
         const count2 = await getUnreadCount(api2)
@@ -76,7 +77,7 @@ test.describe.serial("Comments test suite", () => {
         }
         expect(actualComment).toBeDefined()
 
-        await deleteComment(api1, entityType, actualComment.id)
+        await API.comments.delete(api1, entityType, actualComment.id)
 
         const deletedComment = await getMatchingComment(api1, entityType, postedComment.entityId, postedComment.comment)
         const count1 = await getUnreadCount(api1)
@@ -115,34 +116,8 @@ async function resetUnreadCount(api: APIRequestContext) {
         throw new Error("Failed to reset unread count")
 }
 
-async function createComment(api: APIRequestContext, entityType: CommentEntityType, entityId: number, comment: string, ) { 
-    const data: NewComment = { 
-        comment: comment 
-    }
-    const res = await api.post(`/api/${entityType}/${entityId}/comments/new`, {data: data})
-    if(!res.ok()) {
-        throw new Error(`Failed to create ${entityType} comment.\n${await res.text()}`)
-    }
-}
-
-async function deleteComment(api: APIRequestContext, entityType: CommentEntityType, commentId: number) { 
-    const res = await api.delete(`/api/${entityType}/comments/${commentId}`)
-    if(!res.ok()) {
-        throw new Error(`Failed to delete ${entityType} comment ${commentId}.\n${await res.text()}`)
-    }
-}
-
-async function getAllComments(api: APIRequestContext, entityType: CommentEntityType, entityId: number): Promise<Comment[]> {
-    const res = await api.get(`/api/${entityType}/${entityId}/comments`)
-    if(!res.ok()) {
-        throw new Error(`Failed to get comments for ${entityType} ${entityId}`)
-    }
-    const data = (await res.json()) as Comment[]
-    return data
-}
-
 async function getMatchingComment(api: APIRequestContext, entityType: CommentEntityType, entityId: number, comment: string): Promise<Comment | undefined>{
-    const comments = await getAllComments(api, entityType, entityId)
+    const comments = await API.comments.getAll(api, entityType, entityId)
     const matchingComment = comments.find(c => c.comment === comment)
     return matchingComment
 }

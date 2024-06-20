@@ -1,9 +1,8 @@
-import { APIRequestContext, Browser, Page, TestInfo, expect, test } from "@playwright/test";
-import { CommentEntityType, UserGroup } from "common/enums";
-import { NewComment } from "common/interfaces";
-import { TestUser, disposeLogIn, logIn } from "../../utils/auth.js";
-import { randomString } from "../../utils/randomString.js";
-
+import { Browser, Page, TestInfo, expect, test } from "@playwright/test"
+import { CommentEntityType, UserGroup } from "common/enums"
+import { api } from "../../utils/api/index.js"
+import { TestUser, disposeLogIn, logIn } from "../../utils/auth.js"
+import { randomString } from "../../utils/randomString.js"
 
 runTestSuite({ 
     entityType: CommentEntityType.Event, 
@@ -149,7 +148,7 @@ async function runDeleteTestWithSetup({
     
     const postCommentAs = async (group: UserGroup, comment: string) => {
         const { page } = await logIn(browser, workerInfo, group)
-        await postCommentToApi(page.request, entityType, entityId, comment)
+        await api.comments.new(page.request, entityType, entityId, comment)      // Faster than using the UI
         await disposeLogIn(page)
     }
 
@@ -208,21 +207,9 @@ function buildPageUrl(entityType: CommentEntityType, entityId: number): string {
     }
 }
 
-
 async function waitForCommentsResponse(page: Page, entityType: CommentEntityType) {
     const urlPattern = new RegExp(`/api/${entityType}/comments/\\d+`)
     return await page.waitForResponse(urlPattern)
-}
-
-// Posting a comment through the api is significantly faster than through the UI
-async function postCommentToApi(api: APIRequestContext, entityType: CommentEntityType, entityId: number, comment: string, ) { 
-    const data: NewComment = { 
-        comment: comment 
-    }
-    const res = await api.post(`/api/${entityType}/${entityId}/comments/new`, {data: data})
-    if(!res.ok()) {
-        throw new Error(`Failed to create ${entityType} comment.\n${await res.text()}`)
-    }
 }
 
 function testName(entityType: CommentEntityType) {
