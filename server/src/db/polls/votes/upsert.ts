@@ -1,11 +1,11 @@
 import Database from "better-sqlite3"
 import { dbReadWriteConfig, motstandenDB } from "../../../config/databaseConfig.js"
-import { pollOptionDb } from "../options/index.js"
+import { pollOptionsDb } from "../options/index.js"
 
 export function upsertVotes(userId: number, poll_id: number, optionIds: number[]) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
 
-    const allOptionIds = pollOptionDb.getAllIds(poll_id)
+    const allOptionIds = pollOptionsDb.getAllIds(poll_id)
     const questionMarks = allOptionIds.map(() => "?")
     const deleteStmt = db.prepare(`
         DELETE FROM 

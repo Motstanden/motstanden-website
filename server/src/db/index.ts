@@ -4,12 +4,12 @@ import { eventsDb } from "./events/index.js"
 import { likesDb } from "./likes/index.js"
 import { pollsDb } from "./polls/index.js"
 import { quotesDb } from "./quotes/index.js"
-import { rumourDb } from "./rumours/index.js"
+import { rumoursDb } from "./rumours/index.js"
 import { sheetArchiveDb } from "./sheetArchive/index.js"
-import { simpleTextDb } from "./simpleText/index.js"
+import { simpleTextsDb } from "./simpleTexts/index.js"
 import { songLyricsDb } from "./songLyrics/index.js"
 import { usersDb } from "./users/index.js"
-import { wallPostDb } from "./wallPosts/index.js"
+import { wallPostsDb } from "./wallPosts/index.js"
 
 export const db = {
     comments: {
@@ -31,13 +31,13 @@ export const db = {
         ...quotesDb
     },
     rumours: {
-        ...rumourDb
+        ...rumoursDb
     },
     sheetArchive: {
         ...sheetArchiveDb       
     },
     simpleTexts: {
-        ...simpleTextDb
+        ...simpleTextsDb
     },
     songLyrics: {
         ...songLyricsDb
@@ -46,6 +46,6 @@ export const db = {
         ...usersDb
     },
     wallPosts: {
-        ...wallPostDb
+        ...wallPostsDb
     }
 }

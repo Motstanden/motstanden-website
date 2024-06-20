@@ -1,7 +1,7 @@
 import { deletePoll } from "./delete.js"
 import { getAllPolls, getNewest, getPoll, getPollWithOptions, pollExists } from "./get.js"
 import { insertNewPoll } from "./insert.js"
-import { pollOptionDb } from "./options/index.js"
+import { pollOptionsDb } from "./options/index.js"
 import { pollVotesDb } from "./votes/index.js"
 
 export const pollsDb = {
@@ -15,7 +15,7 @@ export const pollsDb = {
     insert: insertNewPoll,
 
     options: {
-        ...pollOptionDb
+        ...pollOptionsDb
     },
 
     votes: {

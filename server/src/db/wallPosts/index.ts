@@ -4,7 +4,7 @@ import { insertPostAndMarkUnread } from "./insert.js"
 import { getUnreadCount, resetUnreadCount } from "./unreadCount.js"
 import { updateContent } from "./update.js"
 
-export const wallPostDb = { 
+export const wallPostsDb = { 
     get: get,
     getAll: getAll,
     insertPostAndMarkUnread: insertPostAndMarkUnread,

@@ -1,7 +1,7 @@
 import Database from "better-sqlite3"
 import { Poll, PollWithOption } from "common/interfaces"
 import { dbReadOnlyConfig, motstandenDB } from "../../config/databaseConfig.js"
-import { pollOptionDb } from "./options/index.js"
+import { pollOptionsDb } from "./options/index.js"
 
 export function getPoll(pollId: number): Poll | undefined {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
@@ -49,7 +49,7 @@ export function getPollWithOptions(userId: number, pollId: number): PollWithOpti
     if (!poll) {
         return undefined
     }
-    const options = pollOptionDb.getAll(userId, pollId)
+    const options = pollOptionsDb.getAll(userId, pollId)
     const result: PollWithOption = {
         ...poll,
         options: options

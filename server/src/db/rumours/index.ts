@@ -3,7 +3,7 @@ import { get, getAll } from "./get.js"
 import { insertRumour } from "./insert.js"
 import { update } from "./update.js"
 
-export const rumourDb = {
+export const rumoursDb = {
     get: get,
     getAll: getAll,
     insert: insertRumour,
