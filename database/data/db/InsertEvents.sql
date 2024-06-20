@@ -186,6 +186,10 @@ VALUES
 INSERT INTO
     event_comment (event_id, created_by, comment)
 VALUES
+    -- Rebusløp 
+    (1, 15, 'Når er oppmøte?'),
+    (1, 16, 'Bumb'),
+    (1, 1, 'Oppmøte er kl 12:00 i høgskoleparken! 😄'),
 
     -- Rebusløp:
     (5, 1, 'Har vi planlagt hva vi skal gjøre?'),

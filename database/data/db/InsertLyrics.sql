@@ -1,9 +1,10 @@
 PRAGMA foreign_keys = ON;
 
 INSERT INTO 
-    song_lyric(title, is_popular, created_by, updated_by, content) 
+    song_lyric(song_lyric_id, title, is_popular, created_by, updated_by, content) 
 VALUES
     (
+        1,
         'Asbest',              
         0,
         1,
@@ -106,6 +107,7 @@ Asbeeeest!
 Aaaaaasbeeeest.'
     ),
     (
+        2,
         'Bayer i Hånden',      
         1,
         1,
@@ -156,6 +158,7 @@ der vil jeg nyte dem i fred og i ro.
 '
     ),
     (
+        3,
         'Calypso',             
         0,
         1,
@@ -220,6 +223,7 @@ mens min elskov videre med toget dro.
 **Refr.**'
     ),
     (
+        4,
         'De Ohmske',           
         1,
         1,
@@ -268,6 +272,7 @@ Nå klinger dens fuglesang nok en gang
 Hei fara, Faltu riltu raltu ra'
     ),
     (
+        5,
         'Fallskjermsangen',    
         0,
         1,
@@ -319,6 +324,7 @@ Nå flyter’n rundt i Nordsjøen og lengter hjem til mor...
 '
     ),
     (
+        6,
         'Himmelseng',          
         1,
         1,
@@ -361,6 +367,7 @@ jeg trenger ikke speile meg,
 jeg vet hvor jeg er deilig.'
     ),
     (
+        7,
         'Kanonsangen',         
         1,
         1,
@@ -396,6 +403,7 @@ Jo dem skal vi lære, jo dem skal vi lære,
 jo dem skal vi lære **Å SKYTE MED KANON!!!**'
     ),
     (
+        8,
         'Lambo',               
         1,
         1,
@@ -423,6 +431,7 @@ Han kunne kunsten å være et jævla fyllesvin!
 **Avslutning:** Så går vi til baren hen og skjenker oss en tår!'
     ),
     (
+        9,
         'Motstandenskålene',   
         1,
         1,
@@ -448,6 +457,7 @@ Jag gillar havre, jag äter det var dag, jag sniffar det til frukost, det gör m
 '
     ),
     (
+        10,
         'Nu Klinger',          
         1,
         1,
@@ -490,6 +500,7 @@ Også sitter vi i himmelen og stemmer i vår replikk;
 '
     ),
     (
+        11,
         'Ole Bordknuser',      
         1,
         1,
@@ -543,6 +554,7 @@ Og det nye bordet skal leve!
 '
     ),
     (
+        12,
         'På en planke',        
         1,
         1,
@@ -560,3 +572,14 @@ Full i går, full i dag, fullere i morgen.
 Ompa, ompa, drikk deg i hjel,
 **HEI SKÅL!**'
     );
+
+INSERT INTO
+    song_lyric_comment (song_lyric_id, created_by, comment)
+VALUES
+    -- Rebusløp 
+    (1, 8, 'Var det sånn at denne sangen stammer fra cgp? (Chemie Grand Prix)'),
+    (1, 19, 'Det lurer jeg også på det!'),
+    (1, 1, 
+'Tror det... 🤔
+Jeg skal spørre Peder');
+
