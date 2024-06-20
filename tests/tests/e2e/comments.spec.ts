@@ -28,7 +28,7 @@ interface TestOptions {
 }
 
 function runTestSuite(opts: TestOptions) {
-    test.describe.serial(`Comment on ${testName(opts.entityType)}`, () => {  
+    test.describe(`Comment on ${testName(opts.entityType)}`, () => {  
 
         test.describe.serial("Author can create, edit and delete", () => { 
             testAuthorCanUpdateEditAndDelete(opts)
