@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test"
+import { Locator, Page, expect, test } from "@playwright/test"
 import { LikeEntityType, UserGroup } from "common/enums"
 import { disposeLogIn, logIn } from "../../utils/auth.js"
 
@@ -30,44 +30,54 @@ interface TestOptions {
 
 function runTestSuite({entityType, entityId}: TestOptions) {
 
-    test(`Like ${testName(entityType)}`, async ({browser}, workerInfo) => { 
-        
-        const { page } = await logIn(browser, workerInfo, UserGroup.Contributor)
-        await page.goto(buildPageUrl(entityType, entityId))
+    let page: Page
 
-        const comment = page.getByLabel("Kommentar", {exact: true}).nth(0)
+    test.beforeAll(async ({browser}, workerInfo) => { 
+        page = (await logIn(browser, workerInfo, UserGroup.Contributor)).page
+    })
 
-        const getLikeButton = (like: LikeType) => {
-            return comment.getByRole('button', { name: like.emoji + like.label })
-        }
-
-        const testChangeLike = async (oldLike: LikeType, newLike: LikeType) => { 
-            const oldButton = getLikeButton(oldLike)
-            await expect(oldButton).toBeVisible()
-
-            await oldButton.click()
-            const emojiButton = page.getByRole('tooltip').getByRole('button', { name: newLike.emoji, exact: true })
-            await emojiButton.click()
-
-            const newButton = oldLike === newLike 
-                ? getLikeButton(likes.none) 
-                : getLikeButton(newLike)
-
-            await expect(newButton).toBeVisible()
-        }
-
-        await testChangeLike(likes.none, likes.thumbsUp)
-        await testChangeLike(likes.thumbsUp, likes.heart)
-        await testChangeLike(likes.heart, likes.haha)
-        await testChangeLike(likes.haha, likes.wow)
-        await testChangeLike(likes.wow, likes.sad)
-        await testChangeLike(likes.sad, likes.angry)
-
-        // Clicking the same like button should remove the like
-        await testChangeLike(likes.angry, likes.angry)
-
+    test.afterAll(async () => { 
         await disposeLogIn(page)
     })
+
+    test(`Like ${testName(entityType)}`, async () => { 
+        await page.goto(buildPageUrl(entityType, entityId))
+        const comment = page.getByLabel("Kommentar", {exact: true}).nth(0)
+        await testLikes(page, comment)
+    })
+}
+
+async function testLikes(page: Page, container: Locator) {
+    await testChangeLike(page, container, likes.none, likes.thumbsUp)
+    await testChangeLike(page, container, likes.thumbsUp, likes.heart)
+    await testChangeLike(page, container, likes.heart, likes.haha)
+    await testChangeLike(page, container, likes.haha, likes.wow)
+    await testChangeLike(page, container, likes.wow, likes.sad)
+    await testChangeLike(page, container, likes.sad, likes.angry)
+
+    // Clicking the same like button should remove the like
+    await testChangeLike(page, container, likes.angry, likes.angry)
+}
+
+async function testChangeLike(page: Page, container: Locator, oldLike: LikeType, newLike: LikeType) {
+    const oldButton = getLikeButton(container, oldLike)
+    await expect(oldButton).toBeVisible()
+    await oldButton.click()
+
+    const emojiButton = page.getByRole('tooltip').getByRole('button', { name: newLike.emoji, exact: true })
+    await expect(emojiButton).toBeVisible()
+    await emojiButton.click()
+
+    const newButton = oldLike === newLike 
+        ? getLikeButton(container, likes.none) 
+        : getLikeButton(container, newLike)
+
+    await expect(newButton).toBeVisible()
+    await expect(oldButton).not.toBeVisible()
+}
+
+function getLikeButton(container: Locator, like: LikeType) {
+    return container.getByRole('button', { name: like.emoji + like.label, exact: true})
 }
 
 const likes = {
