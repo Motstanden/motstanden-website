@@ -5,9 +5,11 @@ import passport, { PassportStatic } from 'passport'
 import { Strategy as JWTStrategy } from 'passport-jwt'
 import MagicLoginStrategy from 'passport-magic-login'
 import { magicLinkVerifyPath } from "../api/auth.js"
-import * as user from "../db/users/user.js"
+import { usersDb } from "../db/users/index.js"
+import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload.js"
 import * as Mail from './mailConfig.js'
+import { isNullOrWhitespace } from "common/utils"
 
 // Ensure .env is loaded
 dotenv.config()
@@ -63,8 +65,28 @@ function onVerifyLinkClick(
     payload: MagicLinkPayload,
     callback: (err?: Error | undefined, user?: Object | undefined, info?: any) => void
 ): void {
-    const accessTokenData = user.getAccessTokenData(payload.destination)
-    callback( /*Error*/ undefined, accessTokenData)
+
+    const data = payload.destination;
+    let email: string | undefined
+    if (typeof data === "string" && !isNullOrWhitespace(data)) {
+        email = data.trim().toLowerCase()
+    }
+
+    if(!email)
+        return callback(new Error("Failed to parse email from payload"))
+
+    const user = usersDb.getByMail(email)
+    if (!user)
+        return callback(new Error(`Failed to find a user with the email: ${email}`))
+
+    const accessToken: AccessTokenData = {
+        userId: user.id,
+        email: user.email,
+        groupId: user.groupId,
+        groupName: user.groupName,
+    }
+
+    callback( /*Error: */ undefined, accessToken)
 }
 
 export const magicLogin = new MagicLoginStrategy.default({

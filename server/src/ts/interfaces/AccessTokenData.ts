@@ -1,4 +1,4 @@
-import { UserGroup } from "common/enums";
+import { UserGroup } from "common/enums"
 
 export interface AccessTokenData {
     userId: number;

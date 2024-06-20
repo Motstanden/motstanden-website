@@ -4,9 +4,9 @@ import { CookieOptions, NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import passport from 'passport'
 import { loginTokenDb } from "../db/loginToken/index.js"
-import * as userService from '../db/users/user.js'
 import { AccessTokenData } from '../ts/interfaces/AccessTokenData.js'
 import { RefreshTokenData } from '../ts/interfaces/RefreshTokenData.js'
+import { usersDb } from "../db/users/index.js"
 
 enum JwtToken {
     AccessToken = "AccessToken",
@@ -90,7 +90,7 @@ function getRefreshToken(req: Request): {
     }
 
     // Get the user data from the database.
-    const user = userService.getUser(srcPayload.userId)
+    const user = usersDb.get(srcPayload.userId)
     
     // Quickly validate the user data.
     // It should of course always be valid, but let's be safe since this function is responsible for authentication.
