@@ -150,8 +150,7 @@ function Header( {
             {canEdit && (
                 <IconPopupMenu 
                     icon={<MoreHorizIcon/>}
-                    sx={{
-                    }} 
+                    ariaLabel='Tekstmeny'
                 > 
                     <EditMenuItem 
                         onClick={onEditClick} 
