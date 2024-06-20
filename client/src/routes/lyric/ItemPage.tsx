@@ -1,19 +1,19 @@
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Divider, Theme, useMediaQuery, useTheme } from '@mui/material';
-import { useQueryClient } from '@tanstack/react-query';
-import { CommentEntityType } from 'common/enums';
-import { SongLyric } from 'common/interfaces';
-import { useNavigate } from "react-router-dom";
-import { AuthorInfo } from 'src/components/AuthorInfo';
-import { CommentSection } from 'src/components/CommentSection';
-import { MarkDownRenderer } from 'src/components/MarkDownEditor';
-import { DeleteMenuItem } from 'src/components/menu/DeleteMenuItem';
-import { EditMenuItem } from 'src/components/menu/EditMenuItem';
-import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
-import { usePotentialUser } from 'src/context/Authentication';
-import { postJson } from 'src/utils/postJson';
-import { useTitle } from "../../hooks/useTitle";
-import { lyricContextQueryKey, useLyricItemContext } from './Context';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import { Divider, Theme, useMediaQuery, useTheme } from '@mui/material'
+import { useQueryClient } from '@tanstack/react-query'
+import { CommentEntityType } from 'common/enums'
+import { SongLyric } from 'common/interfaces'
+import { useNavigate } from "react-router-dom"
+import { AuthorInfo } from 'src/components/AuthorInfo'
+import { CommentSection } from 'src/components/CommentSection'
+import { MarkDownRenderer } from 'src/components/MarkDownEditor'
+import { DeleteMenuItem } from 'src/components/menu/DeleteMenuItem'
+import { EditMenuItem } from 'src/components/menu/EditMenuItem'
+import { IconPopupMenu } from 'src/components/menu/IconPopupMenu'
+import { usePotentialUser } from 'src/context/Authentication'
+import { postJson } from 'src/utils/postJson'
+import { useTitle } from "../../hooks/useTitle"
+import { lyricContextQueryKey, useLyricItemContext } from './Context'
 
 export function LyricItemPage() {
     const [_allLyrics, lyric] = useLyricItemContext()
@@ -114,6 +114,7 @@ function TitleHeader( {lyric}: {lyric: SongLyric} ) {
             </h1>
             <IconPopupMenu 
                 icon={<MoreHorizIcon/>}
+                ariaLabel='Trallmeny'
                 style={{
                     marginTop: "5px",
                     marginLeft: isSmallScreen ? "0px" : "20px"
