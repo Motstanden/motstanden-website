@@ -97,19 +97,21 @@ export function PostItem({
                 ...style,
             }}
         >
-            <Header
-                post={post}
-                onDeleteClick={onDeleteClick}
-                onEditClick={onEditClick} />
-            {!isEditing && (
-                <ContentBody post={editItem.isPending ? editItem.variables : post} />
-            )}
-            {isEditing && (
-                <EditPostForm
-                    initialValue={post}
-                    onAbortClick={onAbortEditClick}
-                    onSubmit={onPostEdit} />
-            )}
+            <section aria-label="Veggpostinnhold">
+                <Header
+                    post={post}
+                    onDeleteClick={onDeleteClick}
+                    onEditClick={onEditClick} />
+                {!isEditing && (
+                    <ContentBody post={editItem.isPending ? editItem.variables : post} />
+                )}
+                {isEditing && (
+                    <EditPostForm
+                        initialValue={post}
+                        onAbortClick={onAbortEditClick}
+                        onSubmit={onPostEdit} />
+                )}
+            </section>
             <Divider sx={{ mb: 3, mt: 1 }} />
             <CommentSection
                 entityType={CommentEntityType.WallPost}

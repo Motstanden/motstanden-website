@@ -2,49 +2,57 @@ import { Locator, Page, expect, test } from "@playwright/test"
 import { LikeEntityType, UserGroup } from "common/enums"
 import { disposeLogIn, logIn } from "../../utils/auth.js"
 
-runTestSuite({ 
+testCommentLike({ 
     entityType: LikeEntityType.EventComment, 
     entityId: 1
 })
-runTestSuite({ 
+testCommentLike({ 
     entityType: LikeEntityType.PollComment,  
     entityId: 1
 })
-runTestSuite({ 
+testCommentLike({ 
     entityType: LikeEntityType.SongLyricComment,  
     entityId: 1
 })
-runTestSuite({ 
-    entityType: LikeEntityType.WallPost,  
+testCommentLike({ 
+    entityType: LikeEntityType.WallPostComment,  
     entityId: 1
 })
-runTestSuite({ 
-    entityType: LikeEntityType.WallPostComment,  
+testWallPostLike({ 
+    entityType: LikeEntityType.WallPost,  
     entityId: 1
 })
 
 interface TestOptions {
     entityType: LikeEntityType,
-    entityId: number
+    entityId: number,
 }
 
-function runTestSuite({entityType, entityId}: TestOptions) {
+function testCommentLike({entityType, entityId}: TestOptions) {
 
-    let page: Page
+    test(`Like ${testName(entityType)}`, async ({browser}, workerInfo) => { 
+        const { page } = await logIn(browser, workerInfo, UserGroup.Contributor)
+        await page.goto(buildPageUrl(entityType, entityId))
 
-    test.beforeAll(async ({browser}, workerInfo) => { 
-        page = (await logIn(browser, workerInfo, UserGroup.Contributor)).page
+        const comment = page.getByLabel("Kommentar", {exact: true}).nth(0)
+        await testLikes(page, comment)
+        
+        await disposeLogIn(page)
     })
+}
 
-    test.afterAll(async () => { 
+function testWallPostLike({entityId}: TestOptions) { 
+
+    test(`Like wall post`, async ({browser}, workerInfo) => { 
+        const { page } = await logIn(browser, workerInfo, UserGroup.Contributor)
+        await page.goto(`/vegg/${entityId}`)
+
+        const wallPost = page.getByLabel("Veggpostinnhold", {exact: true}).nth(0)        
+        await testLikes(page, wallPost)
+        
         await disposeLogIn(page)
     })
 
-    test(`Like ${testName(entityType)}`, async () => { 
-        await page.goto(buildPageUrl(entityType, entityId))
-        const comment = page.getByLabel("Kommentar", {exact: true}).nth(0)
-        await testLikes(page, comment)
-    })
 }
 
 async function testLikes(page: Page, container: Locator) {
