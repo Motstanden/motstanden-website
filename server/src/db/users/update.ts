@@ -7,6 +7,12 @@ import { userGroupsDb } from "./groups/index.js"
 import { userRanksDb } from "./ranks/index.js"
 import { userStatusDb } from "./status/index.js"
 
+// **********************************************************************
+//                          WARNING!
+//      This file is hot garbage and should be rewritten! 
+// **********************************************************************
+
+
 function isValidDate(dateStr: string): boolean {
     return /^\d{4}-\d{2}-\d{2}$/.test(dateStr)
 }
