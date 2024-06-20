@@ -2,7 +2,7 @@ import { UserGroup } from "common/enums"
 import { NewRumour, Rumour } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
-import { rumourDb } from "../db/rumours/index.js"
+import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
@@ -14,14 +14,14 @@ router.get("/rumours?:limit",
     AuthenticateUser(),
     (req, res) => {
         const limit = strToNumber(req.query.limit?.toString())
-        res.send(rumourDb.getAll(limit))
+        res.send(db.rumours.getAll(limit))
     })
 
 router.get("/rumours/daily-rumour",
     AuthenticateUser(),
     (req, res) => {
         const limit = 100
-        const rumours = rumourDb.getAll(limit)
+        const rumours = db.rumours.getAll(limit)
         const i = dailyRandomInt(limit)
         const mod = Math.min(limit, rumours.length)
         res.send([
@@ -37,7 +37,7 @@ router.post("/rumours/new",
     (req, res) => {
         const user = req.user as AccessTokenData
         try {
-            rumourDb.insert(req.body as NewRumour, user.userId)
+            db.rumours.insert(req.body as NewRumour, user.userId)
         } catch (err) {
             console.log(err)
             res.status(400).send("Bad data")
@@ -51,12 +51,12 @@ router.post("/rumours/delete",
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
-        getAuthorInfo: (id) => rumourDb.get(id)
+        getAuthorInfo: (id) => db.rumours.get(id)
     }),
     (req: Request, res: Response) => {
         const id: number = req.body.id
         try {
-            rumourDb.delete(id)
+            db.rumours.delete(id)
         } catch {
             res.status(400).send("Bad data")
         }
@@ -69,12 +69,12 @@ router.post("/rumours/update",
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
-        getAuthorInfo: id => rumourDb.get(id)
+        getAuthorInfo: id => db.rumours.get(id)
     }),
     (req: Request, res: Response) => {
         const rumour: Rumour = req.body
         try {
-            rumourDb.update(rumour.id, rumour.rumour)
+            db.rumours.update(rumour.id, rumour.rumour)
         } catch (err) {
             res.status(400).send("Bad data")
         }

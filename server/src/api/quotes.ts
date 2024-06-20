@@ -6,15 +6,15 @@ import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import dailyRandomInt from "../utils/dailyRandomInt.js"
-import { quotesDb } from "../db/quotes/index.js"
+import { db } from "../db/index.js"
 
-let router = express.Router()
+const router = express.Router()
 
 router.get("/quotes?:limit",
     AuthenticateUser(),
     (req, res) => {
         const limit = strToNumber(req.query.limit?.toString())
-        res.send(quotesDb.getAll(limit))
+        res.send(db.quotes.getAll(limit))
     }
 )
 
@@ -22,7 +22,7 @@ router.get("/quotes/daily-quotes",
     AuthenticateUser(),
     (req, res) => {
         const limit = 100
-        const quotes = quotesDb.getAll(limit)
+        const quotes = db.quotes.getAll(limit)
         const i = dailyRandomInt(limit)
         const mod = Math.min(limit, quotes.length)
         res.send([
@@ -37,7 +37,7 @@ router.post("/quotes/new",
     (req, res) => {
         const user = req.user as AccessTokenData
         try {
-            quotesDb.insert(req.body as NewQuote, user.userId)
+            db.quotes.insert(req.body as NewQuote, user.userId)
         }
         catch {
             res.status(400).send("Bad data")
@@ -51,12 +51,12 @@ router.post("/quotes/delete",
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
-        getAuthorInfo: id => quotesDb.get(id)
+        getAuthorInfo: id => db.quotes.get(id)
     }),
     (req: Request, res: Response) => {
         const quoteId: number = req.body.id
         try {
-            quotesDb.delete(quoteId)
+            db.quotes.delete(quoteId)
         } catch {
             res.status(400).send("Bad data")
         }
@@ -69,12 +69,12 @@ router.post("/quotes/update",
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
-        getAuthorInfo: id => quotesDb.get(id)
+        getAuthorInfo: id => db.quotes.get(id)
     }),
     (req: Request, res: Response) => {
         const quote: Quote = req.body
         try {
-            quotesDb.update(quote)
+            db.quotes.update(quote)
         } catch {
             return res.status(400).send("bad data")
         }

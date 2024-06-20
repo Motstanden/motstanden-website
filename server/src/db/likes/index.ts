@@ -5,10 +5,10 @@ import { upsert } from "./upsert.js"
 export const likesDb = { 
     getAll: getAllLikes,
     upsert: upsert,
-    delete: deleteLike
-}
+    delete: deleteLike,
 
-export const emojiDb = {
-    exists: emojiExists,
-    getAll: getAllEmojis
+    emojis: {
+        exists: emojiExists,
+        getAll: getAllEmojis
+    }
 }

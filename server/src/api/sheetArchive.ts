@@ -2,17 +2,17 @@ import { UserGroup } from "common/enums"
 import { SheetArchiveTitle } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
+import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroup } from "../middleware/requiresGroup.js"
-import { sheetArchiveDb } from "../db/sheetArchive/index.js"
 
-let router = express.Router()
+const router = express.Router()
 
 router.get("/sheet_archive/song_title",
     AuthenticateUser(),
     (req, res) => {
         try {
-            const sheets = sheetArchiveDb.titles.getAll()
+            const sheets = db.sheetArchive.titles.getAll()
             res.send(sheets);
         } catch (err) {
             console.log(err)
@@ -38,7 +38,7 @@ router.get("/sheet_archive/song_files",
         }
 
         try {
-            const sheets = sheetArchiveDb.files.getAll(id);
+            const sheets = db.sheetArchive.files.getAll(id);
             res.send(sheets);
         } catch (err) {
             console.log(err)
@@ -53,7 +53,7 @@ router.post("/sheet-archive/titles/update",
     (req: Request, res: Response) => {
         const title: SheetArchiveTitle = req.body
         try {
-            sheetArchiveDb.titles.update(title)
+            db.sheetArchive.titles.update(title)
         } catch(err) {
             console.log(err)
             return res.status(400).send("bad data")

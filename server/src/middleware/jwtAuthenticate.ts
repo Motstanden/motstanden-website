@@ -3,10 +3,9 @@ import crypto from "crypto"
 import { CookieOptions, NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import passport from 'passport'
-import { loginTokenDb } from "../db/loginToken/index.js"
+import { db } from "../db/index.js"
 import { AccessTokenData } from '../ts/interfaces/AccessTokenData.js'
 import { RefreshTokenData } from '../ts/interfaces/RefreshTokenData.js'
-import { usersDb } from "../db/users/index.js"
 
 enum JwtToken {
     AccessToken = "AccessToken",
@@ -84,13 +83,13 @@ function getRefreshToken(req: Request): {
     }
 
     // Check if the token is active. The token is considered active if it is in the database.
-    const isActiveToken = loginTokenDb.exists(srcToken, srcPayload.userId)
+    const isActiveToken = db.loginTokens.exists(srcToken, srcPayload.userId)
     if (!isActiveToken) {
         return invalidResult
     }
 
     // Get the user data from the database.
-    const user = usersDb.get(srcPayload.userId)
+    const user = db.users.get(srcPayload.userId)
     
     // Quickly validate the user data.
     // It should of course always be valid, but let's be safe since this function is responsible for authentication.
@@ -154,7 +153,7 @@ export function loginUser(req: Request, res: Response) {
     const refreshToken = signToken(JwtToken.RefreshToken, user)
     const refreshPayload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET) as JwtTokenData
     
-    loginTokenDb.insert(user.userId, refreshToken, refreshPayload.iat, refreshPayload.exp)
+    db.loginTokens.insert(user.userId, refreshToken, refreshPayload.iat, refreshPayload.exp)
     saveToCookie(res, JwtToken.RefreshToken, refreshToken)
 }
 
@@ -194,7 +193,7 @@ function getCookieExpiry(tokenType: JwtToken ): Date {
 export function logOut(req: Request, res: Response) {
     const refreshToken = getCookie(req, JwtToken.RefreshToken)
     if (refreshToken) {
-        loginTokenDb.delete(refreshToken)
+        db.loginTokens.delete(refreshToken)
     }
     clearAllAuthCookies(res)
     res.end()
@@ -202,7 +201,7 @@ export function logOut(req: Request, res: Response) {
 
 export function logOutAllUnits(req: Request, res: Response) {
     const user = req.user as AccessTokenData
-    loginTokenDb.deleteAllMatches(user.userId)
+    db.loginTokens.deleteAllMatches(user.userId)
     clearAllAuthCookies(res)
     res.end()
 }

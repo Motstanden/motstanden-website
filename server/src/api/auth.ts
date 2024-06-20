@@ -3,7 +3,7 @@ import { isNullOrWhitespace } from "common/utils"
 import express, { Request } from "express"
 import passport from "passport"
 import * as passportConfig from "../config/passportConfig.js"
-import { usersDb } from "../db/users/index.js"
+import { db } from "../db/index.js"
 import { AuthenticateUser, logOut, logOutAllUnits, loginUser } from "../middleware/jwtAuthenticate.js"
 import { requiresDevEnv } from "../middleware/requiresDevEnv.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
@@ -16,7 +16,7 @@ router.post("/auth/magic-link/create", async (req, res) => {
 
     const email = getMail(req)
 
-    if (email && usersDb.exists(email)) {
+    if (email && db.users.exists(email)) {
         passportConfig.magicLogin.send(req, res)
     }
     else {
@@ -35,8 +35,8 @@ if (process.env.IS_DEV_ENV) {
 
         const email = getMail(req)
         let user: User | undefined
-        if(email && usersDb.exists(email)) { 
-            user = usersDb.getByMail(email)
+        if(email && db.users.exists(email)) { 
+            user = db.users.getByMail(email)
         }
         
         if(user){
@@ -85,7 +85,7 @@ router.get("/auth/current-user",
     AuthenticateUser( { failureRedirect: "/api/auth/current-user-failure" }),
     (req, res) => {
         const user = req.user as AccessTokenData
-        const userData = usersDb.get(user.userId)
+        const userData = db.users.get(user.userId)
         if(userData) {
             res.send(userData)
         } else {

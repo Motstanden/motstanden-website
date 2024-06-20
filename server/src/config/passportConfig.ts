@@ -1,3 +1,4 @@
+import { isNullOrWhitespace } from "common/utils"
 import dotenv from "dotenv"
 import { Request } from 'express'
 import fs from "fs/promises"
@@ -5,11 +6,10 @@ import passport, { PassportStatic } from 'passport'
 import { Strategy as JWTStrategy } from 'passport-jwt'
 import MagicLoginStrategy from 'passport-magic-login'
 import { magicLinkVerifyPath } from "../api/auth.js"
-import { usersDb } from "../db/users/index.js"
+import { db } from "../db/index.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload.js"
 import * as Mail from './mailConfig.js'
-import { isNullOrWhitespace } from "common/utils"
 
 // Ensure .env is loaded
 dotenv.config()
@@ -75,7 +75,7 @@ function onVerifyLinkClick(
     if(!email)
         return callback(new Error("Failed to parse email from payload"))
 
-    const user = usersDb.getByMail(email)
+    const user = db.users.getByMail(email)
     if (!user)
         return callback(new Error(`Failed to find a user with the email: ${email}`))
 

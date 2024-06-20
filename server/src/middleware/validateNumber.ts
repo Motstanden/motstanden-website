@@ -1,5 +1,5 @@
-import { strToNumber } from 'common/utils';
-import { NextFunction, Request, Response } from 'express';
+import { strToNumber } from 'common/utils'
+import { NextFunction, Request, Response } from 'express'
 
 export function validateNumber( { 
     getValue,

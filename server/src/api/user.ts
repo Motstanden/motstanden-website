@@ -1,24 +1,24 @@
 import { UserEditMode, UserGroup } from "common/enums"
 import { NewUser, User } from "common/interfaces"
 import express, { NextFunction, Request, Response } from "express"
-import { usersDb } from "../db/users/index.js"
 import { AuthenticateUser, updateAccessToken } from "../middleware/jwtAuthenticate.js"
 import { requiresGroup } from "../middleware/requiresGroup.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { db } from "../db/index.js"
 
 const router = express.Router()
 
 router.get("/member-list", 
     AuthenticateUser(),
     (req: Request, res: Response) => {
-        const users = usersDb.getAll()
+        const users = db.users.getAll()
         res.send(users)
 })
 
 router.get("/simplified-member-list",
     AuthenticateUser(),
     (req: Request, res: Response) => {
-        const users = usersDb.getAllAsReference()
+        const users = db.users.getAllAsReference()
         res.send(users)
 })
     
@@ -40,7 +40,7 @@ function handleUserUpdate(updateMode: UserEditMode) {
 
         let changeSuccess = false
         try {
-            usersDb.update(payload, updateMode)
+            db.users.update(payload, updateMode)
             changeSuccess = true
         } catch (err) {
             console.log(err)
@@ -75,7 +75,7 @@ router.post("/create-user", requiresGroup(UserGroup.SuperAdministrator), (req: R
     // TODO: validate user
 
     try {
-        const userId = usersDb.insert(user)
+        const userId = db.users.insert(user)
         res.json({userId: userId})
     } catch (err) {
         console.log(err)

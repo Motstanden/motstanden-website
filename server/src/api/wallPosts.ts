@@ -2,11 +2,11 @@ import { UserGroup } from "common/enums"
 import { Count, NewWallPost } from "common/interfaces"
 import { isNullOrWhitespace, strToNumber } from "common/utils"
 import express from "express"
-import { wallPostDb } from "../db/wallPosts/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { db } from "../db/index.js"
 
 const router = express.Router()
 
@@ -14,7 +14,7 @@ router.get("/wall-posts/all?:userId",
     AuthenticateUser(),
     (req, res) => {
         const userId = strToNumber(req.query.userId?.toString())
-        const posts = wallPostDb.getAll(userId)
+        const posts = db.wallPosts.getAll(userId)
         res.send(posts)
     }
 )
@@ -27,7 +27,7 @@ router.get("/wall-posts/:id",
     (req, res) => {
         const postId = strToNumber(req.params.id) as number         // Validated by middleware
         try {
-            const post = wallPostDb.get(postId)
+            const post = db.wallPosts.get(postId)
             if (!post) {
                 return res.status(404).send("Post not found")
             }
@@ -50,7 +50,7 @@ router.post("/wall-posts/new",
             return res.status(400).send("Could not parse post data")
 
         try {
-            wallPostDb.insertPostAndMarkUnread(newPost, user.userId)
+            db.wallPosts.insertPostAndMarkUnread(newPost, user.userId)
         } catch (err) {
             console.error(err)
             res.status(500).send("Failed to insert post into database")
@@ -64,12 +64,12 @@ router.delete("/wall-posts/:id",
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => strToNumber(req.params.id),
-        getAuthorInfo: (id) => wallPostDb.get(id)
+        getAuthorInfo: (id) => db.wallPosts.get(id)
         }),
     (req, res) => {
         const postId = strToNumber(req.params.id) as number     // is validated by middleware
         try {
-            wallPostDb.delete(postId)
+            db.wallPosts.delete(postId)
         } catch (err) {
             res.status(500).send("Failed to delete post from the database")
         }
@@ -81,7 +81,7 @@ router.patch("/wall-posts/:id",
     AuthenticateUser(),
     requiresAuthor( {
         getId: req => strToNumber(req.params.id),
-        getAuthorInfo: id => wallPostDb.get(id)
+        getAuthorInfo: id => db.wallPosts.get(id)
     }),
     (req, res) => {
         const id = strToNumber(req.params.id) as number         // Is validated by middleware 
@@ -92,7 +92,7 @@ router.patch("/wall-posts/:id",
         }
             
         try {
-            wallPostDb.updateContent(id, newContent)
+            db.wallPosts.updateContent(id, newContent)
         } catch (err) {
             console.error(err)
             res.status(500).send("Failed to update post in database")
@@ -127,7 +127,7 @@ router.get("/wall-posts/unread/count",
     (req, res) => {
         const user = req.user as AccessTokenData
         
-        const unreadCount = wallPostDb.getUnreadCount(user.userId)
+        const unreadCount = db.wallPosts.getUnreadCount(user.userId)
         const result: Count = {
             count: unreadCount ?? 0
         }
@@ -140,7 +140,7 @@ router.post("/wall-posts/unread/count/reset",
     AuthenticateUser(),
     (req, res) => {
         const user = req.user as AccessTokenData
-        wallPostDb.resetUnreadCount(user.userId)
+        db.wallPosts.resetUnreadCount(user.userId)
         res.end()
     }
 )

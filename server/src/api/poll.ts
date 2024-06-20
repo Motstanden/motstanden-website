@@ -2,18 +2,18 @@ import { UserGroup } from "common/enums"
 import { NewPollWithOption } from "common/interfaces"
 import { isNullOrWhitespace, strToNumber } from "common/utils"
 import express from "express"
-import { pollsDb } from "../db/polls/index.js"
+import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
-let router = express.Router() 
+const router = express.Router() 
 
 router.get("/polls/latest",
     AuthenticateUser(),
     (req, res) => {
-        const poll = pollsDb.getNewest()
+        const poll = db.polls.getNewest()
         res.send(poll)
     }
 )
@@ -21,7 +21,7 @@ router.get("/polls/latest",
 router.get("/polls/all",
     AuthenticateUser(),
     (req, res) => {
-        const pollList = pollsDb.getAll()
+        const pollList = db.polls.getAll()
         res.send(pollList)
     }
 )
@@ -36,12 +36,12 @@ router.get("/polls/:id/options",
         const user = req.user as AccessTokenData
         const id = strToNumber(req.params.id) as number
 
-        const isValid = pollsDb.exists(id)
+        const isValid = db.polls.exists(id)
         if(!isValid)
             return res.status(404).end()
 
         try {
-            const options = pollsDb.options.getAll(user.userId, id)
+            const options = db.polls.options.getAll(user.userId, id)
             res.send(options)
         }
         catch (e){
@@ -61,7 +61,7 @@ router.get("/polls/:id/voter-list",
         const pollId = strToNumber(req.params.id) as number
         
         try {
-            const voters = pollsDb.votes.get(pollId)
+            const voters = db.polls.votes.get(pollId)
             res.send(voters)
         }
         catch (e){
@@ -82,7 +82,7 @@ router.post("/polls/new",
             return res.status(400).send("Could not parse poll data")
 
         try {
-            pollsDb.insert(newPoll, user.userId)
+            db.polls.insert(newPoll, user.userId)
         } catch (err) {
             console.log(err)
             res.status(500).send("Failed to insert poll into database")
@@ -96,12 +96,12 @@ router.post("/polls/delete",
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
-        getAuthorInfo: (id) => pollsDb.get(id)
+        getAuthorInfo: (id) => db.polls.get(id)
     }),
     (req, res) => {
         const id = req.body.id as number    // This is already validated by requiresGroupOrAuthor 
         try {
-            pollsDb.delete(id)
+            db.polls.delete(id)
         } catch (err) {
             res.status(500).send("Failed to delete poll from database")
         }
@@ -124,12 +124,12 @@ router.post("/polls/:id/vote/upsert",
         if(optionIds.length <= 0)
             return res.status(400).send("Could not parse option ids")
 
-        if(!pollsDb.options.allIdsMatchesPollId(pollId, optionIds)){
+        if(!db.polls.options.allIdsMatchesPollId(pollId, optionIds)){
             return res.status(400).send("Invalid combination of poll id and option ids")
         }
 
         try {
-            pollsDb.votes.upsert(user.userId, pollId, optionIds);
+            db.polls.votes.upsert(user.userId, pollId, optionIds);
         }
         catch (e){
             console.log(e)

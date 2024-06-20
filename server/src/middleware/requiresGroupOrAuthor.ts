@@ -1,8 +1,8 @@
-import { UserGroup } from "common/enums";
-import { NextFunction, Request, Response } from 'express';
-import { AccessTokenData } from '../ts/interfaces/AccessTokenData.js';
-import { AuthoredItem } from '../ts/interfaces/AuthoredItem.js';
-import { hasGroupAccess } from "../utils/accessTokenUtils.js";
+import { UserGroup } from "common/enums"
+import { NextFunction, Request, Response } from 'express'
+import { AccessTokenData } from '../ts/interfaces/AccessTokenData.js'
+import { AuthoredItem } from '../ts/interfaces/AuthoredItem.js'
+import { hasGroupAccess } from "../utils/accessTokenUtils.js"
 
 interface AuthenticateProps {
     getId: (req: Request) => number | undefined,
