@@ -82,9 +82,16 @@ test.describe("Editor can update simple texts", () => {
 
 async function clickEdit(page: Page) {
     const button = page.getByRole("menuitem", {name: "Rediger"})
-    await button.click()
+    await Promise.all([
+        button.click(),
+        button.waitFor({state: "detached"})
+    ])
 }
 
 async function clickSave(page: Page) {
-    await page.getByRole("button", { name: 'Lagre', exact: true }).click()
+    const button = page.getByRole("button", { name: 'Lagre', exact: true })
+    await Promise.all([
+        button.click(),
+        button.waitFor({state: "detached"})
+    ])
 }
