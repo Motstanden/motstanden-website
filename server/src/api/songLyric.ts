@@ -1,10 +1,11 @@
 import { UserGroup } from "common/enums"
-import { NewSongLyric } from "common/interfaces"
-import { isNullOrWhitespace, strToNumber } from "common/utils"
+import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
+import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
+import { validateBody } from "../middleware/validateBody.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
@@ -59,13 +60,24 @@ function sendSongLyric({ isPublic }: {isPublic: boolean} ) {
     }
 }
 
+const NewSongLyricSchema = z.object({ 
+    title: z.string().trim().min(1, "Title must not be empty"),
+    content: z.string().trim().min(1, "Content must not be empty"),
+    isPopular: z.boolean()
+})
 
 router.post("/song-lyric/:id/update",
+    validateNumber({
+        getValue: (req) => req.params.id,
+    }),
     AuthenticateUser(),
+    validateBody(NewSongLyricSchema),
     (req, res) => {
-        const id = strToNumber(req.params.id) as number     // is validated by middleware
+
+        // Validated by middleware
+        const id = strToNumber(req.params.id) as number
         const user = req.user as AccessTokenData
-        const newLyric = tryCreateValidLyric(req.body)
+        const newLyric = NewSongLyricSchema.parse(req.body)
 
         if(!newLyric)
             return res.status(400).send("Could not parse song lyric data")
@@ -82,12 +94,12 @@ router.post("/song-lyric/:id/update",
 
 router.post("/song-lyric/new",
     AuthenticateUser(),
+    validateBody(NewSongLyricSchema),
     (req, res) => {
-        const user = req.user as AccessTokenData
-        const newLyric = tryCreateValidLyric(req.body) 
 
-        if(!newLyric)
-            return res.status(400).send("Could not parse song lyric data")
+        // Validated by middleware
+        const user = req.user as AccessTokenData
+        const newLyric = NewSongLyricSchema.parse(req.body)
 
         try {
             db.songLyrics.insert(newLyric, user.userId)
@@ -98,28 +110,6 @@ router.post("/song-lyric/new",
         res.end()
     }
 )
-
-function tryCreateValidLyric(obj: unknown): NewSongLyric | undefined {
-    if (typeof obj !== "object" || obj === null)
-        return undefined
-
-    const lyric = obj as NewSongLyric
-
-    if (typeof lyric.title !== "string" || isNullOrWhitespace(lyric.title))
-        return undefined
-
-    if (typeof lyric.content !== "string" || isNullOrWhitespace(lyric.content))
-        return undefined
-
-    if( typeof lyric.isPopular !== "boolean")
-        return undefined
-
-    return {
-        title: lyric.title.trim(),
-        content: lyric.content.trim(),
-        isPopular: lyric.isPopular
-    }
-}
 
 router.post("/song-lyric/:id/delete",
     AuthenticateUser(),
