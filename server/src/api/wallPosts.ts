@@ -1,12 +1,14 @@
 import { UserGroup } from "common/enums"
-import { Count, NewWallPost } from "common/interfaces"
-import { isNullOrWhitespace, strToNumber } from "common/utils"
+import { Count } from "common/interfaces"
+import { strToNumber } from "common/utils"
 import express from "express"
+import { z } from "zod"
+import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
+import { validateBody } from "../middleware/validateBody.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
-import { db } from "../db/index.js"
 
 const router = express.Router()
 
@@ -40,14 +42,19 @@ router.get("/wall-posts/:id",
     }
 )
 
+const NewWallPostSchema = z.object({
+    content: z.string().trim().min(1, "Content must not be empty"),
+    wallUserId: z.number().positive().finite(),
+})
+
 router.post("/wall-posts/new",
     AuthenticateUser(),
+    validateBody(NewWallPostSchema),
     (req, res) => {
-        const user = req.user as AccessTokenData
-        const newPost = tryCreateValidPost(req.body)
         
-        if(!newPost)
-            return res.status(400).send("Could not parse post data")
+        // Validated by middleware
+        const user = req.user as AccessTokenData
+        const newPost = NewWallPostSchema.parse(req.body)
 
         try {
             db.wallPosts.insertPostAndMarkUnread(newPost, user.userId)
@@ -65,7 +72,7 @@ router.delete("/wall-posts/:id",
         requiredGroup: UserGroup.Administrator,
         getId: (req) => strToNumber(req.params.id),
         getAuthorInfo: (id) => db.wallPosts.get(id)
-        }),
+    }),
     (req, res) => {
         const postId = strToNumber(req.params.id) as number     // is validated by middleware
         try {
@@ -77,22 +84,25 @@ router.delete("/wall-posts/:id",
     }
 )
 
+const UpdateWallPostSchema = z.object({ 
+    content: z.string().trim().min(1, "Content must not be empty")
+})
+
 router.patch("/wall-posts/:id",
     AuthenticateUser(),
     requiresAuthor( {
         getId: req => strToNumber(req.params.id),
         getAuthorInfo: id => db.wallPosts.get(id)
     }),
+    validateBody(UpdateWallPostSchema),
     (req, res) => {
-        const id = strToNumber(req.params.id) as number         // Is validated by middleware 
 
-        const newContent = req.body.content
-        if (typeof newContent !== "string" || isNullOrWhitespace(newContent)) {
-            return res.status(400).send("Invalid content")
-        }
+        // Validated by middleware
+        const id = strToNumber(req.params.id) as number 
+        const data = UpdateWallPostSchema.parse(req.body)
             
         try {
-            db.wallPosts.updateContent(id, newContent)
+            db.wallPosts.updateContent(id, data.content)
         } catch (err) {
             console.error(err)
             res.status(500).send("Failed to update post in database")
@@ -100,27 +110,6 @@ router.patch("/wall-posts/:id",
         res.end()
     }
 )
-
-function tryCreateValidPost(obj: unknown): NewWallPost | undefined {
-    if (typeof obj !== "object" || obj === null) {
-        return undefined
-    }
-
-    const post = obj as NewWallPost
-
-    if (typeof post.content !== "string" || isNullOrWhitespace(post.content)) {
-        return undefined
-    }
-    
-    if (typeof post.wallUserId !== "number" || post.wallUserId < 0) {
-        return undefined
-    }
-
-    return {
-        wallUserId: post.wallUserId,
-        content: post.content.trim()
-    }
-}
 
 router.get("/wall-posts/unread/count", 
     AuthenticateUser(),
