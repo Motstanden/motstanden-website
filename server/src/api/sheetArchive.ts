@@ -5,6 +5,9 @@ import express, { Request, Response } from "express"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroup } from "../middleware/requiresGroup.js"
+import { z } from "zod"
+import { validateNumber } from "../middleware/validateNumber.js"
+import { validateBody } from "../middleware/validateBody.js"
 
 const router = express.Router()
 
@@ -47,13 +50,27 @@ router.get("/sheet_archive/song_files",
     }
 )
 
+const UpdateSheetArchiveTitleSchema = z.object({ 
+    title: z.string().trim().min(1, "Title must not be empty"),
+    extraInfo: z.string().trim(),
+    isRepertoire: z.boolean()
+})
 
-router.post("/sheet-archive/titles/update", 
+router.post("/sheet-archive/titles/:id/update", 
+    validateNumber({
+        getValue: req => req.params.id,
+    }),
+    AuthenticateUser(),
     requiresGroup(UserGroup.Administrator),
+    validateBody(UpdateSheetArchiveTitleSchema),
     (req: Request, res: Response) => {
-        const title: SheetArchiveTitle = req.body
+
+        // Validated by middleware
+        const titleId = strToNumber(req.params.id) as number
+        const title = UpdateSheetArchiveTitleSchema.parse(req.body)
+        
         try {
-            db.sheetArchive.titles.update(title)
+            db.sheetArchive.titles.update(titleId, title)
         } catch(err) {
             console.log(err)
             return res.status(400).send("bad data")

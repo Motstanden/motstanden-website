@@ -1,4 +1,4 @@
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from '@mui/icons-material/Edit'
 import {
     Checkbox,
     FormControlLabel, Grid, IconButton,
@@ -14,16 +14,16 @@ import {
     TextField,
     Theme,
     useMediaQuery
-} from "@mui/material";
-import { useQueryClient } from '@tanstack/react-query';
-import { SheetArchiveTitle } from "common/interfaces";
-import { useState } from 'react';
-import { Link as RouterLink } from "react-router-dom";
-import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle';
-import { Form } from 'src/components/form/Form';
-import { useAuthenticatedUser } from "src/context/Authentication";
-import { useTitle } from "../../hooks/useTitle";
-import { sheetArchiveContextQueryKey, useSheetArchiveContext } from './Context';
+} from "@mui/material"
+import { useQueryClient } from '@tanstack/react-query'
+import { NewSheetArchiveTitle, SheetArchiveTitle } from "common/interfaces"
+import { useState } from 'react'
+import { Link as RouterLink } from "react-router-dom"
+import { headerStyle, linkStyle, rowStyle } from 'src/assets/style/tableStyle'
+import { Form } from 'src/components/form/Form'
+import { useAuthenticatedUser } from "src/context/Authentication"
+import { useTitle } from "../../hooks/useTitle"
+import { sheetArchiveContextQueryKey, useSheetArchiveContext } from './Context'
 
 export default function SongPage({ mode }: { mode?: "repertoire" }) {
 
@@ -105,8 +105,9 @@ function TitleTableRow( {song, canEdit }: {song: SheetArchiveTitle, canEdit: boo
     }
 
     if(mode === "edit") 
-        return <EditRow 
-            song={song} 
+        return <EditRow
+            songId={song.id} 
+            initialValue={song} 
             onAbort={onAbortEditClick} 
             onSuccess={onPostSuccess}/>
 
@@ -172,27 +173,29 @@ function SkeletonRow( {canEdit}: {canEdit: boolean}) {
 }
 
 function EditRow( {
-    song, 
+    songId,
+    initialValue, 
     onAbort, 
     onSuccess
 }: {
-    song: SheetArchiveTitle, 
+    songId: number,
+    initialValue: NewSheetArchiveTitle, 
     onAbort: VoidFunction, 
     onSuccess: ((res: Response) => Promise<void>) | ((res: Response) => void) 
 } ) {
-    const [newSong, setNewSong] = useState(song)
+    const [newSong, setNewSong] = useState(initialValue)
     const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
-    const getSubmitData = (): SheetArchiveTitle => ({
+    const getSubmitData = (): NewSheetArchiveTitle => ({
         ...newSong, 
         extraInfo: newSong.extraInfo.trim().replace(/\s+/g, ' '), 
         title: newSong.title.trim().replace(/\s+/g, ' ')
     })
 
     const submitData = getSubmitData()
-    const isDisabled = song.title.trim() === submitData.title.trim() && 
-                       song.extraInfo.trim() === submitData.extraInfo.trim() &&
-                       song.isRepertoire === submitData.isRepertoire  
+    const isDisabled = initialValue.title.trim() === submitData.title.trim() && 
+                       initialValue.extraInfo.trim() === submitData.extraInfo.trim() &&
+                       initialValue.isRepertoire === submitData.isRepertoire  
 
     return (
         <TableRow sx={rowStyle}>
@@ -202,7 +205,7 @@ function EditRow( {
                 }}>
                 <Form 
                     value={getSubmitData} 
-                    postUrl={`/api/sheet-archive/titles/update`}
+                    postUrl={`/api/sheet-archive/titles/${songId}/update`}
                     onAbortClick={ _ => onAbort()}
                     onPostSuccess={onSuccess}
                     disabled={isDisabled}

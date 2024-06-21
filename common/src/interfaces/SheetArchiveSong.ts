@@ -1,10 +1,13 @@
-import { Clef, Tone } from "../enums/index.js";
+import { Clef, Tone } from "../enums/index.js"
 
-export interface SheetArchiveTitle {
-    id: number;
+export interface NewSheetArchiveTitle { 
     title: string;
     extraInfo: string;
     isRepertoire: boolean;
+}
+
+export interface SheetArchiveTitle extends NewSheetArchiveTitle{
+    id: number;
     isPublic: boolean;
     url: string;
 }

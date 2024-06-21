@@ -1,15 +1,8 @@
 import Database from "better-sqlite3"
-import { SheetArchiveTitle } from "common/interfaces"
-import { isNullOrWhitespace } from "common/utils"
+import { NewSheetArchiveTitle } from "common/interfaces"
 import { dbReadWriteConfig, sheetArchiveDB } from "../../config/databaseConfig.js"
 
-export function updateSongTitle(song: SheetArchiveTitle) {
-    const isInvalid = isNullOrWhitespace(song.title) ||
-        typeof song.id !== "number" ||
-        typeof song.isRepertoire !== "boolean"
-    if (isInvalid)
-        throw "Invalid data"
-
+export function updateSongTitle(songId: number, song: NewSheetArchiveTitle) {
     const db = new Database(sheetArchiveDB, dbReadWriteConfig)
     const stmt = db.prepare(`
         UPDATE 
@@ -25,7 +18,7 @@ export function updateSongTitle(song: SheetArchiveTitle) {
         title: song.title,
         extraInfo: song.extraInfo ?? "",
         isRepertoire: song.isRepertoire ? 1 : 0,
-        id: song.id
+        id: songId
     })
     db.close()
 }
