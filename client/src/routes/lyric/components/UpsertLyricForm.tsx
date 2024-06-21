@@ -1,13 +1,13 @@
-import { Box, Checkbox, FormControlLabel, TextField } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
-import { NewSongLyric } from "common/interfaces";
-import { isNullOrWhitespace } from "common/utils";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { MarkDownEditor } from "src/components/MarkDownEditor";
-import { Form } from "src/components/form/Form";
-import { StorageKeyArray, useSessionStorage } from "src/hooks/useStorage";
-import { buildLyricItemUrl, lyricContextQueryKey } from "../Context";
+import { Box, Checkbox, FormControlLabel, TextField } from "@mui/material"
+import { useQueryClient } from "@tanstack/react-query"
+import { NewSongLyric } from "common/interfaces"
+import { isNullOrWhitespace } from "common/utils"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { MarkDownEditor } from "src/components/MarkDownEditor"
+import { Form } from "src/components/form/Form"
+import { StorageKeyArray, useSessionStorage } from "src/hooks/useStorage"
+import { buildLyricItemUrl, lyricContextQueryKey } from "../Context"
 
 export function UpsertLyricForm({
     initialValue, 
@@ -56,9 +56,7 @@ export function UpsertLyricForm({
     const handlePostSuccess = async (res: Response) => {
         setHasPosted(true);
         await queryClient.invalidateQueries({queryKey: lyricContextQueryKey})
-        if(onPostSuccess){
-            await onPostSuccess(res);
-        }
+        await onPostSuccess?.(res);
         clearNewValue()
         navigate(buildLyricItemUrl(newValue.title, newValue.isPopular))
      };

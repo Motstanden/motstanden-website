@@ -11,7 +11,7 @@ import { LyricItemPageSkeleton } from "./skeleton/ItemPage"
 import { LyricListPageSkeleton } from "./skeleton/ListPage"
 import { useAppBarHeader } from "src/context/AppBarHeader"
 
-export const lyricContextQueryKey = ["AllLyricData"]
+export const lyricContextQueryKey = ["song-lyric"]
 
 export {
     LyricContainer as LyricContext
@@ -92,7 +92,7 @@ export function LyricItemContext() {
     return <LyricItemLoader id={lyricId} />
 }
 
-export const getLyricItemContextQueryKey = (id: number) => ["LyricItem", id]
+export const getLyricItemContextQueryKey = (id: number) => [...lyricContextQueryKey, id]
 
 export function LyricItemLoader( {id}: {id: number}){
     const allLyrics = useOutletContext<StrippedSongLyric[]>()
