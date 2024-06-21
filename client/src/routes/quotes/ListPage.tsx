@@ -1,13 +1,13 @@
-import { Divider } from "@mui/material";
-import { Quote as QuoteData } from "common/interfaces";
-import dayjs from "dayjs";
-import { useOutletContext } from "react-router-dom";
-import { useTitle } from "src/hooks/useTitle";
-import { useContextInvalidator } from "./Context";
-import { EditList, RenderEditFormProps } from "./components/EditList";
-import { NewlineText } from "./components/NewlineText";
-import { UpsertQuoteForm } from "./components/UpsertQuoteForm";
-import { QuotesItemSkeleton } from "./skeleton/ListPage";
+import { Divider } from "@mui/material"
+import { Quote as QuoteData } from "common/interfaces"
+import dayjs from "dayjs"
+import { useOutletContext } from "react-router-dom"
+import { useTitle } from "src/hooks/useTitle"
+import { useContextInvalidator } from "./Context"
+import { EditList, RenderEditFormProps } from "./components/EditList"
+import { NewlineText } from "./components/NewlineText"
+import { UpsertQuoteForm } from "./components/UpsertQuoteForm"
+import { QuotesItemSkeleton } from "./skeleton/ListPage"
 
 export default function ListPage() {
     useTitle("Sitater")
@@ -75,7 +75,7 @@ function EditItem(props: RenderEditFormProps<QuoteData>) {
             <UpsertQuoteForm
                 storageKey={["Quotes", "Edit", props.data.id]}
                 initialValue={props.data}
-                postUrl="/api/quotes/update"
+                postUrl={`/api/quotes/${props.data.id}/update`}
                 onAbortClick={props.onEditAbort}
                 onPostSuccess={props.onEditSuccess} />
         </div>

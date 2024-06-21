@@ -9,6 +9,7 @@ import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import dailyRandomInt from "../utils/dailyRandomInt.js"
 import { validateBody } from "../middleware/validateBody.js"
+import { validateNumber } from "../middleware/validateNumber.js"
 
 const router = express.Router()
 
@@ -77,17 +78,25 @@ router.post("/quotes/delete",
     }
 )
 
-router.post("/quotes/update",
+router.post("/quotes/:id/update",
+    validateNumber({
+        getValue: req => req.params.id
+    }),
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
         getAuthorInfo: id => db.quotes.get(id)
     }),
+    validateBody(NewQuoteSchema),
     (req: Request, res: Response) => {
-        const quote: Quote = req.body
+
+        // Validated by middleware
+        const quoteId = strToNumber(req.params.id) as number
+        const quote = NewQuoteSchema.parse(req.body)
+
         try {
-            db.quotes.update(quote)
+            db.quotes.update(quoteId, quote)
         } catch {
             return res.status(400).send("bad data")
         }

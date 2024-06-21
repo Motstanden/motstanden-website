@@ -1,26 +1,22 @@
 import Database from "better-sqlite3"
-import { Quote } from "common/interfaces"
-import { isNullOrWhitespace } from "common/utils"
+import { NewQuote } from "common/interfaces"
 import { dbReadWriteConfig, motstandenDB } from "../../config/databaseConfig.js"
 
 
-export function updateQuote(quote: Quote) {
-
-    const isInvalid = isNullOrWhitespace(quote.quote) ||
-        isNullOrWhitespace(quote.utterer) ||
-        !quote.id || typeof quote.id !== "number"
-    if (isInvalid)
-        throw `Invalid data`
-
+export function updateQuote(quoteId: number, quote: NewQuote) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
     const stmt = db.prepare(`
         UPDATE 
             quote
         SET
-            utterer = ?,
-            quote = ?
-        WHERE quote_id = ?`
+            utterer = @utterer,
+            quote = @quote
+        WHERE quote_id = @id`
     )
-    stmt.run([quote.utterer, quote.quote, quote.id])
+    stmt.run({
+        utterer: quote.utterer,
+        quote: quote.quote,
+        id: quoteId
+    })
     db.close()
 }
