@@ -2,11 +2,13 @@ import { UserGroup } from "common/enums"
 import { NewRumour, Rumour } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
+import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import dailyRandomInt from "../utils/dailyRandomInt.js"
+import { validateBody } from "../middleware/validateBody.js"
 
 const router = express.Router()
 
@@ -32,12 +34,21 @@ router.get("/rumours/daily-rumour",
     }
 )
 
+const NewRumourSchema = z.object({ 
+    rumour: z.string().trim().min(1, "Rumour must not be empty")
+})
+
 router.post("/rumours/new",
     AuthenticateUser(),
+    validateBody(NewRumourSchema),
     (req, res) => {
+
+        // Validated by middleware
         const user = req.user as AccessTokenData
+        const body = NewRumourSchema.parse(req.body)
+
         try {
-            db.rumours.insert(req.body as NewRumour, user.userId)
+            db.rumours.insert(user.userId, body.rumour)
         } catch (err) {
             console.log(err)
             res.status(400).send("Bad data")
