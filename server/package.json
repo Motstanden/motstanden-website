@@ -6,24 +6,20 @@
   "type": "module",
   "scripts": {
     "deploy": "npm run setup-common && npm run setup-server && npm run setup-client && npm run setup-common-link-normal && cd ../client && npm run build",
-    
     "setup-common-link-shared": "cd ../client && npm link common && cd ../server && npm link common && cd ../tests && npm link common",
     "setup-common-link-elevated": "cd ../common && sudo npm link && cd ../server && npm run setup-common-link-shared",
     "setup-common-link-normal": "cd ../common && npm link && cd ../server && npm run setup-common-link-shared",
-
     "setup-common": "echo ------- Setting up common ------- && cd ../common && npm install && npx tsc",
     "setup-client": "echo ------- Setting up client ------- && cd ../client && npm install",
     "setup-server": "echo ------- Setting up server ------- && npm install && npx tsc",
-    "setup-tests":  "echo ------- Setting up tests -------  && cd ../tests && npm install",
-
-    "setup-shared":"npm run setup-common && npm run setup-client && npm run setup-server && npm run setup-tests",
+    "setup-tests": "echo ------- Setting up tests -------  && cd ../tests && npm install",
+    "setup-shared": "npm run setup-common && npm run setup-client && npm run setup-server && npm run setup-tests",
     "setup-linux": "npm run setup-shared && npm run setup-common-link-elevated ",
-    "setup-win":   "npm run setup-shared && npm run setup-common-link-normal",
-
+    "setup-win": "npm run setup-shared && npm run setup-common-link-normal",
     "client-dev": "cd ../client && npm run dev",
     "common-dev": "cd ../common && tsc --watch --preserveWatchOutput",
     "server-dev": "concurrently --prefix-colors \"auto\" --names \"typescript,console\"   \"tsc --watch --preserveWatchOutput\" \"nodemon --delay 1 build/server.js\"",
-    "dev":        "concurrently --prefix-colors \"auto\" --names \"common,server,client\" npm:common-dev npm:server-dev npm:client-dev"
+    "dev": "concurrently --prefix-colors \"auto\" --names \"common,server,client\" npm:common-dev npm:server-dev npm:client-dev"
   },
   "repository": {
     "type": "git",
@@ -49,7 +45,8 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-magic-login": "^1.2.2",
-    "serve-index": "^1.9.1"
+    "serve-index": "^1.9.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
