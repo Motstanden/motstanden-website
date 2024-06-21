@@ -2,11 +2,13 @@ import { UserGroup } from "common/enums"
 import { NewQuote, Quote } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
+import { z } from "zod"
+import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import dailyRandomInt from "../utils/dailyRandomInt.js"
-import { db } from "../db/index.js"
+import { validateBody } from "../middleware/validateBody.js"
 
 const router = express.Router()
 
@@ -30,14 +32,25 @@ router.get("/quotes/daily-quotes",
             quotes[(i + 1) % mod],
             quotes[(i + 2) % mod]
         ])
-    })
+    }
+)
+
+const NewQuoteSchema = z.object({ 
+    utterer: z.string().trim().min(1, "Utterer must not be empty"),
+    quote: z.string().trim().min(1, "Quote must not be empty")
+})
 
 router.post("/quotes/new",
     AuthenticateUser(),
+    validateBody(NewQuoteSchema),
     (req, res) => {
+
+        // Validated by middleware
         const user = req.user as AccessTokenData
+        const quote = NewQuoteSchema.parse(req.body)
+        
         try {
-            db.quotes.insert(req.body as NewQuote, user.userId)
+            db.quotes.insert(user.userId, quote)
         }
         catch {
             res.status(400).send("Bad data")
