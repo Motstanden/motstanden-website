@@ -1,10 +1,11 @@
 import { UserGroup } from "common/enums"
-import { UpdateSimpleText } from "common/interfaces"
 import { isNullOrWhitespace, strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
+import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroup } from "../middleware/requiresGroup.js"
+import { validateBody } from "../middleware/validateBody.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
@@ -30,16 +31,23 @@ router.get("/simple-text/:key", (req, res) => {
     res.end()
 })
 
+const UpdateSimpleTextSchema = z.object({ 
+    text: z.string().trim().min(1, "Text must not be empty")
+})
+
 router.post("/simple-text/:id/update", 
-    AuthenticateUser(),
-    requiresGroup(UserGroup.Editor),
     validateNumber({
         getValue: req => req.params.id,
     }),
+    AuthenticateUser(),
+    requiresGroup(UserGroup.Editor),
+    validateBody(UpdateSimpleTextSchema),
     (req: Request, res: Response) => {
-        const id = strToNumber(req.params.id) as number             // Has been validated by middleware
-        const user = req.user as AccessTokenData                    // Has been validated by middleware
-        const newSimpleText = tryCreateValidSimpleText(req.body)
+
+        // Validated by middleware
+        const id = strToNumber(req.params.id) as number
+        const user = req.user as AccessTokenData
+        const newSimpleText = UpdateSimpleTextSchema.parse(req.body)
 
         if(!newSimpleText)
             return res.status(400).send("Invalid data for UpdateSimpleText object")
@@ -53,21 +61,5 @@ router.post("/simple-text/:id/update",
         res.end()
     }
 )
-
-function tryCreateValidSimpleText(obj: unknown) : UpdateSimpleText | undefined {
-    if(typeof obj !== "object" || obj === null) {
-        return undefined
-    }
-
-    const simpleText = obj as UpdateSimpleText
-
-    if(typeof simpleText.text !== "string") {
-        return undefined
-    }
-
-    return {
-        text: simpleText.text
-    }
-}
 
 export default router
