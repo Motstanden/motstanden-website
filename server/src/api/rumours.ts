@@ -9,6 +9,7 @@ import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import dailyRandomInt from "../utils/dailyRandomInt.js"
 import { validateBody } from "../middleware/validateBody.js"
+import { validateNumber } from "../middleware/validateNumber.js"
 
 const router = express.Router()
 
@@ -75,17 +76,25 @@ router.post("/rumours/delete",
     }
 )
 
-router.post("/rumours/update",
+router.post("/rumours/:id/update",
+    validateNumber({
+        getValue: req => req.params.id
+    }),
     AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
         getAuthorInfo: id => db.rumours.get(id)
     }),
+    validateBody(NewRumourSchema),
     (req: Request, res: Response) => {
-        const rumour: Rumour = req.body
+
+        // Validated by middleware
+        const rumourId = strToNumber(req.params.id) as number
+        const body =  NewRumourSchema.parse(req.body)
+        
         try {
-            db.rumours.update(rumour.id, rumour.rumour)
+            db.rumours.update(rumourId, body.rumour)
         } catch (err) {
             res.status(400).send("Bad data")
         }
