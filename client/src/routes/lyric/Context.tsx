@@ -1,15 +1,16 @@
 import { useQuery } from "@tanstack/react-query"
 import { SongLyric, StrippedSongLyric } from "common/interfaces"
 import { strToNumber } from "common/utils"
-import { Navigate, Outlet, useLocation, useMatch, useOutletContext, useParams } from "react-router-dom"
+import { Outlet, useMatch, useOutletContext, useParams } from "react-router-dom"
+import { useAppBarHeader } from "src/context/AppBarHeader"
 import { usePotentialUser } from "src/context/Authentication"
 import { PageTabItem, TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
 import { strToPrettyUrl } from "src/utils/strToPrettyUrl"
+import { NotFoundPageContent } from "../notFound/NotFound"
 import { LyricEditPageSkeleton } from "./skeleton/EditPage"
 import { LyricItemPageSkeleton } from "./skeleton/ItemPage"
 import { LyricListPageSkeleton } from "./skeleton/ListPage"
-import { useAppBarHeader } from "src/context/AppBarHeader"
 
 export const lyricContextQueryKey = ["song-lyric"]
 
@@ -76,7 +77,6 @@ function LyricContextLoader() {
 export function LyricItemContext() {
     const allLyrics = useOutletContext<StrippedSongLyric[]>()
     const params = useParams();
-    const location = useLocation()
 
     const urlTitle = params.title;
     let lyricId = allLyrics.find(item => strToPrettyUrl(item.title) === urlTitle)?.id
@@ -86,8 +86,9 @@ export function LyricItemContext() {
         lyricId = allLyrics.find(item => item.id === paramId)?.id
     }
 
-    if(!lyricId) 
-        return <Navigate to={`${location.pathname}/..`} replace={true} />
+    if(!lyricId) {
+        return <NotFoundPageContent/>
+    }
 
     return <LyricItemLoader id={lyricId} />
 }
@@ -100,12 +101,11 @@ export function LyricItemLoader( {id}: {id: number}){
     const isLoggedIn = !!usePotentialUser().user
     const url = `/api/${isLoggedIn ? "private" : "public"}/song-lyric/${id}`
 
-    const { isPending, isError, data } = useQuery<SongLyric>({
+    const { isPending, isError, error, data } = useQuery<SongLyric>({
         queryKey: getLyricItemContextQueryKey(id),
         queryFn: fetchFn<SongLyric>(url),
     })
     const {isItemPage, isEditPage} = useLyricItemUrlMatch()
-    const location = useLocation()
 
     if (isPending) {
         if(isItemPage)
@@ -118,7 +118,7 @@ export function LyricItemLoader( {id}: {id: number}){
     }
 
     if (isError) {
-        return <Navigate to={`${location.pathname}/..`} replace={true} />
+        return <>{error}</>
     }
 
     const context = [allLyrics, data]

@@ -1,60 +1,60 @@
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
-import { RequireAuth, RequireAuthRouter, usePotentialUser } from "src/context/Authentication";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom"
+import { RequireAuth, RequireAuthRouter, usePotentialUser } from "src/context/Authentication"
 
-import { UserGroup } from 'common/enums';
-import { AppLayout } from 'src/layout/AppLayout';
+import { UserGroup } from 'common/enums'
+import { AppLayout } from 'src/layout/AppLayout'
 
 // URL routes
 // -- Event pages --
-import { EventContext, EventItemContext } from 'src/routes/event/Context';
-import EditEventPage from "src/routes/event/EditPage";
-import EventItemPage from "src/routes/event/ItemPage";
-import EventListPage from "src/routes/event/ListPage";
-import NewEventPage from "src/routes/event/NewPage";
+import { EventContext, EventItemContext } from 'src/routes/event/Context'
+import EditEventPage from "src/routes/event/EditPage"
+import EventItemPage from "src/routes/event/ItemPage"
+import EventListPage from "src/routes/event/ListPage"
+import NewEventPage from "src/routes/event/NewPage"
 
 // -- User pages --
-import { UserContext, UserProfileContext } from 'src/routes/user/Context';
-import EditUserPage from "src/routes/user/EditPage";
-import UserListPage from "src/routes/user/ListPage";
-import NewUserPage from "src/routes/user/NewPage";
-import UserPage from "src/routes/user/UserPage";
+import { UserContext, UserProfileContext } from 'src/routes/user/Context'
+import EditUserPage from "src/routes/user/EditPage"
+import UserListPage from "src/routes/user/ListPage"
+import NewUserPage from "src/routes/user/NewPage"
+import UserPage from "src/routes/user/UserPage"
 
 // -- Other pages --
-import AdminPage from "src/routes/admin/Admin";
-import SuperAdminPage from "src/routes/admin/SuperAdmin";
-import BecomeMemberPage from "src/routes/becomeMember/BecomeMember";
-import BoardWebsiteListPage from "src/routes/boardWebsiteList/BoardWebsiteList";
-import DocumentsPage from "src/routes/documents/DocumentsPage";
-import { FaqPage } from "src/routes/faq/FaqPage";
-import FrontPage from "src/routes/frontPage/FrontPage";
-import HomePage from "src/routes/home/Home";
-import WallPage from "src/routes/home/Wall";
-import { WallPostItemPage } from "src/routes/home/WallPostItem";
-import HomePageContainer from "src/routes/home/components/PageContainer";
-import { LicenseOnlyPage, LicensePage } from "src/routes/license/LicensePage";
-import LoginPage from "src/routes/login/Login";
-import { EditLyricPage } from "src/routes/lyric/EditPage";
-import { LyricItemPage } from 'src/routes/lyric/ItemPage';
-import { LyricListPage } from 'src/routes/lyric/ListPage';
-import { NewLyricPage } from "src/routes/lyric/NewPage";
-import NotFound from "src/routes/notFound/NotFound";
-import { PollContext } from "src/routes/poll/Context";
-import CurrentPollPage from "src/routes/poll/CurrentPollPage";
-import NewPollPage from "src/routes/poll/NewPage";
-import { QuotesContext } from 'src/routes/quotes/Context';
-import QuoteListPage from "src/routes/quotes/ListPage";
-import NewQuotePage from "src/routes/quotes/NewPage";
-import { RumourContext } from 'src/routes/rumour/Context';
-import { RumourPage } from 'src/routes/rumour/RumourPage';
-import { InstrumentContext, SheetArchiveContext } from "src/routes/sheetArchive/Context";
-import { InstrumentPage } from "src/routes/sheetArchive/InstrumentPage";
-import SongPage from "src/routes/sheetArchive/SongPage";
-import { HistoryPage } from "./routes/history/HistoryPage";
-import { LyricContext, LyricItemContext } from "./routes/lyric/Context";
-import { AllPollsPage } from "./routes/poll/AllPollsPage";
-import { NewRumourPage } from "./routes/rumour/NewPage";
-import { PollItemPage } from "./routes/poll/PollItemPage";
-import { CommentsPage } from "./routes/comments/CommentsPage";
+import AdminPage from "src/routes/admin/Admin"
+import SuperAdminPage from "src/routes/admin/SuperAdmin"
+import BecomeMemberPage from "src/routes/becomeMember/BecomeMember"
+import BoardWebsiteListPage from "src/routes/boardWebsiteList/BoardWebsiteList"
+import DocumentsPage from "src/routes/documents/DocumentsPage"
+import { FaqPage } from "src/routes/faq/FaqPage"
+import FrontPage from "src/routes/frontPage/FrontPage"
+import HomePage from "src/routes/home/Home"
+import WallPage from "src/routes/home/Wall"
+import { WallPostItemPage } from "src/routes/home/WallPostItem"
+import HomePageContainer from "src/routes/home/components/PageContainer"
+import { LicenseOnlyPage, LicensePage } from "src/routes/license/LicensePage"
+import LoginPage from "src/routes/login/Login"
+import { EditLyricPage } from "src/routes/lyric/EditPage"
+import { LyricItemPage } from 'src/routes/lyric/ItemPage'
+import { LyricListPage } from 'src/routes/lyric/ListPage'
+import { NewLyricPage } from "src/routes/lyric/NewPage"
+import { NotFoundPage } from "src/routes/notFound/NotFound"
+import { PollContext } from "src/routes/poll/Context"
+import CurrentPollPage from "src/routes/poll/CurrentPollPage"
+import NewPollPage from "src/routes/poll/NewPage"
+import { QuotesContext } from 'src/routes/quotes/Context'
+import QuoteListPage from "src/routes/quotes/ListPage"
+import NewQuotePage from "src/routes/quotes/NewPage"
+import { RumourContext } from 'src/routes/rumour/Context'
+import { RumourPage } from 'src/routes/rumour/RumourPage'
+import { InstrumentContext, SheetArchiveContext } from "src/routes/sheetArchive/Context"
+import { InstrumentPage } from "src/routes/sheetArchive/InstrumentPage"
+import SongPage from "src/routes/sheetArchive/SongPage"
+import { CommentsPage } from "./routes/comments/CommentsPage"
+import { HistoryPage } from "./routes/history/HistoryPage"
+import { LyricContext, LyricItemContext } from "./routes/lyric/Context"
+import { AllPollsPage } from "./routes/poll/AllPollsPage"
+import { PollItemPage } from "./routes/poll/PollItemPage"
+import { NewRumourPage } from "./routes/rumour/NewPage"
 
 function App() {
 	const { isLoggedIn } = usePotentialUser()
@@ -179,7 +179,7 @@ function App() {
 					</Route>
 
 					{/* 404: no matching routes */}
-					<Route path="/*" element={<NotFound />} />
+					<Route path="/*" element={<NotFoundPage />} />
 				</Route>
 			</Routes>
 		</div>
