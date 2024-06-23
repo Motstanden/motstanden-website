@@ -44,7 +44,7 @@ router.get("/wall-posts/:id",
 
 const NewWallPostSchema = z.object({
     content: z.string().trim().min(1, "Content must not be empty"),
-    wallUserId: z.number().positive().finite(),
+    wallUserId: z.coerce.number().int().positive().finite(),
 })
 
 router.post("/wall-posts/new",
