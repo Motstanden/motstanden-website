@@ -1,10 +1,12 @@
 import { CommentEntityType, UserGroup } from "common/enums"
-import { Count, NewComment } from "common/interfaces"
-import { isNullOrWhitespace, strToNumber } from "common/utils"
+import { Count } from "common/interfaces"
+import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
+import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
+import { validateBody } from "../middleware/validateBody.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
@@ -65,6 +67,10 @@ function getCommentsHandler( {
 
 // ---- POST comments ----
 
+const NewCommentSchema = z.object({ 
+    comment: z.string().trim().min(1, "Comment must not be empty")
+})
+
 router.post("/event/:entityId/comments/new", postCommentPipeline(CommentEntityType.Event))
 router.post("/poll/:entityId/comments/new", postCommentPipeline(CommentEntityType.Poll))
 router.post("/song-lyric/:entityId/comments/new", postCommentPipeline(CommentEntityType.SongLyric))
@@ -72,10 +78,11 @@ router.post("/wall-post/:entityId/comments/new", postCommentPipeline(CommentEnti
 
 function postCommentPipeline(entityType: CommentEntityType) { 
     return [
-        AuthenticateUser(),
         validateNumber({
             getValue: (req: Request) => req.params.entityId,
         }),
+        AuthenticateUser(),
+        validateBody(NewCommentSchema),
         postCommentHandler({
             entityType: entityType,
             getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
@@ -91,8 +98,10 @@ function postCommentHandler( {
     getEntityId: (req: Request) => number
 }) {
     return (req: Request, res: Response) => {
+
+        // Validated by middleware
         const user = req.user as AccessTokenData
-        const comment = tryCreateValidCommentField(req.body)
+        const comment = NewCommentSchema.parse(req.body)
         const entityId = getEntityId(req)
 
         if(!comment)
@@ -106,21 +115,6 @@ function postCommentHandler( {
         }
 
         res.end()
-    }
-}
-
-function tryCreateValidCommentField(obj: unknown): NewComment | undefined {
-    if (typeof obj !== "object" || obj === null) {
-        return undefined
-    }
-
-    const comment = obj as NewComment
-    if (typeof comment.comment !== "string" || isNullOrWhitespace(comment.comment)) {
-        return undefined
-    }
-
-    return {
-        comment: comment.comment.trim()
     }
 }
 
@@ -176,10 +170,11 @@ router.patch("/wall-post/comments/:commentId", patchCommentPipeline(CommentEntit
 
 function patchCommentPipeline(entityType: CommentEntityType) {
     return [
-        AuthenticateUser(),
         validateNumber({
             getValue: req => req.params.commentId
         }),
+        AuthenticateUser(),
+        validateBody(NewCommentSchema),
         requiresAuthor({
             getId: req => strToNumber(req.params.commentId),
             getAuthorInfo: id => db.comments.get(entityType, id)
@@ -199,12 +194,11 @@ function patchCommentHandler( {
     getCommentId: (req: Request) => number
 }) {
     return (req: Request, res: Response) => {
-        const id = getCommentId(req)
-        const comment = tryCreateValidCommentField(req.body)
         
-        if(!comment)
-            return res.status(400).send("Could not parse comment data")
-
+        // Validated by middleware
+        const id = getCommentId(req)
+        const comment = NewCommentSchema.parse(req.body)
+        
         try {
             db.comments.update(entityType, id, comment.comment)
         } catch (err) {
