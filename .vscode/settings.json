@@ -11,17 +11,18 @@
         "Kildekodelisens",
         "klausulslisens",
         "MÅKESODD",
+        "motstanden",
         "networkidle",
         "Profilmeny",
         "redistribuere",
         "Redistribusjon",
+        "Rowid",
         "Sitatytrer",
         "Studentorchesteret",
         "Studentorchesterets",
         "studenttraller",
         "tanstack",
-        "Upsert",
-        "motstanden"
+        "Upsert"
     ],
     "editor.codeActionsOnSave": {
         "source.organizeImports": "explicit"
