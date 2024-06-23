@@ -46,7 +46,8 @@
     "passport-jwt": "^4.0.1",
     "passport-magic-login": "^1.2.2",
     "serve-index": "^1.9.1",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zod-validation-error": "^3.3.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
