@@ -1,7 +1,6 @@
-import { allOptionIdsMatchesPollId, getPollOptionIds, getPollOptions } from "./get.js"
+import { allOptionIdsMatchesPollId, getPollOptions } from "./get.js"
 
 export const pollOptionsDb = {
     getAll: getPollOptions,
-    getAllIds: getPollOptionIds,
     allIdsMatchesPollId: allOptionIdsMatchesPollId
 }

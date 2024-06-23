@@ -37,7 +37,7 @@ export function getPollOptions(userId: number, pollId: number): PollOption[] {
     return options
 }
 
-export function getPollOptionIds(pollId: number): number[] {
+function getPollOptionIds(pollId: number): number[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT 
