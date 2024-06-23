@@ -8,21 +8,29 @@ export function insertNewPoll(newPoll: NewPollWithOption, userId: number) {
     const pollSmt = db.prepare(`
         INSERT INTO
             poll(title, type, created_by, updated_by)
-        VALUES (?, ?, ?, ?)
+        VALUES (@title, @type, @createdBy, @updatedBy)
     `)
 
     const optionStmt = db.prepare(` 
         INSERT INTO
             poll_option(text, poll_id)
-        VALUES (?, ?)
+        VALUES (@text, @pollId)
     `)
 
     db.transaction(() => {
-        const pollResult = pollSmt.run(newPoll.title, newPoll.type, userId, userId)
+        const pollResult = pollSmt.run({
+            title: newPoll.title,
+            type: newPoll.type,
+            createdBy: userId,
+            updatedBy: userId
+        })
         const pollId = pollResult.lastInsertRowid
 
         newPoll.options.forEach(option => {
-            optionStmt.run(option.text, pollId)
+            optionStmt.run({
+                text: option.text,
+                pollId: pollId
+            })
         })
     })()
     db.close()

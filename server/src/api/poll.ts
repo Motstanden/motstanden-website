@@ -7,6 +7,9 @@ import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { z } from "zod"
+import { validateBody } from "../middleware/validateBody.js"
+import { title } from "process"
 
 const router = express.Router() 
 
@@ -72,11 +75,24 @@ router.get("/polls/:id/voter-list",
     }
 )
 
+const NewPollOptionsSchema = z.object({ 
+    text: z.string().trim().min(1, "Option text must not be empty")
+})
+
+const NewPollSchema = z.object({ 
+    title: z.string().trim().min(1, "Title must not be empty"),
+    type: z.literal("single").or(z.literal("multiple")),
+    options: z.array(NewPollOptionsSchema).min(2, "Poll must have at least two options")
+})
+
 router.post("/polls/new",
     AuthenticateUser(),
+    validateBody(NewPollSchema),
     (req, res) => {
+
+        // Validated by middleware
         const user = req.user as AccessTokenData
-        const newPoll = tryCreateValidPoll(req.body) 
+        const newPoll = NewPollSchema.parse(req.body)
 
         if(!newPoll)
             return res.status(400).send("Could not parse poll data")
