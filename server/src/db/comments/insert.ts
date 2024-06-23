@@ -11,9 +11,13 @@ function insertComment(entityType: CommentEntityType, entityId: number, comment:
             comment,
             created_by) 
         VALUES 
-            (?, ?, ?)
+            (@entityId, @comment, @createdBy)
         `)
-    return stmt.run(entityId, comment.comment, createdBy)
+    return stmt.run({
+        entityId,
+        comment: comment.comment,
+        createdBy
+    })
 }
 
 function insertUnreadComment(entityType: CommentEntityType, commentId: number | bigint, userId: number, db: DatabaseType) {
@@ -22,9 +26,12 @@ function insertUnreadComment(entityType: CommentEntityType, commentId: number | 
             ${unreadCommentsTable.commentId(entityType)}, 
             user_id)
         VALUES
-            (?, ?)
+            (@commentId, @userId)
     `)
-    return stmt.run(commentId, userId)
+    return stmt.run({
+        commentId: commentId,
+        userId: userId
+    })
 }
 
 export function insertCommentAndMarkUnread(entityType: CommentEntityType, entityId: number, comment: NewComment, createdBy: number) {
