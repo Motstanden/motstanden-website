@@ -10,12 +10,16 @@ export function upsert(entityType: LikeEntityType, entityId: number, like: NewLi
         INSERT INTO 
             ${likesTable.name(entityType)} (${likesTable.entityId(entityType)}, emoji_id, user_id) 
         VALUES 
-            (?, ?, ?)
+            (@entityId, @emojiId, @userId)
         ON CONFLICT 
             (${likesTable.entityId(entityType)}, user_id) 
         DO UPDATE
             SET emoji_id = EXCLUDED.emoji_id 
     `)
-    stmt.run(entityId, like.emojiId, userId)
+    stmt.run({
+        entityId: entityId,
+        emojiId: like.emojiId,
+        userId: userId
+    })
     db.close()
 }
