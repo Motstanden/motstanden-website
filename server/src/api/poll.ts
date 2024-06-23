@@ -1,15 +1,13 @@
 import { UserGroup } from "common/enums"
-import { NewPollWithOption } from "common/interfaces"
-import { isNullOrWhitespace, strToNumber } from "common/utils"
+import { strToNumber } from "common/utils"
 import express from "express"
+import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
+import { validateBody } from "../middleware/validateBody.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
-import { z } from "zod"
-import { validateBody } from "../middleware/validateBody.js"
-import { title } from "process"
 
 const router = express.Router() 
 
@@ -125,20 +123,21 @@ router.post("/polls/delete",
     }
 )
 
+const OptionIdSchema = z.coerce.number().int().positive().finite()
+const UpsertVoteSchema = z.array(OptionIdSchema).min(1, "Body must contain at least one option id")
+
 router.post("/polls/:id/vote/upsert",
-    AuthenticateUser(),
     validateNumber({
         getValue: (req) => req.params.id,
         failureMessage: "Could not parse poll id"
     }),
+    AuthenticateUser(),
+    validateBody(UpsertVoteSchema),
     (req, res) => {
         
         const user = req.user as AccessTokenData
         const pollId = strToNumber(req.params.id) as number
-        const optionIds = createValidNumberArray(req.body)
-
-        if(optionIds.length <= 0)
-            return res.status(400).send("Could not parse option ids")
+        const optionIds = UpsertVoteSchema.parse(req.body)
 
         if(!db.polls.options.allIdsMatchesPollId(pollId, optionIds)){
             return res.status(400).send("Invalid combination of poll id and option ids")
@@ -154,59 +153,5 @@ router.post("/polls/:id/vote/upsert",
         res.end()
     }
 )
-
-function createValidNumberArray(dirtyValues: number[] | unknown | unknown[] ): number[] {
-    
-    const result: number[] = []
-    
-    if(!Array.isArray(dirtyValues) || dirtyValues.length === 0)
-        return result
-
-    for(let i = 0; i < dirtyValues.length; i++){
-
-        const dirtyVal = dirtyValues[i]
-        let newValue: number | undefined = undefined
-
-        if(typeof dirtyVal === "string" ) {
-            newValue = strToNumber(dirtyVal)
-        } else if (typeof dirtyVal === "number") {
-            newValue = dirtyVal            
-        }   
-
-        if(newValue !== undefined) {
-            result.push(newValue)
-        }
-    }
-
-    return result
-}
-
-function tryCreateValidPoll(obj: unknown): NewPollWithOption | undefined {
-
-    if(typeof obj !== "object" || obj === null)
-        return undefined
-
-    const poll = obj as NewPollWithOption
-
-    if(typeof poll.title !== "string" || isNullOrWhitespace(poll.title))
-        return undefined
-
-    if(poll.type !== "single" && poll.type !== "multiple")
-        return undefined
-
-    if(typeof poll.options !== "object" || poll.options === null || !Array.isArray(poll.options))
-        return undefined
-
-    if(poll.options.length <= 1)
-        return undefined
-
-    for(let i = 0; i < poll.options.length; i++){
-        const option = poll.options[i]
-        if(typeof option.text !== "string" || isNullOrWhitespace(option.text))
-            return undefined
-    }
-
-    return poll
-}
 
 export default router
