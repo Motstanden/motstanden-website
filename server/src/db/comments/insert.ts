@@ -2,6 +2,7 @@ import Database, { Database as DatabaseType } from "better-sqlite3"
 import { CommentEntityType } from "common/enums"
 import { NewComment } from "common/interfaces"
 import { dbReadWriteConfig, motstandenDB } from "../../config/databaseConfig.js"
+import { db as DB } from "../index.js"
 import { commentsTable, unreadCommentsTable } from "./tableNames.js"
 
 function insertComment(entityType: CommentEntityType, entityId: number, comment: NewComment, createdBy: number, db: DatabaseType) {
@@ -41,7 +42,7 @@ export function insertCommentAndMarkUnread(entityType: CommentEntityType, entity
         // Insert new comment
         const { lastInsertRowid } = insertComment(entityType, entityId, comment, createdBy, db)
 
-        const userIds = getAllUserIds(db)
+        const userIds = DB.users.getAllIds(db)
             .filter(id => id.id !== createdBy)
 
         // Insert unread comment for all users
@@ -52,15 +53,4 @@ export function insertCommentAndMarkUnread(entityType: CommentEntityType, entity
     startTransaction()
     db.close()
 
-}
-
-function getAllUserIds(db: DatabaseType) {
-    const stmt = db.prepare(`
-        SELECT
-            user_id as id
-        FROM
-            user
-    `)
-    const userIds = stmt.all() as { id: number} []
-    return userIds
 }

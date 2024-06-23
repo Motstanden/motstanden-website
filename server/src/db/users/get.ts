@@ -1,4 +1,4 @@
-import Database from "better-sqlite3"
+import Database, { Database as DatabaseType } from "better-sqlite3"
 import { User, UserReference } from "common/interfaces"
 import { isNullOrWhitespace } from "common/utils"
 import { dbReadOnlyConfig, motstandenDB } from "../../config/databaseConfig.js"
@@ -63,6 +63,24 @@ export function getAllUsers(): User[] {
     db.close()
 
     return user
+}
+
+export function getAllUserIds(existingDbConnection?: DatabaseType): { id: number }[] { 
+    const db = existingDbConnection ?? new Database(motstandenDB, dbReadOnlyConfig)
+
+    const stmt = db.prepare(`
+        SELECT
+            user_id as id
+        FROM
+            user
+    `)
+    const userIds = stmt.all() as { id: number} []
+
+    if (!existingDbConnection) {
+        db.close()
+    }
+
+    return userIds
 }
 
 export function getAllAsUserReference(): UserReference[] {
