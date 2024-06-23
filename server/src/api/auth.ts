@@ -1,65 +1,70 @@
 import { MagicLinkResponse, User } from "common/interfaces"
-import { isNullOrWhitespace } from "common/utils"
-import express, { Request } from "express"
+import express from "express"
 import passport from "passport"
+import { z } from "zod"
 import * as passportConfig from "../config/passportConfig.js"
 import { db } from "../db/index.js"
 import { AuthenticateUser, logOut, logOutAllUnits, loginUser } from "../middleware/jwtAuthenticate.js"
 import { requiresDevEnv } from "../middleware/requiresDevEnv.js"
+import { validateBody } from "../middleware/validateBody.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { getRandomInt } from "../utils/getRandomInt.js"
 import { sleepAsync } from "../utils/sleepAsync.js"
 
 const router = express.Router()
 
-router.post("/auth/magic-link/create", async (req, res) => {
+export const MagicLinkPayloadSchema = z.object({
+    destination: z.string().trim().toLowerCase().email()
+})
 
-    const email = getMail(req)
+router.post("/auth/magic-link/create", 
+    validateBody(MagicLinkPayloadSchema),
+    async (req, res) => {
+        
+        // Validated by middleware
+        const { destination: email } = MagicLinkPayloadSchema.parse(req.body)
 
-    if (email && db.users.exists(email)) {
-        passportConfig.magicLogin.send(req, res)
-    }
-    else {
-        // Send back spoof response so that random users cannot get information about which emails are in the database.
-        const spoofData: MagicLinkResponse = {
-            code: getRandomInt(10000, 99999).toString(),
-            success: true
+        if (email && db.users.exists(email)) {
+            passportConfig.magicLogin.send(req, res)
+        } else {
+            // Send back spoof response so that random users cannot get information about which emails are in the database.
+            const spoofData: MagicLinkResponse = {
+                code: getRandomInt(10000, 99999).toString(),
+                success: true
+            }
+            await sleepAsync(getRandomInt(1000, 2500))        // Simulate the time it takes to send the email
+            res.json(spoofData)
         }
-        await sleepAsync(getRandomInt(1000, 2500))        // Simulate the time it takes to send the email
-        res.json(spoofData)
     }
-});
+);
 
 if (process.env.IS_DEV_ENV) {
-    router.post("/dev/auth/login", requiresDevEnv, (req, res) => {
+    router.post("/dev/auth/login", 
+        requiresDevEnv,
+        validateBody(MagicLinkPayloadSchema), 
+        (req, res) => {
 
-        const email = getMail(req)
-        let user: User | undefined
-        if(email && db.users.exists(email)) { 
-            user = db.users.getByMail(email)
-        }
-        
-        if(user){
-            const token: AccessTokenData = {
-                userId: user.id,
-                email: user.email,
-                groupId: user.groupId,
-                groupName: user.groupName,
+            // Validated by middleware
+            const { destination: email } = MagicLinkPayloadSchema.parse(req.body)
+
+            let user: User | undefined
+            if(email && db.users.exists(email)) { 
+                user = db.users.getByMail(email)
             }
-            req.user = token
-            loginUser(req, res)
+            
+            if(user){
+                const token: AccessTokenData = {
+                    userId: user.id,
+                    email: user.email,
+                    groupId: user.groupId,
+                    groupName: user.groupName,
+                }
+                req.user = token
+                loginUser(req, res)
+            }
+            res.end()
         }
-        res.end()
-    })
-}
-
-function getMail(req: Request): string | undefined {
-    const data: unknown = req.body.destination
-    let email: string | undefined
-    if(typeof data === "string" && !isNullOrWhitespace(data)) {
-        email = data.trim().toLowerCase()
-    }
-    return email
+    )
 }
 
 export const magicLinkVerifyPath = "/auth/magic-link/verify"

@@ -1,11 +1,11 @@
-import { isNullOrWhitespace } from "common/utils"
 import dotenv from "dotenv"
 import { Request } from 'express'
 import fs from "fs/promises"
 import passport, { PassportStatic } from 'passport'
 import { Strategy as JWTStrategy } from 'passport-jwt'
 import MagicLoginStrategy from 'passport-magic-login'
-import { magicLinkVerifyPath } from "../api/auth.js"
+import { fromError } from "zod-validation-error"
+import { MagicLinkPayloadSchema, magicLinkVerifyPath } from "../api/auth.js"
 import { db } from "../db/index.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload.js"
@@ -66,18 +66,17 @@ function onVerifyLinkClick(
     callback: (err?: Error | undefined, user?: Object | undefined, info?: any) => void
 ): void {
 
-    const data = payload.destination;
-    let email: string | undefined
-    if (typeof data === "string" && !isNullOrWhitespace(data)) {
-        email = data.trim().toLowerCase()
+    const pareResult = MagicLinkPayloadSchema.safeParse(payload)
+    if(pareResult.error) {
+        const errorMsg = fromError(pareResult.error).toString()
+        return callback(new Error(errorMsg))
     }
 
-    if(!email)
-        return callback(new Error("Failed to parse email from payload"))
-
+    const email = pareResult.data.destination
     const user = db.users.getByMail(email)
-    if (!user)
+    if (!user) {
         return callback(new Error(`Failed to find a user with the email: ${email}`))
+    }
 
     const accessToken: AccessTokenData = {
         userId: user.id,
