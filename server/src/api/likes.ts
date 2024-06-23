@@ -1,10 +1,10 @@
 import { LikeEntityType } from "common/enums"
-import { NewLike } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
+import { z } from "zod"
 import { db } from "../db/index.js"
-
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
+import { validateBody } from "../middleware/validateBody.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
@@ -64,6 +64,10 @@ function getLikesHandler( {
 
 // ---- UPSERT likes ----
 
+const NewLikeSchema = z.object({
+    emojiId: z.coerce.number().int().positive().finite()
+})
+
 router.post(`/event/comment/:entityId/likes/upsert`, upsertLikePipeline(LikeEntityType.EventComment))
 router.post("/poll/comment/:entityId/likes/upsert", upsertLikePipeline(LikeEntityType.PollComment))
 router.post("/song-lyric/comment/:entityId/likes/upsert", upsertLikePipeline(LikeEntityType.SongLyricComment))
@@ -72,10 +76,11 @@ router.post("/wall-post/comment/:entityId/likes/upsert", upsertLikePipeline(Like
 
 function upsertLikePipeline(entityType: LikeEntityType) {
     return [
-        AuthenticateUser(),
         validateNumber({
             getValue: (req: Request) => req.params.entityId,
         }),
+        AuthenticateUser(),
+        validateBody(NewLikeSchema),
         upsertLikeHandler({
             entityType: entityType,
             getEntityId: (req: Request) => strToNumber(req.params.entityId) as number   // Validated by previous middleware
@@ -93,7 +98,7 @@ function upsertLikeHandler({
     return async (req: Request, res: Response) => {
         const user = req.user as AccessTokenData
         const entityId = getEntityId(req)
-        const like = tryCreateValidLike(req.body)
+        const like = NewLikeSchema.parse(req.body)
 
         if(!like) {
             return res.status(400).send("Failed to parse like object")
@@ -113,21 +118,6 @@ function upsertLikeHandler({
     }
 }
 
-function tryCreateValidLike(obj: unknown ): NewLike | undefined {
-    
-    if(typeof obj !== "object" || obj === null)
-        return undefined
-
-    const like = obj as NewLike
-
-    if(typeof like.emojiId !== "number" || like.emojiId < 0)
-        return undefined
-    
-    return {
-        emojiId: like.emojiId
-    }
-}
-
 // ---- DELETE likes ----
 
 router.post("/event/comment/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.EventComment))
@@ -136,14 +126,14 @@ router.post("/song-lyric/comment/:entityId/likes/delete", deleteLikePipeline(Lik
 router.post("/wall-post/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.WallPost))
 router.post("/wall-post/comment/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.WallPostComment))
 
-function deleteLikePipeline(entitType: LikeEntityType) {
+function deleteLikePipeline(entityType: LikeEntityType) {
     return [
-        AuthenticateUser(),
         validateNumber({
             getValue: (req: Request) => req.params.entityId,
         }),
+        AuthenticateUser(),
         deleteLikeHandler({
-            entityType: entitType,
+            entityType: entityType,
             getEntityId: (req: Request) => strToNumber(req.params.entityId) as number   // Validated by previous middleware
         })
     ]
