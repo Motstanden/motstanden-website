@@ -6,7 +6,7 @@ import { testUserVariationsCount, unsafeGetUser } from "../../utils/auth.js"
 import { randomString } from "../../utils/randomString.js"
 
 // WARNING:
-// These tests may fail if they are run in parallel with e2e/comments.spec.ts
+// These tests may fail if they are run in parallel with e2e/comments.spec.ts or themselves
 // The tests share the same database, and the tests in e2e/wallPosts.spec.ts 
 // will modify the unread wall posts counter.
 //

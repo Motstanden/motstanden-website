@@ -79,8 +79,13 @@ const config: PlaywrightTestConfig = {
             },
             dependencies: ['global setup'],
 
-            // Tests with race conditions
-            testIgnore: [ "simpleTexts.spec.ts" ]
+            // Tests that fails due to race conditions caused by running in parallel with other browsers.
+            // Temp solution: Only run these tests in firefox
+            testIgnore: [ 
+                "simpleTexts.spec.ts",
+                "comments.api.ts",
+                "wallPosts.api.ts"
+            ]
         },
 
         {
@@ -90,7 +95,13 @@ const config: PlaywrightTestConfig = {
             },
             dependencies: ['global setup'],
 
-            testIgnore: [ "simpleTexts.spec.ts" ]
+            // Tests that fails due to race conditions caused by running in parallel with other browsers.
+            // Temp solution: Only run these tests in firefox
+            testIgnore: [ 
+                "simpleTexts.spec.ts",
+                "comments.api.ts",
+                "wallPosts.api.ts"
+            ]
         },
 
         /* Test against mobile viewports. */
