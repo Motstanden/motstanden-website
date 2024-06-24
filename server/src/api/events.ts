@@ -9,30 +9,22 @@ import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { DbWriteAction } from "../ts/enums/DbWriteAction.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { UpsertDb } from "../ts/types/UpsertDb.js"
+import { StringToIntegerSchema } from "../utils/zodSchema.js"
 
 const router = express.Router()
 
 const GetEventsParamsSchema = z.object({
     
-    limit: z.string()
-        .trim()
-        .transform(strToNumber)
-        .refine(val => val !== undefined, { message: "limit must be an integer number" })
-        .pipe(
-            z.number().int().positive().finite()  
-        )
-        .optional(),
+    limit: StringToIntegerSchema("Limit must be an integer number").optional(),
 
     // Ensures filter is: "upcoming" | "previous" | undefined
-    // Empty string is transformed to undefined
-    // Otherwise, fail invalidation
     filter: z.string()
         .trim()
         .toLowerCase()
         .pipe(z.union([
             z.literal("upcoming"),
             z.literal("previous"),
-            z.literal("").transform(() => undefined),
+            z.literal("").transform(() => undefined),   // Transform empty string to undefined
         ]))
         .optional()
 })
