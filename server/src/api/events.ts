@@ -6,6 +6,7 @@ import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
+import { validateQuery } from "../middleware/zodValidation.js"
 import { DbWriteAction } from "../ts/enums/DbWriteAction.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { UpsertDb } from "../ts/types/UpsertDb.js"
@@ -13,7 +14,7 @@ import { StringToIntegerSchema } from "../utils/zodSchema.js"
 
 const router = express.Router()
 
-const GetEventsParamsSchema = z.object({
+const GetEventsQuerySchema = z.object({
     
     limit: StringToIntegerSchema("Limit must be an integer number").optional(),
 
@@ -28,17 +29,14 @@ const GetEventsParamsSchema = z.object({
         ]))
         .optional()
 })
-  
 
 router.get("/events",
     AuthenticateUser(),
+    validateQuery(GetEventsQuerySchema),
     (req, res) => {
 
-        const params = GetEventsParamsSchema.safeParse(req.query) 
-        if(!params.success) 
-            return res.status(400).send("Invalid params")
-
-        const { limit, filter } = params.data
+        // Validated by middleware
+        const { limit, filter } = GetEventsQuerySchema.parse(req.query)
 
         let data: EventData[]
         if(filter === undefined) {
