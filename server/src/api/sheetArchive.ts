@@ -1,13 +1,12 @@
 import { UserGroup } from "common/enums"
-import { SheetArchiveTitle } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
+import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroup } from "../middleware/requiresGroup.js"
-import { z } from "zod"
 import { validateNumber } from "../middleware/validateNumber.js"
-import { validateBody } from "../middleware/validateBody.js"
+import { validateBody } from "../middleware/zodValidation.js"
 
 const router = express.Router()
 

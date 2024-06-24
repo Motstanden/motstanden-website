@@ -6,8 +6,8 @@ import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
-import { validateBody } from "../middleware/validateBody.js"
 import { validateNumber } from "../middleware/validateNumber.js"
+import { validateBody } from "../middleware/zodValidation.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 
 const router = express.Router()
