@@ -1,7 +1,8 @@
 import { UserGroup } from "common/enums"
-import { Participant, UpsertEventData, UpsertParticipant } from "common/interfaces"
+import { EventData, Participant, UpsertEventData, UpsertParticipant } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import express, { NextFunction, Request, Response } from "express"
+import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
@@ -11,31 +12,54 @@ import { UpsertDb } from "../ts/types/UpsertDb.js"
 
 const router = express.Router()
 
-router.get("/events/upcoming",
+const GetEventsParamsSchema = z.object({
+    
+    limit: z.string()
+        .trim()
+        .transform(strToNumber)
+        .refine(val => val !== undefined, { message: "limit must be an integer number" })
+        .pipe(
+            z.number().int().positive().finite()  
+        )
+        .optional(),
+
+    // Ensures filter is: "upcoming" | "previous" | undefined
+    // Empty string is transformed to undefined
+    // Otherwise, fail invalidation
+    filter: z.string()
+        .trim()
+        .toLowerCase()
+        .pipe(z.union([
+            z.literal("upcoming"),
+            z.literal("previous"),
+            z.literal("").transform(() => undefined),
+        ]))
+        .optional()
+})
+  
+
+router.get("/events",
     AuthenticateUser(),
     (req, res) => {
-        const limit = strToNumber(req.query.limit?.toString())
-        res.send(db.events.getAll({ upcoming: true, limit: limit }))
+
+        const params = GetEventsParamsSchema.safeParse(req.query) 
+        if(!params.success) 
+            return res.status(400).send("Invalid params")
+
+        const { limit, filter } = params.data
+
+        let data: EventData[]
+        if(filter === undefined) {
+            data = [
+                ...db.events.getAll({ upcoming: true, limit: limit }),
+                ...db.events.getAll({ upcoming: false, limit: limit })
+            ]
+        } else {
+            data = db.events.getAll({ upcoming: filter === "upcoming", limit: limit })
+        }
+
+        res.send(data)
     }
-)
-
-router.get("/events/previous",
-    AuthenticateUser(),
-    (req, res) => {
-        const limit = strToNumber(req.query.limit?.toString())
-        res.send(db.events.getAll({ upcoming: true, limit: limit }))
-    }
-)
-
-router.get("/events/all",
-    AuthenticateUser(),
-    (req, res) => res.send(
-        [
-            ...db.events.getAll({ upcoming: true }),
-            ...db.events.getAll({ upcoming: false })
-        ]
-
-    )
 )
 
 router.post("/events/new", AuthenticateUser(), (req, res) => handleUpsert(DbWriteAction.Insert, req, res))

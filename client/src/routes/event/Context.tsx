@@ -36,7 +36,7 @@ function EventContainer() {
 function EventContextLoader() {
     const { isPending, isError, data, error } = useQuery<EventData[]>({
         queryKey: eventContextQueryKey,
-        queryFn: fetchFn<EventData[]>("/api/events/all"),
+        queryFn: fetchFn<EventData[]>("/api/events"),
     })
 
     const { isListPage, isItemPage, isEditPage } = useEventUrlMatch()

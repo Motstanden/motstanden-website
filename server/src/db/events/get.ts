@@ -87,7 +87,7 @@ export function getAllEvents({
         try {
             keyInfo = JSON.parse(item.keyInfo)
         } catch (err) {
-            console.log(`Failed to parse keyinfo for eventId ${item.id}\nError: ${err}\nData: ${item}`)
+            console.error(`Failed to parse keyinfo for eventId ${item.id}\nError: ${err}\nData: ${item}`)
         }
         return {
             ...item,

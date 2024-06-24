@@ -36,7 +36,7 @@ export default function Home() {
             >
                 <ItemOfTheDay
                     title="Arrangement"
-                    fetchUrl="/api/events/upcoming?limit=5"
+                    fetchUrl="/api/events?filter=upcoming&limit=5"
                     renderSkeleton={<TitleAndSubtitleSkeleton length={5} />}
                     renderItems={RenderEventList}
                     md={6}
