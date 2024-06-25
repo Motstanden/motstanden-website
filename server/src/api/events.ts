@@ -1,22 +1,21 @@
 import { UserGroup } from "common/enums"
 import { EventData, Participant, UpsertEventData, UpsertParticipant } from "common/interfaces"
-import { strToNumber } from "common/utils"
 import express, { NextFunction, Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
-import { validateQuery } from "../middleware/zodValidation.js"
+import { validateParams, validateQuery } from "../middleware/zodValidation.js"
 import { DbWriteAction } from "../ts/enums/DbWriteAction.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { UpsertDb } from "../ts/types/UpsertDb.js"
-import { StringToIntegerSchema } from "../utils/zodSchema.js"
+import { Schemas, StringToInt } from "../utils/zodSchema.js"
 
 const router = express.Router()
 
 const GetEventsQuerySchema = z.object({
     
-    limit: StringToIntegerSchema("Limit must be an integer number").optional(),
+    limit: StringToInt("Limit must be an integer number").optional(),
 
     // Ensures filter is: "upcoming" | "previous" | undefined
     filter: z.string()
@@ -96,21 +95,12 @@ router.post("/events/delete",
     }
 )
 
-router.get("/event-participants",
+router.get("/event/:id/participants",
     AuthenticateUser(),
+    validateParams(Schemas.params.id),
     (req: Request, res: Response) => {
 
-        let param = req.query.eventId
-        let eventId: number | undefined
-        if (typeof param === "string") {
-            eventId = strToNumber(param)
-        }
-        else if (typeof param === "number") {
-            eventId = param
-        }
-        if (!eventId) {
-            return res.status(400).send("bad data")
-        }
+        const { id: eventId } = Schemas.params.id.parse(req.params)
 
         let participants: Participant[]
         try {
