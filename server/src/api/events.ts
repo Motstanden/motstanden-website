@@ -37,16 +37,7 @@ router.get("/events",
         // Validated by middleware
         const { limit, filter } = GetEventsQuerySchema.parse(req.query)
 
-        let data: EventData[]
-        if(filter === undefined) {
-            data = [
-                ...db.events.getAll({ upcoming: true, limit: limit }),
-                ...db.events.getAll({ upcoming: false, limit: limit })
-            ]
-        } else {
-            data = db.events.getAll({ upcoming: filter === "upcoming", limit: limit })
-        }
-
+        const data = db.events.getAll( { filter: filter, limit: limit })
         res.send(data)
     }
 )

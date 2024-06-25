@@ -41,13 +41,12 @@ export function getEvent(eventId: number): EventData | undefined {
     } : undefined
 }
 
-export function getAllEvents({
-    upcoming, 
-    limit
-}: {
-    upcoming: boolean
-    limit?: number
-}): EventData[] {
+type GetAllEventsOptions = { 
+    filter?: "upcoming" | "previous" 
+    limit?: number 
+}
+
+export function getAllEvents( {filter, limit}: GetAllEventsOptions): EventData[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT 
@@ -70,18 +69,18 @@ export function getAllEvents({
             is_upcoming as isUpcoming
         FROM 
             vw_event 
-        WHERE 
-            is_upcoming = ?
-        ORDER BY 
-            start_date_time ${upcoming ? "ASC" : "DESC"}
-        ${!!limit ? "LIMIT ?" : ""}
+        
+        ${filter !== undefined ? `WHERE is_upcoming = @isUpcoming` : ""}
+        
+        ORDER BY start_date_time ${ filter === "upcoming" ? "ASC" : "DESC" }
+
+        ${limit !== undefined ? "LIMIT @limit" : ""}
     `)
 
-    let args: any[] = [upcoming ? 1 : 0]
-    if (!!limit)
-        args.push(limit)
-
-    let events = <DbEventData[]>stmt.all(args)
+    const events = <DbEventData[]>stmt.all({
+        limit: limit,
+        isUpcoming: filter === "upcoming" ? 1 : 0
+    })
     db.close()
 
     const parsedEvents: EventData[] = events.map(item => {
