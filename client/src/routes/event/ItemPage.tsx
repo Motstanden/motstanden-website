@@ -88,7 +88,7 @@ function ParticipationContainer({ eventId }: { eventId: number }) {
     const queryKey = ["FetchEvenParticipants", eventId]
     const { isPending, isError, data, error } = useQuery<Participant[]>({
         queryKey: queryKey,
-        queryFn: fetchFn<Participant[]>(`/api/event-participants?eventId=${eventId}`),
+        queryFn: fetchFn<Participant[]>(`/api/events/${eventId}/participants`),
     })
     
     const { user } = useAuthenticatedUser()

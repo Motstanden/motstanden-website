@@ -86,7 +86,7 @@ router.post("/events/delete",
     }
 )
 
-router.get("/event/:id/participants",
+router.get("/events/:id/participants",
     AuthenticateUser(),
     validateParams(Schemas.params.id),
     (req: Request, res: Response) => {
