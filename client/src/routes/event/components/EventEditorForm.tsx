@@ -1,5 +1,5 @@
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add'
+import DeleteIcon from '@mui/icons-material/Delete'
 import {
     Box,
     Button,
@@ -11,21 +11,21 @@ import {
     TextFieldProps,
     Theme,
     useMediaQuery
-} from "@mui/material";
-import { DateTimePicker } from "@mui/x-date-pickers";
-import { useQueryClient } from '@tanstack/react-query';
-import { KeyValuePair, UpsertEventData } from "common/interfaces";
-import { isNullOrWhitespace } from "common/utils";
-import dayjs, { Dayjs } from "dayjs";
-import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { dateTimePickerStyle } from 'src/assets/style/timePickerStyles';
-import { Form } from "src/components/form/Form";
-import { useTimeZone } from 'src/context/TimeZone';
-import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage';
-import { useTitle } from "src/hooks/useTitle";
-import { MarkDownEditor } from '../../../components/MarkDownEditor';
-import { eventContextQueryKey } from '../Context';
+} from "@mui/material"
+import { DateTimePicker } from "@mui/x-date-pickers"
+import { useQueryClient } from '@tanstack/react-query'
+import { KeyValuePair, NewEventData } from "common/interfaces"
+import { isNullOrWhitespace } from "common/utils"
+import dayjs, { Dayjs } from "dayjs"
+import React, { useEffect, useMemo, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { dateTimePickerStyle } from 'src/assets/style/timePickerStyles'
+import { Form } from "src/components/form/Form"
+import { useTimeZone } from 'src/context/TimeZone'
+import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage'
+import { useTitle } from "src/hooks/useTitle"
+import { MarkDownEditor } from '../../../components/MarkDownEditor'
+import { eventContextQueryKey } from '../Context'
 
 export interface EventEditorState {
     title: string
@@ -64,12 +64,14 @@ export function EventEditorForm({
     postUrl, 
     initialValue, 
     storageKey,
-    eventId 
+    eventId,
+    httpVerb = "POST" 
 }: { 
     postUrl: string; 
     initialValue: EventEditorState;
     storageKey: StorageKeyArray, 
     eventId?: number; 
+    httpVerb?: "POST" | "PATCH"
 }) {
     const [event, setEvent, clearEvent] = useSessionStorage<EventEditorState>({
         key: storageKey,
@@ -90,9 +92,8 @@ export function EventEditorForm({
         setEvent(oldValues => ({ ...oldValues, ...newValues }))
     }
 
-    const getSubmitData = (): UpsertEventData => {
-        const serializedEvent: UpsertEventData = {
-            id: eventId,
+    const getSubmitData = (): NewEventData => {
+        const serializedEvent: NewEventData = {
             title: event.title,
             startDateTime: event.startTime!.utc().format("YYYY-MM-DD HH:mm:00"),
             endDateTime: event.endTime?.utc().format("YYYY-MM-DD HH:mm:00") ?? null,
@@ -104,11 +105,16 @@ export function EventEditorForm({
 
     const onPostSuccess = async (res: Response) => {
         setHasPosted(true)
-        const data = await res.json();
         await queryClient.invalidateQueries({queryKey: eventContextQueryKey})
         clearEvent()
-        navigate(`/arrangement/${eventId ?? data.eventId ?? ""}`)
-    };
+
+        if(httpVerb === "POST") {
+            const data = await res.json();
+            navigate(`/arrangement/${data.id}`)
+        } else {
+            navigate(-1)
+        }
+    }
 
     const handleAbortClick = () => {
         clearEvent()
@@ -135,6 +141,7 @@ export function EventEditorForm({
             onAbortClick={handleAbortClick}
             onPostSuccess={onPostSuccess}
             disabled={disabled}
+            httpVerb={httpVerb}
         >
             <Paper elevation={6} sx={{ px: 2, pb: 4, pt: 3 }}>
                 <EventEditor value={event} onChange={onValueChanged} />

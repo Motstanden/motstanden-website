@@ -1,7 +1,7 @@
-import { EventData } from "common/interfaces";
-import dayjs from "dayjs";
-import { useOutletContext } from "react-router-dom";
-import { EventEditorForm, EventEditorState } from "./components/EventEditorForm";
+import { EventData } from "common/interfaces"
+import dayjs from "dayjs"
+import { useOutletContext } from "react-router-dom"
+import { EventEditorForm, EventEditorState } from "./components/EventEditorForm"
 
 
 export default function EditEventPage() {
@@ -21,7 +21,8 @@ export default function EditEventPage() {
             </h1>
             <EventEditorForm 
                 storageKey={["Event", "Edit", event.id]}
-                postUrl="/api/events/update" 
+                postUrl={`/api/events/${event.id}`}
+                httpVerb="PATCH"
                 initialValue={initialValue} eventId={event.id} 
             />
         </div>

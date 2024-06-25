@@ -1,6 +1,5 @@
 import { EventEditorForm, EventEditorState } from "./components/EventEditorForm"
 
-
 export default function NewEventPage() {
 
     return (
@@ -8,7 +7,8 @@ export default function NewEventPage() {
             <h1>Nytt arrangement</h1>
             <EventEditorForm 
                 storageKey={["Event", "New"]}
-                postUrl="/api/events/new" 
+                postUrl="/api/events" 
+                httpVerb="POST"
                 initialValue={emptyEventObj} 
             />
         </div>
