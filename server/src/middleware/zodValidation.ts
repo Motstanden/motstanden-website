@@ -54,7 +54,7 @@ function validate<T>({
     }
 }) {
     return (req: Request, res: Response, next: NextFunction) => {
-        const result = schema.safeParse(data)
+        const result = schema.safeParse(data(req))
         if(result.success) { 
             onSuccess?.(req, result.data)
             next()
