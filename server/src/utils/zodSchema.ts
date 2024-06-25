@@ -12,11 +12,16 @@ const stringToInt = (message?: string) => {
         )
 }
 
-
+const dateTime = (message?: string) => {
+    return z.string()
+        .trim()
+        .regex(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/, message ?? "Must match the date time format: YYYY-MM-DD HH:MM:SS");
+}
 
 export const Schemas = {
     z: {
         stringToInt: stringToInt,
+        dateTime: dateTime
     },
 
     params: {

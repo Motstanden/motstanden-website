@@ -1,14 +1,11 @@
 import { ParticipationStatus, UserGroup } from "common/enums"
-import { UpsertEventData } from "common/interfaces"
 import express, { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { validateBody, validateParams, validateQuery } from "../middleware/zodValidation.js"
-import { DbWriteAction } from "../ts/enums/DbWriteAction.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
-import { UpsertDb } from "../ts/types/UpsertDb.js"
 import { Schemas } from "../utils/zodSchema.js"
 
 const router = express.Router()
@@ -44,32 +41,35 @@ router.get("/events",
     }
 )
 
-// ---- Upsert event (TODO: Refactor) ----
+// ---- POST/PATCH event ----
 
-router.post("/events/new", AuthenticateUser(), (req, res) => handleUpsert(DbWriteAction.Insert, req, res))
+const UpsertEventSchema = z.object({ 
+    title: z.string().trim().min(1),
+    startDateTime: Schemas.z.dateTime("startDateTime must have the format: YYYY-MM-DD HH:MM:SS"),
+    endDateTime: Schemas.z.dateTime("endDateTime must have the format: YYYY-MM-DD HH:MM:SS").nullable(),
+    keyInfo: z.array(z.object({
+        key: z.string().trim().min(1).max(16),
+        value: z.string().trim().min(1).max(100)
+    })),
+    description: z.string().trim().min(1),
+})
 
-router.post("/events/update", AuthenticateUser(), (req, res) => handleUpsert(DbWriteAction.Update, req, res))
-
-function handleUpsert(writeAction: UpsertDb, req: Request, res: Response) {
-    const payload: UpsertEventData = req.body
-    if (!payload) {
-        res.status(400).send("Bad data")
+router.post("/events",
+    AuthenticateUser(),
+    validateBody(UpsertEventSchema),
+    (req, res) => {
+        throw "Not implemented"
     }
+)
 
-    const user = req.user as AccessTokenData
-    if (!user) {
-        res.status(401).send("Unauthorized")
+router.patch("/events/:id",
+    AuthenticateUser(),
+    validateParams(Schemas.params.id),
+    validateBody(UpsertEventSchema),
+    (req: Request, res: Response) => { 
+        throw "Not implemented"        
     }
-
-    try {
-        const eventId = db.events.upsert(payload, user.userId, writeAction)
-        res.json({ eventId: eventId })
-    } catch (err) {
-        console.log(err)
-        res.status(400).send("Failed to create event")
-    }
-    res.end()
-}
+)
 
 // ---- DELETE event ----
 
