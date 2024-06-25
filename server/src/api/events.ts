@@ -1,5 +1,5 @@
 import { UserGroup } from "common/enums"
-import { EventData, Participant, UpsertEventData, UpsertParticipant } from "common/interfaces"
+import { UpsertEventData, UpsertParticipant } from "common/interfaces"
 import express, { NextFunction, Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../db/index.js"
@@ -90,16 +90,12 @@ router.get("/events/:id/participants",
     AuthenticateUser(),
     validateParams(Schemas.params.id),
     (req: Request, res: Response) => {
-
+        
+        // Validated by middleware
         const { id: eventId } = Schemas.params.id.parse(req.params)
 
-        let participants: Participant[]
-        try {
-            participants = db.events.participants.getAll(eventId)
-            res.json(participants)
-        } catch {
-            return res.status(400).send("Bad data")
-        }
+        const participants = db.events.participants.getAll(eventId)
+        res.json(participants)
     }
 )
 
