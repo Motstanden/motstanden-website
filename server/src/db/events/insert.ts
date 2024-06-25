@@ -1,7 +1,6 @@
+import Database from "better-sqlite3"
 import { NewEventData } from "common/interfaces"
 import { dbReadWriteConfig, motstandenDB } from "../../config/databaseConfig.js"
-import Database from "better-sqlite3"
-
 
 export function insertEvent(event: NewEventData, userId: number): number | bigint { 
 
