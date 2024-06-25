@@ -1,6 +1,6 @@
 import { ParticipationStatus, UserGroup } from "common/enums"
 import { UpsertEventData } from "common/interfaces"
-import express, { NextFunction, Request, Response } from "express"
+import express, { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
@@ -12,6 +12,8 @@ import { UpsertDb } from "../ts/types/UpsertDb.js"
 import { Schemas } from "../utils/zodSchema.js"
 
 const router = express.Router()
+
+// ---- GET events ----
 
 const GetEventsQuerySchema = z.object({
     
@@ -42,6 +44,8 @@ router.get("/events",
     }
 )
 
+// ---- Upsert event (TODO: Refactor) ----
+
 router.post("/events/new", AuthenticateUser(), (req, res) => handleUpsert(DbWriteAction.Insert, req, res))
 
 router.post("/events/update", AuthenticateUser(), (req, res) => handleUpsert(DbWriteAction.Update, req, res))
@@ -67,6 +71,8 @@ function handleUpsert(writeAction: UpsertDb, req: Request, res: Response) {
     res.end()
 }
 
+// ---- DELETE event ----
+
 router.delete("/events/:id",
     AuthenticateUser(),
     validateParams(Schemas.params.id),
@@ -75,12 +81,14 @@ router.delete("/events/:id",
         getAuthorInfo: id => db.events.get(id),
         requiredGroup: UserGroup.Administrator
     }),
-    (req: Request, res: Response, next: NextFunction) => {
+    (req: Request, res: Response) => {
         const { id } = Schemas.params.id.parse(req.params)
         db.events.delete(id)
         res.end()
     }
 )
+
+// ---- GET event participants ----
 
 router.get("/events/:id/participants",
     AuthenticateUser(),
@@ -94,6 +102,8 @@ router.get("/events/:id/participants",
         res.json(participants)
     }
 )
+
+// ---- PUT event participant ----
 
 const UpsertParticipantParamSchema = z.object({ 
     eventId: Schemas.z.stringToInt("eventId must be a positive integer"),
