@@ -17,9 +17,9 @@ const userSchema = z.object({
     capeName: z.string(),
     status: z.nativeEnum(UserStatus),
     phoneNumber: z.number().min(10000000).max(99999999).nullable(),
-    birthDate: dateTimeSchema.nullable(),
-    startDate: dateTimeSchema,
-    endDate: dateTimeSchema.nullable(),
+    birthDate: z.string().date().nullable(),
+    startDate: z.string().date(),
+    endDate: z.string().date().nullable(),
     createdAt: dateTimeSchema,
     updatedAt: dateTimeSchema,
 })
