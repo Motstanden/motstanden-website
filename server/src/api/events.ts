@@ -67,21 +67,17 @@ function handleUpsert(writeAction: UpsertDb, req: Request, res: Response) {
     res.end()
 }
 
-router.post("/events/delete",
+router.delete("/events/:id",
     AuthenticateUser(),
+    validateParams(Schemas.params.id),
     requiresGroupOrAuthor({
         getId: req => req.body.eventId,
         getAuthorInfo: id => db.events.get(id),
         requiredGroup: UserGroup.Administrator
     }),
     (req: Request, res: Response, next: NextFunction) => {
-        const id = req.body.eventId as number       // This is already validated by requiresGroupOrAuthor
-        try {
-            db.events.delete(id)
-        } catch (err) {
-            console.log(err)
-            return res.status(500).send("Failed to delete event")
-        }
+        const { id } = Schemas.params.id.parse(req.params)
+        db.events.delete(id)
         res.end()
     }
 )

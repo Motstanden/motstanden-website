@@ -2,7 +2,7 @@
 // The code in this file is poorly designed and is due for a full rewrite.
 // This code is the result of a quick and dirty implementation to get the project up and running in the early stages.
 
-function simpleHttpSendJson(method: "POST" | "PUT" | "PATCH", postUrl: string, jsonValue: object) {
+function simpleHttpSendJson(method: "POST" | "PUT" | "PATCH" | "DELETE", postUrl: string, jsonValue: object) {
     return fetch(postUrl, {
         method: method,
         body: JSON.stringify(jsonValue),
@@ -12,7 +12,7 @@ function simpleHttpSendJson(method: "POST" | "PUT" | "PATCH", postUrl: string, j
     })
 }
 
-async function httpSendJson(method: "POST" | "PUT" | "PATCH", url: string, value: object, opts?: postJsonOpts) {
+async function httpSendJson(method: "POST" | "PUT" | "PATCH" | "DELETE", url: string, value: object, opts?: postJsonOpts) {
 
     if (opts?.confirmText && !window.confirm(opts.confirmText)) {
         return undefined
@@ -43,6 +43,9 @@ export async function patchJson(url: string, jsonValue: object, opts?: postJsonO
     return await httpSendJson("PATCH", url, jsonValue, opts)
 }
 
+export async function httpDelete(url: string, opts?: postJsonOpts) { 
+    return await httpSendJson("DELETE", url, {}, opts)
+}
 
 export type postJsonOpts = {
     confirmText?: string,

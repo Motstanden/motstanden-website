@@ -1,13 +1,13 @@
-import EditIcon from '@mui/icons-material/Edit';
-import { IconButton, Tooltip } from "@mui/material";
-import { UserGroup } from "common/enums";
-import { EventData } from "common/interfaces";
-import { hasGroupAccess } from "common/utils";
-import { useNavigate } from "react-router-dom";
-import { EditOrDeleteMenu } from "src/components/menu/EditOrDeleteMenu";
-import { useAuthenticatedUser } from "src/context/Authentication";
-import { postJson } from 'src/utils/postJson';
-import { buildEventItemUrl } from "../Context";
+import EditIcon from '@mui/icons-material/Edit'
+import { IconButton, Tooltip } from "@mui/material"
+import { UserGroup } from "common/enums"
+import { EventData } from "common/interfaces"
+import { hasGroupAccess } from "common/utils"
+import { useNavigate } from "react-router-dom"
+import { EditOrDeleteMenu } from "src/components/menu/EditOrDeleteMenu"
+import { useAuthenticatedUser } from "src/context/Authentication"
+import { httpDelete } from 'src/utils/postJson'
+import { buildEventItemUrl } from "../Context"
 
 
 export function ItemMenu({ 
@@ -25,14 +25,10 @@ export function ItemMenu({
     const onEditClick = () => navigate(`${buildEventItemUrl(event)}/rediger`);
 
     const onDeleteClick = async () => {
-        const res = await postJson(
-            "/api/events/delete",
-            { eventId: event.id },
-            {
-                confirmText: `Vil du permanent slette:\n«${event.title}»`,
-                alertOnFailure: true
-            }
-        )
+        const res = await httpDelete(`/api/events/${event.id}`, {
+            confirmText: `Vil du permanent slette:\n«${event.title}»`,
+            alertOnFailure: true
+        })
 
         if(res?.ok)
             onDeleteSuccess && onDeleteSuccess()
