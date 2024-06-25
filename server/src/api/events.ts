@@ -61,8 +61,8 @@ router.post("/events",
         const event = UpsertEventSchema.parse(req.body)
         const user = req.user as AccessTokenData
 
-        db.events.insert(event, user.userId)
-        res.end()
+        const newEventId = db.events.insert(event, user.userId)
+        res.send({ id: newEventId })
     }
 )
 
