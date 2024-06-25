@@ -6,5 +6,7 @@
         "module": "NodeNext",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
+
+        "strict": true,
     }
 }
