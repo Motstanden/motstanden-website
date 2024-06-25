@@ -4,25 +4,25 @@ import {
     Paper,
     Stack,
     TextField
-} from "@mui/material";
-import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CommentEntityType, ParticipationStatus } from "common/enums";
-import { EventData, Participant, UpsertParticipant } from "common/interfaces";
-import { useState } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
-import { AuthorInfo } from "src/components/AuthorInfo";
-import { CommentSection } from "src/components/CommentSection";
-import { TitleCard } from "src/components/TitleCard";
-import { UserList } from "src/components/UserList";
-import { useAuthenticatedUser } from "src/context/Authentication";
-import { useTitle } from "src/hooks/useTitle";
-import { fetchFn } from "src/utils/fetchAsync";
-import { postJson } from "src/utils/postJson";
-import { MarkDownRenderer } from "../../components/MarkDownEditor";
-import { eventContextQueryKey } from "./Context";
-import { ItemMenu } from "./components/ItemMenu";
-import { KeyInfo } from "./components/KeyInfo";
-import { EventParticipationSkeleton } from "./skeleton/ItemPage";
+} from "@mui/material"
+import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query"
+import { CommentEntityType, ParticipationStatus } from "common/enums"
+import { EventData, Participant, UpsertParticipant } from "common/interfaces"
+import { useState } from "react"
+import { useNavigate, useOutletContext } from "react-router-dom"
+import { AuthorInfo } from "src/components/AuthorInfo"
+import { CommentSection } from "src/components/CommentSection"
+import { TitleCard } from "src/components/TitleCard"
+import { UserList } from "src/components/UserList"
+import { useAuthenticatedUser } from "src/context/Authentication"
+import { useTitle } from "src/hooks/useTitle"
+import { fetchFn } from "src/utils/fetchAsync"
+import { putJson } from "src/utils/postJson"
+import { MarkDownRenderer } from "../../components/MarkDownEditor"
+import { eventContextQueryKey } from "./Context"
+import { ItemMenu } from "./components/ItemMenu"
+import { KeyInfo } from "./components/KeyInfo"
+import { EventParticipationSkeleton } from "./skeleton/ItemPage"
 
 export default function ItemPage() {
     const event = useOutletContext<EventData>();
@@ -109,7 +109,7 @@ function ParticipationContainer({ eventId }: { eventId: number }) {
 
     return (
         <>
-            <AttendingForm eventId={eventId} queryKey={queryKey} user={currentUserStatus} />
+            <AttendingForm eventId={eventId} queryKey={queryKey} status={currentUserStatus?.status} />
             <AttendingList title="Deltar" items={attending} />
             <AttendingList title="Deltar kanskje" items={maybeAttending} />
             <AttendingList title="Deltar ikke" items={notAttending} />
@@ -117,18 +117,25 @@ function ParticipationContainer({ eventId }: { eventId: number }) {
     )
 }
 
-function AttendingForm({ eventId, queryKey, user }: { eventId: number, queryKey: QueryKey, user?: Participant }) {
-    const attendingStatus = user?.status ?? ParticipationStatus.Unknown
+function AttendingForm({ 
+    eventId, 
+    queryKey, 
+    status = ParticipationStatus.Unknown,
+}: { 
+    eventId: number, 
+    queryKey: QueryKey, 
+    status?: ParticipationStatus 
+}) {
+    const { user } = useAuthenticatedUser()
     const [isSubmitting, setIsSubmitting] = useState(false)
     const queryClient = useQueryClient()
 
     const changeHandler = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setIsSubmitting(true)
         const newVal: UpsertParticipant = {
-            eventId: eventId, 
-            participationStatus: e.target.value as ParticipationStatus 
+            status: e.target.value as ParticipationStatus 
         }
-        const response = await postJson("/api/event-participants/upsert", newVal, { alertOnFailure: true })
+        const response = await putJson(`/api/events/${eventId}/participants/${user.id}`, newVal, { alertOnFailure: true })
 
         if (response && response.ok) {
             await queryClient.invalidateQueries({ queryKey: queryKey })
@@ -142,11 +149,11 @@ function AttendingForm({ eventId, queryKey, user }: { eventId: number, queryKey:
                 <TextField
                     select
                     label="Min status"
-                    value={attendingStatus}
+                    value={status}
                     style={{ width: "100%" }}
                     onChange={changeHandler}
                     disabled={isSubmitting}
-                    helperText={attendingStatus === ParticipationStatus.Unknown ? "Jeg vil ikke svare..." : `Jeg ${attendingStatus.toLowerCase()} på arrangementet...`}
+                    helperText={status === ParticipationStatus.Unknown ? "Jeg vil ikke svare..." : `Jeg ${status.toLowerCase()} på arrangementet...`}
                     FormHelperTextProps={{ style: { opacity: 0.7 } }}
                 >
                     <MenuItem value={ParticipationStatus.Unknown}>——————</MenuItem>

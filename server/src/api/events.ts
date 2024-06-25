@@ -1,11 +1,11 @@
-import { UserGroup } from "common/enums"
-import { UpsertEventData, UpsertParticipant } from "common/interfaces"
+import { ParticipationStatus, UserGroup } from "common/enums"
+import { UpsertEventData } from "common/interfaces"
 import express, { NextFunction, Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
-import { validateParams, validateQuery } from "../middleware/zodValidation.js"
+import { validateBody, validateParams, validateQuery } from "../middleware/zodValidation.js"
 import { DbWriteAction } from "../ts/enums/DbWriteAction.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { UpsertDb } from "../ts/types/UpsertDb.js"
@@ -99,17 +99,31 @@ router.get("/events/:id/participants",
     }
 )
 
-router.post("/event-participants/upsert",
+const UpsertParticipantParamSchema = z.object({ 
+    eventId: Schemas.z.stringToInt("eventId must be a positive integer"),
+    userId: Schemas.z.stringToInt("userId must be a positive integer"),
+})
+
+const UpsertParticipantBodySchema = z.object({ 
+    status: z.string().pipe(z.nativeEnum(ParticipationStatus)),
+})
+
+router.put("/events/:eventId/participants/:userId",
     AuthenticateUser(),
+    validateParams(UpsertParticipantParamSchema),
+    validateBody(UpsertParticipantBodySchema),
     (req: Request, res: Response) => {
+
+        // Validated by middleware
         const user = req.user as AccessTokenData
-        const newData: UpsertParticipant = req.body
-        try {
-            db.events.participants.upsert(newData.eventId, user.userId, newData.participationStatus)
-        } catch (err) {
-            console.log(err)
-            return res.status(400).send("bad data")
+        const { eventId, userId } = UpsertParticipantParamSchema.parse(req.params)
+        const { status } = UpsertParticipantBodySchema.parse(req.body)
+
+        if(user.userId !== userId) { 
+            return res.status(403).send("You can only change your own status")
         }
+
+        db.events.participants.upsert(eventId, userId, status)
         res.end()
     }
 )
