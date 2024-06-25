@@ -2,8 +2,9 @@ import Database from "better-sqlite3"
 import { EventData, KeyValuePair } from "common/interfaces"
 import { dbReadOnlyConfig, motstandenDB } from "../../config/databaseConfig.js"
 
-interface DbEventData extends Omit<EventData, "keyInfo"> {
-    keyInfo: string
+interface DbEventData extends Omit<EventData, "keyInfo" | "isUpcoming"> {
+    keyInfo: string,
+    isUpcoming: number
 }
 
 export function getEvent(eventId: number): EventData | undefined {
@@ -35,7 +36,8 @@ export function getEvent(eventId: number): EventData | undefined {
 
     return dbResult ? { 
         ...dbResult,
-        keyInfo: JSON.parse(dbResult.keyInfo)
+        keyInfo: JSON.parse(dbResult.keyInfo),
+        isUpcoming: dbResult.isUpcoming === 1
     } : undefined
 }
 
@@ -91,6 +93,7 @@ export function getAllEvents({
         }
         return {
             ...item,
+            isUpcoming: item.isUpcoming === 1,
             keyInfo
         }
     })
