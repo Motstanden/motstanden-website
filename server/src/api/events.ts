@@ -58,7 +58,11 @@ router.post("/events",
     AuthenticateUser(),
     validateBody(UpsertEventSchema),
     (req, res) => {
-        throw "Not implemented"
+        const event = UpsertEventSchema.parse(req.body)
+        const user = req.user as AccessTokenData
+
+        db.events.insert(event, user.userId)
+        res.end()
     }
 )
 
@@ -67,7 +71,14 @@ router.patch("/events/:id",
     validateParams(Schemas.params.id),
     validateBody(UpsertEventSchema),
     (req: Request, res: Response) => { 
-        throw "Not implemented"        
+
+        // Validated by middleware
+        const { id: eventId } = Schemas.params.id.parse(req.params)        
+        const event = UpsertEventSchema.parse(req.body)
+        const user = req.user as AccessTokenData
+
+        db.events.update(event, eventId, user.userId)
+        res.end()
     }
 )
 
