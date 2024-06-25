@@ -12,7 +12,7 @@ function simpleHttpSendJson(method: "POST" | "PUT" | "PATCH" | "DELETE", postUrl
     })
 }
 
-async function httpSendJson(method: "POST" | "PUT" | "PATCH" | "DELETE", url: string, value: object, opts?: postJsonOpts) {
+export async function httpSendJson(method: "POST" | "PUT" | "PATCH" | "DELETE", url: string, value: object, opts?: postJsonOpts) {
 
     if (opts?.confirmText && !window.confirm(opts.confirmText)) {
         return undefined

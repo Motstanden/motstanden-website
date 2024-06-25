@@ -1,7 +1,7 @@
-import { Divider } from "@mui/material";
-import { useState } from "react";
-import { postJson } from "src/utils/postJson";
-import SubmitFormButtons from "./SubmitButtons";
+import { Divider } from "@mui/material"
+import { useState } from "react"
+import { httpSendJson } from "src/utils/postJson"
+import SubmitFormButtons from "./SubmitButtons"
 
 export function Form({
     value,
@@ -13,7 +13,8 @@ export function Form({
     onPostFailure,
     onAbortClick,
     noDivider,
-    noPadding
+    noPadding,
+    httpVerb = "POST"
 }: {
     value: object | (() => object)    // Either any object, or a callback function that returns the object
     children: React.ReactNode
@@ -25,6 +26,7 @@ export function Form({
     onAbortClick?: React.MouseEventHandler<HTMLButtonElement>
     noDivider?: boolean
     noPadding?: boolean
+    httpVerb?: "POST" | "PATCH"
 }) {
     const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -36,7 +38,8 @@ export function Form({
         setIsSubmitting(true)
 
         const newValue = typeof value === "function" ? value() : value
-        const response = await postJson(postUrl, newValue, { alertOnFailure: true })
+
+        const response = await httpSendJson(httpVerb, postUrl, newValue, { alertOnFailure: true })
 
         if (response && response.ok) {
             onPostSuccess && await onPostSuccess(response)
