@@ -1,8 +1,8 @@
-import { APIRequestContext, Browser, Page, TestInfo } from "@playwright/test";
-import { UserGroup, UserRank, UserStatus } from "common/enums";
-import { User } from "common/interfaces";
-import path from "path";
-import { getDirname } from "./getDirname.js";
+import { APIRequestContext, Browser, Page, TestInfo } from "@playwright/test"
+import { UserGroup, UserRank, UserStatus } from "common/enums"
+import { User } from "common/interfaces"
+import path from "path"
+import { getDirname } from "./getDirname.js"
 
 export interface TestUser extends Omit<User, "groupId" | "createdAt" | "updatedAt"> { 
     storageStatePath: string
