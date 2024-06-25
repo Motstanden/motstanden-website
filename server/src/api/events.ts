@@ -9,13 +9,13 @@ import { validateParams, validateQuery } from "../middleware/zodValidation.js"
 import { DbWriteAction } from "../ts/enums/DbWriteAction.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { UpsertDb } from "../ts/types/UpsertDb.js"
-import { Schemas, StringToInt } from "../utils/zodSchema.js"
+import { Schemas } from "../utils/zodSchema.js"
 
 const router = express.Router()
 
 const GetEventsQuerySchema = z.object({
     
-    limit: StringToInt("Limit must be an integer number").optional(),
+    limit: Schemas.queries.limit.shape.limit,
 
     // Ensures filter is: "upcoming" | "previous" | undefined
     filter: z.string()

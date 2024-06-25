@@ -2,7 +2,7 @@
 import { strToNumber } from "common/utils"
 import { z } from "zod"
 
-export const StringToInt = (message?: string) => { 
+const stringToInt = (message?: string) => { 
     return z.string()
         .trim()
         .transform(strToNumber)
@@ -13,14 +13,21 @@ export const StringToInt = (message?: string) => {
 }
 
 
+
 export const Schemas = {
-    utils: {
-        StringToInt: StringToInt,
+    z: {
+        stringToInt: stringToInt,
     },
 
     params: {
         id: z.object({
-            id: StringToInt("id param must be a positive integer")
-        })  
+            id: stringToInt("id param must be a positive integer")
+        }),  
     },
+
+    queries: {
+        limit: z.object({
+            limit: stringToInt("Limit must be a positive integer").optional()
+        })
+    }
 }
