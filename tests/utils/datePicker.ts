@@ -1,14 +1,13 @@
-import { Page } from "@playwright/test";
-import dayjs from "common/lib/dayjs";
-import { Dayjs } from "dayjs";
-import { isMobile } from "./mediaQueries.js";
+import { Page } from "@playwright/test"
+import dayjs from "common/lib/dayjs"
+import { isMobile } from "./mediaQueries.js"
 
 type dateFormat = "MonthYear" | "DayMonthYear" | "TimeDayMonthYear"
 
 export async function selectDate(
     page: Page, 
     label: string | RegExp, 
-    date: Dayjs | string | undefined | null, 
+    date: dayjs.Dayjs | string | undefined | null, 
     format: dateFormat
 ) {
     const isMobilePage = await isMobile(page)
@@ -32,21 +31,23 @@ export async function selectDate(
 async function desktopSelectDate(
     page: Page, 
     label: string | RegExp, 
-    date: Dayjs, 
+    date: dayjs.Dayjs, 
     format: dateFormat
 ) {
+
     let dateValue: string
-
-    if(format === "MonthYear") {
-        dateValue = date.format("MMMM YYYY")
-    }
-
-    if(format === "DayMonthYear") {
-        dateValue = dayjs(date).format("DD.MM.YYYY")
-    }
-    
-    if(format === "TimeDayMonthYear") {
-        dateValue = dayjs(date).format("DD.MM.YYYY HH:mm")
+    switch (format) {
+        case "MonthYear":
+            dateValue = date.format("MMMM YYYY")
+            break
+        case "DayMonthYear":
+            dateValue = dayjs(date).format("DD.MM.YYYY")
+            break
+        case "TimeDayMonthYear":
+            dateValue = dayjs(date).format("DD.MM.YYYY HH:mm")
+            break
+        default:
+            throw new Error("Not implemented");
     }
 
     await page.getByLabel(label).fill(dateValue)
@@ -56,7 +57,7 @@ async function desktopSelectDate(
 async function mobileSelectDate(
     page: Page, 
     label: string | RegExp, 
-    date: Dayjs, 
+    date: dayjs.Dayjs, 
     format: dateFormat
 ) {
     switch (format) {
@@ -72,7 +73,7 @@ async function mobileSelectDate(
 }
 
 // This is not thoroughly tested
-async function mobileSelectMonthYear(page: Page, label: string | RegExp, date: Dayjs) {
+async function mobileSelectMonthYear(page: Page, label: string | RegExp, date: dayjs.Dayjs) {
     await page.getByLabel(label).click();
     await page.getByRole('button', { name: date.format("YYYY") }).click();
     await page.getByRole('button', { name: date.format("MMM") }).click();
@@ -80,7 +81,7 @@ async function mobileSelectMonthYear(page: Page, label: string | RegExp, date: D
 }
 
 // This is not thoroughly tested
-async function mobileSelectDayMonthYear(page: Page, label: string | RegExp, date: Dayjs) {
+async function mobileSelectDayMonthYear(page: Page, label: string | RegExp, date: dayjs.Dayjs) {
     await page.getByLabel(label).click();
     await page.getByText(/(januar|februar|mars|april|mai|juni|juli|august|september|oktober|november|desember)\s+[0-9]{4}/).click();
     await page.getByRole('button', { name: date.format("YYYY") }).click();
