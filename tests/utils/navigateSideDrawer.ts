@@ -1,4 +1,4 @@
-import { Page } from "@playwright/test";
+import { Page } from "@playwright/test"
 
 export async function navigateSideDrawer(page: Page, navigation: SideDrawerNavigation) {
     await page.getByRole("link", { name: navigation }).click()

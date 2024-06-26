@@ -1,8 +1,8 @@
-import { APIRequestContext, Page, expect, test } from '@playwright/test';
-import { UserGroup } from 'common/enums';
-import { NewPollWithOption, Poll } from 'common/interfaces';
-import { disposeLogIn, logIn } from '../../utils/auth.js';
-import { randomString } from '../../utils/randomString.js';
+import { APIRequestContext, Page, expect, test } from '@playwright/test'
+import { UserGroup } from 'common/enums'
+import { NewPollWithOption, Poll } from 'common/interfaces'
+import { disposeLogIn, logIn } from '../../utils/auth.js'
+import { randomString } from '../../utils/randomString.js'
 
 test.describe.configure({ mode: "serial"})
 

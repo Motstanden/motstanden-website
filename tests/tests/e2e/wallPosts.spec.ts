@@ -1,7 +1,7 @@
-import { Browser, Page, TestInfo, expect, test } from '@playwright/test';
-import { UserGroup } from 'common/enums';
-import { TestUser, disposeLogIn, logIn, storageLogIn } from '../../utils/auth.js';
-import { randomString } from '../../utils/randomString.js';
+import { Browser, Page, TestInfo, expect, test } from '@playwright/test'
+import { UserGroup } from 'common/enums'
+import { TestUser, disposeLogIn, logIn, storageLogIn } from '../../utils/auth.js'
+import { randomString } from '../../utils/randomString.js'
 
 test.describe.serial("Contributor can create, edit and delete wall posts they have created", async () => { 
 
