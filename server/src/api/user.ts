@@ -67,7 +67,7 @@ router.patch("/users/me",
     }
 )
 
-router.patch("/users/:id", 
+router.put("/users/:id", 
     AuthenticateUser(),
     validateParams(Schemas.params.id),
     RequiresGroup(UserGroup.SuperAdministrator),
