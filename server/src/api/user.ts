@@ -48,7 +48,7 @@ router.get("/users/:id",
     AuthenticateUser(),
     validateParams(Schemas.params.id),
     (req, res) => {
-        const { id } = Schemas.params.id.parse(req.params.id)
+        const { id } = Schemas.params.id.parse(req.params)
         const user = db.users.get(id)
         if(user !== undefined) {
             res.json(user)
