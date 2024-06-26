@@ -169,12 +169,13 @@ const NewUserSchema = z.object({
 
 
 router.post("/users", 
+    AuthenticateUser(),
     RequiresGroup(UserGroup.SuperAdministrator),
     validateBody(NewUserSchema), 
     (req: Request, res: Response) => {
-    const user = NewUserSchema.parse(req.body)
-    const userId = db.users.insert(user)
-    res.json({userId: userId})
+        const user = NewUserSchema.parse(req.body)
+        const userId = db.users.insert(user)
+        res.json({userId: userId})
 })
 
 export default router
