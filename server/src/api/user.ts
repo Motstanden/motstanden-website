@@ -5,8 +5,9 @@ import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser, logOutAllUnits, updateAccessToken } from "../middleware/jwtAuthenticate.js"
 import { RequiresGroup } from "../middleware/requiresGroup.js"
-import { validateBody } from "../middleware/zodValidation.js"
+import { validateBody, validateParams } from "../middleware/zodValidation.js"
 import { getUser } from "../utils/getUser.js"
+import { Schemas } from "../utils/zodSchema.js"
 
 const router = express.Router()
 
@@ -43,6 +44,19 @@ router.get("/users/me",
     }
 )
 
+router.get("/users/:id",
+    AuthenticateUser(),
+    validateParams(Schemas.params.id),
+    (req, res) => {
+        const { id } = Schemas.params.id.parse(req.params.id)
+        const user = db.users.get(id)
+        if(user !== undefined) {
+            res.json(user)
+        } else {
+            res.status(404).send("User not found")
+        }
+    }
+)
 
 // ---- Update users ----
 
