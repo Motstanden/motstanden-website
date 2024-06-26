@@ -2,7 +2,7 @@
   "name": "motstanden-web",
   "version": "1.0.0",
   "description": "Motstanden web page",
-  "main": "src/server.js",
+  "main": "build/server.js",
   "type": "module",
   "scripts": {
     "deploy": "npm run setup-common && npm run setup-server && npm run setup-client && npm run setup-common-link-normal && cd ../client && npm run build",
