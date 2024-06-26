@@ -4,7 +4,7 @@ import express, { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
-import { requiresGroup } from "../middleware/requiresGroup.js"
+import { RequiresGroup } from "../middleware/requiresGroup.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { validateBody } from "../middleware/zodValidation.js"
 
@@ -60,7 +60,7 @@ router.post("/sheet-archive/titles/:id/update",
         getValue: req => req.params.id,
     }),
     AuthenticateUser(),
-    requiresGroup(UserGroup.Administrator),
+    RequiresGroup(UserGroup.Administrator),
     validateBody(UpdateSheetArchiveTitleSchema),
     (req: Request, res: Response) => {
 

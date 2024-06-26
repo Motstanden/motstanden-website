@@ -4,7 +4,7 @@ import express, { NextFunction, Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser, logOutAllUnits, updateAccessToken } from "../middleware/jwtAuthenticate.js"
-import { requiresGroup } from "../middleware/requiresGroup.js"
+import { RequiresGroup } from "../middleware/requiresGroup.js"
 import { validateBody } from "../middleware/zodValidation.js"
 import { getUser } from "../utils/getUser.js"
 
@@ -46,13 +46,13 @@ router.get("/users/me",
 
 // ---- Update users ----
 
-router.post("/super-admin/update-user", requiresGroup(UserGroup.SuperAdministrator), handleUserUpdate(UserEditMode.SuperAdmin))
+router.post("/super-admin/update-user", AuthenticateUser(), RequiresGroup(UserGroup.SuperAdministrator), handleUserUpdate(UserEditMode.SuperAdmin))
 
-router.post("/admin/update-user", requiresGroup(UserGroup.Administrator), handleUserUpdate(UserEditMode.Admin))
+router.post("/admin/update-user", AuthenticateUser(), RequiresGroup(UserGroup.Administrator), handleUserUpdate(UserEditMode.Admin))
 
-router.post("/self-and-admin/update-user", requiresGroup(UserGroup.Administrator), RequireSelf, handleUserUpdate(UserEditMode.SelfAndAdmin))
+router.post("/self-and-admin/update-user", AuthenticateUser(), RequiresGroup(UserGroup.Administrator), RequireSelf(), handleUserUpdate(UserEditMode.SelfAndAdmin))
 
-router.post("/self/update-user", AuthenticateUser(), RequireSelf, handleUserUpdate(UserEditMode.Self))
+router.post("/self/update-user", AuthenticateUser(), RequireSelf(), handleUserUpdate(UserEditMode.Self))
 
 function handleUserUpdate(updateMode: UserEditMode) {
     return (req: Request, res: Response, next: NextFunction) => {
@@ -82,17 +82,18 @@ function handleUserUpdate(updateMode: UserEditMode) {
     }
 }
 
-function RequireSelf(req: Request, res: Response, next: NextFunction) {
-    const user = getUser(req)
-    const newUser = req.body as User | undefined
-    if (newUser?.id && newUser.id === user.userId) {
-        next()
-    }
-    else {
-        res.status(401).send("Unauthorized").end()
+function RequireSelf() {
+    return (req: Request, res: Response, next: NextFunction) => { 
+        const user = getUser(req)
+        const newUser = req.body as User | undefined
+        if (newUser?.id && newUser.id === user.userId) {
+            next()
+        }
+        else {
+            res.status(401).send("Unauthorized").end()
+        }
     }
 }
-
 
 // ---- POST users ----
 
@@ -115,7 +116,7 @@ const NewUserSchema = z.object({
 
 
 router.post("/users", 
-    requiresGroup(UserGroup.SuperAdministrator),
+    RequiresGroup(UserGroup.SuperAdministrator),
     validateBody(NewUserSchema), 
     (req: Request, res: Response) => {
     const user = NewUserSchema.parse(req.body)

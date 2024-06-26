@@ -4,7 +4,7 @@ import express, { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
-import { requiresGroup } from "../middleware/requiresGroup.js"
+import { RequiresGroup } from "../middleware/requiresGroup.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { validateBody } from "../middleware/zodValidation.js"
 import { getUser } from "../utils/getUser.js"
@@ -40,7 +40,7 @@ router.post("/simple-text/:id/update",
         getValue: req => req.params.id,
     }),
     AuthenticateUser(),
-    requiresGroup(UserGroup.Editor),
+    RequiresGroup(UserGroup.Editor),
     validateBody(UpdateSimpleTextSchema),
     (req: Request, res: Response) => {
 
