@@ -1,17 +1,17 @@
 // Loads secret keys from the local .env file. The .env file should always be a hidden secret, and should not be committed to github.
-import dotenv from "dotenv";
+import dotenv from "dotenv"
 dotenv.config({ path: "../.env" });
 
-import cookieParser from 'cookie-parser';
-import cors from "cors";
-import express from "express";
-import helmet from "helmet";
-import serveIndex from "serve-index";
-import { fileURLToPath } from 'url';
-import * as passportConfig from "./config/passportConfig.js";
+import cookieParser from 'cookie-parser'
+import cors from "cors"
+import express from "express"
+import helmet from "helmet"
+import serveIndex from "serve-index"
+import { fileURLToPath } from 'url'
+import * as passportConfig from "./config/passportConfig.js"
 
-import router from "./api/apiRouter.js";
-import { AuthenticateUser } from "./middleware/jwtAuthenticate.js";
+import router from "./api/apiRouter.js"
+import { AuthenticateUser } from "./middleware/jwtAuthenticate.js"
 
 const PORT = process.env.PORT || 5000
 const app = express()
