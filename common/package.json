@@ -10,7 +10,6 @@
   "exports": {
     "./enums": "./build/enums/index.js",
     "./interfaces": "./build/interfaces/index.js",
-    "./lib/dayjs": "./build/lib/dayjs.js",
     "./richTextSchema": "./build/richTextSchema/index.js",
     "./types": "./build/types/index.js",
     "./utils": "./build/utils/index.js",
@@ -23,9 +22,6 @@
       ],
       "interfaces": [
         "./build/interfaces/index.d.ts"
-      ],
-      "lib/dayjs": [
-        "./build/lib/dayjs.d.ts"
       ],
       "richTextSchema": [
         "./build/richTextSchema/index.d.js"

@@ -1,9 +1,9 @@
 import { APIRequestContext, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
 import { NewUser, User } from 'common/interfaces'
-import dayjs from "common/lib/dayjs"
 import { randomUUID } from 'crypto'
 import { z } from "zod"
+import dayjs from "../../lib/dayjs.js"
 import { apiLogIn } from '../../utils/auth.js'
 import { dateTimeSchema } from '../../utils/zodtypes.js'
 

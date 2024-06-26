@@ -1,7 +1,6 @@
 import { Page, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
 import { User } from 'common/interfaces'
-import dayjs from 'common/lib/dayjs'
 import {
     getFullName,
     isNullOrWhitespace,
@@ -10,6 +9,7 @@ import {
     userStatusToPrettyStr
 } from "common/utils"
 import { randomInt, randomUUID } from 'crypto'
+import dayjs from "../../lib/dayjs.js"
 import { TestUser, disposeLogIn, logIn, unsafeApiLogIn } from '../../utils/auth.js'
 import { selectDate } from '../../utils/datePicker.js'
 

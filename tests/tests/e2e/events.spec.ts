@@ -1,10 +1,10 @@
 import { expect, Page, test } from '@playwright/test'
 import { ParticipationStatus, UserGroup } from 'common/enums'
 import { NewEventData } from 'common/interfaces'
-import dayjs from "common/lib/dayjs"
 import { getFullName } from 'common/utils'
 import { formatDateTimeInterval } from "common/utils/dateTime"
 import { randomInt } from 'crypto'
+import dayjs from "../../lib/dayjs.js"
 import { disposeLogIn, logIn, TestUser } from '../../utils/auth.js'
 import { selectDate } from '../../utils/datePicker.js'
 import { randomString } from '../../utils/randomString.js'
