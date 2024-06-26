@@ -1,5 +1,5 @@
 import Database, { Database as DatabaseType } from "better-sqlite3"
-import { User, UserReference } from "common/interfaces"
+import { User, UserIdentity } from "common/interfaces"
 import { isNullOrWhitespace } from "common/utils"
 import { dbReadOnlyConfig, motstandenDB } from "../../config/databaseConfig.js"
 
@@ -83,7 +83,7 @@ export function getAllUserIds(existingDbConnection?: DatabaseType): { id: number
     return userIds
 }
 
-export function getAllAsUserReference(): UserReference[] {
+export function getAllUsersAsIdentifiers(): UserIdentity[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
         `SELECT 
@@ -97,7 +97,7 @@ export function getAllAsUserReference(): UserReference[] {
             END AS shortFullName
         FROM 
             user;`)
-    const user = stmt.all() as UserReference[]
+    const user = stmt.all() as UserIdentity[]
     db.close()
     return user
 }

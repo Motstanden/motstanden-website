@@ -1,7 +1,7 @@
 import { ParticipationStatus } from "../enums/index.js"
-import { UserReference } from "./index.js"
+import { UserIdentity } from "./index.js"
 
-export interface Participant extends UserReference {
+export interface Participant extends UserIdentity {
     status: ParticipationStatus
 }
 

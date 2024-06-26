@@ -1,4 +1,4 @@
-import { UserReference } from "./User.js";
+import { UserIdentity } from "./User.js";
 
 export interface NewPoll {
     title: string;
@@ -37,5 +37,5 @@ export interface PollOption extends NewPollOption {
 
 export interface PollOptionVoters { 
     optionId: number,
-    voters: UserReference[]
+    voters: UserIdentity[]
 }

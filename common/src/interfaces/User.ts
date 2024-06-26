@@ -2,9 +2,9 @@ import {
     UserGroup,
     UserRank,
     UserStatus
-} from "../enums/index.js";
+} from "../enums/index.js"
 
-export interface UserReference {
+export interface UserIdentity {
     id: number;
     fullName: string;
     shortFullName: string;        // Format: 'First M. L.' (for )

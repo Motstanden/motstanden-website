@@ -1,4 +1,4 @@
-import { getAllAsUserReference, getAllUserIds, getAllUsers, getUser, getUserByMail, userExists } from "./get.js"
+import { getAllUserIds, getAllUsers, getAllUsersAsIdentifiers, getUser, getUserByMail, userExists } from "./get.js"
 import { userGroupsDb } from "./groups/index.js"
 import { insertUser } from "./insert.js"
 import { userRanksDb } from "./ranks/index.js"
@@ -11,7 +11,7 @@ export const usersDb = {
     getByMail: getUserByMail,
     getAll: getAllUsers,
     getAllIds: getAllUserIds,
-    getAllAsReference: getAllAsUserReference,
+    getAllAsIdentifiers: getAllUsersAsIdentifiers,
     exists: userExists,
 
     insert: insertUser,

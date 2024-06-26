@@ -22,7 +22,7 @@ router.get("/users",
 router.get("/users/identifiers",
     AuthenticateUser(),
     (req: Request, res: Response) => {
-        const users = db.users.getAllAsReference()
+        const users = db.users.getAllAsIdentifiers()
         res.send(users)
 })
     
