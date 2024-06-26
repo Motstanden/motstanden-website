@@ -10,20 +10,24 @@ import { getUser } from "../utils/getUser.js"
 
 const router = express.Router()
 
-router.get("/member-list", 
+// ---- GET users ----
+
+router.get("/users", 
     AuthenticateUser(),
     (req: Request, res: Response) => {
         const users = db.users.getAll()
         res.send(users)
 })
 
-router.get("/simplified-member-list",
+router.get("/users/identifiers",
     AuthenticateUser(),
     (req: Request, res: Response) => {
         const users = db.users.getAllAsReference()
         res.send(users)
 })
     
+// ---- Update users ----
+
 router.post("/super-admin/update-user", requiresGroup(UserGroup.SuperAdministrator), handleUserUpdate(UserEditMode.SuperAdmin))
 
 router.post("/admin/update-user", requiresGroup(UserGroup.Administrator), handleUserUpdate(UserEditMode.Admin))

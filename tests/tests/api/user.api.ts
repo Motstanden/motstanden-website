@@ -34,9 +34,9 @@ const simplifiedUserSchema = z.object({
 
 const simplifiedUserArraySchema = z.array(simplifiedUserSchema)
 
-test.describe("GET api/member-list", () => {
+test.describe("GET api/users", () => {
     
-    const getValues = async (request: APIRequestContext) => await request.get("/api/member-list")
+    const getValues = async (request: APIRequestContext) => await request.get("/api/users")
 
     test("Receives valid object", async ({request}, workerInfo) => {
         await apiLogIn(request, workerInfo)
@@ -54,9 +54,9 @@ test.describe("GET api/member-list", () => {
     })
 })
 
-test.describe("GET api/simplified-member-list", () => {
+test.describe("GET api/users/identifiers", () => {
 
-    const getValues = async (request: APIRequestContext) => await request.get("/api/simplified-member-list")
+    const getValues = async (request: APIRequestContext) => await request.get("/api/users/identifiers")
 
     test("Returns valid object", async ({request}, workerInfo) => {
         await apiLogIn(request, workerInfo)

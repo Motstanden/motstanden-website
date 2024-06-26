@@ -39,7 +39,7 @@ export function UserReferenceProvider( {children}: {children: React.ReactNode} )
 
     const { isPending, isError, data } = useQuery<UserReference[]>({
         queryKey: ["user-reference"],
-        queryFn: fetchFn<UserReference[]>("/api/simplified-member-list"),
+        queryFn: fetchFn<UserReference[]>("/api/users/identifiers"),
         enabled: isLoggedIn
     })
 

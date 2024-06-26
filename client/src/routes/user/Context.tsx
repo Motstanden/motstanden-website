@@ -25,7 +25,7 @@ function UserContainer() {
 function UserContextLoader() {
     const { isPending, isError, data, error } = useQuery<User[]>({
         queryKey: userListQueryKey,
-        queryFn: fetchFn<User[]>("/api/member-list"),
+        queryFn: fetchFn<User[]>("/api/users"),
     })
 
     if (isError) {
