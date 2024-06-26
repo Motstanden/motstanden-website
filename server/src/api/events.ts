@@ -5,7 +5,7 @@ import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { validateBody, validateParams, validateQuery } from "../middleware/zodValidation.js"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { getUser } from "../utils/getUser.js"
 import { Schemas } from "../utils/zodSchema.js"
 
 const router = express.Router()
@@ -59,7 +59,7 @@ router.post("/events",
     validateBody(UpsertEventSchema),
     (req, res) => {
         const event = UpsertEventSchema.parse(req.body)
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
 
         const newEventId = db.events.insert(event, user.userId)
         res.send({ id: newEventId })
@@ -75,7 +75,7 @@ router.patch("/events/:id",
         // Validated by middleware
         const { id: eventId } = Schemas.params.id.parse(req.params)        
         const event = UpsertEventSchema.parse(req.body)
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
 
         db.events.update(event, eventId, user.userId)
         res.end()
@@ -132,7 +132,7 @@ router.put("/events/:eventId/participants/:userId",
     (req: Request, res: Response) => {
 
         // Validated by middleware
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         const { eventId, userId } = UpsertParticipantParamSchema.parse(req.params)
         const { status } = UpsertParticipantBodySchema.parse(req.body)
 

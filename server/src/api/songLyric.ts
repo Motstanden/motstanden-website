@@ -7,7 +7,7 @@ import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { validateBody } from "../middleware/zodValidation.js"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { getUser } from "../utils/getUser.js"
 
 const router = express.Router()
 
@@ -76,7 +76,7 @@ router.post("/song-lyric/:id/update",
 
         // Validated by middleware
         const id = strToNumber(req.params.id) as number
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         const newLyric = NewSongLyricSchema.parse(req.body)
 
         if(!newLyric)
@@ -98,7 +98,7 @@ router.post("/song-lyric/new",
     (req, res) => {
 
         // Validated by middleware
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         const newLyric = NewSongLyricSchema.parse(req.body)
 
         try {

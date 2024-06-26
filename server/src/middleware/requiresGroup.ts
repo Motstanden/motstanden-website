@@ -1,16 +1,14 @@
 import { UserGroup } from "common/enums"
 import { userGroupToNum } from "common/utils"
 import { NextFunction, Request, Response } from 'express'
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { getUser } from "../utils/getUser.js"
 import { AuthenticateUser } from "./jwtAuthenticate.js"
 
 export function requiresGroup(requiredGroup: UserGroup) {
     return [
         AuthenticateUser(),
         (req: Request, res: Response, next: NextFunction) => {
-            const user = req.user as AccessTokenData
-            if (!user)
-                throw `Invalid operation`
+            const user = getUser(req)
 
             const requiredNum = userGroupToNum(requiredGroup)
             const actualNum = userGroupToNum(user.groupName)

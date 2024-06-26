@@ -8,7 +8,7 @@ import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { validateBody } from "../middleware/zodValidation.js"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { getUser } from "../utils/getUser.js"
 
 const router = express.Router()
 
@@ -53,7 +53,7 @@ router.post("/wall-posts/new",
     (req, res) => {
         
         // Validated by middleware
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         const newPost = NewWallPostSchema.parse(req.body)
 
         try {
@@ -114,7 +114,7 @@ router.patch("/wall-posts/:id",
 router.get("/wall-posts/unread/count", 
     AuthenticateUser(),
     (req, res) => {
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         
         const unreadCount = db.wallPosts.getUnreadCount(user.userId)
         const result: Count = {
@@ -128,7 +128,7 @@ router.get("/wall-posts/unread/count",
 router.post("/wall-posts/unread/count/reset", 
     AuthenticateUser(),
     (req, res) => {
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         db.wallPosts.resetUnreadCount(user.userId)
         res.end()
     }

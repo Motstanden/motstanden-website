@@ -6,6 +6,7 @@ import passport from 'passport'
 import { db } from "../db/index.js"
 import { AccessTokenData } from '../ts/interfaces/AccessTokenData.js'
 import { RefreshTokenData } from '../ts/interfaces/RefreshTokenData.js'
+import { getUser } from "../utils/getUser.js"
 
 enum JwtToken {
     AccessToken = "AccessToken",
@@ -143,7 +144,7 @@ function signRefreshToken(user: AccessTokenData): string {
 
 export function loginUser(req: Request, res: Response) {
 
-    const user = req.user as AccessTokenData
+    const user = getUser(req)
 
     // -- Sign and save access token --
     const accessToken = signToken(JwtToken.AccessToken, user)
@@ -200,7 +201,7 @@ export function logOut(req: Request, res: Response) {
 }
 
 export function logOutAllUnits(req: Request, res: Response) {
-    const user = req.user as AccessTokenData
+    const user = getUser(req)
     db.users.refreshTokens.deleteAllMatches(user.userId)
     clearAllAuthCookies(res)
     res.end()

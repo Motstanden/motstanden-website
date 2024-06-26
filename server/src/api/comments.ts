@@ -8,7 +8,7 @@ import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { validateBody } from "../middleware/zodValidation.js"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { getUser } from "../utils/getUser.js"
 
 const router = express.Router()
 
@@ -100,7 +100,7 @@ function postCommentHandler( {
     return (req: Request, res: Response) => {
 
         // Validated by middleware
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         const comment = NewCommentSchema.parse(req.body)
         const entityId = getEntityId(req)
 
@@ -214,7 +214,7 @@ function patchCommentHandler( {
 router.get("/comments/unread/count", 
     AuthenticateUser(),
     (req, res) => {
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
 
         const unreadCount = db.comments.getUnreadCount(user.userId)
         const result: Count = {
@@ -228,7 +228,7 @@ router.get("/comments/unread/count",
 router.post("/comments/unread/count/reset", 
     AuthenticateUser(),
     (req, res) => {
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         db.comments.resetUnreadCount(user.userId)
         res.end()
     }

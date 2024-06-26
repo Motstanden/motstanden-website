@@ -6,7 +6,7 @@ import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { validateBody } from "../middleware/zodValidation.js"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { getUser } from "../utils/getUser.js"
 
 const router = express.Router()
 
@@ -96,7 +96,7 @@ function upsertLikeHandler({
     getEntityId: (req: Request) => number
 }) {
     return async (req: Request, res: Response) => {
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         const entityId = getEntityId(req)
         const like = NewLikeSchema.parse(req.body)
 
@@ -147,7 +147,7 @@ function deleteLikeHandler({
     getEntityId: (req: Request) => number
 }) {
     return async (req: Request, res: Response) => {
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         const entityId = getEntityId(req)
         try {
             db.likes.delete(entityType, entityId, user.userId)

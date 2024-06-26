@@ -1,10 +1,10 @@
 import { UserEditMode, UserGroup } from "common/enums"
 import { NewUser, User } from "common/interfaces"
 import express, { NextFunction, Request, Response } from "express"
+import { db } from "../db/index.js"
 import { AuthenticateUser, updateAccessToken } from "../middleware/jwtAuthenticate.js"
 import { requiresGroup } from "../middleware/requiresGroup.js"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
-import { db } from "../db/index.js"
+import { getUser } from "../utils/getUser.js"
 
 const router = express.Router()
 
@@ -48,7 +48,7 @@ function handleUserUpdate(updateMode: UserEditMode) {
         }
 
         if (changeSuccess) {
-            const currentUser = req.user as AccessTokenData
+            const currentUser = getUser(req)
             if (payload.id === currentUser.userId) {
                 updateAccessToken(req, res, () => { }, {})
             }
@@ -59,7 +59,7 @@ function handleUserUpdate(updateMode: UserEditMode) {
 }
 
 function RequireSelf(req: Request, res: Response, next: NextFunction) {
-    const user = req.user as AccessTokenData
+    const user = getUser(req)
     const newUser = req.body as User | undefined
     if (newUser?.id && newUser.id === user.userId) {
         next()

@@ -7,7 +7,7 @@ import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroup } from "../middleware/requiresGroup.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { validateBody } from "../middleware/zodValidation.js"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { getUser } from "../utils/getUser.js"
 
 const router = express.Router();
 
@@ -46,7 +46,7 @@ router.post("/simple-text/:id/update",
 
         // Validated by middleware
         const id = strToNumber(req.params.id) as number
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         const newSimpleText = UpdateSimpleTextSchema.parse(req.body)
 
         if(!newSimpleText)

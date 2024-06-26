@@ -10,6 +10,7 @@ import { validateBody } from "../middleware/zodValidation.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { getRandomInt } from "../utils/getRandomInt.js"
 import { sleepAsync } from "../utils/sleepAsync.js"
+import { getUser } from "../utils/getUser.js"
 
 const router = express.Router()
 
@@ -89,7 +90,7 @@ router.post("/auth/logout/all-devices", AuthenticateUser(), logOutAllUnits)
 router.get("/auth/current-user",
     AuthenticateUser( { failureRedirect: "/api/auth/current-user-failure" }),
     (req, res) => {
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         const userData = db.users.get(user.userId)
         if(userData) {
             res.send(userData)

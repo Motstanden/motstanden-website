@@ -7,8 +7,8 @@ import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { validateBody } from "../middleware/zodValidation.js"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import dailyRandomInt from "../utils/dailyRandomInt.js"
+import { getUser } from "../utils/getUser.js"
 
 const router = express.Router()
 
@@ -44,7 +44,7 @@ router.post("/rumours/new",
     (req, res) => {
 
         // Validated by middleware
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         const body = NewRumourSchema.parse(req.body)
 
         try {

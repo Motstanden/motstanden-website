@@ -7,7 +7,7 @@ import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
 import { validateNumber } from "../middleware/validateNumber.js"
 import { validateBody } from "../middleware/zodValidation.js"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
+import { getUser } from "../utils/getUser.js"
 
 const router = express.Router() 
 
@@ -34,7 +34,7 @@ router.get("/polls/:id/options",
         failureMessage: "Could not parse poll id"
     }),
     (req, res) => {
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         const id = strToNumber(req.params.id) as number
 
         const isValid = db.polls.exists(id)
@@ -89,7 +89,7 @@ router.post("/polls/new",
     (req, res) => {
 
         // Validated by middleware
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         const newPoll = NewPollSchema.parse(req.body)
 
         if(!newPoll)
@@ -135,7 +135,7 @@ router.post("/polls/:id/vote/upsert",
     validateBody(UpsertVoteSchema),
     (req, res) => {
         
-        const user = req.user as AccessTokenData
+        const user = getUser(req)
         const pollId = strToNumber(req.params.id) as number
         const optionIds = UpsertVoteSchema.parse(req.body)
 
