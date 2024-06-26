@@ -1,9 +1,11 @@
 import { UserEditMode, UserGroup } from "common/enums"
-import { NewUser, User } from "common/interfaces"
+import { User } from "common/interfaces"
 import express, { NextFunction, Request, Response } from "express"
+import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser, updateAccessToken } from "../middleware/jwtAuthenticate.js"
 import { requiresGroup } from "../middleware/requiresGroup.js"
+import { validateBody } from "../middleware/zodValidation.js"
 import { getUser } from "../utils/getUser.js"
 
 const router = express.Router()
@@ -69,19 +71,34 @@ function RequireSelf(req: Request, res: Response, next: NextFunction) {
     }
 }
 
-router.post("/create-user", requiresGroup(UserGroup.SuperAdministrator), (req: Request, res: Response) => {
-    const user = req.body as NewUser
 
-    // TODO: validate user
+// ---- POST users ----
 
-    try {
-        const userId = db.users.insert(user)
-        res.json({userId: userId})
-    } catch (err) {
-        console.log(err)
-        res.status(400).send("Bad data")
-    }
-
-    res.end()
+const NewUserSchema = z.object({ 
+    firstName: z.string().trim().min(1, "First name cannot be empty"),
+    middleName: z.string().trim(),
+    lastName: z.string().trim().min(1, "Last name cannot be empty"),
+    email: z.string()
+        .trim()
+        .toLowerCase()
+        .email()
+        .refine(value => !value.endsWith("ntnu.no"), "Email cannot be an NTNU email"),
+    profilePicture: z.string()
+        .trim()
+        .pipe(z.union([
+            z.literal("files/private/profilbilder/boy.png"),
+            z.literal("files/private/profilbilder/girl.png")
+        ])),
 })
+
+
+router.post("/users", 
+    requiresGroup(UserGroup.SuperAdministrator),
+    validateBody(NewUserSchema), 
+    (req: Request, res: Response) => {
+    const user = NewUserSchema.parse(req.body)
+    const userId = db.users.insert(user)
+    res.json({userId: userId})
+})
+
 export default router

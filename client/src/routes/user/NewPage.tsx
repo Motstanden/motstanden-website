@@ -64,7 +64,7 @@ function NewUserForm() {
         setIsSubmitting(true)
         const user = buildUser()
         
-        const response = await postJson("/api/create-user", user, {alertOnFailure: true})
+        const response = await postJson("/api/users", user, {alertOnFailure: true})
 
         if (response && response.ok) {
             const data: {userId: number} = await response.json() 
