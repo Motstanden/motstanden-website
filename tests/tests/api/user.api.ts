@@ -73,3 +73,45 @@ test.describe("GET api/users/identifiers", () => {
         expect(res.ok()).toBeFalsy()
     })
 })
+
+test.describe.serial("Create and update user", () => {
+    
+    test("POST /api/users", async ({request}, workerInfo) => { 
+        throw "Not implemented"
+    })
+
+    test("PATCH /api/users/me", async ({request}, workerInfo) => { 
+        throw "Not implemented"
+    })
+
+    test.describe.serial("PUT /api/users/:id/role", () => { 
+
+        test("Admin can promote to admin", async ({request}, workerInfo) => { 
+            throw "Not implemented"
+        })
+
+        test("Admin can not promote to super admin", async ({request}, workerInfo) => { 
+            throw "Not implemented"
+        })
+
+        test("Super admin can promote to super admin", async ({request}, workerInfo) => { 
+            throw "Not implemented"
+        })
+
+        test("Admin can not demote super admin", async ({request}, workerInfo) => { 
+            throw "Not implemented"
+        })
+
+        test("Super admin can demote super admin", async ({request}, workerInfo) => { 
+            throw "Not implemented"
+        })
+    })
+    
+    test("PUT /api/users/:id/membership", async ({request}, workerInfo) => { 
+        throw "Not implemented"
+    })
+
+    test("PATCH /api/users/:id", async ({request}, workerInfo) => { 
+        throw "Not implemented"
+    })
+})
