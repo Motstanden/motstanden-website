@@ -61,9 +61,9 @@ test.describe.serial("api/wall-posts/unread", () => {
     })
 
     test("Deleting post decreases count", async ({ }) => { 
-        await deletePost(api1, post.id)
+        await deletePost(api1, post!.id)
 
-        const deletedPost = await getMatchingPost(api1, post)
+        const deletedPost = await getMatchingPost(api1, post!)
         const count1 = await getUnreadCount(api1)
         const count2 = await getUnreadCount(api2)
         
@@ -80,27 +80,28 @@ async function getUnreadCount(request: APIRequestContext) {
 }
 
 async function resetUnreadCount(request: APIRequestContext) {
-    const res = await request.post("/api/wall-posts/unread/count/reset")
+    const res = await request.put("/api/wall-posts/unread/count")
     if(!res.ok()) 
-        throw new Error("Failed to reset unread count")
+        throw new Error(`Failed to reset unread count.\n${res.status()}: ${res.statusText()}`)
 }
 
 async function createPost(request: APIRequestContext, post: NewWallPost) {
-    const res = await request.post("/api/wall-posts/new", { data: post })
+    const res = await request.post("/api/wall-posts", { data: post })
+    console.log(res)
     if(!res.ok()) 
-        throw new Error("Failed to create post")
+        throw new Error(`Failed to create post.\n${res.status()}: ${res.statusText()}`)
 }
 
 async function deletePost(request: APIRequestContext, postId: number) {
     const res = await request.delete(`/api/wall-posts/${postId}`)
     if(!res.ok()) 
-        throw new Error("Failed to delete post")
+        throw new Error(`Failed to delete post.\n${res.status()}: ${res.statusText()}`)
 }
 
 async function getAllPosts(request: APIRequestContext) { 
-    const res = await request.get("/api/wall-posts/all")
+    const res = await request.get("/api/wall-posts")
     if(!res.ok()) 
-        throw new Error("Failed to get all posts")
+        throw new Error(`Failed to get all posts.\n${res.status()}: ${res.statusText()}`)
     const data = await res.json() as WallPost[]
     return data
 }

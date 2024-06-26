@@ -47,7 +47,7 @@ function useUnreadWallPosts() {
     
     const resetCount = useMutation({
         mutationFn: async () => {
-            return await fetch("/api/wall-posts/unread/count/reset", { method: "POST" })
+            return await fetch("/api/wall-posts/unread/count", { method: "PUT" })
         },
         onSettled: async () => {
             return await queryClient.invalidateQueries({queryKey: queryKey})

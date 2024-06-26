@@ -50,7 +50,7 @@ const NewWallPostSchema = z.object({
     wallUserId: z.coerce.number().int().positive().finite(),
 })
 
-router.post("/wall-posts/new",
+router.post("/wall-posts",
     AuthenticateUser(),
     validateBody(NewWallPostSchema),
     (req, res) => {
@@ -115,6 +115,8 @@ router.delete("/wall-posts/:id",
     }
 )
 
+// ---- GET/PUT count of unread wall posts ----
+
 router.get("/wall-posts/unread/count", 
     AuthenticateUser(),
     (req, res) => {
@@ -129,7 +131,7 @@ router.get("/wall-posts/unread/count",
     }
 )
 
-router.post("/wall-posts/unread/count/reset", 
+router.put("/wall-posts/unread/count", 
     AuthenticateUser(),
     (req, res) => {
         const user = getUser(req)

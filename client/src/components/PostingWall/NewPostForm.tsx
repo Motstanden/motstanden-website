@@ -45,7 +45,7 @@ export function NewPostForm({
             content: value.content.trim()
         };
 
-        const response = await postJson(`/api/wall-posts/new`, newValue, { alertOnFailure: true });
+        const response = await postJson(`/api/wall-posts`, newValue, { alertOnFailure: true });
 
         if (response && response.ok) {
             onPostSuccess && await onPostSuccess(response);

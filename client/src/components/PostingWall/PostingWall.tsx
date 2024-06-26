@@ -1,12 +1,12 @@
-import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
-import { WallPost } from "common/interfaces";
-import { useAuthenticatedUser } from "src/context/Authentication";
-import { useQuerySuccess } from 'src/hooks/useQuerySuccess';
-import { StorageKeyArray } from 'src/hooks/useStorage';
-import { fetchFn } from "src/utils/fetchAsync";
-import { NewPostForm } from './NewPostForm';
-import { PostList } from './PostList';
-import { PostListSkeleton } from './Skeleton';
+import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query"
+import { WallPost } from "common/interfaces"
+import { useAuthenticatedUser } from "src/context/Authentication"
+import { useQuerySuccess } from 'src/hooks/useQuerySuccess'
+import { StorageKeyArray } from 'src/hooks/useStorage'
+import { fetchFn } from "src/utils/fetchAsync"
+import { NewPostForm } from './NewPostForm'
+import { PostList } from './PostList'
+import { PostListSkeleton } from './Skeleton'
 
 export function PostingWall({
     userId,
@@ -70,9 +70,9 @@ function PostingWallFetcher({
     onLoadedPosts?: () => void
 }) {
     
-    let url = "/api/wall-posts/all"
+    let url = "/api/wall-posts"
     if(userId)
-        url += `?userId=${userId}`
+        url += `?wallUserId=${userId}`
 
     const { isPending, isError, data, error, isSuccess } = useQuery<WallPost[]>({
         queryKey: queryKey,
