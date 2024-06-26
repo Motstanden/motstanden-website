@@ -6,41 +6,44 @@ import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
-import { validateNumber } from "../middleware/validateNumber.js"
-import { validateBody } from "../middleware/zodValidation.js"
+import { validateBody, validateParams, validateQuery } from "../middleware/zodValidation.js"
 import { getUser } from "../utils/getUser.js"
+import { Schemas } from "../utils/zodSchema.js"
 
 const router = express.Router()
 
-router.get("/wall-posts/all?:userId",
+// ---- GET wall-posts ----
+
+const WallPostsQuerySchema = z.object({ 
+    wallUserId: Schemas.z.stringToInt("wallUserId must be a positive integer").optional(),
+})
+
+router.get("/wall-posts",
     AuthenticateUser(),
+    validateQuery(WallPostsQuerySchema),
     (req, res) => {
-        const userId = strToNumber(req.query.userId?.toString())
-        const posts = db.wallPosts.getAll(userId)
+        const { wallUserId } = WallPostsQuerySchema.parse(req.query)
+        const posts = db.wallPosts.getAll(wallUserId)
         res.send(posts)
     }
 )
 
 router.get("/wall-posts/:id",
     AuthenticateUser(),
-    validateNumber({
-        getValue: req => req.params.id,
-    }),
+    validateParams(Schemas.params.id),
     (req, res) => {
-        const postId = strToNumber(req.params.id) as number         // Validated by middleware
-        try {
-            const post = db.wallPosts.get(postId)
-            if (!post) {
-                return res.status(404).send("Post not found")
-            }
+        const { id: postId } = Schemas.params.id.parse(req.params)
+        const post = db.wallPosts.get(postId)
+
+        if (post !== undefined) {
             res.send(post)
-        } catch (err) {
-            console.error(err)
-            res.status(500).send("Failed to get post from database")
+        } else {
+            res.status(404).send("Post not found")
         }
-        res.end()
     }
 )
+
+// ---- POST wall-posts ----
 
 const NewWallPostSchema = z.object({
     content: z.string().trim().min(1, "Content must not be empty"),
@@ -66,23 +69,7 @@ router.post("/wall-posts/new",
     }
 )
 
-router.delete("/wall-posts/:id",
-    AuthenticateUser(),
-    requiresGroupOrAuthor({
-        requiredGroup: UserGroup.Administrator,
-        getId: (req) => strToNumber(req.params.id),
-        getAuthorInfo: (id) => db.wallPosts.get(id)
-    }),
-    (req, res) => {
-        const postId = strToNumber(req.params.id) as number     // is validated by middleware
-        try {
-            db.wallPosts.delete(postId)
-        } catch (err) {
-            res.status(500).send("Failed to delete post from the database")
-        }
-        res.end()
-    }
-)
+// ---- PATCH wall-posts ----
 
 const UpdateWallPostSchema = z.object({ 
     content: z.string().trim().min(1, "Content must not be empty")
@@ -107,6 +94,23 @@ router.patch("/wall-posts/:id",
             console.error(err)
             res.status(500).send("Failed to update post in database")
         }
+        res.end()
+    }
+)
+
+// ---- DELETE wall-posts ----
+
+router.delete("/wall-posts/:id",
+    AuthenticateUser(),
+    validateParams(Schemas.params.id),
+    requiresGroupOrAuthor({
+        requiredGroup: UserGroup.Administrator,
+        getId: (req) => strToNumber(req.params.id),
+        getAuthorInfo: (id) => db.wallPosts.get(id)
+    }),
+    (req, res) => {
+        const { id: postId } = Schemas.params.id.parse(req.params)
+        db.wallPosts.delete(postId)
         res.end()
     }
 )
