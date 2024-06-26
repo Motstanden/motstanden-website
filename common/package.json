@@ -47,9 +47,9 @@
   "author": "Studentorchesteret den Ohmske Motstanden",
   "license": "MÅKESODD v1",
   "dependencies": {
-    "dayjs": "^1.11.10"
+    "dayjs": "^1.11.11"
   },
   "devDependencies": {
-    "typescript": "^5.3.3"
+    "typescript": "^5.5.2"
   }
 }
