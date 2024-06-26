@@ -3,7 +3,7 @@ import { User } from "common/interfaces"
 import express, { NextFunction, Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../db/index.js"
-import { AuthenticateUser, updateAccessToken } from "../middleware/jwtAuthenticate.js"
+import { AuthenticateUser, logOutAllUnits, updateAccessToken } from "../middleware/jwtAuthenticate.js"
 import { requiresGroup } from "../middleware/requiresGroup.js"
 import { validateBody } from "../middleware/zodValidation.js"
 import { getUser } from "../utils/getUser.js"
@@ -16,16 +16,34 @@ router.get("/users",
     AuthenticateUser(),
     (req: Request, res: Response) => {
         const users = db.users.getAll()
-        res.send(users)
+        res.json(users)
 })
 
 router.get("/users/identifiers",
     AuthenticateUser(),
     (req: Request, res: Response) => {
         const users = db.users.getAllAsIdentifiers()
-        res.send(users)
+        res.json(users)
 })
     
+router.get("/users/me",
+    AuthenticateUser(),
+    (req, res) => {
+        const user = getUser(req)
+        const userData = db.users.get(user.userId)
+        if(userData !== undefined) {
+            res.json(userData)
+        } else {
+            // This should never happen.
+            // If the user is authenticated, the user should be in the database.
+            console.error(`User authenticated but not found in database.\nUser: ${user}\nLogging user out of all units.`)
+            logOutAllUnits(req, res)
+            res.status(410).send("User authenticated but not found in database")        
+        }
+    }
+)
+
+
 // ---- Update users ----
 
 router.post("/super-admin/update-user", requiresGroup(UserGroup.SuperAdministrator), handleUserUpdate(UserEditMode.SuperAdmin))

@@ -1,10 +1,10 @@
-import { APIRequestContext, request, test as setup } from "@playwright/test";
-import { UserGroup } from "common/enums";
-import { User } from "common/interfaces";
-import fs from "fs/promises";
-import path from "path";
-import { testUserVariationsCount, unsafeApiLogIn, unsafeGetUser } from "./utils/auth.js";
-import { getDirname } from "./utils/getDirname.js";
+import { APIRequestContext, request, test as setup } from "@playwright/test"
+import { UserGroup } from "common/enums"
+import { User } from "common/interfaces"
+import fs from "fs/promises"
+import path from "path"
+import { testUserVariationsCount, unsafeApiLogIn, unsafeGetUser } from "./utils/auth.js"
+import { getDirname } from "./utils/getDirname.js"
 
 setup.describe.configure({ mode: "serial" })
 
@@ -51,7 +51,7 @@ async function loginUser(userGroup: UserGroup, variantIndex: number) {
 }
 
 async function fetchCurrentUser(apiContext: APIRequestContext): Promise<User> { 
-    const fetchUser = await apiContext.get("/api/auth/current-user")
+    const fetchUser = await apiContext.get("/api/users/me")
     if(!fetchUser.ok())
         throw `Failed to fetch current user from database`
     const user = await fetchUser.json() as User

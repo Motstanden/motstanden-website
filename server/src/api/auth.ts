@@ -10,7 +10,6 @@ import { validateBody } from "../middleware/zodValidation.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { getRandomInt } from "../utils/getRandomInt.js"
 import { sleepAsync } from "../utils/sleepAsync.js"
-import { getUser } from "../utils/getUser.js"
 
 const router = express.Router()
 
@@ -86,24 +85,5 @@ router.get(
 router.post("/auth/logout", AuthenticateUser(), logOut)
 
 router.post("/auth/logout/all-devices", AuthenticateUser(), logOutAllUnits)
-
-router.get("/auth/current-user",
-    AuthenticateUser( { failureRedirect: "/api/auth/current-user-failure" }),
-    (req, res) => {
-        const user = getUser(req)
-        const userData = db.users.get(user.userId)
-        if(userData) {
-            res.send(userData)
-        } else {
-            // This should never happen.
-            // If the user is authenticated, the user should be in the database.
-            // TODO: Handle this case better. 
-            console.error("User authenticated but not found in database.")
-            res.status(404).end("User authenticated but not found in database")        
-        }
-    }
-)
-
-router.get("/auth/current-user-failure", (req, res) => res.status(204).end())
 
 export default router

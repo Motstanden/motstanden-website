@@ -1,10 +1,10 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { UserGroup } from "common/enums";
-import { User } from "common/interfaces";
-import { hasGroupAccess } from "common/utils";
-import React, { useContext, useEffect, useState } from "react";
-import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useLocalStorage } from 'src/hooks/useStorage';
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { UserGroup } from "common/enums"
+import { User } from "common/interfaces"
+import { hasGroupAccess } from "common/utils"
+import React, { useContext, useEffect, useState } from "react"
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom"
+import { useLocalStorage } from 'src/hooks/useStorage'
 
 type LoggedOutContextType = { 
     user: undefined,
@@ -69,14 +69,15 @@ function signOutAllDevices( {onSuccess}: { onSuccess?: () => void | Promise<void
 }
 
 async function fetchCurrentUser(): Promise<User | null> {
-    const res = await fetch("/api/auth/current-user")
-    if(!res.ok)
-        throw `${res.status} ${res.statusText}`
-
-    if (res.status === 204)     // Request was successful but user is not logged in
-        return null
-    
-    return await res.json()
+    const res = await fetch("/api/users/me")
+    switch(res.status) { 
+        case 200: 
+            return await res.json() as User
+        case 401:                           // Unauthorized: User is not logged in
+            return null
+        default: 
+            throw `${res.status}: ${res.statusText}`
+    }
 }
 
 // NB: If you change this, make sure to also change the key in the global playwright test setup file:
