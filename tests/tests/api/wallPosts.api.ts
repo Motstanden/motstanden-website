@@ -87,7 +87,6 @@ async function resetUnreadCount(request: APIRequestContext) {
 
 async function createPost(request: APIRequestContext, post: NewWallPost) {
     const res = await request.post("/api/wall-posts", { data: post })
-    console.log(res)
     if(!res.ok()) 
         throw new Error(`Failed to create post.\n${res.status()}: ${res.statusText()}`)
 }
