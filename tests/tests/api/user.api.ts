@@ -106,7 +106,7 @@ test.describe.serial("Create and update user", () => {
             status: UserStatus.Active,
             phoneNumber: null,
             birthDate: null,
-            startDate: dayjs().format("YYYY-MM-DD"),    // TODO: Convert this to utc
+            startDate: dayjs().utc().format("YYYY-MM-DD"),
             endDate: null,  
             
             // createdAt and updatedAt are not known in advance
