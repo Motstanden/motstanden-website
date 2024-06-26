@@ -60,6 +60,45 @@ router.get("/users/:id",
 
 // ---- Update users ----
 
+router.patch("/users/me", 
+    AuthenticateUser(), 
+    (req, res) => { 
+        // TODO: Update current user with new data
+    }
+)
+
+router.patch("/users/:id", 
+    AuthenticateUser(),
+    validateParams(Schemas.params.id),
+    RequiresGroup(UserGroup.SuperAdministrator),
+    (req, res) => { 
+        // TODO: Update all user fields
+    }
+)
+
+router.put("/users/:id/role", 
+    AuthenticateUser(),
+    validateParams(Schemas.params.id),
+    RequiresGroup(UserGroup.Administrator),
+    (req, res) => { 
+        // TODO: Update user role.
+        //  1. Super admin can do whatever they want
+        //  2. Prevent admin from demoting super admins
+        //  3. Prevent admin from promoting users to super admins 
+    }
+)
+
+router.put("/users/:id/membership",
+    AuthenticateUser(),
+    validateParams(Schemas.params.id),
+    RequiresGroup(UserGroup.Administrator),
+    (req, res) => { 
+        // TODO: Update user membership
+    }
+)
+
+// --- DEPRECATED: Remove soon ----
+
 router.post("/super-admin/update-user", AuthenticateUser(), RequiresGroup(UserGroup.SuperAdministrator), handleUserUpdate(UserEditMode.SuperAdmin))
 
 router.post("/admin/update-user", AuthenticateUser(), RequiresGroup(UserGroup.Administrator), handleUserUpdate(UserEditMode.Admin))
