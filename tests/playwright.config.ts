@@ -19,6 +19,10 @@ const config: PlaywrightTestConfig = {
     testMatch: [
         "*.spec.ts", "*.api.ts"
     ],
+
+    /* Files matching .gitignore patterns are excluded when searching for tests */
+    respectGitIgnore: true,
+
     /* Maximum time one test can run for. */
     timeout: 55 * 1000,
     expect: {
