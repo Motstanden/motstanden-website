@@ -35,3 +35,39 @@ export interface User extends NewUser {
     createdAt: string;              // Format: 'YYYY-MM-DD HH-MM-SS'
     updatedAt: string;              // Format: 'YYYY-MM-DD HH-MM-SS'
 }
+
+export interface UserUpdateAsSelf extends Pick<User, 
+    "firstName" | 
+    "middleName" | 
+    "lastName" | 
+    "email" |  
+    "phoneNumber" |
+    "birthDate" |
+    "startDate" |
+    "endDate" 
+> {}
+
+export interface UserUpdateMembership extends Pick<User,
+    "rank" |
+    "capeName" |
+    "status" |
+    "startDate" |
+    "endDate"
+> {}
+    
+export interface UserUpdateRole extends Pick<User, "groupName"> {}
+
+export interface UserUpdateSuperAdmin extends Pick<User, 
+    "firstName" | 
+    "middleName" | 
+    "lastName" | 
+    "email" |
+    "groupName" |
+    "rank" |
+    "capeName" |
+    "status" |
+    "phoneNumber" |
+    "birthDate" |
+    "startDate" |
+    "endDate" 
+> {}
