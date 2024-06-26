@@ -137,7 +137,7 @@ function PersonForm({ value, onChange, onIsValidChange, editMode }: FormParams) 
                 views={["year", "month", "day"]}
                 label="Fødselsdato"
                 minDate={dayjs().subtract(100, "year")}
-                maxDate={dayjs().subtract(18, "year")}
+                // maxDate={dayjs().subtract(18, "year")}   // Uncomment as it is causing rendering issues
                 value={value.birthDate ? dayjs(value.birthDate) : null}
                 onChange={(newVal: Dayjs | null) => onChange({ ...value, birthDate: newVal?.format("YYYY-MM-DD") ?? null })}
             />

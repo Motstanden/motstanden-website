@@ -1,21 +1,21 @@
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import {
     Button,
     MenuItem,
     Paper,
     Stack,
     TextField
-} from "@mui/material";
-import { useQueryClient } from '@tanstack/react-query';
-import { NewUser } from 'common/interfaces';
-import { isNtnuMail as checkIsNtnuMail, isNullOrWhitespace } from 'common/utils';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useTitle } from 'src/hooks/useTitle';
-import { postJson } from 'src/utils/postJson';
-import { userListQueryKey } from './Context';
-import { profilePictureTVPair } from "./utils/TextValuePair";
-import { useAppBarHeader } from 'src/context/AppBarHeader';
+} from "@mui/material"
+import { useQueryClient } from '@tanstack/react-query'
+import { NewUser } from 'common/interfaces'
+import { isNtnuMail as checkIsNtnuMail, isNullOrWhitespace } from 'common/utils'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAppBarHeader } from 'src/context/AppBarHeader'
+import { useTitle } from 'src/hooks/useTitle'
+import { postJson } from 'src/utils/postJson'
+import { userListQueryKey } from './Context'
+import { profilePictureTVPair } from "./utils/TextValuePair"
 
 export default function NewUserPage() {
     useTitle("Ny Bruker")
