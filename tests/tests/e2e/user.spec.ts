@@ -77,7 +77,7 @@ test.describe.serial("Create and update user data", async () => {
 
     test("Should create new user @smoke", async ({browser}, workerInfo) => {
         user = createUser({
-            capeName: null,
+            capeName: "",
             phoneNumber: null,
             birthDate: null,
             endDate: null,
@@ -351,7 +351,7 @@ function getEnums<T>(enumObj: {}): T[] {
 }
 
 async function gotoUser(page: Page, user: TestUser, opts?: {editUser?: boolean}) {
-    const url = opts.editUser 
+    const url = opts?.editUser === true 
         ? `/medlem/${user.id}/rediger`
         : `/medlem/${user.id}`
     await page.goto(url)

@@ -1,5 +1,5 @@
-import { TestInfo, expect, test, type Page } from '@playwright/test';
-import { unsafeApiLogIn } from '../../utils/auth.js';
+import { TestInfo, expect, test, type Page } from '@playwright/test'
+import { unsafeApiLogIn } from '../../utils/auth.js'
 
 function getReservedMail(workerInfo: TestInfo) {
     return `test-auth-${workerInfo.parallelIndex + 1}@motstanden.no`
@@ -34,7 +34,7 @@ test.describe("Login tokens are created and persisted", () => {
         expect(refreshToken).toBeDefined()
 
         // Test that AccessToken expires within 15 minutes
-        expect(accessToken.expires * 1000).toBeLessThanOrEqual(Date.now() + 1000*60*15)
+        expect(accessToken!.expires * 1000).toBeLessThanOrEqual(Date.now() + 1000*60*15)
     })
 
     test("AccessToken is renewed if browser only has RefreshToken", async ({page}) => {

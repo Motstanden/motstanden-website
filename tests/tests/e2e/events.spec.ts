@@ -1,13 +1,13 @@
-import { expect, Page, test } from '@playwright/test';
-import { ParticipationStatus, UserGroup } from 'common/enums';
-import { NewEventData } from 'common/interfaces';
-import dayjs from "common/lib/dayjs";
-import { getFullName } from 'common/utils';
-import { formatDateTimeInterval } from "common/utils/dateTime";
-import { randomInt, randomUUID } from 'crypto';
-import { disposeLogIn, logIn, TestUser } from '../../utils/auth.js';
-import { selectDate } from '../../utils/datePicker.js';
-import { randomString } from '../../utils/randomString.js';
+import { expect, Page, test } from '@playwright/test'
+import { ParticipationStatus, UserGroup } from 'common/enums'
+import { NewEventData } from 'common/interfaces'
+import dayjs from "common/lib/dayjs"
+import { getFullName } from 'common/utils'
+import { formatDateTimeInterval } from "common/utils/dateTime"
+import { randomInt } from 'crypto'
+import { disposeLogIn, logIn, TestUser } from '../../utils/auth.js'
+import { selectDate } from '../../utils/datePicker.js'
+import { randomString } from '../../utils/randomString.js'
 
 test.describe("Contributor can update and delete events they have created", async () => {
     testCrud({
@@ -61,8 +61,9 @@ function testCrud(opts: CrudOptions) {
 	test.describe.configure({mode: 'serial'})
 	test.slow()
 
-	opts.updater ??= opts.creator
-    opts.deleter ??= opts.updater
+	const { participator } = opts
+	const updater = opts.updater ?? opts.creator
+	const deleter = opts.deleter ?? updater
 
     const event1: TestEvent = createRandomEvent()
 	const event2: TestEvent = createRandomEvent()
@@ -81,13 +82,13 @@ function testCrud(opts: CrudOptions) {
 		await disposeLogIn(page)
 	})
 
-	if(opts.participator) {
+	if(participator !== undefined) {
 		test(`User can participate on events (${opts.testId})`, async ({browser}, workerInfo) => {
 
 			if(opts.participator === opts.creator) 
 				throw "Invalid operation: participator and creator can not be the same user";
 
-			const { page, user } = await logIn(browser, workerInfo, opts.participator)
+			const { page, user } = await logIn(browser, workerInfo, participator)
 			await page.goto(eventUrl)
 
 			await testParticipation(page, user)
@@ -98,7 +99,7 @@ function testCrud(opts: CrudOptions) {
 
 	test(`Update (${opts.testId})`, async ({browser}, workerInfo) => {
 
-		const { page } = await logIn(browser, workerInfo, opts.updater)
+		const { page } = await logIn(browser, workerInfo, updater)
 		await page.goto(eventUrl)
 
     	await testUpdate(page, event1, event2)
@@ -108,7 +109,7 @@ function testCrud(opts: CrudOptions) {
 
 	test(`Delete (${opts.testId})`, async ({browser}, workerInfo) => {
 
-		const { page } = await logIn(browser, workerInfo, opts.deleter)
+		const { page } = await logIn(browser, workerInfo, deleter)
 		await page.goto(eventUrl)
 		
     	await testDelete(page, event2)
