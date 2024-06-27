@@ -60,19 +60,19 @@ router.get("/users/:id",
 
 // ---- Update users ----
 
-router.patch("/users/me", 
-    AuthenticateUser(), 
-    (req, res) => { 
-        // TODO: Update current user with new data
-    }
-)
-
-router.put("/users/:id", 
+router.patch("/users/:id", 
     AuthenticateUser(),
     validateParams(Schemas.params.id),
     RequiresGroup(UserGroup.SuperAdministrator),
     (req, res) => { 
         // TODO: Update all user fields
+    }
+)
+
+router.patch("/users/me", 
+    AuthenticateUser(), 
+    (req, res) => { 
+        // TODO: Update current user with new data
     }
 )
 
