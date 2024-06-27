@@ -1,5 +1,5 @@
 import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums"
-import { User, UserUpdateAsSelf, UserUpdateAsSuperAdmin, UserUpdateMembership, UserUpdateRole } from "common/interfaces"
+import { UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipBody, UpdateUserRoleBody, User } from "common/interfaces"
 import express, { NextFunction, Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../db/index.js"
@@ -106,7 +106,7 @@ router.patch("/users/:id",
     validateParams(Schemas.params.id),
     validateBody(UpdateUserSchema),
     (req, res) => { 
-        const newUserData: UserUpdateAsSuperAdmin = UpdateUserSchema.parse(req.body)
+        const newUserData: UpdateUserAsSuperAdminBody = UpdateUserSchema.parse(req.body)
         const { id } = Schemas.params.id.parse(req.params)
         
         // TODO: Update all user fields
@@ -128,7 +128,7 @@ router.patch("/users/me",
     AuthenticateUser(), 
     validateBody(UpdateCurrentUserSchema),
     (req, res) => { 
-        const newUserData: UserUpdateAsSelf = UpdateCurrentUserSchema.parse(req.body)
+        const newUserData: UpdateUserAsSelfBody = UpdateCurrentUserSchema.parse(req.body)
         const user = getUser(req)
         // TODO: Update current user with new data
     }
@@ -142,7 +142,7 @@ router.put("/users/:id/role",
     validateParams(Schemas.params.id),
     validateBody(UpdateUserRoleSchema),
     (req, res) => { 
-        const newRole: UserUpdateRole = UpdateUserRoleSchema.parse(req.body)
+        const newRole: UpdateUserRoleBody = UpdateUserRoleSchema.parse(req.body)
         const { id } = Schemas.params.id.parse(req.params)
         // TODO: Update user role.
         //  1. Super admin can do whatever they want
@@ -165,7 +165,7 @@ router.put("/users/:id/membership",
     validateParams(Schemas.params.id),
     validateBody(UpdateUserMembershipSchema),
     (req, res) => { 
-        const newUserData: UserUpdateMembership = UpdateUserMembershipSchema.parse(req.body)
+        const newUserData: UpdateUserMembershipBody = UpdateUserMembershipSchema.parse(req.body)
         const { id } = Schemas.params.id.parse(req.params)
 
         // TODO: Update user membership

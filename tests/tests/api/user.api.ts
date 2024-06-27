@@ -1,6 +1,6 @@
 import { APIRequestContext, APIResponse, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
-import { NewUser, User, UserUpdateAsSelf, UserUpdateMembership, UserUpdateRole } from 'common/interfaces'
+import { NewUser, UpdateUserAsSelfBody, UpdateUserMembershipBody, UpdateUserRoleBody, User } from 'common/interfaces'
 import { randomUUID } from 'crypto'
 import { z } from "zod"
 import dayjs from "../../lib/dayjs.js"
@@ -122,7 +122,7 @@ test.describe.serial("Create and update user", () => {
         await unsafeApiLogIn(request, user.email)
 
         const uuid: string = randomUUID().toLowerCase()
-        const updatedData: UserUpdateAsSelf = {
+        const updatedData: UpdateUserAsSelfBody = {
             firstName: "___Test_2",
             middleName: "___User_2",
             lastName: uuid,
@@ -228,7 +228,7 @@ async function testForbiddenUpdateRole(request: APIRequestContext, user: User, n
 }
 
 async function updateRole(request: APIRequestContext, user: User, newGroup: UserGroup) { 
-    const body: UserUpdateRole = {
+    const body: UpdateUserRoleBody = {
         groupName: newGroup
     }
     const res = await request.put(`/api/users/${user.id}/role`, { data: body })
@@ -262,13 +262,13 @@ async function getUser(request: APIRequestContext, id: number) {
 
 type UpdateType = {
     type: "self",
-    data: UserUpdateAsSelf
+    data: UpdateUserAsSelfBody
 } | {
     type: "membership",
-    data: UserUpdateMembership
+    data: UpdateUserMembershipBody
 } | {
     type: "superadmin",
-    data: UserUpdateMembership
+    data: UpdateUserMembershipBody
 }
 
 async function updateUser(request: APIRequestContext,  {type, data} : UpdateType)  {
