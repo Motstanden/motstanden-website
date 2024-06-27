@@ -62,8 +62,8 @@ router.get("/users/:id",
 
 router.patch("/users/:id", 
     AuthenticateUser(),
-    validateParams(Schemas.params.id),
     RequiresGroup(UserGroup.SuperAdministrator),
+    validateParams(Schemas.params.id),
     (req, res) => { 
         // TODO: Update all user fields
     }
@@ -78,8 +78,8 @@ router.patch("/users/me",
 
 router.put("/users/:id/role", 
     AuthenticateUser(),
-    validateParams(Schemas.params.id),
     RequiresGroup(UserGroup.Administrator),
+    validateParams(Schemas.params.id),
     (req, res) => { 
         // TODO: Update user role.
         //  1. Super admin can do whatever they want
@@ -90,8 +90,8 @@ router.put("/users/:id/role",
 
 router.put("/users/:id/membership",
     AuthenticateUser(),
-    validateParams(Schemas.params.id),
     RequiresGroup(UserGroup.Administrator),
+    validateParams(Schemas.params.id),
     (req, res) => { 
         // TODO: Update user membership
     }
