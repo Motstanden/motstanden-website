@@ -170,7 +170,23 @@ test("PATCH /api/users/:id", async ({request}, workerInfo) => {
 
 
 test("PUT /api/users/:id/membership", async ({request}, workerInfo) => { 
-    throw "Not implemented"
+    const user = await createRandomUser(workerInfo)
+    await apiLogIn(request, workerInfo, UserGroup.Administrator)
+
+    const uuid: string = randomUUID().toLowerCase()
+    const newUserData: UpdateUserMembershipBody = { 
+        rank: UserRank.GigaOhm,
+        capeName: `___capeName ${uuid}`,
+        status: UserStatus.Retired,
+        startDate: dayjs().subtract(6, "years").utc().format("YYYY-MM-DD"),
+        endDate: dayjs().subtract(3, "years").utc().format("YYYY-MM-DD"),
+    }
+    await updateUser(request, { type: "membership", data: newUserData, id: user.id })
+
+    const actualUser = await getUser(request, user.id)
+    const expectedUser: User = { ...user, ...newUserData,}
+
+    assertEqualUsers(actualUser, expectedUser)
 })
 
 test.describe("PUT /api/users/:id/role", () => { 
