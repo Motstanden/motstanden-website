@@ -57,7 +57,7 @@ export interface UserUpdateMembership extends Pick<User,
     
 export interface UserUpdateRole extends Pick<User, "groupName"> {}
 
-export interface UserUpdateSuperAdmin extends Pick<User, 
+export interface UserUpdateAsSuperAdmin extends Pick<User, 
     "firstName" | 
     "middleName" | 
     "lastName" | 
