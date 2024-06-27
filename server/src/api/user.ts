@@ -109,8 +109,25 @@ router.patch("/users/:id",
         const newUserData: UpdateUserAsSuperAdminBody = UpdateUserSchema.parse(req.body)
         const { id } = Schemas.params.id.parse(req.params)
         
-        // TODO: Update all user fields
+        // This could have been written as db.users.update(id, newUserData)
+        // However, it is safer and more secure to be explicit about what fields are updated.
+        db.users.update(id, {
+            firstName: newUserData.firstName,
+            middleName: newUserData.middleName,
+            lastName: newUserData.lastName,
+            email: newUserData.email,
+            groupName: newUserData.groupName,
+            rank: newUserData.rank,
+            capeName: newUserData.capeName,
+            status: newUserData.status,
+            phoneNumber: newUserData.phoneNumber,
+            birthDate: newUserData.birthDate,
+            startDate: newUserData.startDate,
+            endDate: newUserData.endDate,
+        })
+
         updateAccessTokenIfCurrentUser(req, res, id)
+        res.end()
     }
 )
 
@@ -132,9 +149,21 @@ router.patch("/users/me",
         const newUserData: UpdateUserAsSelfBody = UpdateCurrentUserSchema.parse(req.body)
         const user = getUser(req)
 
-        // TODO: Update current user with new data
+        // This could have been written as db.users.update(id, newUserData)
+        // However, it is safer and more secure to be explicit about what fields are updated.
+        db.users.update(user.userId, {
+            firstName: newUserData.firstName,
+            middleName: newUserData.middleName,
+            lastName: newUserData.lastName,
+            email: newUserData.email,
+            phoneNumber: newUserData.phoneNumber,
+            birthDate: newUserData.birthDate,
+            startDate: newUserData.startDate,
+            endDate: newUserData.endDate,
+        })
 
         updateAccessTokenIfCurrentUser(req, res, user.userId)
+        res.end()
     }
 )
 
@@ -146,15 +175,36 @@ router.put("/users/:id/role",
     validateParams(Schemas.params.id),
     validateBody(UpdateUserRoleSchema),
     (req, res) => { 
-        const newRole: UpdateUserRoleBody = UpdateUserRoleSchema.parse(req.body)
+        const { groupName: newRole }: UpdateUserRoleBody = UpdateUserRoleSchema.parse(req.body)
         const { id } = Schemas.params.id.parse(req.params)
 
-        // TODO: Update user role.
-        //  1. Super admin can do whatever they want
-        //  2. Prevent admin from demoting super admins
-        //  3. Prevent admin from promoting users to super admins 
+        const currentUser = getUser(req)
+        const targetUser = db.users.get(id)
+
+        if(targetUser === undefined) { 
+            return res.status(410).send("User does not exists")
+        }
+
+        const isSuperAdmin = currentUser.groupName === UserGroup.SuperAdministrator
+        const isAdmin = currentUser.groupName === UserGroup.Administrator
+        const newRoleIsSuperAdmin = newRole === UserGroup.SuperAdministrator
+        const targetUserIsSuperAdmin = targetUser.groupName === UserGroup.SuperAdministrator
+
+        if(isSuperAdmin) {
+            // Super admins can do whatever they want
+            db.users.update(id, { groupName: newRole })
+
+        } else if (isAdmin && !newRoleIsSuperAdmin && !targetUserIsSuperAdmin) { 
+            // Admin can change roles as long as:
+            //   1. They are not promoting a user to super admin
+            //   2. They are not demoting a super admin
+            db.users.update(id, { groupName: newRole })
+        } else {
+            res.status(403).send("Shame on you for trying this! This is logged and reported")   // Lie
+        }
 
         updateAccessTokenIfCurrentUser(req, res, id)
+        res.end()
     }
 )
 
@@ -175,9 +225,18 @@ router.put("/users/:id/membership",
         const newUserData: UpdateUserMembershipBody = UpdateUserMembershipSchema.parse(req.body)
         const { id } = Schemas.params.id.parse(req.params)
 
-        // TODO: Update user membership
+        // This could have been written as db.users.update(id, newUserData)
+        // However, it is safer and more secure to be explicit about what fields are updated.
+        db.users.update(id, {
+            rank: newUserData.rank,
+            capeName: newUserData.capeName,
+            status: newUserData.status,
+            startDate: newUserData.startDate,
+            endDate: newUserData.endDate,
+        })
 
         updateAccessTokenIfCurrentUser(req, res, id)
+        res.end()
     }
 )
 
@@ -185,57 +244,6 @@ function updateAccessTokenIfCurrentUser(req: Request, res: Response, userId: num
     const currentUser = getUser(req)
     if (userId === currentUser.userId) {
         updateAccessToken(req, res, () => { }, {})
-    }
-}
-
-// --- DEPRECATED: Remove soon ----
-
-router.post("/super-admin/update-user", AuthenticateUser(), RequiresGroup(UserGroup.SuperAdministrator), handleUserUpdate(UserEditMode.SuperAdmin))
-
-router.post("/admin/update-user", AuthenticateUser(), RequiresGroup(UserGroup.Administrator), handleUserUpdate(UserEditMode.Admin))
-
-router.post("/self-and-admin/update-user", AuthenticateUser(), RequiresGroup(UserGroup.Administrator), RequireSelf(), handleUserUpdate(UserEditMode.SelfAndAdmin))
-
-router.post("/self/update-user", AuthenticateUser(), RequireSelf(), handleUserUpdate(UserEditMode.Self))
-
-function handleUserUpdate(updateMode: UserEditMode) {
-    return (req: Request, res: Response, next: NextFunction) => {
-
-        const payload = req.body as User
-        if (!payload) {
-            res.status(400).send("Bad data")
-        }
-
-        let changeSuccess = false
-        try {
-            // db.users.update(payload, updateMode)
-            changeSuccess = true
-        } catch (err) {
-            console.log(err)
-            res.status(400).send("Failed to update user")
-        }
-
-        if (changeSuccess) {
-            const currentUser = getUser(req)
-            if (payload.id === currentUser.userId) {
-                updateAccessToken(req, res, () => { }, {})
-            }
-        }
-
-        res.end()
-    }
-}
-
-function RequireSelf() {
-    return (req: Request, res: Response, next: NextFunction) => { 
-        const user = getUser(req)
-        const newUser = req.body as User | undefined
-        if (newUser?.id && newUser.id === user.userId) {
-            next()
-        }
-        else {
-            res.status(401).send("Unauthorized").end()
-        }
     }
 }
 
