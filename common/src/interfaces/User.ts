@@ -42,6 +42,8 @@ export interface UpdateUserAsSelfBody extends Pick<User,
     "lastName" | 
     "email" |  
     "phoneNumber" |
+    "capeName" |
+    "status" |
     "birthDate" |
     "startDate" |
     "endDate" 
