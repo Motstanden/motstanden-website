@@ -124,14 +124,16 @@ test("PATCH /api/users/me", async ({request}, workerInfo) => {
     // Post new random user data
     const uuid: string = randomUUID().toLowerCase()
     const newUserData: UpdateUserAsSelfBody = {
-        firstName: "___Test_2",
-        middleName: "___User_2",
-        lastName: uuid,
+        firstName: `___firstName ${uuid}`,
+        middleName: `___middleName ${uuid}`,
+        lastName: `___lastName ${uuid}`,
         email: `${uuid}@motstanden.no`,
-        phoneNumber: 12345678,
+        phoneNumber: randomInt(10000000, 99999999),
         birthDate: dayjs().subtract(20, "years").utc().format("YYYY-MM-DD"),
         startDate: dayjs().subtract(3, "years").utc().format("YYYY-MM-DD"),
         endDate: dayjs().subtract(1, "years").utc().format("YYYY-MM-DD"),
+        status: UserStatus.Veteran,
+        capeName: `___capeName ${uuid}`,
     }
     await updateUser(request, { type: "self", data: newUserData })
 
