@@ -117,7 +117,7 @@ function handleUserUpdate(updateMode: UserEditMode) {
 
         let changeSuccess = false
         try {
-            db.users.update(payload, updateMode)
+            // db.users.update(payload, updateMode)
             changeSuccess = true
         } catch (err) {
             console.log(err)
