@@ -1,5 +1,5 @@
-import { UserEditMode, UserGroup } from "common/enums"
-import { User } from "common/interfaces"
+import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums"
+import { User, UserUpdateAsSelf, UserUpdateAsSuperAdmin, UserUpdateMembership, UserUpdateRole } from "common/interfaces"
 import express, { NextFunction, Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../db/index.js"
@@ -44,6 +44,45 @@ router.get("/users/me",
     }
 )
 
+const UserSchema = z.object({ 
+    // Personal details
+    firstName: z.string().trim().min(1, "First name cannot be empty"),
+    middleName: z.string().trim(),
+    lastName: z.string().trim().min(1, "Last name cannot be empty"),
+    email: z.string()
+        .trim()
+        .toLowerCase()
+        .email()
+        .refine(value => !value.endsWith("ntnu.no"), "Email cannot be an NTNU email"),
+    
+    profilePicture: z.string()
+        .trim()
+        .pipe(z.union([
+            z.literal("files/private/profilbilder/boy.png"),
+            z.literal("files/private/profilbilder/girl.png")
+        ])),
+        
+    phoneNumber: z.number()
+        .int()
+        .positive()
+        .finite()
+        .min(10000000, "Phone number must be 8 digits")
+        .max(99999999, "Phone number must be 8 digits")
+        .nullable(),
+    birthDate: Schemas.z.dateTime(),
+    
+    // Membership details
+    capeName: z.string().trim(),
+    rank: z.string().trim().pipe(z.nativeEnum(UserRank)),
+    status: z.string().trim().pipe(z.nativeEnum(UserStatus)),
+    startDate: Schemas.z.dateTime(),
+    endDate: Schemas.z.dateTime().nullable(),
+    
+    // Website details
+    groupName: z.string().pipe(z.nativeEnum(UserGroup)), 
+
+})
+
 router.get("/users/:id",
     AuthenticateUser(),
     validateParams(Schemas.params.id),
@@ -59,28 +98,52 @@ router.get("/users/:id",
 )
 
 // ---- Update users ----
+const UpdateUserSchema = UserSchema.omit({ profilePicture: true })
 
 router.patch("/users/:id", 
     AuthenticateUser(),
     RequiresGroup(UserGroup.SuperAdministrator),
     validateParams(Schemas.params.id),
+    validateBody(UpdateUserSchema),
     (req, res) => { 
+        const newUserData: UserUpdateAsSuperAdmin = UpdateUserSchema.parse(req.body)
+        const { id } = Schemas.params.id.parse(req.params)
+        
         // TODO: Update all user fields
     }
 )
 
+const UpdateCurrentUserSchema = UserSchema.pick({
+    firstName: true,
+    middleName: true,
+    lastName: true,
+    email: true,
+    phoneNumber: true,
+    birthDate: true,
+    startDate: true,
+    endDate: true
+})
+
 router.patch("/users/me", 
     AuthenticateUser(), 
+    validateBody(UpdateCurrentUserSchema),
     (req, res) => { 
+        const newUserData: UserUpdateAsSelf = UpdateCurrentUserSchema.parse(req.body)
+        const user = getUser(req)
         // TODO: Update current user with new data
     }
 )
+
+const UpdateUserRoleSchema = UserSchema.pick({ groupName: true })
 
 router.put("/users/:id/role", 
     AuthenticateUser(),
     RequiresGroup(UserGroup.Administrator),
     validateParams(Schemas.params.id),
+    validateBody(UpdateUserRoleSchema),
     (req, res) => { 
+        const newRole: UserUpdateRole = UpdateUserRoleSchema.parse(req.body)
+        const { id } = Schemas.params.id.parse(req.params)
         // TODO: Update user role.
         //  1. Super admin can do whatever they want
         //  2. Prevent admin from demoting super admins
@@ -88,11 +151,23 @@ router.put("/users/:id/role",
     }
 )
 
+const UpdateUserMembershipSchema = UserSchema.pick({ 
+    rank: true, 
+    capeName: true, 
+    status: true, 
+    startDate: true, 
+    endDate: true
+})
+
 router.put("/users/:id/membership",
     AuthenticateUser(),
     RequiresGroup(UserGroup.Administrator),
     validateParams(Schemas.params.id),
+    validateBody(UpdateUserMembershipSchema),
     (req, res) => { 
+        const newUserData: UserUpdateMembership = UpdateUserMembershipSchema.parse(req.body)
+        const { id } = Schemas.params.id.parse(req.params)
+
         // TODO: Update user membership
     }
 )
@@ -150,23 +225,13 @@ function RequireSelf() {
 
 // ---- POST users ----
 
-const NewUserSchema = z.object({ 
-    firstName: z.string().trim().min(1, "First name cannot be empty"),
-    middleName: z.string().trim(),
-    lastName: z.string().trim().min(1, "Last name cannot be empty"),
-    email: z.string()
-        .trim()
-        .toLowerCase()
-        .email()
-        .refine(value => !value.endsWith("ntnu.no"), "Email cannot be an NTNU email"),
-    profilePicture: z.string()
-        .trim()
-        .pipe(z.union([
-            z.literal("files/private/profilbilder/boy.png"),
-            z.literal("files/private/profilbilder/girl.png")
-        ])),
+const NewUserSchema = UserSchema.pick({
+    firstName: true, 
+    lastName: true, 
+    middleName: true, 
+    email: true,
+    profilePicture: true 
 })
-
 
 router.post("/users", 
     AuthenticateUser(),
