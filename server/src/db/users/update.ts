@@ -23,6 +23,9 @@ export interface UpdatableUserFields extends Pick<User,
 
 export function updateUser(userId: number, user: Partial<UpdatableUserFields>) {
 
+    if(isEmpty(user))
+        return  // Nothing to update
+
     const db = new Database(motstandenDB, dbReadWriteConfig)
 
     const groupId = getGroupId(user.groupName, db)
@@ -80,6 +83,15 @@ function concatClauses( items: { value: any | undefined, clause: string}[] ): st
         .filter(item => item.value !== undefined)
         .map(item => item.clause)
         .join(", ")
+}
+
+/**
+ * Check if all properties in the user object are undefined
+ * @param user The user object to check 
+ * @returns True if all properties in the user object are undefined. Otherwise, false.
+ */
+function isEmpty(user: Partial<UpdatableUserFields>): boolean {
+    return Object.values(user).every(value => value === undefined)
 }
 
 function getRankId(rank: UserRank | undefined, db?: DatabaseType): number | undefined {
