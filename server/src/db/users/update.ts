@@ -29,32 +29,26 @@ export function updateUser(userId: number, user: Partial<UpdatableUserFields>) {
     const rankId = getRankId(user.rank, db)
     const statusId = getStatusId(user.status, db)
 
-    const setClauses: string[] = []
-
-    const addSetClause = (value: any | undefined, clause: string) => {
-        if(value !== undefined) {
-            setClauses.push(clause)
-        }
-    }
-
-    addSetClause(user.firstName, `first_name = @firstName`)
-    addSetClause(user.middleName, `middle_name = @middleName`)
-    addSetClause(user.lastName, `last_name = @lastName`)
-    addSetClause(user.email, `email = @email`)
-    addSetClause(groupId, `user_group_id = @groupId`)
-    addSetClause(rankId, `user_rank_id = @rankId`)
-    addSetClause(user.capeName, `cape_name = @capeName`)
-    addSetClause(statusId, `user_status_id = @statusId`)
-    addSetClause(user.phoneNumber, `phone_number = @phoneNumber`)
-    addSetClause(user.birthDate, `birth_date = @birthDate`)    
-    addSetClause(user.startDate, `start_date = @startDate`)
-    addSetClause(user.endDate, `end_date = @endDate`)
+    const setClause = concatClauses([
+        { value: user.firstName,    clause: `first_name = @firstName` },
+        { value: user.middleName,   clause: `middle_name = @middleName` },
+        { value: user.lastName,     clause: `last_name = @lastName` },
+        { value: user.email,        clause: `email = @email` },
+        { value: groupId,           clause: `user_group_id = @groupId` },
+        { value: rankId,            clause: `user_rank_id = @rankId` },
+        { value: user.capeName,     clause: `cape_name = @capeName` },
+        { value: statusId,          clause: `user_status_id = @statusId` },
+        { value: user.phoneNumber,  clause: `phone_number = @phoneNumber` },
+        { value: user.birthDate,    clause: `birth_date = @birthDate` },
+        { value: user.startDate,    clause: `start_date = @startDate` },
+        { value: user.endDate,      clause: `end_date = @endDate` }
+    ])
 
     const stmt = db.prepare(`
         UPDATE 
             user
         SET
-            ${setClauses.join(', ')}
+            ${setClause}
         WHERE
             user_id = @userId
     `)
@@ -74,6 +68,18 @@ export function updateUser(userId: number, user: Partial<UpdatableUserFields>) {
         startDate: user.startDate,
         endDate: user.endDate
     })
+}
+
+/**
+ * For each defined value, concatenate clauses and delimit them by a comma
+ * @param items Array of {value, clause} objects.
+ * @returns A string of concatenated clauses separated by a comma
+ */
+function concatClauses( items: { value: any | undefined, clause: string}[] ): string {
+    return items
+        .filter(item => item.value !== undefined)
+        .map(item => item.clause)
+        .join(", ")
 }
 
 function getRankId(rank: UserRank | undefined, db?: DatabaseType): number | undefined {
