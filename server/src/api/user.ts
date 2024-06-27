@@ -69,14 +69,14 @@ const UserSchema = z.object({
         .min(10000000, "Phone number must be 8 digits")
         .max(99999999, "Phone number must be 8 digits")
         .nullable(),
-    birthDate: Schemas.z.dateTime(),
+    birthDate: z.string().date(),
     
     // Membership details
     capeName: z.string().trim(),
     rank: z.string().trim().pipe(z.nativeEnum(UserRank)),
     status: z.string().trim().pipe(z.nativeEnum(UserStatus)),
-    startDate: Schemas.z.dateTime(),
-    endDate: Schemas.z.dateTime().nullable(),
+    startDate: z.string().date(),
+    endDate: z.string().date().nullable(),
     
     // Website details
     groupName: z.string().pipe(z.nativeEnum(UserGroup)), 
