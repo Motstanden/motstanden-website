@@ -281,7 +281,7 @@ async function updateUser(request: APIRequestContext,  {type, data} : UpdateType
             res = await request.put("/api/users/:id/membership", { data: data })
             break
         case "superadmin":
-            res = await request.patch("/api/users/:id/membership", { data: data })
+            res = await request.patch("/api/users/:id", { data: data })
             break
     }
     if(!res.ok()) {
