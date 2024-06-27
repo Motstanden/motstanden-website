@@ -110,6 +110,7 @@ router.patch("/users/:id",
         const { id } = Schemas.params.id.parse(req.params)
         
         // TODO: Update all user fields
+        updateAccessTokenIfCurrentUser(req, res, id)
     }
 )
 
@@ -130,7 +131,10 @@ router.patch("/users/me",
     (req, res) => { 
         const newUserData: UpdateUserAsSelfBody = UpdateCurrentUserSchema.parse(req.body)
         const user = getUser(req)
+
         // TODO: Update current user with new data
+
+        updateAccessTokenIfCurrentUser(req, res, user.userId)
     }
 )
 
@@ -144,10 +148,13 @@ router.put("/users/:id/role",
     (req, res) => { 
         const newRole: UpdateUserRoleBody = UpdateUserRoleSchema.parse(req.body)
         const { id } = Schemas.params.id.parse(req.params)
+
         // TODO: Update user role.
         //  1. Super admin can do whatever they want
         //  2. Prevent admin from demoting super admins
         //  3. Prevent admin from promoting users to super admins 
+
+        updateAccessTokenIfCurrentUser(req, res, id)
     }
 )
 
@@ -169,8 +176,17 @@ router.put("/users/:id/membership",
         const { id } = Schemas.params.id.parse(req.params)
 
         // TODO: Update user membership
+
+        updateAccessTokenIfCurrentUser(req, res, id)
     }
 )
+
+function updateAccessTokenIfCurrentUser(req: Request, res: Response, userId: number) {
+    const currentUser = getUser(req)
+    if (userId === currentUser.userId) {
+        updateAccessToken(req, res, () => { }, {})
+    }
+}
 
 // --- DEPRECATED: Remove soon ----
 
