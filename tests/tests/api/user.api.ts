@@ -1,7 +1,7 @@
 import Playwright, { APIRequestContext, APIResponse, TestInfo, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
-import { NewUser, UpdateUserAsSelfBody, UpdateUserMembershipBody, UpdateUserRoleBody, User } from 'common/interfaces'
-import { randomUUID } from 'crypto'
+import { NewUser, UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipBody, UpdateUserRoleBody, User } from 'common/interfaces'
+import { randomInt, randomUUID } from 'crypto'
 import { z } from "zod"
 import dayjs from "../../lib/dayjs.js"
 import { apiLogIn, getUser as getTestUser, unsafeApiLogIn } from '../../utils/auth.js'
@@ -123,7 +123,7 @@ test("PATCH /api/users/me", async ({request}, workerInfo) => {
 
     // Post new random user data
     const uuid: string = randomUUID().toLowerCase()
-    const updatedData: UpdateUserAsSelfBody = {
+    const newUserData: UpdateUserAsSelfBody = {
         firstName: "___Test_2",
         middleName: "___User_2",
         lastName: uuid,
@@ -133,22 +133,41 @@ test("PATCH /api/users/me", async ({request}, workerInfo) => {
         startDate: dayjs().subtract(3, "years").utc().format("YYYY-MM-DD"),
         endDate: dayjs().subtract(1, "years").utc().format("YYYY-MM-DD"),
     }
-    await updateUser(request, { type: "self", data: updatedData })
+    await updateUser(request, { type: "self", data: newUserData })
 
     const actualUser = await getUser(request, user.id)
-    const expectedUser: User = {
-        ...user,
-        ...updatedData,
-        updatedAt: actualUser.updatedAt,
-        createdAt: actualUser.createdAt,
-    }
+    const expectedUser: User = { ...user, ...newUserData,}
 
     assertEqualUsers(actualUser, expectedUser)
 })
 
 test("PATCH /api/users/:id", async ({request}, workerInfo) => { 
-    throw "Not implemented"
+    const user = await createRandomUser(workerInfo)
+    await apiLogIn(request, workerInfo, UserGroup.SuperAdministrator)
+    
+    const uuid: string = randomUUID().toLowerCase()
+    const newUserData: UpdateUserAsSuperAdminBody = {
+        firstName: `___firstName ${uuid}`,
+        middleName: `___middleName ${uuid}`,
+        lastName: `___lastName ${uuid}`,
+        email: `${uuid}@motstanden.np`,
+        groupName: UserGroup.Editor,
+        status: UserStatus.Inactive,
+        rank: UserRank.KiloOhm,
+        capeName: `___capeName ${uuid}`,
+        phoneNumber: randomInt(10000000, 99999999),
+        birthDate: dayjs().subtract(25, "years").utc().format("YYYY-MM-DD"),
+        startDate: dayjs().subtract(5, "years").utc().format("YYYY-MM-DD"),
+        endDate: dayjs().subtract(2, "years").utc().format("YYYY-MM-DD"),
+    } 
+    await updateUser(request, { type: "superadmin", data: newUserData, id: user.id })
+
+    const actualUser = await getUser(request, user.id)
+    const expectedUser: User = { ...user, ...newUserData,}
+
+    assertEqualUsers(actualUser, expectedUser)
 })
+
 
 test("PUT /api/users/:id/membership", async ({request}, workerInfo) => { 
     throw "Not implemented"
@@ -265,22 +284,21 @@ test.describe("PUT /api/users/:id/role", () => {
     }
 })
 
-function assertEqualUsers(user1: User, user2: User) { 
-    expect(user1.id).toBe(user2.id)
-    expect(user1.firstName).toBe(user2.firstName)
-    expect(user1.middleName).toBe(user2.middleName)
-    expect(user1.lastName).toBe(user2.lastName)
-    expect(user1.email).toBe(user2.email)
-    expect(user1.profilePicture).toBe(user2.profilePicture)
-    expect(user1.groupId).toBe(user2.groupId)
-    expect(user1.groupName).toBe(user2.groupName)
-    expect(user1.rank).toBe(user2.rank)
-    expect(user1.capeName).toBe(user2.capeName)
-    expect(user1.status).toBe(user2.status)
-    expect(user1.phoneNumber).toBe(user2.phoneNumber)
-    expect(user1.birthDate).toBe(user2.birthDate)
-    expect(user1.startDate).toBe(user2.startDate)
-    expect(user1.endDate).toBe(user2.endDate)
+function assertEqualUsers(actual: User, expected: User) { 
+    expect(actual.id).toBe(expected.id)
+    expect(actual.firstName).toBe(expected.firstName)
+    expect(actual.middleName).toBe(expected.middleName)
+    expect(actual.lastName).toBe(expected.lastName)
+    expect(actual.email).toBe(expected.email)
+    expect(actual.profilePicture).toBe(expected.profilePicture)
+    expect(actual.groupName).toBe(expected.groupName)
+    expect(actual.rank).toBe(expected.rank)
+    expect(actual.capeName).toBe(expected.capeName)
+    expect(actual.status).toBe(expected.status)
+    expect(actual.phoneNumber).toBe(expected.phoneNumber)
+    expect(actual.birthDate).toBe(expected.birthDate)
+    expect(actual.startDate).toBe(expected.startDate)
+    expect(actual.endDate).toBe(expected.endDate)
 
     // No need to compare createdAt and updatedAt
 }
@@ -337,25 +355,28 @@ async function getUser(request: APIRequestContext, id: number): Promise<User> {
 type UpdateType = {
     type: "self",
     data: UpdateUserAsSelfBody
+    id?: never
 } | {
     type: "membership",
     data: UpdateUserMembershipBody
+    id: number
 } | {
     type: "superadmin",
     data: UpdateUserMembershipBody
+    id: number
 }
 
-async function updateUser(request: APIRequestContext,  {type, data} : UpdateType)  {
+async function updateUser(request: APIRequestContext,  {type, data, id} : UpdateType)  {
     let res: APIResponse 
     switch(type) { 
         case "self":
             res = await request.patch("/api/users/me", { data: data })
             break
         case "membership":
-            res = await request.put("/api/users/:id/membership", { data: data })
+            res = await request.put(`/api/users/${id}/membership`, { data: data })
             break
         case "superadmin":
-            res = await request.patch("/api/users/:id", { data: data })
+            res = await request.patch(`/api/users/${id}`, { data: data })
             break
     }
     if(!res.ok()) {
