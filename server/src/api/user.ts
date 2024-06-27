@@ -1,6 +1,6 @@
-import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums"
-import { UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipBody, UpdateUserRoleBody, User } from "common/interfaces"
-import express, { NextFunction, Request, Response } from "express"
+import { UserGroup, UserRank, UserStatus } from "common/enums"
+import { UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipBody, UpdateUserRoleBody } from "common/interfaces"
+import express, { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../db/index.js"
 import { AuthenticateUser, logOutAllUnits, updateAccessToken } from "../middleware/jwtAuthenticate.js"
@@ -44,6 +44,22 @@ router.get("/users/me",
     }
 )
 
+router.get("/users/:id",
+    AuthenticateUser(),
+    validateParams(Schemas.params.id),
+    (req, res) => {
+        const { id } = Schemas.params.id.parse(req.params)
+        const user = db.users.get(id)
+        if(user !== undefined) {
+            res.json(user)
+        } else {
+            res.status(404).send("User not found")
+        }
+    }
+)
+
+// ---- User schema ----
+
 const UserSchema = z.object({ 
     // Personal details
     firstName: z.string().trim().min(1, "First name cannot be empty"),
@@ -80,56 +96,29 @@ const UserSchema = z.object({
     
     // Website details
     groupName: z.string().pipe(z.nativeEnum(UserGroup)), 
-
 })
 
-router.get("/users/:id",
-    AuthenticateUser(),
-    validateParams(Schemas.params.id),
-    (req, res) => {
-        const { id } = Schemas.params.id.parse(req.params)
-        const user = db.users.get(id)
-        if(user !== undefined) {
-            res.json(user)
-        } else {
-            res.status(404).send("User not found")
-        }
-    }
-)
+// ---- POST users ----
 
-// ---- Update users ----
-const UpdateUserSchema = UserSchema.omit({ profilePicture: true })
+const NewUserSchema = UserSchema.pick({
+    firstName: true, 
+    lastName: true, 
+    middleName: true, 
+    email: true,
+    profilePicture: true 
+})
 
-router.patch("/users/:id", 
+router.post("/users", 
     AuthenticateUser(),
     RequiresGroup(UserGroup.SuperAdministrator),
-    validateParams(Schemas.params.id),
-    validateBody(UpdateUserSchema),
-    (req, res) => { 
-        const newUserData: UpdateUserAsSuperAdminBody = UpdateUserSchema.parse(req.body)
-        const { id } = Schemas.params.id.parse(req.params)
-        
-        // This could have been written as db.users.update(id, newUserData)
-        // However, it is safer and more secure to be explicit about what fields are updated.
-        db.users.update(id, {
-            firstName: newUserData.firstName,
-            middleName: newUserData.middleName,
-            lastName: newUserData.lastName,
-            email: newUserData.email,
-            groupName: newUserData.groupName,
-            rank: newUserData.rank,
-            capeName: newUserData.capeName,
-            status: newUserData.status,
-            phoneNumber: newUserData.phoneNumber,
-            birthDate: newUserData.birthDate,
-            startDate: newUserData.startDate,
-            endDate: newUserData.endDate,
-        })
+    validateBody(NewUserSchema), 
+    (req: Request, res: Response) => {
+        const user = NewUserSchema.parse(req.body)
+        const userId = db.users.insert(user)
+        res.json({userId: userId})
+})
 
-        updateAccessTokenIfCurrentUser(req, res, id)
-        res.end()
-    }
-)
+// ---- PATCH/PUT users ----
 
 const UpdateCurrentUserSchema = UserSchema.pick({
     firstName: true,
@@ -163,6 +152,39 @@ router.patch("/users/me",
         })
 
         updateAccessTokenIfCurrentUser(req, res, user.userId)
+        res.end()
+    }
+)
+
+const UpdateUserSchema = UserSchema.omit({ profilePicture: true })
+
+router.patch("/users/:id", 
+    AuthenticateUser(),
+    RequiresGroup(UserGroup.SuperAdministrator),
+    validateParams(Schemas.params.id),
+    validateBody(UpdateUserSchema),
+    (req, res) => { 
+        const newUserData: UpdateUserAsSuperAdminBody = UpdateUserSchema.parse(req.body)
+        const { id } = Schemas.params.id.parse(req.params)
+        
+        // This could have been written as db.users.update(id, newUserData)
+        // However, it is safer and more secure to be explicit about what fields are updated.
+        db.users.update(id, {
+            firstName: newUserData.firstName,
+            middleName: newUserData.middleName,
+            lastName: newUserData.lastName,
+            email: newUserData.email,
+            groupName: newUserData.groupName,
+            rank: newUserData.rank,
+            capeName: newUserData.capeName,
+            status: newUserData.status,
+            phoneNumber: newUserData.phoneNumber,
+            birthDate: newUserData.birthDate,
+            startDate: newUserData.startDate,
+            endDate: newUserData.endDate,
+        })
+
+        updateAccessTokenIfCurrentUser(req, res, id)
         res.end()
     }
 )
@@ -246,25 +268,5 @@ function updateAccessTokenIfCurrentUser(req: Request, res: Response, userId: num
         updateAccessToken(req, res, () => { }, {})
     }
 }
-
-// ---- POST users ----
-
-const NewUserSchema = UserSchema.pick({
-    firstName: true, 
-    lastName: true, 
-    middleName: true, 
-    email: true,
-    profilePicture: true 
-})
-
-router.post("/users", 
-    AuthenticateUser(),
-    RequiresGroup(UserGroup.SuperAdministrator),
-    validateBody(NewUserSchema), 
-    (req: Request, res: Response) => {
-        const user = NewUserSchema.parse(req.body)
-        const userId = db.users.insert(user)
-        res.json({userId: userId})
-})
 
 export default router
