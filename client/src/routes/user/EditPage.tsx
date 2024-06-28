@@ -26,6 +26,8 @@ import { groupTVPair, rankTVPair, statusTVPair } from "./utils/TextValuePair"
 import { UserEditMode } from "./utils/UserEditMode"
 import { sendUserUpdate } from "./utils/sendUserUpdate"
 
+// Note: This file could use some refactoring...
+
 export default function EditUserPage() {
     const {user, isAdmin, isSuperAdmin} = useAuthenticatedUser()
     const { viewedUser } = useUserProfileContext()

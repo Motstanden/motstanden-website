@@ -3,6 +3,9 @@ import { UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipB
 import { patchJson, putJson } from "src/utils/postJson"
 import { UserEditMode } from "./UserEditMode"
 
+// Note: This file could use some refactoring...
+//       Wait for ../EditPage.tsx to be refactored first
+
 type UserUpdateResult = { 
     success: boolean,
     partialSuccess: boolean
