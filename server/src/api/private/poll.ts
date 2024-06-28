@@ -2,17 +2,15 @@ import { UserGroup } from "common/enums"
 import { strToNumber } from "common/utils"
 import express from "express"
 import { z } from "zod"
-import { db } from "../db/index.js"
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
-import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
-import { validateNumber } from "../middleware/validateNumber.js"
-import { validateBody } from "../middleware/zodValidation.js"
-import { getUser } from "../utils/getUser.js"
+import { db } from "../../db/index.js"
+import { requiresGroupOrAuthor } from "../../middleware/requiresGroupOrAuthor.js"
+import { validateNumber } from "../../middleware/validateNumber.js"
+import { validateBody } from "../../middleware/zodValidation.js"
+import { getUser } from "../../utils/getUser.js"
 
 const router = express.Router() 
 
 router.get("/polls/latest",
-    AuthenticateUser(),
     (req, res) => {
         const poll = db.polls.getNewest()
         res.send(poll)
@@ -20,7 +18,6 @@ router.get("/polls/latest",
 )
 
 router.get("/polls/all",
-    AuthenticateUser(),
     (req, res) => {
         const pollList = db.polls.getAll()
         res.send(pollList)
@@ -28,7 +25,6 @@ router.get("/polls/all",
 )
 
 router.get("/polls/:id/options",
-    AuthenticateUser(),
     validateNumber({
         getValue: (req) => req.params.id,
         failureMessage: "Could not parse poll id"
@@ -53,7 +49,6 @@ router.get("/polls/:id/options",
 )
 
 router.get("/polls/:id/voter-list",
-    AuthenticateUser(),
     validateNumber({
         getValue: (req) => req.params.id,
         failureMessage: "Could not parse poll id"
@@ -84,7 +79,6 @@ const NewPollSchema = z.object({
 })
 
 router.post("/polls/new",
-    AuthenticateUser(),
     validateBody(NewPollSchema),
     (req, res) => {
 
@@ -106,7 +100,6 @@ router.post("/polls/new",
 )
 
 router.post("/polls/delete",
-    AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
@@ -131,7 +124,6 @@ router.post("/polls/:id/vote/upsert",
         getValue: (req) => req.params.id,
         failureMessage: "Could not parse poll id"
     }),
-    AuthenticateUser(),
     validateBody(UpsertVoteSchema),
     (req, res) => {
         
@@ -154,4 +146,7 @@ router.post("/polls/:id/vote/upsert",
     }
 )
 
-export default router
+export {
+    router as pollApi
+}
+

@@ -2,6 +2,7 @@ import express from "express"
 import { commentsApi } from "./comments.js"
 import { eventsApi } from "./events.js"
 import { likesApi } from "./likes.js"
+import { pollApi } from "./poll.js"
 import { quotesApi } from "./quotes.js"
 
 const router = express.Router()
@@ -10,8 +11,7 @@ const router = express.Router()
 router.use(commentsApi)
 router.use(eventsApi)
 router.use(likesApi)
-
-
+router.use(pollApi)
 router.use(quotesApi)
 
 export {
