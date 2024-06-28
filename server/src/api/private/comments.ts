@@ -3,19 +3,17 @@ import { Count } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
 import { z } from "zod"
-import { db } from "../db/index.js"
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
-import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
-import { validateNumber } from "../middleware/validateNumber.js"
-import { validateBody } from "../middleware/zodValidation.js"
-import { getUser } from "../utils/getUser.js"
+import { db } from "../../db/index.js"
+import { requiresAuthor, requiresGroupOrAuthor } from "../../middleware/requiresGroupOrAuthor.js"
+import { validateNumber } from "../../middleware/validateNumber.js"
+import { validateBody } from "../../middleware/zodValidation.js"
+import { getUser } from "../../utils/getUser.js"
 
 const router = express.Router()
 
 // ---- GET all comments ----
 
 router.get("/comments/all?:limit", 
-    AuthenticateUser(),
     validateNumber({
         getValue: (req: Request) =>  req.query.limit?.toString() ?? ""
     }),
@@ -34,7 +32,6 @@ router.get("/wall-post/:entityId/comments", getCommentsPipeline(CommentEntityTyp
 
 function getCommentsPipeline(entityType: CommentEntityType) {
     return [
-        AuthenticateUser(),
         validateNumber({
             getValue: (req: Request) => req.params.entityId,
         }),
@@ -81,7 +78,6 @@ function postCommentPipeline(entityType: CommentEntityType) {
         validateNumber({
             getValue: (req: Request) => req.params.entityId,
         }),
-        AuthenticateUser(),
         validateBody(NewCommentSchema),
         postCommentHandler({
             entityType: entityType,
@@ -127,7 +123,6 @@ router.delete("/wall-post/comments/:commentId", deleteCommentPipeline(CommentEnt
 
 function deleteCommentPipeline(entityType: CommentEntityType) { 
     return [
-        AuthenticateUser(),
         validateNumber({
             getValue: req => req.params.commentId
         }),
@@ -173,7 +168,6 @@ function patchCommentPipeline(entityType: CommentEntityType) {
         validateNumber({
             getValue: req => req.params.commentId
         }),
-        AuthenticateUser(),
         validateBody(NewCommentSchema),
         requiresAuthor({
             getId: req => strToNumber(req.params.commentId),
@@ -211,27 +205,24 @@ function patchCommentHandler( {
 
 // ---- Manage the count of unread comments ---- 
 
-router.get("/comments/unread/count", 
-    AuthenticateUser(),
-    (req, res) => {
-        const user = getUser(req)
+router.get("/comments/unread/count", (req, res) => {
+    const user = getUser(req)
 
-        const unreadCount = db.comments.getUnreadCount(user.userId)
-        const result: Count = {
-            count: unreadCount ?? 0
-        }
-
-        res.send(result)
+    const unreadCount = db.comments.getUnreadCount(user.userId)
+    const result: Count = {
+        count: unreadCount ?? 0
     }
-)
 
-router.post("/comments/unread/count/reset", 
-    AuthenticateUser(),
-    (req, res) => {
-        const user = getUser(req)
-        db.comments.resetUnreadCount(user.userId)
-        res.end()
-    }
-)
+    res.send(result)
+})
 
-export default router;
+router.post("/comments/unread/count/reset", (req, res) => {
+    const user = getUser(req)
+    db.comments.resetUnreadCount(user.userId)
+    res.end()
+})
+
+export {
+    router as commentsApi
+}
+

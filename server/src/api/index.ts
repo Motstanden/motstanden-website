@@ -1,7 +1,6 @@
 import express from "express"
 import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import login from "./auth.js"
-import comments from "./comments.js"
 import documents from "./documents.js"
 import events from "./events.js"
 import likes from "./likes.js"
@@ -18,7 +17,6 @@ import wallPosts from "./wallPosts.js"
 const router = express.Router()
 
 // TODO: Move these routes to public/private folders
-router.use(comments)
 router.use(documents)
 router.use(events)
 router.use(likes)
