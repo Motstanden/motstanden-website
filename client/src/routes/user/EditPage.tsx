@@ -312,8 +312,8 @@ function AccountDetailsForm({ value, onChange }: FormParams) {
         return <AccountDetailsCard user={value} />
     }
 
-    // Prevent admin from demoting super admin
-    if(isAdmin && value.groupName === UserGroup.SuperAdministrator) {
+    // Only allow super admin to edit other super admins
+    if(!isSuperAdmin && value.groupName === UserGroup.SuperAdministrator) {
         return <AccountDetailsCard user={value} />
     }
 
