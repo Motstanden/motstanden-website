@@ -3,12 +3,11 @@ import { Count } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import express from "express"
 import { z } from "zod"
-import { db } from "../db/index.js"
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
-import { requiresAuthor, requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
-import { validateBody, validateParams, validateQuery } from "../middleware/zodValidation.js"
-import { getUser } from "../utils/getUser.js"
-import { Schemas } from "../utils/zodSchema.js"
+import { db } from "../../db/index.js"
+import { requiresAuthor, requiresGroupOrAuthor } from "../../middleware/requiresGroupOrAuthor.js"
+import { validateBody, validateParams, validateQuery } from "../../middleware/zodValidation.js"
+import { getUser } from "../../utils/getUser.js"
+import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router()
 
@@ -19,7 +18,6 @@ const WallPostsQuerySchema = z.object({
 })
 
 router.get("/wall-posts",
-    AuthenticateUser(),
     validateQuery(WallPostsQuerySchema),
     (req, res) => {
         const { wallUserId } = WallPostsQuerySchema.parse(req.query)
@@ -29,7 +27,6 @@ router.get("/wall-posts",
 )
 
 router.get("/wall-posts/:id",
-    AuthenticateUser(),
     validateParams(Schemas.params.id),
     (req, res) => {
         const { id: postId } = Schemas.params.id.parse(req.params)
@@ -51,7 +48,6 @@ const NewWallPostSchema = z.object({
 })
 
 router.post("/wall-posts",
-    AuthenticateUser(),
     validateBody(NewWallPostSchema),
     (req, res) => {
         
@@ -76,7 +72,6 @@ const UpdateWallPostSchema = z.object({
 })
 
 router.patch("/wall-posts/:id",
-    AuthenticateUser(),
     requiresAuthor( {
         getId: req => strToNumber(req.params.id),
         getAuthorInfo: id => db.wallPosts.get(id)
@@ -101,7 +96,6 @@ router.patch("/wall-posts/:id",
 // ---- DELETE wall-posts ----
 
 router.delete("/wall-posts/:id",
-    AuthenticateUser(),
     validateParams(Schemas.params.id),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
@@ -117,27 +111,23 @@ router.delete("/wall-posts/:id",
 
 // ---- GET/PUT count of unread wall posts ----
 
-router.get("/wall-posts/unread/count", 
-    AuthenticateUser(),
-    (req, res) => {
-        const user = getUser(req)
-        
-        const unreadCount = db.wallPosts.getUnreadCount(user.userId)
-        const result: Count = {
-            count: unreadCount ?? 0
-        }
-
-        res.send(result)
+router.get("/wall-posts/unread/count", (req, res) => {
+    const user = getUser(req)
+    
+    const unreadCount = db.wallPosts.getUnreadCount(user.userId)
+    const result: Count = {
+        count: unreadCount ?? 0
     }
-)
 
-router.put("/wall-posts/unread/count", 
-    AuthenticateUser(),
-    (req, res) => {
-        const user = getUser(req)
-        db.wallPosts.resetUnreadCount(user.userId)
-        res.end()
-    }
-)
+    res.send(result)
+})
 
-export default router
+router.put("/wall-posts/unread/count", (req, res) => {
+    const user = getUser(req)
+    db.wallPosts.resetUnreadCount(user.userId)
+    res.end()
+})
+
+export {
+    router as wallPostApi
+}
