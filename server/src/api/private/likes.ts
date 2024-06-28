@@ -22,7 +22,7 @@ router.get("/likes/emojis/all",
 
 router.get("/event/comment/:entityId/likes", getLikesPipeline(LikeEntityType.EventComment))
 router.get("/poll/comment/:entityId/likes", getLikesPipeline(LikeEntityType.PollComment))
-router.get("/song-lyric/comment/:entityId/likes", getLikesPipeline(LikeEntityType.SongLyricComment))
+router.get("/lyrics/comment/:entityId/likes", getLikesPipeline(LikeEntityType.SongLyricComment))
 router.get("/wall-post/:entityId/likes", getLikesPipeline(LikeEntityType.WallPost))
 router.get("/wall-post/comment/:entityId/likes", getLikesPipeline(LikeEntityType.WallPostComment))
 
@@ -67,7 +67,7 @@ const NewLikeSchema = z.object({
 
 router.post(`/event/comment/:entityId/likes/upsert`, upsertLikePipeline(LikeEntityType.EventComment))
 router.post("/poll/comment/:entityId/likes/upsert", upsertLikePipeline(LikeEntityType.PollComment))
-router.post("/song-lyric/comment/:entityId/likes/upsert", upsertLikePipeline(LikeEntityType.SongLyricComment))
+router.post("/lyrics/comment/:entityId/likes/upsert", upsertLikePipeline(LikeEntityType.SongLyricComment))
 router.post("/wall-post/:entityId/likes/upsert", upsertLikePipeline(LikeEntityType.WallPost))
 router.post("/wall-post/comment/:entityId/likes/upsert", upsertLikePipeline(LikeEntityType.WallPostComment))
 
@@ -118,7 +118,7 @@ function upsertLikeHandler({
 
 router.post("/event/comment/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.EventComment))
 router.post("/poll/comment/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.PollComment))
-router.post("/song-lyric/comment/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.SongLyricComment))
+router.post("/lyrics/comment/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.SongLyricComment))
 router.post("/wall-post/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.WallPost))
 router.post("/wall-post/comment/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.WallPostComment))
 

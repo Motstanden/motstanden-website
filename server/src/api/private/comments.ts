@@ -27,7 +27,7 @@ router.get("/comments/all?:limit",
 
 router.get("/event/:entityId/comments",getCommentsPipeline(CommentEntityType.Event))
 router.get("/poll/:entityId/comments", getCommentsPipeline(CommentEntityType.Poll))
-router.get("/song-lyric/:entityId/comments", getCommentsPipeline(CommentEntityType.SongLyric))
+router.get("/lyrics/:entityId/comments", getCommentsPipeline(CommentEntityType.SongLyric))
 router.get("/wall-post/:entityId/comments", getCommentsPipeline(CommentEntityType.WallPost))
 
 function getCommentsPipeline(entityType: CommentEntityType) {
@@ -70,7 +70,7 @@ const NewCommentSchema = z.object({
 
 router.post("/event/:entityId/comments/new", postCommentPipeline(CommentEntityType.Event))
 router.post("/poll/:entityId/comments/new", postCommentPipeline(CommentEntityType.Poll))
-router.post("/song-lyric/:entityId/comments/new", postCommentPipeline(CommentEntityType.SongLyric))
+router.post("/lyrics/:entityId/comments/new", postCommentPipeline(CommentEntityType.SongLyric))
 router.post("/wall-post/:entityId/comments/new", postCommentPipeline(CommentEntityType.WallPost))
 
 function postCommentPipeline(entityType: CommentEntityType) { 
@@ -118,7 +118,7 @@ function postCommentHandler( {
 
 router.delete("/event/comments/:commentId", deleteCommentPipeline(CommentEntityType.Event))
 router.delete("/poll/comments/:commentId", deleteCommentPipeline(CommentEntityType.Poll))
-router.delete("/song-lyric/comments/:commentId", deleteCommentPipeline(CommentEntityType.SongLyric))
+router.delete("/lyrics/comments/:commentId", deleteCommentPipeline(CommentEntityType.SongLyric))
 router.delete("/wall-post/comments/:commentId", deleteCommentPipeline(CommentEntityType.WallPost))
 
 function deleteCommentPipeline(entityType: CommentEntityType) { 
@@ -160,7 +160,7 @@ function deleteCommentHandler( {
 
 router.patch("/event/comments/:commentId", patchCommentPipeline(CommentEntityType.Event))
 router.patch("/poll/comments/:commentId", patchCommentPipeline(CommentEntityType.Poll))
-router.patch("/song-lyric/comments/:commentId", patchCommentPipeline(CommentEntityType.SongLyric))
+router.patch("/lyrics/comments/:commentId", patchCommentPipeline(CommentEntityType.SongLyric))
 router.patch("/wall-post/comments/:commentId", patchCommentPipeline(CommentEntityType.WallPost))
 
 function patchCommentPipeline(entityType: CommentEntityType) {

@@ -11,7 +11,7 @@ router.get("/lyrics", (req, res) => {
     res.json(lyrics)
 })
 
-router.get("/private/song-lyric/:id", 
+router.get("/private/lyrics/:id", 
     AuthenticateUser(),
     validateParams(Schemas.params.id),
     (req, res) => {
@@ -25,7 +25,7 @@ router.get("/private/song-lyric/:id",
     }
 )
 
-router.get("/public/song-lyric/:id",
+router.get("/public/lyrics/:id",
     validateParams(Schemas.params.id),
     (req, res) => {
         const { id } = Schemas.params.id.parse(req.params)

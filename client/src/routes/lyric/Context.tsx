@@ -12,7 +12,7 @@ import { LyricEditPageSkeleton } from "./skeleton/EditPage"
 import { LyricItemPageSkeleton } from "./skeleton/ItemPage"
 import { LyricListPageSkeleton } from "./skeleton/ListPage"
 
-export const lyricContextQueryKey = ["song-lyric"]
+export const lyricContextQueryKey = ["lyrics"]
 
 export {
     LyricContainer as LyricContext
@@ -99,7 +99,7 @@ export function LyricItemLoader( {id}: {id: number}){
     const allLyrics = useOutletContext<StrippedSongLyric[]>()
 
     const isLoggedIn = !!usePotentialUser().user
-    const url = `/api/${isLoggedIn ? "private" : "public"}/song-lyric/${id}`
+    const url = `/api/${isLoggedIn ? "private" : "public"}/lyrics/${id}`
 
     const { isPending, isError, error, data } = useQuery<SongLyric>({
         queryKey: getLyricItemContextQueryKey(id),

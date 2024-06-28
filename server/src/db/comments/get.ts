@@ -30,7 +30,7 @@ export function getAllUnion(limit?: number): EntityComment[] {
         UNION ALL
         SELECT 
             song_lyric_comment_id as id,
-            'song-lyric' as type,
+            'lyrics' as type,
             song_lyric_id as entityId,
             comment,
             created_by as createdBy,

@@ -72,7 +72,7 @@ function TitleHeader( {lyric}: {lyric: SongLyric} ) {
 
     const onDeleteClick = async () => {
         const response = await postJson(
-            `/api/song-lyric/${lyric.id}/delete`, 
+            `/api/lyrics/${lyric.id}/delete`, 
             { },
             {
                 alertOnFailure: true,

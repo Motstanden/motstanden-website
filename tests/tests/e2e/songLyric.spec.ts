@@ -94,7 +94,7 @@ async function clickSave(page: Page, songLyric: NewSongLyric) {
     await Promise.all([
         page.getByRole('button', { name: 'Lagre' }).click(),
         page.waitForURL(expectedUrl),
-        page.waitForResponse(/api\/private\/song-lyric\/[0-9]+/)
+        page.waitForResponse(/api\/private\/lyrics\/[0-9]+/)
     ])
 }
 
