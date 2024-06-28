@@ -52,6 +52,9 @@ async function updateAsSelf(newData: User): Promise<boolean> {
 }
 
 async function updateAsAdmin(userId: number, newData: User): Promise<UnclearUserUpdateResult> {
+
+    // It is important to update the membership first because are allowed to demote themselves,
+    // which will cause this request to fail
     const body: UpdateUserMembershipBody = {
         rank: newData.rank,
         capeName: newData.capeName,
@@ -64,7 +67,7 @@ async function updateAsAdmin(userId: number, newData: User): Promise<UnclearUser
     const partialSuccess = res?.ok ?? false
 
     const success = partialSuccess 
-        ? await sendUpdateRole(userId, newData.groupName) 
+        ? await sendUpdateRole(userId, newData.groupName)
         : false
 
     return { success, partialSuccess }
