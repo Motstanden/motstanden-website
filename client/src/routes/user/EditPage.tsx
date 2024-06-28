@@ -9,7 +9,7 @@ import {
 import { DatePicker } from "@mui/x-date-pickers"
 import { useQueryClient } from "@tanstack/react-query"
 import { UserGroup, UserRank, UserStatus } from "common/enums"
-import { User } from "common/interfaces"
+import { UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipBody, UpdateUserRoleBody, User } from "common/interfaces"
 import { isNtnuMail as checkIsNtnuMail, isNullOrWhitespace, strToNumber, userRankToPrettyStr } from "common/utils"
 import dayjs, { Dayjs } from "dayjs"
 import { useEffect, useState } from "react"
@@ -19,6 +19,7 @@ import { HelpButton } from "src/components/HelpButton"
 import SubmitFormButtons from "src/components/form/SubmitButtons"
 import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication"
 import { useTitle } from "src/hooks/useTitle"
+import { patchJson, putJson } from "src/utils/postJson"
 import { useUserProfileContext, userListQueryKey } from "./Context"
 import { AccountDetailsCard, PersonCard, formatExactDate } from "./UserPage"
 import { Card, CardTextItem } from "./components/Card"
@@ -76,12 +77,13 @@ function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
         } 
     }
     const onSubmit = async () => {
+        const success = await sendUpdateUserRequest(editMode, user.id, newUser)
 
-        // TODO: Submit changes to server
-
-        await queryClient.invalidateQueries({queryKey: userQueryKey})
-        await queryClient.invalidateQueries({queryKey: userListQueryKey})
-        navigate("..", {replace: true})
+        if(success) {
+            await queryClient.invalidateQueries({queryKey: userQueryKey})
+            await queryClient.invalidateQueries({queryKey: userListQueryKey})
+            navigate("..", {replace: true})
+        }
     }
 
     return (
@@ -97,6 +99,87 @@ function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
             </Grid>
         </Form>
     )
+}
+
+async function sendUpdateUserRequest(mode: UserEditMode, userId: number, newData: User): Promise<boolean> {
+ 
+    switch (mode) {
+        case UserEditMode.Self:
+            return await sendUpdateAsSelf(newData)
+        case UserEditMode.SelfAndAdmin:
+            return await sendUpdateAsSelfAndAdmin(userId, newData)
+        case UserEditMode.Admin:
+            return await  sendUpdateAsAdmin(userId, newData)
+        case UserEditMode.SuperAdmin:
+            return await sendUpdateAsSuperAdmin(userId, newData)
+    }
+}
+
+async function sendUpdateAsSelf(newData: User): Promise<boolean> { 
+    const body: UpdateUserAsSelfBody = { 
+        firstName: newData.firstName,
+        middleName: newData.middleName,
+        lastName: newData.lastName,
+        email: newData.email,
+        phoneNumber: newData.phoneNumber,
+        capeName: newData.capeName,
+        status: newData.status,
+        birthDate: newData.birthDate,
+        startDate: newData.startDate,
+        endDate: newData.endDate
+    }
+    const res = await patchJson("/api/users/me", body)
+    return res?.ok ?? false
+}
+
+async function sendUpdateAsAdmin(userId: number, newData: User): Promise<boolean> { 
+    const body: UpdateUserMembershipBody = {
+        rank: newData.rank,
+        capeName: newData.capeName,
+        status: newData.status,
+        startDate: newData.startDate,
+        endDate: newData.endDate
+    }
+    const res = await putJson(`/api/users/${userId}/membership`, body)
+    
+    if(!res?.ok)
+        return false
+
+    return await sendUpdateRole(userId, newData.groupName)
+}
+
+async function sendUpdateAsSelfAndAdmin(userId: number, newData: User): Promise<boolean> { 
+    return await sendUpdateAsSelf(newData) 
+        && await sendUpdateAsAdmin(userId, newData)
+}
+
+async function sendUpdateAsSuperAdmin(userId: number, newData: User): Promise<boolean> { 
+    const body: UpdateUserAsSuperAdminBody = {
+        firstName: newData.firstName,
+        middleName: newData.middleName,
+        lastName: newData.lastName,
+        email: newData.email,
+        groupName: newData.groupName,
+        rank: newData.rank,
+        capeName: newData.capeName,
+        status: newData.status,
+        phoneNumber: newData.phoneNumber,
+        birthDate: newData.birthDate,
+        startDate: newData.startDate,
+        endDate: newData.endDate
+    }
+    const res = await patchJson(`/api/users/${userId}`, body)
+
+    if(!res?.ok)
+        return false
+
+    return await sendUpdateRole(userId, newData.groupName)
+}
+
+async function sendUpdateRole(userId: number, role: UserGroup): Promise<boolean> { 
+    const body: UpdateUserRoleBody = { groupName: role }
+    const res = await putJson(`/api/users/${userId}/role`, body)
+    return res?.ok ?? false
 }
 
 function Form({
@@ -370,15 +453,6 @@ function isUserEqual(oldUser: User, newUser: User): boolean {
         oldUser.startDate === newUser.startDate &&
         oldUser.status === newUser.status
     )
-}
-
-function getPostUrl(mode: UserEditMode): string {
-    switch (mode) {
-        case UserEditMode.Self: return "/api/self/update-user"
-        case UserEditMode.Admin: return "/api/admin/update-user"
-        case UserEditMode.SelfAndAdmin: return "/api/self-and-admin/update-user"
-        case UserEditMode.SuperAdmin: return "/api/super-admin/update-user"
-    }
 }
 
 function getStatusExplanation(status: UserStatus): string {
