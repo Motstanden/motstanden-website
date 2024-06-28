@@ -2,18 +2,16 @@ import { UserGroup } from "common/enums"
 import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
 import { z } from "zod"
-import { db } from "../db/index.js"
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
-import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
-import { validateNumber } from "../middleware/validateNumber.js"
-import { validateBody } from "../middleware/zodValidation.js"
-import dailyRandomInt from "../utils/dailyRandomInt.js"
-import { getUser } from "../utils/getUser.js"
+import { db } from "../../db/index.js"
+import { requiresGroupOrAuthor } from "../../middleware/requiresGroupOrAuthor.js"
+import { validateNumber } from "../../middleware/validateNumber.js"
+import { validateBody } from "../../middleware/zodValidation.js"
+import dailyRandomInt from "../../utils/dailyRandomInt.js"
+import { getUser } from "../../utils/getUser.js"
 
 const router = express.Router()
 
 router.get("/quotes?:limit",
-    AuthenticateUser(),
     (req, res) => {
         const limit = strToNumber(req.query.limit?.toString())
         res.send(db.quotes.getAll(limit))
@@ -21,7 +19,6 @@ router.get("/quotes?:limit",
 )
 
 router.get("/quotes/daily-quotes",
-    AuthenticateUser(),
     (req, res) => {
         const limit = 100
         const quotes = db.quotes.getAll(limit)
@@ -41,7 +38,6 @@ const NewQuoteSchema = z.object({
 })
 
 router.post("/quotes/new",
-    AuthenticateUser(),
     validateBody(NewQuoteSchema),
     (req, res) => {
 
@@ -60,7 +56,6 @@ router.post("/quotes/new",
 )
 
 router.post("/quotes/delete",
-    AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
@@ -81,7 +76,6 @@ router.post("/quotes/:id/update",
     validateNumber({
         getValue: req => req.params.id
     }),
-    AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
@@ -103,4 +97,7 @@ router.post("/quotes/:id/update",
     }
 )
 
-export default router
+export {
+    router as quotesApi
+}
+
