@@ -10,7 +10,7 @@ import serveIndex from "serve-index"
 import { fileURLToPath } from 'url'
 import * as passportConfig from "./config/passportConfig.js"
 
-import router from "./api/apiRouter.js"
+import { apiRoutes } from "./api/index.js"
 import { AuthenticateUser } from "./middleware/jwtAuthenticate.js"
 
 const PORT = process.env.PORT || 5000
@@ -64,7 +64,7 @@ app.use("/files",
     express.static(allFilesPath),
     serveIndex(allFilesPath, { icons: true }))
 
-app.use("/api", router)
+app.use("/api", apiRoutes)
 
 // Allows us to use files from './client/build'
 app.use(express.static(fileURLToPath(new URL("../../client/build", import.meta.url))))
