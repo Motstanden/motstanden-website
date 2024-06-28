@@ -77,7 +77,7 @@ const UserSchema = z.object({
         .min(10000000, "Phone number must be 8 digits")
         .max(99999999, "Phone number must be 8 digits")
         .nullable(),
-    birthDate: z.string().date(),
+    birthDate: z.string().date().nullable(),
     
     // Membership details
     capeName: z.string().trim(),
@@ -121,7 +121,7 @@ const UpdateCurrentUserSchema = UserSchema.pick({
     status: true,
     birthDate: true,
     startDate: true,
-    endDate: true
+    endDate: true,
 })
 
 router.patch("/users/me", 
