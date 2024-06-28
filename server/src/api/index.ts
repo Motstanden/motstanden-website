@@ -7,6 +7,8 @@ import songLyric from "./songLyric.js"
 const router = express.Router()
 
 // NOTE: The order is very important!!!
+
+// TODO: Split up this file and put it into private/public folders
 router.use(songLyric)
 
 // Public routes

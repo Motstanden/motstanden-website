@@ -1,3 +1,5 @@
+// TODO: Split up this file and put it into private/public folders
+
 import { UserGroup } from "common/enums"
 import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
