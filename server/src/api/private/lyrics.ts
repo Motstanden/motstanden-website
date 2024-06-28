@@ -79,6 +79,6 @@ router.post("/lyrics/:id/delete",
 )
 
 export {
-    router as privateSongLyricApi
+    router as privateLyricsApi
 }
 

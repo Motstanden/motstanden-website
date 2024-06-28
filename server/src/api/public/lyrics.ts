@@ -45,6 +45,6 @@ router.get("/public/lyrics/:id",
 )
 
 export {
-    router as publicSongLyricApi
+    router as publicLyricsApi
 }
 
