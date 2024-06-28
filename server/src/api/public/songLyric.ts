@@ -1,5 +1,4 @@
-import { strToNumber } from "common/utils"
-import express, { Request, Response } from "express"
+import express from "express"
 import { db } from "../../db/index.js"
 import { AuthenticateUser } from "../../middleware/jwtAuthenticate.js"
 import { validateParams } from "../../middleware/zodValidation.js"
@@ -7,7 +6,7 @@ import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router()
 
-router.get("/song-lyric/simple-list", (req, res) => { 
+router.get("/lyrics", (req, res) => { 
     const lyrics = db.songLyrics.getSimplifiedList()
     res.json(lyrics)
 })

@@ -46,7 +46,7 @@ function LyricContextLoader() {
 
     const { isPending, isError, data, error } = useQuery<StrippedSongLyric[]>({
         queryKey: lyricContextQueryKey,
-        queryFn: fetchFn<StrippedSongLyric[]>("/api/song-lyric/simple-list"),
+        queryFn: fetchFn<StrippedSongLyric[]>("/api/lyrics"),
     })
 
     const { isListPage, isAllListPage,  isNewPage, isItemPage, isEditPage } = useLyricUrlMatch()
