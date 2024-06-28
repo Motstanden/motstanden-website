@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useQueryClient } from "@tanstack/react-query";
-import { UserEditMode, UserGroup, UserRank, UserStatus } from "common/enums";
+import { UserGroup, UserRank, UserStatus } from "common/enums";
 import { User } from "common/interfaces";
 import { isNtnuMail as checkIsNtnuMail, isNullOrWhitespace, strToNumber, userRankToPrettyStr } from "common/utils";
 import dayjs, { Dayjs } from "dayjs";
@@ -22,6 +22,13 @@ import { useUserProfileContext, userListQueryKey } from "./Context";
 import { AccountDetailsCard, PersonCard, formatExactDate } from "./UserPage";
 import { Card, CardTextItem } from "./components/Card";
 import { groupTVPair, rankTVPair, statusTVPair } from "./utils/TextValuePair";
+
+enum UserEditMode {
+    Self = 1,
+    Admin = 2,
+    SelfAndAdmin = 3,
+    SuperAdmin = 4,
+}
 
 export default function EditUserPage() {
     const {user, isAdmin, isSuperAdmin} = useAuthenticatedUser()
