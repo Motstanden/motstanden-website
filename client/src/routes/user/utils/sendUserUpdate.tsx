@@ -20,7 +20,7 @@ export async function sendUserUpdate(mode: UserEditMode, userId: number, newData
         case UserEditMode.Self:
             return {
                 success: await updateAsSelf(newData),
-                partialSuccess: false
+                partialSuccess: true
             }
         case UserEditMode.SelfAndAdmin:
             return await updateAsSelfAndAdmin(userId, newData)
@@ -47,7 +47,7 @@ async function updateAsSelf(newData: User): Promise<boolean> {
         startDate: newData.startDate,
         endDate: newData.endDate
     }
-    const res = await patchJson("/api/users/me", body)
+    const res = await patchJson("/api/users/me", body, { alertOnFailure: true })
     return res?.ok ?? false
 }
 
@@ -62,7 +62,7 @@ async function updateAsAdmin(userId: number, newData: User): Promise<UnclearUser
         startDate: newData.startDate,
         endDate: newData.endDate
     }
-    const res = await putJson(`/api/users/${userId}/membership`, body)
+    const res = await putJson(`/api/users/${userId}/membership`, body, { alertOnFailure: true })
 
     const partialSuccess = res?.ok ?? false
 
@@ -100,12 +100,12 @@ async function updateAsSuperAdmin(userId: number, newData: User): Promise<boolea
         startDate: newData.startDate,
         endDate: newData.endDate
     }
-    const res = await patchJson(`/api/users/${userId}`, body)
+    const res = await patchJson(`/api/users/${userId}`, body, { alertOnFailure: true })
     return res?.ok ?? false
 }
 
 async function sendUpdateRole(userId: number, role: UserGroup): Promise<boolean> {
     const body: UpdateUserRoleBody = { groupName: role }
-    const res = await putJson(`/api/users/${userId}/role`, body)
+    const res = await putJson(`/api/users/${userId}/role`, body, { alertOnFailure: true })
     return res?.ok ?? false
 }
