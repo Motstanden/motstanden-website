@@ -3,34 +3,27 @@ import { UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipB
 import { patchJson, putJson } from "src/utils/postJson"
 import { UserEditMode } from "./UserEditMode"
 
-type ConclusiveUserUpdateResult = {
-    success: boolean,
-    partialSuccess: true
-}
-
-type UnclearUserUpdateResult = { 
+type UserUpdateResult = { 
     success: boolean,
     partialSuccess: boolean
 }
 
-type UserUpdateResult = ConclusiveUserUpdateResult | UnclearUserUpdateResult
-
 export async function sendUserUpdate(mode: UserEditMode, userId: number, newData: User): Promise<UserUpdateResult> {
     switch (mode) {
-        case UserEditMode.Self:
-            return {
-                success: await updateAsSelf(newData),
-                partialSuccess: true
-            }
-        case UserEditMode.SelfAndAdmin:
+        case UserEditMode.Self: {
+            const success = await updateAsSelf(newData)
+            return { success, partialSuccess: success }
+        }
+        case UserEditMode.SelfAndAdmin: {
             return await updateAsSelfAndAdmin(userId, newData)
-        case UserEditMode.Admin:
+        }
+        case UserEditMode.Admin: {
             return await updateAsAdmin(userId, newData)
-        case UserEditMode.SuperAdmin:
-            return {
-                success: await updateAsSuperAdmin(userId, newData),
-                partialSuccess: true
-            }
+        }
+        case UserEditMode.SuperAdmin: {
+            const success = await updateAsSuperAdmin(userId, newData)
+            return { success: success, partialSuccess: success }
+        }
     }
 }
 
@@ -51,7 +44,7 @@ async function updateAsSelf(newData: User): Promise<boolean> {
     return res?.ok ?? false
 }
 
-async function updateAsAdmin(userId: number, newData: User): Promise<UnclearUserUpdateResult> {
+async function updateAsAdmin(userId: number, newData: User): Promise<UserUpdateResult> {
 
     // It is important to update the membership first because are allowed to demote themselves,
     // which will cause this request to fail
@@ -73,7 +66,7 @@ async function updateAsAdmin(userId: number, newData: User): Promise<UnclearUser
     return { success, partialSuccess }
 }
 
-async function updateAsSelfAndAdmin(userId: number, newData: User): Promise<UnclearUserUpdateResult> {
+async function updateAsSelfAndAdmin(userId: number, newData: User): Promise<UserUpdateResult> {
 
     const partialSuccess = await updateAsSelf(newData)
 
