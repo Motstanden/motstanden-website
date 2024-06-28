@@ -2,18 +2,16 @@ import { LikeEntityType } from "common/enums"
 import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
 import { z } from "zod"
-import { db } from "../db/index.js"
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
-import { validateNumber } from "../middleware/validateNumber.js"
-import { validateBody } from "../middleware/zodValidation.js"
-import { getUser } from "../utils/getUser.js"
+import { db } from "../../db/index.js"
+import { validateNumber } from "../../middleware/validateNumber.js"
+import { validateBody } from "../../middleware/zodValidation.js"
+import { getUser } from "../../utils/getUser.js"
 
 const router = express.Router()
 
 // ---- GET like emojis ----
 
 router.get("/likes/emojis/all",
-    AuthenticateUser(),
     (req, res) => {
         const emojis = db.likes.emojis.getAll()
         res.send(emojis)
@@ -30,7 +28,6 @@ router.get("/wall-post/comment/:entityId/likes", getLikesPipeline(LikeEntityType
 
 function getLikesPipeline(entityType: LikeEntityType) {
     return [
-        AuthenticateUser(),
         validateNumber({
             getValue: (req: Request) => req.params.entityId,
         }),
@@ -79,7 +76,6 @@ function upsertLikePipeline(entityType: LikeEntityType) {
         validateNumber({
             getValue: (req: Request) => req.params.entityId,
         }),
-        AuthenticateUser(),
         validateBody(NewLikeSchema),
         upsertLikeHandler({
             entityType: entityType,
@@ -131,7 +127,6 @@ function deleteLikePipeline(entityType: LikeEntityType) {
         validateNumber({
             getValue: (req: Request) => req.params.entityId,
         }),
-        AuthenticateUser(),
         deleteLikeHandler({
             entityType: entityType,
             getEntityId: (req: Request) => strToNumber(req.params.entityId) as number   // Validated by previous middleware
@@ -159,4 +154,7 @@ function deleteLikeHandler({
     }
 }
 
-export default router
+export {
+    router as likesApi
+}
+
