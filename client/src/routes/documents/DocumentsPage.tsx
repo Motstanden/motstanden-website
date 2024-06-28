@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
+import { Document } from 'common/interfaces'
+import { useAppBarHeader } from 'src/context/AppBarHeader'
+import { usePotentialUser } from 'src/context/Authentication'
 import { UrlList, UrlListItem, UrlListSkeleton } from "../../components/UrlList"
 import { useTitle } from "../../hooks/useTitle"
 import { PageContainer } from "../../layout/PageContainer/PageContainer"
 import { fetchFn } from "../../utils/fetchAsync"
-import { Document } from 'common/interfaces'
-import { useAppBarHeader } from 'src/context/AppBarHeader'
 
 export default function DocumentsPage() {
     useTitle("Dokumenter")
@@ -18,9 +19,12 @@ export default function DocumentsPage() {
 
 function DocumentList() {
 
+    const { isLoggedIn } = usePotentialUser()
+
+    const subPath = isLoggedIn ? "private" : "public"
     const { isPending, isError, data, error } = useQuery<Document[]>({
-        queryKey: ["FetchDocuments"],
-        queryFn: fetchFn<Document[]>("/api/documents"),
+        queryKey: ["documents", subPath],
+        queryFn: fetchFn<Document[]>(`/api/${subPath}/documents`),
     })
 
     if (isPending) {
