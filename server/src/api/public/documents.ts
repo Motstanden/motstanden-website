@@ -1,6 +1,6 @@
 import express from "express"
-import { db } from "../db/index.js"
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
+import { db } from "../../db/index.js"
+import { AuthenticateUser } from "../../middleware/jwtAuthenticate.js"
 
 const router = express.Router()
 
@@ -17,4 +17,6 @@ router.get("/public/documents", (req, res) => {
     res.send(documents)
 })
 
-export default router;
+export {
+    router as documentsApi
+}
