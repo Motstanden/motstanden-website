@@ -4,6 +4,7 @@ import { eventsApi } from "./events.js"
 import { likesApi } from "./likes.js"
 import { pollApi } from "./poll.js"
 import { quotesApi } from "./quotes.js"
+import { rumoursApi } from "./rumours.js"
 
 const router = express.Router()
 
@@ -13,6 +14,7 @@ router.use(eventsApi)
 router.use(likesApi)
 router.use(pollApi)
 router.use(quotesApi)
+router.use(rumoursApi)
 
 export {
     router as privateRoutes
