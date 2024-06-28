@@ -388,13 +388,20 @@ function MemberForm({ value, onChange, editMode }: FormParams) {
     )
 }
 
-function AccountDetailsForm({ value, onChange, editMode }: FormParams) {
+function AccountDetailsForm({ value, onChange }: FormParams) {
 
-    if (!hasAdminAccess(editMode)) {
+    const { isAdmin, isSuperAdmin } = useAuthenticatedUser()
+
+    // Must be at least admin to edit group
+    if (!isAdmin) {
         return <AccountDetailsCard user={value} />
     }
 
-    const isSuperAdmin = editMode === UserEditMode.SuperAdmin
+    // Prevent admin from demoting super admin
+    if(isAdmin && value.groupName === UserGroup.SuperAdministrator) {
+        return <AccountDetailsCard user={value} />
+    }
+
     const groupSource = isSuperAdmin
         ? groupTVPair
         : groupTVPair.filter(item => item.value !== UserGroup.SuperAdministrator)
