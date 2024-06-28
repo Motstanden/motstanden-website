@@ -2,50 +2,42 @@ import { UserGroup, UserRank, UserStatus } from "common/enums"
 import { UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipBody, UpdateUserRoleBody } from "common/interfaces"
 import express, { Request, Response } from "express"
 import { z } from "zod"
-import { db } from "../db/index.js"
-import { AuthenticateUser, logOutAllUnits, updateAccessToken } from "../middleware/jwtAuthenticate.js"
-import { RequiresGroup } from "../middleware/requiresGroup.js"
-import { validateBody, validateParams } from "../middleware/zodValidation.js"
-import { getUser } from "../utils/getUser.js"
-import { Schemas } from "../utils/zodSchema.js"
+import { db } from "../../db/index.js"
+import { logOutAllUnits, updateAccessToken } from "../../middleware/jwtAuthenticate.js"
+import { RequiresGroup } from "../../middleware/requiresGroup.js"
+import { validateBody, validateParams } from "../../middleware/zodValidation.js"
+import { getUser } from "../../utils/getUser.js"
+import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router()
 
 // ---- GET users ----
 
-router.get("/users", 
-    AuthenticateUser(),
-    (req: Request, res: Response) => {
-        const users = db.users.getAll()
-        res.json(users)
+router.get("/users", (req: Request, res: Response) => {
+    const users = db.users.getAll()
+    res.json(users)
 })
 
-router.get("/users/identifiers",
-    AuthenticateUser(),
-    (req: Request, res: Response) => {
-        const users = db.users.getAllAsIdentifiers()
-        res.json(users)
+router.get("/users/identifiers", (req: Request, res: Response) => {
+    const users = db.users.getAllAsIdentifiers()
+    res.json(users)
 })
     
-router.get("/users/me",
-    AuthenticateUser(),
-    (req, res) => {
-        const user = getUser(req)
-        const userData = db.users.get(user.userId)
-        if(userData !== undefined) {
-            res.json(userData)
-        } else {
-            // This should never happen.
-            // If the user is authenticated, the user should be in the database.
-            console.error(`User authenticated but not found in database.\nUser: ${user}\nLogging user out of all units.`)
-            logOutAllUnits(req, res)
-            res.status(410).send("User authenticated but not found in database")        
-        }
+router.get("/users/me", (req, res) => {
+    const user = getUser(req)
+    const userData = db.users.get(user.userId)
+    if(userData !== undefined) {
+        res.json(userData)
+    } else {
+        // This should never happen.
+        // If the user is authenticated, the user should be in the database.
+        console.error(`User authenticated but not found in database.\nUser: ${user}\nLogging user out of all units.`)
+        logOutAllUnits(req, res)
+        res.status(410).send("User authenticated but not found in database")        
     }
-)
+})
 
 router.get("/users/:id",
-    AuthenticateUser(),
     validateParams(Schemas.params.id),
     (req, res) => {
         const { id } = Schemas.params.id.parse(req.params)
@@ -109,7 +101,6 @@ const NewUserSchema = UserSchema.pick({
 })
 
 router.post("/users", 
-    AuthenticateUser(),
     RequiresGroup(UserGroup.SuperAdministrator),
     validateBody(NewUserSchema), 
     (req: Request, res: Response) => {
@@ -134,7 +125,6 @@ const UpdateCurrentUserSchema = UserSchema.pick({
 })
 
 router.patch("/users/me", 
-    AuthenticateUser(), 
     validateBody(UpdateCurrentUserSchema),
     (req, res) => { 
         const newUserData: UpdateUserAsSelfBody = UpdateCurrentUserSchema.parse(req.body)
@@ -163,7 +153,6 @@ router.patch("/users/me",
 const UpdateUserSchema = UserSchema.omit({ profilePicture: true })
 
 router.patch("/users/:id", 
-    AuthenticateUser(),
     RequiresGroup(UserGroup.SuperAdministrator),
     validateParams(Schemas.params.id),
     validateBody(UpdateUserSchema),
@@ -196,7 +185,6 @@ router.patch("/users/:id",
 const UpdateUserRoleSchema = UserSchema.pick({ groupName: true })
 
 router.put("/users/:id/role", 
-    AuthenticateUser(),
     RequiresGroup(UserGroup.Administrator),
     validateParams(Schemas.params.id),
     validateBody(UpdateUserRoleSchema),
@@ -243,7 +231,6 @@ const UpdateUserMembershipSchema = UserSchema.pick({
 })
 
 router.put("/users/:id/membership",
-    AuthenticateUser(),
     RequiresGroup(UserGroup.Administrator),
     validateParams(Schemas.params.id),
     validateBody(UpdateUserMembershipSchema),
@@ -273,4 +260,7 @@ function updateAccessTokenIfCurrentUser(req: Request, res: Response, userId: num
     }
 }
 
-export default router
+export {
+    router as userApi
+}
+

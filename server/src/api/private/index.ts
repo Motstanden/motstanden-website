@@ -7,6 +7,7 @@ import { quotesApi } from "./quotes.js"
 import { rumoursApi } from "./rumours.js"
 import { sheetArchiveApi } from "./sheetArchive.js"
 import { privateSimpleTextApi } from "./simpleText.js"
+import { userApi } from "./user.js"
 
 const router = express.Router()
 
@@ -19,6 +20,7 @@ router.use(quotesApi)
 router.use(rumoursApi)
 router.use(sheetArchiveApi)
 router.use(privateSimpleTextApi)
+router.use(userApi)
 
 export {
     router as privateRoutes

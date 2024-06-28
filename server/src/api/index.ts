@@ -3,14 +3,12 @@ import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
 import { privateRoutes } from "./private/index.js"
 import { publicRoutes } from "./public/index.js"
 import songLyric from "./songLyric.js"
-import user from "./user.js"
 import wallPosts from "./wallPosts.js"
 
 const router = express.Router()
 
 // TODO: Move these routes to public/private folders
 router.use(songLyric)
-router.use(user)
 router.use(wallPosts)
 
 // NOTE: The order is very important!!!
