@@ -8,17 +8,22 @@ type UserUpdateResult = {
     partialSuccess: boolean
 }
 
-export async function sendUserUpdate(mode: UserEditMode, userId: number, newData: User): Promise<UserUpdateResult> {
+type UpdateAsAdminOpts = {
+    updateTargeIsSuperAdmin: boolean
+}
+
+export async function sendUserUpdate(mode: UserEditMode, userId: number, newData: User, opts?: UpdateAsAdminOpts): Promise<UserUpdateResult> {
+    const updateTargeIsSuperAdmin = opts?.updateTargeIsSuperAdmin ?? false
     switch (mode) {
         case UserEditMode.Self: {
             const success = await updateAsSelf(newData)
             return { success, partialSuccess: success }
         }
         case UserEditMode.SelfAndAdmin: {
-            return await updateAsSelfAndAdmin(userId, newData)
+            return await updateAsSelfAndAdmin(userId, newData, { updateTargeIsSuperAdmin })
         }
         case UserEditMode.Admin: {
-            return await updateAsAdmin(userId, newData)
+            return await updateAsAdmin(userId, newData, { updateTargeIsSuperAdmin })
         }
         case UserEditMode.SuperAdmin: {
             const success = await updateAsSuperAdmin(userId, newData)
@@ -44,7 +49,7 @@ async function updateAsSelf(newData: User): Promise<boolean> {
     return res?.ok ?? false
 }
 
-async function updateAsAdmin(userId: number, newData: User): Promise<UserUpdateResult> {
+async function updateAsAdmin(userId: number, newData: User, { updateTargeIsSuperAdmin }: UpdateAsAdminOpts): Promise<UserUpdateResult> {
 
     // It is important to update the membership first because are allowed to demote themselves,
     // which will cause this request to fail
@@ -59,6 +64,10 @@ async function updateAsAdmin(userId: number, newData: User): Promise<UserUpdateR
 
     const partialSuccess = res?.ok ?? false
 
+    // If the target user is a super admin, we can't update their role
+    if(updateTargeIsSuperAdmin)
+        return { success: partialSuccess, partialSuccess: partialSuccess }
+    
     const success = partialSuccess 
         ? await sendUpdateRole(userId, newData.groupName)
         : false
@@ -66,12 +75,12 @@ async function updateAsAdmin(userId: number, newData: User): Promise<UserUpdateR
     return { success, partialSuccess }
 }
 
-async function updateAsSelfAndAdmin(userId: number, newData: User): Promise<UserUpdateResult> {
+async function updateAsSelfAndAdmin(userId: number, newData: User, { updateTargeIsSuperAdmin }: UpdateAsAdminOpts): Promise<UserUpdateResult> {
 
     const partialSuccess = await updateAsSelf(newData)
 
     const success = partialSuccess 
-        ? (await updateAsAdmin(userId, newData)).success 
+        ? (await updateAsAdmin(userId, newData, { updateTargeIsSuperAdmin })).success 
         : false
     
     return { success, partialSuccess }

@@ -73,7 +73,8 @@ function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
 
     const onSubmit = async () => {
 
-        const {success, partialSuccess } = await sendUserUpdate(editMode, user.id, newUser)
+        const updateTargeIsSuperAdmin = user.groupName === UserGroup.SuperAdministrator
+        const {success, partialSuccess } = await sendUserUpdate(editMode, user.id, newUser, { updateTargeIsSuperAdmin })
 
         if(success || partialSuccess) {
             await queryClient.invalidateQueries({queryKey: userQueryKey})
