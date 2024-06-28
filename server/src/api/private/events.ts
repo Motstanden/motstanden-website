@@ -1,12 +1,11 @@
 import { ParticipationStatus, UserGroup } from "common/enums"
 import express, { Request, Response } from "express"
 import { z } from "zod"
-import { db } from "../db/index.js"
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
-import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
-import { validateBody, validateParams, validateQuery } from "../middleware/zodValidation.js"
-import { getUser } from "../utils/getUser.js"
-import { Schemas } from "../utils/zodSchema.js"
+import { db } from "../../db/index.js"
+import { requiresGroupOrAuthor } from "../../middleware/requiresGroupOrAuthor.js"
+import { validateBody, validateParams, validateQuery } from "../../middleware/zodValidation.js"
+import { getUser } from "../../utils/getUser.js"
+import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router()
 
@@ -29,7 +28,6 @@ const GetEventsQuerySchema = z.object({
 })
 
 router.get("/events",
-    AuthenticateUser(),
     validateQuery(GetEventsQuerySchema),
     (req, res) => {
 
@@ -55,7 +53,6 @@ const UpsertEventSchema = z.object({
 })
 
 router.post("/events",
-    AuthenticateUser(),
     validateBody(UpsertEventSchema),
     (req, res) => {
         const event = UpsertEventSchema.parse(req.body)
@@ -67,7 +64,6 @@ router.post("/events",
 )
 
 router.patch("/events/:id",
-    AuthenticateUser(),
     validateParams(Schemas.params.id),
     validateBody(UpsertEventSchema),
     (req: Request, res: Response) => { 
@@ -85,7 +81,6 @@ router.patch("/events/:id",
 // ---- DELETE event ----
 
 router.delete("/events/:id",
-    AuthenticateUser(),
     validateParams(Schemas.params.id),
     requiresGroupOrAuthor({
         getId: req => req.body.eventId,
@@ -102,7 +97,6 @@ router.delete("/events/:id",
 // ---- GET event participants ----
 
 router.get("/events/:id/participants",
-    AuthenticateUser(),
     validateParams(Schemas.params.id),
     (req: Request, res: Response) => {
         
@@ -126,7 +120,6 @@ const UpsertParticipantBodySchema = z.object({
 })
 
 router.put("/events/:eventId/participants/:userId",
-    AuthenticateUser(),
     validateParams(UpsertParticipantParamSchema),
     validateBody(UpsertParticipantBodySchema),
     (req: Request, res: Response) => {
@@ -145,4 +138,7 @@ router.put("/events/:eventId/participants/:userId",
     }
 )
 
-export default router
+export {
+    router as eventsApi
+}
+
