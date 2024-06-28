@@ -5,7 +5,7 @@ import passport, { PassportStatic } from 'passport'
 import { Strategy as JWTStrategy } from 'passport-jwt'
 import MagicLoginStrategy from 'passport-magic-login'
 import { fromError } from "zod-validation-error"
-import { MagicLinkPayloadSchema, magicLinkVerifyPath } from "../api/auth.js"
+import { MagicLinkPayloadSchema, magicLinkVerifyPath } from "../api/public/auth.js"
 import { db } from "../db/index.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload.js"

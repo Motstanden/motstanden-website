@@ -2,14 +2,14 @@ import { MagicLinkResponse, User } from "common/interfaces"
 import express from "express"
 import passport from "passport"
 import { z } from "zod"
-import * as passportConfig from "../config/passportConfig.js"
-import { db } from "../db/index.js"
-import { AuthenticateUser, logOut, logOutAllUnits, loginUser } from "../middleware/jwtAuthenticate.js"
-import { requiresDevEnv } from "../middleware/requiresDevEnv.js"
-import { validateBody } from "../middleware/zodValidation.js"
-import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
-import { getRandomInt } from "../utils/getRandomInt.js"
-import { sleepAsync } from "../utils/sleepAsync.js"
+import * as passportConfig from "../../config/passportConfig.js"
+import { db } from "../../db/index.js"
+import { AuthenticateUser, logOut, logOutAllUnits, loginUser } from "../../middleware/jwtAuthenticate.js"
+import { requiresDevEnv } from "../../middleware/requiresDevEnv.js"
+import { validateBody } from "../../middleware/zodValidation.js"
+import { AccessTokenData } from "../../ts/interfaces/AccessTokenData.js"
+import { getRandomInt } from "../../utils/getRandomInt.js"
+import { sleepAsync } from "../../utils/sleepAsync.js"
 
 const router = express.Router()
 
@@ -86,4 +86,6 @@ router.post("/auth/logout", AuthenticateUser(), logOut)
 
 router.post("/auth/logout/all-devices", AuthenticateUser(), logOutAllUnits)
 
-export default router
+export {
+    router as authApi
+}
