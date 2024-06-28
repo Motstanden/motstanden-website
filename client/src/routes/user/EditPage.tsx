@@ -1,27 +1,28 @@
 import {
     Box,
+    Divider,
     Grid,
     MenuItem,
     Stack,
     TextField
-} from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
-import { useQueryClient } from "@tanstack/react-query";
-import { UserGroup, UserRank, UserStatus } from "common/enums";
-import { User } from "common/interfaces";
-import { isNtnuMail as checkIsNtnuMail, isNullOrWhitespace, strToNumber, userRankToPrettyStr } from "common/utils";
-import dayjs, { Dayjs } from "dayjs";
-import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-import { datePickerStyle } from "src/assets/style/timePickerStyles";
-import { HelpButton } from "src/components/HelpButton";
-import { Form } from "src/components/form/Form";
-import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication";
-import { useTitle } from "src/hooks/useTitle";
-import { useUserProfileContext, userListQueryKey } from "./Context";
-import { AccountDetailsCard, PersonCard, formatExactDate } from "./UserPage";
-import { Card, CardTextItem } from "./components/Card";
-import { groupTVPair, rankTVPair, statusTVPair } from "./utils/TextValuePair";
+} from "@mui/material"
+import { DatePicker } from "@mui/x-date-pickers"
+import { useQueryClient } from "@tanstack/react-query"
+import { UserGroup, UserRank, UserStatus } from "common/enums"
+import { User } from "common/interfaces"
+import { isNtnuMail as checkIsNtnuMail, isNullOrWhitespace, strToNumber, userRankToPrettyStr } from "common/utils"
+import dayjs, { Dayjs } from "dayjs"
+import { useEffect, useState } from "react"
+import { Navigate, useNavigate } from "react-router-dom"
+import { datePickerStyle } from "src/assets/style/timePickerStyles"
+import { HelpButton } from "src/components/HelpButton"
+import SubmitFormButtons from "src/components/form/SubmitButtons"
+import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication"
+import { useTitle } from "src/hooks/useTitle"
+import { useUserProfileContext, userListQueryKey } from "./Context"
+import { AccountDetailsCard, PersonCard, formatExactDate } from "./UserPage"
+import { Card, CardTextItem } from "./components/Card"
+import { groupTVPair, rankTVPair, statusTVPair } from "./utils/TextValuePair"
 
 enum UserEditMode {
     Self = 1,
@@ -74,7 +75,10 @@ function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
             navigate("..", {replace: true})
         } 
     }
-    const onPostSuccess = async (_: Response) => {
+    const onSubmit = async () => {
+
+        // TODO: Submit changes to server
+
         await queryClient.invalidateQueries({queryKey: userQueryKey})
         await queryClient.invalidateQueries({queryKey: userListQueryKey})
         navigate("..", {replace: true})
@@ -82,11 +86,9 @@ function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
 
     return (
         <Form
-            value={newUser}
-            postUrl={getPostUrl(editMode)}
             disabled={isUserEqual(user, newUser) || disableSubmit}
             onAbortClick={onAbort}
-            onPostSuccess={onPostSuccess}
+            onSubmit={onSubmit}
         >
             <Grid container alignItems="top" spacing={4}>
                 <PersonForm value={newUser} onChange={onChange} onIsValidChange={onIsValidChange} editMode={editMode} />
@@ -96,6 +98,44 @@ function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
         </Form>
     )
 }
+
+function Form({
+    onSubmit,
+    onAbortClick,
+    disabled,
+    children,
+}: {
+    onSubmit?: (() => void) | (() => Promise<void>),
+    disabled?: boolean,
+    onAbortClick?: () => void
+    children?: React.ReactNode,
+}) {
+    const [isSubmitting, setIsSubmitting] = useState(false)
+
+    const handleSubmit = async (e: React.FormEvent) => { 
+        e.preventDefault()
+        setIsSubmitting(true)
+        await onSubmit?.()
+        setIsSubmitting(false)
+    }
+
+    return (
+        <>
+            <form onSubmit={handleSubmit}>
+                {children}
+                <div style={{ marginTop: "4em" }}>
+                    <SubmitFormButtons 
+                        loading={isSubmitting} 
+                        onAbort={onAbortClick} 
+                        disabled={disabled} 
+                    />
+                </div>
+            </form>
+            { <Divider sx={{ my: 3 }} /> }
+        </>
+    )
+}
+
 
 function PersonForm({ value, onChange, onIsValidChange, editMode }: FormParams) {
     const [isValid, setIsValid] = useState(true)
