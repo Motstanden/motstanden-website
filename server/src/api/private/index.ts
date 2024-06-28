@@ -7,6 +7,7 @@ import { quotesApi } from "./quotes.js"
 import { rumoursApi } from "./rumours.js"
 import { sheetArchiveApi } from "./sheetArchive.js"
 import { privateSimpleTextApi } from "./simpleText.js"
+import { privateSongLyricApi } from "./songLyric.js"
 import { userApi } from "./user.js"
 import { wallPostApi } from "./wallPosts.js"
 
@@ -20,6 +21,7 @@ router.use(quotesApi)
 router.use(rumoursApi)
 router.use(sheetArchiveApi)
 router.use(privateSimpleTextApi)
+router.use(privateSongLyricApi)
 router.use(userApi)
 router.use(wallPostApi)
 

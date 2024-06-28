@@ -2,65 +2,15 @@
 
 import { UserGroup } from "common/enums"
 import { strToNumber } from "common/utils"
-import express, { Request, Response } from "express"
+import express from "express"
 import { z } from "zod"
-import { db } from "../db/index.js"
-import { AuthenticateUser } from "../middleware/jwtAuthenticate.js"
-import { requiresGroupOrAuthor } from "../middleware/requiresGroupOrAuthor.js"
-import { validateNumber } from "../middleware/validateNumber.js"
-import { validateBody } from "../middleware/zodValidation.js"
-import { getUser } from "../utils/getUser.js"
+import { db } from "../../db/index.js"
+import { requiresGroupOrAuthor } from "../../middleware/requiresGroupOrAuthor.js"
+import { validateNumber } from "../../middleware/validateNumber.js"
+import { validateBody } from "../../middleware/zodValidation.js"
+import { getUser } from "../../utils/getUser.js"
 
 const router = express.Router()
-
-router.get("/song-lyric/simple-list", (req, res) => { 
-    const lyrics = db.songLyrics.getSimplifiedList()
-    res.send(lyrics)
-})
-
-router.get("/private/song-lyric/:id", 
-    validateNumber({
-        getValue: (req) => req.params.id,
-        failureMessage: "Could not parse song lyric id"
-    }),
-    AuthenticateUser(),
-    sendSongLyric({ 
-        isPublic: false 
-    })
-)
-
-router.get("/public/song-lyric/:id",
-    validateNumber({
-        getValue: (req) => req.params.id,
-        failureMessage: "Could not parse song lyric id"
-    }),
-    sendSongLyric({ 
-        isPublic: true 
-    })
-)
-
-function sendSongLyric({ isPublic }: {isPublic: boolean} ) {
-    return (req: Request, res: Response) => {
-        const id = strToNumber(req.params.id) as number
-        try {
-            const privateLyric = db.songLyrics.get(id)
-
-            if(!privateLyric)
-                return res.status(404).send("Song lyric not found");
-            
-            const filteredLyric = isPublic ? {
-                id: privateLyric.id,
-                title: privateLyric.title,
-                content: privateLyric.content
-            } : privateLyric
-            
-            res.send(filteredLyric)
-        } catch (err) {
-            console.error(err)
-            res.status(500).end()
-        }
-    }
-}
 
 const NewSongLyricSchema = z.object({ 
     title: z.string().trim().min(1, "Title must not be empty"),
@@ -72,7 +22,6 @@ router.post("/song-lyric/:id/update",
     validateNumber({
         getValue: (req) => req.params.id,
     }),
-    AuthenticateUser(),
     validateBody(NewSongLyricSchema),
     (req, res) => {
 
@@ -95,7 +44,6 @@ router.post("/song-lyric/:id/update",
 )
 
 router.post("/song-lyric/new",
-    AuthenticateUser(),
     validateBody(NewSongLyricSchema),
     (req, res) => {
 
@@ -114,7 +62,6 @@ router.post("/song-lyric/new",
 )
 
 router.post("/song-lyric/:id/delete",
-    AuthenticateUser(),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => strToNumber(req.params.id),
@@ -131,4 +78,7 @@ router.post("/song-lyric/:id/delete",
     }
 )
 
-export default router;
+export {
+    router as privateSongLyricApi
+}
+
