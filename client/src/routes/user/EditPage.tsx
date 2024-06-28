@@ -70,11 +70,12 @@ function EditPage({ editMode, user }: { editMode: UserEditMode, user: User }) {
             navigate("..", {replace: true})
         } 
     }
+
     const onSubmit = async () => {
 
-        const success = await sendUserUpdate(editMode, user.id, newUser)
+        const {success, partialSuccess } = await sendUserUpdate(editMode, user.id, newUser)
 
-        if(success) {
+        if(success || partialSuccess) {
             await queryClient.invalidateQueries({queryKey: userQueryKey})
             await queryClient.invalidateQueries({queryKey: userListQueryKey})
             navigate("..", {replace: true})
