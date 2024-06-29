@@ -18,6 +18,7 @@ import { useState } from 'react'
 import { datePickerStyle } from "src/assets/style/timePickerStyles"
 import { HelpButton } from "src/components/HelpButton"
 import { PostingWall } from "src/components/PostingWall"
+import { TitleCard } from "src/components/TitleCard"
 import { Form } from "src/components/form/Form"
 import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication"
 import { useTimeZone } from 'src/context/TimeZone'
@@ -635,18 +636,11 @@ function FormCard({
             noPadding
             noDivider={noDivider}
         >
-            <Card 
-                title={title}
-                showEditButton={false}
-                sx={{ 
-                    mb: 3,
-                }}
-                spacing={4}
-            >
+            <TitleCard title={title} sx={{mb: 3}}>
                 <Stack spacing={4} sx={{py: 1}}>
                     {children}
                 </Stack>
-            </Card>
+            </TitleCard>
         </Form>
     )
 }
