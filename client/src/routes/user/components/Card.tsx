@@ -8,7 +8,9 @@ export function Card({
     spacing,
     showEditButton,
     onEditClick,
-    editButtonToolTip
+    editButtonToolTip,
+    sx,
+    stackSx
 }:{
     title: string,
     spacing?: number
@@ -16,6 +18,8 @@ export function Card({
     showEditButton?: boolean
     onEditClick?: () => void
     editButtonToolTip?: string
+    sx?: SxProps,
+    stackSx?: SxProps
 }) {
     return (
         <TitleCard 
@@ -33,23 +37,25 @@ export function Card({
                     />
             )}
             sx={{ 
-                height: "100%" 
+                height: "100%",
+                ...sx
             }}
             >
-            <Stack spacing={spacing ?? 2}>
+            <Stack spacing={spacing ?? 2} sx={stackSx}>
                 {children}
             </Stack>
         </TitleCard>
     )
 }
 
-export function CardTextList( { children }: { children: React.ReactNode }) { 
+export function CardTextList( { children, style }: { children: React.ReactNode, style?: React.CSSProperties }) { 
     return (
         <div style={{
             display: "grid",
             gridTemplateColumns: "min-content auto",
             columnGap: "20px",
             rowGap: "18px",
+            ...style
         }}>
             {children}
         </div>
@@ -57,14 +63,21 @@ export function CardTextList( { children }: { children: React.ReactNode }) {
     )
 }
 
-export function CardTextItem({ label, text }: { label: string, text: string }) {
+export function CardTextItem({ 
+    label, text, labelStyle, textStyle 
+}: { 
+    label: string, 
+    text: string 
+    labelStyle?: React.CSSProperties,
+    textStyle?: React.CSSProperties
+}) {
     return (
         <>
-            <div style={{whiteSpace: "nowrap" }}>
+            <div style={{whiteSpace: "nowrap", ...labelStyle }}>
                 <b>{label}</b>
             </div>
             <div>
-                <span style={{ overflowWrap: "anywhere"}}>
+                <span style={{ overflowWrap: "anywhere", ...textStyle}}>
                     {text}
                 </span>
             </div>
