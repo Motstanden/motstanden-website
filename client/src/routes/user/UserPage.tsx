@@ -1,20 +1,16 @@
-import EditIcon from '@mui/icons-material/Edit'
 import {
     Divider,
     Grid,
-    IconButton,
     Paper,
-    SxProps,
-    Tooltip
+    SxProps
 } from "@mui/material"
 import { User } from "common/interfaces"
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
 import dayjs from "dayjs"
-import { Link as RouterLink, matchPath, useLocation } from "react-router-dom"
+import { useState } from 'react'
 import { PostingWall } from "src/components/PostingWall"
 import { useAuthenticatedUser } from "src/context/Authentication"
 import { useTimeZone } from 'src/context/TimeZone'
-import { useTopScroller } from 'src/context/TopScroller'
 import { useTitle } from "src/hooks/useTitle"
 import { useUserProfileContext } from './Context'
 import { Card, CardTextItem, CardTextList } from "./components/Card"
@@ -30,9 +26,9 @@ export default function UserPage() {
                     mb: {xs: 2, md: 2, lg: 4}
                 }} />
             <Grid container alignItems="top" spacing={{xs: 2, md: 2, lg: 4}}>
-                <PersonCard user={user} />
-                <MemberCard user={user} />
-                <AccountDetailsCard user={user} />
+                <PersonalDetailsController/>
+                <MembershipDetailsController/>
+                <AccountDetailsController/>
             </Grid>
             <Divider sx={{my: 4}} />
             <h1>Tidslinje</h1>
@@ -63,50 +59,77 @@ function ProfileHeader({ user, sx }: { user: User, sx?: SxProps }) {
     )
 }
 
-function EditButton({ user }: { user: User }) {
-    const {user: currentUser, isAdmin} = useAuthenticatedUser()
+// ********************************************************
+//                     CONTROLLERS
+// ********************************************************
 
-    const { preventNextScroll } = useTopScroller()
-    const location  = useLocation()
-
-    const isSelf = currentUser.id === user.id
-    const canEdit = isSelf || isAdmin
-    if (!canEdit) {
-        return <></>
-    }
-
-    const onClick = () => {
-        const isEditPage = matchPath("/medlem/:id/rediger", location.pathname)
-        if(!isEditPage) {
-            preventNextScroll(true)
-        }
-    }
+function PersonalDetailsController() { 
+    
+    const { user: currentUser, isSuperAdmin} = useAuthenticatedUser()
+    const { viewedUser } = useUserProfileContext()
+    const [isEditing, setIsEditing] = useState(false)
+    
+    // Only super admins and the user themselves can edit personal details
+    const canEdit = isSuperAdmin || currentUser.id === viewedUser.id
+    
+    if(canEdit && isEditing) 
+        return (
+            <PersonalDetailsForm 
+                initialValue={viewedUser} 
+                onCancel={() => setIsEditing(false)}
+                onSave={() => setIsEditing(false)}        
+        />
+    )
 
     return (
-        <div style={{ position: "relative" }}>
-            <Tooltip title="Rediger Profil" >
-                <IconButton
-                    component={RouterLink}
-                    to={`rediger`}
-                    replace
-                    onClick={onClick}
-                    style={{
-                        position: "absolute",
-                        right: "0px",
-                        bottom: "0px"
-                    }}>
-                    <EditIcon />
-                </IconButton>
-            </Tooltip>
-        </div>
-
+        <PersonalDetailsCard 
+            user={viewedUser} 
+            showEditMenu={canEdit}
+            onEditClick={() => setIsEditing(true)}
+        />
     )
 }
 
-function PersonCard({ user }: { user: User }) {
+function MembershipDetailsController() {
+    const { viewedUser } = useUserProfileContext()
+
+    // TODO: Implement edit switch
+
+    return (
+        <MembershipDetailsCard user={viewedUser} />
+    )
+}
+
+function AccountDetailsController() {
+    const { viewedUser } = useUserProfileContext()
+
+    // TODO: Implement edit switch
+
+    return (
+        <AccountDetailsCard user={viewedUser} />
+    )
+}
+
+// ********************************************************
+//                  READ-ONLY CARDS
+// ********************************************************
+
+
+type DetailsCardProps = { 
+    user: User, 
+    showEditMenu?: boolean,
+    onEditClick?: () => void,
+}
+
+function PersonalDetailsCard( { user, showEditMenu, onEditClick}: DetailsCardProps) {
     useTimeZone()
     return (
-        <Card title="Personalia">
+        <Card 
+            title="Personalia" 
+            showEditButton={showEditMenu} 
+            onEditClick={onEditClick}
+            editButtonToolTip="Rediger personalia"
+            >
             <CardTextList>
                 <CardTextItem label="Navn" text={getFullName(user)} />
                 <CardTextItem label="Bursdag" text={formatDateStr(user.birthDate)} />
@@ -117,10 +140,15 @@ function PersonCard({ user }: { user: User }) {
     )
 }
 
-function MemberCard({ user }: { user: User }) {
+function MembershipDetailsCard({ user, showEditMenu, onEditClick}: DetailsCardProps) {
     useTimeZone()
     return (
-        <Card title="Medlemskap">
+        <Card 
+            title="Medlemskap"
+            showEditButton={showEditMenu}
+            onEditClick={onEditClick}
+            editButtonToolTip="Rediger medlemskap"
+        >
             <CardTextList>
                 <CardTextItem label="Kappe" text={user.capeName ? user.capeName : "-"} />
                 <CardTextItem label="Rang" text={userRankToPrettyStr(user.rank)} />
@@ -131,10 +159,15 @@ function MemberCard({ user }: { user: User }) {
     )
 }
 
-function AccountDetailsCard({ user }: { user: User }) {
+function AccountDetailsCard({ user, showEditMenu, onEditClick}: DetailsCardProps) {
     useTimeZone()
     return (
-        <Card title="Brukerkonto">
+        <Card 
+            title="Brukerkonto"
+            showEditButton={showEditMenu}
+            onEditClick={onEditClick}
+            editButtonToolTip="Rediger brukerkonto"
+        >
             <CardTextList>
                 <CardTextItem label="Rolle" text={userGroupToPrettyStr(user.groupName)} />
                 <CardTextItem label="Opprettet" text={formatExactDate(user.createdAt)} />
@@ -144,6 +177,39 @@ function AccountDetailsCard({ user }: { user: User }) {
     )
 
 }
+
+// ********************************************************
+//                          FORMS
+// ********************************************************
+
+
+type DetailsFormProps = {
+    initialValue: User,
+    onCancel?: () => void,
+    onSave?: () => void,
+}
+
+function PersonalDetailsForm( { initialValue, onCancel, onSave }: DetailsFormProps) {
+    return (
+        <>TODO...</>
+    )
+}
+
+function MembershipDetailsForm( { initialValue, onCancel, onSave }: DetailsFormProps) {
+    return (
+        <>TODO...</>
+    )
+}
+
+function AccountDetailsForm( { initialValue, onCancel, onSave }: DetailsFormProps) {
+    return (
+        <>TODO...</>
+    )
+}
+
+// ********************************************************
+//                     FORMATTERS
+// ********************************************************
 
 function formatExactDate(dateStr: string): string {
     return dayjs.utc(dateStr).tz().format("DD MMM YYYY HH:mm:ss")
