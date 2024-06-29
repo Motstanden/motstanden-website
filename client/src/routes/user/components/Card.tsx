@@ -10,7 +10,6 @@ export function Card({
     onEditClick,
     editButtonToolTip,
     sx,
-    stackSx,
 }:{
     title: string,
     spacing?: number
@@ -19,7 +18,6 @@ export function Card({
     onEditClick?: () => void
     editButtonToolTip?: string
     sx?: SxProps,
-    stackSx?: SxProps
 }) {
     return (
         <TitleCard 
@@ -40,7 +38,7 @@ export function Card({
                 ...sx
             }}
             >
-            <Stack spacing={spacing ?? 2} sx={stackSx}>
+            <Stack spacing={spacing ?? 2}>
                 {children}
             </Stack>
         </TitleCard>

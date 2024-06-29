@@ -641,14 +641,14 @@ function FormCard({
                 sx={{ 
                     mb: 3,
                 }}
-                stackSx={{ py: 1 }}
                 spacing={4}
             >
-                {children}
+                <Stack spacing={4} sx={{py: 1}}>
+                    {children}
+                </Stack>
             </Card>
         </Form>
     )
-
 }
 
 // ********************************************************
