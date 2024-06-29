@@ -49,14 +49,32 @@ export interface UpdateUserAsSelfBody extends Pick<User,
     "endDate" 
 > {}
 
-export interface UpdateUserMembershipBody extends Pick<User,
+export interface UpdateUserMembershipAsMeBody extends Pick<User,
+    "capeName" |
+    "status" |
+    "startDate" |
+    "endDate"
+> {}
+
+export interface UpdateUserMembershipAsAdminBody extends Pick<User,
     "rank" |
     "capeName" |
     "status" |
     "startDate" |
     "endDate"
 > {}
-    
+
+
+export interface UpdateUserPersonalInfoBody extends Pick<User,
+    "firstName" |
+    "middleName" |
+    "lastName" |
+    "email" |
+    "phoneNumber" |
+    "birthDate"
+> {}
+
+
 export interface UpdateUserRoleBody extends Pick<User, "groupName"> {}
 
 export interface UpdateUserAsSuperAdminBody extends Pick<User, 

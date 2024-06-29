@@ -1,5 +1,5 @@
 import { UserGroup } from "common/enums"
-import { UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipBody, UpdateUserRoleBody, User } from "common/interfaces"
+import { UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUserRoleBody, User } from "common/interfaces"
 import { patchJson, putJson } from "src/utils/postJson"
 import { UserEditMode } from "./UserEditMode"
 
@@ -56,7 +56,7 @@ async function updateAsAdmin(userId: number, newData: User, { updateTargeIsSuper
 
     // It is important to update the membership first because are allowed to demote themselves,
     // which will cause this request to fail
-    const body: UpdateUserMembershipBody = {
+    const body: UpdateUserMembershipAsAdminBody = {
         rank: newData.rank,
         capeName: newData.capeName,
         status: newData.status,

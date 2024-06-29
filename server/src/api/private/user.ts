@@ -1,5 +1,5 @@
 import { UserGroup, UserRank, UserStatus } from "common/enums"
-import { UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipBody, UpdateUserRoleBody } from "common/interfaces"
+import { UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUserMembershipAsMeBody, UpdateUserPersonalInfoBody, UpdateUserRoleBody } from "common/interfaces"
 import express, { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../../db/index.js"
@@ -182,6 +182,122 @@ router.patch("/users/:id",
     }
 )
 
+// ---- PUT users/*/personal-info ----
+
+const UpdateUserPersonalSchema = UserSchema.pick({ 
+    firstName: true,
+    middleName: true,
+    lastName: true,
+    email: true,
+    birthDate: true,
+    phoneNumber: true,
+})
+
+router.put("/users/me/personal-info",
+    validateBody(UpdateUserPersonalSchema),
+    (req, res) => {
+        const newUserData: UpdateUserPersonalInfoBody = UpdateUserPersonalSchema.parse(req.body)
+        const user = getUser(req)
+
+        // This could have been written as db.users.update(id, newUserData)
+        // However, it is safer and more secure to be explicit about what fields are updated.
+        db.users.update(user.userId, {
+            firstName: newUserData.firstName,
+            middleName: newUserData.middleName,
+            lastName: newUserData.lastName,
+            email: newUserData.email,
+            phoneNumber: newUserData.phoneNumber,
+            birthDate: newUserData.birthDate,
+        })
+
+        updateAccessTokenIfCurrentUser(req, res, user.userId)
+        res.end()
+    }
+)
+
+router.put("/users/:id/personal-info",
+    RequiresGroup(UserGroup.SuperAdministrator),
+    validateParams(Schemas.params.id),
+    validateBody(UpdateUserPersonalSchema),
+    (req, res) => {
+        const newUserData: UpdateUserPersonalInfoBody = UpdateUserPersonalSchema.parse(req.body)
+        const { id } = Schemas.params.id.parse(req.params)
+
+        // This could have been written as db.users.update(id, newUserData)
+        // However, it is safer and more secure to be explicit about what fields are updated.
+        db.users.update(id, {
+            firstName: newUserData.firstName,
+            middleName: newUserData.middleName,
+            lastName: newUserData.lastName,
+            email: newUserData.email,
+            phoneNumber: newUserData.phoneNumber,
+            birthDate: newUserData.birthDate,
+        })
+
+        updateAccessTokenIfCurrentUser(req, res, id)
+        res.end()
+    }
+)
+
+// ---- PUT/PATCH users/*/membership ----
+
+const UpdateUserMembershipAsMeBody = UserSchema.pick({ 
+    capeName: true, 
+    status: true, 
+    startDate: true, 
+    endDate: true
+})
+
+const UpdateUserMembershipAsAdminSchema = UpdateUserMembershipAsMeBody.merge(
+    UserSchema.pick({ 
+        rank: true 
+}))
+
+router.patch("/users/me/membership",
+    validateBody(UpdateUserMembershipAsMeBody),
+    (req, res) => {
+        const newUserData: UpdateUserMembershipAsMeBody = UpdateUserMembershipAsMeBody.parse(req.body)
+        const user = getUser(req)
+
+        // This could have been written as db.users.update(id, newUserData)
+        // However, it is safer and more secure to be explicit about what fields are updated.
+        db.users.update(user.userId, { 
+            capeName: newUserData.capeName,
+            status: newUserData.status,
+            startDate: newUserData.startDate,
+            endDate: newUserData.endDate,
+        })
+
+        updateAccessTokenIfCurrentUser(req, res, user.userId)
+        res.end()
+    }
+)
+
+router.put("/users/:id/membership",
+    RequiresGroup(UserGroup.Administrator),
+    validateParams(Schemas.params.id),
+    validateBody(UpdateUserMembershipAsAdminSchema),
+    (req, res) => { 
+        const newUserData: UpdateUserMembershipAsAdminBody = UpdateUserMembershipAsAdminSchema.parse(req.body)
+        const { id } = Schemas.params.id.parse(req.params)
+
+        // This could have been written as db.users.update(id, newUserData)
+        // However, it is safer and more secure to be explicit about what fields are updated.
+        db.users.update(id, {
+            rank: newUserData.rank,
+            capeName: newUserData.capeName,
+            status: newUserData.status,
+            startDate: newUserData.startDate,
+            endDate: newUserData.endDate,
+        })
+
+        updateAccessTokenIfCurrentUser(req, res, id)
+        res.end()
+    }
+)
+
+// ---- PUT users/:id/role ----
+
 const UpdateUserRoleSchema = UserSchema.pick({ groupName: true })
 
 router.put("/users/:id/role", 
@@ -222,36 +338,6 @@ router.put("/users/:id/role",
     }
 )
 
-const UpdateUserMembershipSchema = UserSchema.pick({ 
-    rank: true, 
-    capeName: true, 
-    status: true, 
-    startDate: true, 
-    endDate: true
-})
-
-router.put("/users/:id/membership",
-    RequiresGroup(UserGroup.Administrator),
-    validateParams(Schemas.params.id),
-    validateBody(UpdateUserMembershipSchema),
-    (req, res) => { 
-        const newUserData: UpdateUserMembershipBody = UpdateUserMembershipSchema.parse(req.body)
-        const { id } = Schemas.params.id.parse(req.params)
-
-        // This could have been written as db.users.update(id, newUserData)
-        // However, it is safer and more secure to be explicit about what fields are updated.
-        db.users.update(id, {
-            rank: newUserData.rank,
-            capeName: newUserData.capeName,
-            status: newUserData.status,
-            startDate: newUserData.startDate,
-            endDate: newUserData.endDate,
-        })
-
-        updateAccessTokenIfCurrentUser(req, res, id)
-        res.end()
-    }
-)
 
 function updateAccessTokenIfCurrentUser(req: Request, res: Response, userId: number) {
     const currentUser = getUser(req)
