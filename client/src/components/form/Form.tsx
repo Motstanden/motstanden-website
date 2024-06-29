@@ -26,7 +26,7 @@ export function Form({
     onAbortClick?: React.MouseEventHandler<HTMLButtonElement>
     noDivider?: boolean
     noPadding?: boolean
-    httpVerb?: "POST" | "PATCH"
+    httpVerb?: "POST" | "PATCH" | "PUT"
 }) {
     const [isSubmitting, setIsSubmitting] = useState(false)
 
