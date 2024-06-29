@@ -83,7 +83,7 @@ router.patch("/events/:id",
 router.delete("/events/:id",
     validateParams(Schemas.params.id),
     requiresGroupOrAuthor({
-        getId: req => req.body.eventId,
+        getId: req => Schemas.params.id.parse(req.params).id,
         getAuthorInfo: id => db.events.get(id),
         requiredGroup: UserGroup.Administrator
     }),
