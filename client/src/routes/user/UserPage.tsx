@@ -1,19 +1,23 @@
 import {
     Divider,
     Grid,
+    MenuItem,
     Paper,
-    SxProps
+    SxProps,
+    TextField
 } from "@mui/material"
+import { useQueryClient } from "@tanstack/react-query"
 import { UserGroup } from "common/enums"
-import { User } from "common/interfaces"
+import { UpdateUserRoleBody, User } from "common/interfaces"
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
 import dayjs from "dayjs"
 import { useState } from 'react'
 import { PostingWall } from "src/components/PostingWall"
-import { useAuthenticatedUser } from "src/context/Authentication"
+import { Form } from "src/components/form/Form"
+import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication"
 import { useTimeZone } from 'src/context/TimeZone'
 import { useTitle } from "src/hooks/useTitle"
-import { useUserProfileContext } from './Context'
+import { useUserProfileContext, userListQueryKey } from './Context'
 import { Card, CardTextItem, CardTextList } from "./components/Card"
 
 export default function UserPage() {
@@ -230,12 +234,14 @@ type DetailsFormProps = {
     onSave?: () => void,
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function PersonalDetailsForm( { initialValue, onCancel, onSave }: DetailsFormProps) {
     return (
         <>TODO...</>
     )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function MembershipDetailsForm( { initialValue, onCancel, onSave }: DetailsFormProps) {
     return (
         <>TODO...</>
@@ -243,9 +249,80 @@ function MembershipDetailsForm( { initialValue, onCancel, onSave }: DetailsFormP
 }
 
 function AccountDetailsForm( { initialValue, onCancel, onSave }: DetailsFormProps) {
+
+    const { id, createdAt, updatedAt } = initialValue
+
+    const [value, setValue] = useState<UpdateUserRoleBody>({  
+        groupName: initialValue.groupName 
+    })
+
+    const { isSuperAdmin } = useAuthenticatedUser()
+    const invalidateUserQueries = useUserQueryInvalidation()
+
+    const onPostSuccess = async () => { 
+        await invalidateUserQueries()
+        onSave?.()
+    }
+
+    const disabled = value.groupName === initialValue.groupName
+
     return (
-        <>TODO...</>
+        <Form
+            value={value}
+            httpVerb="PUT"
+            postUrl={`/api/users/${id}/role`}
+            disabled={disabled}
+            noDivider
+            onPostSuccess={onPostSuccess}
+            onAbortClick={onCancel}
+        >
+            <Card title="Brukerkonto" showEditButton={false} spacing={4}>
+                <TextField
+                    select
+                    label="Rolle"
+                    required
+                    sx={{ mt: 2 }}
+                    value={value.groupName}
+                    onChange={(e) => setValue({ groupName: e.target.value as UserGroup })}
+                >
+                    <MenuItem value={UserGroup.Contributor}>
+                        {userGroupToPrettyStr(UserGroup.Contributor)}
+                    </MenuItem>
+                    <MenuItem value={UserGroup.Editor}>
+                        {userGroupToPrettyStr(UserGroup.Editor)}
+                    </MenuItem>
+                    <MenuItem value={UserGroup.Administrator}>
+                        {userGroupToPrettyStr(UserGroup.Administrator)}
+                    </MenuItem>
+                    {isSuperAdmin && (
+                        <MenuItem value={UserGroup.SuperAdministrator}>
+                            {userGroupToPrettyStr(UserGroup.SuperAdministrator)}
+                        </MenuItem>
+                    )}
+                </TextField>
+
+                <div style={{ paddingLeft: "10px" }}>
+                    <CardTextItem label="Laget" text={formatExactDate(createdAt)} />
+                </div>
+                <div style={{ paddingLeft: "10px" }}>
+                    <CardTextItem label="Oppdatert" text={formatExactDate(updatedAt)} />
+                </div>
+            </Card>
+        </Form>
     )
+}
+
+function useUserQueryInvalidation() {
+    const queryClient = useQueryClient()
+
+    const invalidateUserQueries = async () => {
+        await Promise.all([
+            queryClient.invalidateQueries({queryKey: userQueryKey}),
+            queryClient.invalidateQueries({queryKey: userListQueryKey})
+        ])
+    }
+
+    return invalidateUserQueries
 }
 
 // ********************************************************
