@@ -7,10 +7,10 @@ export function Form({
     value,
     children,
     disabled,
-    postUrl,
+    url,
     preventSubmit,
-    onPostSuccess,
-    onPostFailure,
+    onSuccess,
+    onFailure,
     onAbortClick,
     noDivider,
     noPadding,
@@ -18,11 +18,11 @@ export function Form({
 }: {
     value: object | (() => object)    // Either any object, or a callback function that returns the object
     children: React.ReactNode
-    postUrl: string
+    url: string
     disabled?: boolean
     preventSubmit?: () => boolean
-    onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
-    onPostFailure?: () => void
+    onSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
+    onFailure?: () => void
     onAbortClick?: React.MouseEventHandler<HTMLButtonElement>
     noDivider?: boolean
     noPadding?: boolean
@@ -39,14 +39,14 @@ export function Form({
 
         const newValue = typeof value === "function" ? value() : value
 
-        const response = await httpSendJson(httpVerb, postUrl, newValue, { alertOnFailure: true })
+        const response = await httpSendJson(httpVerb, url, newValue, { alertOnFailure: true })
 
         if (response && response.ok) {
-            onPostSuccess && await onPostSuccess(response)
+            onSuccess && await onSuccess(response)
         }
 
         if (response && !response.ok) {
-            onPostFailure && onPostFailure()
+            onFailure && onFailure()
         }
 
         setIsSubmitting(false)

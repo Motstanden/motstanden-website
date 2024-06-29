@@ -205,9 +205,9 @@ function EditRow( {
                 }}>
                 <Form 
                     value={getSubmitData} 
-                    postUrl={`/api/sheet-archive/titles/${songId}/update`}
+                    url={`/api/sheet-archive/titles/${songId}/update`}
                     onAbortClick={ _ => onAbort()}
-                    onPostSuccess={onSuccess}
+                    onSuccess={onSuccess}
                     disabled={isDisabled}
                     noDivider={true}
                     noPadding={true}>

@@ -270,10 +270,10 @@ function AccountDetailsForm( { initialValue, onCancel, onSave }: DetailsFormProp
         <Form
             value={value}
             httpVerb="PUT"
-            postUrl={`/api/users/${id}/role`}
+            url={`/api/users/${id}/role`}
             disabled={disabled}
             noDivider
-            onPostSuccess={onPostSuccess}
+            onSuccess={onPostSuccess}
             onAbortClick={onCancel}
         >
             <Card title="Brukerkonto" showEditButton={false} spacing={4}>

@@ -137,9 +137,9 @@ export function EventEditorForm({
     return (
         <Form
             value={() => getSubmitData()}
-            postUrl={postUrl}
+            url={postUrl}
             onAbortClick={handleAbortClick}
-            onPostSuccess={onPostSuccess}
+            onSuccess={onPostSuccess}
             disabled={disabled}
             httpVerb={httpVerb}
         >

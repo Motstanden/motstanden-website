@@ -107,10 +107,10 @@ function UpsertPollForm({
         <div style={{ maxWidth: "600px" }}>
             <Form
                 value={getSubmitData}
-                postUrl={postUrl}
+                url={postUrl}
                 disabled={disabled}
                 onAbortClick={handleAbortClick}
-                onPostSuccess={handlePostSuccess}
+                onSuccess={handlePostSuccess}
 
             >
                 <div>

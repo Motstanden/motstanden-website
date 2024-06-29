@@ -49,10 +49,10 @@ export function UpsertRumourForm({
         <div style={{ maxWidth: "700px" }}>
             <Form
                 value={getSubmitData}
-                postUrl={postUrl}
+                url={postUrl}
                 disabled={disabled}
                 onAbortClick={handleAbortClick}
-                onPostSuccess={handlePostSuccess}
+                onSuccess={handlePostSuccess}
             >
                 <div style={{ marginBottom: "-1em" }}>
                     <TextField

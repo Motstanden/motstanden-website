@@ -74,10 +74,10 @@ export function UpsertLyricForm({
         <div style={{ maxWidth: "700px" }}>
             <Form
                 value={getSubmitData}
-                postUrl={postUrl}
+                url={postUrl}
                 disabled={isDisabled}
                 onAbortClick={handleAbortClick}
-                onPostSuccess={handlePostSuccess}
+                onSuccess={handlePostSuccess}
             >
                 <div>
                     <TextField 

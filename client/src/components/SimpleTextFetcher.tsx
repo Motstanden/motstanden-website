@@ -219,10 +219,10 @@ function SimpleTextForm( {
     return (
         <Form 
             value={newValue}
-            postUrl={postUrl}
+            url={postUrl}
             disabled={disabled}
             onAbortClick={handleAbortClick}
-            onPostSuccess={handlePostSuccess}
+            onSuccess={handlePostSuccess}
         >
             <MarkDownEditor
                 value={newValue.text}
