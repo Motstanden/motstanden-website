@@ -172,7 +172,7 @@ async function testUpdate(page: Page, oldEvent: TestEvent, newEvent: TestEvent) 
 
 async function testDelete(page: Page, event: TestEvent) {
 	await clickDelete(page)
-	await expect(page.getByRole('link', { name: event.title })).not.toBeVisible()
+	await expect(page.getByText(event.title)).not.toBeVisible()
 }
 
 async function submitForm(page: Page, event: TestEvent) {
