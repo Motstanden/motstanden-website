@@ -32,17 +32,7 @@ export default function UserPage() {
                 sx={{
                     mb: {xs: 2, md: 2, lg: 4}
                 }} />
-            <Grid container alignItems="top" spacing={{xs: 2, md: 2, lg: 4}}>
-                <Grid item xs={12} md={6}>
-                    <PersonalDetailsController/>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <MembershipDetailsController/>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <AccountDetailsController/>
-                </Grid>
-            </Grid>
+            <ProfileInfoGrid />
             <Divider sx={{my: 4}} />
             <h1>Tidslinje</h1>
             <PostingWall userId={user.id} userFirstName={user.firstName}/>
@@ -70,6 +60,23 @@ function ProfileHeader({ user, sx }: { user: User, sx?: SxProps }) {
                 }} />
         </Paper>
     )
+}
+
+function ProfileInfoGrid() {
+    return (
+        <Grid container alignItems="top" spacing={{xs: 2, md: 2, lg: 4}}>
+            <Grid item xs={12} md={6}>
+                <PersonalDetailsController/>
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <MembershipDetailsController/>
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <AccountDetailsController/>
+            </Grid>
+        </Grid>
+    )
+
 }
 
 // ********************************************************
