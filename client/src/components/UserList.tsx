@@ -1,8 +1,8 @@
-import { Avatar, Link, Skeleton, Stack, useTheme } from "@mui/material";
-import { UserReference } from "common/interfaces";
-import React from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { UserAvatarSkeleton } from "./user/UserAvatar";
+import { Avatar, Link, Skeleton, Stack, useTheme } from "@mui/material"
+import { UserIdentity } from "common/interfaces"
+import React from "react"
+import { Link as RouterLink } from "react-router-dom"
+import { UserAvatarSkeleton } from "./user/UserAvatar"
 
 export function UserList( { 
     users,
@@ -10,7 +10,7 @@ export function UserList( {
     style,
     alternatingStyle
 }: { 
-    users: UserReference[],
+    users: UserIdentity[],
     noUsersText?: string,
     style?: React.CSSProperties 
     alternatingStyle?: React.CSSProperties

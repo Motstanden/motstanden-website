@@ -1,14 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { UserReference } from "common/interfaces";
-import React, { useEffect } from "react";
-import { fetchFn } from "src/utils/fetchAsync";
-import { usePotentialUser } from "./Authentication";
+import { useQuery } from "@tanstack/react-query"
+import { UserIdentity } from "common/interfaces"
+import React, { useEffect } from "react"
+import { fetchFn } from "src/utils/fetchAsync"
+import { usePotentialUser } from "./Authentication"
 
 export interface UserReferenceContextType {
     isPending: boolean,
     isError: boolean,
     isEnabled: boolean,
-    userReference: Record<number, UserReference>
+    userReference: Record<number, UserIdentity>
 }
 
 const emptyUserReference: UserReferenceContextType = {
@@ -37,15 +37,15 @@ export function UserReferenceProvider( {children}: {children: React.ReactNode} )
 
     const [userReference, setUserReference] = React.useState<UserReferenceContextType>(initialValue)
 
-    const { isPending, isError, data } = useQuery<UserReference[]>({
+    const { isPending, isError, data } = useQuery<UserIdentity[]>({
         queryKey: ["user-reference"],
-        queryFn: fetchFn<UserReference[]>("/api/users/identifiers"),
+        queryFn: fetchFn<UserIdentity[]>("/api/users/identifiers"),
         enabled: isLoggedIn
     })
 
     useEffect(() => {
 
-        const userLookUpTable: Record<number, UserReference> = {}
+        const userLookUpTable: Record<number, UserIdentity> = {}
         if(data) {
             for(const userRef of data) {
                 userLookUpTable[userRef.id] = userRef
