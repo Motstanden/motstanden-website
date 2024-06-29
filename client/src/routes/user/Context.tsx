@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import { User } from "common/interfaces"
 import { strToNumber } from "common/utils"
-import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
+import { Outlet, useOutletContext, useParams } from "react-router-dom"
 import { useAppBarHeader } from "src/context/AppBarHeader"
 import { PageContainer } from "src/layout/PageContainer/PageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
+import { NotFoundPage } from "../notFound/NotFound"
 import { UserPageSkeleton } from "./skeleton/UserPage"
 
 export const userListQueryKey = ["FetchAllUsers"]
@@ -55,21 +56,22 @@ export function useUserListContext(): UserListContextProps {
 
 export function UserProfileContext() {
     const {users, isPending} = useUserListContext()
-    useAppBarHeader("Medlem")
+    
+    const params = useParams();
+    const userId = strToNumber(params.userId)
+    
+    const user = users?.find(item => item.id === userId)
+    
+    useAppBarHeader(user?.firstName || "Medlem")
+
+    if(!userId)
+        return <NotFoundPage/>
 
     if(isPending)
         return <UserPageSkeleton/>
 
-    const params = useParams();
-    const userId = strToNumber(params.userId)
-    if (!userId) {
-        return <Navigate to="/medlem/liste" replace />
-    }
-
-    const user = users.find(item => item.id === userId)
-
     if (!user) {
-        return <Navigate to="/medlem/liste" replace />
+        return <NotFoundPage/>
     }
 
     const context: UserProfileContextProps = { 
