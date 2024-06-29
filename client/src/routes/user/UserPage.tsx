@@ -6,12 +6,14 @@ import {
     SxProps,
     TextField
 } from "@mui/material"
+import { DatePicker } from "@mui/x-date-pickers"
 import { useQueryClient } from "@tanstack/react-query"
 import { UserGroup } from "common/enums"
-import { UpdateUserRoleBody, User } from "common/interfaces"
-import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
-import dayjs from "dayjs"
+import { UpdateUserPersonalInfoBody, UpdateUserRoleBody, User } from "common/interfaces"
+import { isNtnuMail as checkIsNtnuMail, getFullName, isNullOrWhitespace, strToNumber, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
+import dayjs, { Dayjs } from "dayjs"
 import { useState } from 'react'
+import { datePickerStyle } from "src/assets/style/timePickerStyles"
 import { PostingWall } from "src/components/PostingWall"
 import { Form } from "src/components/form/Form"
 import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication"
@@ -233,26 +235,152 @@ function AccountDetailsCard({ user, showEditMenu, onEditClick}: DetailsCardProps
 //                          FORMS
 // ********************************************************
 
-
 type DetailsFormProps = {
     initialValue: User,
     onCancel?: () => void,
     onSave?: () => void,
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function PersonalDetailsForm( { initialValue, onCancel, onSave }: DetailsFormProps) {
+    
+    const { id } = initialValue
+    const [value, setValue] = useState<UpdateUserPersonalInfoBody>(getPersonalDetailsBody(initialValue))
+
+    const { user } = useAuthenticatedUser()
+    const invalidateUserQueries = useUserQueryInvalidation()
+
+    const onPostSuccess = async () => { 
+        await invalidateUserQueries()
+        onSave?.()
+    }
+
+    // Validate form
+    const isNtnuMail = checkIsNtnuMail(value.email)
+    const isValidPhone = value.phoneNumber === null || (value.phoneNumber >= 10000000 && value.phoneNumber <= 99999999)
+
+    const disabled = isNtnuMail ||
+        !isValidPhone || 
+        isNullOrWhitespace(value.firstName) || 
+        isNullOrWhitespace(value.lastName) ||
+        isEqualUsers(value, getPersonalDetailsBody(initialValue))
+
+    // Posting to /users/:id requires super admin rights
+    const url = user.id === id 
+        ? "/api/users/me/personal-info" 
+        : `/api/users/${id}/personal-info`
+
     return (
-        <>TODO...</>
+        <Form
+            value={() => trimPersonalInfo(value)}
+            url={url}
+            httpVerb="PUT"
+            disabled={disabled}
+            // noDivider
+            onSuccess={onPostSuccess}
+            onAbortClick={onCancel}
+            noPadding
+        >
+            <Card 
+                title="Personalia"
+                showEditButton={false}
+                spacing={4}
+                stackSx={{ py: 1 }}
+                sx={{ mb: 4 }}
+            >
+                <TextField
+                    label="Fornavn"
+                    value={value.firstName}
+                    onChange={e => setValue( prev => ({ ...prev, firstName: e.target.value }))}
+                    required
+                    sx={{ mt: 2 }}
+                />
+                <TextField
+                    label="Mellomnavn"
+                    value={value.middleName}
+                    onChange={e => setValue( prev => ({ ...prev, middleName: e.target.value }))}
+                />
+                <TextField
+                    label="Etternavn"
+                    value={value.lastName}
+                    onChange={e => setValue( prev => ({ ...prev, lastName: e.target.value }))}
+                    required
+                />
+                <DatePicker
+                    {...datePickerStyle}
+                    views={["year", "month", "day"]}
+                    label="Fødselsdato"
+                    value={value.birthDate ? dayjs(value.birthDate) : null}
+                    onChange={ (newVal: Dayjs | null) => {
+                        const newDate = newVal?.format("YYYY-MM-DD") ?? null
+                        setValue( prev => ({ ...prev, birthDate: newDate }))
+                    }}
+                />
+                <div>
+                    <TextField
+                        label="E-post"
+                        type="email"
+                        value={value.email}
+                        onChange={e => setValue( prev => ({ ...prev, email: e.target.value }))}
+                        error={isNtnuMail}
+                        fullWidth
+                        required
+                    />
+                    {isNtnuMail && "Ntnu mail ikke tillat"}
+                </div>
+                <div>
+                    <TextField
+                        type="tel"
+                        label="Tlf."
+                        value={value.phoneNumber ?? ""}
+                        fullWidth
+                        onChange={e => {
+                            const newVal = strToNumber(e.target.value) ?? null
+                            const inRange = newVal && newVal < 99999999
+                            const isEmpty = e.target.value.length === 0
+                            if (inRange || isEmpty) {
+                                setValue(prev => ({ ...prev, phoneNumber: newVal }))
+                            }
+                        }}
+                    />
+                    {!isValidPhone &&  "Ugyldig nummer"}
+                </div>   
+            </Card>
+
+        </Form>
     )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function getPersonalDetailsBody(user: User): UpdateUserPersonalInfoBody { 
+    return {
+        firstName: user.firstName,
+        middleName: user.middleName,
+        lastName: user.lastName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        birthDate: user.birthDate
+    }
+}
+
+function trimPersonalInfo(user: UpdateUserPersonalInfoBody): UpdateUserPersonalInfoBody { 
+    return {
+        firstName: user.firstName.trim(),
+        middleName: user.middleName?.trim(),
+        lastName: user.lastName.trim(),
+        email: user.email.trim(),
+        phoneNumber: user.phoneNumber,
+        birthDate: user.birthDate?.trim() ?? null
+    }
+}
+
+// **************** Membership Details Form *****************
+
 function MembershipDetailsForm( { initialValue, onCancel, onSave }: DetailsFormProps) {
     return (
         <>TODO...</>
     )
 }
+
+// **************** Account Details Form *****************
 
 function AccountDetailsForm( { initialValue, onCancel, onSave }: DetailsFormProps) {
 
@@ -357,4 +485,23 @@ function formatDateInterval(startDate: string, endDate: string | null): string {
     let result = dayjs.utc(startDate).tz().format("MMMM YYYY") + " - "
     result += endDate ? dayjs.utc(endDate).tz().format("MMMM YYYY") : "dags dato"
     return result
+}
+
+
+function isEqualUsers(oldUser: Partial<User>, newUser: Partial<User>): boolean {
+    return (
+        oldUser.birthDate === newUser.birthDate &&
+        oldUser.capeName === newUser.capeName &&
+        oldUser.email === newUser.email &&
+        oldUser.endDate === newUser.endDate &&
+        oldUser.firstName === newUser.firstName &&
+        oldUser.groupName === newUser.groupName &&
+        oldUser.lastName === newUser.lastName &&
+        oldUser.middleName === newUser.middleName &&
+        oldUser.phoneNumber === newUser.phoneNumber &&
+        oldUser.profilePicture === newUser.profilePicture &&
+        oldUser.rank === newUser.rank &&
+        oldUser.startDate === newUser.startDate &&
+        oldUser.status === newUser.status
+    )
 }
