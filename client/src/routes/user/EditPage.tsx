@@ -20,7 +20,6 @@ import SubmitFormButtons from "src/components/form/SubmitButtons"
 import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication"
 import { useTitle } from "src/hooks/useTitle"
 import { useUserProfileContext, userListQueryKey } from "./Context"
-import { AccountDetailsCard, PersonCard, formatExactDate } from "./UserPage"
 import { Card, CardTextItem } from "./components/Card"
 import { groupTVPair, rankTVPair, statusTVPair } from "./utils/TextValuePair"
 import { UserEditMode } from "./utils/UserEditMode"
@@ -145,7 +144,8 @@ function PersonForm({ value, onChange, onIsValidChange, editMode }: FormParams) 
     const isSelf = editMode === UserEditMode.Self || editMode === UserEditMode.SelfAndAdmin
     const isSuperAdmin = editMode === UserEditMode.SuperAdmin
     if (!isSelf && !isSuperAdmin) {
-        return <PersonCard user={value} />
+        // return <PersonCard user={value} />
+        return <></>
     }
 
     const isNtnuMail = checkIsNtnuMail(value.email)
@@ -312,12 +312,14 @@ function AccountDetailsForm({ value, onChange }: FormParams) {
 
     // Must be at least admin to edit group
     if (!isAdmin) {
-        return <AccountDetailsCard user={value} />
+        // return <AccountDetailsCard user={value} />
+        return <></>
     }
 
     // Only allow super admin to edit other super admins
     if(!isSuperAdmin && value.groupName === UserGroup.SuperAdministrator) {
-        return <AccountDetailsCard user={value} />
+        // return <AccountDetailsCard user={value} />
+        return <></>
     }
 
     const groupSource = isSuperAdmin
@@ -338,10 +340,10 @@ function AccountDetailsForm({ value, onChange }: FormParams) {
                 {groupSource.map(item => (<MenuItem key={item.value} value={item.value}>{item.text}</MenuItem>))}
             </TextField>
             <div style={{ paddingLeft: "10px" }}>
-                <CardTextItem label="Laget" text={formatExactDate(value.createdAt)} />
+                {/* <CardTextItem label="Laget" text={formatExactDate(value.createdAt)} /> */}
             </div>
             <div style={{ paddingLeft: "10px" }}>
-                <CardTextItem label="Oppdatert" text={formatExactDate(value.updatedAt)} />
+                {/* <CardTextItem label="Oppdatert" text={formatExactDate(value.updatedAt)} /> */}
             </div>
         </Card>
     )

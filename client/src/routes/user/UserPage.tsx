@@ -103,7 +103,7 @@ function EditButton({ user }: { user: User }) {
     )
 }
 
-export function PersonCard({ user }: { user: User }) {
+function PersonCard({ user }: { user: User }) {
     useTimeZone()
     return (
         <Card title="Personalia">
@@ -117,7 +117,7 @@ export function PersonCard({ user }: { user: User }) {
     )
 }
 
-export function MemberCard({ user }: { user: User }) {
+function MemberCard({ user }: { user: User }) {
     useTimeZone()
     return (
         <Card title="Medlemskap">
@@ -131,7 +131,7 @@ export function MemberCard({ user }: { user: User }) {
     )
 }
 
-export function AccountDetailsCard({ user }: { user: User }) {
+function AccountDetailsCard({ user }: { user: User }) {
     useTimeZone()
     return (
         <Card title="Brukerkonto">
@@ -145,7 +145,7 @@ export function AccountDetailsCard({ user }: { user: User }) {
 
 }
 
-export function formatExactDate(dateStr: string): string {
+function formatExactDate(dateStr: string): string {
     return dayjs.utc(dateStr).tz().format("DD MMM YYYY HH:mm:ss")
 }
 
