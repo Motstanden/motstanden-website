@@ -2,8 +2,6 @@ import EditIcon from "@mui/icons-material/Edit"
 import { IconButton, Stack, SxProps, Tooltip } from "@mui/material"
 import { TitleCard } from "src/components/TitleCard"
 
-export type CardVariant = "maximized" | "minimized"
-
 export function Card({
     title,
     children,
@@ -13,7 +11,6 @@ export function Card({
     editButtonToolTip,
     sx,
     stackSx,
-    variant
 }:{
     title: string,
     spacing?: number
@@ -23,7 +20,6 @@ export function Card({
     editButtonToolTip?: string
     sx?: SxProps,
     stackSx?: SxProps
-    variant?: CardVariant
 }) {
     return (
         <TitleCard 
@@ -41,7 +37,6 @@ export function Card({
                     />
             )}
             sx={{ 
-                height: variant === "maximized" ? "100%" : "auto",
                 ...sx
             }}
             >

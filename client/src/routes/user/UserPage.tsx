@@ -23,7 +23,7 @@ import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication"
 import { useTimeZone } from 'src/context/TimeZone'
 import { useTitle } from "src/hooks/useTitle"
 import { useUserProfileContext, userListQueryKey } from './Context'
-import { Card, CardTextItem, CardTextList, CardVariant } from "./components/Card"
+import { Card, CardTextItem, CardTextList } from "./components/Card"
 
 export default function UserPage() {
     const { viewedUser: user } = useUserProfileContext()
@@ -66,25 +66,13 @@ function ProfileHeader({ user, sx }: { user: User, sx?: SxProps }) {
 }
 
 function ProfileInfoGrid() {
-
-    const [ personalDetailsStyle, setPersonalDetailsStyle ] = useState<CardVariant>("maximized")
-    const [ membershipStyle, setMemberShipStyle ] = useState<CardVariant>("maximized")
-
-    console.log("personal details style", personalDetailsStyle, "membership style", membershipStyle)
-
     return (
         <Grid container alignItems="top" spacing={{xs: 2, md: 2, lg: 4}}>
             <Grid item xs={12} md={6}>
-                <PersonalDetailsController
-                    variant={personalDetailsStyle}
-                    onEditChange={isEditing => setMemberShipStyle(isEditing ? "minimized" : "maximized")}
-                />
+                <PersonalDetailsController/>
             </Grid>
             <Grid item xs={12} md={6}>
-                <MembershipDetailsController
-                    variant={membershipStyle}
-                    onEditChange={isEditing => setPersonalDetailsStyle(isEditing ? "minimized" : "maximized")}
-                />
+                <MembershipDetailsController/>
             </Grid>
             <Grid item xs={12} md={6}>
                 <AccountDetailsController/>
@@ -98,22 +86,12 @@ function ProfileInfoGrid() {
 //                     CONTROLLERS
 // ********************************************************
 
-type DetailsControllerProps = {
-    onEditChange?: (isEditing: boolean) => void
-    variant?: CardVariant
-}
-
-function PersonalDetailsController( { onEditChange, variant }: DetailsControllerProps) { 
+function PersonalDetailsController() { 
     
     const { user: currentUser, isSuperAdmin} = useAuthenticatedUser()
     const { viewedUser } = useUserProfileContext()
     const [isEditing, setIsEditing] = useState(false)
     
-    const handleEditChange = (isEditing: boolean) => { 
-        setIsEditing(isEditing)
-        onEditChange?.(isEditing)
-    }
-
     // People who can edit:
     //  - Super admins
     //  - Users who are viewing their own profile
@@ -123,8 +101,8 @@ function PersonalDetailsController( { onEditChange, variant }: DetailsController
         return (
             <PersonalDetailsForm 
                 initialValue={viewedUser} 
-                onCancel={() => handleEditChange(false)}
-                onSave={() => handleEditChange(false)}        
+                onCancel={() => setIsEditing(false)}
+                onSave={() => setIsEditing(false)}        
         />
     )
 
@@ -132,22 +110,16 @@ function PersonalDetailsController( { onEditChange, variant }: DetailsController
         <PersonalDetailsCard 
             user={viewedUser} 
             showEditMenu={canEdit}
-            onEditClick={() => handleEditChange(true)}
-            variant={variant}
+            onEditClick={() => setIsEditing(true)}
         />
     )
 }
 
-function MembershipDetailsController( { onEditChange, variant }: DetailsControllerProps ) {
+function MembershipDetailsController() {
     
     const { user: currentUser, isAdmin } = useAuthenticatedUser()
     const { viewedUser } = useUserProfileContext()
     const [isEditing, setIsEditing] = useState(false)
-
-    const handleEditChange = (isEditing: boolean) => { 
-        setIsEditing(isEditing)
-        onEditChange?.(isEditing)
-    }
 
     // People who can edit:
     //  - Admins
@@ -158,8 +130,8 @@ function MembershipDetailsController( { onEditChange, variant }: DetailsControll
         return (
             <MembershipDetailsForm 
                 initialValue={viewedUser} 
-                onCancel={() => handleEditChange(false)}
-                onSave={() => handleEditChange(false)}    
+                onCancel={() => setIsEditing(false)}
+                onSave={() => setIsEditing(false)}    
              />    
         )
 
@@ -167,22 +139,16 @@ function MembershipDetailsController( { onEditChange, variant }: DetailsControll
         <MembershipDetailsCard 
             user={viewedUser} 
             showEditMenu={canEdit}
-            onEditClick={() => handleEditChange(true)}
-            variant={variant}
+            onEditClick={() => setIsEditing(true)}
         />
     )
 }
 
-function AccountDetailsController({ onEditChange, variant }: DetailsControllerProps) {
+function AccountDetailsController() {
 
     const { viewedUser } = useUserProfileContext()
     const { isSuperAdmin, isAdmin} = useAuthenticatedUser()
     const [isEditing, setIsEditing] = useState(false)
-
-    const handleEditChange = (isEditing: boolean) => { 
-        setIsEditing(isEditing)
-        onEditChange?.(isEditing)
-    }
 
     // People who can edit:
     // - Super admins
@@ -193,8 +159,8 @@ function AccountDetailsController({ onEditChange, variant }: DetailsControllerPr
         return (
             <AccountDetailsForm 
                 initialValue={viewedUser} 
-                onCancel={() => handleEditChange(false)}
-                onSave={() => handleEditChange(false)}        
+                onCancel={() => setIsEditing(false)}
+                onSave={() => setIsEditing(false)}        
             />
         )
 
@@ -202,8 +168,7 @@ function AccountDetailsController({ onEditChange, variant }: DetailsControllerPr
         <AccountDetailsCard 
             user={viewedUser}
             showEditMenu={canEdit}
-            onEditClick={() => handleEditChange(true)} 
-            variant={variant}
+            onEditClick={() => setIsEditing(true)} 
         />
     )
 }
@@ -215,12 +180,11 @@ function AccountDetailsController({ onEditChange, variant }: DetailsControllerPr
 
 type DetailsCardProps = { 
     user: User, 
-    variant?: CardVariant,
     showEditMenu?: boolean,
     onEditClick?: () => void,
 }
 
-function PersonalDetailsCard( { user, showEditMenu, onEditClick, variant}: DetailsCardProps) {
+function PersonalDetailsCard( { user, showEditMenu, onEditClick }: DetailsCardProps) {
     useTimeZone()
     return (
         <Card 
@@ -228,7 +192,10 @@ function PersonalDetailsCard( { user, showEditMenu, onEditClick, variant}: Detai
             showEditButton={showEditMenu} 
             onEditClick={onEditClick}
             editButtonToolTip="Rediger personalia"
-            variant={variant}
+            sx={{
+                height: "100%",
+                maxHeight: "512px"  // Height of membership form
+            }}
             >
             <CardTextList>
                 <CardTextItem label="Navn" text={getFullName(user)} />
@@ -240,7 +207,7 @@ function PersonalDetailsCard( { user, showEditMenu, onEditClick, variant}: Detai
     )
 }
 
-function MembershipDetailsCard({ user, showEditMenu, onEditClick, variant}: DetailsCardProps) {
+function MembershipDetailsCard({ user, showEditMenu, onEditClick }: DetailsCardProps) {
     useTimeZone()
     return (
         <Card 
@@ -248,7 +215,9 @@ function MembershipDetailsCard({ user, showEditMenu, onEditClick, variant}: Deta
             showEditButton={showEditMenu}
             onEditClick={onEditClick}
             editButtonToolTip="Rediger medlemskap"
-            variant={variant}
+            sx={{
+                minHeight: "MIN(312px, 100%)"   // Looks good when the user is editing personal details 
+            }}
         >
             <CardTextList>
                 <CardTextItem label="Kappe" text={user.capeName ? user.capeName : "-"} />
@@ -260,7 +229,7 @@ function MembershipDetailsCard({ user, showEditMenu, onEditClick, variant}: Deta
     )
 }
 
-function AccountDetailsCard({ user, showEditMenu, onEditClick, variant}: DetailsCardProps) {
+function AccountDetailsCard({ user, showEditMenu, onEditClick }: DetailsCardProps) {
     useTimeZone()
     return (
         <Card 
@@ -268,7 +237,6 @@ function AccountDetailsCard({ user, showEditMenu, onEditClick, variant}: Details
             showEditButton={showEditMenu}
             onEditClick={onEditClick}
             editButtonToolTip="Rediger brukerkonto"
-            variant={variant}
         >
             <CardTextList>
                 <CardTextItem label="Rolle" text={userGroupToPrettyStr(user.groupName)} />
