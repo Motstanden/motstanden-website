@@ -1,19 +1,22 @@
 import {
+    Box,
     Divider,
     Grid,
     MenuItem,
     Paper,
+    Stack,
     SxProps,
     TextField
 } from "@mui/material"
 import { DatePicker } from "@mui/x-date-pickers"
 import { useQueryClient } from "@tanstack/react-query"
-import { UserGroup } from "common/enums"
-import { UpdateUserPersonalInfoBody, UpdateUserRoleBody, User } from "common/interfaces"
-import { isNtnuMail as checkIsNtnuMail, getFullName, isNullOrWhitespace, strToNumber, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
+import { UserGroup, UserRank, UserStatus } from "common/enums"
+import { UpdateUserMembershipAsAdminBody, UpdateUserMembershipAsMeBody, UpdateUserPersonalInfoBody, UpdateUserRoleBody, User } from "common/interfaces"
+import { isNtnuMail as checkIsNtnuMail, getFullName, isNullOrWhitespace, strToNumber, userGroupToPrettyStr, userRankToPrettyStr, userStatusToPrettyStr } from "common/utils"
 import dayjs, { Dayjs } from "dayjs"
 import { useState } from 'react'
 import { datePickerStyle } from "src/assets/style/timePickerStyles"
+import { HelpButton } from "src/components/HelpButton"
 import { PostingWall } from "src/components/PostingWall"
 import { Form } from "src/components/form/Form"
 import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication"
@@ -292,7 +295,7 @@ function PersonalDetailsForm( { initialValue, onCancel, onSave }: DetailsFormPro
     const { id } = initialValue
     const [value, setValue] = useState<UpdateUserPersonalInfoBody>(getPersonalDetailsBody(initialValue))
 
-    const { user } = useAuthenticatedUser()
+    const { isSuperAdmin } = useAuthenticatedUser()
     const invalidateUserQueries = useUserQueryInvalidation()
 
     const onPostSuccess = async () => { 
@@ -311,17 +314,16 @@ function PersonalDetailsForm( { initialValue, onCancel, onSave }: DetailsFormPro
         isEqualUsers(value, getPersonalDetailsBody(initialValue))
 
     // Posting to /users/:id requires super admin rights
-    const url = user.id === id 
-        ? "/api/users/me/personal-info" 
-        : `/api/users/${id}/personal-info`
+    const url = isSuperAdmin
+        ? `/api/users/${id}/personal-info`
+        : "/api/users/me/personal-info" 
 
     return (
         <Form
             value={() => trimPersonalInfo(value)}
-            url={url}
             httpVerb="PUT"
+            url={url}
             disabled={disabled}
-            // noDivider
             onSuccess={onPostSuccess}
             onAbortClick={onCancel}
             noPadding
@@ -391,7 +393,6 @@ function PersonalDetailsForm( { initialValue, onCancel, onSave }: DetailsFormPro
                     {!isValidPhone &&  "Ugyldig nummer"}
                 </div>   
             </Card>
-
         </Form>
     )
 }
@@ -420,10 +421,175 @@ function trimPersonalInfo(user: UpdateUserPersonalInfoBody): UpdateUserPersonalI
 
 // **************** Membership Details Form *****************
 
+type MembershipBody = UpdateUserMembershipAsAdminBody | UpdateUserMembershipAsMeBody
+
 function MembershipDetailsForm( { initialValue, onCancel, onSave }: DetailsFormProps) {
+    const { id } = initialValue
+    const { isAdmin } = useAuthenticatedUser()
+
+    const getBody = (value: User) => isAdmin
+        ? getMembershipAsAdminBody(value)
+        : getMembershipAsMeBody(value)
+
+    const [value, setValue] = useState<MembershipBody>(getBody(initialValue))
+
+    // Invalidate user queries on successful post
+    const invalidateUserQueries = useUserQueryInvalidation()
+
+    const onPostSuccess = async () => { 
+        await invalidateUserQueries()
+        onSave?.()
+    }
+
+    // Validate form
+    const disabled = isEqualUsers(value, getBody(initialValue))
+
+    const httpVerb = isAdmin ? "PUT" : "PATCH"
+    const url = isAdmin
+        ? `/api/users/${id}/membership`
+        : "/api/users/me/membership"
+
+
     return (
-        <>TODO...</>
+        <Form
+            value={() => trimMembershipBody(value)}
+            httpVerb={httpVerb}
+            url={url}
+            onSuccess={onPostSuccess}
+            onAbortClick={onCancel}
+            disabled={disabled}
+            noPadding
+        >
+            <Card 
+                title="Medlemskap"
+                spacing={4}
+                stackSx={{ py: 1 }}
+                sx={{ mb: 4 }}
+                >
+                <TextField
+                    label="Kappe"
+                    fullWidth
+                    value={value.capeName}
+                    onChange={e => setValue( prev => ({ ...prev, capeName: e.target.value }))}
+                />
+                {isAdmin && isAdminBody(value) && (
+                    <TextField
+                        select
+                        label="Rang"
+                        required
+                        value={value.rank}
+                        onChange={e => setValue( prev => ({ ...prev, rank: e.target.value as UserRank }))}
+                    >
+                        {Object.values(UserRank).map(rank => (
+                            <MenuItem key={rank} value={rank}>
+                                {userRankToPrettyStr(rank)}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                )}
+                {!isAdmin && (
+                    <div style={{
+                        minHeight: "56px",
+                        paddingLeft: "10px",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center"
+                    }}>
+                        <CardTextItem label="Rang" text={userRankToPrettyStr(initialValue.rank)} />
+                    </div>
+                )}
+                <Stack direction="row" alignItems="center">
+                    <TextField
+                        select
+                        fullWidth
+                        label="Status"
+                        required
+                        value={value.status}
+                        onChange={e => setValue( prev => ({ ...prev, status: e.target.value as UserStatus }))}
+                    >
+                        {Object.values(UserStatus).map(status => (
+                            <MenuItem key={status} value={status}>
+                                {userStatusToPrettyStr(status)}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                    <Box sx={{ ml: 2 }}>
+                        <HelpButton>
+                            {getStatusExplanation(value.status)}
+                        </HelpButton>
+                    </Box>
+                </Stack>
+                <DatePicker
+                    {...datePickerStyle}
+                    views={["year", "month"]}
+                    label="Startet"
+                    minDate={dayjs().year(2018).month(7)}
+                    maxDate={dayjs()}
+                    value={dayjs(value.startDate)}
+                    onChange={(newVal: Dayjs) => {
+                        const newDate = newVal.format("YYYY-MM-DD")
+                        setValue( prev => ({ ...prev, startDate: newDate }))
+                    }}
+                    slotProps={{
+                        textField: { required: true }
+                    }}
+                />
+                <DatePicker
+                    {...datePickerStyle}
+                    views={["year", "month"]}
+                    label="Sluttet"
+                    minDate={dayjs().year(2018).month(7)}
+                    maxDate={dayjs().add(6, "year")}
+                    value={value.endDate ? dayjs(value.endDate) : null}
+                    onChange={(newVal: Dayjs | null) => {
+                        const newDate = newVal?.format("YYYY-MM-DD") ?? null
+                        setValue( prev => ({ ...prev, endDate: newDate }))
+                    }}
+                />
+            </Card>
+        </Form>
     )
+}
+
+function getMembershipAsAdminBody(user: User): UpdateUserMembershipAsAdminBody {
+    return {
+        capeName: user.capeName,
+        rank: user.rank,
+        status: user.status,
+        startDate: user.startDate,
+        endDate: user.endDate
+    }
+}
+
+function getMembershipAsMeBody(user: User): UpdateUserMembershipAsMeBody {
+    return {
+        capeName: user.capeName,
+        status: user.status,
+        startDate: user.startDate,
+        endDate: user.endDate
+    }
+}
+
+function trimMembershipBody(user: MembershipBody): MembershipBody {
+    return {
+        ...user,
+        capeName: user.capeName.trim(),
+        startDate: user.startDate.trim(),
+        endDate: user.endDate?.trim() ?? null
+    }
+}
+
+const isAdminBody = (body: MembershipBody): body is UpdateUserMembershipAsAdminBody => { 
+    return (body as UpdateUserMembershipAsAdminBody).rank !== undefined
+}
+
+function getStatusExplanation(status: UserStatus): string {
+    switch (status) {
+        case UserStatus.Active: return "Aktiv: Aktivt medlem av motstanden"
+        case UserStatus.Veteran: return "Veteran: Medlem som generelt ikke er aktiv, men som likevel deltar på ting av og til (f.eks SMASH og Forohming)"
+        case UserStatus.Retired: return "Pensjonist: Medlem som hverken er aktiv eller deltar på ting. Medlemmet deltar kanskje på større jubileum."
+        case UserStatus.Inactive: return "Inaktiv: Medlem som sluttet kort tid etter at vedkommende ble medlem"
+    }
 }
 
 // **************** Account Details Form *****************
