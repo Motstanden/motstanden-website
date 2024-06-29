@@ -10,18 +10,18 @@ import { UserPageSkeleton } from "./skeleton/UserPage"
 export const userListQueryKey = ["FetchAllUsers"]
 
 export {
-    UserContainer as UserContext
+    RootPageContainer as UserListContext
 }
 
-function UserContainer() {
+function RootPageContainer() {
     return (
         <PageContainer>
-            <UserContextLoader/>
+            <UserListContext/>
         </PageContainer>
     )
 }
 
-function UserContextLoader() {
+function UserListContext() {
     const { isPending, isError, data, error } = useQuery<User[]>({
         queryKey: userListQueryKey,
         queryFn: fetchFn<User[]>("/api/users"),
@@ -31,7 +31,7 @@ function UserContextLoader() {
         return `${error}`
     }
 
-    const context: UsersContextProps = isPending 
+    const context: UserListContextProps = isPending 
         ? { isPending: true, users: undefined }
         : { isPending: false, users: data }
 
@@ -40,8 +40,21 @@ function UserContextLoader() {
     )
 }
 
+type UserListContextProps = {
+    isPending: true,
+    users: undefined
+} | {
+    isPending: false,
+    users: User[]
+}
+
+export function useUserListContext(): UserListContextProps {
+    return useOutletContext<UserListContextProps>()
+}
+
+
 export function UserProfileContext() {
-    const {users, isPending} = useUsersContext()
+    const {users, isPending} = useUserListContext()
     useAppBarHeader("Medlem")
 
     if(isPending)
@@ -67,18 +80,6 @@ export function UserProfileContext() {
     return (
         <Outlet context={context} />
     )
-}
-
-type UsersContextProps = {
-    isPending: true,
-    users: undefined
-} | {
-    isPending: false,
-    users: User[]
-}
-
-export function useUsersContext(): UsersContextProps {
-    return useOutletContext<UsersContextProps>()
 }
 
 type UserProfileContextProps = { users: User[], viewedUser: User }

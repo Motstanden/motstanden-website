@@ -24,10 +24,10 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { TitleCard } from 'src/components/TitleCard';
+import { useAppBarHeader } from "src/context/AppBarHeader";
 import { useAppSnackBar } from "src/context/AppSnackBar";
 import { useTitle } from 'src/hooks/useTitle';
-import { useUsersContext } from "./Context";
-import { useAppBarHeader } from "src/context/AppBarHeader";
+import { useUserListContext } from "./Context";
 
 export default function UserListPage() {
     useTitle("Medlemsliste")
@@ -46,7 +46,7 @@ export default function UserListPage() {
 
     const [showBoard, setShowBoard] = useState(false)
 
-    const {users, isPending} = useUsersContext()
+    const {users, isPending} = useUserListContext()
 
     const actualUsers = users?.filter(user => !isMotstandenMail(user.email)) || []
     const boardUsers = users?.filter(user => isMotstandenMail(user.email)) || []

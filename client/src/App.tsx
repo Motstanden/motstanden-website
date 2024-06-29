@@ -13,7 +13,7 @@ import EventListPage from "src/routes/event/ListPage"
 import NewEventPage from "src/routes/event/NewPage"
 
 // -- User pages --
-import { UserContext, UserProfileContext } from 'src/routes/user/Context'
+import { UserListContext, UserProfileContext } from 'src/routes/user/Context'
 import UserListPage from "src/routes/user/ListPage"
 import NewUserPage from "src/routes/user/NewPage"
 import UserPage from "src/routes/user/UserPage"
@@ -140,7 +140,7 @@ function App() {
 							<Route path="ny" element={<NewPollPage/>}/>
 							<Route path=":pollId" element={<PollItemPage/>}/>
 						</Route>
-						<Route path="/medlem" element={<UserContext />}>
+						<Route path="/medlem" element={<UserListContext />}>
 							<Route path="" element={<Navigate to="liste" replace/>} />
 							<Route path="liste" element={<UserListPage />} />
 							<Route path=":userId" element={<UserProfileContext />}>
