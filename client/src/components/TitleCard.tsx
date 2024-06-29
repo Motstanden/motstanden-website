@@ -1,17 +1,45 @@
-import { Divider, Paper, Skeleton, SxProps } from "@mui/material";
+import { Divider, Paper, Skeleton, Stack, SxProps } from "@mui/material"
 
-export type TitleCardProps = {
+export function TitleCard({ 
+    title, sx, children, paddingTop, menu, showMenu, noMenuMargin: noMenuMargin 
+}: {
     title: string,
     children: React.ReactNode,
     sx?: SxProps,
-    paddingTop?: number
-}
-
-export function TitleCard({ title, sx, children, paddingTop }: TitleCardProps) {
+    paddingTop?: number,
+    menu?: React.ReactNode,
+    showMenu?: boolean
+    noMenuMargin?: boolean
+}) {
     return (
-        <Paper sx={{ p: 2, ...sx }} elevation={6}>
-            <h3 style={{ margin: 0 }}>{title}</h3>
-            <Divider sx={{ mt: 1.5, mb: paddingTop ?? 2 }} />
+        <Paper 
+            sx={{ 
+                p: 2,
+                pt: "10px", 
+                ...sx 
+            }} 
+            elevation={6}>
+            <Stack
+                flexDirection="row"
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{
+                    minHeight: "45px",
+                }}
+            >
+                <h3 style={{ margin: 0 }}>
+                    {title}
+                </h3>
+                {showMenu == true && (
+                    <div style={{
+                        // Most menus have a padding of ~12px. This will align the menu with the divider line below
+                        marginRight: noMenuMargin ? "0px" : "-12px"     
+                    }}>
+                        {menu}
+                    </div>
+                )}
+            </Stack>
+            <Divider sx={{mb: paddingTop ?? 2 }} />
             {children}
         </Paper>
     )
