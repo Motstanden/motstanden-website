@@ -281,13 +281,18 @@ function AccountDetailsForm( { initialValue, onCancel, onSave }: DetailsFormProp
             noDivider
             onSuccess={onPostSuccess}
             onAbortClick={onCancel}
+            noPadding
         >
-            <Card title="Brukerkonto" showEditButton={false} spacing={4}>
+            <Card 
+                title="Brukerkonto" 
+                showEditButton={false} 
+                sx={{ mb: 2 }}
+                stackSx={{ py: 1 }}
+                >
                 <TextField
                     select
                     label="Rolle"
                     required
-                    sx={{ mt: 2 }}
                     value={value.groupName}
                     onChange={(e) => setValue({ groupName: e.target.value as UserGroup })}
                 >
@@ -307,12 +312,15 @@ function AccountDetailsForm( { initialValue, onCancel, onSave }: DetailsFormProp
                     )}
                 </TextField>
 
-                <div style={{ paddingLeft: "10px" }}>
-                    <CardTextItem label="Laget" text={formatExactDate(createdAt)} />
-                </div>
-                <div style={{ paddingLeft: "10px" }}>
+                <CardTextList style={{marginLeft: "5px", marginTop: "25px"}}>
+                    <CardTextItem 
+                        label="Laget" 
+                        text={formatExactDate(createdAt)} 
+                        labelStyle={{marginBottom: "5px"}}
+                        textStyle={{marginBottom: "5px"}}
+                        />
                     <CardTextItem label="Oppdatert" text={formatExactDate(updatedAt)} />
-                </div>
+                </CardTextList>
             </Card>
         </Form>
     )
