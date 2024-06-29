@@ -14,7 +14,6 @@ import NewEventPage from "src/routes/event/NewPage"
 
 // -- User pages --
 import { UserContext, UserProfileContext } from 'src/routes/user/Context'
-import EditUserPage from "src/routes/user/EditPage"
 import UserListPage from "src/routes/user/ListPage"
 import NewUserPage from "src/routes/user/NewPage"
 import UserPage from "src/routes/user/UserPage"
@@ -146,7 +145,6 @@ function App() {
 							<Route path="liste" element={<UserListPage />} />
 							<Route path=":userId" element={<UserProfileContext />}>
 								<Route index element={<UserPage />} />
-								<Route path="rediger" element={<EditUserPage/>} /> {/* Authorization to this path is handled internally by EditUserPage. */}
 							</Route>
 							<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator} />}>
 								<Route path="ny" element={<NewUserPage/>} />

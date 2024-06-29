@@ -4,6 +4,7 @@ import {
     Grid,
     IconButton,
     Paper,
+    SxProps,
     Tooltip
 } from "@mui/material"
 import { User } from "common/interfaces"
@@ -22,7 +23,12 @@ export default function UserPage() {
     const { viewedUser: user } = useUserProfileContext()
     useTitle(user.firstName)
     return (
-        <div>
+        <div style={{maxWidth: "1300px"}}>
+            <ProfileHeader 
+                user={user} 
+                sx={{
+                    mb: {xs: 2, md: 2, lg: 4}
+                }} />
             <Grid container alignItems="top" spacing={{xs: 2, md: 2, lg: 4}}>
                 <PersonCard user={user} />
                 <MemberCard user={user} />
@@ -35,22 +41,13 @@ export default function UserPage() {
     )
 }
 
-export function UserPageHeader( {user}: {user: User}) {
-    return (
-        <>
-            <ProfileBanner user={user} />
-            <EditButton user={user} />
-            <Divider sx={{ mt: 2, mb: 2 }} />
-        </>
-    )
-}
-
-function ProfileBanner({ user }: { user: User }) {
+function ProfileHeader({ user, sx }: { user: User, sx?: SxProps }) {
     const fullName = getFullName(user)
     return (
         <Paper
             elevation={6}
             style={{ textAlign: "center" }}
+            sx={{ ...sx }}
         >
             <h1 style={{ paddingTop: "10px" }}>{fullName}</h1>
             <img

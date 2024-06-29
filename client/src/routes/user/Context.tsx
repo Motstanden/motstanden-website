@@ -2,11 +2,10 @@ import { useQuery } from "@tanstack/react-query"
 import { User } from "common/interfaces"
 import { strToNumber } from "common/utils"
 import { Navigate, Outlet, useOutletContext, useParams } from "react-router-dom"
+import { useAppBarHeader } from "src/context/AppBarHeader"
 import { PageContainer } from "src/layout/PageContainer/PageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
-import { UserPageHeader } from "./UserPage"
 import { UserPageSkeleton } from "./skeleton/UserPage"
-import { useAppBarHeader } from "src/context/AppBarHeader"
 
 export const userListQueryKey = ["FetchAllUsers"]
 
@@ -66,10 +65,7 @@ export function UserProfileContext() {
     }
 
     return (
-        <div style={{maxWidth: "1300px"}}>
-            <UserPageHeader user={user}/>
-            <Outlet context={context} />
-        </div>
+        <Outlet context={context} />
     )
 }
 
