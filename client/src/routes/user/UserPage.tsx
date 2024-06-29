@@ -4,6 +4,7 @@ import {
     Paper,
     SxProps
 } from "@mui/material"
+import { UserGroup } from "common/enums"
 import { User } from "common/interfaces"
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
 import dayjs from "dayjs"
@@ -69,7 +70,9 @@ function PersonalDetailsController() {
     const { viewedUser } = useUserProfileContext()
     const [isEditing, setIsEditing] = useState(false)
     
-    // Only super admins and the user themselves can edit personal details
+    // People who can edit:
+    //  - Super admins
+    //  - Users who are viewing their own profile
     const canEdit = isSuperAdmin || currentUser.id === viewedUser.id
     
     if(canEdit && isEditing) 
@@ -91,22 +94,60 @@ function PersonalDetailsController() {
 }
 
 function MembershipDetailsController() {
+    
+    const { user: currentUser, isAdmin } = useAuthenticatedUser()
     const { viewedUser } = useUserProfileContext()
+    const [isEditing, setIsEditing] = useState(false)
 
-    // TODO: Implement edit switch
+    // People who can edit:
+    //  - Admins
+    //  - Users who are viewing their own profile
+    const canEdit = isAdmin || currentUser.id === viewedUser.id
+
+    if(canEdit && isEditing) 
+        return (
+            <MembershipDetailsForm 
+                initialValue={viewedUser} 
+                onCancel={() => setIsEditing(false)}
+                onSave={() => setIsEditing(false)}    
+             />    
+        )
 
     return (
-        <MembershipDetailsCard user={viewedUser} />
+        <MembershipDetailsCard 
+            user={viewedUser} 
+            showEditMenu={canEdit}
+            onEditClick={() => setIsEditing(true)}
+        />
     )
 }
 
 function AccountDetailsController() {
-    const { viewedUser } = useUserProfileContext()
 
-    // TODO: Implement edit switch
+    const { viewedUser } = useUserProfileContext()
+    const { isSuperAdmin, isAdmin} = useAuthenticatedUser()
+    const [isEditing, setIsEditing] = useState(false)
+
+    // People who can edit:
+    // - Super admins
+    // - Admin, if the viewedUser is not a super admin
+    const canEdit = isSuperAdmin || (isAdmin && viewedUser.groupName !== UserGroup.SuperAdministrator)
+
+    if(canEdit && isEditing) 
+        return (
+            <AccountDetailsForm 
+                initialValue={viewedUser} 
+                onCancel={() => setIsEditing(false)}
+                onSave={() => setIsEditing(false)}        
+            />
+        )
 
     return (
-        <AccountDetailsCard user={viewedUser} />
+        <AccountDetailsCard 
+            user={viewedUser}
+            showEditMenu={canEdit}
+            onEditClick={() => setIsEditing(true)} 
+        />
     )
 }
 
