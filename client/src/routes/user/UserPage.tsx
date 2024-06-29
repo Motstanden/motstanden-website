@@ -261,15 +261,8 @@ type DetailsFormProps = {
 function PersonalDetailsForm( { initialValue, onCancel, onSave }: DetailsFormProps) {
     
     const { id } = initialValue
-    const [value, setValue] = useState<UpdateUserPersonalInfoBody>(getPersonalDetailsBody(initialValue))
-
     const { isSuperAdmin } = useAuthenticatedUser()
-    const invalidateUserQueries = useUserQueryInvalidation()
-
-    const onPostSuccess = async () => { 
-        await invalidateUserQueries()
-        onSave?.()
-    }
+    const [value, setValue] = useState<UpdateUserPersonalInfoBody>(getPersonalDetailsBody(initialValue))
 
     // Validate form
     const isNtnuMail = checkIsNtnuMail(value.email)
@@ -287,81 +280,73 @@ function PersonalDetailsForm( { initialValue, onCancel, onSave }: DetailsFormPro
         : "/api/users/me/personal-info" 
 
     return (
-        <Form
+        <FormCard
+            title="Personalia"
             value={() => trimPersonalInfo(value)}
             httpVerb="PUT"
             url={url}
             disabled={disabled}
-            onSuccess={onPostSuccess}
+            onSuccess={onSave}
             onAbortClick={onCancel}
-            noPadding
         >
-            <Card 
-                title="Personalia"
-                showEditButton={false}
-                spacing={4}
-                stackSx={{ py: 1 }}
-                sx={{ mb: 4 }}
-            >
+            <TextField
+                label="Fornavn"
+                value={value.firstName}
+                onChange={e => setValue( prev => ({ ...prev, firstName: e.target.value }))}
+                required
+                sx={{ mt: 2 }}
+            />
+            <TextField
+                label="Mellomnavn"
+                value={value.middleName}
+                onChange={e => setValue( prev => ({ ...prev, middleName: e.target.value }))}
+            />
+            <TextField
+                label="Etternavn"
+                value={value.lastName}
+                onChange={e => setValue( prev => ({ ...prev, lastName: e.target.value }))}
+                required
+            />
+            <DatePicker
+                {...datePickerStyle}
+                views={["year", "month", "day"]}
+                label="Fødselsdato"
+                value={value.birthDate ? dayjs(value.birthDate) : null}
+                onChange={ (newVal: Dayjs | null) => {
+                    const newDate = newVal?.format("YYYY-MM-DD") ?? null
+                    setValue( prev => ({ ...prev, birthDate: newDate }))
+                }}
+            />
+            <div>
                 <TextField
-                    label="Fornavn"
-                    value={value.firstName}
-                    onChange={e => setValue( prev => ({ ...prev, firstName: e.target.value }))}
+                    label="E-post"
+                    type="email"
+                    value={value.email}
+                    onChange={e => setValue( prev => ({ ...prev, email: e.target.value }))}
+                    error={isNtnuMail}
+                    fullWidth
                     required
-                    sx={{ mt: 2 }}
                 />
+                {isNtnuMail && "Ntnu mail ikke tillat"}
+            </div>
+            <div>
                 <TextField
-                    label="Mellomnavn"
-                    value={value.middleName}
-                    onChange={e => setValue( prev => ({ ...prev, middleName: e.target.value }))}
-                />
-                <TextField
-                    label="Etternavn"
-                    value={value.lastName}
-                    onChange={e => setValue( prev => ({ ...prev, lastName: e.target.value }))}
-                    required
-                />
-                <DatePicker
-                    {...datePickerStyle}
-                    views={["year", "month", "day"]}
-                    label="Fødselsdato"
-                    value={value.birthDate ? dayjs(value.birthDate) : null}
-                    onChange={ (newVal: Dayjs | null) => {
-                        const newDate = newVal?.format("YYYY-MM-DD") ?? null
-                        setValue( prev => ({ ...prev, birthDate: newDate }))
+                    type="tel"
+                    label="Tlf."
+                    value={value.phoneNumber ?? ""}
+                    fullWidth
+                    onChange={e => {
+                        const newVal = strToNumber(e.target.value) ?? null
+                        const inRange = newVal && newVal < 99999999
+                        const isEmpty = e.target.value.length === 0
+                        if (inRange || isEmpty) {
+                            setValue(prev => ({ ...prev, phoneNumber: newVal }))
+                        }
                     }}
                 />
-                <div>
-                    <TextField
-                        label="E-post"
-                        type="email"
-                        value={value.email}
-                        onChange={e => setValue( prev => ({ ...prev, email: e.target.value }))}
-                        error={isNtnuMail}
-                        fullWidth
-                        required
-                    />
-                    {isNtnuMail && "Ntnu mail ikke tillat"}
-                </div>
-                <div>
-                    <TextField
-                        type="tel"
-                        label="Tlf."
-                        value={value.phoneNumber ?? ""}
-                        fullWidth
-                        onChange={e => {
-                            const newVal = strToNumber(e.target.value) ?? null
-                            const inRange = newVal && newVal < 99999999
-                            const isEmpty = e.target.value.length === 0
-                            if (inRange || isEmpty) {
-                                setValue(prev => ({ ...prev, phoneNumber: newVal }))
-                            }
-                        }}
-                    />
-                    {!isValidPhone &&  "Ugyldig nummer"}
-                </div>   
-            </Card>
-        </Form>
+                {!isValidPhone &&  "Ugyldig nummer"}
+            </div>   
+        </FormCard>
     )
 }
 
@@ -401,15 +386,6 @@ function MembershipDetailsForm( { initialValue, onCancel, onSave }: DetailsFormP
 
     const [value, setValue] = useState<MembershipBody>(getBody(initialValue))
 
-    // Invalidate user queries on successful post
-    const invalidateUserQueries = useUserQueryInvalidation()
-
-    const onPostSuccess = async () => { 
-        await invalidateUserQueries()
-        onSave?.()
-    }
-
-    // Validate form
     const disabled = isEqualUsers(value, getBody(initialValue))
 
     const httpVerb = isAdmin ? "PUT" : "PATCH"
@@ -419,103 +395,96 @@ function MembershipDetailsForm( { initialValue, onCancel, onSave }: DetailsFormP
 
 
     return (
-        <Form
+        <FormCard
+            title="Medlemskap"
             value={() => trimMembershipBody(value)}
             httpVerb={httpVerb}
             url={url}
-            onSuccess={onPostSuccess}
+            onSuccess={onSave}
             onAbortClick={onCancel}
             disabled={disabled}
-            noPadding
         >
-            <Card 
-                title="Medlemskap"
-                spacing={4}
-                stackSx={{ py: 1 }}
-                sx={{ mb: 4 }}
-                >
+            <TextField
+                label="Kappe"
+                fullWidth
+                value={value.capeName}
+                onChange={e => setValue( prev => ({ ...prev, capeName: e.target.value }))}
+            />
+            {isAdmin && isAdminBody(value) && (
                 <TextField
-                    label="Kappe"
+                    select
+                    label="Rang"
+                    required
+                    value={value.rank}
+                    onChange={e => setValue( prev => ({ ...prev, rank: e.target.value as UserRank }))}
+                >
+                    {Object.values(UserRank).map(rank => (
+                        <MenuItem key={rank} value={rank}>
+                            {userRankToPrettyStr(rank)}
+                        </MenuItem>
+                    ))}
+                </TextField>
+            )}
+            {!isAdmin && (
+                <div style={{
+                    minHeight: "56px",
+                    paddingLeft: "10px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center"
+                }}>
+                    <CardTextItem label="Rang" text={userRankToPrettyStr(initialValue.rank)} />
+                </div>
+            )}
+            <Stack direction="row" alignItems="center">
+                <TextField
+                    select
                     fullWidth
-                    value={value.capeName}
-                    onChange={e => setValue( prev => ({ ...prev, capeName: e.target.value }))}
-                />
-                {isAdmin && isAdminBody(value) && (
-                    <TextField
-                        select
-                        label="Rang"
-                        required
-                        value={value.rank}
-                        onChange={e => setValue( prev => ({ ...prev, rank: e.target.value as UserRank }))}
-                    >
-                        {Object.values(UserRank).map(rank => (
-                            <MenuItem key={rank} value={rank}>
-                                {userRankToPrettyStr(rank)}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                )}
-                {!isAdmin && (
-                    <div style={{
-                        minHeight: "56px",
-                        paddingLeft: "10px",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center"
-                    }}>
-                        <CardTextItem label="Rang" text={userRankToPrettyStr(initialValue.rank)} />
-                    </div>
-                )}
-                <Stack direction="row" alignItems="center">
-                    <TextField
-                        select
-                        fullWidth
-                        label="Status"
-                        required
-                        value={value.status}
-                        onChange={e => setValue( prev => ({ ...prev, status: e.target.value as UserStatus }))}
-                    >
-                        {Object.values(UserStatus).map(status => (
-                            <MenuItem key={status} value={status}>
-                                {userStatusToPrettyStr(status)}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                    <Box sx={{ ml: 2 }}>
-                        <HelpButton>
-                            {getStatusExplanation(value.status)}
-                        </HelpButton>
-                    </Box>
-                </Stack>
-                <DatePicker
-                    {...datePickerStyle}
-                    views={["year", "month"]}
-                    label="Startet"
-                    minDate={dayjs().year(2018).month(7)}
-                    maxDate={dayjs()}
-                    value={dayjs(value.startDate)}
-                    onChange={(newVal: Dayjs) => {
-                        const newDate = newVal.format("YYYY-MM-DD")
-                        setValue( prev => ({ ...prev, startDate: newDate }))
-                    }}
-                    slotProps={{
-                        textField: { required: true }
-                    }}
-                />
-                <DatePicker
-                    {...datePickerStyle}
-                    views={["year", "month"]}
-                    label="Sluttet"
-                    minDate={dayjs().year(2018).month(7)}
-                    maxDate={dayjs().add(6, "year")}
-                    value={value.endDate ? dayjs(value.endDate) : null}
-                    onChange={(newVal: Dayjs | null) => {
-                        const newDate = newVal?.format("YYYY-MM-DD") ?? null
-                        setValue( prev => ({ ...prev, endDate: newDate }))
-                    }}
-                />
-            </Card>
-        </Form>
+                    label="Status"
+                    required
+                    value={value.status}
+                    onChange={e => setValue( prev => ({ ...prev, status: e.target.value as UserStatus }))}
+                >
+                    {Object.values(UserStatus).map(status => (
+                        <MenuItem key={status} value={status}>
+                            {userStatusToPrettyStr(status)}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                <Box sx={{ ml: 2 }}>
+                    <HelpButton>
+                        {getStatusExplanation(value.status)}
+                    </HelpButton>
+                </Box>
+            </Stack>
+            <DatePicker
+                {...datePickerStyle}
+                views={["year", "month"]}
+                label="Startet"
+                minDate={dayjs().year(2018).month(7)}
+                maxDate={dayjs()}
+                value={dayjs(value.startDate)}
+                onChange={(newVal: Dayjs) => {
+                    const newDate = newVal.format("YYYY-MM-DD")
+                    setValue( prev => ({ ...prev, startDate: newDate }))
+                }}
+                slotProps={{
+                    textField: { required: true }
+                }}
+            />
+            <DatePicker
+                {...datePickerStyle}
+                views={["year", "month"]}
+                label="Sluttet"
+                minDate={dayjs().year(2018).month(7)}
+                maxDate={dayjs().add(6, "year")}
+                value={value.endDate ? dayjs(value.endDate) : null}
+                onChange={(newVal: Dayjs | null) => {
+                    const newDate = newVal?.format("YYYY-MM-DD") ?? null
+                    setValue( prev => ({ ...prev, endDate: newDate }))
+                }}
+            />
+        </FormCard>
     )
 }
 
@@ -571,80 +540,115 @@ function AccountDetailsForm( { initialValue, onCancel, onSave }: DetailsFormProp
     })
 
     const { isSuperAdmin } = useAuthenticatedUser()
-    const invalidateUserQueries = useUserQueryInvalidation()
-
-    const onPostSuccess = async () => { 
-        await invalidateUserQueries()
-        onSave?.()
-    }
 
     const disabled = value.groupName === initialValue.groupName
 
     return (
-        <Form
+        <FormCard
+            title="Brukerkonto"
             value={value}
             httpVerb="PUT"
             url={`/api/users/${id}/role`}
             disabled={disabled}
             noDivider
-            onSuccess={onPostSuccess}
+            onSuccess={onSave}
             onAbortClick={onCancel}
-            noPadding
         >
-            <Card 
-                title="Brukerkonto" 
-                showEditButton={false} 
-                sx={{ mb: 2 }}
-                stackSx={{ py: 1 }}
-                >
-                <TextField
-                    select
-                    label="Rolle"
-                    required
-                    value={value.groupName}
-                    onChange={(e) => setValue({ groupName: e.target.value as UserGroup })}
-                >
-                    <MenuItem value={UserGroup.Contributor}>
-                        {userGroupToPrettyStr(UserGroup.Contributor)}
+            <TextField
+                select
+                label="Rolle"
+                required
+                value={value.groupName}
+                onChange={(e) => setValue({ groupName: e.target.value as UserGroup })}
+            >
+                <MenuItem value={UserGroup.Contributor}>
+                    {userGroupToPrettyStr(UserGroup.Contributor)}
+                </MenuItem>
+                <MenuItem value={UserGroup.Editor}>
+                    {userGroupToPrettyStr(UserGroup.Editor)}
+                </MenuItem>
+                <MenuItem value={UserGroup.Administrator}>
+                    {userGroupToPrettyStr(UserGroup.Administrator)}
+                </MenuItem>
+                {isSuperAdmin && (
+                    <MenuItem value={UserGroup.SuperAdministrator}>
+                        {userGroupToPrettyStr(UserGroup.SuperAdministrator)}
                     </MenuItem>
-                    <MenuItem value={UserGroup.Editor}>
-                        {userGroupToPrettyStr(UserGroup.Editor)}
-                    </MenuItem>
-                    <MenuItem value={UserGroup.Administrator}>
-                        {userGroupToPrettyStr(UserGroup.Administrator)}
-                    </MenuItem>
-                    {isSuperAdmin && (
-                        <MenuItem value={UserGroup.SuperAdministrator}>
-                            {userGroupToPrettyStr(UserGroup.SuperAdministrator)}
-                        </MenuItem>
-                    )}
-                </TextField>
+                )}
+            </TextField>
 
-                <CardTextList style={{marginLeft: "5px", marginTop: "25px"}}>
-                    <CardTextItem 
-                        label="Laget" 
-                        text={formatExactDate(createdAt)} 
-                        labelStyle={{marginBottom: "5px"}}
-                        textStyle={{marginBottom: "5px"}}
-                        />
-                    <CardTextItem label="Oppdatert" text={formatExactDate(updatedAt)} />
-                </CardTextList>
-            </Card>
-        </Form>
+            <CardTextList style={{marginLeft: "5px", marginTop: "25px"}}>
+                <CardTextItem 
+                    label="Laget" 
+                    text={formatExactDate(createdAt)} 
+                    labelStyle={{marginBottom: "5px"}}
+                    textStyle={{marginBottom: "5px"}}
+                    />
+                <CardTextItem label="Oppdatert" text={formatExactDate(updatedAt)} />
+            </CardTextList>
+        </FormCard>
     )
 }
 
-function useUserQueryInvalidation() {
+function FormCard({
+    title,
+    value,
+    children,
+    disabled,
+    url,
+    onSuccess,
+    onAbortClick,
+    noDivider,
+    httpVerb = "POST"
+}: {
+    title: string
+    value: object | (() => object)    // Either any object, or a callback function that returns the object
+    children: React.ReactNode
+    url: string
+    disabled?: boolean
+    preventSubmit?: () => boolean
+    onSuccess?: (() => Promise<void>) | (() => void)
+    onFailure?: () => void
+    onAbortClick?: React.MouseEventHandler<HTMLButtonElement>
+    noDivider?: boolean
+    httpVerb?: "POST" | "PATCH" | "PUT"
+}) {
+
     const queryClient = useQueryClient()
 
-    const invalidateUserQueries = async () => {
+    const handleOnSuccess = async () => { 
         await Promise.all([
             queryClient.invalidateQueries({queryKey: userQueryKey}),
             queryClient.invalidateQueries({queryKey: userListQueryKey})
         ])
+        await onSuccess?.()   
     }
 
-    return invalidateUserQueries
+    return (
+        <Form
+            value={value}
+            httpVerb={httpVerb}
+            url={url}
+            disabled={disabled}
+            onSuccess={handleOnSuccess}
+            onAbortClick={onAbortClick}
+            noPadding
+            noDivider={noDivider}
+        >
+            <Card 
+                title={title}
+                showEditButton={false}
+                sx={{ 
+                    mb: 3,
+                }}
+                stackSx={{ py: 1 }}
+                spacing={4}
+            >
+                {children}
+            </Card>
+        </Form>
+    )
+
 }
 
 // ********************************************************
