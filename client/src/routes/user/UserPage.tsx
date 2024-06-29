@@ -31,9 +31,15 @@ export default function UserPage() {
                     mb: {xs: 2, md: 2, lg: 4}
                 }} />
             <Grid container alignItems="top" spacing={{xs: 2, md: 2, lg: 4}}>
-                <PersonalDetailsController/>
-                <MembershipDetailsController/>
-                <AccountDetailsController/>
+                <Grid item xs={12} md={6}>
+                    <PersonalDetailsController/>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <MembershipDetailsController/>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <AccountDetailsController/>
+                </Grid>
             </Grid>
             <Divider sx={{my: 4}} />
             <h1>Tidslinje</h1>

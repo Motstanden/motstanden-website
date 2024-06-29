@@ -1,5 +1,5 @@
 import EditIcon from "@mui/icons-material/Edit"
-import { Grid, IconButton, Stack, SxProps, Tooltip } from "@mui/material"
+import { IconButton, Stack, SxProps, Tooltip } from "@mui/material"
 import { TitleCard } from "src/components/TitleCard"
 
 export function Card({
@@ -18,30 +18,28 @@ export function Card({
     editButtonToolTip?: string
 }) {
     return (
-        <Grid item xs={12} md={6}>
-            <TitleCard 
-                title={title} 
-                showMenu={showEditButton}
-                noMenuMargin
-                menu={(
-                    <EditButton 
-                        onClick={onEditClick} 
-                        toolTip={editButtonToolTip} 
-                        sx={{
-                            marginRight: "-9px",
-                            marginTop: "2px"
-                        }}
-                        />
-                )}
-                sx={{ 
-                    height: "100%" 
-                }}
-                >
-                <Stack spacing={spacing ?? 2}>
-                    {children}
-                </Stack>
-            </TitleCard>
-        </Grid>
+        <TitleCard 
+            title={title} 
+            showMenu={showEditButton}
+            noMenuMargin
+            menu={(
+                <EditButton 
+                    onClick={onEditClick} 
+                    toolTip={editButtonToolTip} 
+                    sx={{
+                        marginRight: "-9px",
+                        marginTop: "2px"
+                    }}
+                    />
+            )}
+            sx={{ 
+                height: "100%" 
+            }}
+            >
+            <Stack spacing={spacing ?? 2}>
+                {children}
+            </Stack>
+        </TitleCard>
     )
 }
 
