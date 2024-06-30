@@ -11,7 +11,7 @@ import {
 import { randomInt, randomUUID } from 'crypto'
 import dayjs from "../../lib/dayjs.js"
 import { api } from '../../utils/api/index.js'
-import { TestUser, disposeLogIn, logIn, unsafeApiLogIn } from '../../utils/auth.js'
+import { disposeLogIn, logIn, unsafeApiLogIn } from '../../utils/auth.js'
 import { selectDate } from '../../utils/datePicker.js'
 
 
@@ -39,6 +39,8 @@ test("Create new user @smoke", async ({browser}, workerInfo) => {
     await disposeLogIn(page)
 })
 
+
+// ************* Update personal info ***************
 
 test.describe("Update personal info", () => {
 
@@ -75,6 +77,21 @@ test.describe("Update personal info", () => {
 })
 
 
+async function fillPersonalForm(page: Page, user: UpdateUserPersonalInfoBody) {
+    await page.getByLabel('Fornavn *').fill(user.firstName)
+    await page.getByLabel('Mellomnavn').fill(user.middleName)
+    await page.getByLabel('Etternavn *').fill(user.lastName)
+    await page.getByLabel('E-post *').fill(user.email)
+    
+    if(user.birthDate){
+        await selectDate(page, "Fødselsdato", user.birthDate, "DayMonthYear")
+    }
+    if(user.phoneNumber){
+        await page.getByLabel('Tlf.').fill(`${user.phoneNumber}`)
+    }
+}
+
+
 async function validatePersonalInfo(page: Page, user: UpdateUserPersonalInfoBody) {
     await expect(page).toHaveURL(/\/medlem\/[0-9]+$/)
     await expect(page.getByText(getFullName(user)).first()).toBeVisible()
@@ -90,6 +107,13 @@ async function validatePersonalInfo(page: Page, user: UpdateUserPersonalInfoBody
     }
 }
 
+// ************* Update membership info ***************
+
+// TODO...
+
+
+// **************** Shared Utils ******************
+
 async function clickEdit(page: Page, variant: "personal" | "membership" | "role") {
     
     const getLabel = () => { 
@@ -102,7 +126,7 @@ async function clickEdit(page: Page, variant: "personal" | "membership" | "role"
 
     const buttonLabel = getLabel()
     await page.getByLabel(buttonLabel).click()
-    await page.getByRole('button', { name: 'Lagre' }).waitFor({ state: 'visible' })
+    await page.getByRole('button', { name: 'Lagre' }).waitFor({ state: 'visible' })     // Note: This will not work if the test is editing multiple forms at once
 }
 
 async function clickSave(page: Page) {
@@ -110,6 +134,8 @@ async function clickSave(page: Page) {
     await button.click(),
     await button.waitFor({ state: 'detached'})
 }
+
+// ************* Obsolete Tests ***************
 
 test.describe.serial("Create and update user data", async () => {
     test.slow()
@@ -222,20 +248,6 @@ test.describe.serial("Create and update user data", async () => {
         })
     })
 })
-
-async function fillPersonalForm(page: Page, user: UpdateUserPersonalInfoBody) {
-    await page.getByLabel('Fornavn *').fill(user.firstName)
-    await page.getByLabel('Mellomnavn').fill(user.middleName)
-    await page.getByLabel('Etternavn *').fill(user.lastName)
-    await page.getByLabel('E-post *').fill(user.email)
-    
-    if(user.birthDate){
-        await selectDate(page, "Fødselsdato", user.birthDate, "DayMonthYear")
-    }
-    if(user.phoneNumber){
-        await page.getByLabel('Tlf.').fill(`${user.phoneNumber}`)
-    }
-}
 
 async function fillMembershipForm(page: Page, user: UserWithoutDbData, opts?: { skipRank?: boolean }) {
     await select(page, "UserStatus", user.status)
@@ -374,11 +386,4 @@ async function validateUserProfile(page: Page, user: UserWithoutDbData) {
 function getEnums<T>(enumObj: {}): T[] {
     return Object.keys(enumObj)
                  .map(itemStr => enumObj[itemStr as keyof typeof enumObj] as T)
-}
-
-async function gotoUser(page: Page, user: TestUser, opts?: {editUser?: boolean}) {
-    const url = opts?.editUser === true 
-        ? `/medlem/${user.id}/rediger`
-        : `/medlem/${user.id}`
-    await page.goto(url)
 }
