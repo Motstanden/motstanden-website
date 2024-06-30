@@ -13,21 +13,6 @@ import dayjs from "../../lib/dayjs.js"
 import { TestUser, disposeLogIn, logIn, unsafeApiLogIn } from '../../utils/auth.js'
 import { selectDate } from '../../utils/datePicker.js'
 
-test("New users can only be created by super admin", async ({browser}, workerInfo) => {
-
-    const {page: adminPage } = await logIn(browser, workerInfo, UserGroup.Administrator)
-    const {page: superAdminPage } = await logIn(browser, workerInfo, UserGroup.SuperAdministrator)
-
-    await adminPage.goto("/medlem/ny")
-    await superAdminPage.goto("/medlem/ny")
-    
-    await expect(adminPage).toHaveURL("/")
-    await expect(superAdminPage).toHaveURL("/medlem/ny")
-
-    await disposeLogIn(adminPage)
-    await disposeLogIn(superAdminPage)
-})
-
 test.describe.serial("Create and update user data", async () => {
     test.slow()
     let user: UserWithoutDbData

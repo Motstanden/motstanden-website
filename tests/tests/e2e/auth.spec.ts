@@ -1,5 +1,6 @@
 import { TestInfo, expect, test, type Page } from '@playwright/test'
-import { unsafeApiLogIn } from '../../utils/auth.js'
+import { UserGroup } from 'common/enums'
+import { disposeLogIn, logIn, unsafeApiLogIn } from '../../utils/auth.js'
 
 function getReservedMail(workerInfo: TestInfo) {
     return `test-auth-${workerInfo.parallelIndex + 1}@motstanden.no`
@@ -82,6 +83,24 @@ test.describe("Routes that require authentication are protected", () => {
                 page.goto(route)
             ])
             await expect(page).toHaveURL('/logg-inn')
+        })
+    }
+})
+
+test.describe("Routes that require groups are protected", () => { 
+    
+    testRoute("/medlem/ny", UserGroup.Administrator)
+
+    function testRoute(route: string, group: UserGroup) {
+        return test(route, async ({browser}, workerInfo) => { 
+            const { page } = await logIn(browser, workerInfo, group)
+            
+            await page.goto(route)
+
+            // TODO: In the future, we should have a 403 forbidden page
+            await expect(page.getByRole("main").getByRole('heading', { name: '404' })).toBeVisible()          
+
+            await disposeLogIn(page)
         })
     }
 })
