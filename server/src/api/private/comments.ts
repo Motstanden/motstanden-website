@@ -5,8 +5,7 @@ import express, { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../../db/index.js"
 import { requiresAuthor, requiresGroupOrAuthor } from "../../middleware/requiresGroupOrAuthor.js"
-import { validateNumber } from "../../middleware/validateNumber.js"
-import { validateBody, validateParams } from "../../middleware/zodValidation.js"
+import { validateBody, validateParams, validateQuery } from "../../middleware/zodValidation.js"
 import { getUser } from "../../utils/getUser.js"
 import { Schemas } from "../../utils/zodSchema.js"
 
@@ -14,13 +13,12 @@ const router = express.Router()
 
 // ---- GET all comments ----
 
-router.get("/comments?:limit", 
-    validateNumber({
-        getValue: (req: Request) =>  req.query.limit?.toString() ?? ""
-    }),
+router.get("/comments?:limit",
+    validateQuery(Schemas.queries.limit),
     (req, res) => {
-        const limit = strToNumber(req.query.limit?.toString()) as number
-        res.send(db.comments.getAllUnion(limit))
+        const { limit } = Schemas.queries.limit.parse(req.query)
+        const comments = db.comments.getAllUnion(limit)
+        res.send(comments)
     }
 )
 
