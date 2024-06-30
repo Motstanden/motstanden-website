@@ -1,6 +1,6 @@
 import { Page, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
-import { UpdateUserMembershipAsAdminBody, UpdateUserMembershipAsMeBody, UpdateUserPersonalInfoBody, User } from 'common/interfaces'
+import { NewUser, UpdateUserMembershipAsAdminBody, UpdateUserMembershipAsMeBody, UpdateUserPersonalInfoBody, User } from 'common/interfaces'
 import {
     getFullName,
     isNullOrWhitespace,
@@ -18,22 +18,19 @@ import { selectDate } from '../../utils/datePicker.js'
 test("Create new user @smoke", async ({browser}, workerInfo) => {
     const { page } = await logIn(browser, workerInfo, UserGroup.SuperAdministrator)
     await page.goto("/medlem/ny")
-
-    const user: UpdateUserPersonalInfoBody = {
+    
+    const user: PersonalInfo = {
         firstName: `___firstName ${randomUUID().toLowerCase()}`,
         middleName: `___middleName ${randomUUID().toLowerCase()}`,
         lastName: `___lastName ${randomUUID().toLowerCase()}`,
         email: `${randomUUID().toLowerCase()}@motstanden.no`,
-        birthDate: null,
-        phoneNumber: null
     }
-    await fillPersonalForm(page, user)
 
+    await fillPersonalForm(page, user)
     await Promise.all([
         page.waitForURL(/\/medlem\/[0-9]+/),
         page.getByRole('button', { name: 'Legg til bruker' }).click()
     ])
-
     await validatePersonalInfo(page, user)
 
     await disposeLogIn(page)
@@ -82,33 +79,34 @@ test.describe("Update personal info", () => {
     }
 })
 
+type PersonalInfo = UpdateUserPersonalInfoBody | Omit<NewUser, "profilePicture">
 
-async function fillPersonalForm(page: Page, user: UpdateUserPersonalInfoBody) {
+async function fillPersonalForm(page: Page, user: PersonalInfo) {
     await page.getByLabel('Fornavn *').fill(user.firstName)
     await page.getByLabel('Mellomnavn').fill(user.middleName)
     await page.getByLabel('Etternavn *').fill(user.lastName)
     await page.getByLabel('E-post *').fill(user.email)
     
-    if(user.birthDate){
+    if("birthDate" in user && user.birthDate !== null){
         await selectDate(page, "Fødselsdato", user.birthDate, "DayMonthYear")
     }
-    if(user.phoneNumber){
+    if("phoneNumber" in user && user.phoneNumber !== null){
         await page.getByLabel('Tlf.').fill(`${user.phoneNumber}`)
     }
 }
 
 
-async function validatePersonalInfo(page: Page, user: UpdateUserPersonalInfoBody) {
+async function validatePersonalInfo(page: Page, user: PersonalInfo) {
     await expect(page).toHaveURL(/\/medlem\/[0-9]+$/)
     await expect(page.getByText(getFullName(user)).first()).toBeVisible()
     await expect(page.getByText(user.email)).toBeVisible()
 
-    if(user.birthDate) {
+    if("birthDate" in user && user.birthDate !== null) {
         const birthDate = dayjs(user.birthDate).format("DD MMMM YYYY")
         await expect(page.getByText(birthDate)).toBeVisible()
     }
 
-    if(user.phoneNumber) {
+    if("phoneNumber" in user && user.phoneNumber !== null) {
         await expect(page.getByText(`${user.phoneNumber}`)).toBeVisible()
     }
 }
