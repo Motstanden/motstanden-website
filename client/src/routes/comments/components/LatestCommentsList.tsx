@@ -17,7 +17,7 @@ export function LatestCommentsList() {
 
     const { isPending, isError, data, error } = useQuery<EntityComment[]>({
         queryKey: ["comments", "latest"],
-        queryFn: fetchFn(`/api/comments/all?limit=${length}`)
+        queryFn: fetchFn(`/api/comments?limit=${length}`)
     })
 
     if(isPending)
