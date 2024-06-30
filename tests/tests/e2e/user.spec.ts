@@ -10,6 +10,7 @@ import {
 } from "common/utils"
 import { randomInt, randomUUID } from 'crypto'
 import dayjs from "../../lib/dayjs.js"
+import { api } from '../../utils/api/index.js'
 import { TestUser, disposeLogIn, logIn, unsafeApiLogIn } from '../../utils/auth.js'
 import { selectDate } from '../../utils/datePicker.js'
 
@@ -38,6 +39,42 @@ test("Create new user @smoke", async ({browser}, workerInfo) => {
     await disposeLogIn(page)
 })
 
+
+test.describe("Update personal info", () => {
+
+    test("As self", async ({page}, workerInfo) => {
+        const user = await api.users.createRandom(workerInfo)
+        await unsafeApiLogIn(page.request, user.email)
+        await runTest(page, user)
+    })
+
+    test("As super admin", async ({browser}, workerInfo) => {
+        const user = await api.users.createRandom(workerInfo)
+        const { page } = await logIn(browser, workerInfo, UserGroup.SuperAdministrator)
+        await runTest(page, user)
+        await disposeLogIn(page)
+    })
+
+    async function runTest(page: Page, user: User) {
+        await page.goto(`/medlem/${user.id}`)
+        
+        const newUserData: UpdateUserPersonalInfoBody = {
+            firstName: `___firstName ${randomUUID().toLowerCase()}`,
+            middleName: `___middleName ${randomUUID().toLowerCase()}`,
+            lastName: `___lastName ${randomUUID().toLowerCase()}`,
+            email: `${randomUUID().toLowerCase()}@motstanden.no`,
+            phoneNumber: randomInt(10000000, 99999999),
+            birthDate: `${randomInt(1980, 2003)}-${randomInt(1, 12)}-${randomInt(1, 28)}`,
+        }
+
+        await clickEdit(page, "personal")
+        await fillPersonalForm(page, newUserData)
+        await clickSave(page)
+        await validatePersonalInfo(page, newUserData)
+    }
+})
+
+
 async function validatePersonalInfo(page: Page, user: UpdateUserPersonalInfoBody) {
     await expect(page).toHaveURL(/\/medlem\/[0-9]+$/)
     await expect(page.getByText(getFullName(user)).first()).toBeVisible()
@@ -53,6 +90,26 @@ async function validatePersonalInfo(page: Page, user: UpdateUserPersonalInfoBody
     }
 }
 
+async function clickEdit(page: Page, variant: "personal" | "membership" | "role") {
+    
+    const getLabel = () => { 
+        switch(variant) {
+            case "personal":    return "Rediger personalia"
+            case "membership":  return "Rediger medlemskap"
+            case "role":        return "Rediger brukerkonto"
+        }
+    }
+
+    const buttonLabel = getLabel()
+    await page.getByLabel(buttonLabel).click()
+    await page.getByRole('button', { name: 'Lagre' }).waitFor({ state: 'visible' })
+}
+
+async function clickSave(page: Page) {
+    const button = page.getByRole('button', { name: 'Lagre' })
+    await button.click(),
+    await button.waitFor({ state: 'detached'})
+}
 
 test.describe.serial("Create and update user data", async () => {
     test.slow()
