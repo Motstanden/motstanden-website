@@ -115,7 +115,7 @@ async function validatePersonalInfo(page: Page, user: UpdateUserPersonalInfoBody
 
 // ************* Update membership info ***************
 
-test.describe("Update membership info", () => { 
+test.describe("Update membership", () => { 
 
     test("As self", async ({page}, workerInfo) => { 
 
@@ -204,6 +204,43 @@ async function validateMembership(page: Page, user: MemberShipBody) {
         await expect(page.getByText(userRankToPrettyStr(user.rank))).toBeVisible()
     }
 }
+
+// ***************** Update role info *****************
+
+test.describe("Update role", () => { 
+
+    testCanUpdateRole({
+        title: "As admin",
+        updater: UserGroup.Administrator,
+        newRole: UserGroup.Administrator
+    })
+
+    testCanUpdateRole({
+        title: "As super admin",
+        updater: UserGroup.SuperAdministrator,
+        newRole: UserGroup.SuperAdministrator
+    })
+
+    async function testCanUpdateRole({ title, updater, newRole }: { title: string, updater: UserGroup, newRole: UserGroup}) { 
+
+        test(title, async ({browser}, workerInfo) => { 
+                
+            // Create new user and log in as "updater"
+            const user = await api.users.createRandom(workerInfo)
+            const { page } = await logIn(browser, workerInfo, updater)
+
+            await page.goto(`/medlem/${user.id}`)
+            await clickEdit(page, "role")
+            await select(page, "UserGroup", newRole)
+            await clickSave(page)
+            
+            const roleText = userGroupToPrettyStr(newRole)
+            await expect(page.getByText(roleText)).toBeVisible()    // NOTE: This will fail if the role is "Contributor"
+
+            await disposeLogIn(page)
+        })
+    }
+})
 
 // **************** Shared Utils ******************
 
