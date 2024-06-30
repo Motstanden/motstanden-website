@@ -25,6 +25,7 @@ router.get("/comments?:limit",
 )
 
 // ---- Param Schemas ----
+
 const CommentIdSchema = z.object({ 
     commentId: Schemas.z.stringToInt()
 })
@@ -96,35 +97,20 @@ router.delete("/wall-posts/comments/:commentId", deleteCommentPipeline(CommentEn
 
 function deleteCommentPipeline(entityType: CommentEntityType) { 
     return [
-        validateNumber({
-            getValue: req => req.params.commentId
-        }),
+        validateParams(CommentIdSchema),
         requiresGroupOrAuthor({
             requiredGroup: UserGroup.Administrator,
-            getId: (req) => strToNumber(req.params.commentId),
+            getId: (req) => CommentIdSchema.parse(req.params).commentId,
             getAuthorInfo: (id) => db.comments.get(entityType, id)
         }),
-        deleteCommentHandler({
-            entityType: entityType,
-            getCommentId: (req: Request) => strToNumber(req.params.commentId) as number
-        })
+        deleteCommentHandler(entityType)
     ]
 }
 
-function deleteCommentHandler( {
-    entityType,
-    getCommentId,
-}: {
-    entityType: CommentEntityType,
-    getCommentId: (req: Request) => number
-}) {
+function deleteCommentHandler(entityType: CommentEntityType) {
     return (req: Request, res: Response) => {
-        const id = getCommentId(req)
-        try {
-            db.comments.delete(entityType, id)
-        } catch (err) {
-            res.status(500).send(`Failed to delete ${entityType} comment from the database`)
-        }
+        const { commentId } = CommentIdSchema.parse(req.params)
+        db.comments.delete(entityType, commentId)
         res.end()
     }
 }
@@ -138,39 +124,24 @@ router.patch("/wall-posts/comments/:commentId", patchCommentPipeline(CommentEnti
 
 function patchCommentPipeline(entityType: CommentEntityType) {
     return [
-        validateNumber({
-            getValue: req => req.params.commentId
-        }),
+        validateParams(CommentIdSchema),
         validateBody(NewCommentSchema),
         requiresAuthor({
-            getId: req => strToNumber(req.params.commentId),
+            getId: (req) => CommentIdSchema.parse(req.params).commentId,
             getAuthorInfo: id => db.comments.get(entityType, id)
         }),
-        patchCommentHandler({
-            entityType: entityType,
-            getCommentId: (req: Request) => strToNumber(req.params.commentId) as number
-        })
+        patchCommentHandler(entityType)
     ]
 }
 
-function patchCommentHandler( {
-    entityType,
-    getCommentId,
-}: {
-    entityType: CommentEntityType,
-    getCommentId: (req: Request) => number
-}) {
+function patchCommentHandler(entityType: CommentEntityType) {
     return (req: Request, res: Response) => {
         
         // Validated by middleware
-        const id = getCommentId(req)
+        const { commentId } = CommentIdSchema.parse(req.params)
         const comment = NewCommentSchema.parse(req.body)
-        
-        try {
-            db.comments.update(entityType, id, comment.comment)
-        } catch (err) {
-            res.status(500).send(`Failed to update ${entityType} comment in the database`)
-        }
+
+        db.comments.update(entityType, commentId, comment.comment)
         res.end()
     }
 }
