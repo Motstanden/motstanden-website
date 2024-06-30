@@ -1,6 +1,6 @@
 import { Page, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
-import { UpdateUserPersonalInfoBody, User } from 'common/interfaces'
+import { UpdateUserMembershipAsAdminBody, UpdateUserMembershipAsMeBody, UpdateUserPersonalInfoBody, User } from 'common/interfaces'
 import {
     getFullName,
     isNullOrWhitespace,
@@ -45,14 +45,20 @@ test("Create new user @smoke", async ({browser}, workerInfo) => {
 test.describe("Update personal info", () => {
 
     test("As self", async ({page}, workerInfo) => {
+
+        // Create new user and log in as that user
         const user = await api.users.createRandom(workerInfo)
         await unsafeApiLogIn(page.request, user.email)
+        
         await runTest(page, user)
     })
 
     test("As super admin", async ({browser}, workerInfo) => {
+
+        // Create new user and log in as another super admin user
         const user = await api.users.createRandom(workerInfo)
         const { page } = await logIn(browser, workerInfo, UserGroup.SuperAdministrator)
+
         await runTest(page, user)
         await disposeLogIn(page)
     })
@@ -109,8 +115,95 @@ async function validatePersonalInfo(page: Page, user: UpdateUserPersonalInfoBody
 
 // ************* Update membership info ***************
 
-// TODO...
+test.describe("Update membership info", () => { 
 
+    test("As self", async ({page}, workerInfo) => { 
+
+        // Create new user and log in as that user
+        const user = await api.users.createRandom(workerInfo)
+        await unsafeApiLogIn(page.request, user.email)
+
+        await runTest(page, user, { updateRank: false })      // Can update all except rank
+    })
+
+    test("As Admin", async ({browser}, workerInfo) => { 
+
+        // Create new user and log in as another admin user
+        const user = await api.users.createRandom(workerInfo)
+        const { page } = await logIn(browser, workerInfo, UserGroup.Administrator)
+
+        await runTest(page, user, { updateRank: true }) // Can update all
+        await disposeLogIn(page)
+    })
+
+    async function runTest(page: Page, user: User, { updateRank }: { updateRank: boolean }) {
+
+        const base: UpdateUserMembershipAsMeBody = {
+            capeName: `capeName ${randomUUID().toLowerCase()}`,
+            startDate: `2019-${randomInt(1, 12)}-${randomInt(1, 28)}`,
+            endDate: `2023-${randomInt(1, 12)}-${randomInt(1, 28)}`,
+            status: UserStatus.Retired
+        }
+        const newData: MemberShipBody = updateRank 
+            ? { ...base, rank: UserRank.MegaOhm }
+            : base 
+
+        await page.goto(`/medlem/${user.id}`)
+        await clickEdit(page, "membership")
+        await fillMembershipForm(page, newData)
+        await clickSave(page)
+        await validateMembership(page, newData)
+    }
+})
+
+
+type MemberShipBody = UpdateUserMembershipAsMeBody | UpdateUserMembershipAsAdminBody
+
+async function fillMembershipForm(page: Page, user: MemberShipBody) {
+    await page.getByLabel('Kappe').fill(user.capeName)
+    await select(page, "UserStatus", user.status)
+    await selectDate(page, "Startet *", user.startDate, "MonthYear")
+    await selectDate(page, "Sluttet", user.endDate, "MonthYear")
+
+    if("rank" in user) {
+        await select(page, "UserRank", user.rank)
+    }
+}
+
+
+async function validateMembership(page: Page, user: MemberShipBody) {
+
+    // Cape name
+    await expect(page.getByText(user.capeName)).toBeVisible()
+
+    // Status
+    const statusText = userStatusToPrettyStr(user.status)
+    if(user.status === UserStatus.Active) {
+        // Status will match two elements if it is active: 'Status: Aktiv' and 'Aktiv periode'
+
+        const status = await page.getByText(statusText).all()
+        expect(status).toHaveLength(2)
+        await expect(status[0]).toBeVisible()
+        await expect(status[1]).toBeVisible()
+
+    } else {
+        // All other statuses will only match one element
+
+        await expect(page.getByText(statusText)).toBeVisible()
+    }
+
+    // Start and end date
+    const formatDate = (date: string): string => dayjs(date).locale("nb").format("MMMM YYYY").toLowerCase()
+    const startDate = formatDate(user.startDate)
+    const endDate = isNullOrWhitespace(user.endDate)   ? "dags dato" : formatDate(user.endDate)
+    const dateText = `${startDate} - ${endDate}`
+    await expect(page.getByText(dateText)).toBeVisible()
+
+    // Rank
+    if("rank" in user) {
+        await expect(page.getByText(userRankToPrettyStr(user.rank))).toBeVisible()
+    }
+}
 
 // **************** Shared Utils ******************
 
@@ -129,10 +222,40 @@ async function clickEdit(page: Page, variant: "personal" | "membership" | "role"
     await page.getByRole('button', { name: 'Lagre' }).waitFor({ state: 'visible' })     // Note: This will not work if the test is editing multiple forms at once
 }
 
+
 async function clickSave(page: Page) {
     const button = page.getByRole('button', { name: 'Lagre' })
     await button.click(),
     await button.waitFor({ state: 'detached'})
+}
+
+
+type UserEnum = UserRank | UserGroup | UserStatus
+type UserEnumName = "UserRank" | "UserGroup" | "UserStatus"
+
+async function select<T extends UserEnum>(page: Page, typeName: UserEnumName,  value: T) {
+
+    let buttonRegEx: RegExp
+    let selectValue: string
+    switch(typeName) {
+        case "UserRank": 
+            buttonRegEx = /Rang/
+            selectValue = userRankToPrettyStr(value as UserRank)
+            break
+        case "UserGroup": 
+            buttonRegEx = /Rolle/
+            selectValue = userGroupToPrettyStr(value as UserGroup)
+            break
+        case "UserStatus": 
+            buttonRegEx = /Status/
+            selectValue = userStatusToPrettyStr(value as UserStatus)
+            break
+        default: 
+            throw `The type is not implemented: "${typeName}"`
+    }
+
+    await page.getByRole("combobox", { name: buttonRegEx}).click()
+    await page.getByRole('option', { name: selectValue, exact: true }).click()
 }
 
 // ************* Obsolete Tests ***************
@@ -221,7 +344,7 @@ test.describe.serial("Create and update user data", async () => {
             })
     
             await fillPersonalForm(page, user)
-            await fillMembershipForm(page, user)
+            // await fillMembershipForm(page, user)
             await select(page, "UserGroup", user.groupName)
             await saveChanges(page)
             await validateUserProfile(page, user)
@@ -241,56 +364,13 @@ test.describe.serial("Create and update user data", async () => {
             })
         
             await fillPersonalForm(page, user)
-            await fillMembershipForm(page, user, {skipRank: true})
+            // await fillMembershipForm(page, user, {skipRank: true})
             
             await saveChanges(page)
             await validateUserProfile(page, user)
         })
     })
 })
-
-async function fillMembershipForm(page: Page, user: UserWithoutDbData, opts?: { skipRank?: boolean }) {
-    await select(page, "UserStatus", user.status)
-    await selectDate(page, "Startet *", user.startDate, "MonthYear")
-
-    if(user.capeName) {
-        await page.getByLabel('Kappe').fill(user.capeName)
-    }
-    if(user.endDate){
-        await selectDate(page, "Sluttet", user.endDate, "MonthYear")
-    }
-    if(!opts?.skipRank){
-        await select(page, "UserRank", user.rank)
-    }
-}
-
-type UserEnum = UserRank | UserGroup | UserStatus
-type UserEnumName = "UserRank" | "UserGroup" | "UserStatus"
-
-async function select<T extends UserEnum>(page: Page, typeName: UserEnumName,  value: T) {
-
-    let buttonRegEx: RegExp
-    let selectValue: string
-    switch(typeName) {
-        case "UserRank": 
-            buttonRegEx = /Rang/
-            selectValue = userRankToPrettyStr(value as UserRank)
-            break
-        case "UserGroup": 
-            buttonRegEx = /Rolle/
-            selectValue = userGroupToPrettyStr(value as UserGroup)
-            break
-        case "UserStatus": 
-            buttonRegEx = /Status/
-            selectValue = userStatusToPrettyStr(value as UserStatus)
-            break
-        default: 
-            throw `The type is not implemented: "${typeName}"`
-    }
-
-    await page.getByRole("combobox", { name: buttonRegEx}).click()
-    await page.getByRole('option', { name: selectValue, exact: true }).click()
-}
 
 interface UserWithoutDbData extends Omit<User,  "id" | "groupId" | "createdAt" | "updatedAt" > {}
 
