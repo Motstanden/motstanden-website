@@ -6,8 +6,9 @@ import { z } from "zod"
 import { db } from "../../db/index.js"
 import { requiresAuthor, requiresGroupOrAuthor } from "../../middleware/requiresGroupOrAuthor.js"
 import { validateNumber } from "../../middleware/validateNumber.js"
-import { validateBody } from "../../middleware/zodValidation.js"
+import { validateBody, validateParams } from "../../middleware/zodValidation.js"
 import { getUser } from "../../utils/getUser.js"
+import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router()
 
@@ -23,6 +24,15 @@ router.get("/comments?:limit",
     }
 )
 
+// ---- Param Schemas ----
+const CommentIdSchema = z.object({ 
+    commentId: Schemas.z.stringToInt()
+})
+
+const EntityIdSchema = z.object({ 
+    entityId: Schemas.z.stringToInt()
+})
+
 // ---- GET comments ----
 
 router.get("/events/:entityId/comments",getCommentsPipeline(CommentEntityType.Event))
@@ -32,33 +42,16 @@ router.get("/wall-posts/:entityId/comments", getCommentsPipeline(CommentEntityTy
 
 function getCommentsPipeline(entityType: CommentEntityType) {
     return [
-        validateNumber({
-            getValue: (req: Request) => req.params.entityId,
-        }),
-        getCommentsHandler({
-            entityType: entityType,
-            getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
-        })
+        validateParams(EntityIdSchema),
+        getCommentsHandler(entityType)
     ]
 }
 
-function getCommentsHandler( {
-    entityType,
-    getEntityId
-}: {
-    entityType: CommentEntityType,
-    getEntityId: (req: Request) => number
-}) {
-    return (req: Request, res: Response) => {
-        const id = getEntityId(req)
-        try {
-            const comments = db.comments.getAll(entityType, id)
-            res.send(comments)
-        } catch (err) {
-            console.error(err)
-            res.status(500).send(`Failed to get ${entityType} comments from the database`)
-        }
-        res.end()
+function getCommentsHandler(entityType: CommentEntityType) {
+    return (req: Request, res: Response) =>  {
+        const { entityId } = EntityIdSchema.parse(req.params)
+        const comments = db.comments.getAll(entityType, entityId)
+        res.send(comments)
     }
 }
 
@@ -75,41 +68,21 @@ router.post("/wall-posts/:entityId/comments/new", postCommentPipeline(CommentEnt
 
 function postCommentPipeline(entityType: CommentEntityType) { 
     return [
-        validateNumber({
-            getValue: (req: Request) => req.params.entityId,
-        }),
+        validateParams(EntityIdSchema),
         validateBody(NewCommentSchema),
-        postCommentHandler({
-            entityType: entityType,
-            getEntityId: (req: Request) => strToNumber(req.params.entityId) as number
-        })
+        postCommentHandler(entityType)
     ]
 }
 
-function postCommentHandler( {
-    entityType,
-    getEntityId
-}: {
-    entityType: CommentEntityType,
-    getEntityId: (req: Request) => number
-}) {
+function postCommentHandler(entityType: CommentEntityType) {
     return (req: Request, res: Response) => {
 
         // Validated by middleware
         const user = getUser(req)
         const comment = NewCommentSchema.parse(req.body)
-        const entityId = getEntityId(req)
+        const { entityId } = EntityIdSchema.parse(req.params)
 
-        if(!comment)
-            return res.status(400).send("Could not parse comment data")
-
-        try {
-            db.comments.insertNew(entityType, entityId, comment, user.userId)
-        } catch (err) {
-            console.error(err)
-            res.status(500).send(`Failed to insert ${entityType} comment into the database`)
-        }
-
+        db.comments.insertNew(entityType, entityId, comment, user.userId)
         res.end()
     }
 }
