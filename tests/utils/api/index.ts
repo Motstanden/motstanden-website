@@ -1,5 +1,6 @@
 import { commentsApi } from "./comments.js"
 import { songLyricsApi } from "./songLyric.js"
+import { usersApi } from "./users.js"
 
 export const api = {
     comments: {
@@ -7,5 +8,8 @@ export const api = {
     },
     songLyrics: {
         ...songLyricsApi
+    },
+    users: {
+        ...usersApi
     }
 }

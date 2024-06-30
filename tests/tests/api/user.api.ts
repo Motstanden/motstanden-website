@@ -4,6 +4,7 @@ import { NewUser, UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMe
 import { randomInt, randomUUID } from 'crypto'
 import { z } from "zod"
 import dayjs from "../../lib/dayjs.js"
+import { api } from '../../utils/api/index.js'
 import { apiLogIn, getUser as getTestUser, unsafeApiLogIn } from '../../utils/auth.js'
 import { dateTimeSchema } from '../../utils/zodtypes.js'
 
@@ -90,8 +91,8 @@ test("POST /api/users", async ({request}, workerInfo) => {
         profilePicture: "files/private/profilbilder/girl.png"
     }
 
-    const id = await createUser(request, newUser)
-    const actualUser = await getUser(request, id)
+    const id = await api.users.create(request, newUser)
+    const actualUser = await api.users.get(request, id)
 
     const expectedUser: User = { 
         ...newUser,
@@ -116,7 +117,7 @@ test("POST /api/users", async ({request}, workerInfo) => {
 
 test("PATCH /api/users/me", async ({request}, workerInfo) => { 
 
-    const user = await createRandomUser(workerInfo)
+    const user = await api.users.createRandom(workerInfo)
 
     // Log in as the new user
     await unsafeApiLogIn(request, user.email)
@@ -137,14 +138,14 @@ test("PATCH /api/users/me", async ({request}, workerInfo) => {
     }
     await updateUser(request, { type: "self", data: newUserData })
 
-    const actualUser = await getUser(request, user.id)
+    const actualUser = await api.users.get(request, user.id)
     const expectedUser: User = { ...user, ...newUserData,}
 
     assertEqualUsers(actualUser, expectedUser)
 })
 
 test("PATCH /api/users/:id", async ({request}, workerInfo) => { 
-    const user = await createRandomUser(workerInfo)
+    const user = await api.users.createRandom(workerInfo)
     await apiLogIn(request, workerInfo, UserGroup.SuperAdministrator)
     
     const uuid: string = randomUUID().toLowerCase()
@@ -164,7 +165,7 @@ test("PATCH /api/users/:id", async ({request}, workerInfo) => {
     } 
     await updateUser(request, { type: "superadmin", data: newUserData, id: user.id })
 
-    const actualUser = await getUser(request, user.id)
+    const actualUser = await api.users.get(request, user.id)
     const expectedUser: User = { ...user, ...newUserData,}
 
     assertEqualUsers(actualUser, expectedUser)
@@ -172,7 +173,7 @@ test("PATCH /api/users/:id", async ({request}, workerInfo) => {
 
 
 test("PUT /api/users/:id/membership", async ({request}, workerInfo) => { 
-    const user = await createRandomUser(workerInfo)
+    const user = await api.users.createRandom(workerInfo)
     await apiLogIn(request, workerInfo, UserGroup.Administrator)
 
     const uuid: string = randomUUID().toLowerCase()
@@ -185,7 +186,7 @@ test("PUT /api/users/:id/membership", async ({request}, workerInfo) => {
     }
     await updateUser(request, { type: "membership", data: newUserData, id: user.id })
 
-    const actualUser = await getUser(request, user.id)
+    const actualUser = await api.users.get(request, user.id)
     const expectedUser: User = { ...user, ...newUserData,}
 
     assertEqualUsers(actualUser, expectedUser)
@@ -236,7 +237,7 @@ test.describe("PUT /api/users/:id/role", () => {
         test(title, async ({request}, workerInfo) => {
             
             // Create new user
-            const user = await createRandomUser(workerInfo)
+            const user = await api.users.createRandom(workerInfo)
             expect(user.groupName).toBe(UserGroup.Contributor)
     
             // Log in with the permissions of current user
@@ -246,7 +247,7 @@ test.describe("PUT /api/users/:id/role", () => {
             expect(res.ok(), `Failed to update role\n${res.status()}: ${res.statusText()}`).toBeTruthy()
             
     
-            const updatedUser = await getUser(request, user.id)
+            const updatedUser = await api.users.get(request, user.id)
             expect(updatedUser.groupName).toBe(targetNewRole)
         })
     }
@@ -270,7 +271,7 @@ test.describe("PUT /api/users/:id/role", () => {
         test(title, async ({request}, workerInfo) => { 
     
             // Create new user
-            const user = await createRandomUser(workerInfo)
+            const user = await api.users.createRandom(workerInfo)
             expect(user.groupName).toBe(UserGroup.Contributor)
     
             // Force user to have the initial role
@@ -280,7 +281,7 @@ test.describe("PUT /api/users/:id/role", () => {
             await apiLogIn(request, workerInfo, currentUserRole)
     
             // Assert that the user has the initial role
-            const user2 = await getUser(request, user.id)
+            const user2 = await api.users.get(request, user.id)
             expect(user2.groupName).toBe(targetInitialRole)
     
             // Try to update role
@@ -288,7 +289,7 @@ test.describe("PUT /api/users/:id/role", () => {
             expect(res.status(), `Expected 403 forbidden but got ${res.status()} ${res.statusText()}`).toBe(403)
     
             // Assert role has not changed
-            const user3 = await getUser(request, user.id)
+            const user3 = await api.users.get(request, user.id)
             expect(user3.groupName).toBe(targetInitialRole)
         })
     }
@@ -319,55 +320,6 @@ function assertEqualUsers(actual: User, expected: User) {
     expect(actual.endDate).toBe(expected.endDate)
 
     // No need to compare createdAt and updatedAt
-}
-
-async function createRandomUser(workerInfo: TestInfo): Promise<User> {
-
-    // Log in as super admin
-    const superAdmin = getTestUser(workerInfo, UserGroup.SuperAdministrator)
-    const request = await Playwright.request.newContext( { storageState: superAdmin.storageStatePath } )
-
-    // Create and post random user
-    const uuid: string = randomUUID().toLowerCase()
-    const newUser: NewUser = {
-        firstName: `__firstName ${uuid}`,
-        middleName: `__middleName ${uuid}`,
-        lastName: `__lastName ${uuid}`,
-        email: `${uuid}@motstanden.no`,
-        profilePicture: "files/private/profilbilder/girl.png"
-    }
-    
-    const id = await createUser(request, newUser)
-    const user = await getUser(request, id)
-    
-    request.dispose()
-    
-    return user
-}
-
-async function createUser(request: APIRequestContext, newUser: NewUser) {
-    const res = await request.post("/api/users", { data: newUser })
-    if(!res.ok()) {
-        throw new Error(`Failed to create user.\n${res.status()}: ${await res.text()}`)
-    }
-
-    const resultData = await res.json()
-    const id = resultData?.userId
-
-    if(id === undefined || typeof id !== "number" || id <= 0 || isNaN(id)) { 
-        throw new Error(`Expected to get a valid user id, but got: ${id}.`)
-    }
-
-    return id
-}
-
-async function getUser(request: APIRequestContext, id: number): Promise<User> {
-    const res = await request.get(`/api/users/${id}`)
-    if(!res.ok()) {
-        throw new Error(`Failed to get user ${id}.\n${res.status()}: ${res.statusText()}`)
-    }
-    const user = await res.json() as User
-    return user
 }
 
 type UpdateType = {
