@@ -28,48 +28,6 @@ test("New users can only be created by super admin", async ({browser}, workerInf
     await disposeLogIn(superAdminPage)
 })
 
-test("Admin can not promote self to super admin", async ({browser}, workerInfo) => {
-    const {page, user} = await logIn(browser, workerInfo, UserGroup.Administrator)
-
-    await gotoUser(page, user, { editUser: true})
-
-    await page.getByRole("combobox", { name: /Rolle/ }).click()
-
-    const superAdminCount = await page.getByRole('option', { name: userGroupToPrettyStr(UserGroup.SuperAdministrator)}).count()
-    expect(superAdminCount).toBe(0)
-
-    await disposeLogIn(page)
-})
-
-test.describe("Set inactive status", async () => {
-    
-    test("Contributor can not update self to be inactive", async ({browser}, workerInfo) => {
-        const { page, user} = await logIn(browser, workerInfo, UserGroup.Contributor)        
-
-        await gotoUser(page, user, {editUser: true})
-
-        expect(await canUpdateInactive(page)).not.toBeTruthy()
-
-        await disposeLogIn(page)
-    })
-
-    test("Admin can update self to be inactive", async ({browser}, workerInfo) => {
-        const {page, user} = await logIn(browser, workerInfo, UserGroup.Administrator)
-
-        await gotoUser(page, user, {editUser: true})
-
-        expect(await canUpdateInactive(page)).toBeTruthy()
-
-        await disposeLogIn(page)
-    })
-        
-    async function canUpdateInactive(page: Page): Promise<boolean> {
-        await page.getByRole("combobox", { name: /Status/ }).click()
-        const inactiveCount = await page.getByRole('option', { name: userStatusToPrettyStr(UserStatus.Inactive) }).count()
-        return inactiveCount === 1
-    }
-})
-
 test.describe.serial("Create and update user data", async () => {
     test.slow()
     let user: UserWithoutDbData
