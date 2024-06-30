@@ -1,6 +1,6 @@
 import Playwright, { APIRequestContext, TestInfo } from '@playwright/test'
 import { UserGroup } from "common/enums"
-import { NewUser, User } from "common/interfaces"
+import { NewUser, UpdateUserRoleBody, User } from "common/interfaces"
 import { randomUUID } from 'crypto'
 import { getUser as getTestUser } from '../../utils/auth.js'
 
@@ -30,30 +30,40 @@ async function createUser(request: APIRequestContext, newUser: NewUser) {
     return id
 }
 
-async function createRandomUser(workerInfo: TestInfo): Promise<User> {
+async function createRandomUser(workerInfo: TestInfo, group: UserGroup = UserGroup.Contributor): Promise<User> {
 
     // Log in as super admin
     const superAdmin = getTestUser(workerInfo, UserGroup.SuperAdministrator)
     const request = await Playwright.request.newContext( { storageState: superAdmin.storageStatePath } )
 
     // Create and post random user
-    const uuid: string = randomUUID().toLowerCase()
     const newUser: NewUser = {
-        firstName: `__firstName ${uuid}`,
-        middleName: `__middleName ${uuid}`,
-        lastName: `__lastName ${uuid}`,
-        email: `${uuid}@motstanden.no`,
+        firstName: `__firstName ${randomUUID().toLowerCase()}`,
+        middleName: `__middleName ${randomUUID().toLowerCase()}`,
+        lastName: `__lastName ${randomUUID().toLowerCase()}`,
+        email: `${randomUUID().toLowerCase()}@motstanden.no`,
         profilePicture: "files/private/profilbilder/girl.png"
     }
-    
     const id = await createUser(request, newUser)
+
+    // Update role if not default value
+    if(group !== UserGroup.Contributor) { 
+        await updateRole(request, id, group)
+    }
+
+    // Fetch and return the actual data from server
     const user = await getUser(request, id)
-    
-    request.dispose()
-    
+    await request.dispose()
     return user
 }
 
+async function updateRole(request: APIRequestContext, userId: number, newGroup: UserGroup) { 
+    const body: UpdateUserRoleBody = { groupName: newGroup }
+    const res = await request.put(`/api/users/${userId}/role`, { data: body })
+    if(!res.ok()) {
+        throw new Error(`Failed to create user.\n${res.status()}: ${await res.text()}`)
+    }
+}
 
 export const usersApi = {
     get: getUser,
