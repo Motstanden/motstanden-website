@@ -1,6 +1,6 @@
 import Playwright, { APIRequestContext, APIResponse, TestInfo, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
-import { NewUser, UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipBody, UpdateUserRoleBody, User } from 'common/interfaces'
+import { NewUser, UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUserRoleBody, User } from 'common/interfaces'
 import { randomInt, randomUUID } from 'crypto'
 import { z } from "zod"
 import dayjs from "../../lib/dayjs.js"
@@ -152,7 +152,7 @@ test("PATCH /api/users/:id", async ({request}, workerInfo) => {
         firstName: `___firstName ${uuid}`,
         middleName: `___middleName ${uuid}`,
         lastName: `___lastName ${uuid}`,
-        email: `${uuid}@motstanden.np`,
+        email: `${uuid}@motstanden.no`,
         groupName: UserGroup.Editor,
         status: UserStatus.Inactive,
         rank: UserRank.KiloOhm,
@@ -176,7 +176,7 @@ test("PUT /api/users/:id/membership", async ({request}, workerInfo) => {
     await apiLogIn(request, workerInfo, UserGroup.Administrator)
 
     const uuid: string = randomUUID().toLowerCase()
-    const newUserData: UpdateUserMembershipBody = { 
+    const newUserData: UpdateUserMembershipAsAdminBody = { 
         rank: UserRank.GigaOhm,
         capeName: `___capeName ${uuid}`,
         status: UserStatus.Retired,
@@ -376,11 +376,11 @@ type UpdateType = {
     id?: never
 } | {
     type: "membership",
-    data: UpdateUserMembershipBody
+    data: UpdateUserMembershipAsAdminBody
     id: number
 } | {
     type: "superadmin",
-    data: UpdateUserMembershipBody
+    data: UpdateUserAsSuperAdminBody
     id: number
 }
 
