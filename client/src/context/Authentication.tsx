@@ -5,6 +5,7 @@ import { hasGroupAccess } from "common/utils"
 import React, { useContext, useEffect, useState } from "react"
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom"
 import { useLocalStorage } from 'src/hooks/useStorage'
+import { NotFoundPage } from 'src/routes/notFound/NotFound'
 
 type LoggedOutContextType = { 
     user: undefined,
@@ -172,12 +173,12 @@ export function RequireAuth({ requiredGroup, children }: { children: React.React
     const [ initialLocation ] = useState(useLocation())
 
     if(!isLoggedIn) {
-        console.log("Navigating to /logg-inn")
         return <Navigate to="/logg-inn" state={{ from: initialLocation }} replace />;
     }
 
     if(requiredGroup && !hasGroupAccess(user, requiredGroup)) {
-        return <Navigate to="/" replace />;
+        // TODO: In the future, we should have a 403 forbidden page
+        return <NotFoundPage/>
     }
 
     return children
