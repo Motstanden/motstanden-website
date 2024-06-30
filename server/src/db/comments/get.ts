@@ -10,7 +10,7 @@ export function getAllUnion(limit?: number): EntityComment[] {
     const stmt = db.prepare(`
         SELECT 
             event_comment_id as id,
-            'event' as type,
+            '${CommentEntityType.Event}' as type,
             event_id as entityId,
             comment,
             created_by as createdBy,
@@ -20,7 +20,7 @@ export function getAllUnion(limit?: number): EntityComment[] {
         UNION ALL
         SELECT 
             poll_comment_id as id,
-            'poll' as type,
+            '${CommentEntityType.Poll}' as type,
             poll_id as entityId,
             comment,
             created_by as createdBy,
@@ -30,7 +30,7 @@ export function getAllUnion(limit?: number): EntityComment[] {
         UNION ALL
         SELECT 
             song_lyric_comment_id as id,
-            'lyrics' as type,
+            '${CommentEntityType.SongLyric}' as type,
             song_lyric_id as entityId,
             comment,
             created_by as createdBy,
@@ -40,7 +40,7 @@ export function getAllUnion(limit?: number): EntityComment[] {
         UNION ALL
         SELECT 
             wall_post_comment_id as id,
-            'wall-post' as type,
+            '${CommentEntityType.WallPost}' as type,
             wall_post_id as entityId,
             comment,
             created_by as createdBy,

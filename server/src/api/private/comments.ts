@@ -13,7 +13,7 @@ const router = express.Router()
 
 // ---- GET all comments ----
 
-router.get("/comments/all?:limit", 
+router.get("/comments?:limit", 
     validateNumber({
         getValue: (req: Request) =>  req.query.limit?.toString() ?? ""
     }),
@@ -25,10 +25,10 @@ router.get("/comments/all?:limit",
 
 // ---- GET comments ----
 
-router.get("/event/:entityId/comments",getCommentsPipeline(CommentEntityType.Event))
-router.get("/poll/:entityId/comments", getCommentsPipeline(CommentEntityType.Poll))
+router.get("/events/:entityId/comments",getCommentsPipeline(CommentEntityType.Event))
+router.get("/polls/:entityId/comments", getCommentsPipeline(CommentEntityType.Poll))
 router.get("/lyrics/:entityId/comments", getCommentsPipeline(CommentEntityType.SongLyric))
-router.get("/wall-post/:entityId/comments", getCommentsPipeline(CommentEntityType.WallPost))
+router.get("/wall-posts/:entityId/comments", getCommentsPipeline(CommentEntityType.WallPost))
 
 function getCommentsPipeline(entityType: CommentEntityType) {
     return [
@@ -68,10 +68,10 @@ const NewCommentSchema = z.object({
     comment: z.string().trim().min(1, "Comment must not be empty")
 })
 
-router.post("/event/:entityId/comments/new", postCommentPipeline(CommentEntityType.Event))
-router.post("/poll/:entityId/comments/new", postCommentPipeline(CommentEntityType.Poll))
+router.post("/events/:entityId/comments/new", postCommentPipeline(CommentEntityType.Event))
+router.post("/polls/:entityId/comments/new", postCommentPipeline(CommentEntityType.Poll))
 router.post("/lyrics/:entityId/comments/new", postCommentPipeline(CommentEntityType.SongLyric))
-router.post("/wall-post/:entityId/comments/new", postCommentPipeline(CommentEntityType.WallPost))
+router.post("/wall-posts/:entityId/comments/new", postCommentPipeline(CommentEntityType.WallPost))
 
 function postCommentPipeline(entityType: CommentEntityType) { 
     return [
@@ -116,10 +116,10 @@ function postCommentHandler( {
 
 // ---- DELETE comment ----
 
-router.delete("/event/comments/:commentId", deleteCommentPipeline(CommentEntityType.Event))
-router.delete("/poll/comments/:commentId", deleteCommentPipeline(CommentEntityType.Poll))
+router.delete("/events/comments/:commentId", deleteCommentPipeline(CommentEntityType.Event))
+router.delete("/polls/comments/:commentId", deleteCommentPipeline(CommentEntityType.Poll))
 router.delete("/lyrics/comments/:commentId", deleteCommentPipeline(CommentEntityType.SongLyric))
-router.delete("/wall-post/comments/:commentId", deleteCommentPipeline(CommentEntityType.WallPost))
+router.delete("/wall-posts/comments/:commentId", deleteCommentPipeline(CommentEntityType.WallPost))
 
 function deleteCommentPipeline(entityType: CommentEntityType) { 
     return [
@@ -158,10 +158,10 @@ function deleteCommentHandler( {
 
 // ---- PATCH comment ----
 
-router.patch("/event/comments/:commentId", patchCommentPipeline(CommentEntityType.Event))
-router.patch("/poll/comments/:commentId", patchCommentPipeline(CommentEntityType.Poll))
+router.patch("/events/comments/:commentId", patchCommentPipeline(CommentEntityType.Event))
+router.patch("/polls/comments/:commentId", patchCommentPipeline(CommentEntityType.Poll))
 router.patch("/lyrics/comments/:commentId", patchCommentPipeline(CommentEntityType.SongLyric))
-router.patch("/wall-post/comments/:commentId", patchCommentPipeline(CommentEntityType.WallPost))
+router.patch("/wall-posts/comments/:commentId", patchCommentPipeline(CommentEntityType.WallPost))
 
 function patchCommentPipeline(entityType: CommentEntityType) {
     return [
