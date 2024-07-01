@@ -9,7 +9,7 @@ import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router() 
 
-// ---- GET polls ----
+// ---- GET polls, options, voters ----
 
 router.get("/polls",
     (req, res) => {
@@ -69,27 +69,25 @@ const NewPollSchema = z.object({
 router.post("/polls",
     validateBody(NewPollSchema),
     (req, res) => {
-
-        // Validated by middleware
         const user = getUser(req)
         const newPoll = NewPollSchema.parse(req.body)
-
-        if(!newPoll)
-            return res.status(400).send("Could not parse poll data")
 
         db.polls.insert(newPoll, user.userId)
         res.end()
     }
 )
 
-router.post("/polls/delete",
+// ---- DELETE polls ----
+
+router.delete("/polls/:id",
+    validateParams(Schemas.params.id),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
-        getId: (req) => req.body.id,
+        getId: (req) => Schemas.params.id.parse(req.params).id,
         getAuthorInfo: (id) => db.polls.get(id)
     }),
     (req, res) => {
-        const id = req.body.id as number    // This is already validated by requiresGroupOrAuthor 
+        const { id } = Schemas.params.id.parse(req.params)
         db.polls.delete(id)
         res.end()
     }
