@@ -96,7 +96,15 @@ router.delete("/polls/:id",
 // ---- PUT votes ----
 
 const OptionIdSchema = z.coerce.number().int().positive().finite()
-const UpsertVoteSchema = z.array(OptionIdSchema).min(1, "Body must contain at least one option id")     // TODO: Remove duplicated numbers
+
+const UpsertVoteSchema = z.array(OptionIdSchema)
+    .min(1, "Body must contain at least one option id")
+    .superRefine((data, ctx) => {                                   // Prevent duplicate values in array     
+        const set = new Set(data);
+        if (set.size !== data.length) {
+            ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Option id array cannot have duplicate values" });
+        }
+    })
 
 router.put("/polls/:id/votes/me",
     validateParams(Schemas.params.id),
@@ -107,17 +115,17 @@ router.put("/polls/:id/votes/me",
         const { id: pollId } = Schemas.params.id.parse(req.params)
         const optionIds = UpsertVoteSchema.parse(req.body)
 
-        // Check if poll exists
         const poll = db.polls.getWithOptions(user.userId, pollId)
+
+        // Check if poll exists 
         if(poll === undefined)
             return res.status(404).end()
 
-        // Check if all option ids are valid
-        const expectedOptionIds = poll.options.map(option => option.id)
-        const isValidOptionIds = optionIds.every(id => expectedOptionIds.includes(id))
-        if(!isValidOptionIds)
+        // Check all option ids from payload matches the actual option ids in the poll
+        const expectedIds = poll.options.map(option => option.id)
+        const isValidIds = optionIds.every(id => expectedIds.includes(id))
+        if(!isValidIds)
             return res.status(400).send("Invalid combination of poll id and option ids")
-
 
         // Check only one vote for single choice poll
         if(poll.type === "single" && optionIds.length > 1)
