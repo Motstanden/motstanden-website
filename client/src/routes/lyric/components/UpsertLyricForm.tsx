@@ -16,7 +16,6 @@ export function UpsertLyricForm({
     storageKey,
     onAbortClick, 
     usedTitles,
-    onPostSuccess,
     disabled,
 }: {
     initialValue: NewSongLyric
@@ -25,7 +24,6 @@ export function UpsertLyricForm({
     httpVerb: "POST" | "PATCH"
     onAbortClick: VoidFunction
     usedTitles: string[]
-    onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
     disabled?: boolean
 }) {
     const [newValue, setNewValue, clearNewValue] = useSessionStorage<NewSongLyric>({
@@ -55,12 +53,14 @@ export function UpsertLyricForm({
         };
     };
     
-    const handlePostSuccess = async (res: Response) => {
+    const handlePostSuccess = async () => {
         setHasPosted(true);
-        await queryClient.invalidateQueries({queryKey: lyricContextQueryKey})
-        await onPostSuccess?.(res);
         clearNewValue()
-        navigate(buildLyricItemUrl(newValue.title, newValue.isPopular))
+
+        // TODO: If the user is editing an existing item, and the title has changed, this will briefly flash a 404 page
+        await queryClient.invalidateQueries({queryKey: lyricContextQueryKey})   
+        
+        navigate(buildLyricItemUrl(newValue.title, newValue.isPopular), { replace: true })
      };
 
      const handleAbortClick = () => {

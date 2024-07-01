@@ -14,8 +14,11 @@ import { usePotentialUser } from 'src/context/Authentication'
 import { httpDelete } from 'src/utils/postJson'
 import { useTitle } from "../../hooks/useTitle"
 import { lyricContextQueryKey, useLyricItemContext } from './Context'
+import { useAppBarHeader } from 'src/context/AppBarHeader'
 
 export function LyricItemPage() {
+    useAppBarHeader("Studenttraller")
+
     const [_allLyrics, lyric] = useLyricItemContext()
     const { isLoggedIn } = usePotentialUser()
     useTitle(lyric.title);

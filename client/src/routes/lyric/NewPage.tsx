@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom"
 import { useTitle } from "src/hooks/useTitle"
 import { usePendingLyricContext } from "./Context"
 import { UpsertLyricForm } from "./components/UpsertLyricForm"
+import { useAppBarHeader } from "src/context/AppBarHeader"
 
 export function NewLyricPage() {
+    useAppBarHeader("Studenttraller")
     useTitle("Ny")
 
     const {lyrics, isPending} = usePendingLyricContext()

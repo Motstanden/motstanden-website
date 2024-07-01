@@ -2,8 +2,11 @@ import { useNavigate } from "react-router-dom"
 import { useTitle } from "src/hooks/useTitle"
 import { getLyricItemContextQueryKey, useLyricItemContext } from "./Context"
 import { UpsertLyricForm } from "./components/UpsertLyricForm"
+import { useAppBarHeader } from "src/context/AppBarHeader"
 
 export function EditLyricPage() {
+    useAppBarHeader("Studenttraller")
+
     const [allLyrics, lyric] = useLyricItemContext()
     const usedTitles = allLyrics.map(item => item.title).filter(item => item !== lyric.title);
 
