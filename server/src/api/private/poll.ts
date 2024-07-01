@@ -1,12 +1,11 @@
 import { UserGroup } from "common/enums"
-import { strToNumber } from "common/utils"
 import express from "express"
 import { z } from "zod"
 import { db } from "../../db/index.js"
 import { requiresGroupOrAuthor } from "../../middleware/requiresGroupOrAuthor.js"
-import { validateNumber } from "../../middleware/validateNumber.js"
-import { validateBody } from "../../middleware/zodValidation.js"
+import { validateBody, validateParams } from "../../middleware/zodValidation.js"
 import { getUser } from "../../utils/getUser.js"
+import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router() 
 
@@ -25,46 +24,31 @@ router.get("/polls/latest",
 )
 
 router.get("/polls/:id/options",
-    validateNumber({
-        getValue: (req) => req.params.id,
-        failureMessage: "Could not parse poll id"
-    }),
+    validateParams(Schemas.params.id),
     (req, res) => {
         const user = getUser(req)
-        const id = strToNumber(req.params.id) as number
+        const { id } = Schemas.params.id.parse(req.params)
 
-        const isValid = db.polls.exists(id)
-        if(!isValid)
+        const pollExists = db.polls.exists(id)
+        if(!pollExists)
             return res.status(404).end()
 
-        try {
-            const options = db.polls.options.getAll(user.userId, id)
-            res.send(options)
-        }
-        catch (e){
-            console.log(e)
-            res.status(500).end()
-        }
+        const options = db.polls.options.getAll(user.userId, id)
+        res.json(options)
     }
 )
 
 router.get("/polls/:id/voter-list",
-    validateNumber({
-        getValue: (req) => req.params.id,
-        failureMessage: "Could not parse poll id"
-    }),
+    validateParams(Schemas.params.id),
     (req, res) => { 
-        const pollId = strToNumber(req.params.id) as number
+        const { id } = Schemas.params.id.parse(req.params)        
         
-        try {
-            const voters = db.polls.votes.get(pollId)
-            res.send(voters)
-        }
-        catch (e){
-            console.error(e)
-            res.status(500).end()
-        }
-        res.end()
+        const pollExists = db.polls.exists(id)
+        if(!pollExists)
+            return res.status(404).end()
+        
+        const voters = db.polls.votes.get(id)
+        res.json(voters)
     }
 )
 
@@ -89,12 +73,7 @@ router.post("/polls/new",
         if(!newPoll)
             return res.status(400).send("Could not parse poll data")
 
-        try {
-            db.polls.insert(newPoll, user.userId)
-        } catch (err) {
-            console.log(err)
-            res.status(500).send("Failed to insert poll into database")
-        }
+        db.polls.insert(newPoll, user.userId)
         res.end()
     }
 )
@@ -107,11 +86,7 @@ router.post("/polls/delete",
     }),
     (req, res) => {
         const id = req.body.id as number    // This is already validated by requiresGroupOrAuthor 
-        try {
-            db.polls.delete(id)
-        } catch (err) {
-            res.status(500).send("Failed to delete poll from database")
-        }
+        db.polls.delete(id)
         res.end()
     }
 )
@@ -120,28 +95,19 @@ const OptionIdSchema = z.coerce.number().int().positive().finite()
 const UpsertVoteSchema = z.array(OptionIdSchema).min(1, "Body must contain at least one option id")
 
 router.post("/polls/:id/vote/upsert",
-    validateNumber({
-        getValue: (req) => req.params.id,
-        failureMessage: "Could not parse poll id"
-    }),
+    validateParams(Schemas.params.id),
     validateBody(UpsertVoteSchema),
     (req, res) => {
         
         const user = getUser(req)
-        const pollId = strToNumber(req.params.id) as number
+        const { id: pollId } = Schemas.params.id.parse(req.params)
         const optionIds = UpsertVoteSchema.parse(req.body)
 
         if(!db.polls.options.allIdsMatchesPollId(pollId, optionIds)){
             return res.status(400).send("Invalid combination of poll id and option ids")
         }
-
-        try {
-            db.polls.votes.upsert(user.userId, pollId, optionIds);
-        }
-        catch (e){
-            console.log(e)
-            res.status(400).end()
-        }
+        
+        db.polls.votes.upsert(user.userId, pollId, optionIds);
         res.end()
     }
 )
