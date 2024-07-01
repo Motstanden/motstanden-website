@@ -1,11 +1,10 @@
 import { LikeEntityType } from "common/enums"
-import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../../db/index.js"
-import { validateNumber } from "../../middleware/validateNumber.js"
-import { validateBody } from "../../middleware/zodValidation.js"
+import { validateBody, validateParams } from "../../middleware/zodValidation.js"
 import { getUser } from "../../utils/getUser.js"
+import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router()
 
@@ -18,6 +17,12 @@ router.get("/emojis",
     }
 )
 
+// ---- Param Schemas ----
+
+const EntityIdSchema = z.object({ 
+    entityId: Schemas.z.stringToInt()
+})
+
 // ---- GET likes ----
 
 router.get("/events/comments/:entityId/likes", getLikesPipeline(LikeEntityType.EventComment))
@@ -28,34 +33,17 @@ router.get("/wall-posts/comments/:entityId/likes", getLikesPipeline(LikeEntityTy
 
 function getLikesPipeline(entityType: LikeEntityType) {
     return [
-        validateNumber({
-            getValue: (req: Request) => req.params.entityId,
-        }),
-        getLikesHandler({
-            entityType: entityType,
-            getEntityId: (req: Request) => strToNumber(req.params.entityId) as number   // Validated by previous middleware
-        })
+        validateParams(EntityIdSchema),
+        getLikesHandler(entityType)
     ]
 }
 
-
-function getLikesHandler( {
-    entityType, 
-    getEntityId
-}: {
-    entityType: LikeEntityType
-    getEntityId: (req: Request) => number
-}) {
+function getLikesHandler(entityType: LikeEntityType) {
     return async (req: Request, res: Response) => {
-        const id = getEntityId(req)
-        try {
-            const likes =  db.likes.getAll(entityType, id)
-            res.send(likes)
-        } catch (err) {
-            console.error(err)
-            res.status(500).send(`Failed to get ${entityType}/likes with id '${id}' from database`)
-        }
-        res.end()
+        const { entityId } = EntityIdSchema.parse(req.params)
+        
+        const likes =  db.likes.getAll(entityType, entityId)
+        res.json(likes)
     }
 }
 
@@ -73,43 +61,23 @@ router.post("/wall-posts/comments/:entityId/likes/upsert", upsertLikePipeline(Li
 
 function upsertLikePipeline(entityType: LikeEntityType) {
     return [
-        validateNumber({
-            getValue: (req: Request) => req.params.entityId,
-        }),
+        validateParams(EntityIdSchema),
         validateBody(NewLikeSchema),
-        upsertLikeHandler({
-            entityType: entityType,
-            getEntityId: (req: Request) => strToNumber(req.params.entityId) as number   // Validated by previous middleware
-        })
+        upsertLikeHandler(entityType)
     ]
 }
 
-function upsertLikeHandler({
-    entityType,
-    getEntityId
-}: {
-    entityType: LikeEntityType
-    getEntityId: (req: Request) => number
-}) {
+function upsertLikeHandler(entityType: LikeEntityType) {
     return async (req: Request, res: Response) => {
         const user = getUser(req)
-        const entityId = getEntityId(req)
+        const { entityId } = EntityIdSchema.parse(req.params)
         const like = NewLikeSchema.parse(req.body)
-
-        if(!like) {
-            return res.status(400).send("Failed to parse like object")
-        }
 
         if(!db.likes.emojis.exists(like.emojiId)) {
             return res.status(400).send(`Emoji with id '${like.emojiId}' does not exist`)
         }
 
-        try {
-            db.likes.upsert(entityType, entityId, like, user.userId)
-        } catch (err) {
-            console.error(err)
-            res.status(500).send(`Failed to upsert ${entityType} with id '${entityId}' from database`)
-        }
+        db.likes.upsert(entityType, entityId, like, user.userId)
         res.end()
     }
 }
@@ -124,32 +92,17 @@ router.post("/wall-posts/comments/:entityId/likes/delete", deleteLikePipeline(Li
 
 function deleteLikePipeline(entityType: LikeEntityType) {
     return [
-        validateNumber({
-            getValue: (req: Request) => req.params.entityId,
-        }),
-        deleteLikeHandler({
-            entityType: entityType,
-            getEntityId: (req: Request) => strToNumber(req.params.entityId) as number   // Validated by previous middleware
-        })
+        validateParams(EntityIdSchema),
+        deleteLikeHandler(entityType)
     ]
 }
 
-function deleteLikeHandler({
-    entityType,
-    getEntityId
-}: {
-    entityType: LikeEntityType
-    getEntityId: (req: Request) => number
-}) {
+function deleteLikeHandler(entityType: LikeEntityType) {
     return async (req: Request, res: Response) => {
         const user = getUser(req)
-        const entityId = getEntityId(req)
-        try {
-            db.likes.delete(entityType, entityId, user.userId)
-        } catch (err) {
-            console.error(err)
-            res.status(500).send(`Failed to delete ${entityType} with id '${entityId}' from database`)
-        }
+        const { entityId } = EntityIdSchema.parse(req.params)
+
+        db.likes.delete(entityType, entityId, user.userId)
         res.end()
     }
 }
