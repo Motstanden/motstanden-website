@@ -9,6 +9,8 @@ import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router() 
 
+// ---- GET polls ----
+
 router.get("/polls",
     (req, res) => {
         const pollList = db.polls.getAll()
@@ -38,7 +40,7 @@ router.get("/polls/:id/options",
     }
 )
 
-router.get("/polls/:id/voter-list",
+router.get("/polls/:id/voters",
     validateParams(Schemas.params.id),
     (req, res) => { 
         const { id } = Schemas.params.id.parse(req.params)        

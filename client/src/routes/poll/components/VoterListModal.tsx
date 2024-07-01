@@ -133,7 +133,7 @@ function VoterListLoader({ poll, selectedOptionId }: { poll: PollWithOption; sel
 
     const { isPending, isError, data, error } = useQuery<PollOptionVoters[]>({
         queryKey: ["FetchPollVoters", poll.id],
-        queryFn: fetchFn<PollOptionVoters[]>(`/api/polls/${poll.id}/voter-list`),
+        queryFn: fetchFn<PollOptionVoters[]>(`/api/polls/${poll.id}/voters`),
     });
 
     if (isPending)
