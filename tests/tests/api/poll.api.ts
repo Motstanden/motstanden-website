@@ -30,12 +30,12 @@ test.describe("GET /api/polls/latest", () => {
 
 })
 
-test.describe("GET /polls/all", () => {
+test.describe("GET /polls", () => {
 
     test("Returns valid object", async ({ request }, workerInfo) => {
         await apiLogIn(request, workerInfo)
 
-        const res = await request.get("/api/polls/all")
+        const res = await request.get("/api/polls")
         expect(res.ok()).toBeTruthy()
 
         const polls = await res.json()

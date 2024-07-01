@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { Poll } from "common/interfaces";
 import { Outlet, useMatch, useOutletContext } from "react-router-dom";
+import { useAppBarHeader } from "src/context/AppBarHeader";
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer";
 import { fetchFn } from "src/utils/fetchAsync";
 import { AllPollsPageSkeleton } from "./skeleton/AllPollsPage";
 import { CurrentPollPageSkeleton } from './skeleton/CurrentPollPage';
 import { PollItemPageSkeleton } from "./skeleton/PollItemPage";
-import { useAppBarHeader } from "src/context/AppBarHeader";
 
 export const pollBaseQueryKey = ["poll"]
 
@@ -35,7 +35,7 @@ function PollLoader() {
 
     const {isPending, isError, data, error} = useQuery<Poll[]>({
         queryKey: pollListQueryKey,
-        queryFn: fetchFn<Poll[]>("/api/polls/all")
+        queryFn: fetchFn<Poll[]>("/api/polls")
     })
 
     const {isCurrentPollPage, isAllPollsPage, isPollItemPage, isNewPollsPage} = usePollUrlMatch()

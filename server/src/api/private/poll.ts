@@ -10,17 +10,17 @@ import { getUser } from "../../utils/getUser.js"
 
 const router = express.Router() 
 
+router.get("/polls",
+    (req, res) => {
+        const pollList = db.polls.getAll()
+        res.send(pollList)
+    }
+)
+
 router.get("/polls/latest",
     (req, res) => {
         const poll = db.polls.getNewest()
         res.send(poll)
-    }
-)
-
-router.get("/polls/all",
-    (req, res) => {
-        const pollList = db.polls.getAll()
-        res.send(pollList)
     }
 )
 

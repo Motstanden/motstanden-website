@@ -159,7 +159,7 @@ async function getPoll(api: APIRequestContext, poll: NewPollWithOption): Promise
 }
 
 async function getAllPolls(api: APIRequestContext): Promise<Poll[]> {
-    const res = await api.get("/api/polls/all")
+    const res = await api.get("/api/polls")
     if(!res.ok()) {
         throw new Error(`Failed to get all polls.\n${await res.text()}`)
     }
