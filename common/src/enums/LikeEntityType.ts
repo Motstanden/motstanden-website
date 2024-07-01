@@ -1,7 +1,11 @@
+
+// All though a purist would argue that the strings should be singular and delimited by a hyphen (E.G. "event-comment"), 
+// this structure is used to match the API endpoints - which is very convenient for us!
+
 export enum LikeEntityType {
-    EventComment = "event/comment",
-    PollComment = "poll/comment",
-    SongLyricComment = "lyrics/comment",
-    WallPost = "wall-post",
-    WallPostComment = "wall-post/comment"
+    EventComment = "events/comments",
+    PollComment = "polls/comments",
+    SongLyricComment = "lyrics/comments",
+    WallPost = "wall-posts",
+    WallPostComment = "wall-posts/comments"
 }
