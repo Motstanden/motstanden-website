@@ -93,10 +93,12 @@ router.delete("/polls/:id",
     }
 )
 
+// ---- PUT votes ----
+
 const OptionIdSchema = z.coerce.number().int().positive().finite()
 const UpsertVoteSchema = z.array(OptionIdSchema).min(1, "Body must contain at least one option id")
 
-router.post("/polls/:id/vote/upsert",
+router.put("/polls/:id/votes/me",
     validateParams(Schemas.params.id),
     validateBody(UpsertVoteSchema),
     (req, res) => {

@@ -1,14 +1,14 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Poll, PollOption, PollWithOption } from "common/interfaces";
-import { useState } from "react";
-import { AuthorInfo } from 'src/components/AuthorInfo';
-import { fetchFn } from "src/utils/fetchAsync";
-import { postJson } from 'src/utils/postJson';
-import { pollBaseQueryKey } from "../Context";
-import { PollOptionsSkeleton } from '../skeleton/PollOptions';
-import { PollResult } from './PollResult';
-import { VoteForm } from './VoteForm';
-import { VoterListModal } from './VoterListModal';
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { Poll, PollOption, PollWithOption } from "common/interfaces"
+import { useState } from "react"
+import { AuthorInfo } from 'src/components/AuthorInfo'
+import { fetchFn } from "src/utils/fetchAsync"
+import { putJson } from 'src/utils/postJson'
+import { pollBaseQueryKey } from "../Context"
+import { PollOptionsSkeleton } from '../skeleton/PollOptions'
+import { PollResult } from './PollResult'
+import { VoteForm } from './VoteForm'
+import { VoterListModal } from './VoterListModal'
 
 export function PollContent({ poll }: { poll: Poll; }) {
     return (
@@ -72,10 +72,10 @@ function PollOptionsRenderer({
 
     const onSubmit = async (selectedItems: PollOption[]) => {
 
-        const url = `/api/polls/${poll.id}/vote/upsert`;
+        const url = `/api/polls/${poll.id}/votes/me`;
         const optionIds: number[] = selectedItems.map(item => item.id);
 
-        const response = await postJson(url, optionIds, { alertOnFailure: true });
+        const response = await putJson(url, optionIds, { alertOnFailure: true });
 
         if (response && response.ok) {
             await onSubmitSuccess();
