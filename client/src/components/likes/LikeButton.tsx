@@ -1,10 +1,10 @@
-import { Button, ButtonProps, ClickAwayListener, Paper, Popper, Skeleton } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
-import { LikeEmoji, NewLike } from "common/interfaces";
-import React, { useRef, useState } from "react";
-import { useLikeEmoji } from "src/context/LikeEmoji";
-import { postJson } from "src/utils/postJson";
-import { useLikes } from "./LikesContext";
+import { Button, ButtonProps, ClickAwayListener, Paper, Popper, Skeleton } from "@mui/material"
+import { useQueryClient } from "@tanstack/react-query"
+import { LikeEmoji, NewLike } from "common/interfaces"
+import React, { useRef, useState } from "react"
+import { useLikeEmoji } from "src/context/LikeEmoji"
+import { httpSendJson, postJson } from "src/utils/postJson"
+import { useLikes } from "./LikesContext"
 
 interface LikeButtonProps extends Omit<ButtonProps, "style" | "onClick" | "ref"> {
     style?: React.CSSProperties
@@ -118,15 +118,11 @@ function LikeForm( {
 
         const isDeleteAction = selfLike?.emojiId === id
 
-        const value: NewLike | Record<never, never> = isDeleteAction 
-            ? {} 
-            : { emojiId: id }
-
-        const url = isDeleteAction 
-            ? `/api/${entityType}/${entityId}/likes/delete`
-            : `/api/${entityType}/${entityId}/likes/upsert`
-
-        const response = await postJson(url, value, { alertOnFailure: true })
+        const value: NewLike | Record<never, never> = isDeleteAction  ? {} : { emojiId: id }
+        const url = `/api/${entityType}/${entityId}/likes/me`
+        const httpVerb = isDeleteAction ? "DELETE" : "PUT"
+        
+        const response = await httpSendJson(httpVerb, url, value, { alertOnFailure: true })
 
         if(response?.ok){
             queryClient.invalidateQueries({queryKey: queryKey})

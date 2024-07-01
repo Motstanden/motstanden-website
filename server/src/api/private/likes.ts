@@ -41,7 +41,7 @@ function getLikesPipeline(entityType: LikeEntityType) {
 function getLikesHandler(entityType: LikeEntityType) {
     return async (req: Request, res: Response) => {
         const { entityId } = EntityIdSchema.parse(req.params)
-        
+
         const likes =  db.likes.getAll(entityType, entityId)
         res.json(likes)
     }
@@ -53,11 +53,11 @@ const NewLikeSchema = z.object({
     emojiId: z.coerce.number().int().positive().finite()
 })
 
-router.post(`/events/comments/:entityId/likes/upsert`, upsertLikePipeline(LikeEntityType.EventComment))
-router.post("/polls/comments/:entityId/likes/upsert", upsertLikePipeline(LikeEntityType.PollComment))
-router.post("/lyrics/comments/:entityId/likes/upsert", upsertLikePipeline(LikeEntityType.SongLyricComment))
-router.post("/wall-posts/:entityId/likes/upsert", upsertLikePipeline(LikeEntityType.WallPost))
-router.post("/wall-posts/comments/:entityId/likes/upsert", upsertLikePipeline(LikeEntityType.WallPostComment))
+router.put(`/events/comments/:entityId/likes/me`, upsertLikePipeline(LikeEntityType.EventComment))
+router.put("/polls/comments/:entityId/likes/me", upsertLikePipeline(LikeEntityType.PollComment))
+router.put("/lyrics/comments/:entityId/likes/me", upsertLikePipeline(LikeEntityType.SongLyricComment))
+router.put("/wall-posts/:entityId/likes/me", upsertLikePipeline(LikeEntityType.WallPost))
+router.put("/wall-posts/comments/:entityId/likes/me", upsertLikePipeline(LikeEntityType.WallPostComment))
 
 function upsertLikePipeline(entityType: LikeEntityType) {
     return [
@@ -84,11 +84,11 @@ function upsertLikeHandler(entityType: LikeEntityType) {
 
 // ---- DELETE likes ----
 
-router.post("/events/comments/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.EventComment))
-router.post("/polls/comments/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.PollComment))
-router.post("/lyrics/comments/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.SongLyricComment))
-router.post("/wall-posts/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.WallPost))
-router.post("/wall-posts/comments/:entityId/likes/delete", deleteLikePipeline(LikeEntityType.WallPostComment))
+router.delete("/events/comments/:entityId/likes/me", deleteLikePipeline(LikeEntityType.EventComment))
+router.delete("/polls/comments/:entityId/likes/me", deleteLikePipeline(LikeEntityType.PollComment))
+router.delete("/lyrics/comments/:entityId/likes/me", deleteLikePipeline(LikeEntityType.SongLyricComment))
+router.delete("/wall-posts/:entityId/likes/me", deleteLikePipeline(LikeEntityType.WallPost))
+router.delete("/wall-posts/comments/:entityId/likes/me", deleteLikePipeline(LikeEntityType.WallPostComment))
 
 function deleteLikePipeline(entityType: LikeEntityType) {
     return [
