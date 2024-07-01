@@ -54,6 +54,8 @@ router.get("/polls/:id/voters",
     }
 )
 
+// ---- POST polls ----
+
 const NewPollOptionsSchema = z.object({ 
     text: z.string().trim().min(1, "Option text must not be empty")
 })
@@ -64,7 +66,7 @@ const NewPollSchema = z.object({
     options: z.array(NewPollOptionsSchema).min(2, "Poll must have at least two options")
 })
 
-router.post("/polls/new",
+router.post("/polls",
     validateBody(NewPollSchema),
     (req, res) => {
 

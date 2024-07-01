@@ -37,7 +37,7 @@ export default function NewPollPage() {
             <h1>Ny avstemning</h1>
             <UpsertPollForm
                 initialValue={emptyPoll}
-                postUrl="/api/polls/new"
+                postUrl="/api/polls"
                 onAbortClick={onAbort}
                 onPostSuccess={onSuccess} />
         </>
