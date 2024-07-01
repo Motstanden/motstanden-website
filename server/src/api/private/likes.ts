@@ -11,10 +11,10 @@ const router = express.Router()
 
 // ---- GET like emojis ----
 
-router.get("/likes/emojis/all",
+router.get("/emojis",
     (req, res) => {
         const emojis = db.likes.emojis.getAll()
-        res.send(emojis)
+        res.json(emojis)
     }
 )
 

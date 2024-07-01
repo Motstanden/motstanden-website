@@ -25,7 +25,7 @@ export function LikeEmojiProvider( {children}: {children: React.ReactNode} ) {
 
     const { data } = useQuery<LikeEmoji[]>({
         queryKey: ["like-emoji"],
-        queryFn: fetchFn<LikeEmoji[]>("/api/likes/emojis/all"),
+        queryFn: fetchFn<LikeEmoji[]>("/api/emojis"),
         enabled: isLoggedIn
     })
 
