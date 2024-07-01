@@ -37,26 +37,3 @@ export function getPollOptions(userId: number, pollId: number): PollOption[] {
     return options
 }
 
-function getPollOptionIds(pollId: number): number[] {
-    const db = new Database(motstandenDB, dbReadOnlyConfig)
-    const stmt = db.prepare(`
-        SELECT 
-            poll_option_id as id
-        FROM 
-            poll_option 
-        WHERE 
-            poll_id = ?
-    `)
-
-    const dbData = <{ id: number}[]> stmt.all(pollId)
-    db.close()
-
-    const ids = dbData.map(item => item.id)
-
-    return ids
-}
-
-export function allOptionIdsMatchesPollId(pollId: number, optionIds: number[]) {
-    const validIds = getPollOptionIds(pollId)
-    return optionIds.every(id => validIds.includes(id))
-}

@@ -96,7 +96,7 @@ router.delete("/polls/:id",
 // ---- PUT votes ----
 
 const OptionIdSchema = z.coerce.number().int().positive().finite()
-const UpsertVoteSchema = z.array(OptionIdSchema).min(1, "Body must contain at least one option id")
+const UpsertVoteSchema = z.array(OptionIdSchema).min(1, "Body must contain at least one option id")     // TODO: Remove duplicated numbers
 
 router.put("/polls/:id/votes/me",
     validateParams(Schemas.params.id),
@@ -107,10 +107,26 @@ router.put("/polls/:id/votes/me",
         const { id: pollId } = Schemas.params.id.parse(req.params)
         const optionIds = UpsertVoteSchema.parse(req.body)
 
-        if(!db.polls.options.allIdsMatchesPollId(pollId, optionIds)){
+        // Check if poll exists
+        const poll = db.polls.getWithOptions(user.userId, pollId)
+        if(poll === undefined)
+            return res.status(404).end()
+
+        // Check if all option ids are valid
+        const expectedOptionIds = poll.options.map(option => option.id)
+        const isValidOptionIds = optionIds.every(id => expectedOptionIds.includes(id))
+        if(!isValidOptionIds)
             return res.status(400).send("Invalid combination of poll id and option ids")
-        }
-        
+
+
+        // Check only one vote for single choice poll
+        if(poll.type === "single" && optionIds.length > 1)
+            return res.status(400).send("Poll is single choice, only one option id is allowed")
+
+        // Check if too many option ids
+        if(optionIds.length > poll.options.length)
+            return res.status(400).send("Too many option ids")
+
         db.polls.votes.upsert(user.userId, pollId, optionIds);
         res.end()
     }
