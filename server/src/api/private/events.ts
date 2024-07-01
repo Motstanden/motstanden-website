@@ -12,7 +12,6 @@ const router = express.Router()
 // ---- GET events ----
 
 const GetEventsQuerySchema = z.object({
-    
     limit: Schemas.queries.limit.shape.limit,
 
     // Ensures filter is: "upcoming" | "previous" | undefined
@@ -30,12 +29,10 @@ const GetEventsQuerySchema = z.object({
 router.get("/events",
     validateQuery(GetEventsQuerySchema),
     (req, res) => {
-
-        // Validated by middleware
         const { limit, filter } = GetEventsQuerySchema.parse(req.query)
 
         const data = db.events.getAll( { filter: filter, limit: limit })
-        res.send(data)
+        res.json(data)
     }
 )
 
@@ -59,7 +56,7 @@ router.post("/events",
         const user = getUser(req)
 
         const newEventId = db.events.insert(event, user.userId)
-        res.send({ id: newEventId })
+        res.json({ id: newEventId })
     }
 )
 
@@ -68,7 +65,6 @@ router.patch("/events/:id",
     validateBody(UpsertEventSchema),
     (req: Request, res: Response) => { 
 
-        // Validated by middleware
         const { id: eventId } = Schemas.params.id.parse(req.params)        
         const event = UpsertEventSchema.parse(req.body)
         const user = getUser(req)
@@ -99,8 +95,6 @@ router.delete("/events/:id",
 router.get("/events/:id/participants",
     validateParams(Schemas.params.id),
     (req: Request, res: Response) => {
-        
-        // Validated by middleware
         const { id: eventId } = Schemas.params.id.parse(req.params)
 
         const participants = db.events.participants.getAll(eventId)
@@ -110,30 +104,19 @@ router.get("/events/:id/participants",
 
 // ---- PUT event participant ----
 
-const UpsertParticipantParamSchema = z.object({ 
-    eventId: Schemas.z.stringToInt("eventId must be a positive integer"),
-    userId: Schemas.z.stringToInt("userId must be a positive integer"),
-})
-
 const UpsertParticipantBodySchema = z.object({ 
     status: z.string().pipe(z.nativeEnum(ParticipationStatus)),
 })
 
-router.put("/events/:eventId/participants/:userId",
-    validateParams(UpsertParticipantParamSchema),
+router.put("/events/:id/participants/me",
+    validateParams(Schemas.params.id),
     validateBody(UpsertParticipantBodySchema),
     (req: Request, res: Response) => {
-
-        // Validated by middleware
         const user = getUser(req)
-        const { eventId, userId } = UpsertParticipantParamSchema.parse(req.params)
+        const { id: eventId } = Schemas.params.id.parse(req.params)
         const { status } = UpsertParticipantBodySchema.parse(req.body)
 
-        if(user.userId !== userId) { 
-            return res.status(403).send("You can only change your own status")
-        }
-
-        db.events.participants.upsert(eventId, userId, status)
+        db.events.participants.upsert(eventId, user.userId, status)
         res.end()
     }
 )

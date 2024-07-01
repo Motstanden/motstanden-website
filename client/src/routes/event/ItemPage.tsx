@@ -126,7 +126,6 @@ function AttendingForm({
     queryKey: QueryKey, 
     status?: ParticipationStatus 
 }) {
-    const { user } = useAuthenticatedUser()
     const [isSubmitting, setIsSubmitting] = useState(false)
     const queryClient = useQueryClient()
 
@@ -135,7 +134,7 @@ function AttendingForm({
         const newVal: UpsertParticipant = {
             status: e.target.value as ParticipationStatus 
         }
-        const response = await putJson(`/api/events/${eventId}/participants/${user.id}`, newVal, { alertOnFailure: true })
+        const response = await putJson(`/api/events/${eventId}/participants/me`, newVal, { alertOnFailure: true })
 
         if (response && response.ok) {
             await queryClient.invalidateQueries({ queryKey: queryKey })
