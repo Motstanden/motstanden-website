@@ -11,7 +11,7 @@ import { DeleteMenuItem } from 'src/components/menu/DeleteMenuItem'
 import { EditMenuItem } from 'src/components/menu/EditMenuItem'
 import { IconPopupMenu } from 'src/components/menu/IconPopupMenu'
 import { usePotentialUser } from 'src/context/Authentication'
-import { postJson } from 'src/utils/postJson'
+import { httpDelete } from 'src/utils/postJson'
 import { useTitle } from "../../hooks/useTitle"
 import { lyricContextQueryKey, useLyricItemContext } from './Context'
 
@@ -71,14 +71,11 @@ function TitleHeader( {lyric}: {lyric: SongLyric} ) {
     }
 
     const onDeleteClick = async () => {
-        const response = await postJson(
-            `/api/lyrics/${lyric.id}/delete`, 
-            { },
-            {
-                alertOnFailure: true,
-                confirmText: "Vil du permanent slette denne trallen?"
-            }
-        )
+        const response = await httpDelete(`/api/lyrics/${lyric.id}`, {
+            alertOnFailure: true,
+            confirmText: "Vil du permanent slette denne trallen?"
+        }
+    )
         if(response?.ok) {
             await queryClient.invalidateQueries({queryKey: lyricContextQueryKey})
             navigate("..", { replace: true })

@@ -16,8 +16,7 @@ const NewSongLyricSchema = z.object({
     isPopular: z.boolean()
 })
 
-
-router.post("/lyrics/new",
+router.post("/lyrics",
     validateBody(NewSongLyricSchema),
     (req, res) => {
         const user = getUser(req)
@@ -28,7 +27,7 @@ router.post("/lyrics/new",
     }
 )
 
-router.post("/lyrics/:id/update",
+router.patch("/lyrics/:id",
     validateParams(Schemas.params.id),
     validateBody(NewSongLyricSchema),
     (req, res) => {
@@ -41,7 +40,7 @@ router.post("/lyrics/:id/update",
     }
 )
 
-router.post("/lyrics/:id/delete",
+router.delete("/lyrics/:id",
     validateParams(Schemas.params.id),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,

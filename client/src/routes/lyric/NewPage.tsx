@@ -21,7 +21,8 @@ export function NewLyricPage() {
                 storageKey={["LyricItem", "New"]}
                 initialValue={emptyLyricItem}
                 onAbortClick={onAbortClick}
-                postUrl="/api/lyrics/new"
+                httpVerb="POST"
+                url="/api/lyrics"
                 usedTitles={usedTitles}
                 disabled={isPending}
             />

@@ -23,7 +23,8 @@ export function EditLyricPage() {
                 initialValue={lyric}
                 onAbortClick={onAbortClick}
                 storageKey={queryKey}
-                postUrl={`/api/lyrics/${lyric.id}/update`}
+                httpVerb="PATCH"
+                url={`/api/lyrics/${lyric.id}`}
                 usedTitles={usedTitles}
             />
         </div>

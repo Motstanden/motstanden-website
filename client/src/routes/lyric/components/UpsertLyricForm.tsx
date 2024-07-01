@@ -11,7 +11,8 @@ import { buildLyricItemUrl, lyricContextQueryKey } from "../Context"
 
 export function UpsertLyricForm({
     initialValue, 
-    postUrl, 
+    url, 
+    httpVerb,
     storageKey,
     onAbortClick, 
     usedTitles,
@@ -19,8 +20,9 @@ export function UpsertLyricForm({
     disabled,
 }: {
     initialValue: NewSongLyric
-    postUrl: string
+    url: string
     storageKey: StorageKeyArray,
+    httpVerb: "POST" | "PATCH"
     onAbortClick: VoidFunction
     usedTitles: string[]
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
@@ -74,7 +76,8 @@ export function UpsertLyricForm({
         <div style={{ maxWidth: "700px" }}>
             <Form
                 value={getSubmitData}
-                url={postUrl}
+                httpVerb={httpVerb}
+                url={url}
                 disabled={isDisabled}
                 onAbortClick={handleAbortClick}
                 onSuccess={handlePostSuccess}
