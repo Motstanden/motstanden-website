@@ -1,11 +1,9 @@
 import { UserGroup } from "common/enums"
-import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../../db/index.js"
 import { requiresGroupOrAuthor } from "../../middleware/requiresGroupOrAuthor.js"
-import { validateNumber } from "../../middleware/validateNumber.js"
-import { validateBody, validateQuery } from "../../middleware/zodValidation.js"
+import { validateBody, validateParams, validateQuery } from "../../middleware/zodValidation.js"
 import dailyRandomInt from "../../utils/dailyRandomInt.js"
 import { getUser } from "../../utils/getUser.js"
 import { Schemas } from "../../utils/zodSchema.js"
@@ -16,7 +14,8 @@ router.get("/quotes?:limit",
     validateQuery(Schemas.queries.limit),
     (req, res) => {
         const { limit } = Schemas.queries.limit.parse(req.query)
-        res.send(db.quotes.getAll(limit))
+        const quotes = db.quotes.getAll(limit)
+        res.json(quotes)
     }
 )
 
@@ -42,17 +41,10 @@ const NewQuoteSchema = z.object({
 router.post("/quotes/new",
     validateBody(NewQuoteSchema),
     (req, res) => {
-
-        // Validated by middleware
         const user = getUser(req)
         const quote = NewQuoteSchema.parse(req.body)
-        
-        try {
-            db.quotes.insert(user.userId, quote)
-        }
-        catch {
-            res.status(400).send("Bad data")
-        }
+
+        db.quotes.insert(user.userId, quote)
         res.end();
     }
 )
@@ -65,19 +57,13 @@ router.post("/quotes/delete",
     }),
     (req: Request, res: Response) => {
         const quoteId: number = req.body.id
-        try {
-            db.quotes.delete(quoteId)
-        } catch {
-            res.status(400).send("Bad data")
-        }
+        db.quotes.delete(quoteId)
         res.end();
     }
 )
 
 router.post("/quotes/:id/update",
-    validateNumber({
-        getValue: req => req.params.id
-    }),
+    validateParams(Schemas.params.id),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
@@ -85,16 +71,10 @@ router.post("/quotes/:id/update",
     }),
     validateBody(NewQuoteSchema),
     (req: Request, res: Response) => {
-
-        // Validated by middleware
-        const quoteId = strToNumber(req.params.id) as number
+        const { id } = Schemas.params.id.parse(req.params)
         const quote = NewQuoteSchema.parse(req.body)
 
-        try {
-            db.quotes.update(quoteId, quote)
-        } catch {
-            return res.status(400).send("bad data")
-        }
+        db.quotes.update(id, quote)
         res.end();
     }
 )
