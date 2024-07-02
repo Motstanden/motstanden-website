@@ -83,7 +83,8 @@ function SimpleTextEditor( {
     if(canEdit && isEditing) {
         return (
             <SimpleTextForm
-                postUrl={`/api/simple-text/${value.id}/update`}
+                httpMethod='PATCH'
+                url={`/api/simple-texts/${value.id}`}
                 initialValue={{
                     text: value.text
                 }}
@@ -181,13 +182,15 @@ function LastEditInfo( {simpleText}: {simpleText: SimpleText} ) {
 
 function SimpleTextForm( {
     initialValue,
-    postUrl,
+    url,
+    httpMethod,
     storageKey,
     onAbortClick,
     onPostSuccess,
 }: {
     initialValue: UpdateSimpleText | SimpleText,
-    postUrl: string
+    url: string
+    httpMethod: "POST" | "PATCH",
     storageKey: StorageKeyArray,
     onAbortClick?: VoidFunction,
     onPostSuccess?: ((res: Response) => Promise<void>) | ((res: Response) => void)
@@ -219,7 +222,8 @@ function SimpleTextForm( {
     return (
         <Form 
             value={newValue}
-            url={postUrl}
+            url={url}
+            httpVerb={httpMethod}
             disabled={disabled}
             onAbortClick={handleAbortClick}
             onSuccess={handlePostSuccess}
