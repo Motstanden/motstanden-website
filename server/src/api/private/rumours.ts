@@ -16,7 +16,7 @@ router.get("/rumours?:limit", (req, res) => {
     res.send(db.rumours.getAll(limit))
 })
 
-router.get("/rumours/daily-rumour", (req, res) => {
+router.get("/rumours/random-daily", (req, res) => {
     const limit = 100
     const rumours = db.rumours.getAll(limit)
     const i = dailyRandomInt(limit)

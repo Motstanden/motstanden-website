@@ -68,7 +68,7 @@ export default function Home() {
                 />
                 <ItemOfTheDay
                     title="Dagens rykter"
-                    fetchUrl="/api/rumours/daily-rumour"
+                    fetchUrl="/api/rumours/random-daily"
                     renderSkeleton={<RumourListSkeleton length={3} />}
                     renderItems={RenderRumourList}
                 />
