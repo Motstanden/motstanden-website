@@ -8,7 +8,7 @@ import { quotesApi } from "./quotes.js"
 import { rumoursApi } from "./rumours.js"
 import { sheetArchiveApi } from "./sheetMusic.js"
 import { privateSimpleTextApi } from "./simpleTexts.js"
-import { userApi } from "./user.js"
+import { userApi } from "./users.js"
 import { wallPostApi } from "./wallPosts.js"
 
 const router = express.Router()
