@@ -10,6 +10,8 @@ import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router()
 
+// ---- GET rumours ----
+
 router.get("/rumours?:limit",
     validateQuery(Schemas.queries.limit),
     (req, res) => {
@@ -31,11 +33,13 @@ router.get("/rumours/random-daily", (req, res) => {
     ])
 })
 
+// ---- POST rumours ----
+
 const NewRumourSchema = z.object({ 
     rumour: z.string().trim().min(1, "Rumour must not be empty")
 })
 
-router.post("/rumours/new",
+router.post("/rumours",
     validateBody(NewRumourSchema),
     (req, res) => {
         const user = getUser(req)
@@ -45,6 +49,8 @@ router.post("/rumours/new",
         res.end()
     }
 )
+
+// ---- DELETE rumours ----
 
 router.post("/rumours/delete",
     requiresGroupOrAuthor({
@@ -58,6 +64,8 @@ router.post("/rumours/delete",
         res.end()
     }
 )
+
+// ---- UPDATE rumours ----
 
 router.post("/rumours/:id/update",
     validateParams(Schemas.params.id),

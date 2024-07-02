@@ -10,6 +10,8 @@ import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router()
 
+// ---- GET quotes ----
+
 router.get("/quotes?:limit",
     validateQuery(Schemas.queries.limit),
     (req, res) => {
@@ -33,12 +35,14 @@ router.get("/quotes/random-daily",
     }
 )
 
+// ---- POST quotes ----
+
 const NewQuoteSchema = z.object({ 
     utterer: z.string().trim().min(1, "Utterer must not be empty"),
     quote: z.string().trim().min(1, "Quote must not be empty")
 })
 
-router.post("/quotes/new",
+router.post("/quotes",
     validateBody(NewQuoteSchema),
     (req, res) => {
         const user = getUser(req)
@@ -48,6 +52,8 @@ router.post("/quotes/new",
         res.end();
     }
 )
+
+// ---- DELETE quotes ----
 
 router.post("/quotes/delete",
     requiresGroupOrAuthor({
@@ -61,6 +67,8 @@ router.post("/quotes/delete",
         res.end();
     }
 )
+
+// ---- UPDATE quotes ----
 
 router.post("/quotes/:id/update",
     validateParams(Schemas.params.id),
