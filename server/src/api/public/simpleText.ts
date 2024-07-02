@@ -1,27 +1,25 @@
-import { isNullOrWhitespace } from "common/utils"
 import express from "express"
+import { z } from "zod"
 import { db } from "../../db/index.js"
+import { validateParams } from "../../middleware/zodValidation.js"
 
 const router = express.Router();
 
-router.get("/simple-text/:key", (req, res) => { 
-    const key = req.params.key.trim().toLowerCase()
-    
-    if(isNullOrWhitespace(key)) {
-        return res.status(400).send("A non-empty key is required")
-    }
+const SimpleTextParamsSchema = z.object({
+    key: z.string().trim().toLowerCase().min(1, "Key must not be empty")
+})
 
-    try {
+router.get("/simple-texts/:key", 
+    validateParams(SimpleTextParamsSchema),
+    (req, res) => { 
+        const { key } = SimpleTextParamsSchema.parse(req.params)
+    
         const text = db.simpleTexts.get(key)
-        if(text === undefined) {
-            return res.status(404).send(`No simple text found for key: ${key}`)
+        if(text !== undefined) {
+            res.json(text)
+        } else {
+            res.status(404).send(`No simple text found for key: ${key}`)
         }
-        res.send(text) 
-    } catch (err) {
-        console.error(err)
-        res.status(500).send("Failed to retrieve simple text from the database")
-    }
-    res.end()
 })
 
 export {

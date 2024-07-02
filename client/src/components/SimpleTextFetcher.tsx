@@ -29,7 +29,7 @@ export function SimpleTextFetcher({
     const queryKey = buildQueryKey(textKey, queryKeyModifier)
     const { isPending, isError, data, error } = useQuery<SimpleText>({
         queryKey: queryKey,
-        queryFn: fetchFn<SimpleText>(`/api/simple-text/${textKey}`),
+        queryFn: fetchFn<SimpleText>(`/api/simple-texts/${textKey}`),
     })
 
     if(isPending)
@@ -48,7 +48,7 @@ export function SimpleTextFetcher({
 }
 
 function buildQueryKey(textKey: string, otherKeys?: (string | number)[]): (string | number)[] {
-    const queryKey: (string | number)[] = ["get", "/api/simple-text/:key", textKey ]
+    const queryKey: (string | number)[] = ["get", "/api/simple-texts/:key", textKey ]
     if(otherKeys)
         queryKey.push(...otherKeys)
     return queryKey
