@@ -36,35 +36,6 @@ export interface User extends NewUser {
     updatedAt: string;              // Format: 'YYYY-MM-DD HH-MM-SS'
 }
 
-export interface UpdateUserAsSelfBody extends Pick<User, 
-    "firstName" | 
-    "middleName" | 
-    "lastName" | 
-    "email" |  
-    "phoneNumber" |
-    "capeName" |
-    "status" |
-    "birthDate" |
-    "startDate" |
-    "endDate" 
-> {}
-
-export interface UpdateUserMembershipAsMeBody extends Pick<User,
-    "capeName" |
-    "status" |
-    "startDate" |
-    "endDate"
-> {}
-
-export interface UpdateUserMembershipAsAdminBody extends Pick<User,
-    "rank" |
-    "capeName" |
-    "status" |
-    "startDate" |
-    "endDate"
-> {}
-
-
 export interface UpdateUserPersonalInfoBody extends Pick<User,
     "firstName" |
     "middleName" |
@@ -73,6 +44,23 @@ export interface UpdateUserPersonalInfoBody extends Pick<User,
     "phoneNumber" |
     "birthDate"
 > {}
+
+
+export interface UpdateUserMembershipAsMeBody extends Pick<User,
+    "capeName" |
+    "status" |
+    "startDate" |
+    "endDate"
+> {}    
+
+
+export interface UpdateUserMembershipAsAdminBody extends Pick<User,
+    "rank" |
+    "capeName" |
+    "status" |
+    "startDate" |
+    "endDate"
+> {}    
 
 
 export interface UpdateUserRoleBody extends Pick<User, "groupName"> {}

@@ -1,6 +1,6 @@
 import Playwright, { APIRequestContext, APIResponse, TestInfo, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
-import { NewUser, UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUserRoleBody, User } from 'common/interfaces'
+import { NewUser, UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUserPersonalInfoBody, UpdateUserRoleBody, User } from 'common/interfaces'
 import { randomInt, randomUUID } from 'crypto'
 import { z } from "zod"
 import dayjs from "../../lib/dayjs.js"
@@ -115,7 +115,7 @@ test("POST /api/users", async ({request}, workerInfo) => {
     assertEqualUsers(actualUser, expectedUser)
 })
 
-test("PATCH /api/users/me", async ({request}, workerInfo) => { 
+test("PATCH /api/users/me/personal-info", async ({request}, workerInfo) => { 
 
     const user = await api.users.createRandom(workerInfo)
 
@@ -124,19 +124,15 @@ test("PATCH /api/users/me", async ({request}, workerInfo) => {
 
     // Post new random user data
     const uuid: string = randomUUID().toLowerCase()
-    const newUserData: UpdateUserAsSelfBody = {
+    const newUserData: UpdateUserPersonalInfoBody = {
         firstName: `___firstName ${uuid}`,
         middleName: `___middleName ${uuid}`,
         lastName: `___lastName ${uuid}`,
         email: `${uuid}@motstanden.no`,
         phoneNumber: randomInt(10000000, 99999999),
         birthDate: dayjs().subtract(20, "years").utc().format("YYYY-MM-DD"),
-        startDate: dayjs().subtract(3, "years").utc().format("YYYY-MM-DD"),
-        endDate: dayjs().subtract(1, "years").utc().format("YYYY-MM-DD"),
-        status: UserStatus.Veteran,
-        capeName: `___capeName ${uuid}`,
     }
-    await updateUser(request, { type: "self", data: newUserData })
+    await updateUser(request, { type: "my-personal-info", data: newUserData })
 
     const actualUser = await api.users.get(request, user.id)
     const expectedUser: User = { ...user, ...newUserData,}
@@ -323,8 +319,8 @@ function assertEqualUsers(actual: User, expected: User) {
 }
 
 type UpdateType = {
-    type: "self",
-    data: UpdateUserAsSelfBody
+    type: "my-personal-info",
+    data: UpdateUserPersonalInfoBody
     id?: never
 } | {
     type: "membership",
@@ -339,8 +335,8 @@ type UpdateType = {
 async function updateUser(request: APIRequestContext,  {type, data, id} : UpdateType)  {
     let res: APIResponse 
     switch(type) { 
-        case "self":
-            res = await request.patch("/api/users/me", { data: data })
+        case "my-personal-info":
+            res = await request.patch("/api/users/me/personal-info", { data: data })
             break
         case "membership":
             res = await request.put(`/api/users/${id}/membership`, { data: data })

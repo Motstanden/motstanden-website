@@ -1,5 +1,5 @@
 import { UserGroup, UserRank, UserStatus } from "common/enums"
-import { UpdateUserAsSelfBody, UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUserMembershipAsMeBody, UpdateUserPersonalInfoBody, UpdateUserRoleBody } from "common/interfaces"
+import { UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUserMembershipAsMeBody, UpdateUserPersonalInfoBody, UpdateUserRoleBody } from "common/interfaces"
 import express, { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../../db/index.js"
@@ -109,46 +109,7 @@ router.post("/users",
         res.json({userId: userId})
 })
 
-// ---- PATCH/PUT users ----
-
-const UpdateCurrentUserSchema = UserSchema.pick({
-    firstName: true,
-    middleName: true,
-    lastName: true,
-    email: true,
-    phoneNumber: true,
-    capeName: true,
-    status: true,
-    birthDate: true,
-    startDate: true,
-    endDate: true,
-})
-
-router.patch("/users/me", 
-    validateBody(UpdateCurrentUserSchema),
-    (req, res) => { 
-        const newUserData: UpdateUserAsSelfBody = UpdateCurrentUserSchema.parse(req.body)
-        const user = getUser(req)
-
-        // This could have been written as db.users.update(id, newUserData)
-        // However, it is safer and more secure to be explicit about what fields are updated.
-        db.users.update(user.userId, {
-            firstName: newUserData.firstName,
-            middleName: newUserData.middleName,
-            lastName: newUserData.lastName,
-            email: newUserData.email,
-            phoneNumber: newUserData.phoneNumber,
-            capeName: newUserData.capeName,
-            status: newUserData.status,
-            birthDate: newUserData.birthDate,
-            startDate: newUserData.startDate,
-            endDate: newUserData.endDate,
-        })
-
-        updateAccessTokenIfCurrentUser(req, res, user.userId)
-        res.end()
-    }
-)
+// ---- PATCH users ----
 
 const UpdateUserSchema = UserSchema.omit({ profilePicture: true })
 
