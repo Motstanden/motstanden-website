@@ -2,7 +2,7 @@ import express from "express"
 import { authApi } from "./auth.js"
 import { documentsApi } from "./documents.js"
 import { publicLyricsApi } from "./lyrics.js"
-import { publicSimpleTextApi } from "./simpleText.js"
+import { publicSimpleTextApi } from "./simpleTexts.js"
 
 const router = express.Router()
 
