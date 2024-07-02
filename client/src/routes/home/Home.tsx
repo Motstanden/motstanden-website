@@ -62,7 +62,7 @@ export default function Home() {
                 />
                 <ItemOfTheDay
                     title="Dagens sitater"
-                    fetchUrl="/api/quotes/daily-quotes"
+                    fetchUrl="/api/quotes/random-daily"
                     renderSkeleton={<QuotesListSkeleton length={3} />}
                     renderItems={RenderQuotesList}
                 />

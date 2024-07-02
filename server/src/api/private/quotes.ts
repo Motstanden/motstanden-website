@@ -5,20 +5,22 @@ import { z } from "zod"
 import { db } from "../../db/index.js"
 import { requiresGroupOrAuthor } from "../../middleware/requiresGroupOrAuthor.js"
 import { validateNumber } from "../../middleware/validateNumber.js"
-import { validateBody } from "../../middleware/zodValidation.js"
+import { validateBody, validateQuery } from "../../middleware/zodValidation.js"
 import dailyRandomInt from "../../utils/dailyRandomInt.js"
 import { getUser } from "../../utils/getUser.js"
+import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router()
 
 router.get("/quotes?:limit",
+    validateQuery(Schemas.queries.limit),
     (req, res) => {
-        const limit = strToNumber(req.query.limit?.toString())
+        const { limit } = Schemas.queries.limit.parse(req.query)
         res.send(db.quotes.getAll(limit))
     }
 )
 
-router.get("/quotes/daily-quotes",
+router.get("/quotes/random-daily",
     (req, res) => {
         const limit = 100
         const quotes = db.quotes.getAll(limit)
