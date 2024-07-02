@@ -1,10 +1,8 @@
 import { UserGroup } from "common/enums"
-import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../../db/index.js"
 import { RequiresGroup } from "../../middleware/requiresGroup.js"
-import { validateNumber } from "../../middleware/validateNumber.js"
 import { validateBody, validateParams } from "../../middleware/zodValidation.js"
 import { Schemas } from "../../utils/zodSchema.js"
 
@@ -25,30 +23,23 @@ router.get("/sheet-music/songs/:id/files",
         res.send(sheets);
 })
 
-const UpdateSheetArchiveTitleSchema = z.object({ 
+// ---- PATCH song ----
+
+const UpdateSheetMusicSongSchema = z.object({ 
     title: z.string().trim().min(1, "Title must not be empty"),
     extraInfo: z.string().trim(),
     isRepertoire: z.boolean()
 })
 
-router.post("/sheet-archive/titles/:id/update", 
-    validateNumber({
-        getValue: req => req.params.id,
-    }),
+router.patch("/sheet-music/songs/:id", 
+    validateParams(Schemas.params.id),
     RequiresGroup(UserGroup.Administrator),
-    validateBody(UpdateSheetArchiveTitleSchema),
+    validateBody(UpdateSheetMusicSongSchema),
     (req: Request, res: Response) => {
-
-        // Validated by middleware
-        const titleId = strToNumber(req.params.id) as number
-        const title = UpdateSheetArchiveTitleSchema.parse(req.body)
+        const { id } = Schemas.params.id.parse(req.params)
+        const song = UpdateSheetMusicSongSchema.parse(req.body)
         
-        try {
-            db.sheetArchive.titles.update(titleId, title)
-        } catch(err) {
-            console.log(err)
-            return res.status(400).send("bad data")
-        }
+        db.sheetArchive.titles.update(id, song)
         res.end()
     } 
 )

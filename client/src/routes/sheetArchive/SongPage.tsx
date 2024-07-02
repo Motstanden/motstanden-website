@@ -205,7 +205,8 @@ function EditRow( {
                 }}>
                 <Form 
                     value={getSubmitData} 
-                    url={`/api/sheet-archive/titles/${songId}/update`}
+                    url={`/api/sheet-music/songs/${songId}`}
+                    httpVerb='PATCH'
                     onAbortClick={ _ => onAbort()}
                     onSuccess={onSuccess}
                     disabled={isDisabled}
