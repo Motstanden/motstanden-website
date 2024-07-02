@@ -1,17 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
-import { SheetArchiveFile, SheetArchiveTitle } from 'common/interfaces';
-import { Navigate, Outlet, useMatch, useOutletContext, useParams } from "react-router-dom";
-import { useAppBarHeader } from 'src/context/AppBarHeader';
-import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer";
-import { fetchFn } from "../../utils/fetchAsync";
-import { InstrumentPageSkeleton } from './skeleton/InstrumentPage';
+import { useQuery } from '@tanstack/react-query'
+import { SheetArchiveFile, SheetArchiveTitle } from 'common/interfaces'
+import { Navigate, Outlet, useMatch, useOutletContext, useParams } from "react-router-dom"
+import { useAppBarHeader } from 'src/context/AppBarHeader'
+import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
+import { fetchFn } from "../../utils/fetchAsync"
+import { InstrumentPageSkeleton } from './skeleton/InstrumentPage'
 
 export const sheetArchiveContextQueryKey = ["FetchSheetArchiveTitles"]
 
 export {
     InstrumentContainer as InstrumentContext,
     SheetArchiveContainer as SheetArchiveContext
-};
+}
 
 export function SheetArchiveContainer() {
     useAppBarHeader("Notearkiv")
@@ -80,7 +80,7 @@ export function InstrumentLoader( {song}: {song: SheetArchiveTitle} ) {
 
     const { isPending, isError, error, data } = useQuery<SheetArchiveFile[]>({
         queryKey: ["FetchSheetArchiveFile", song.url],
-        queryFn: fetchFn<SheetArchiveFile[]>(`/api/sheet_archive/song_files?id=${song.id}`),
+        queryFn: fetchFn<SheetArchiveFile[]>(`/api/sheet-music/songs/${song.id}/files`),
     })
 
     if (isPending) {

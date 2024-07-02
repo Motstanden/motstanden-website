@@ -5,36 +5,24 @@ import { z } from "zod"
 import { db } from "../../db/index.js"
 import { RequiresGroup } from "../../middleware/requiresGroup.js"
 import { validateNumber } from "../../middleware/validateNumber.js"
-import { validateBody } from "../../middleware/zodValidation.js"
+import { validateBody, validateParams } from "../../middleware/zodValidation.js"
+import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router()
+
+// ---- GET songs/files ----
 
 router.get("/sheet-music/songs", (req, res) => {
     const songs = db.sheetArchive.titles.getAll()
     res.json(songs);
 })
 
-router.get("/sheet_archive/song_files", (req, res) => {
-        
-    let param = req.query.id
-    let id: number | undefined
-    if (typeof param === "string") {
-        id = strToNumber(param)
-    }
-    else if (typeof param === "number") {
-        id = param
-    }
-    if (!id) {
-        return res.status(400).send("bad data")
-    }
-
-    try {
+router.get("/sheet-music/songs/:id/files", 
+    validateParams(Schemas.params.id),
+    (req, res) => {
+        const { id } = Schemas.params.id.parse(req.params)
         const sheets = db.sheetArchive.files.getAll(id);
         res.send(sheets);
-    } catch (err) {
-        console.log(err)
-        return res.status(400).send("Bad data");
-    }
 })
 
 const UpdateSheetArchiveTitleSchema = z.object({ 
