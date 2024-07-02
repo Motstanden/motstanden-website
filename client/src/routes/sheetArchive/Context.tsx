@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { SheetArchiveFile, SheetArchiveTitle } from 'common/interfaces';
 import { Navigate, Outlet, useMatch, useOutletContext, useParams } from "react-router-dom";
+import { useAppBarHeader } from 'src/context/AppBarHeader';
 import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer";
 import { fetchFn } from "../../utils/fetchAsync";
 import { InstrumentPageSkeleton } from './skeleton/InstrumentPage';
-import { useAppBarHeader } from 'src/context/AppBarHeader';
 
 export const sheetArchiveContextQueryKey = ["FetchSheetArchiveTitles"]
 
 export {
-    InstrumentContainer as InstrumentContext, 
+    InstrumentContainer as InstrumentContext,
     SheetArchiveContainer as SheetArchiveContext
 };
 
@@ -31,7 +31,7 @@ export function SheetArchiveContainer() {
 function SheetArchiveLoader() {
     const { isPending, isError, data, error } = useQuery<SheetArchiveTitle[]>({
         queryKey: sheetArchiveContextQueryKey,
-        queryFn: fetchFn<SheetArchiveTitle[]>("/api/sheet_archive/song_title"),
+        queryFn: fetchFn<SheetArchiveTitle[]>("/api/sheet-music/songs"),
     });
 
     if (isError) {

@@ -9,14 +9,9 @@ import { validateBody } from "../../middleware/zodValidation.js"
 
 const router = express.Router()
 
-router.get("/sheet_archive/song_title", (req, res) => {
-    try {
-        const sheets = db.sheetArchive.titles.getAll()
-        res.send(sheets);
-    } catch (err) {
-        console.log(err)
-        return res.status(400).send("Bad data");
-    }
+router.get("/sheet-music/songs", (req, res) => {
+    const songs = db.sheetArchive.titles.getAll()
+    res.json(songs);
 })
 
 router.get("/sheet_archive/song_files", (req, res) => {
