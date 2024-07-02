@@ -73,7 +73,8 @@ function EditItem(props: RenderEditFormProps<Rumour>) {
                 initialValue={props.data}
                 onAbortClick={props.onEditAbort}
                 onPostSuccess={props.onEditSuccess}
-                postUrl={`/api/rumours/${props.data.id}/update`}
+                url={`/api/rumours/${props.data.id}`}
+                httpMethod="PATCH"
             />
         </div>
     )

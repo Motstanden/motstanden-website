@@ -1,19 +1,21 @@
-import { TextField } from "@mui/material";
-import { NewQuote, Quote, Quote as QuoteData } from "common/interfaces";
-import { isNullOrWhitespace } from "common/utils";
-import { Form } from "src/components/form/Form";
-import { StorageKeyArray, useSessionStorage } from "src/hooks/useStorage";
+import { TextField } from "@mui/material"
+import { NewQuote, Quote, Quote as QuoteData } from "common/interfaces"
+import { isNullOrWhitespace } from "common/utils"
+import { Form } from "src/components/form/Form"
+import { StorageKeyArray, useSessionStorage } from "src/hooks/useStorage"
 
 export function UpsertQuoteForm({
     initialValue, 
-    postUrl,
+    url,
+    httpMethod,
     storageKey, 
     onAbortClick, 
     onPostSuccess,
 }: {
     initialValue: NewQuote | QuoteData;
     storageKey: StorageKeyArray;
-    postUrl: string;
+    url: string;
+    httpMethod: "POST" | "PATCH";
     onAbortClick: VoidFunction;
     onPostSuccess: VoidFunction;
 }) {
@@ -48,7 +50,8 @@ export function UpsertQuoteForm({
         <div style={{ maxWidth: "700px" }}>
             <Form
                 value={getSubmitData}
-                url={postUrl}
+                url={url}
+                httpVerb={httpMethod}
                 disabled={disabled}
                 onAbortClick={handleAbortClick}
                 onSuccess={handlePostSuccess}

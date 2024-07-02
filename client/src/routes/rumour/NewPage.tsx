@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import { useTitle } from "src/hooks/useTitle";
-import { useContextInvalidator } from "./Context";
-import { UpsertRumourForm } from "./components/UpsertRumourForm";
+import { useNavigate } from "react-router-dom"
+import { useTitle } from "src/hooks/useTitle"
+import { useContextInvalidator } from "./Context"
+import { UpsertRumourForm } from "./components/UpsertRumourForm"
 
 export function NewRumourPage() {
     useTitle("Nytt rykte");
@@ -21,7 +21,8 @@ export function NewRumourPage() {
             <UpsertRumourForm
                 storageKey={["Rumours", "New"]}
                 initialValue={{ rumour: "" }}
-                postUrl="/api/rumours"
+                url="/api/rumours"
+                httpMethod="POST"
                 onAbortClick={onAbort}
                 onPostSuccess={onSuccess} />
         </>

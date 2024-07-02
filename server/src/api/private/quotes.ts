@@ -71,7 +71,7 @@ router.delete("/quotes/:id",
 
 // ---- UPDATE quotes ----
 
-router.post("/quotes/:id/update",
+router.patch("/quotes/:id",
     validateParams(Schemas.params.id),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,

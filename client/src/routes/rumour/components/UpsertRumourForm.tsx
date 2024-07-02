@@ -1,19 +1,21 @@
-import { TextField } from "@mui/material";
-import { NewRumour, Rumour } from "common/interfaces";
-import { isNullOrWhitespace } from "common/utils";
-import { Form } from "src/components/form/Form";
-import { StorageKeyArray, useSessionStorage } from "src/hooks/useStorage";
+import { TextField } from "@mui/material"
+import { NewRumour, Rumour } from "common/interfaces"
+import { isNullOrWhitespace } from "common/utils"
+import { Form } from "src/components/form/Form"
+import { StorageKeyArray, useSessionStorage } from "src/hooks/useStorage"
 
 
 export function UpsertRumourForm({
     initialValue, 
-    postUrl, 
+    url, 
+    httpMethod,
     storageKey,
     onAbortClick, 
     onPostSuccess,
 }: {
     initialValue: NewRumour | Rumour;
-    postUrl: string;
+    url: string;
+    httpMethod: "POST" | "PATCH";
     storageKey: StorageKeyArray,
     onAbortClick: VoidFunction;
     onPostSuccess: VoidFunction;
@@ -49,7 +51,8 @@ export function UpsertRumourForm({
         <div style={{ maxWidth: "700px" }}>
             <Form
                 value={getSubmitData}
-                url={postUrl}
+                url={url}
+                httpVerb={httpMethod}
                 disabled={disabled}
                 onAbortClick={handleAbortClick}
                 onSuccess={handlePostSuccess}

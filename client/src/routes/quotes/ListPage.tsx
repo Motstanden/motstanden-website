@@ -75,7 +75,8 @@ function EditItem(props: RenderEditFormProps<QuoteData>) {
             <UpsertQuoteForm
                 storageKey={["Quotes", "Edit", props.data.id]}
                 initialValue={props.data}
-                postUrl={`/api/quotes/${props.data.id}/update`}
+                url={`/api/quotes/${props.data.id}`}
+                httpMethod="PATCH"
                 onAbortClick={props.onEditAbort}
                 onPostSuccess={props.onEditSuccess} />
         </div>

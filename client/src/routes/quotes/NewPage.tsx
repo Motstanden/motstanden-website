@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import { useTitle } from "src/hooks/useTitle";
-import { UpsertQuoteForm } from "src/routes/quotes/components/UpsertQuoteForm";
-import { useContextInvalidator } from "src/routes/quotes/Context";
+import { useNavigate } from "react-router-dom"
+import { useTitle } from "src/hooks/useTitle"
+import { UpsertQuoteForm } from "src/routes/quotes/components/UpsertQuoteForm"
+import { useContextInvalidator } from "src/routes/quotes/Context"
 
 export default function NewPage() {
     useTitle("Nytt sitat");
@@ -21,7 +21,8 @@ export default function NewPage() {
             <UpsertQuoteForm
                 initialValue={{ quote: "", utterer: "" }}
                 storageKey={["Quotes", "New"]}
-                postUrl="/api/quotes"
+                url="/api/quotes"
+                httpMethod="POST"
                 onAbortClick={onAbort}
                 onPostSuccess={onSuccess} />
         </>

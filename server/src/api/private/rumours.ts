@@ -68,7 +68,7 @@ router.delete("/rumours/:id",
 
 // ---- UPDATE rumours ----
 
-router.post("/rumours/:id/update",
+router.patch("/rumours/:id",
     validateParams(Schemas.params.id),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
