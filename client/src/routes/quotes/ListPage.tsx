@@ -37,7 +37,7 @@ export function QuoteList({ quotes, onItemChanged }: { quotes: QuoteData[], onIt
             renderEditForm={renderEditForm}
             itemComparer={isEqual}
             renderItemSkeleton={<QuotesItemSkeleton />}
-            deleteItemUrl="/api/quotes/delete"
+            deleteItemUrl={(quote) => `/api/quotes/${quote.id}`}
             confirmDeleteItemText="Vil du permanent slette dette sitatet?"
             itemSpacing="25px"
         />

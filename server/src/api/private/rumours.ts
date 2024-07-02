@@ -52,14 +52,15 @@ router.post("/rumours",
 
 // ---- DELETE rumours ----
 
-router.post("/rumours/delete",
+router.delete("/rumours/:id",
+    validateParams(Schemas.params.id),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
-        getId: (req) => req.body.id,
+        getId: (req) => Schemas.params.id.parse(req.params).id,
         getAuthorInfo: (id) => db.rumours.get(id)
     }),
     (req: Request, res: Response) => {
-        const id: number = req.body.id
+        const { id } = Schemas.params.id.parse(req.params)
         db.rumours.delete(id)
         res.end()
     }

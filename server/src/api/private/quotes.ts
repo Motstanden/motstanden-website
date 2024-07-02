@@ -55,15 +55,16 @@ router.post("/quotes",
 
 // ---- DELETE quotes ----
 
-router.post("/quotes/delete",
+router.delete("/quotes/:id",
+    validateParams(Schemas.params.id),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
-        getId: (req) => req.body.id,
+        getId: (req) => Schemas.params.id.parse(req.params).id,
         getAuthorInfo: id => db.quotes.get(id)
     }),
     (req: Request, res: Response) => {
-        const quoteId: number = req.body.id
-        db.quotes.delete(quoteId)
+        const { id } = Schemas.params.id.parse(req.params)
+        db.quotes.delete(id)
         res.end();
     }
 )

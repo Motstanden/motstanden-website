@@ -1,15 +1,15 @@
-import { Stack } from "@mui/material";
-import { useState } from "react";
-import { EditOrDeleteMenu } from "src/components/menu/EditOrDeleteMenu";
-import { useAuthenticatedUser } from "src/context/Authentication";
-import { postJson } from "src/utils/postJson";
+import { Stack } from "@mui/material"
+import { useState } from "react"
+import { EditOrDeleteMenu } from "src/components/menu/EditOrDeleteMenu"
+import { useAuthenticatedUser } from "src/context/Authentication"
+import { httpDelete } from "src/utils/postJson"
 
 interface EditListProps<T> {
     items: T[],
     onItemChanged: VoidFunction,
     renderItem: (item: T) => React.ReactElement,
     renderEditForm: (props: RenderEditFormProps<T>) => React.ReactElement,
-    deleteItemUrl: string,
+    deleteItemUrl: (data: T) => string,
     confirmDeleteItemText: string,
     itemComparer?: (a: T, b: T) => boolean,
     renderItemSkeleton?: React.ReactElement,
@@ -112,7 +112,7 @@ function DefaultItem<T extends ItemBase>({
     renderItem: (item: T) => React.ReactElement,
     onEditClick: VoidFunction,
     onItemDeleted: VoidFunction,
-    deleteItemUrl: string,
+    deleteItemUrl: (data: T) => string,
     confirmDeleteItemText: string
 }) {
     const [isHighlighted, setIsHighlighted] = useState(false)
@@ -136,14 +136,11 @@ function DefaultItem<T extends ItemBase>({
 
     const onDeleteClick = async (_: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
         setIsDisabled(true)
-        const response = await postJson(
-            deleteItemUrl,
-            { id: data.id },
-            {
+        const url = deleteItemUrl(data)
+        const response = await httpDelete(url,{
                 alertOnFailure: true,
                 confirmText: confirmDeleteItemText
-            }
-        )
+        })
         if (!response?.ok) {
             setIsDisabled(false)
         }

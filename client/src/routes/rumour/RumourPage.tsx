@@ -1,13 +1,13 @@
-import { Divider, Stack } from "@mui/material";
-import { Rumour } from "common/interfaces";
-import dayjs from "dayjs";
-import { useOutletContext } from "react-router-dom";
-import { useTitle } from "src/hooks/useTitle";
-import { EditList, RenderEditFormProps } from "../quotes/components/EditList";
-import { NewlineText } from "../quotes/components/NewlineText";
-import { useContextInvalidator } from "./Context";
-import { UpsertRumourForm } from "./components/UpsertRumourForm";
-import { RumourItemSkeleton } from "./skeleton/RumourPage";
+import { Divider, Stack } from "@mui/material"
+import { Rumour } from "common/interfaces"
+import dayjs from "dayjs"
+import { useOutletContext } from "react-router-dom"
+import { useTitle } from "src/hooks/useTitle"
+import { EditList, RenderEditFormProps } from "../quotes/components/EditList"
+import { NewlineText } from "../quotes/components/NewlineText"
+import { useContextInvalidator } from "./Context"
+import { UpsertRumourForm } from "./components/UpsertRumourForm"
+import { RumourItemSkeleton } from "./skeleton/RumourPage"
 
 export function RumourPage() {
     useTitle("Ryktebørsen")
@@ -38,7 +38,7 @@ export function RumourList({ rumours, onItemChanged }: { rumours: Rumour[], onIt
             renderEditForm={renderEditForm}
             itemComparer={isEqual}
             renderItemSkeleton={<RumourItemSkeleton />}
-            deleteItemUrl="/api/rumours/delete"
+            deleteItemUrl={(rumour) => `/api/rumours/${rumour.id}`}
             confirmDeleteItemText="Vil du permanent slette dette ryktet?"
             itemSpacing="15px"
         />
