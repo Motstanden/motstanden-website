@@ -1,20 +1,23 @@
 import { UserGroup } from "common/enums"
-import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../../db/index.js"
 import { requiresGroupOrAuthor } from "../../middleware/requiresGroupOrAuthor.js"
-import { validateNumber } from "../../middleware/validateNumber.js"
-import { validateBody } from "../../middleware/zodValidation.js"
+import { validateBody, validateParams, validateQuery } from "../../middleware/zodValidation.js"
 import dailyRandomInt from "../../utils/dailyRandomInt.js"
 import { getUser } from "../../utils/getUser.js"
+import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router()
 
-router.get("/rumours?:limit", (req, res) => {
-    const limit = strToNumber(req.query.limit?.toString())
-    res.send(db.rumours.getAll(limit))
-})
+router.get("/rumours?:limit",
+    validateQuery(Schemas.queries.limit),
+    (req, res) => {
+        const { limit } = Schemas.queries.limit.parse(req.query)
+        const rumours = db.rumours.getAll(limit)
+        res.json(rumours)
+    }
+)
 
 router.get("/rumours/random-daily", (req, res) => {
     const limit = 100
@@ -35,17 +38,10 @@ const NewRumourSchema = z.object({
 router.post("/rumours/new",
     validateBody(NewRumourSchema),
     (req, res) => {
-
-        // Validated by middleware
         const user = getUser(req)
         const body = NewRumourSchema.parse(req.body)
 
-        try {
-            db.rumours.insert(user.userId, body.rumour)
-        } catch (err) {
-            console.log(err)
-            res.status(400).send("Bad data")
-        }
+        db.rumours.insert(user.userId, body.rumour)
         res.end()
     }
 )
@@ -58,19 +54,13 @@ router.post("/rumours/delete",
     }),
     (req: Request, res: Response) => {
         const id: number = req.body.id
-        try {
-            db.rumours.delete(id)
-        } catch {
-            res.status(400).send("Bad data")
-        }
+        db.rumours.delete(id)
         res.end()
     }
 )
 
 router.post("/rumours/:id/update",
-    validateNumber({
-        getValue: req => req.params.id
-    }),
+    validateParams(Schemas.params.id),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
@@ -78,16 +68,10 @@ router.post("/rumours/:id/update",
     }),
     validateBody(NewRumourSchema),
     (req: Request, res: Response) => {
-
-        // Validated by middleware
-        const rumourId = strToNumber(req.params.id) as number
+        const { id } = Schemas.params.id.parse(req.params)
         const body =  NewRumourSchema.parse(req.body)
         
-        try {
-            db.rumours.update(rumourId, body.rumour)
-        } catch (err) {
-            res.status(400).send("Bad data")
-        }
+        db.rumours.update(id, body.rumour)
         res.end()
     }
 )
