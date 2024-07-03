@@ -1,6 +1,5 @@
 import { CommentEntityType, UserGroup } from "common/enums"
 import { Count } from "common/interfaces"
-import { strToNumber } from "common/utils"
 import express, { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../../db/index.js"
@@ -37,7 +36,7 @@ const EntityIdSchema = z.object({
 router.get("/events/:entityId/comments",getCommentsPipeline(CommentEntityType.Event))
 router.get("/polls/:entityId/comments", getCommentsPipeline(CommentEntityType.Poll))
 router.get("/lyrics/:entityId/comments", getCommentsPipeline(CommentEntityType.SongLyric))
-router.get("/wall-posts/:entityId/comments", getCommentsPipeline(CommentEntityType.WallPost))
+router.get("/wall/posts/:entityId/comments", getCommentsPipeline(CommentEntityType.WallPost))
 
 function getCommentsPipeline(entityType: CommentEntityType) {
     return [
@@ -63,7 +62,7 @@ const NewCommentSchema = z.object({
 router.post("/events/:entityId/comments/new", postCommentPipeline(CommentEntityType.Event))
 router.post("/polls/:entityId/comments/new", postCommentPipeline(CommentEntityType.Poll))
 router.post("/lyrics/:entityId/comments/new", postCommentPipeline(CommentEntityType.SongLyric))
-router.post("/wall-posts/:entityId/comments/new", postCommentPipeline(CommentEntityType.WallPost))
+router.post("/wall/posts/:entityId/comments/new", postCommentPipeline(CommentEntityType.WallPost))
 
 function postCommentPipeline(entityType: CommentEntityType) { 
     return [
@@ -91,7 +90,7 @@ function postCommentHandler(entityType: CommentEntityType) {
 router.delete("/events/comments/:commentId", deleteCommentPipeline(CommentEntityType.Event))
 router.delete("/polls/comments/:commentId", deleteCommentPipeline(CommentEntityType.Poll))
 router.delete("/lyrics/comments/:commentId", deleteCommentPipeline(CommentEntityType.SongLyric))
-router.delete("/wall-posts/comments/:commentId", deleteCommentPipeline(CommentEntityType.WallPost))
+router.delete("/wall/posts/comments/:commentId", deleteCommentPipeline(CommentEntityType.WallPost))
 
 function deleteCommentPipeline(entityType: CommentEntityType) { 
     return [
@@ -118,7 +117,7 @@ function deleteCommentHandler(entityType: CommentEntityType) {
 router.patch("/events/comments/:commentId", patchCommentPipeline(CommentEntityType.Event))
 router.patch("/polls/comments/:commentId", patchCommentPipeline(CommentEntityType.Poll))
 router.patch("/lyrics/comments/:commentId", patchCommentPipeline(CommentEntityType.SongLyric))
-router.patch("/wall-posts/comments/:commentId", patchCommentPipeline(CommentEntityType.WallPost))
+router.patch("/wall/posts/comments/:commentId", patchCommentPipeline(CommentEntityType.WallPost))
 
 function patchCommentPipeline(entityType: CommentEntityType) {
     return [

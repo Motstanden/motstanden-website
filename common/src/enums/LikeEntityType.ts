@@ -6,6 +6,6 @@ export enum LikeEntityType {
     EventComment = "events/comments",
     PollComment = "polls/comments",
     SongLyricComment = "lyrics/comments",
-    WallPost = "wall-posts",
-    WallPostComment = "wall-posts/comments"
+    WallPost = "wall/posts",
+    WallPostComment = "wall/posts/comments"
 }

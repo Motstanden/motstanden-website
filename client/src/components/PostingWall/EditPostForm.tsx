@@ -1,9 +1,9 @@
-import { TextField } from "@mui/material";
-import { WallPost } from "common/interfaces";
-import { isNullOrWhitespace } from 'common/utils';
-import { useAuthenticatedUser } from "src/context/Authentication";
-import { useSessionStorage } from 'src/hooks/useStorage';
-import SubmitFormButtons from '../form/SubmitButtons';
+import { TextField } from "@mui/material"
+import { WallPost } from "common/interfaces"
+import { isNullOrWhitespace } from 'common/utils'
+import { useAuthenticatedUser } from "src/context/Authentication"
+import { useSessionStorage } from 'src/hooks/useStorage'
+import SubmitFormButtons from '../form/SubmitButtons'
 
 
 export function EditPostForm({
@@ -19,7 +19,7 @@ export function EditPostForm({
 
     const [value, setValue, clearValue] = useSessionStorage<WallPost>({
         initialValue: initialValue,
-        key: ["wall-post", "edit", `${initialValue.id}`, `${user.id}`]
+        key: ["wall", "posts", "edit", `${initialValue.id}`, `${user.id}`]
     });
 
     const handleSubmit = async (e: React.FormEvent) => {

@@ -1,13 +1,13 @@
-import { Badge } from "@mui/material";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Count } from "common/interfaces";
-import { useEffect } from "react";
-import { Outlet, useMatch } from "react-router-dom";
-import { useAppBarHeader } from "src/context/AppBarHeader";
-import { useAuthenticatedUser } from "src/context/Authentication";
-import { useDebounce } from "src/hooks/useDebounce";
-import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer";
-import { fetchFn } from "src/utils/fetchAsync";
+import { Badge } from "@mui/material"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { Count } from "common/interfaces"
+import { useEffect } from "react"
+import { Outlet, useMatch } from "react-router-dom"
+import { useAppBarHeader } from "src/context/AppBarHeader"
+import { useAuthenticatedUser } from "src/context/Authentication"
+import { useDebounce } from "src/hooks/useDebounce"
+import { TabbedPageContainer } from "src/layout/PageContainer/TabbedPageContainer"
+import { fetchFn } from "src/utils/fetchAsync"
 
 export default function PageContainer() { 
     useAppBarHeader("Hjem")
@@ -36,10 +36,10 @@ export default function PageContainer() {
 
 function useUnreadWallPosts() {
 
-    const queryKey = ["wall-posts", "unread", "count"]
+    const queryKey = ["wall", "posts", "unread", "count"]
     const { data, isPending, isError } = useQuery<Count>({
         queryKey: queryKey,
-        queryFn: fetchFn("/api/wall-posts/unread/count"),
+        queryFn: fetchFn("/api/wall/posts/unread/count"),
     })
     const unreadCount = data?.count ?? 0
 
@@ -47,7 +47,7 @@ function useUnreadWallPosts() {
     
     const resetCount = useMutation({
         mutationFn: async () => {
-            return await fetch("/api/wall-posts/unread/count", { method: "PUT" })
+            return await fetch("/api/wall/posts/unread/count", { method: "PUT" })
         },
         onSettled: async () => {
             return await queryClient.invalidateQueries({queryKey: queryKey})

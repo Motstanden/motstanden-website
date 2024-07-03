@@ -6,5 +6,5 @@ export enum CommentEntityType {
     Event = "events",
     Poll = "polls",
     SongLyric = "lyrics",
-    WallPost = "wall-posts"
+    WallPost = "wall/posts"
 }

@@ -13,7 +13,7 @@ import { randomString } from '../../utils/randomString.js'
 // Create a global thread-safe lock to prevent parallel execution between the two test files
 //
 
-test.describe.serial("api/wall-posts/unread", () => {
+test.describe.serial("api/wall/posts/unread", () => {
     const user1 = unsafeGetUser(UserGroup.Contributor, testUserVariationsCount - 1)
     const user2 = unsafeGetUser(UserGroup.Administrator, testUserVariationsCount - 1)
 
@@ -74,31 +74,31 @@ test.describe.serial("api/wall-posts/unread", () => {
 })
 
 async function getUnreadCount(request: APIRequestContext) {
-    const res = await request.get("/api/wall-posts/unread/count")
+    const res = await request.get("/api/wall/posts/unread/count")
     const data = <Count>await res.json()
     return data.count
 }
 
 async function resetUnreadCount(request: APIRequestContext) {
-    const res = await request.put("/api/wall-posts/unread/count")
+    const res = await request.put("/api/wall/posts/unread/count")
     if(!res.ok()) 
         throw new Error(`Failed to reset unread count.\n${res.status()}: ${res.statusText()}`)
 }
 
 async function createPost(request: APIRequestContext, post: NewWallPost) {
-    const res = await request.post("/api/wall-posts", { data: post })
+    const res = await request.post("/api/wall/posts", { data: post })
     if(!res.ok()) 
         throw new Error(`Failed to create post.\n${res.status()}: ${res.statusText()}`)
 }
 
 async function deletePost(request: APIRequestContext, postId: number) {
-    const res = await request.delete(`/api/wall-posts/${postId}`)
+    const res = await request.delete(`/api/wall/posts/${postId}`)
     if(!res.ok()) 
         throw new Error(`Failed to delete post.\n${res.status()}: ${res.statusText()}`)
 }
 
 async function getAllPosts(request: APIRequestContext) { 
-    const res = await request.get("/api/wall-posts")
+    const res = await request.get("/api/wall/posts")
     if(!res.ok()) 
         throw new Error(`Failed to get all posts.\n${res.status()}: ${res.statusText()}`)
     const data = await res.json() as WallPost[]

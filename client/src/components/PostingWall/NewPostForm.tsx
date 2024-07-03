@@ -1,13 +1,13 @@
-import SendIcon from '@mui/icons-material/Send';
-import { LoadingButton } from "@mui/lab";
-import { Paper, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material";
-import { NewWallPost } from "common/interfaces";
-import { isNullOrWhitespace } from 'common/utils';
-import { useState } from "react";
-import { useAuthenticatedUser } from "src/context/Authentication";
-import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage';
-import { postJson } from 'src/utils/postJson';
-import { UserAvatar } from '../user/UserAvatar';
+import SendIcon from '@mui/icons-material/Send'
+import { LoadingButton } from "@mui/lab"
+import { Paper, Stack, TextField, Theme, useMediaQuery, useTheme } from "@mui/material"
+import { NewWallPost } from "common/interfaces"
+import { isNullOrWhitespace } from 'common/utils'
+import { useState } from "react"
+import { useAuthenticatedUser } from "src/context/Authentication"
+import { StorageKeyArray, useSessionStorage } from 'src/hooks/useStorage'
+import { postJson } from 'src/utils/postJson'
+import { UserAvatar } from '../user/UserAvatar'
 
 export function NewPostForm({
     initialValue, 
@@ -45,7 +45,7 @@ export function NewPostForm({
             content: value.content.trim()
         };
 
-        const response = await postJson(`/api/wall-posts`, newValue, { alertOnFailure: true });
+        const response = await postJson(`/api/wall/posts`, newValue, { alertOnFailure: true });
 
         if (response && response.ok) {
             onPostSuccess && await onPostSuccess(response);

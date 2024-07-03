@@ -25,7 +25,7 @@ export function PostingWall({
 
     const queryClient = useQueryClient()
 
-    const queryKey: StorageKeyArray = ["wall-post", userId ?? "all"]
+    const queryKey: StorageKeyArray = ["wall", "posts", userId ?? "all"]
 
     const handlePostSuccess = async () => {
         await queryClient.invalidateQueries({queryKey: queryKey})
@@ -70,7 +70,7 @@ function PostingWallFetcher({
     onLoadedPosts?: () => void
 }) {
     
-    let url = "/api/wall-posts"
+    let url = "/api/wall/posts"
     if(userId)
         url += `?wallUserId=${userId}`
 

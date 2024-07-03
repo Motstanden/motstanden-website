@@ -11,13 +11,13 @@ import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router()
 
-// ---- GET wall-posts ----
+// ---- GET wall/posts ----
 
 const WallPostsQuerySchema = z.object({ 
     wallUserId: Schemas.z.stringToInt("wallUserId must be a positive integer").optional(),
 })
 
-router.get("/wall-posts",
+router.get("/wall/posts",
     validateQuery(WallPostsQuerySchema),
     (req, res) => {
         const { wallUserId } = WallPostsQuerySchema.parse(req.query)
@@ -26,7 +26,7 @@ router.get("/wall-posts",
     }
 )
 
-router.get("/wall-posts/:id",
+router.get("/wall/posts/:id",
     validateParams(Schemas.params.id),
     (req, res) => {
         const { id: postId } = Schemas.params.id.parse(req.params)
@@ -40,14 +40,14 @@ router.get("/wall-posts/:id",
     }
 )
 
-// ---- POST wall-posts ----
+// ---- POST wall/posts ----
 
 const NewWallPostSchema = z.object({
     content: z.string().trim().min(1, "Content must not be empty"),
     wallUserId: z.coerce.number().int().positive().finite(),
 })
 
-router.post("/wall-posts",
+router.post("/wall/posts",
     validateBody(NewWallPostSchema),
     (req, res) => {
         
@@ -65,13 +65,13 @@ router.post("/wall-posts",
     }
 )
 
-// ---- PATCH wall-posts ----
+// ---- PATCH wall/posts ----
 
 const UpdateWallPostSchema = z.object({ 
     content: z.string().trim().min(1, "Content must not be empty")
 })
 
-router.patch("/wall-posts/:id",
+router.patch("/wall/posts/:id",
     requiresAuthor( {
         getId: req => strToNumber(req.params.id),
         getAuthorInfo: id => db.wallPosts.get(id)
@@ -93,9 +93,9 @@ router.patch("/wall-posts/:id",
     }
 )
 
-// ---- DELETE wall-posts ----
+// ---- DELETE wall/posts ----
 
-router.delete("/wall-posts/:id",
+router.delete("/wall/posts/:id",
     validateParams(Schemas.params.id),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
@@ -111,7 +111,7 @@ router.delete("/wall-posts/:id",
 
 // ---- GET/PUT count of unread wall posts ----
 
-router.get("/wall-posts/unread/count", (req, res) => {
+router.get("/wall/posts/unread/count", (req, res) => {
     const user = getUser(req)
     
     const unreadCount = db.wallPosts.getUnreadCount(user.userId)
@@ -122,7 +122,7 @@ router.get("/wall-posts/unread/count", (req, res) => {
     res.send(result)
 })
 
-router.put("/wall-posts/unread/count", (req, res) => {
+router.put("/wall/posts/unread/count", (req, res) => {
     const user = getUser(req)
     db.wallPosts.resetUnreadCount(user.userId)
     res.end()
@@ -131,3 +131,4 @@ router.put("/wall-posts/unread/count", (req, res) => {
 export {
     router as wallPostApi
 }
+

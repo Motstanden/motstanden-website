@@ -28,8 +28,8 @@ const EntityIdSchema = z.object({
 router.get("/events/comments/:entityId/likes", getLikesPipeline(LikeEntityType.EventComment))
 router.get("/polls/comments/:entityId/likes", getLikesPipeline(LikeEntityType.PollComment))
 router.get("/lyrics/comments/:entityId/likes", getLikesPipeline(LikeEntityType.SongLyricComment))
-router.get("/wall-posts/:entityId/likes", getLikesPipeline(LikeEntityType.WallPost))
-router.get("/wall-posts/comments/:entityId/likes", getLikesPipeline(LikeEntityType.WallPostComment))
+router.get("/wall/posts/:entityId/likes", getLikesPipeline(LikeEntityType.WallPost))
+router.get("/wall/posts/comments/:entityId/likes", getLikesPipeline(LikeEntityType.WallPostComment))
 
 function getLikesPipeline(entityType: LikeEntityType) {
     return [
@@ -56,8 +56,8 @@ const NewLikeSchema = z.object({
 router.put(`/events/comments/:entityId/likes/me`, upsertLikePipeline(LikeEntityType.EventComment))
 router.put("/polls/comments/:entityId/likes/me", upsertLikePipeline(LikeEntityType.PollComment))
 router.put("/lyrics/comments/:entityId/likes/me", upsertLikePipeline(LikeEntityType.SongLyricComment))
-router.put("/wall-posts/:entityId/likes/me", upsertLikePipeline(LikeEntityType.WallPost))
-router.put("/wall-posts/comments/:entityId/likes/me", upsertLikePipeline(LikeEntityType.WallPostComment))
+router.put("/wall/posts/:entityId/likes/me", upsertLikePipeline(LikeEntityType.WallPost))
+router.put("/wall/posts/comments/:entityId/likes/me", upsertLikePipeline(LikeEntityType.WallPostComment))
 
 function upsertLikePipeline(entityType: LikeEntityType) {
     return [
@@ -87,8 +87,8 @@ function upsertLikeHandler(entityType: LikeEntityType) {
 router.delete("/events/comments/:entityId/likes/me", deleteLikePipeline(LikeEntityType.EventComment))
 router.delete("/polls/comments/:entityId/likes/me", deleteLikePipeline(LikeEntityType.PollComment))
 router.delete("/lyrics/comments/:entityId/likes/me", deleteLikePipeline(LikeEntityType.SongLyricComment))
-router.delete("/wall-posts/:entityId/likes/me", deleteLikePipeline(LikeEntityType.WallPost))
-router.delete("/wall-posts/comments/:entityId/likes/me", deleteLikePipeline(LikeEntityType.WallPostComment))
+router.delete("/wall/posts/:entityId/likes/me", deleteLikePipeline(LikeEntityType.WallPost))
+router.delete("/wall/posts/comments/:entityId/likes/me", deleteLikePipeline(LikeEntityType.WallPostComment))
 
 function deleteLikePipeline(entityType: LikeEntityType) {
     return [

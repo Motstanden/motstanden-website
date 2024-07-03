@@ -1,25 +1,25 @@
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { Divider, Paper, Stack, SxProps } from "@mui/material";
-import { QueryKey, useMutation, useQueryClient } from "@tanstack/react-query";
-import { CommentEntityType } from "common/enums";
-import { WallPost } from "common/interfaces";
-import dayjs from "dayjs";
-import { useState } from "react";
-import { CommentSection } from "src/components/CommentSection";
-import { useAuthenticatedUser } from "src/context/Authentication";
-import { deleteRequest } from 'src/utils/deleteRequest';
-import { patchRequest } from 'src/utils/patchRequest';
-import { LinkifiedText } from "../LinkifiedText";
-import { LikeButton } from "../likes/LikeButton";
-import { CopyLinkMenuItem } from "../menu/CopyLinkMenuItem";
-import { DeleteMenuItem } from "../menu/DeleteMenuItem";
-import { EditMenuItem } from "../menu/EditMenuItem";
-import { IconPopupMenu } from "../menu/IconPopupMenu";
-import { UserAvatar } from "../user/UserAvatar";
-import { UserFullName } from "../user/UserFullName";
-import { EditPostForm } from './EditPostForm';
-import { PostItemLikes } from "./PostItemLikes";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight"
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
+import { Divider, Paper, Stack, SxProps } from "@mui/material"
+import { QueryKey, useMutation, useQueryClient } from "@tanstack/react-query"
+import { CommentEntityType } from "common/enums"
+import { WallPost } from "common/interfaces"
+import dayjs from "dayjs"
+import { useState } from "react"
+import { CommentSection } from "src/components/CommentSection"
+import { useAuthenticatedUser } from "src/context/Authentication"
+import { deleteRequest } from 'src/utils/deleteRequest'
+import { patchRequest } from 'src/utils/patchRequest'
+import { LinkifiedText } from "../LinkifiedText"
+import { LikeButton } from "../likes/LikeButton"
+import { CopyLinkMenuItem } from "../menu/CopyLinkMenuItem"
+import { DeleteMenuItem } from "../menu/DeleteMenuItem"
+import { EditMenuItem } from "../menu/EditMenuItem"
+import { IconPopupMenu } from "../menu/IconPopupMenu"
+import { UserAvatar } from "../user/UserAvatar"
+import { UserFullName } from "../user/UserFullName"
+import { EditPostForm } from './EditPostForm'
+import { PostItemLikes } from "./PostItemLikes"
 
 
 export function PostItem({
@@ -38,7 +38,7 @@ export function PostItem({
             const data: Pick<WallPost, "content"> = {
                 content: newPost.content
             };
-            return await patchRequest(`/api/wall-posts/${post.id}`, data);
+            return await patchRequest(`/api/wall/posts/${post.id}`, data);
         },
         onError: () => {
             window.alert("Fikk ikke til å redigere veggposten.\nSi ifra til webansvarlig!");
@@ -50,7 +50,7 @@ export function PostItem({
 
     const deleteItem = useMutation({
         mutationFn: async () => {
-            return await deleteRequest(`/api/wall-posts/${post.id}`);
+            return await deleteRequest(`/api/wall/posts/${post.id}`);
         },
         onError: () => {
             window.alert("Fikk ikke til å slette veggposten.\nSi ifra til webansvarlig!");

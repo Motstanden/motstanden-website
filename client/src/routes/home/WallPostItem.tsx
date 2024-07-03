@@ -1,17 +1,17 @@
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { Breadcrumbs, Link } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { LikeEntityType } from "common/enums";
-import { WallPost } from "common/interfaces";
-import { strToNumber } from "common/utils";
-import { Navigate, Link as RouterLink, useParams } from "react-router-dom";
-import { LikesContextProvider } from 'src/components/likes/LikesContext';
-import { PostListSkeleton, PostSectionItem } from "src/components/PostingWall";
-import { fetchFn } from "src/utils/fetchAsync";
+import NavigateNextIcon from '@mui/icons-material/NavigateNext'
+import { Breadcrumbs, Link } from "@mui/material"
+import { useQuery } from "@tanstack/react-query"
+import { LikeEntityType } from "common/enums"
+import { WallPost } from "common/interfaces"
+import { strToNumber } from "common/utils"
+import { Navigate, Link as RouterLink, useParams } from "react-router-dom"
+import { LikesContextProvider } from 'src/components/likes/LikesContext'
+import { PostListSkeleton, PostSectionItem } from "src/components/PostingWall"
+import { fetchFn } from "src/utils/fetchAsync"
 
 export {
     ParamValidator as WallPostItemPage
-};
+}
 
 function ParamValidator() {
 
@@ -75,8 +75,8 @@ function PostFetcher({
 }: {
     postId: number
 }) {
-    const queryKey = ["wall-post", postId, "item" ]
-    const url = `/api/wall-posts/${postId}`
+    const queryKey = ["wall", "posts", postId, "item" ]
+    const url = `/api/wall/posts/${postId}`
     const { isPending, isError, data, error } = useQuery<WallPost>({
         queryKey: queryKey,
         queryFn: fetchFn<WallPost>(url),

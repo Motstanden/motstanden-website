@@ -95,7 +95,7 @@ async function testDeleteWallPost(browser: Browser, workerInfo: TestInfo, group:
     await disposeLogIn(page)
 }
 
-const allWallPostsApi = '/api/wall-posts'
+const allWallPostsApi = '/api/wall/posts'
 
 async function gotoWallPostPage(page: Page) {
     await Promise.all([
