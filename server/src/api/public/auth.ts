@@ -17,7 +17,7 @@ export const MagicLinkPayloadSchema = z.object({
     destination: z.string().trim().toLowerCase().email()
 })
 
-router.post("/auth/magic-link/create", 
+router.post("/auth/magic-link", 
     validateBody(MagicLinkPayloadSchema),
     async (req, res) => {
         
@@ -89,3 +89,4 @@ router.post("/auth/logout/all-devices", AuthenticateUser(), logOutAllUnits)
 export {
     router as authApi
 }
+
