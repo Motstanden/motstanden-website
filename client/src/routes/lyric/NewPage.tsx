@@ -1,9 +1,10 @@
+import { useQueryClient } from "@tanstack/react-query"
 import { NewSongLyric } from "common/interfaces"
 import { useNavigate } from "react-router-dom"
-import { useTitle } from "src/hooks/useTitle"
-import { usePendingLyricContext } from "./Context"
-import { UpsertLyricForm } from "./components/UpsertLyricForm"
 import { useAppBarHeader } from "src/context/AppBarHeader"
+import { useTitle } from "src/hooks/useTitle"
+import { buildLyricItemUrl, lyricContextQueryKey, usePendingLyricContext } from "./Context"
+import { UpsertLyricForm } from "./components/UpsertLyricForm"
 
 export function NewLyricPage() {
     useAppBarHeader("Studenttraller")
@@ -13,8 +14,15 @@ export function NewLyricPage() {
     const usedTitles = isPending ? [] : lyrics.map(item => item.title)
 
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const onAbortClick = () => navigate("/studenttraller/populaere");
+
+    const onPostSuccess = async (newValue: NewSongLyric) => {
+        await queryClient.invalidateQueries({queryKey: lyricContextQueryKey})   
+        const url = buildLyricItemUrl(newValue.title, newValue.isPopular)
+        navigate(url, { replace: true })
+    }
 
     return (
         <div>
@@ -27,6 +35,7 @@ export function NewLyricPage() {
                 url="/api/lyrics"
                 usedTitles={usedTitles}
                 disabled={isPending}
+                onPostSuccess={onPostSuccess}
             />
         </div>
     )

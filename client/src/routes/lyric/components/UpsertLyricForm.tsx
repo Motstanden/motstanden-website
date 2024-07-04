@@ -1,13 +1,10 @@
 import { Box, Checkbox, FormControlLabel, TextField } from "@mui/material"
-import { useQueryClient } from "@tanstack/react-query"
 import { NewSongLyric } from "common/interfaces"
 import { isNullOrWhitespace } from "common/utils"
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
 import { MarkDownEditor } from "src/components/MarkDownEditor"
 import { Form } from "src/components/form/Form"
 import { StorageKeyArray, useSessionStorage } from "src/hooks/useStorage"
-import { buildLyricItemUrl, lyricContextQueryKey } from "../Context"
 
 export function UpsertLyricForm({
     initialValue, 
@@ -17,6 +14,7 @@ export function UpsertLyricForm({
     onAbortClick, 
     usedTitles,
     disabled,
+    onPostSuccess
 }: {
     initialValue: NewSongLyric
     url: string
@@ -24,7 +22,8 @@ export function UpsertLyricForm({
     httpVerb: "POST" | "PATCH"
     onAbortClick: VoidFunction
     usedTitles: string[]
-    disabled?: boolean
+    disabled?: boolean,
+    onPostSuccess?: ( (newValue: NewSongLyric) => void )| ( (newValue: NewSongLyric) => Promise<void> )
 }) {
     const [newValue, setNewValue, clearNewValue] = useSessionStorage<NewSongLyric>({
         key: storageKey,
@@ -32,9 +31,6 @@ export function UpsertLyricForm({
         delay: 1000
     });
     const [hasPosted, setHasPosted] = useState(false);
-
-    const queryClient = useQueryClient();
-    const navigate = useNavigate();
 
     const validateData = () => {
         const isEmpty = isNullOrWhitespace(newValue.title) || isNullOrWhitespace(newValue.content);
@@ -56,11 +52,7 @@ export function UpsertLyricForm({
     const handlePostSuccess = async () => {
         setHasPosted(true);
         clearNewValue()
-
-        // TODO: If the user is editing an existing item, and the title has changed, this will briefly flash a 404 page
-        await queryClient.invalidateQueries({queryKey: lyricContextQueryKey})   
-        
-        navigate(buildLyricItemUrl(newValue.title, newValue.isPopular), { replace: true })
+        await onPostSuccess?.(newValue);
      };
 
      const handleAbortClick = () => {
