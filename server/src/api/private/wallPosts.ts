@@ -50,17 +50,10 @@ const NewWallPostSchema = z.object({
 router.post("/wall/posts",
     validateBody(NewWallPostSchema),
     (req, res) => {
-        
-        // Validated by middleware
         const user = getUser(req)
         const newPost = NewWallPostSchema.parse(req.body)
-
-        try {
-            db.wallPosts.insertPostAndMarkUnread(newPost, user.userId)
-        } catch (err) {
-            console.error(err)
-            res.status(500).send("Failed to insert post into database")
-        }
+        
+        db.wallPosts.insertPostAndMarkUnread(newPost, user.userId)
         res.end()
     }
 )
@@ -72,23 +65,17 @@ const UpdateWallPostSchema = z.object({
 })
 
 router.patch("/wall/posts/:id",
+    validateParams(Schemas.params.id),
     requiresAuthor( {
-        getId: req => strToNumber(req.params.id),
+        getId: req => Schemas.params.id.parse(req.params).id,
         getAuthorInfo: id => db.wallPosts.get(id)
     }),
     validateBody(UpdateWallPostSchema),
     (req, res) => {
-
-        // Validated by middleware
-        const id = strToNumber(req.params.id) as number 
+        const { id } = Schemas.params.id.parse(req.params)
         const data = UpdateWallPostSchema.parse(req.body)
-            
-        try {
-            db.wallPosts.updateContent(id, data.content)
-        } catch (err) {
-            console.error(err)
-            res.status(500).send("Failed to update post in database")
-        }
+
+        db.wallPosts.updateContent(id, data.content)
         res.end()
     }
 )
