@@ -1,5 +1,4 @@
 import { UserGroup } from "common/enums"
-import { strToNumber } from "common/utils"
 import express from "express"
 import { z } from "zod"
 import { db } from "../../db/index.js"
@@ -44,7 +43,7 @@ router.delete("/lyrics/:id",
     validateParams(Schemas.params.id),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
-        getId: (req) => strToNumber(req.params.id),
+        getId: (req) => Schemas.params.id.parse(req.params).id,
         getAuthorInfo: (id) => db.songLyrics.get(id)
     }),
     (req, res) => {

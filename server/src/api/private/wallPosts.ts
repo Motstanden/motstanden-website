@@ -1,6 +1,5 @@
 import { UserGroup } from "common/enums"
 import { Count } from "common/interfaces"
-import { strToNumber } from "common/utils"
 import express from "express"
 import { z } from "zod"
 import { db } from "../../db/index.js"
@@ -86,7 +85,7 @@ router.delete("/wall/posts/:id",
     validateParams(Schemas.params.id),
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
-        getId: (req) => strToNumber(req.params.id),
+        getId: (req) => Schemas.params.id.parse(req.params).id,
         getAuthorInfo: (id) => db.wallPosts.get(id)
     }),
     (req, res) => {
