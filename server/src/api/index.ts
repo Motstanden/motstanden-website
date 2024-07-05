@@ -18,6 +18,11 @@ router.use(AuthenticateUser())
 // Private routes
 router.use(privateRoutes)
 
+// Fallback to 404
+router.use((req, res) => {
+    res.status(404).json({ message: "Not Found" })
+})
+
 export {
     router as apiRoutes
 }
