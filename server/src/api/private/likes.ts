@@ -74,7 +74,7 @@ function upsertLikeHandler(entityType: LikeEntityType) {
         const like = NewLikeSchema.parse(req.body)
 
         if(!db.likes.emojis.exists(like.emojiId)) {
-            return res.status(400).send(`Emoji with id '${like.emojiId}' does not exist`)
+            return res.status(404).send(`Emoji with id '${like.emojiId}' does not exist`)
         }
 
         db.likes.upsert(entityType, entityId, like, user.userId)
