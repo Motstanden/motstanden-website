@@ -336,7 +336,7 @@ async function updateUser(request: APIRequestContext,  {type, data, id} : Update
     let res: APIResponse 
     switch(type) { 
         case "my-personal-info":
-            res = await request.patch("/api/users/me/personal-info", { data: data })
+            res = await request.put("/api/users/me/personal-info", { data: data })
             break
         case "membership":
             res = await request.put(`/api/users/${id}/membership`, { data: data })
