@@ -90,7 +90,7 @@ async function fillForm(page: Page, songLyric: NewSongLyric) {
 }
 
 async function clickSave(page: Page, songLyric: NewSongLyric) { 
-    const expectedUrl = buildUrl(songLyric)
+    const expectedUrl = new RegExp(buildUrlPattern(songLyric))
     await Promise.all([
         page.getByRole('button', { name: 'Lagre' }).click(),
         page.waitForURL(expectedUrl),
@@ -103,7 +103,7 @@ async function openMenu(page: Page) {
 }
 
 async function clickEdit(page: Page, songLyric: NewSongLyric) { 
-    const expectedUrl = `${buildUrl(songLyric)}/rediger`
+    const expectedUrl = new RegExp(`${buildUrlPattern(songLyric)}\/rediger`)
     await Promise.all([
         page.getByRole("menuitem", { name: "Rediger" }).click(),
         page.waitForURL(expectedUrl)
@@ -130,15 +130,25 @@ async function clickAllSongsTab(page: Page) {
     }
 }
 
-function buildUrl( lyric: NewSongLyric) {
-    const title = lyric.title
+function buildUrlTitle(lyric: NewSongLyric): string {
+    return lyric.title
         .replace(/ /g, "-")
         .replace(/æ/g, "ae")
         .replace(/ø/g, "oe")
         .replace(/å/g, "aa")
-        .toLowerCase()
+        .toLowerCase();
+}
+
+function buildUrl(lyric: NewSongLyric): string {
+    const title = buildUrlTitle(lyric)
     const categoryPath = lyric.isPopular ? "populaere" : "alle"
     return `/studenttraller/${categoryPath}/${title}`
+}
+
+function buildUrlPattern(lyric: NewSongLyric): string {
+    const title = buildUrlTitle(lyric)
+    const categoryPath = lyric.isPopular ? "populaere" : "alle"
+    return `\/studenttraller\/(${categoryPath}\/${title}|[1-9]\d*)`      // Matches both title and id
 }
 
 function createRandomData(data?: NewSongLyric): NewSongLyric {
