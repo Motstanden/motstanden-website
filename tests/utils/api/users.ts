@@ -14,6 +14,15 @@ async function getUser(request: APIRequestContext, id: number): Promise<User> {
     return user
 }
 
+async function getAllUsers(request: APIRequestContext) {
+    const res = await request.get("/api/users")
+    if(!res.ok()) {
+        throw new Error(`Failed to get all users.\n${res.status()}: ${res.statusText()}`)
+    }
+    const users = await res.json() as User[]
+    return users   
+}
+
 async function createUser(request: APIRequestContext, newUser: NewUser) {
     const res = await request.post("/api/users", { data: newUser })
     if(!res.ok()) {
@@ -28,6 +37,28 @@ async function createUser(request: APIRequestContext, newUser: NewUser) {
     }
 
     return id
+}
+
+async function deleteUser(workerInfo: TestInfo, id: number) {
+
+    // Log in as super admin
+    const superAdmin = getTestUser(workerInfo, UserGroup.SuperAdministrator)
+    const request = await Playwright.request.newContext( { storageState: superAdmin.storageStatePath } )
+
+    // Delete user
+    const res = await request.delete(`/api/users/${id}`)
+    if(!res.ok()) {
+        throw new Error(`Failed to delete user ${id}.\n${res.status()}: ${res.statusText()}`)
+    }
+
+    await request.dispose()
+}
+
+async function deleteCurrentUser(request: APIRequestContext) {
+    const res = await request.delete(`/api/users/me`)
+    if(!res.ok()) {
+        throw new Error(`Failed to delete current user.\n${res.status()}: ${res.statusText()}`)
+    }
 }
 
 async function createRandomUser(workerInfo: TestInfo, group: UserGroup = UserGroup.Contributor): Promise<User> {
@@ -67,6 +98,9 @@ async function updateRole(request: APIRequestContext, userId: number, newGroup: 
 
 export const usersApi = {
     get: getUser,
+    getAll: getAllUsers,
     create: createUser,
-    createRandom: createRandomUser
+    createRandom: createRandomUser,
+    delete: deleteUser,
+    deleteCurrentUser: deleteCurrentUser,
 }

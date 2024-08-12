@@ -40,32 +40,24 @@ const simplifiedUserArraySchema = z.array(simplifiedUserSchema)
 
 test.describe("GET api/users", () => {
     
-    const getValues = async (request: APIRequestContext) => await request.get("/api/users")
-
     test("Receives valid object", async ({request}, workerInfo) => {
         await apiLogIn(request, workerInfo)
-        
-        const res = await getValues(request)
-        expect(res.ok()).toBeTruthy()
-    
-        const users = await res.json()
+        const users = await api.users.getAll(request)
         expect( () => userArraySchema.parse(users)).not.toThrow()
     })
 
     test("Refuses unauthenticated requests", async ({request}) => { 
-        const res = await getValues(request)
+        const res = await request.get("/api/users")
         expect(res.ok()).toBeFalsy()
     })
 })
 
 test.describe("GET api/users/identifiers", () => {
 
-    const getValues = async (request: APIRequestContext) => await request.get("/api/users/identifiers")
-
     test("Returns valid object", async ({request}, workerInfo) => {
         await apiLogIn(request, workerInfo)
 
-        const res = await getValues(request)
+        const res = await request.get("/api/users/identifiers")
         expect(res.ok()).toBeTruthy()
 
         const users = await res.json()
@@ -73,7 +65,7 @@ test.describe("GET api/users/identifiers", () => {
     })
 
     test("Returns unauthenticated requests", async ({request}) => { 
-        const res = await getValues(request)
+        const res = await request.get("/api/users/identifiers")
         expect(res.ok()).toBeFalsy()
     })
 })
@@ -113,6 +105,83 @@ test("POST /api/users", async ({request}, workerInfo) => {
     }
 
     assertEqualUsers(actualUser, expectedUser)
+})
+
+test("DELETE /api/users/:id", async ({request}, workerInfo) => { 
+    await apiLogIn(request, workerInfo, UserGroup.SuperAdministrator)
+
+    const user = await api.users.createRandom(workerInfo)
+    await api.users.delete(workerInfo, user.id)
+
+    await assertUserIsDeleted(request, user)
+})
+
+test("DELETE /api/users/me", async ({request}, workerInfo) => { 
+
+    // Create a new user, and log in as that user
+    const user = await api.users.createRandom(workerInfo)
+    await unsafeApiLogIn(request, user.email)
+
+    // Delete current user
+    await api.users.deleteCurrentUser(request)
+
+    // Check that current user is logged out
+    const res = await request.get("/api/users/me")
+    expect(res.status(), `Expected 401, but got ${res.status()}: ${res.statusText()}`).toBe(401)
+
+    // Log in as another user and validate that the user is deleted
+    await apiLogIn(request, workerInfo, UserGroup.Contributor)
+    await assertUserIsDeleted(request, user)
+})
+
+async function assertUserIsDeleted(request: APIRequestContext, user: User) { 
+    const res = await request.get(`/api/users/${user.id}`)
+    expect(res.status(), `Expected 404, but got ${res.status}: ${res.statusText()}`).toBe(404)
+}
+
+test.describe("Deleted user is actually deleted", () => { 
+    
+    let user: User
+
+    test.beforeAll(async ({}, workerInfo) => { 
+        user = await api.users.createRandom(workerInfo)
+        await api.users.delete(workerInfo, user.id)
+
+    })
+
+    test.beforeEach(async ({request}, workerInfo) => { 
+        await apiLogIn(request, workerInfo, UserGroup.Contributor)
+    })
+
+    test("GET /api/users/:id", async ({request}) => { 
+        await assertUserIsDeleted(request, user)
+    })
+
+    test("GET api/users", async ({request}) => {
+        const allUsers = await api.users.getAll(request)
+        const deletedUser = allUsers.find(u => u.id === user.id)
+        expect(deletedUser).toBeUndefined()
+    })
+
+    test("GET api/users/identifiers", async () => {
+        throw new Error("Not implemented")
+    })
+
+    test("PATCH /users/:id", async () => { 
+        throw new Error("Not implemented")
+    })
+
+    test("PUT /users/:id/personal-info", async () => { 
+        throw new Error("Not implemented")
+    })
+
+    test("PUT /users/:id/membership", async () => { 
+        throw new Error("Not implemented")
+    })
+
+    test("PUT /users/:id/role", async () => { 
+        throw new Error("Not implemented")
+    })
 })
 
 test("PATCH /api/users/me/personal-info", async ({request}, workerInfo) => { 
