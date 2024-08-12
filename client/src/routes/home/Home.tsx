@@ -117,7 +117,7 @@ function RenderEventList(props: RenderItemProps<EventData[]>) {
                         fontSize: "small"
                     }}
                     >
-                        {dayjs.utc(event.startDateTime).tz().format("dddd D. MMM k[l]: HH:mm")}
+                        {dayjs.utc(event.startDateTime).tz().format("dddd D. MMM [kl]: HH:mm")}
                     </div>
                 </li>
             ))}
