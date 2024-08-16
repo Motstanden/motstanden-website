@@ -1,6 +1,6 @@
 import Playwright, { APIRequestContext, TestInfo } from '@playwright/test'
 import { UserGroup } from "common/enums"
-import { NewUser, UpdateUserRoleBody, User } from "common/interfaces"
+import { NewUser, UpdateUserRoleBody, User, UserIdentity } from "common/interfaces"
 import { randomUUID } from 'crypto'
 import { getUser as getTestUser } from '../../utils/auth.js'
 
@@ -20,6 +20,15 @@ async function getAllUsers(request: APIRequestContext) {
         throw new Error(`Failed to get all users.\n${res.status()}: ${res.statusText()}`)
     }
     const users = await res.json() as User[]
+    return users   
+}
+
+async function getAllUserIdentifiers(request: APIRequestContext) {
+    const res = await request.get("/api/users/identifiers")
+    if(!res.ok()) {
+        throw new Error(`Failed to get all user identifiers.\n${res.status()}: ${res.statusText()}`)
+    }
+    const users = await res.json() as UserIdentity[]
     return users   
 }
 
@@ -99,6 +108,7 @@ async function updateRole(request: APIRequestContext, userId: number, newGroup: 
 export const usersApi = {
     get: getUser,
     getAll: getAllUsers,
+    getAllIdentifiers: getAllUserIdentifiers,
     create: createUser,
     createRandom: createRandomUser,
     delete: deleteUser,

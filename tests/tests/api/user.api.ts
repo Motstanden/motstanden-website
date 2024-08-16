@@ -56,11 +56,7 @@ test.describe("GET api/users/identifiers", () => {
 
     test("Returns valid object", async ({request}, workerInfo) => {
         await apiLogIn(request, workerInfo)
-
-        const res = await request.get("/api/users/identifiers")
-        expect(res.ok()).toBeTruthy()
-
-        const users = await res.json()
+        const users = await api.users.getAllIdentifiers(request)
         expect(() => simplifiedUserArraySchema.parse(users)).not.toThrow()
     })
 
@@ -146,11 +142,10 @@ test.describe("Deleted user is actually deleted", () => {
     test.beforeAll(async ({}, workerInfo) => { 
         user = await api.users.createRandom(workerInfo)
         await api.users.delete(workerInfo, user.id)
-
     })
 
     test.beforeEach(async ({request}, workerInfo) => { 
-        await apiLogIn(request, workerInfo, UserGroup.Contributor)
+        await apiLogIn(request, workerInfo, UserGroup.SuperAdministrator)
     })
 
     test("GET /api/users/:id", async ({request}) => { 
@@ -163,12 +158,16 @@ test.describe("Deleted user is actually deleted", () => {
         expect(deletedUser).toBeUndefined()
     })
 
-    test("GET api/users/identifiers", async () => {
-        throw new Error("Not implemented")
+    test("GET api/users/identifiers", async ({request}) => {
+        const allUsers = await api.users.getAllIdentifiers(request)
+        const deleteUser = allUsers.find(u => u.id === user.id)
+        expect(deleteUser).toBeUndefined()
     })
 
     test("PATCH /users/:id", async () => { 
-        throw new Error("Not implemented")
+        const payload = {
+            
+        }
     })
 
     test("PUT /users/:id/personal-info", async () => { 
