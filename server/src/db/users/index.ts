@@ -1,3 +1,4 @@
+import { softDeleteUser } from "./delete.js"
 import { getAllUserIds, getAllUsers, getAllUsersAsIdentifiers, getUser, getUserByMail, userExists } from "./get.js"
 import { userGroupsDb } from "./groups/index.js"
 import { insertUser } from "./insert.js"
@@ -16,6 +17,7 @@ export const usersDb = {
 
     insert: insertUser,
     update: updateUser,
+    softDelete: softDeleteUser,
 
     groups: {
         ...userGroupsDb
