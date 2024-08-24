@@ -165,9 +165,7 @@ test.describe("Deleted user is actually deleted", () => {
     })
 
     test("PATCH /users/:id", async () => { 
-        const payload = {
-            
-        }
+        throw new Error("Not implemented")
     })
 
     test("PUT /users/:id/personal-info", async () => { 
