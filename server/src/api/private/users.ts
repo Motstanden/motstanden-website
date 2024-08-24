@@ -111,6 +111,20 @@ router.post("/users",
 
 // ---- DELETE users ----
 
+router.delete("/users/me", 
+    (req, res) => { 
+        console.log("Deleting me")
+        const user = getUser(req)
+        db.users.softDelete(user.userId)
+
+        // TODO: 
+        // - Log out user from all units
+        // - Send email to user about account deletion
+
+        res.end()
+    }
+)
+
 router.delete("/users/:id", 
     RequiresGroup(UserGroup.SuperAdministrator),
     validateParams(Schemas.params.id),
@@ -125,18 +139,6 @@ router.delete("/users/:id",
         res.end()
     }
 )
-
-router.delete("/users/me", 
-    (req, res) => { 
-        const user = getUser(req)
-        db.users.softDelete(user.userId)
-
-        // TODO: 
-        // - Log out user from all units
-        // - Send email to user about account deletion
-
-        res.end()
-    })
 
 // ---- PATCH users ----
 
