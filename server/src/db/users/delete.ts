@@ -58,7 +58,10 @@ export function softDeleteUser(userId: number) {
         anonymizeUser(userId, db)
         deactivateUser(userId, db)
         
-        // TODO: Delete more ?
+        // TODO:
+        //  - Delete unread wall posts
+        //  - Delete unread comments
+        //  - Delete more ?
     })
     transaction()
     db.close()
