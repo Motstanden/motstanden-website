@@ -60,34 +60,6 @@ CREATE TABLE user (
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
-CREATE VIEW vw_user 
-AS
-SELECT
-    user_id,
-    user_group_id,
-    user_group.name as user_group,
-    user_rank_id,
-    user_rank.name as user_rank,
-    email,
-    first_name,
-    middle_name,
-    last_name,
-    full_name,
-    cape_name,
-    profile_picture,
-    phone_number,
-    birth_date,
-    user_status.status as user_status,
-    start_date,
-    end_date,
-    created_at,
-    updated_at
-FROM
-    user
-LEFT JOIN user_group USING (user_group_id)
-LEFT JOIN user_rank USING (user_rank_id)
-LEFT JOIN user_status USING (user_status_id)
-/* vw_user(user_id,user_group_id,user_group,user_rank_id,user_rank,email,first_name,middle_name,last_name,full_name,cape_name,profile_picture,phone_number,birth_date,user_status,start_date,end_date,created_at,updated_at) */;
 CREATE TABLE login_token (
     token_id INTEGER PRIMARY KEY NOT NULL,
     user_id INTEGER NOT NULL,
@@ -662,3 +634,33 @@ BEGIN
         AND OLD.is_deleted = 1
         AND NEW.is_deleted = 0;
 END;
+CREATE VIEW vw_user 
+AS
+SELECT
+    user_id,
+    user_group_id,
+    user_group.name as user_group,
+    user_rank_id,
+    user_rank.name as user_rank,
+    email,
+    first_name,
+    middle_name,
+    last_name,
+    full_name,
+    cape_name,
+    profile_picture,
+    phone_number,
+    birth_date,
+    user_status.status as user_status,
+    start_date,
+    end_date,
+    created_at,
+    updated_at,
+    is_deleted,
+    deleted_at
+FROM
+    user
+LEFT JOIN user_group USING (user_group_id)
+LEFT JOIN user_rank USING (user_rank_id)
+LEFT JOIN user_status USING (user_status_id)
+/* vw_user(user_id,user_group_id,user_group,user_rank_id,user_rank,email,first_name,middle_name,last_name,full_name,cape_name,profile_picture,phone_number,birth_date,user_status,start_date,end_date,created_at,updated_at,is_deleted,deleted_at) */;
