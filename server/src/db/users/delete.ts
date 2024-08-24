@@ -1,14 +1,15 @@
 import Database, { Database as DatabaseType } from "better-sqlite3"
 import { UserGroup, UserStatus } from "common/enums"
 import { dbReadWriteConfig, motstandenDB } from "../../config/databaseConfig.js"
-import { userStatusDb } from "./status/index.js"
 import { userGroupsDb } from "./groups/index.js"
+import { userStatusDb } from "./status/index.js"
 
-function softDeleteUser(userId: number, db: DatabaseType) {
+function anonymizeUser(userId: number, db: DatabaseType) {
 
     const newMail = `${userId}@slettet-bruker.motstanden.no`    // Should pass UNIQUE NOT NULL email constraint
     const statusId = userStatusDb.getId(UserStatus.Inactive, db)
     const groupId = userGroupsDb.getId(UserGroup.Contributor, db)
+    const profilePic = 'files/private/profilbilder/boy.png'
 
     // Reset all fields except
     //  - user_rank_id
@@ -18,8 +19,7 @@ function softDeleteUser(userId: number, db: DatabaseType) {
     //  - created_at
     //  - updated_at
     const stmt = db.prepare(`
-        UPDATE user
-        SET
+        UPDATE user SET
             user_group_id = @groupId,
             email = @email,
             first_name = '',
@@ -28,27 +28,37 @@ function softDeleteUser(userId: number, db: DatabaseType) {
             phone_number = NULL,
             birth_date = NULL,
             user_status_id = @statusId,
-            profile_picture = DEFAULT,
-            is_deleted = 1
+            profile_picture = @profilePic
         WHERE
-            id = @userId
+            user_id = @userId
     `)
 
     stmt.run({
-        userId: userId,
+        groupId: groupId,
         email: newMail,
         statusId: statusId,
-        groupId: groupId
+        profilePic: profilePic,
+        userId: userId,
     })
 }
 
-function deleteUserData(userId: number) {
+function deactivateUser(userId: number, db: DatabaseType) { 
+    const stmt = db.prepare(`
+        UPDATE user SET
+            is_deleted = 1 
+        WHERE
+            user_id = @userId
+    `)
+    stmt.run({ userId: userId })
+}
+
+export function softDeleteUser(userId: number) {
     const db = new Database(motstandenDB, dbReadWriteConfig)
     const transaction = db.transaction(() => {
-        softDeleteUser(userId, db)
-
+        anonymizeUser(userId, db)
+        deactivateUser(userId, db)
+        
         // TODO: Delete more ?
-
     })
     transaction()
     db.close()
