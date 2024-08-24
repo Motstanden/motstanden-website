@@ -26,9 +26,11 @@ export function getUser(id: number): User | undefined {
             updated_at as updatedAt
         FROM 
             vw_user 
-        WHERE user_id = ?`)
+        WHERE 
+            user_id = ? AND is_deleted = 0`)
     const user = stmt.get(id) as User
     db.close()
+
 
     return user
 }
@@ -56,7 +58,9 @@ export function getAllUsers(): User[] {
             created_at as createdAt,
             updated_at as updatedAt
         FROM 
-            vw_user 
+            vw_user
+        WHERE
+            is_deleted = 0 
         ORDER BY 
             first_name COLLATE NOCASE ASC`)
     const user = stmt.all() as User[]
@@ -73,6 +77,8 @@ export function getAllUserIds(existingDbConnection?: DatabaseType): { id: number
             user_id as id
         FROM
             user
+        WHERE
+            is_deleted = 0
     `)
     const userIds = stmt.all() as { id: number} []
 
@@ -96,7 +102,10 @@ export function getAllUsersAsIdentifiers(): UserIdentity[] {
                 ELSE first_name
             END AS shortFullName
         FROM 
-            user;`)
+            user
+        WHERE
+            is_deleted = 0
+        `)
     const user = stmt.all() as UserIdentity[]
     db.close()
     return user
@@ -114,7 +123,9 @@ export function userExists(unsafeEmail: string | undefined): boolean {
             user_id
         FROM 
             user 
-        WHERE email = ?`)
+        WHERE 
+            email = ? AND is_deleted = 0
+        `)
     const user = stmt.get(email)
     db.close()
 
@@ -144,9 +155,9 @@ export function getUserByMail(email: string): User | undefined {
             updated_at as updatedAt
         FROM 
             vw_user 
-        WHERE email = ?`)
+        WHERE 
+            email = ? AND is_deleted = 0`)
     const user = <User | undefined>stmt.get(email)
     db.close()
     return user
 }
-
