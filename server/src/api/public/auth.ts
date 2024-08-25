@@ -82,9 +82,21 @@ router.get(
     }
 )
 
-router.post("/auth/logout", AuthenticateUser(), logOut)
+router.post("/auth/logout", 
+    AuthenticateUser(), 
+    (req, res) => {
+        logOut(req, res)
+        res.end()
+    }
+)
 
-router.post("/auth/logout/all-devices", AuthenticateUser(), logOutAllUnits)
+router.post("/auth/logout/all-devices", 
+    AuthenticateUser(),
+    (req, res) => {
+        logOutAllUnits(req, res)
+        res.end()
+    } 
+)
 
 export {
     router as authApi

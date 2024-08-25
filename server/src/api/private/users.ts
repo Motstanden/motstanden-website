@@ -31,7 +31,7 @@ router.get("/users/me", (req, res) => {
     } else {
         // This should never happen.
         // If the user is authenticated, the user should be in the database.
-        console.error(`User authenticated but not found in database.\nUser: ${user}\nLogging user out of all units.`)
+        console.error(`User authenticated but not found in database.\nUser: %j\nLogging user out of all units.`, user)
         logOutAllUnits(req, res)
         res.status(410).send("User authenticated but not found in database")        
     }

@@ -197,14 +197,12 @@ export function logOut(req: Request, res: Response) {
         db.users.refreshTokens.delete(refreshToken)
     }
     clearAllAuthCookies(res)
-    res.end()
 }
 
 export function logOutAllUnits(req: Request, res: Response) {
     const user = getUser(req)
     db.users.refreshTokens.deleteAllMatches(user.userId)
     clearAllAuthCookies(res)
-    res.end()
 }
 
 function clearAllAuthCookies(res: Response) {
