@@ -1,70 +1,11 @@
 import Playwright, { APIRequestContext, APIResponse, TestInfo, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
-import { DeletedUser, NewUser, UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUserPersonalInfoBody, UpdateUserRoleBody, User } from 'common/interfaces'
+import { NewUser, UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUserPersonalInfoBody, UpdateUserRoleBody, User } from 'common/interfaces'
 import { randomInt, randomUUID } from 'crypto'
-import { z } from "zod"
-import dayjs from "../../lib/dayjs.js"
-import { api } from '../../utils/api/index.js'
-import { apiLogIn, getUser as getTestUser, unsafeApiLogIn } from '../../utils/auth.js'
-import { dateTimeSchema } from '../../utils/zodtypes.js'
-
-const userSchema = z.object({ 
-    firstName: z.string(),
-    middleName: z.string(),
-    lastName: z.string(),
-    email: z.string().email(),
-    profilePicture: z.string(),
-    id: z.number(),
-    groupId: z.number(),
-    groupName: z.nativeEnum(UserGroup),
-    rank: z.nativeEnum(UserRank),
-    capeName: z.string(),
-    status: z.nativeEnum(UserStatus),
-    phoneNumber: z.number().min(10000000).max(99999999).nullable(),
-    birthDate: z.string().date().nullable(),
-    startDate: z.string().date(),
-    endDate: z.string().date().nullable(),
-    createdAt: dateTimeSchema,
-    updatedAt: dateTimeSchema,
-})
-
-const userArraySchema = z.array(userSchema)
-
-const simplifiedUserSchema = z.object({
-    id: z.number(),
-    fullName: z.string(),
-    initials: z.string().min(2).max(3),
-})
-
-const simplifiedUserArraySchema = z.array(simplifiedUserSchema)
-
-test.describe("GET api/users", () => {
-    
-    test("Receives valid object", async ({request}, workerInfo) => {
-        await apiLogIn(request, workerInfo)
-        const users = await api.users.getAll(request)
-        expect( () => userArraySchema.parse(users)).not.toThrow()
-    })
-
-    test("Refuses unauthenticated requests", async ({request}) => { 
-        const res = await request.get("/api/users")
-        expect(res.ok()).toBeFalsy()
-    })
-})
-
-test.describe("GET api/users/identifiers", () => {
-
-    test("Returns valid object", async ({request}, workerInfo) => {
-        await apiLogIn(request, workerInfo)
-        const users = await api.users.getAllIdentifiers(request)
-        expect(() => simplifiedUserArraySchema.parse(users)).not.toThrow()
-    })
-
-    test("Returns unauthenticated requests", async ({request}) => { 
-        const res = await request.get("/api/users/identifiers")
-        expect(res.ok()).toBeFalsy()
-    })
-})
+import dayjs from "../../../lib/dayjs.js"
+import { api } from '../../../utils/api/index.js'
+import { apiLogIn, getUser as getTestUser, unsafeApiLogIn } from '../../../utils/auth.js'
+import { assertEqualUsers } from './utils.js'
 
 
 test("POST /api/users", async ({request}, workerInfo) => { 
@@ -103,81 +44,6 @@ test("POST /api/users", async ({request}, workerInfo) => {
     assertEqualUsers(actualUser, expectedUser)
 
     await api.users.delete(workerInfo, id)
-})
-
-test.describe("DELETE /api/users/:id", () => { 
-    
-    let user: User
-
-    test.beforeAll(async ({}, workerInfo) => { 
-        user = await api.users.createRandom(workerInfo)
-        await api.users.delete(workerInfo, user.id)
-    })
-
-    test.beforeEach(async ({request}, workerInfo) => { 
-        await apiLogIn(request, workerInfo, UserGroup.SuperAdministrator)
-    })
-
-    test("GET /api/users/:id", async ({request}) => { 
-        const res = await request.get(`/api/users/${user.id}`)
-        expect(res.status(), `Expected 404, but got ${res.status()}: ${res.statusText()}`).toBe(404)
-    })
-
-    test("GET api/users", async ({request}) => {
-        const allUsers = await api.users.getAll(request)
-        const deletedUser = allUsers.find(u => u.id === user.id)
-        expect(deletedUser).toBeUndefined()
-    })
-
-    test("GET api/users/identifiers", async ({request}) => {
-        const allUsers = await api.users.getAllIdentifiers(request)
-        const deleteUser = allUsers.find(u => u.id === user.id)
-        expect(deleteUser).toBeUndefined()
-    })
-
-    test("GET api/users/deleted", async ({request}) => {
-        const res = await request.get("/api/users/deleted")
-        expect(res.status(), `Expected 200, but got ${res.status()}: ${res.statusText()}`).toBe(200)
-
-        const allDeletedUsers: DeletedUser[] = await res.json()
-        const deletedUser = allDeletedUsers.find(u => u.id === user.id)
-        expect(deletedUser).toBeDefined()
-    })
-
-    test("PATCH /users/:id", async () => { 
-        throw new Error("Not implemented")
-    })
-
-    test("PUT /users/:id/personal-info", async () => { 
-        throw new Error("Not implemented")
-    })
-
-    test("PUT /users/:id/membership", async () => { 
-        throw new Error("Not implemented")
-    })
-
-    test("PUT /users/:id/role", async () => { 
-        throw new Error("Not implemented")
-    })
-})
-
-test("DELETE /api/users/me", async ({request}, workerInfo) => { 
-
-    // Create a new user, and log in as that user
-    const user = await api.users.createRandom(workerInfo)
-    await unsafeApiLogIn(request, user.email)
-
-    // Delete current user
-    await api.users.deleteCurrentUser(request)
-
-    // Check that current user is logged out
-    const res = await request.get("/api/users/me")
-    expect(res.status(), `Expected 401, but got ${res.status()}: ${res.statusText()}`).toBe(401)
-
-    // Log in as another user and validate that the user is deleted
-    await apiLogIn(request, workerInfo, UserGroup.Contributor)
-    const res2 = await request.get(`/api/users/${user.id}`)
-    expect(res2.status(), `Expected 404, but got ${res2.status()}: ${res2.statusText()}`).toBe(404)
 })
 
 test("PATCH /api/users/me/personal-info", async ({request}, workerInfo) => { 
@@ -373,25 +239,6 @@ test.describe("PUT /api/users/:id/role", () => {
         return res
     }
 })
-
-function assertEqualUsers(actual: User, expected: User) { 
-    expect(actual.id).toBe(expected.id)
-    expect(actual.firstName).toBe(expected.firstName)
-    expect(actual.middleName).toBe(expected.middleName)
-    expect(actual.lastName).toBe(expected.lastName)
-    expect(actual.email).toBe(expected.email)
-    expect(actual.profilePicture).toBe(expected.profilePicture)
-    expect(actual.groupName).toBe(expected.groupName)
-    expect(actual.rank).toBe(expected.rank)
-    expect(actual.capeName).toBe(expected.capeName)
-    expect(actual.status).toBe(expected.status)
-    expect(actual.phoneNumber).toBe(expected.phoneNumber)
-    expect(actual.birthDate).toBe(expected.birthDate)
-    expect(actual.startDate).toBe(expected.startDate)
-    expect(actual.endDate).toBe(expected.endDate)
-
-    // No need to compare createdAt and updatedAt
-}
 
 type UpdateType = {
     type: "my-personal-info",
