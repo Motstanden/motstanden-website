@@ -101,6 +101,8 @@ test("POST /api/users", async ({request}, workerInfo) => {
     }
 
     assertEqualUsers(actualUser, expectedUser)
+
+    await api.users.delete(workerInfo, id)
 })
 
 test.describe("DELETE /api/users/:id", () => { 
@@ -201,6 +203,8 @@ test("PATCH /api/users/me/personal-info", async ({request}, workerInfo) => {
     const expectedUser: User = { ...user, ...newUserData,}
 
     assertEqualUsers(actualUser, expectedUser)
+
+    await api.users.delete(workerInfo, actualUser.id)
 })
 
 test("PATCH /api/users/:id", async ({request}, workerInfo) => { 
@@ -228,6 +232,9 @@ test("PATCH /api/users/:id", async ({request}, workerInfo) => {
     const expectedUser: User = { ...user, ...newUserData,}
 
     assertEqualUsers(actualUser, expectedUser)
+
+    // Clean up: Delete the user that was created
+    await api.users.delete(workerInfo, actualUser.id)
 })
 
 
@@ -304,10 +311,12 @@ test.describe("PUT /api/users/:id/role", () => {
     
             const res = await updateRole(request, user, targetNewRole)
             expect(res.ok(), `Failed to update role\n${res.status()}: ${res.statusText()}`).toBeTruthy()
-            
     
             const updatedUser = await api.users.get(request, user.id)
             expect(updatedUser.groupName).toBe(targetNewRole)
+
+            // Clean up: Delete the user that was created
+            await api.users.delete(workerInfo, updatedUser.id)
         })
     }
     
@@ -350,6 +359,9 @@ test.describe("PUT /api/users/:id/role", () => {
             // Assert role has not changed
             const user3 = await api.users.get(request, user.id)
             expect(user3.groupName).toBe(targetInitialRole)
+
+            // Clean up: Delete the user that was created
+            await api.users.delete(workerInfo, user.id)
         })
     }
     

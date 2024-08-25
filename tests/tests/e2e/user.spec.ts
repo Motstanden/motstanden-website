@@ -41,19 +41,24 @@ test("Create new user @smoke", async ({browser}, workerInfo) => {
 
 test.describe("Update personal info", () => {
 
-    test("As self", async ({page}, workerInfo) => {
+    let user: User
 
-        // Create new user and log in as that user
-        const user = await api.users.createRandom(workerInfo)
+    test.beforeEach( async ({}, workerInfo) => {
+        user = await api.users.createRandom(workerInfo)
+    })
+
+    test.afterEach( async ({}, workerInfo) => {
+        await api.users.delete(workerInfo, user.id)
+    })
+
+    test("As self", async ({page}, workerInfo) => {
+        // Log in as the new user
         await unsafeApiLogIn(page.request, user.email)
         
         await runTest(page, user)
     })
 
     test("As super admin", async ({browser}, workerInfo) => {
-
-        // Create new user and log in as another super admin user
-        const user = await api.users.createRandom(workerInfo)
         const { page } = await logIn(browser, workerInfo, UserGroup.SuperAdministrator)
 
         await runTest(page, user)
@@ -115,19 +120,25 @@ async function validatePersonalInfo(page: Page, user: PersonalInfo) {
 
 test.describe("Update membership", () => { 
 
-    test("As self", async ({page}, workerInfo) => { 
+    let user: User
 
-        // Create new user and log in as that user
-        const user = await api.users.createRandom(workerInfo)
+    test.beforeEach( async ({}, workerInfo) => {
+        user = await api.users.createRandom(workerInfo)
+    })
+
+    test.afterEach( async ({}, workerInfo) => {
+        await api.users.delete(workerInfo, user.id)
+    })
+
+    test("As self", async ({page}, workerInfo) => { 
+        // Log in as the new user
         await unsafeApiLogIn(page.request, user.email)
 
         await runTest(page, user, { updateRank: false })      // Can update all except rank
     })
 
     test("As Admin", async ({browser}, workerInfo) => { 
-
         // Create new user and log in as another admin user
-        const user = await api.users.createRandom(workerInfo)
         const { page } = await logIn(browser, workerInfo, UserGroup.Administrator)
 
         await runTest(page, user, { updateRank: true }) // Can update all
@@ -236,6 +247,7 @@ test.describe("Update role", () => {
             await expect(page.getByText(roleText)).toBeVisible()    // NOTE: This will fail if the role is "Contributor"
 
             await disposeLogIn(page)
+            await api.users.delete(workerInfo, user.id)
         })
     }
 })
