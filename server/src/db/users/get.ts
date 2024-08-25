@@ -69,8 +69,28 @@ export function getAllUsers(): User[] {
     return user
 }
 
-export function getAllDeletedUsers(): DeletedUser {
-    throw new Error("Not implemented")    
+export function getAllDeletedUsers(): DeletedUser[] {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(
+        `SELECT 
+            user_id as id,
+            user_rank as rank,
+            cape_name as capeName,
+            start_date as startDate,
+            end_date as endDate,
+            created_at as createdAt,
+            updated_at as updatedAt,
+            deleted_at as deletedAt
+        FROM 
+            vw_user
+        WHERE
+            is_deleted = 1 
+        ORDER BY 
+            deleted_at DESC`)
+    const users = stmt.all() as DeletedUser[]
+    db.close()
+
+    return users    
 }
 
 export function getAllUserIds(existingDbConnection?: DatabaseType): { id: number }[] { 
