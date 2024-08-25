@@ -1,5 +1,13 @@
 import { softDeleteUser } from "./delete.js"
-import { getAllUserIds, getAllUsers, getAllUsersAsIdentifiers, getUser, getUserByMail, userExists } from "./get.js"
+import {
+    getAllDeletedUsers,
+    getAllUserIds,
+    getAllUsers,
+    getAllUsersAsIdentifiers,
+    getUser,
+    getUserByMail,
+    userExists
+} from "./get.js"
 import { userGroupsDb } from "./groups/index.js"
 import { insertUser } from "./insert.js"
 import { userRanksDb } from "./ranks/index.js"
@@ -12,6 +20,7 @@ export const usersDb = {
     getByMail: getUserByMail,
     getAll: getAllUsers,
     getAllIds: getAllUserIds,
+    getAllDeleted: getAllDeletedUsers,
     getAllAsIdentifiers: getAllUsersAsIdentifiers,
     exists: userExists,
 

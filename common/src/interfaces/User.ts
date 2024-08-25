@@ -36,6 +36,18 @@ export interface User extends NewUser {
     updatedAt: string;              // Format: 'YYYY-MM-DD HH-MM-SS'
 }
 
+export interface DeletedUser extends Pick<User, 
+    "id" |
+    "rank" |
+    "capeName" |
+    "startDate" |
+    "endDate" |
+    "createdAt" |
+    "updatedAt" 
+> {
+    deletedAt: string               // Format: 'YYYY-MM-DD HH-MM-SS'
+}
+
 export interface UpdateUserPersonalInfoBody extends Pick<User,
     "firstName" |
     "middleName" |

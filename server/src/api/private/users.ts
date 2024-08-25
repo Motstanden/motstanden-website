@@ -18,6 +18,14 @@ router.get("/users", (req: Request, res: Response) => {
     res.json(users)
 })
 
+router.get("/users/deleted",
+    RequiresGroup(UserGroup.SuperAdministrator),
+    (req, res) => {
+        const users = db.users.getAllDeleted()
+        res.json(users)
+    }
+)
+
 router.get("/users/identifiers", (req: Request, res: Response) => {
     const users = db.users.getAllAsIdentifiers()
     res.json(users)
