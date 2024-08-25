@@ -3,6 +3,7 @@ import { UserGroup, UserStatus } from "common/enums"
 import { dbReadWriteConfig, motstandenDB } from "../../config/databaseConfig.js"
 import { userGroupsDb } from "./groups/index.js"
 import { userStatusDb } from "./status/index.js"
+import { db as DB } from "../index.js"
 
 function anonymizeUser(userId: number, db: DatabaseType) {
 
@@ -57,11 +58,11 @@ export function softDeleteUser(userId: number) {
     const transaction = db.transaction(() => {
         anonymizeUser(userId, db)
         deactivateUser(userId, db)
+
+        DB.comments.resetUnreadCount(userId, db)
+        DB.wallPosts.resetUnreadCount(userId, db)
         
-        // TODO:
-        //  - Delete unread wall posts
-        //  - Delete unread comments
-        //  - Delete more ?
+        // TODO: Delete more ?
     })
     transaction()
     db.close()

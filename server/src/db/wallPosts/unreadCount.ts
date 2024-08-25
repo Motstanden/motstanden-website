@@ -1,4 +1,4 @@
-import Database from "better-sqlite3"
+import Database, { Database as DatabaseType } from "better-sqlite3"
 import { Count } from "common/interfaces"
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../../config/databaseConfig.js"
 
@@ -17,13 +17,17 @@ export function getUnreadCount(userId: number): number | undefined {
     return data?.count
 }
 
-export function resetUnreadCount(userId: number) {
-    const db = new Database(motstandenDB, dbReadWriteConfig)
+export function resetUnreadCount(userId: number, existingDbConnection?: DatabaseType) {
+    const db = existingDbConnection ?? new Database(motstandenDB, dbReadWriteConfig)
+
     const stmt = db.prepare(`
         DELETE FROM 
             unread_wall_post 
         WHERE user_id = ?
     `)
     stmt.run(userId)
-    db.close()
+
+    if (!existingDbConnection) {
+        db.close()
+    }
 }

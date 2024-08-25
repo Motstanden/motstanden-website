@@ -1,4 +1,4 @@
-import Database from "better-sqlite3"
+import Database, { Database as DatabaseType } from "better-sqlite3"
 import { CommentEntityType } from "common/enums"
 import { Count } from "common/interfaces"
 import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../../config/databaseConfig.js"
@@ -19,9 +19,9 @@ export function getUnreadCount(userId: number): number | undefined {
     return data?.count
 }
 
-export function resetUnreadCount(userId: number) {
+export function resetUnreadCount(userId: number, existingDbConnection?: DatabaseType) {
 
-    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const db = existingDbConnection ?? new Database(motstandenDB, dbReadWriteConfig)
 
     const deleteFn = (entityType: CommentEntityType) => {
         const stmt = db.prepare(`
@@ -40,5 +40,7 @@ export function resetUnreadCount(userId: number) {
     })
     transaction()
 
-    db.close()
+    if (!existingDbConnection) {
+        db.close()
+    }
 }
