@@ -1,7 +1,6 @@
 import Playwright, { APIRequestContext, TestInfo, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
-import { NewUser, UpdateUserRoleBody, User } from 'common/interfaces'
-import { randomUUID } from 'crypto'
+import { UpdateUserRoleBody, User } from 'common/interfaces'
 import dayjs from "../../../lib/dayjs.js"
 import { api } from '../../../utils/api/index.js'
 import { apiLogIn, getUser as getTestUser, unsafeApiLogIn } from '../../../utils/auth.js'
@@ -11,14 +10,7 @@ import { assertEqualUsers, getRandomPayloadFor } from './utils.js'
 test("POST /api/users", async ({request}, workerInfo) => { 
     await apiLogIn(request, workerInfo, UserGroup.SuperAdministrator)
 
-    const uuid: string = randomUUID().toLowerCase()
-    const newUser: NewUser = {
-        firstName: "__Test_1",
-        middleName: "User_1",
-        lastName: uuid,
-        email: `${uuid}@motstanden.no`,
-        profilePicture: "files/private/profilbilder/girl.png"
-    }
+    const newUser = getRandomPayloadFor("POST users")
 
     const id = await api.users.create(request, newUser)
     const actualUser = await api.users.get(request, id)

@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test"
 import { UserGroup, UserRank, UserStatus } from "common/enums"
-import { UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUserPersonalInfoBody, User } from "common/interfaces"
+import { NewUser, UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUserPersonalInfoBody, User } from "common/interfaces"
 import { randomInt, randomUUID } from "crypto"
 import dayjs from "../../../lib/dayjs.js"
 
@@ -24,16 +24,29 @@ export function assertEqualUsers(actual: User, expected: User) {
 }
 
 
-type UrlType = "users/*/personal-info" | "users/:id/membership" | "users/:id"
+type UrlType = "POST users" | "users/deleted/:id" | "users/*/personal-info" | "users/:id/membership" | "users/:id"
 
+export function getRandomPayloadFor(url: "POST users"): NewUser;
+export function getRandomPayloadFor(url: "users/deleted/:id"): NewUser;
 export function getRandomPayloadFor(url: "users/*/personal-info"): UpdateUserPersonalInfoBody;
 export function getRandomPayloadFor(url: "users/:id/membership"): UpdateUserMembershipAsAdminBody;
 export function getRandomPayloadFor(url: "users/:id"): UpdateUserAsSuperAdminBody;
-export function getRandomPayloadFor(url: UrlType): UpdateUserAsSuperAdminBody | UpdateUserMembershipAsAdminBody | UpdateUserPersonalInfoBody {
+export function getRandomPayloadFor(url: UrlType): NewUser | UpdateUserAsSuperAdminBody | UpdateUserMembershipAsAdminBody | UpdateUserPersonalInfoBody {
 
     const uuid: string = randomUUID().toLowerCase()
 
     switch (url) {
+
+        case "POST users":
+        case "users/deleted/:id":
+            return {
+                firstName: `___firstName ${uuid}`,
+                middleName: `___middleName ${uuid}`,
+                lastName: `___lastName ${uuid}`,
+                email: `${uuid}@motstanden.no`,
+                profilePicture: "files/private/profilbilder/girl.png"
+            } satisfies NewUser
+        
         case "users/*/personal-info": {
             return {
                 firstName: `___firstName ${uuid}`,

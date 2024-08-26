@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test'
-import { UserGroup } from 'common/enums'
+import { UserGroup, UserStatus } from 'common/enums'
 import { DeletedUser, UpdateUserRoleBody, User } from 'common/interfaces'
 import { api } from '../../../utils/api/index.js'
 import { apiLogIn, unsafeApiLogIn } from '../../../utils/auth.js'
-import { getRandomPayloadFor } from './utils.js'
+import { assertEqualUsers, getRandomPayloadFor } from './utils.js'
 
 test.describe("DELETE /api/users/:id", () => {
 
@@ -86,4 +86,43 @@ test("DELETE /api/users/me", async ({ request }, workerInfo) => {
     await apiLogIn(request, workerInfo, UserGroup.Contributor)
     const res2 = await request.get(`/api/users/${user.id}`)
     expect(res2.status(), `Expected 404, but got ${res2.status()}: ${res2.statusText()}`).toBe(404)
+})
+
+test("PATCH /api/users/deleted/:id", async ({ request }, workerInfo) => { 
+    await apiLogIn(request, workerInfo, UserGroup.SuperAdministrator)
+
+    const initialUser = await api.users.createRandom(workerInfo)    // TODO: Set more props on the initial user
+    await api.users.delete(workerInfo, initialUser.id)
+
+    const restoreUserData = getRandomPayloadFor("users/deleted/:id")
+    const res = await request.patch(`/api/users/deleted/${initialUser.id}`, { data: restoreUserData })
+    expect(res.status(), `Expected 200, but got ${res.status()}: ${res.statusText()}`).toBe(200)
+
+    const actualUser = await api.users.get(request, initialUser.id)
+    const expectedUser: User = { 
+        // New values from the payload
+        ...restoreUserData,
+
+        // Values we don't expect to be change
+        id: initialUser.id,
+        rank: initialUser.rank,
+        capeName: initialUser.capeName,
+        startDate: initialUser.startDate,
+        endDate: initialUser.endDate,
+
+        // Values that should have been erased
+        groupId: 1,
+        groupName: UserGroup.Contributor,
+        status: UserStatus.Active,
+        phoneNumber: null,
+        birthDate: null,
+        
+        // Don't compare createdAt and updatedAt
+        createdAt: actualUser.createdAt,
+        updatedAt: actualUser.updatedAt,
+        
+    }
+    assertEqualUsers(actualUser, expectedUser)
+
+    await api.users.delete(workerInfo, initialUser.id)
 })
