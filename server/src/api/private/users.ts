@@ -25,6 +25,19 @@ function validateUserExists() {
     }
 }
 
+function validateCurrentUserNotDeleted() {
+    return (req: Request, res: Response, next: NextFunction) => {
+        const id = getUser(req).userId
+        const user = db.users.get(id)
+        if(user !== undefined) {
+            next()
+        } else {
+            clearAllAuthCookies(res)
+            return res.status(410).send("User is deleted")
+        }
+    }
+}
+
 // ---- GET users ----
 
 router.get("/users", (req: Request, res: Response) => {
@@ -51,8 +64,12 @@ router.get("/users/me", (req, res) => {
     if(userData !== undefined) {
         res.json(userData)
     } else {
-        // This should never happen.
-        // If the user is authenticated, the user should be in the database.
+        // This should generally not happen...
+        // However, a "phantom user" can reach this code if:
+        //   1. The user just refreshed their access token cookie
+        //   2. A different device is used to delete the user
+        //   3. The user can now use the access token from step 1 to appear as an active and valid user
+        // Wow, what a journey!
         console.error(`User authenticated but not found in database.\nUser: %j\nLogging user out of all units.`, user)
         logOutAllUnits(req, res)
         res.status(410).send("User authenticated but not found in database")        
@@ -134,6 +151,7 @@ router.post("/users",
 // ---- DELETE users ----
 
 router.delete("/users/me", 
+    validateCurrentUserNotDeleted(),
     (req, res) => { 
         const user = getUser(req)
         db.users.softDelete(user.userId)
@@ -213,6 +231,7 @@ const UpdateUserPersonalSchema = UserSchema.pick({
 })
 
 router.put("/users/me/personal-info",
+    validateCurrentUserNotDeleted(),
     validateBody(UpdateUserPersonalSchema),
     (req, res) => {
         const newUserData: UpdateUserPersonalInfoBody = UpdateUserPersonalSchema.parse(req.body)
@@ -274,6 +293,7 @@ const UpdateUserMembershipAsAdminSchema = UpdateUserMembershipAsMeBody.merge(
 }))
 
 router.patch("/users/me/membership",
+    validateCurrentUserNotDeleted(),
     validateBody(UpdateUserMembershipAsMeBody),
     (req, res) => {
         const newUserData: UpdateUserMembershipAsMeBody = UpdateUserMembershipAsMeBody.parse(req.body)
