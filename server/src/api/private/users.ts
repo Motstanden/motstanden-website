@@ -1,6 +1,6 @@
 import { UserGroup, UserRank, UserStatus } from "common/enums"
 import { UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUserMembershipAsMeBody, UpdateUserPersonalInfoBody, UpdateUserRoleBody } from "common/interfaces"
-import express, { Request, Response } from "express"
+import express, { NextFunction, Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../../db/index.js"
 import { logOutAllUnits, updateAccessToken } from "../../middleware/jwtAuthenticate.js"
@@ -10,6 +10,20 @@ import { getUser } from "../../utils/getUser.js"
 import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router()
+
+// ---- Middleware ----
+
+function validateUserExists() {
+    return (req: Request, res: Response, next: NextFunction) => {
+        const { id } = Schemas.params.id.parse(req.params)
+        const user = db.users.get(id)
+        if( user !== undefined) {
+            next()
+        } else {
+            return res.status(404).send("User not found")
+        }
+    }
+}
 
 // ---- GET users ----
 
@@ -135,6 +149,7 @@ router.delete("/users/me",
 router.delete("/users/:id", 
     RequiresGroup(UserGroup.SuperAdministrator),
     validateParams(Schemas.params.id),
+    validateUserExists(),
     (req, res) => {
         const { id } = Schemas.params.id.parse(req.params)
         db.users.softDelete(id)
@@ -154,6 +169,7 @@ const UpdateUserSchema = UserSchema.omit({ profilePicture: true })
 router.patch("/users/:id", 
     RequiresGroup(UserGroup.SuperAdministrator),
     validateParams(Schemas.params.id),
+    validateUserExists(),
     validateBody(UpdateUserSchema),
     (req, res) => { 
         const newUserData: UpdateUserAsSuperAdminBody = UpdateUserSchema.parse(req.body)
@@ -217,6 +233,7 @@ router.put("/users/me/personal-info",
 router.put("/users/:id/personal-info",
     RequiresGroup(UserGroup.SuperAdministrator),
     validateParams(Schemas.params.id),
+    validateUserExists(),
     validateBody(UpdateUserPersonalSchema),
     (req, res) => {
         const newUserData: UpdateUserPersonalInfoBody = UpdateUserPersonalSchema.parse(req.body)
@@ -275,6 +292,7 @@ router.patch("/users/me/membership",
 router.put("/users/:id/membership",
     RequiresGroup(UserGroup.Administrator),
     validateParams(Schemas.params.id),
+    validateUserExists(),
     validateBody(UpdateUserMembershipAsAdminSchema),
     (req, res) => { 
         const newUserData: UpdateUserMembershipAsAdminBody = UpdateUserMembershipAsAdminSchema.parse(req.body)
@@ -302,6 +320,7 @@ const UpdateUserRoleSchema = UserSchema.pick({ groupName: true })
 router.put("/users/:id/role", 
     RequiresGroup(UserGroup.Administrator),
     validateParams(Schemas.params.id),
+    validateUserExists(),
     validateBody(UpdateUserRoleSchema),
     (req, res) => { 
         const { groupName: newRole }: UpdateUserRoleBody = UpdateUserRoleSchema.parse(req.body)
