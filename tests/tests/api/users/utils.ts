@@ -2,7 +2,7 @@ import { expect } from "@playwright/test"
 import { UserGroup, UserRank, UserStatus } from "common/enums"
 import { UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUserPersonalInfoBody, User } from "common/interfaces"
 import { randomInt, randomUUID } from "crypto"
-import dayjs from "dayjs"
+import dayjs from "../../../lib/dayjs.js"
 
 export function assertEqualUsers(actual: User, expected: User) { 
     expect(actual.id).toBe(expected.id)
