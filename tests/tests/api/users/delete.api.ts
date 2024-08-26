@@ -89,40 +89,54 @@ test("DELETE /api/users/me", async ({ request }, workerInfo) => {
 })
 
 test("PATCH /api/users/deleted/:id", async ({ request }, workerInfo) => { 
-    await apiLogIn(request, workerInfo, UserGroup.SuperAdministrator)
+    
+    let initialUser: User
 
-    const initialUser = await api.users.createRandom(workerInfo)    // TODO: Set more props on the initial user
-    await api.users.delete(workerInfo, initialUser.id)
+    await test.step("[SETUP] Create and delete an initial user", async () => {
+        await apiLogIn(request, workerInfo, UserGroup.SuperAdministrator)
 
-    const restoreUserData = getRandomPayloadFor("users/deleted/:id")
-    const res = await request.patch(`/api/users/deleted/${initialUser.id}`, { data: restoreUserData })
-    expect(res.status(), `Expected 200, but got ${res.status()}: ${res.statusText()}`).toBe(200)
+        const user = await api.users.createRandom(workerInfo)
+        const newUserData = getRandomPayloadFor("users/:id") 
+        await request.patch(`/api/users/${user.id}`, { data: newUserData })
 
-    const actualUser = await api.users.get(request, initialUser.id)
-    const expectedUser: User = { 
-        // New values from the payload
-        ...restoreUserData,
+        initialUser = await api.users.get(request, user.id)
 
-        // Values we don't expect to be change
-        id: initialUser.id,
-        rank: initialUser.rank,
-        capeName: initialUser.capeName,
-        startDate: initialUser.startDate,
-        endDate: initialUser.endDate,
+        await api.users.delete(workerInfo, user.id)
+    })
 
-        // Values that should have been erased
-        groupId: 1,
-        groupName: UserGroup.Contributor,
-        status: UserStatus.Active,
-        phoneNumber: null,
-        birthDate: null,
-        
-        // Don't compare createdAt and updatedAt
-        createdAt: actualUser.createdAt,
-        updatedAt: actualUser.updatedAt,
-        
-    }
-    assertEqualUsers(actualUser, expectedUser)
+    await test.step("[TEST] Recover deleted user", async () => { 
 
-    await api.users.delete(workerInfo, initialUser.id)
+        const restoreUserData = getRandomPayloadFor("users/deleted/:id")
+        const res = await request.patch(`/api/users/deleted/${initialUser.id}`, { data: restoreUserData })
+        expect(res.status(), `Expected 200, but got ${res.status()}: ${res.statusText()}`).toBe(200)
+    
+        const actualUser = await api.users.get(request, initialUser.id)
+        const expectedUser: User = { 
+            // New values from the payload
+            ...restoreUserData,
+    
+            // Values we don't expect to be change
+            id: initialUser.id,
+            rank: initialUser.rank,
+            capeName: initialUser.capeName,
+            startDate: initialUser.startDate,
+            endDate: initialUser.endDate,
+    
+            // Values that should have been erased
+            groupId: 1,
+            groupName: UserGroup.Contributor,
+            status: UserStatus.Active,
+            phoneNumber: null,
+            birthDate: null,
+            
+            // Don't compare createdAt and updatedAt
+            createdAt: actualUser.createdAt,
+            updatedAt: actualUser.updatedAt,
+        }
+        assertEqualUsers(actualUser, expectedUser)
+    })
+
+    await test.step("Cleanup", async () => { 
+        await api.users.delete(workerInfo, initialUser.id)
+    })
 })
