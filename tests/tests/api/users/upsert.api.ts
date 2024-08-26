@@ -1,11 +1,11 @@
-import Playwright, { APIRequestContext, APIResponse, TestInfo, expect, test } from '@playwright/test'
+import Playwright, { APIRequestContext, TestInfo, expect, test } from '@playwright/test'
 import { UserGroup, UserRank, UserStatus } from 'common/enums'
-import { NewUser, UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUserPersonalInfoBody, UpdateUserRoleBody, User } from 'common/interfaces'
-import { randomInt, randomUUID } from 'crypto'
+import { NewUser, UpdateUserRoleBody, User } from 'common/interfaces'
+import { randomUUID } from 'crypto'
 import dayjs from "../../../lib/dayjs.js"
 import { api } from '../../../utils/api/index.js'
 import { apiLogIn, getUser as getTestUser, unsafeApiLogIn } from '../../../utils/auth.js'
-import { assertEqualUsers } from './utils.js'
+import { assertEqualUsers, getRandomPayloadFor } from './utils.js'
 
 
 test("POST /api/users", async ({request}, workerInfo) => { 
@@ -54,16 +54,9 @@ test("PATCH /api/users/me/personal-info", async ({request}, workerInfo) => {
     await unsafeApiLogIn(request, user.email)
 
     // Post new random user data
-    const uuid: string = randomUUID().toLowerCase()
-    const newUserData: UpdateUserPersonalInfoBody = {
-        firstName: `___firstName ${uuid}`,
-        middleName: `___middleName ${uuid}`,
-        lastName: `___lastName ${uuid}`,
-        email: `${uuid}@motstanden.no`,
-        phoneNumber: randomInt(10000000, 99999999),
-        birthDate: dayjs().subtract(20, "years").utc().format("YYYY-MM-DD"),
-    }
-    await updateUser(request, { type: "my-personal-info", data: newUserData })
+    const newUserData = getRandomPayloadFor("users/*/personal-info")
+    const res = await request.put(`/api/users/me/personal-info`, { data: newUserData })
+    expect(res.ok(), `Failed to update user\n${res.status()}: ${res.statusText()}`).toBeTruthy()
 
     const actualUser = await api.users.get(request, user.id)
     const expectedUser: User = { ...user, ...newUserData,}
@@ -77,22 +70,9 @@ test("PATCH /api/users/:id", async ({request}, workerInfo) => {
     const user = await api.users.createRandom(workerInfo)
     await apiLogIn(request, workerInfo, UserGroup.SuperAdministrator)
     
-    const uuid: string = randomUUID().toLowerCase()
-    const newUserData: UpdateUserAsSuperAdminBody = {
-        firstName: `___firstName ${uuid}`,
-        middleName: `___middleName ${uuid}`,
-        lastName: `___lastName ${uuid}`,
-        email: `${uuid}@motstanden.no`,
-        groupName: UserGroup.Editor,
-        status: UserStatus.Inactive,
-        rank: UserRank.KiloOhm,
-        capeName: `___capeName ${uuid}`,
-        phoneNumber: randomInt(10000000, 99999999),
-        birthDate: dayjs().subtract(25, "years").utc().format("YYYY-MM-DD"),
-        startDate: dayjs().subtract(5, "years").utc().format("YYYY-MM-DD"),
-        endDate: dayjs().subtract(2, "years").utc().format("YYYY-MM-DD"),
-    } 
-    await updateUser(request, { type: "superadmin", data: newUserData, id: user.id })
+    const newUserData = getRandomPayloadFor("users/:id") 
+    const res = await request.patch(`/api/users/${user.id}`, { data: newUserData })
+    expect(res.ok(), `Failed to update user\n${res.status()}: ${res.statusText()}`).toBeTruthy()
 
     const actualUser = await api.users.get(request, user.id)
     const expectedUser: User = { ...user, ...newUserData,}
@@ -108,15 +88,9 @@ test("PUT /api/users/:id/membership", async ({request}, workerInfo) => {
     const user = await api.users.createRandom(workerInfo)
     await apiLogIn(request, workerInfo, UserGroup.Administrator)
 
-    const uuid: string = randomUUID().toLowerCase()
-    const newUserData: UpdateUserMembershipAsAdminBody = { 
-        rank: UserRank.GigaOhm,
-        capeName: `___capeName ${uuid}`,
-        status: UserStatus.Retired,
-        startDate: dayjs().subtract(6, "years").utc().format("YYYY-MM-DD"),
-        endDate: dayjs().subtract(3, "years").utc().format("YYYY-MM-DD"),
-    }
-    await updateUser(request, { type: "membership", data: newUserData, id: user.id })
+    const newUserData = getRandomPayloadFor("users/:id/membership")
+    const res = await request.put(`/api/users/${user.id}/membership`, { data: newUserData })
+    expect(res.ok(), `Failed to update user\n${res.status()}: ${res.statusText()}`).toBeTruthy()
 
     const actualUser = await api.users.get(request, user.id)
     const expectedUser: User = { ...user, ...newUserData,}
@@ -195,13 +169,6 @@ test.describe("PUT /api/users/:id/role", () => {
         targetNewRole: UserGroup
     }) { 
     
-        const updateRoleAsSuperAdmin = async (workerInfo: TestInfo, user: User, newGroup: UserGroup) => { 
-            const superAdmin = getTestUser(workerInfo, UserGroup.SuperAdministrator)
-            const request = await Playwright.request.newContext( { storageState: superAdmin.storageStatePath } )
-            await updateRole(request, user, newGroup)
-            await request.dispose()
-        }
-    
         test(title, async ({request}, workerInfo) => { 
     
             // Create new user
@@ -229,8 +196,15 @@ test.describe("PUT /api/users/:id/role", () => {
             // Clean up: Delete the user that was created
             await api.users.delete(workerInfo, user.id)
         })
+
+        async function updateRoleAsSuperAdmin(workerInfo: TestInfo, user: User, newGroup: UserGroup){ 
+            const superAdmin = getTestUser(workerInfo, UserGroup.SuperAdministrator)
+            const request = await Playwright.request.newContext( { storageState: superAdmin.storageStatePath } )
+            await updateRole(request, user, newGroup)
+            await request.dispose()
+        }
     }
-    
+
     async function updateRole(request: APIRequestContext, user: User, newGroup: UserGroup) { 
         const body: UpdateUserRoleBody = {
             groupName: newGroup
@@ -239,35 +213,3 @@ test.describe("PUT /api/users/:id/role", () => {
         return res
     }
 })
-
-type UpdateType = {
-    type: "my-personal-info",
-    data: UpdateUserPersonalInfoBody
-    id?: never
-} | {
-    type: "membership",
-    data: UpdateUserMembershipAsAdminBody
-    id: number
-} | {
-    type: "superadmin",
-    data: UpdateUserAsSuperAdminBody
-    id: number
-}
-
-async function updateUser(request: APIRequestContext,  {type, data, id} : UpdateType)  {
-    let res: APIResponse 
-    switch(type) { 
-        case "my-personal-info":
-            res = await request.put("/api/users/me/personal-info", { data: data })
-            break
-        case "membership":
-            res = await request.put(`/api/users/${id}/membership`, { data: data })
-            break
-        case "superadmin":
-            res = await request.patch(`/api/users/${id}`, { data: data })
-            break
-    }
-    if(!res.ok()) {
-        throw new Error(`Failed to update user.\n${res.status()}: ${await res.text()}`)
-    }
-}
