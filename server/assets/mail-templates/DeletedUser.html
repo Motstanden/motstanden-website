@@ -6,12 +6,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Motstanden</title>
     <style>
-        #root {
-            /* TODO */
+            
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            color: #222222;
+            max-width: 600px;
         }
+
+        h1, h2, h3 {
+            font-family: Helvetica, sans-serif;
+        }
+        
+        footer {
+            margin-top: 2em;
+            padding-top: 1em;
+            font-size: 11px;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+
     </style>
 </head>
-<div id="root">
-<!-- TODO -->
-</div>
+<body>
+    <main>
+        <h2>Brukeren din er slettet</h2>
+        <p>
+            Din personlige data på <a href="https://motstanden.no">Motstanden.no</a> er herved permanent slettet.<br/>
+        </p>
+        <p>
+            Din tidligere brukerkonto er ellers anonymisert og deaktivert fram til du eventuelt skulle ønske å gjenopprette den.
+        </p>
+
+        <h3>Hva er ikke slettet?</h3>
+        <p>
+            Data som ikke er personlig identifiserbar, som for eksempel din tidligere <i>brukerID</i>, er arkivert og gjort så utilgjengelig som mulig.
+            Dette er for å bevare integritet i vår database, og for å kunne gjenopprette din bruker dersom du ønsker det i fremtiden.
+        </p>
+
+        <h3>Gjenopprett bruker?</h3>
+        <p>
+            <i>
+                Har det skjedd en feil? <br/>
+                Ønsker du å gjenopprette din tidligere bruker?
+            </i>
+        </p>
+        <p>
+            Meld fra til Motstandenstyret at du ønsker å gjenopprette <b><i>brukerID</i> {{userId}}</b> med følgende informasjon:
+            <ul>
+                <li>Fornavn</li>
+                <li>Mellomnavn</li>
+                <li>Etternavn</li>
+                <li>E-post</li>
+                <li>Foretrukket profilbilde: Mannlig- eller kvinnelig avatar. </li>
+            </ul>
+        </p>
+        <p>
+            Motstandenstyret kan blant annet kontaktes på E-post: <a href="mailto:styret@motstanden.no">styret@motstanden.no</a>. 
+        </p>
+
+        <h3>Har du spørsmål?</h3>
+        <p>
+            Ta kontakt med Motstandenstyret eller spør våre nettsideutviklere på <a href="https://github.com/Motstanden/motstanden-website/issues">GitHub</a>.
+        </p>
+    </main>
+    <footer>
+        <p>
+            Med vennlig hilsen,<br/>
+            Motstandens utviklerteam.
+        </p>
+        <p>
+            <i>I en sluttet krets..!</i>
+        </p>
+    </footer>
+
+</body>
 </html>
