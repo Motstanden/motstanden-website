@@ -69,6 +69,28 @@ export function getAllUsers(): User[] {
     return user
 }
 
+export function getDeletedUser(id: number): DeletedUser | undefined { 
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(
+        `SELECT 
+            user_id as id,
+            user_rank as rank,
+            cape_name as capeName,
+            start_date as startDate,
+            end_date as endDate,
+            created_at as createdAt,
+            updated_at as updatedAt,
+            deleted_at as deletedAt
+        FROM 
+            vw_user 
+        WHERE 
+            user_id = ? AND is_deleted = 1`)
+    const user = stmt.get(id) as DeletedUser | undefined
+    db.close()
+
+    return user
+}
+
 export function getAllDeletedUsers(): DeletedUser[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(

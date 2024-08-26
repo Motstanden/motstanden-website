@@ -1,9 +1,10 @@
 import Database, { Database as DatabaseType } from "better-sqlite3"
 import { UserGroup, UserStatus } from "common/enums"
+import { NewUser } from "common/interfaces"
 import { dbReadWriteConfig, motstandenDB } from "../../config/databaseConfig.js"
+import { db as DB } from "../index.js"
 import { userGroupsDb } from "./groups/index.js"
 import { userStatusDb } from "./status/index.js"
-import { db as DB } from "../index.js"
 
 function anonymizeUser(userId: number, db: DatabaseType) {
 
@@ -68,4 +69,8 @@ export function softDeleteUser(userId: number) {
     })
     transaction()
     db.close()
+}
+
+export function undoSoftDeleteUser(userId: number, newUserData: NewUser) {
+    throw new Error("Not implemented")
 }

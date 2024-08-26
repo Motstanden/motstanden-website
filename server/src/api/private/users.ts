@@ -184,6 +184,25 @@ router.delete("/users/:id",
     }
 )
 
+router.patch("/users/deleted/:id",
+    RequiresGroup(UserGroup.SuperAdministrator),
+    validateParams(Schemas.params.id),
+    validateBody(NewUserSchema),
+    (req, res) => {
+        const { id } = Schemas.params.id.parse(req.params)
+        const newUserData = NewUserSchema.parse(req.body)
+
+        // Ensure user exists and is soft deleted
+        const isDeleted = db.users.getDeleted(id) !== undefined
+        if(!isDeleted) {
+            return res.status(404).send("User not found")
+        }
+
+        db.users.undoSoftDelete(id, newUserData)
+        res.end()
+    }
+)
+
 // ---- PATCH users ----
 
 const UpdateUserSchema = UserSchema.omit({ profilePicture: true })
