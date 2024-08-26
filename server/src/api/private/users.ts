@@ -121,7 +121,6 @@ router.post("/users",
 
 router.delete("/users/me", 
     (req, res) => { 
-        console.log("Deleting me")
         const user = getUser(req)
         db.users.softDelete(user.userId)
 
