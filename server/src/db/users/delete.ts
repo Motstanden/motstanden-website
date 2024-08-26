@@ -72,5 +72,34 @@ export function softDeleteUser(userId: number) {
 }
 
 export function undoSoftDeleteUser(userId: number, newUserData: NewUser) {
-    throw new Error("Not implemented")
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+
+    // Default values
+    const groupId = userGroupsDb.getId(UserGroup.Contributor, db)
+    const statusId = userStatusDb.getId(UserStatus.Active, db)
+
+    const stmt = db.prepare(`
+        UPDATE user SET
+            first_name = @firstName,
+            middle_name = @middleName,
+            last_name = @lastName,
+            email = @email,
+            profile_picture = @profilePicture,
+            user_status_id = @statusId,
+            user_group_id = @groupId,
+            is_deleted = 0
+        WHERE
+            user_id = @userId
+    `)
+    stmt.run({
+        userId: userId,
+        firstName: newUserData.firstName,
+        middleName: newUserData.middleName,
+        lastName: newUserData.lastName,
+        email: newUserData.email,
+        profilePicture: newUserData.profilePicture,
+        statusId: statusId,
+        groupId: groupId,
+    })
+    db.close()
 }
