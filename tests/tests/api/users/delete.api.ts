@@ -3,6 +3,7 @@ import { UserGroup } from 'common/enums'
 import { DeletedUser, User } from 'common/interfaces'
 import { api } from '../../../utils/api/index.js'
 import { apiLogIn, unsafeApiLogIn } from '../../../utils/auth.js'
+import { getRandomPayloadFor } from './utils.js'
 
 test.describe("DELETE /api/users/:id", () => {
 
@@ -43,16 +44,22 @@ test.describe("DELETE /api/users/:id", () => {
         expect(deletedUser).toBeDefined()
     })
 
-    test("PATCH /users/:id", async () => {
-        throw new Error("Not implemented")
+    test("PATCH /users/:id", async ({request}) => {
+        const payload = getRandomPayloadFor("users/:id")
+        const res = await request.patch(`/api/users/${user.id}`, { data: payload })
+        expect(res.status(), `Expected 404, but got ${res.status()}: ${res.statusText()}`).toBe(404)
     })
 
-    test("PUT /users/:id/personal-info", async () => {
-        throw new Error("Not implemented")
+    test("PUT /users/:id/personal-info", async ({request}) => {
+        const payload = getRandomPayloadFor("users/*/personal-info")
+        const res = await request.put(`/api/users/${user.id}/personal-info`, { data: payload })
+        expect(res.status(), `Expected 404, but got ${res.status()}: ${res.statusText()}`).toBe(404)
     })
 
-    test("PUT /users/:id/membership", async () => {
-        throw new Error("Not implemented")
+    test("PUT /users/:id/membership", async ({request}) => {
+        const payload = getRandomPayloadFor("users/:id/membership")
+        const res = await request.put(`/api/users/${user.id}/membership`, { data: payload })
+        expect(res.status(), `Expected 404, but got ${res.status()}: ${res.statusText()}`).toBe(404)
     })
 
     test("PUT /users/:id/role", async () => {
