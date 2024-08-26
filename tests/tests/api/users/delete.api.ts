@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { UserGroup } from 'common/enums'
-import { DeletedUser, User } from 'common/interfaces'
+import { DeletedUser, UpdateUserRoleBody, User } from 'common/interfaces'
 import { api } from '../../../utils/api/index.js'
 import { apiLogIn, unsafeApiLogIn } from '../../../utils/auth.js'
 import { getRandomPayloadFor } from './utils.js'
@@ -62,8 +62,10 @@ test.describe("DELETE /api/users/:id", () => {
         expect(res.status(), `Expected 404, but got ${res.status()}: ${res.statusText()}`).toBe(404)
     })
 
-    test("PUT /users/:id/role", async () => {
-        throw new Error("Not implemented")
+    test("PUT /users/:id/role", async ({request}) => {
+        const payload: UpdateUserRoleBody = { groupName: UserGroup.Administrator }
+        const res = await request.put(`/api/users/${user.id}/role`, { data: payload })
+        expect(res.status(), `Expected 404, but got ${res.status()}: ${res.statusText()}`).toBe(404)
     })
 })
 
