@@ -3,7 +3,7 @@ import { UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUser
 import express, { NextFunction, Request, Response } from "express"
 import { z } from "zod"
 import { db } from "../../db/index.js"
-import { logOutAllUnits, updateAccessToken } from "../../middleware/jwtAuthenticate.js"
+import { clearAllAuthCookies, logOutAllUnits, updateAccessToken } from "../../middleware/jwtAuthenticate.js"
 import { RequiresGroup } from "../../middleware/requiresGroup.js"
 import { validateBody, validateParams } from "../../middleware/zodValidation.js"
 import { getUser } from "../../utils/getUser.js"
@@ -137,9 +137,9 @@ router.delete("/users/me",
     (req, res) => { 
         const user = getUser(req)
         db.users.softDelete(user.userId)
+        clearAllAuthCookies(res)
 
         // TODO: 
-        // - Log out user from all units
         // - Send email to user about account deletion
 
         res.end()
@@ -154,8 +154,12 @@ router.delete("/users/:id",
         const { id } = Schemas.params.id.parse(req.params)
         db.users.softDelete(id)
 
+        const currentUser = getUser(req)
+        if(currentUser.userId === id){ 
+            clearAllAuthCookies(res)
+        }
+
         // TODO: 
-        // - Log out user from all units
         // - Send email to user about account deletion
 
         res.end()

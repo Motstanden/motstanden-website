@@ -205,7 +205,7 @@ export function logOutAllUnits(req: Request, res: Response) {
     clearAllAuthCookies(res)
 }
 
-function clearAllAuthCookies(res: Response) {
+export function clearAllAuthCookies(res: Response) {
     res.clearCookie(JwtToken.AccessToken.toString(), {sameSite: "strict"})
     res.clearCookie(JwtToken.RefreshToken.toString(), {sameSite: "strict"})
 }
