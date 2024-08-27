@@ -9,7 +9,7 @@ import { MagicLinkPayloadSchema, magicLinkVerifyPath } from "../api/public/auth.
 import { db } from "../db/index.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload.js"
-import * as Mail from './mailConfig.js'
+import { Mail } from "./mailConfig.js"
 
 // Ensure .env is loaded
 dotenv.config()
@@ -38,11 +38,7 @@ const DomainUrl = process.env.IS_DEV_ENV === 'true' ? 'http://localhost:3000' : 
 
 async function onSendMagicLinkRequest(email: string, href: string, code: string): Promise<void> {
     const htmlStr = await createMagicLinkHtml(href, code)
-    await Mail.transporter.sendMail({
-        from: {
-            name: "Motstanden",
-            address: Mail.InfoMail
-        },
+    await Mail.send({
         to: email,
         subject: "Logg inn på Motstanden",
         html: htmlStr
