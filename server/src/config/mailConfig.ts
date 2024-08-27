@@ -42,7 +42,9 @@ const transporter = createTransporter()
 async function send(options: SendMailOptions) {
     
     if(process.env.ENABLE_EMAIL_SERVICE !== "true") {
-        console.warn("Email service is disabled. Email not sent.")
+        if(process.env.IS_DEV_ENV !== "true") {
+            console.warn("Email service is disabled. Email not sent.")
+        }
         return
     } 
 
