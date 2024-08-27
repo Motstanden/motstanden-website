@@ -38,7 +38,7 @@ const DomainUrl = process.env.IS_DEV_ENV === 'true' ? 'http://localhost:3000' : 
 
 async function onSendMagicLinkRequest(email: string, href: string, code: string): Promise<void> {
     const htmlStr = await createMagicLinkHtml(href, code)
-    await Mail.send({
+    Mail.send({
         to: email,
         subject: "Logg inn på Motstanden",
         html: htmlStr
