@@ -20,8 +20,9 @@ async function buildMagicLinkHtml(url: string, code: string): Promise<string> {
         .replace("${linkExpireTime}", `${time}`)
 }
 
-async function buildDeletedUserHtml(): Promise<string> {
-    throw new Error("Not implemented")
+async function buildDeletedUserHtml(userId: number): Promise<string> {
+    const html = await readFile(Templates.DeletedUser)
+    return html.replace("${userId}", `${userId}`)
 }
 
 async function buildRestoredDeletedUserHtml(): Promise<string> {
