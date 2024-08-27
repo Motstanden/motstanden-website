@@ -64,15 +64,15 @@
 </head>
 <div id="root">
     <div id="verification-code-label"><i>Verifiseringskode</i></div>
-    <div id="verification-code" >${verificationcode}</div>
+    <div id="verification-code" >${verificationCode}</div>
     <div id="main-text">Klikk på knappen for å logge inn <b>på denne enheten</b></div>
 
     <div id="button-link-container">
-        <a id="button-link" href="${magiclink}">
+        <a id="button-link" href="${magicLink}">
             LOGG INN
         </a>
     </div>
     <div id="final-quote"><i>I en sluttet krets..!</i></div>
-    <div id="time-stamp"><i> Sendt ut: ${timestamp}</i></div>
+    <div id="time-stamp"><i> Gyldig fram til: kl ${linkExpireTime}, <br/>${linkExpireDate}<br/>(Norsk tid)</i></div>
 </div>
 </html>
