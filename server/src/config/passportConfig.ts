@@ -9,7 +9,7 @@ import { MagicLinkPayloadSchema, magicLinkVerifyPath } from "../api/public/auth.
 import { db } from "../db/index.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload.js"
-import { Mail } from "./mailConfig.js"
+import { Mail } from "../services/mail.js"
 
 // Ensure .env is loaded
 dotenv.config()
