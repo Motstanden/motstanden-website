@@ -1,4 +1,5 @@
 import { MagicLinkResponse, User } from "common/interfaces"
+import { randomInt } from "crypto"
 import express from "express"
 import passport from "passport"
 import { z } from "zod"
@@ -8,7 +9,6 @@ import { AuthenticateUser, logOut, logOutAllUnits, loginUser } from "../../middl
 import { requiresDevEnv } from "../../middleware/requiresDevEnv.js"
 import { validateBody } from "../../middleware/zodValidation.js"
 import { AccessTokenData } from "../../ts/interfaces/AccessTokenData.js"
-import { getRandomInt } from "../../utils/getRandomInt.js"
 import { sleepAsync } from "../../utils/sleepAsync.js"
 
 const router = express.Router()
@@ -20,23 +20,30 @@ export const MagicLinkPayloadSchema = z.object({
 router.post("/auth/magic-link", 
     validateBody(MagicLinkPayloadSchema),
     async (req, res) => {
-        
-        // Validated by middleware
+        // TODO: 
+        // This api is vulnerable to timing attacks.
+        // A motivated attacker could use this api to determine which emails are in the database.
+        // https://github.com/Motstanden/motstanden-website/issues/98
+
+        // A random delay to make timing attacks less feasible.
+        // Although, it is important to note that this does not fully prevent timing attacks:
+        // https://security.stackexchange.com/questions/96489/can-i-prevent-timing-attacks-with-random-delays  
+        await sleepAsync(randomInt(0, 10000))
+
         const { destination: email } = MagicLinkPayloadSchema.parse(req.body)
 
         if (email && db.users.exists(email)) {
             passportConfig.magicLogin.send(req, res)
         } else {
-            // Send back spoof response so that random users cannot get information about which emails are in the database.
+            // Send back spoof response so that random users cannot *easily* get information about which emails are in the database.
             const spoofData: MagicLinkResponse = {
-                code: getRandomInt(10000, 99999).toString(),
+                code: randomInt(10000, 99999).toString(),
                 success: true
             }
-            await sleepAsync(getRandomInt(1000, 2500))        // Simulate the time it takes to send the email
             res.json(spoofData)
         }
     }
-);
+)
 
 if (process.env.IS_DEV_ENV) {
     router.post("/dev/auth/login", 
