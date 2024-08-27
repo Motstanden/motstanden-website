@@ -1,15 +1,15 @@
 import dotenv from "dotenv"
 import { Request } from 'express'
-import fs from "fs/promises"
 import passport, { PassportStatic } from 'passport'
 import { Strategy as JWTStrategy } from 'passport-jwt'
 import MagicLoginStrategy from 'passport-magic-login'
 import { fromError } from "zod-validation-error"
 import { MagicLinkPayloadSchema, magicLinkVerifyPath } from "../api/public/auth.js"
 import { db } from "../db/index.js"
+import { Mail } from "../services/mail.js"
 import { AccessTokenData } from "../ts/interfaces/AccessTokenData.js"
 import { MagicLinkPayload } from "../ts/interfaces/MagicLinkPayload.js"
-import { Mail } from "../services/mail.js"
+import { mailTemplates } from "../utils/mailTemplateBuilders.js"
 
 // Ensure .env is loaded
 dotenv.config()
@@ -34,27 +34,19 @@ const jwtLogin = new JWTStrategy({
 // --------------------------------------------
 //      Magic login strategy
 // --------------------------------------------
-const DomainUrl = process.env.IS_DEV_ENV === 'true' ? 'http://localhost:3000' : 'https://motstanden.no'
 
 async function onSendMagicLinkRequest(email: string, href: string, code: string): Promise<void> {
-    const htmlStr = await createMagicLinkHtml(href, code)
+    const url = process.env.IS_DEV_ENV === 'true' 
+        ? `http://localhost:3000/${href}` 
+        : `https://motstanden.no/${href}`
+    const htmlStr = await mailTemplates.buildMagicLinkHtml(url, code)
+
+    // We are intentionally not awaiting the email to be sent, as it may take multiple minutes to complete.
     Mail.send({
         to: email,
         subject: "Logg inn på Motstanden",
         html: htmlStr
     })
-}
-
-async function createMagicLinkHtml(href: string, code: string) {
-
-    const filePath = new URL(`../../assets/mail-templates/MagicLink.html`, import.meta.url)
-    const html = await fs.readFile(filePath, "utf-8")
-
-    const date = new Date().toLocaleString("no-no", { timeZone: "cet" })
-
-    return html.replace("${magiclink}", `${DomainUrl}/${href}`)
-        .replace("${verificationcode}", code)
-        .replace("${timestamp}", `${date}`)
 }
 
 function onVerifyLinkClick(
