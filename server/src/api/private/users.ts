@@ -6,7 +6,9 @@ import { db } from "../../db/index.js"
 import { clearAllAuthCookies, logOutAllUnits, updateAccessToken } from "../../middleware/jwtAuthenticate.js"
 import { RequiresGroup } from "../../middleware/requiresGroup.js"
 import { validateBody, validateParams } from "../../middleware/zodValidation.js"
+import { Mail } from "../../services/mail.js"
 import { getUser } from "../../utils/getUser.js"
+import { mailTemplates } from "../../utils/mailTemplateBuilders.js"
 import { Schemas } from "../../utils/zodSchema.js"
 
 const router = express.Router()
@@ -152,15 +154,9 @@ router.post("/users",
 
 router.delete("/users/me", 
     validateCurrentUserNotDeleted(),
-    (req, res) => { 
+    async (req, res) => { 
         const user = getUser(req)
-        db.users.softDelete(user.userId)
-        clearAllAuthCookies(res)
-
-        // TODO: 
-        // - Send email to user about account deletion
-
-        res.end()
+        await deleteUserHandler(req, res, user.userId)
     }
 )
 
@@ -168,21 +164,38 @@ router.delete("/users/:id",
     RequiresGroup(UserGroup.SuperAdministrator),
     validateParams(Schemas.params.id),
     validateUserExists(),
-    (req, res) => {
+    async (req, res) => {
         const { id } = Schemas.params.id.parse(req.params)
-        db.users.softDelete(id)
-
-        const currentUser = getUser(req)
-        if(currentUser.userId === id){ 
-            clearAllAuthCookies(res)
-        }
-
-        // TODO: 
-        // - Send email to user about account deletion
-
-        res.end()
+        await deleteUserHandler(req, res, id)
     }
 )
+
+async function deleteUserHandler(req: Request, res: Response, id: number) {
+    // Get the user, and ensure it exists
+    const user = db.users.get(id)
+    if(user === undefined) {
+        return res.status(404).send("User not found")
+    }
+
+    db.users.softDelete(id)
+
+    // If the user is deleting themselves, log them out
+    const currentUser = getUser(req)
+    if(currentUser.userId === id){ 
+        clearAllAuthCookies(res)
+    }
+
+    // Notify user by mail.
+    // We are intentionally not awaiting the email to be sent, as it may take multiple minutes to complete.
+    const mailHtml = await mailTemplates.buildDeletedUserHtml(user.id)
+    Mail.send({
+        to: user.email,
+        subject: "Din bruker er slettet",
+        html: mailHtml
+    })
+
+    res.end()
+}
 
 router.patch("/users/deleted/:id",
     RequiresGroup(UserGroup.SuperAdministrator),
