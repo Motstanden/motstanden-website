@@ -1,5 +1,6 @@
 import dotenv from "dotenv"
 import { Request } from 'express'
+import jwt from 'jsonwebtoken'
 import passport, { PassportStatic } from 'passport'
 import { Strategy as JWTStrategy } from 'passport-jwt'
 import MagicLoginStrategy from 'passport-magic-login'
@@ -82,6 +83,30 @@ export const magicLogin = new MagicLoginStrategy.default({
     sendMagicLink: onSendMagicLinkRequest,
     verify: onVerifyLinkClick,
 })
+
+
+/**
+ * Mimics how passport-magic-login creates urls.
+ * @param email Email of the user to authenticate.
+ * @returns A url that a user can click to log in.
+ */
+//
+// This function is created by reading the source code for passport-magic-login:
+// https://github.com/mxstbr/passport-magic-login
+//
+// This is a hack, but the alternative is a big refactor.
+// We'll allow this hack for now because it is not too awful.
+export function buildMagicLinkFromMail(email: string): string {
+
+    const jwtPayload = { destination: email }
+    const token = jwt.sign(jwtPayload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "60min" })
+    const href = `api${magicLinkVerifyPath}?token=${token}`
+
+    const url = process.env.IS_DEV_ENV === 'true' 
+        ? `http://localhost:3000/${href}` 
+        : `https://motstanden.no/${href}`
+    return url
+}
 
 // --------------------------------------------
 //      Create passport

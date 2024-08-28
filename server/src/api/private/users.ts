@@ -2,6 +2,7 @@ import { UserGroup, UserRank, UserStatus } from "common/enums"
 import { UpdateUserAsSuperAdminBody, UpdateUserMembershipAsAdminBody, UpdateUserMembershipAsMeBody, UpdateUserPersonalInfoBody, UpdateUserRoleBody } from "common/interfaces"
 import express, { NextFunction, Request, Response } from "express"
 import { z } from "zod"
+import * as passportConfig from "../../config/passportConfig.js"
 import { db } from "../../db/index.js"
 import { clearAllAuthCookies, logOutAllUnits, updateAccessToken } from "../../middleware/jwtAuthenticate.js"
 import { RequiresGroup } from "../../middleware/requiresGroup.js"
@@ -144,9 +145,21 @@ const NewUserSchema = UserSchema.pick({
 router.post("/users", 
     RequiresGroup(UserGroup.SuperAdministrator),
     validateBody(NewUserSchema), 
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
         const user = NewUserSchema.parse(req.body)
         const userId = db.users.insert(user)
+
+        // Send the new user a welcome mail with a magic link they can click on to authenticate.
+        const authUrl = passportConfig.buildMagicLinkFromMail(user.email)
+        const html = await mailTemplates.buildWelcomeHtml(authUrl)
+
+        // We are intentionally not awaiting the email to be sent, as it may take multiple minutes to complete.
+        Mail.send({
+            to: user.email,
+            subject: "Velkommen til Motstanden!",
+            html: html
+        })
+
         res.json({userId: userId})
 })
 
