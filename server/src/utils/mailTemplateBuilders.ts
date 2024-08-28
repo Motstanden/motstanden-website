@@ -17,7 +17,8 @@ async function buildMagicLinkHtml(url: string, code: string): Promise<string> {
     return html.replace(/{{magicLink}}/g, url)
         .replace(/{{verificationCode}}/g, code)
         .replace(/{{linkExpireDate}}/g, `${date}`)
-        .replace(/{{linkExpireTime}}/g, `${time}`);
+        .replace(/{{linkExpireTime}}/g, `${time}`)
+        .replace(/{{randomFooterNumber}}/g, code)
 }
 
 async function buildDeletedUserHtml(userId: number): Promise<string> {

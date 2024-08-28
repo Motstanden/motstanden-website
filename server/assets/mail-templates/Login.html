@@ -8,18 +8,22 @@
     <style>
         .body {
             margin: min(4vw, 30px);
-            border: 1.5px solid #196E45;
             max-width: 700px;
-            padding-top: min(2em, 30px);
-            padding-bottom: min(2em, 30px);
-            padding-left: min(4vw, 30px);
-            padding-right: min(4vw, 30px);
-            
-            text-align: center;
+
             font-family:arial,helvetica,sans-serif;
             font-size: 14pt;
             background-color: white;
             color: #222222;
+        }
+
+        .main {
+            border: 1.5px solid #196E45;
+            padding-top: min(2em, 30px);
+            padding-bottom: min(2em, 30px);
+            padding-left: min(4vw, 30px);
+            padding-right: min(4vw, 30px);
+
+            text-align: center;
         }
 
         .small-text {
@@ -66,39 +70,43 @@
     </style>
 </head>
 <div class="body">
+    <div class="main">
 
-    <div class="tiny-text">
-        <i>Verifiseringskode</i>
-    </div>
-    <div style="margin-bottom: 1em;">
-        {{verificationCode}}
-    </div>
+        <div class="tiny-text">
+            <i>Verifiseringskode</i>
+        </div>
+        <div style="margin-bottom: 1em;">
+            {{verificationCode}}
+        </div>
 
-    <div class="black-text">
-        Klikk på knappen for å logge inn 
-        <span class="green-text">
-            <b>på denne enheten</b>
-        </span>
-    </div>
-    
-    <div style="margin: 2em 0px">
-        <a class="button-link" href="{{magicLink}}">
-            <span class="white-text">
-                LOGG INN
+        <div class="black-text">
+            Klikk på knappen for å logge inn 
+            <span class="green-text">
+                <b>på denne enheten</b>
             </span>
-        </a>
+        </div>
+        
+        <div style="margin: 2em 0px">
+            <a class="button-link" href="{{magicLink}}">
+                <span class="white-text">
+                    LOGG INN
+                </span>
+            </a>
+        </div>
+        
+        <div class="tiny-text">
+            <i> Gyldig fram til: kl {{linkExpireTime}}<br/>{{linkExpireDate}}<br/>(Norsk tid)</i>
+        </div>
+        
+        <div class="small-text" style="margin-top: 1.5em;">
+            <i>I en sluttet krets..!</i>
+        </div>
+        
     </div>
-    
-    <div class="tiny-text">
-        <i> Gyldig fram til: kl {{linkExpireTime}}<br/>{{linkExpireDate}}<br/>(Norsk tid)</i>
-    </div>
-    
-    <div class="small-text" style="margin-top: 1.5em;">
-        <i>I en sluttet krets..!</i>
-    </div>
-    
+
     <div class="invisible">
-        {{verificationCode}}
+        {{randomFooterNumber}}
     </div>
+
 </div>
 </html>
