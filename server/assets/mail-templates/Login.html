@@ -71,7 +71,7 @@
         <i>Verifiseringskode</i>
     </div>
     <div style="margin-bottom: 1em;">
-        ${verificationCode}
+        {{verificationCode}}
     </div>
 
     <div class="black-text">
@@ -82,7 +82,7 @@
     </div>
     
     <div style="margin: 2em 0px">
-        <a class="button-link" href="${magicLink}">
+        <a class="button-link" href="{{magicLink}}">
             <span class="white-text">
                 LOGG INN
             </span>
@@ -90,7 +90,7 @@
     </div>
     
     <div class="tiny-text">
-        <i> Gyldig fram til: kl ${linkExpireTime}<br/>${linkExpireDate}<br/>(Norsk tid)</i>
+        <i> Gyldig fram til: kl {{linkExpireTime}}<br/>{{linkExpireDate}}<br/>(Norsk tid)</i>
     </div>
     
     <div class="small-text" style="margin-top: 1.5em;">
@@ -98,7 +98,7 @@
     </div>
     
     <div class="invisible">
-        ${verificationCode}
+        {{verificationCode}}
     </div>
 </div>
 </html>
