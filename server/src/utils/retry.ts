@@ -34,20 +34,24 @@ export async function retry<T>({
     while(retries < maxRetries) {
         try {
             const result = await fn()
-            return { 
-                result: result, 
-                error: undefined 
+            if(retries > 0) {
+                console.log(`Retry ${retries}/${maxRetries} successful`)
             }
+            return { result: result, error: undefined }
 
         } catch (error) {
             retries++
             internalError =  error instanceof Error ? error : new Error(String(error))
 
-            const nextRetryMs = Math.min(maxDelay, Math.exp(retries * delayDampening) * 1000)
+            const nextRetryMs = Math.floor(Math.min(maxDelay, Math.exp(retries * delayDampening) * 1000))
             if(retries < maxRetries) {
-                console.warn(errorMessage, "Reason:", error, `Retrying in ${nextRetryMs}ms, [${retries}/${maxRetries}]`)
+                console.warn(`${errorMessage}\nReason: ${error}\nRetrying in ${nextRetryMs}ms, [${retries}/${maxRetries}]\n`)
                 await sleepAsync(nextRetryMs)
             } 
+
+            if(retries === maxRetries) {
+                console.warn(`${errorMessage}\nReason: ${error}\nMax retries reached, [${retries}/${maxRetries}]\n`)
+            }
         }
     }
 
