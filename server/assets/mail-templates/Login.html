@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Motstanden</title>
     <style>
-        #root {
+        .body {
             margin: min(4vw, 30px);
             border: 1.5px solid #196E45;
             max-width: 700px;
@@ -14,35 +14,35 @@
             padding-bottom: min(2em, 30px);
             padding-left: min(4vw, 30px);
             padding-right: min(4vw, 30px);
+            
             text-align: center;
             font-family:arial,helvetica,sans-serif;
+            font-size: 14pt;
             background-color: white;
+            color: #222222;
         }
 
-        #verification-code-label {
+        .small-text {
+            font-size: 12pt;
+        }
+
+        .tiny-text {
             font-size: 9pt;
         }
 
-        #verification-code {
-            font-size: 14pt;
-            margin-bottom: 1em;
-        }
-
-        #main-text {
-            font-size: 14pt;
-            color: black;
-        }
-
-        #main-text b {
+        .green-text {
             color: #196E45;
         }
 
-        #button-link-container {
-            margin-top: 2.75em;
-            margin-bottom: 2.75em;
+        .white-text {
+            color: white;
         }
 
-        #button-link {
+        .black-text {
+            color: #222222;
+        }
+
+        .button-link {
             background-color: #196E45;
             text-decoration: none;
             color: white;
@@ -52,27 +52,53 @@
             border-radius: 0.25em;
         }
 
-        #final-quote {
-            margin-bottom: 1.5em;
-            color: black;
+        .invisible {
+            display: none;
+            font-size: 0px;     
+            max-height:0px; 
+            overflow: hidden;    
+            opacity: 0;
+            visibility: hidden;
+            display: none; 
+            mso-hide: all;      
         }
 
-        #time-stamp {
-            font-size: 9pt;
-        }
     </style>
 </head>
-<div id="root">
-    <div id="verification-code-label"><i>Verifiseringskode</i></div>
-    <div id="verification-code" >${verificationCode}</div>
-    <div id="main-text">Klikk på knappen for å logge inn <b>på denne enheten</b></div>
+<div class="body">
 
-    <div id="button-link-container">
-        <a id="button-link" href="${magicLink}">
-            LOGG INN
+    <div class="tiny-text">
+        <i>Verifiseringskode</i>
+    </div>
+    <div style="margin-bottom: 1em;">
+        ${verificationCode}
+    </div>
+
+    <div class="black-text">
+        Klikk på knappen for å logge inn 
+        <span class="green-text">
+            <b>på denne enheten</b>
+        </span>
+    </div>
+    
+    <div style="margin: 2em 0px">
+        <a class="button-link" href="${magicLink}">
+            <span class="white-text">
+                LOGG INN
+            </span>
         </a>
     </div>
-    <div id="final-quote"><i>I en sluttet krets..!</i></div>
-    <div id="time-stamp"><i> Gyldig fram til: kl ${linkExpireTime}<br/>${linkExpireDate}<br/>(Norsk tid)</i></div>
+    
+    <div class="tiny-text">
+        <i> Gyldig fram til: kl ${linkExpireTime}<br/>${linkExpireDate}<br/>(Norsk tid)</i>
+    </div>
+    
+    <div class="small-text" style="margin-top: 1.5em;">
+        <i>I en sluttet krets..!</i>
+    </div>
+    
+    <div class="invisible">
+        ${verificationCode}
+    </div>
 </div>
 </html>
