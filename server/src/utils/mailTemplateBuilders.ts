@@ -14,15 +14,15 @@ async function buildMagicLinkHtml(url: string, code: string): Promise<string> {
 
     const {date, time} = getMagicLinkExpireTime()
 
-    return html.replace("${magicLink}", url)
-        .replace("${verificationCode}", code)
-        .replace("${linkExpireDate}", `${date}`)
-        .replace("${linkExpireTime}", `${time}`)
+    return html.replace(/\${magicLink}/g, url)
+        .replace(/\${verificationCode}/g, code)
+        .replace(/\${linkExpireDate}/g, `${date}`)
+        .replace(/\${linkExpireTime}/g, `${time}`);
 }
 
 async function buildDeletedUserHtml(userId: number): Promise<string> {
     const html = await readFile(Templates.DeletedUser)
-    return html.replace("${userId}", `${userId}`)
+    return html.replace(/\${userId}/g, `${userId}`)
 }
 
 async function buildRestoredDeletedUserHtml(): Promise<string> {
