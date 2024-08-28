@@ -27,6 +27,17 @@
             border-top: 1px solid #ddd;
         }
 
+        .invisible {
+            display: none;
+            font-size: 0px;     
+            max-height:0px; 
+            overflow: hidden;    
+            opacity: 0;
+            visibility: hidden;
+            display: none; 
+            mso-hide: all;      
+        }
+        
     </style>
 </head>
 <body>
@@ -79,7 +90,9 @@
         <p>
             <i>I en sluttet krets..!</i>
         </p>
+        <div class="invisible">
+            {{randomFooterNumber}}
+        </div>
     </footer>
-
 </body>
 </html>

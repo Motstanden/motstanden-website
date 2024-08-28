@@ -24,7 +24,11 @@ async function buildMagicLinkHtml(url: string, code: string): Promise<string> {
 
 async function buildDeletedUserHtml(userId: number): Promise<string> {
     const html = await readFile(Templates.DeletedUser)
+
+    const randomNumber = randomInt(0, 10000)
+
     return html.replace(/{{userId}}/g, `${userId}`)
+        .replace(/{{randomFooterNumber}}/g, `${randomNumber}`)
 }
 
 async function buildRestoredDeletedUserHtml(): Promise<string> {
