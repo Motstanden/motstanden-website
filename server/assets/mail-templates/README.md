@@ -7,26 +7,32 @@ The resulting css and html may look ugly and redundant, but it is what it is, we
 
 ## CSS
 - Try to write as little css as possible.
+- Use css class selector. It seems to be the most stable selector across email clients.
+    ```css
+    .my-css-class {
+        /* css props... */
+    }
+    ```
 - Use `<div>` instead of `display: block` or `display: inline-block`
 - Gmail likes to override your text color, it is ok to be overly specific with text coloring. For example:
-```html 
-<div style="color: black;">
-    <div>
-        <a>
-            <!-- Prevent text from turning blue -->
-            <span style="color: black;">
-                Lorum ipsum...
-            </span>
-        </a>
-    </div>
-
-    <!-- For some reason, gmail will make this text purple unless we specifically override it here -->
+    ```html 
     <div style="color: black;">
-        Lorum ipsum...
-    </div>
-</div>
+        <div>
+            <a>
+                <!-- Prevent text from turning blue -->
+                <span style="color: black;">
+                    Lorum ipsum...
+                </span>
+            </a>
+        </div>
 
-```
+        <!-- For some reason, gmail will make this text purple unless we specifically override it here -->
+        <div style="color: black;">
+            Lorum ipsum...
+        </div>
+    </div>
+
+    ```
 
 ## HTML 
 - Don't use semantic elements such as `body`, `main`, `footer` or `section`. Use `div` instead.
