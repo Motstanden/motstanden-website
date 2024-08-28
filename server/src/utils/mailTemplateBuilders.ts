@@ -3,7 +3,7 @@ import fs from "fs/promises"
 const basePath = "../../assets/mail-templates" 
 
 enum Templates {
-    MagicLink = `${basePath}/MagicLink.html`,
+    MagicLink = `${basePath}/Login.html`,
     DeletedUser = `${basePath}/DeletedUser.html`,
     RestoredDeletedUser = `${basePath}/RestoredDeletedUser.html`,
     Welcome = `${basePath}/Welcome.html`,
