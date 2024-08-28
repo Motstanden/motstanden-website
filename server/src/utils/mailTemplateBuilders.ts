@@ -1,3 +1,4 @@
+import { randomInt } from "crypto"
 import fs from "fs/promises"
 
 const basePath = "../../assets/mail-templates" 
@@ -30,8 +31,15 @@ async function buildRestoredDeletedUserHtml(): Promise<string> {
     throw new Error("Not implemented")
 }
 
-async function buildWelcomeHtml(): Promise<string> {
-    throw new Error("Not implemented")
+async function buildWelcomeHtml(url: string): Promise<string> {
+    const html = await readFile(Templates.Welcome)
+    
+    const { time } = getMagicLinkExpireTime()
+    const randomNumber = randomInt(0, 10000)
+
+    return html.replace(/{{magicLink}}/g, url)
+        .replace(/{{linkExpireTime}}/g, `${time}`)
+        .replace(/{{randomFooterNumber}}/g, `${randomNumber}`)
 }
 
 async function readFile(filePath: Templates) {
