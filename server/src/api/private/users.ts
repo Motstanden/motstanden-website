@@ -214,7 +214,7 @@ router.patch("/users/deleted/:id",
     RequiresGroup(UserGroup.SuperAdministrator),
     validateParams(Schemas.params.id),
     validateBody(NewUserSchema),
-    (req, res) => {
+    async (req, res) => {
         const { id } = Schemas.params.id.parse(req.params)
         const newUserData = NewUserSchema.parse(req.body)
 
@@ -225,6 +225,19 @@ router.patch("/users/deleted/:id",
         }
 
         db.users.undoSoftDelete(id, newUserData)
+
+        // Notify user by mail.
+        // We are intentionally not awaiting the email to be sent, as it may take multiple minutes to complete.
+        const userProfileUrl = process.env.IS_DEV_ENV === 'true' 
+            ? `http://localhost:3000/medlem/${id}` 
+            : `https://motstanden.no/medlem/${id}`
+        const mailHtml = await mailTemplates.buildRestoredDeletedUserHtml(userProfileUrl)
+        Mail.send({
+            to: newUserData.email,
+            subject: "Din bruker er gjenopprettet",
+            html: mailHtml
+        })
+
         res.end()
     }
 )
