@@ -7,36 +7,69 @@
     <title>Motstanden</title>
     <style>
             
-        body {
+        .body {
             background-color: white;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
+            font-family:arial,helvetica,sans-serif;
+            font-size: 14pt;
             color: #222222;
             max-width: 600px;
         }
 
-        h1, h2, h3 {
-            font-family: Helvetica, sans-serif;
+        .black-text {
+            color: #222222;
         }
-        
-        footer {
-            margin-top: 2em;
-            padding-top: 1em;
-            font-size: 11px;
+
+        .green-text {
+            color: #196E45;
+        }
+
+        .anchor {
+            text-decoration: none;
+        }
+
+        .footer {
+            font-size: 9pt;
             color: #666;
             border-top: 1px solid #ddd;
         }
 
+        .invisible {
+            display: none;
+            font-size: 0px;     
+            max-height:0px; 
+            overflow: hidden;    
+            opacity: 0;
+            visibility: hidden;
+            display: none; 
+            mso-hide: all;      
+        }
+
     </style>
 </head>
-<body>
-    <main>
-        <!-- TODO -->
-    </main>
-    <footer>
+<div class="body">
+    <h2>Velkommen, igjen!</h2>
+
+    <p class="black-text">
+        Din bruker på <a href="https://motstanden.no" class="anchor"><b>motstanden.no</b></a> er nå gjenopprettet 🎉
+    </p>
+
+    <p class="black-text">
+        Vennligst logg inn og sjekk at din burkerinformasjon er korrekt 
+        <a href="{{userProfileUrl}}" class="anchor">her</a>.
+    </p>
+
+    <div class="footer">
+        <p>
+            Med vennlig hilsen,<br/>
+            Motstandens utviklerteam.
+        </p>
         <p>
             <i>I en sluttet krets..!</i>
         </p>
-    </footer>
-</body>
+        <div class="invisible">
+            {{randomFooterNumber}}
+        </div>
+    </div>
+
+</div>
 </html>
