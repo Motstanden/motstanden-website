@@ -19,31 +19,30 @@ async function buildMagicLinkHtml(url: string, code: string): Promise<string> {
         .replace(/{{verificationCode}}/g, code)
         .replace(/{{linkExpireDate}}/g, `${date}`)
         .replace(/{{linkExpireTime}}/g, `${time}`)
-        .replace(/{{randomFooterNumber}}/g, code)
+        .replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
 }
 
 async function buildDeletedUserHtml(userId: number): Promise<string> {
     const html = await readFile(Templates.DeletedUser)
 
-    const randomNumber = randomInt(0, 10000)
-
     return html.replace(/{{userId}}/g, `${userId}`)
-        .replace(/{{randomFooterNumber}}/g, `${randomNumber}`)
+    .replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
 }
 
-async function buildRestoredDeletedUserHtml(): Promise<string> {
-    throw new Error("Not implemented")
+async function buildRestoredDeletedUserHtml(userProfileUrl: string): Promise<string> {
+    const html = await readFile(Templates.RestoredDeletedUser)
+    
+    return html.replace(/{{userProfileUrl}}/g, userProfileUrl)
+    .replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
 }
 
 async function buildWelcomeHtml(url: string): Promise<string> {
     const html = await readFile(Templates.Welcome)
-    
     const { time } = getMagicLinkExpireTime()
-    const randomNumber = randomInt(0, 10000)
 
     return html.replace(/{{magicLink}}/g, url)
         .replace(/{{linkExpireTime}}/g, `${time}`)
-        .replace(/{{randomFooterNumber}}/g, `${randomNumber}`)
+        .replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
 }
 
 async function readFile(filePath: Templates) {
