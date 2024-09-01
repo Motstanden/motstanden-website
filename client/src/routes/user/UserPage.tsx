@@ -162,6 +162,13 @@ function DeleteUserDialog( {
                 <Stack 
                     direction="row"
                     alignItems="center"
+                    sx={{
+                        marginTop: "10px",
+                        marginBottom: "35px",
+                        borderRadius: "5px",
+                        backgroundColor: theme => theme.palette.action.hover,
+                        padding: "14px",
+                    }}
                 >
                     <UserAvatar userId={user.id} />
                     <Box 
@@ -175,13 +182,11 @@ function DeleteUserDialog( {
                     </Box>
                 </Stack>
                 <Box sx={{
-                    marginTop: "25px",
-                    fontWeight: "bold",
                     fontSize: "0.95em",
                     marginBottom: "5px",
                     color: theme => theme.palette.text.secondary
                 }}>
-                    Bekreft ved å skrive inn {`"${fullName}"`} i feltet under 
+                    Bekreft ved å skrive inn &quot;<b>{`${fullName}`}</b>&quot; i feltet under 
                 </Box>
                 <TextField 
                     placeholder={fullName}
@@ -199,7 +204,7 @@ function DeleteUserDialog( {
                     loading={isPosting}
                     startIcon={<DeleteForeverIcon/>}
                     sx={{
-                        mt: 4,
+                        mt: "40px",
                         width: "100%"
                     }}
                 >
