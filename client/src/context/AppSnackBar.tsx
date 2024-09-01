@@ -67,6 +67,10 @@ export function AppSnackBarProvider({ children }: { children: React.ReactNode })
                 open={open}
                 onClose={closeSnackBar}
                 autoHideDuration={snackBarOpts.autoHideDuration}
+                sx={ 
+                    // Force snack bar to render above React Query Devtools
+                    import.meta.env.DEV ? { zIndex: 200000 } : {}
+                }
             >
                 <Alert onClose={closeSnackBar} severity={snackBarOpts.severity} variant="filled">
                     {snackBarOpts.message}
