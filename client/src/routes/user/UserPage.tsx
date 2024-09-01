@@ -32,7 +32,7 @@ import { DeleteMenuItem } from 'src/components/menu/DeleteMenuItem'
 import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
 import { UserAvatar } from 'src/components/user/UserAvatar'
 import { useAppSnackBar } from 'src/context/AppSnackBar'
-import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication"
+import { useAuthenticatedUser, userAuthQueryKey } from "src/context/Authentication"
 import { useTimeZone } from 'src/context/TimeZone'
 import { useTitle } from "src/hooks/useTitle"
 import { httpDelete } from 'src/utils/postJson'
@@ -124,27 +124,33 @@ function DeleteUserDialog( {
     onClose?: () => void,
     user: User
 }) {
-    const fullName = getFullName(user)
+    const [isPosting, setIsPosting] = useState(false)
     
+    const [confirmText, setConfirmText] = useState("")
     const { user: currentUser} = useAuthenticatedUser()
-
+    const userFullName = getFullName(user)
+    const isDisabled = confirmText !== userFullName
+    
     const navigate = useNavigate()
     const queryClient = useQueryClient()
     const showSnackbar = useAppSnackBar()
-
-    const [isPosting, setIsPosting] = useState(false)
-
-    const [confirmText, setConfirmText] = useState("")
-    const isDisabled = confirmText !== fullName
+    
+    const onCloseModal = () => {
+        // Don't allow the user to exit the dialog if a delete request is in progress
+        if(!isPosting) {
+            onClose?.()
+        }
+    }
 
     const onDeleteClick = async () => {
         setIsPosting(true)
         const isDeletingSelf = currentUser.id === user.id
-        const url = isDeletingSelf ? "/api/users/me" : `/api/users/${user.id}`
-        const res = await httpDelete(url, { alertOnFailure: true })
+        const res = await httpDelete(isDeletingSelf ? "/api/users/me" : `/api/users/${user.id}`, { 
+            alertOnFailure: true 
+        })
 
         // If something went wrong, allow the user to try again
-        if(!res) {
+        if(res === undefined) {
             setIsPosting(false)
             return
         }
@@ -155,18 +161,7 @@ function DeleteUserDialog( {
             severity: "success" 
         })   
         navigate(isDeletingSelf ? "/framside" : "/medlem")
-        
-        if(isDeletingSelf) {
-            await queryClient.invalidateQueries({queryKey: userQueryKey})
-        } else {
-            await queryClient.invalidateQueries({queryKey: userListQueryKey})
-        }
-    }
-
-    const onCloseModal = () => {
-        if(!isPosting) {
-            onClose?.()
-        }
+        await queryClient.invalidateQueries({queryKey: isDeletingSelf ? userAuthQueryKey : userListQueryKey})
     }
 
     return (
@@ -206,7 +201,7 @@ function DeleteUserDialog( {
                             color: theme => theme.palette.text.secondary
                         }}
                     >
-                        {fullName}
+                        {userFullName}
                     </Box>
                 </Stack>
                 <Box sx={{
@@ -214,10 +209,10 @@ function DeleteUserDialog( {
                     marginBottom: "5px",
                     color: theme => theme.palette.text.secondary
                 }}>
-                    Bekreft ved å skrive inn &quot;<b>{`${fullName}`}</b>&quot; i feltet under 
+                    Bekreft ved å skrive inn {'"'}<b>{`${userFullName}`}</b>{'"'} i feltet under
                 </Box>
                 <TextField 
-                    placeholder={fullName}
+                    placeholder={userFullName}
                     fullWidth
                     value={confirmText}
                     onChange={e => setConfirmText(e.target.value)}
@@ -242,11 +237,6 @@ function DeleteUserDialog( {
         </Dialog>
     )
 }
-
-function ConfirmDeleteUserForm() { 
-
-}
-
 
 function ProfileInfoGrid() {
     return (
@@ -801,7 +791,7 @@ function FormCard({
 
     const handleOnSuccess = async () => { 
         await Promise.all([
-            queryClient.invalidateQueries({queryKey: userQueryKey}),
+            queryClient.invalidateQueries({queryKey: userAuthQueryKey}),
             queryClient.invalidateQueries({queryKey: userListQueryKey})
         ])
         await onSuccess?.()   

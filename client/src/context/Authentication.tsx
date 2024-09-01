@@ -83,17 +83,17 @@ async function fetchCurrentUser(): Promise<User | null> {
 
 // NB: If you change this, make sure to also change the key in the global playwright test setup file:
 //     tests/global.setup.ts
-export const userQueryKey = ["user", "current"]
+export const userAuthQueryKey = ["user", "current"]
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const [previousUser, setPreviousUser ] = useLocalStorage<User | null>({
-        key: userQueryKey,
+        key: userAuthQueryKey,
         initialValue: null,
     })
 
     const { isPending, data: user, dataUpdatedAt, isPlaceholderData } = useQuery<User | null>({
-        queryKey: userQueryKey,
+        queryKey: userAuthQueryKey,
         queryFn: fetchCurrentUser,
         placeholderData: previousUser,
     })
@@ -109,7 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const onSignOutSuccess = async () => { 
         navigate("/framside")
         setPreviousUser(null)
-        await queryClient.invalidateQueries({ queryKey: userQueryKey })
+        await queryClient.invalidateQueries({ queryKey: userAuthQueryKey })
     }
 
     let contextValue: AuthContextType
