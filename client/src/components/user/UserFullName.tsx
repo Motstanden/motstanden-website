@@ -31,11 +31,25 @@ export function UserFullName({
 
     const user = getUser(userId);
 
+    if (user.isDeleted) {
+        return (
+            <span style={{
+                wordWrap: "break-word",
+                fontSize: "inherit",
+                fontWeight: "bold",
+                opacity: 0.75,
+                ...style
+            }}>
+                {user.fullName}
+            </span>)
+    }
+
     return (
         <Link
             component={RouterLink}
             to={`/medlem/${userId}`}
             underline="hover"
+            color="secondary"
             style={{
                 wordWrap: "break-word",
                 fontSize: "inherit",

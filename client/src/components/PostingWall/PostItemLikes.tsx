@@ -26,23 +26,38 @@ export function PostItemLikes() {
     if (likes.length <= 0)
         return <></>;
 
+
+
+    const findActiveUser = (opts?: {offset?: number}): string | undefined => {
+        const offset = opts?.offset ?? 0
+        for (let i = offset; i < likes.length; i++) {
+            const user = users.getUser(likes[i].userId)
+            if (!user.isDeleted) {
+                return user.shortFullName
+            }
+        }
+        // Fall back to the first user if no active user is found
+        return users.getUser(likes[0].userId).shortFullName
+    }
+
+    const name1 = findActiveUser();
     let text = "";
 
-    const name = users.getUser(likes[0].userId).shortFullName;
-    if (likes.length === 1)
-        text = `${name}`;
+    if (likes.length === 1) {
+        text = `${name1}`
+    }
 
     if (likes.length === 2) {
-        text = `${name} og ${users.getUser(likes[1].userId).shortFullName}`;
+        text = `${name1} og ${findActiveUser({offset: 1})}`;
 
         const maxLength = 40;
         if (text.length > maxLength && isSmallScreen) {
-            text = `${name} og 1 annen`;
+            text = `${name1} og 1 annen`;
         }
     }
 
     if (likes.length > 2) {
-        text = `${name} og ${likes.length - 1} andre`;
+        text = `${name1} og ${likes.length - 1} andre`;
     }
 
     return (

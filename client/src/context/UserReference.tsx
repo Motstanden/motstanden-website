@@ -4,12 +4,23 @@ import React, { useMemo } from "react"
 import { fetchFn } from "src/utils/fetchAsync"
 import { usePotentialUser } from "./Authentication"
 
+interface DeletedUser extends Omit<UserIdentity, "id"> { 
+    id: undefined,
+    isDeleted: true
+}
+
+interface ActiveUser extends Omit<UserIdentity, "id"> { 
+    id: number
+    isDeleted: false
+}
+
+type UserIdentityExtended = ActiveUser | DeletedUser
 
 export type UserReferenceContextType = {
     isPending: false,
     isError: false,
     isEnabled: true
-    getUser: (userId: number) => UserIdentity
+    getUser: (userId: number) => UserIdentityExtended
 } | {
     isPending: true,
     isError: false,
@@ -53,12 +64,14 @@ export function useUserReference() {
     return context
 }
 
+export const userReferenceQueryKey = ["user-reference"]
+
 export function UserReferenceProvider( {children}: {children: React.ReactNode} ) {
  
     const { isLoggedIn: isEnabled } = usePotentialUser()
 
     const { isPending, isError, data } = useQuery<UserIdentity[]>({
-        queryKey: ["user-reference"],
+        queryKey: userReferenceQueryKey,
         queryFn: fetchFn<UserIdentity[]>("/api/users/identifiers"),
         enabled: isEnabled
     })
@@ -73,14 +86,19 @@ export function UserReferenceProvider( {children}: {children: React.ReactNode} )
         return lookUpTable
     }, [data])
     
-    const getUser = (userId: number) => { 
-        const user: UserIdentity = userLookUpTable[userId] ?? { 
-            id: userId,
-            fullName: "[Slettet]",
-            shortFullName: "[Slettet]",
-            initials: "SL"
-        } satisfies UserIdentity
-        return user
+    const getUser = (userId: number): UserIdentityExtended => { 
+        const user = userLookUpTable[userId]
+        if(user) {
+            return { ...user, isDeleted: false }
+        } else {
+            return { 
+                id: undefined,
+                fullName: "[Slettet]",
+                shortFullName: "[Slettet]",
+                initials: "SL",
+                isDeleted: true
+            }
+        }
     }
 
     let contextValue: UserReferenceContextType 

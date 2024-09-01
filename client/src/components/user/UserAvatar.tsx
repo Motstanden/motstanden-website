@@ -1,5 +1,5 @@
-import { Avatar, Skeleton } from "@mui/material";
-import { useUserReference } from "src/context/UserReference";
+import { Avatar, Skeleton } from "@mui/material"
+import { useUserReference } from "src/context/UserReference"
 
 export function UserAvatar({
     userId, style
@@ -14,12 +14,7 @@ export function UserAvatar({
         return <UserAvatarSkeleton style={style} />;
     }
 
-    if (isError) {
-        return <Avatar style={style} />;
-    }
-    
-    const user = getUser(userId);
-
+    const user = isError ? undefined : getUser(userId);
     return (
         <Avatar
             style={{
@@ -30,7 +25,7 @@ export function UserAvatar({
                 ...style
             }}
         >
-            {user.initials}
+            {user?.isDeleted === false ? user.initials : ""}
         </Avatar>
     );
 }

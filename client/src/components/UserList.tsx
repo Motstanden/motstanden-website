@@ -2,7 +2,8 @@ import { Avatar, Link, Skeleton, Stack, useTheme } from "@mui/material"
 import { UserIdentity } from "common/interfaces"
 import React from "react"
 import { Link as RouterLink } from "react-router-dom"
-import { UserAvatarSkeleton } from "./user/UserAvatar"
+import { UserAvatar, UserAvatarSkeleton } from "./user/UserAvatar"
+import { UserFullName } from "./user/UserFullName"
 
 export function UserList( { 
     users,
@@ -33,15 +34,8 @@ export function UserList( {
                     alternatingStyle={alternatingStyle}
                     isAlternate={index % 2 === 1}
                 >
-                    <Avatar>{user.initials}</Avatar>
-                    <Link
-                        color="secondary"
-                        component={RouterLink}
-                        to={`/medlem/${user.id}`}
-                        underline="hover"
-                    >
-                        {user.fullName}
-                    </Link>
+                    <UserAvatar userId={user.id}/>
+                    <UserFullName userId={user.id} style={{fontWeight: "normal", color: undefined}} />
                 </UserStack>
             ))}
         </>

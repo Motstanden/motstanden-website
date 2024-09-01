@@ -79,8 +79,15 @@ export function AuthorItem({ userId, dateTime }: { userId: number, dateTime: str
     return (
         <span>
             {`${dayjs.utc(dateTime).tz().format("DD. MMM YYYY HH:mm")}, av `}
+
+
+            {user.isDeleted && (
+                <span>
+                    {user.fullName}
+                </span>
+            )}
             
-            {user && (
+            {!user.isDeleted && (
                 <Link
                     color="secondary"
                     component={RouterLink}
@@ -89,11 +96,9 @@ export function AuthorItem({ userId, dateTime }: { userId: number, dateTime: str
                 >
                     {user.fullName}
                 </Link> 
+
             )}
 
-            {!user && (
-                <span>Ukjent</span>
-            )}
         </span>
     )
 }
