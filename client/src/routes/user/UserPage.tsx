@@ -148,9 +148,9 @@ function DeleteUserDialog( {
             setIsPosting(false)
             return
         }
-
-        navigate(isDeletingSelf ? "/famside" : "/medlem")
-        showSnackbar(isDeletingSelf ? "Brukeren din har nå blitt slettet" : `Brukeren til ${user.firstName} har nå blitt slettet`)   
+        
+        showSnackbar(isDeletingSelf ? "Brukeren din har nå blitt slettet" : `Brukeren til ${user.firstName} har nå blitt slettet`, { autoHideDuration: null })   
+        navigate(isDeletingSelf ? "/framside" : "/medlem")
         
         if(isDeletingSelf) {
             await queryClient.invalidateQueries({queryKey: userQueryKey})
