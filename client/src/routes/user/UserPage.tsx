@@ -1,4 +1,6 @@
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import { LoadingButton } from '@mui/lab'
 import {
     Box,
     Dialog,
@@ -19,6 +21,7 @@ import { UpdateUserMembershipAsAdminBody, UpdateUserMembershipAsMeBody, UpdateUs
 import { isNtnuMail as checkIsNtnuMail, getFullName, isNullOrWhitespace, strToNumber, userGroupToPrettyStr, userRankToPrettyStr, userStatusToPrettyStr } from "common/utils"
 import dayjs, { Dayjs } from "dayjs"
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { datePickerStyle } from "src/assets/style/timePickerStyles"
 import { CloseModalButton } from 'src/components/CloseModalButton'
 import { HelpButton } from "src/components/HelpButton"
@@ -28,13 +31,13 @@ import { Form } from "src/components/form/Form"
 import { DeleteMenuItem } from 'src/components/menu/DeleteMenuItem'
 import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
 import { UserAvatar } from 'src/components/user/UserAvatar'
+import { useAppSnackBar } from 'src/context/AppSnackBar'
 import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication"
 import { useTimeZone } from 'src/context/TimeZone'
 import { useTitle } from "src/hooks/useTitle"
+import { httpDelete } from 'src/utils/postJson'
 import { useUserProfileContext, userListQueryKey } from './Context'
 import { Card, CardTextItem, CardTextList } from "./components/Card"
-import { LoadingButton } from '@mui/lab'
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 export default function UserPage() {
     const { viewedUser: user } = useUserProfileContext()
@@ -121,17 +124,39 @@ function DeleteUserDialog( {
     onClose?: () => void,
     user: User
 }) {
-
     const fullName = getFullName(user)
+    
+    const { user: currentUser} = useAuthenticatedUser()
+
+    const navigate = useNavigate()
+    const queryClient = useQueryClient()
+    const showSnackbar = useAppSnackBar()
 
     const [isPosting, setIsPosting] = useState(false)
-
 
     const [confirmText, setConfirmText] = useState("")
     const isDisabled = confirmText !== fullName
 
-    const onDeleteClick = () => {
+    const onDeleteClick = async () => {
         setIsPosting(true)
+        const isDeletingSelf = currentUser.id === user.id
+        const url = isDeletingSelf ? "/api/users/me" : `/api/users/${user.id}`
+        const res = await httpDelete(url, { alertOnFailure: true })
+
+        // If something went wrong, allow the user to try again
+        if(!res) {
+            setIsPosting(false)
+            return
+        }
+
+        navigate(isDeletingSelf ? "/famside" : "/medlem")
+        showSnackbar(isDeletingSelf ? "Brukeren din har nå blitt slettet" : `Brukeren til ${user.firstName} har nå blitt slettet`)   
+        
+        if(isDeletingSelf) {
+            await queryClient.invalidateQueries({queryKey: userQueryKey})
+        } else {
+            await queryClient.invalidateQueries({queryKey: userListQueryKey})
+        }
     }
 
     const onCloseModal = () => {
@@ -145,7 +170,6 @@ function DeleteUserDialog( {
             open={isOpen} 
             onClose={onCloseModal}
             >
-
             <DialogTitle>
                 <Stack
                     direction="row"
@@ -214,6 +238,11 @@ function DeleteUserDialog( {
         </Dialog>
     )
 }
+
+function ConfirmDeleteUserForm() { 
+
+}
+
 
 function ProfileInfoGrid() {
     return (
