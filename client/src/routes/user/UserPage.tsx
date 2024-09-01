@@ -149,7 +149,11 @@ function DeleteUserDialog( {
             return
         }
         
-        showSnackbar(isDeletingSelf ? "Brukeren din har nå blitt slettet" : `Brukeren til ${user.firstName} har nå blitt slettet`, { autoHideDuration: null })   
+        showSnackbar({
+            message: isDeletingSelf ? "Brukeren din har nå blitt slettet" : `Brukeren til ${user.firstName} har nå blitt slettet`,
+            autoHideDuration: null,
+            severity: "success" 
+        })   
         navigate(isDeletingSelf ? "/framside" : "/medlem")
         
         if(isDeletingSelf) {

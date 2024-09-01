@@ -19,7 +19,7 @@ export function CopyLinkMenuItem({
     const onCopyLinkClick = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
         const link = typeof linkValue === "function" ? linkValue() : linkValue;
         navigator.clipboard.writeText(link);
-        showSnackbar("Kopiert til utklippstavlen")
+        showSnackbar({message: "Kopiert til utklippstavlen"})
         onClick?.(e)
     }
 

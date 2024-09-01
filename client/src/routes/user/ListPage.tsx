@@ -167,7 +167,7 @@ function EmailListItem({users, label }:{ users: User[], label: string }) {
         const data = users.map((user: User) => (user.email))
                           .join("\n")
         navigator.clipboard.writeText(data);
-        showSnackbar("Kopiert til utklippstavlen")
+        showSnackbar({message: "Kopiert til utklippstavlen"})
     }
 
     if(users.length <= 0)
