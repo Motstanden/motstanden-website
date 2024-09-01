@@ -1,6 +1,9 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import {
     Box,
+    Dialog,
+    DialogContent,
+    DialogTitle,
     Divider,
     Grid,
     MenuItem,
@@ -17,17 +20,21 @@ import { isNtnuMail as checkIsNtnuMail, getFullName, isNullOrWhitespace, strToNu
 import dayjs, { Dayjs } from "dayjs"
 import { useState } from 'react'
 import { datePickerStyle } from "src/assets/style/timePickerStyles"
+import { CloseModalButton } from 'src/components/CloseModalButton'
 import { HelpButton } from "src/components/HelpButton"
 import { PostingWall } from "src/components/PostingWall"
 import { TitleCard } from "src/components/TitleCard"
 import { Form } from "src/components/form/Form"
+import { DeleteMenuItem } from 'src/components/menu/DeleteMenuItem'
 import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
+import { UserAvatar } from 'src/components/user/UserAvatar'
 import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication"
 import { useTimeZone } from 'src/context/TimeZone'
 import { useTitle } from "src/hooks/useTitle"
 import { useUserProfileContext, userListQueryKey } from './Context'
 import { Card, CardTextItem, CardTextList } from "./components/Card"
-import { DeleteMenuItem } from 'src/components/menu/DeleteMenuItem'
+import { LoadingButton } from '@mui/lab'
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 export default function UserPage() {
     const { viewedUser: user } = useUserProfileContext()
@@ -53,51 +60,153 @@ function ProfileHeader({ user, sx }: { user: User, sx?: SxProps }) {
     const { user: currentUser, isSuperAdmin } = useAuthenticatedUser()
     const canDeleteUser = user.id === currentUser.id || isSuperAdmin
     
-    return (
-        <Paper
-            elevation={6}
-            style={{ textAlign: "center" }}
-            sx={{ ...sx, p: 2 }}
-        >
-            {!canDeleteUser && (
-                <h1 style={{ margin: "0px" }}>{fullName}</h1>
-            )}
-
-            {canDeleteUser && (
-                <Stack direction="row" 
-                    justifyContent="space-between" 
-                    alignItems="center">
-                        <div style={{width: "42px"}}/>
-                        <h1 style={{margin: "0px"}}>{fullName}</h1>
-                        <div style={{width: "42px"}}>
-                            <ProfileHeaderMenu/>
-                        </div>
-                </Stack>
-            )}
-
-            <img
-                src={`${window.location.origin}/${user.profilePicture}`}
-                alt={`Profilbildet til ${fullName}`}
-                style={{
-                    width: "90%",
-                    maxWidth: "300px",
-                    borderRadius: "50%",
-                    marginTop: "10px"
-                }} />
-        </Paper>
-    )
-}
-
-function ProfileHeaderMenu() {
+    const [ showDeleteUserDialog, setShowDeleteUserDialog ] = useState(false)
 
     const onDeleteClick = () => {
-        // Todo
+        setShowDeleteUserDialog(true)
+    }
+
+    const onCloseDialog = () => {
+        setShowDeleteUserDialog(false)
     }
 
     return (
-        <IconPopupMenu icon={<MoreHorizIcon/>}>
-            <DeleteMenuItem onClick={onDeleteClick}/>
-        </IconPopupMenu>
+        <>
+            <DeleteUserDialog 
+                isOpen={showDeleteUserDialog}
+                onClose={onCloseDialog}
+                user={user}
+            />
+            <Paper
+                elevation={6}
+                style={{ textAlign: "center" }}
+                sx={{ ...sx, p: 2 }}
+            >
+                {!canDeleteUser && (
+                    <h1 style={{ margin: "0px" }}>{fullName}</h1>
+                )}
+
+                {canDeleteUser && (
+                    <Stack direction="row" 
+                        justifyContent="space-between" 
+                        alignItems="center">
+                            <div style={{width: "42px"}}/>
+                            <h1 style={{margin: "0px"}}>{fullName}</h1>
+                            <div style={{width: "42px"}}>
+                            <IconPopupMenu icon={<MoreHorizIcon/>}>
+                                <DeleteMenuItem onClick={onDeleteClick}/>
+                            </IconPopupMenu>
+                            </div>
+                    </Stack>
+                )}
+
+                <img
+                    src={`${window.location.origin}/${user.profilePicture}`}
+                    alt={`Profilbildet til ${fullName}`}
+                    style={{
+                        width: "90%",
+                        maxWidth: "300px",
+                        borderRadius: "50%",
+                        marginTop: "10px"
+                    }} />
+            </Paper>
+        </>
+    )
+}
+
+function DeleteUserDialog( {
+    isOpen = false, onClose, user
+}: {
+    isOpen?: boolean, 
+    onClose?: () => void,
+    user: User
+}) {
+
+    const fullName = getFullName(user)
+
+    const [isPosting, setIsPosting] = useState(false)
+
+
+    const [confirmText, setConfirmText] = useState("")
+    const isDisabled = confirmText !== fullName
+
+    const onDeleteClick = () => {
+        setIsPosting(true)
+    }
+
+    const onCloseModal = () => {
+        if(!isPosting) {
+            onClose?.()
+        }
+    }
+
+    return (
+        <Dialog 
+            open={isOpen} 
+            onClose={onCloseModal}
+            >
+
+            <DialogTitle>
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                >
+                    <h4 style={{margin: "0px"}}>
+                        Slett bruker?
+                    </h4>
+                    {!isPosting && <CloseModalButton onClick={onClose} style={{ marginBottom: "2px" }} />}
+                </Stack>
+            </DialogTitle>
+            <DialogContent>
+                <Stack 
+                    direction="row"
+                    alignItems="center"
+                >
+                    <UserAvatar userId={user.id} />
+                    <Box 
+                        sx={{
+                            marginLeft: "10px",
+                            fontWeight: "bold",
+                            color: theme => theme.palette.text.secondary
+                        }}
+                    >
+                        {fullName}
+                    </Box>
+                </Stack>
+                <Box sx={{
+                    marginTop: "25px",
+                    fontWeight: "bold",
+                    fontSize: "0.95em",
+                    marginBottom: "5px",
+                    color: theme => theme.palette.text.secondary
+                }}>
+                    Bekreft ved å skrive inn {`"${fullName}"`} i feltet under 
+                </Box>
+                <TextField 
+                    placeholder={fullName}
+                    fullWidth
+                    value={confirmText}
+                    onChange={e => setConfirmText(e.target.value)}
+                    autoComplete="off"
+                    error={isDisabled}
+                />
+                <LoadingButton
+                    onClick={onDeleteClick}
+                    color='error'
+                    variant='outlined'
+                    disabled={isDisabled}
+                    loading={isPosting}
+                    startIcon={<DeleteForeverIcon/>}
+                    sx={{
+                        mt: 4,
+                        width: "100%"
+                    }}
+                >
+                    Slett bruker
+                </LoadingButton>
+            </DialogContent>
+        </Dialog>
     )
 }
 
