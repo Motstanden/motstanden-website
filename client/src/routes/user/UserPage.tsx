@@ -34,6 +34,7 @@ import { UserAvatar } from 'src/components/user/UserAvatar'
 import { useAppSnackBar } from 'src/context/AppSnackBar'
 import { useAuthenticatedUser, userAuthQueryKey } from "src/context/Authentication"
 import { useTimeZone } from 'src/context/TimeZone'
+import { userReferenceQueryKey } from 'src/context/UserReference'
 import { useTitle } from "src/hooks/useTitle"
 import { httpDelete } from 'src/utils/postJson'
 import { useUserProfileContext, userListQueryKey } from './Context'
@@ -156,12 +157,17 @@ function DeleteUserDialog( {
         }
         
         showSnackbar({
-            message: isDeletingSelf ? "Brukeren din har nå blitt slettet" : `Brukeren til ${user.firstName} har nå blitt slettet`,
+            message: isDeletingSelf ? "Brukeren din har blitt slettet" : `Brukeren til ${user.firstName} har blitt slettet`,
             autoHideDuration: null,
             severity: "success" 
         })   
         navigate(isDeletingSelf ? "/framside" : "/medlem")
-        await queryClient.invalidateQueries({queryKey: isDeletingSelf ? userAuthQueryKey : userListQueryKey})
+
+        await Promise.all([
+            queryClient.invalidateQueries({queryKey: userAuthQueryKey}),
+            queryClient.invalidateQueries({queryKey: userListQueryKey}),
+            queryClient.invalidateQueries({queryKey: userReferenceQueryKey})
+        ])
     }
 
     return (
