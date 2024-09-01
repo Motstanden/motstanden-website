@@ -1,3 +1,4 @@
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import {
     Box,
     Divider,
@@ -20,11 +21,13 @@ import { HelpButton } from "src/components/HelpButton"
 import { PostingWall } from "src/components/PostingWall"
 import { TitleCard } from "src/components/TitleCard"
 import { Form } from "src/components/form/Form"
+import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
 import { useAuthenticatedUser, userQueryKey } from "src/context/Authentication"
 import { useTimeZone } from 'src/context/TimeZone'
 import { useTitle } from "src/hooks/useTitle"
 import { useUserProfileContext, userListQueryKey } from './Context'
 import { Card, CardTextItem, CardTextList } from "./components/Card"
+import { DeleteMenuItem } from 'src/components/menu/DeleteMenuItem'
 
 export default function UserPage() {
     const { viewedUser: user } = useUserProfileContext()
@@ -46,13 +49,32 @@ export default function UserPage() {
 
 function ProfileHeader({ user, sx }: { user: User, sx?: SxProps }) {
     const fullName = getFullName(user)
+
+    const { user: currentUser, isSuperAdmin } = useAuthenticatedUser()
+    const canDeleteUser = user.id === currentUser.id || isSuperAdmin
+    
     return (
         <Paper
             elevation={6}
             style={{ textAlign: "center" }}
-            sx={{ ...sx }}
+            sx={{ ...sx, p: 2 }}
         >
-            <h1 style={{ paddingTop: "10px" }}>{fullName}</h1>
+            {!canDeleteUser && (
+                <h1 style={{ margin: "0px" }}>{fullName}</h1>
+            )}
+
+            {canDeleteUser && (
+                <Stack direction="row" 
+                    justifyContent="space-between" 
+                    alignItems="center">
+                        <div style={{width: "42px"}}/>
+                        <h1 style={{margin: "0px"}}>{fullName}</h1>
+                        <div style={{width: "42px"}}>
+                            <ProfileHeaderMenu/>
+                        </div>
+                </Stack>
+            )}
+
             <img
                 src={`${window.location.origin}/${user.profilePicture}`}
                 alt={`Profilbildet til ${fullName}`}
@@ -60,9 +82,22 @@ function ProfileHeader({ user, sx }: { user: User, sx?: SxProps }) {
                     width: "90%",
                     maxWidth: "300px",
                     borderRadius: "50%",
-                    paddingBottom: "10px"
+                    marginTop: "10px"
                 }} />
         </Paper>
+    )
+}
+
+function ProfileHeaderMenu() {
+
+    const onDeleteClick = () => {
+        // Todo
+    }
+
+    return (
+        <IconPopupMenu icon={<MoreHorizIcon/>}>
+            <DeleteMenuItem onClick={onDeleteClick}/>
+        </IconPopupMenu>
     )
 }
 
