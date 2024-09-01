@@ -30,26 +30,26 @@ root.render(
 			<BrowserRouter>
 				<LocaleProvider>
 					<TimeZoneProvider>
-						<AuthProvider>
-							<UserReferenceProvider>
-								<LikeEmojiProvider>
-									<AppThemeProvider>
-										<TopScrollerProvider>
-											<AppBarStyleProvider>
-												<AppSnackBarProvider>
-													<AppBarHeaderProvider>
-														{/* Provides reasonable default css values from the material-ui framework */}
-														<CssBaseline />
+						<AppSnackBarProvider>
+							<AuthProvider>
+								<UserReferenceProvider>
+									<LikeEmojiProvider>
+										<AppThemeProvider>
+											<TopScrollerProvider>
+												<AppBarStyleProvider>
+														<AppBarHeaderProvider>
+															{/* Provides reasonable default css values from the material-ui framework */}
+															<CssBaseline />
 
-														<App />
-													</AppBarHeaderProvider>
-												</AppSnackBarProvider>
-											</AppBarStyleProvider>
-										</TopScrollerProvider>
-									</AppThemeProvider>
-								</LikeEmojiProvider>
-							</UserReferenceProvider>
-						</AuthProvider>
+															<App />
+														</AppBarHeaderProvider>
+												</AppBarStyleProvider>
+											</TopScrollerProvider>
+										</AppThemeProvider>
+									</LikeEmojiProvider>
+								</UserReferenceProvider>
+							</AuthProvider>
+						</AppSnackBarProvider>
 					</TimeZoneProvider>
 				</LocaleProvider>
 			</BrowserRouter>
