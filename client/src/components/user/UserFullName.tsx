@@ -1,16 +1,16 @@
-import { Link, Skeleton } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
-import { useUserReference } from "src/context/UserReference";
+import { Link, Skeleton } from "@mui/material"
+import { Link as RouterLink } from "react-router-dom"
+import { useUserReference } from "src/context/UserReference"
 
 
 export function UserFullName({
     userId, style
 }: {
     userId: number;
-    style?: React.CSSProperties;
+    style?: React.CSSProperties
 }) {
 
-    const { isError, isPending, userReference } = useUserReference();
+    const { isError, isPending, getUser } = useUserReference();
 
     if (isPending) {
         return (
@@ -25,10 +25,11 @@ export function UserFullName({
         );
     }
 
-    const user = userReference[userId];
-    if (isError || !user) {
-        return <b>[Ukjent]</b>;
+    if (isError) {
+        return <b>[Feil]</b>
     }
+
+    const user = getUser(userId);
 
     return (
         <Link

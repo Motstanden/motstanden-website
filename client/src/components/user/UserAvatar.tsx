@@ -8,16 +8,17 @@ export function UserAvatar({
     style?: React.CSSProperties;
 }) {
 
-    const { isError, isPending, userReference } = useUserReference();
+    const { isError, isPending, getUser } = useUserReference();
 
     if (isPending) {
         return <UserAvatarSkeleton style={style} />;
     }
 
-    const user = userReference[userId];
-    if (isError || !user) {
+    if (isError) {
         return <Avatar style={style} />;
     }
+    
+    const user = getUser(userId);
 
     return (
         <Avatar

@@ -1,15 +1,15 @@
-import { Button, useMediaQuery } from "@mui/material";
-import { isNullOrWhitespace } from 'common/utils';
-import { useUserReference } from 'src/context/UserReference';
-import { LikeListEmojiContent } from '../likes/LikeListButton';
-import { useLikes } from '../likes/LikesContext';
-import { UserLikesModal, useLikesModal } from '../likes/UserLikesModal';
-import { PostItemLikesSkeleton } from './Skeleton';
+import { Button, useMediaQuery } from "@mui/material"
+import { isNullOrWhitespace } from 'common/utils'
+import { useUserReference } from 'src/context/UserReference'
+import { LikeListEmojiContent } from '../likes/LikeListButton'
+import { useLikes } from '../likes/LikesContext'
+import { UserLikesModal, useLikesModal } from '../likes/UserLikesModal'
+import { PostItemLikesSkeleton } from './Skeleton'
 
 
 export function PostItemLikes() {
     const { likes, isPending } = useLikes();
-    const { userReference } = useUserReference();
+    const users = useUserReference();
     const isSmallScreen = useMediaQuery("(max-width: 675px)"); // We will consider this a small screen because the side drawer is docked at this width
 
     const { openModal } = useLikesModal();
@@ -17,32 +17,32 @@ export function PostItemLikes() {
         openModal();
     };
 
-    if (isPending)
+    if (isPending || users.isPending)
         return <PostItemLikesSkeleton />;
+
+    if (users.isError)
+        return <></>;
 
     if (likes.length <= 0)
         return <></>;
 
     let text = "";
-    if (userReference) {
 
-        const name = userReference[likes[0].userId].shortFullName;
+    const name = users.getUser(likes[0].userId).shortFullName;
+    if (likes.length === 1)
+        text = `${name}`;
 
-        if (likes.length === 1)
-            text = `${name}`;
+    if (likes.length === 2) {
+        text = `${name} og ${users.getUser(likes[1].userId).shortFullName}`;
 
-        if (likes.length === 2) {
-            text = `${name} og ${userReference[likes[1].userId].shortFullName}`;
-
-            const maxLength = 40;
-            if (text.length > maxLength && isSmallScreen) {
-                text = `${name} og 1 annen`;
-            }
+        const maxLength = 40;
+        if (text.length > maxLength && isSmallScreen) {
+            text = `${name} og 1 annen`;
         }
+    }
 
-        if (likes.length > 2) {
-            text = `${name} og ${likes.length - 1} andre`;
-        }
+    if (likes.length > 2) {
+        text = `${name} og ${likes.length - 1} andre`;
     }
 
     return (

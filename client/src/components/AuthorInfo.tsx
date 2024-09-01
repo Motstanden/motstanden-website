@@ -66,7 +66,7 @@ export function AuthorInfo({
 }
 
 export function AuthorItem({ userId, dateTime }: { userId: number, dateTime: string }) {
-    const { userReference, isPending, isError } = useUserReference()
+    const { getUser, isPending, isError } = useUserReference()
     useTimeZone()
 
     if(isPending)
@@ -75,7 +75,7 @@ export function AuthorItem({ userId, dateTime }: { userId: number, dateTime: str
     if(isError)
         return <span style={{color: "red"}}>Oops, noe gikk galt...🤔</span>
 
-    const user = userReference[userId]
+    const user = getUser(userId)
     return (
         <span>
             {`${dayjs.utc(dateTime).tz().format("DD. MMM YYYY HH:mm")}, av `}
