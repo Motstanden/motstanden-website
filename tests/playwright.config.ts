@@ -88,7 +88,8 @@ const config: PlaywrightTestConfig = {
             testIgnore: [ 
                 "simpleTexts.spec.ts",
                 "comments.api.ts",
-                "wallPosts.api.ts"
+                "wallPosts.api.ts",
+                "deleteDeactivatedUsers.spec.ts",
             ]
         },
 
@@ -104,7 +105,8 @@ const config: PlaywrightTestConfig = {
             testIgnore: [ 
                 "simpleTexts.spec.ts",
                 "comments.api.ts",
-                "wallPosts.api.ts"
+                "wallPosts.api.ts",
+                "deleteDeactivatedUsers.spec.ts",
             ]
         },
 
