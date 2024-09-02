@@ -18,7 +18,7 @@
     "setup-win": "npm run setup-shared && npm run setup-common-link-normal",
     "client-dev": "cd ../client && npm run dev",
     "common-dev": "cd ../common && tsc --watch --preserveWatchOutput",
-    "server-dev": "concurrently --prefix-colors \"auto\" --names \"typescript,console\"   \"tsc --watch --preserveWatchOutput\" \"nodemon --delay 1 build/server.js\"",
+    "server-dev": "concurrently --prefix-colors \"auto\" --names \"typescript,console,jobs\"   \"tsc --watch --preserveWatchOutput\" \"nodemon --delay 1 build/server.js\" \"nodemon --delay 1 build/jobScheduler.js\"" ,
     "dev": "concurrently --prefix-colors \"auto\" --names \"common,server,client\" npm:common-dev npm:server-dev npm:client-dev"
   },
   "repository": {
@@ -34,6 +34,7 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "better-sqlite3": "^11.2.1",
+    "bree": "^9.2.4",
     "common": "file:../common",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
