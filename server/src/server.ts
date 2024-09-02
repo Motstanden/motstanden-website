@@ -1,9 +1,6 @@
-// Loads secret keys from the local .env file. The .env file should always be a hidden secret, and should not be committed to github.
-import dotenv from "dotenv"
-dotenv.config({ path: "../.env" });
-
 import cookieParser from 'cookie-parser'
 import cors from "cors"
+import dotenv from "dotenv"
 import express from "express"
 import helmet from "helmet"
 import serveIndex from "serve-index"
@@ -12,6 +9,13 @@ import * as passportConfig from "./config/passportConfig.js"
 
 import { apiRoutes } from "./api/index.js"
 import { AuthenticateUser } from "./middleware/jwtAuthenticate.js"
+
+function resolvePath(relativePath: string) {
+    return fileURLToPath(new URL(relativePath, import.meta.url))
+}
+
+// Loads secret keys from the local .env file
+dotenv.config({ path: resolvePath("../.env") })
 
 const PORT = process.env.PORT || 5000
 const app = express()
@@ -46,31 +50,29 @@ app.use(express.json());                            // support json encoded bodi
 const passport = passportConfig.createPassport()
 app.use(passport.initialize());
 
-const allFilesPath     = fileURLToPath(new URL("../files",  import.meta.url))
-const privateFilesPath = fileURLToPath(new URL("../files/private", import.meta.url))
-const publicFilesPath  = fileURLToPath(new URL("../files/public",  import.meta.url))
-
+// Serve files from the server
 app.use("/files/private",
     AuthenticateUser({ failureRedirect: "/files/public" }),
-    express.static(privateFilesPath),
-    serveIndex(privateFilesPath, { icons: true }))
+    express.static(resolvePath("../files/private")),
+    serveIndex(resolvePath("../files/private"), { icons: true }))
 
 app.use("/files/public",
-    express.static(publicFilesPath),
-    serveIndex(publicFilesPath, { icons: true }))
+    express.static(resolvePath("../files/public")),
+    serveIndex(resolvePath("../files/public"), { icons: true }))
 
 app.use("/files",
     AuthenticateUser({ failureRedirect: "/files/public" }),
-    express.static(allFilesPath),
-    serveIndex(allFilesPath, { icons: true }))
+    express.static(resolvePath("../files")),
+    serveIndex(resolvePath("../files"), { icons: true }))
 
+// API routes – our bread and butter
 app.use("/api", apiRoutes)
 
 // Allows us to use files from './client/build'
-app.use(express.static(fileURLToPath(new URL("../../client/build", import.meta.url))))
+app.use(express.static(resolvePath("../../client/build")))
 
 app.get("*", (req, res) => {
-    res.sendFile(fileURLToPath(new URL("../../client/build/index.html", import.meta.url)))
+    res.sendFile(resolvePath("../../client/build/index.html"))
 })
 
 app.listen(PORT, () => console.log(process.env.IS_DEV_ENV ? `Back-end server running on http://localhost:${PORT}` : `Server running on port ${PORT}` ))
