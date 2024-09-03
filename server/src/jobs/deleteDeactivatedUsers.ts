@@ -1,23 +1,28 @@
 import Database, { Database as DatabaseType } from "better-sqlite3"
 import { CommentEntityType, LikeEntityType, UserGroup, UserRank, UserStatus } from "common/enums"
+import { DeactivatedUser } from "common/interfaces"
 import { parentPort } from 'node:worker_threads'
 import { dbReadWriteConfig, motstandenDB } from '../config/databaseConfig.js'
 import { db as DB } from '../db/index.js'
 import { dayjs } from "../lib/dayjs.js"
 import { isMainModule } from '../utils/isMainModule.js'
 import { sleepAsync } from '../utils/sleepAsync.js'
-import { DeactivatedUser } from "common/interfaces"
 
 /**
  * Entry point for the job `deleteDeactivatedUsers`
  */
 async function main() {
-    const errors: Error[] = []
-    
+
     const users = getUsersToDelete()
     if(users.length === 0) 
         return
     
+    const errors: Error[] = []
+    const onError = (err: unknown) => {
+        const error = err instanceof Error ? err : new Error(String(err))
+        errors.push(error)
+    }
+
     const db = new Database(motstandenDB, dbReadWriteConfig)
     
     // Prepare users for deletion
@@ -28,55 +33,33 @@ async function main() {
             DB.users.refreshTokens.deleteAllByUser(user.id, db)
             preparedUsers.push(user)
         } catch(err) { 
+            onError(err)
             undoMarkUserAsDeleted(db, user.id)
-            const error = err instanceof Error ? err : new Error(String(err))
-            errors.push(error)
         }
     }
     
-    
     // Avoid race conditions by waiting for any pending writes to the user table to complete
     // In production, we will wait 15 minutes for the AccessToken to expire
-    await sleepAsync( process.env.IS_DEV_ENV === "true" ? 2000 : 15 * 1000 * 60)
+    await sleepAsync(process.env.IS_DEV_ENV === "true" ? 2000 : 15 * 1000 * 60)
 
-    // Delete all user-identifiable data
     for(const user of preparedUsers) { 
-        const transaction = db.transaction(() => { 
-            anonymizeUser(db, user.id)
-
-            deleteAllLikes(db, user.id)
-            
-            DB.comments.resetUnreadCount(user.id, db)
-            deleteAllComments(db, user.id)
-
-            DB.wallPosts.resetUnreadCount(user.id, db)
-            DB.wallPosts.deleteAllByUser(user.id, db)
-            DB.wallPosts.deleteAllOnWall(user.id, db)
-
-            DB.events.participants.deleteAllByUser(user.id, db)
-
-            DB.polls.votes.deleteAllBy(user.id, db)
-
-            // TODO:
-            //  - Delete all events created by the user
-        })
-
+        
+        // Delete all user-identifiable data
         let success = false
         try {
-            transaction()
+            deleteUser(db, user)
             success = true
         } catch(err) { 
+            onError(err)
             undoMarkUserAsDeleted(db, user.id)
-            const error = err instanceof Error ? err : new Error(String(err))
-            errors.push(error)
         }
 
+        // TODO: Notify the user by mail
         if(success) {
             try {
-                // Send email to user
+                // TODO: Send email to user
             } catch(err) {
-                const error = err instanceof Error ? err : new Error(String(err))
-                errors.push(error)
+                onError(err)
             }
         }
     }
@@ -88,6 +71,30 @@ async function main() {
     }
 }
 
+/**
+ * Deletes all user-identifiable data for the given user
+ */
+function deleteUser(db: DatabaseType, user: DeactivatedUser) { 
+    return db.transaction(() => { 
+        anonymizeUser(db, user.id)
+
+        deleteAllLikes(db, user.id)
+        
+        DB.comments.resetUnreadCount(user.id, db)
+        deleteAllComments(db, user.id)
+
+        DB.wallPosts.resetUnreadCount(user.id, db)
+        DB.wallPosts.deleteAllByUser(user.id, db)
+        DB.wallPosts.deleteAllOnWall(user.id, db)
+
+        DB.events.participants.deleteAllByUser(user.id, db)
+
+        DB.polls.votes.deleteAllBy(user.id, db)
+
+        // TODO:
+        //  - Delete all events created by the user
+    })
+}
 /**
  * Gets all users that have been deactivated for more than 90 days
  */
