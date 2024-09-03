@@ -20,7 +20,7 @@ async function getPollOptions(request: APIRequestContext, pollId: number) {
 }
 
 async function getPollVoters(request: APIRequestContext, pollId: number) {
-    const res = await request.get(`/api/polls/${pollId}/votes`)
+    const res = await request.get(`/api/polls/${pollId}/voters`)
     if(!res.ok()) {
         throw new Error(`Failed to get all poll voters.\n${res.status()}: ${res.statusText()}`)
     }
