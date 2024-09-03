@@ -75,4 +75,4 @@ app.get("*", (req, res) => {
     res.sendFile(resolvePath("../../client/build/index.html"))
 })
 
-app.listen(PORT, () => console.log(process.env.IS_DEV_ENV ? `Back-end server running on http://localhost:${PORT}` : `Server running on port ${PORT}` ))
+app.listen(PORT, () => console.log(process.env.IS_DEV_ENV === "true" ? `Back-end server running on http://localhost:${PORT}` : `Server running on port ${PORT}` ))
