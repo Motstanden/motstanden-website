@@ -213,8 +213,10 @@ async function deleteUserHandler(req: Request, res: Response, id: number) {
         return res.status(404).send("User not found")
     }
 
-    // Deactivate the user. It will be deleted by an automatic job in 90 days.
+    // Deactivate the user, and log them out of all devices. 
+    // The user will be deleted by an automatic job in 90 days.
     db.users.deactivate(id)
+    db.users.refreshTokens.deleteAllByUser(id)  
 
     // If the user is deleting themselves, log them out
     const currentUser = getUser(req)
