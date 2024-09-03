@@ -7,6 +7,7 @@ import { db as DB } from '../db/index.js'
 import { dayjs } from "../lib/dayjs.js"
 import { isMainModule } from '../utils/isMainModule.js'
 import { sleepAsync } from '../utils/sleepAsync.js'
+import { ErrorLogger } from "../utils/ErrorLogger.js"
 
 /**
  * Entry point for the job `deleteDeactivatedUsers`
@@ -17,12 +18,7 @@ async function main() {
     if(users.length === 0) 
         return
     
-    const errors: Error[] = []
-    const onError = (err: unknown) => {
-        const error = err instanceof Error ? err : new Error(String(err))
-        errors.push(error)
-    }
-
+    const errors = new ErrorLogger()
     const db = new Database(motstandenDB, dbReadWriteConfig)
     
     // Prepare users for deletion
@@ -33,7 +29,7 @@ async function main() {
             DB.users.refreshTokens.deleteAllByUser(user.id, db)
             preparedUsers.push(user)
         } catch(err) { 
-            onError(err)
+            errors.log(err)
             undoMarkUserAsDeleted(db, user.id)
         }
     }
@@ -50,7 +46,7 @@ async function main() {
             deleteUser(db, user)
             success = true
         } catch(err) { 
-            onError(err)
+            errors.log(err)
             undoMarkUserAsDeleted(db, user.id)
         }
 
@@ -59,15 +55,14 @@ async function main() {
             try {
                 // TODO: Send email to user
             } catch(err) {
-                onError(err)
+                errors.log(err)
             }
         }
     }
-    db.close()
 
-    if(errors.length > 0) {
-        const errorMessages = errors.map((err, index) => `Error ${index + 1}:\n${err.message}`).join("\n\n")
-        throw new Error(`Encountered ${errors.length} errors during deletion of deactivated users:\n\n${errorMessages}`)
+    db.close()
+    if(errors.hasErrors()) {
+        throw new Error(errors.message())
     }
 }
 
