@@ -5,33 +5,56 @@ INSERT INTO version(migration) VALUES
     ('24_delete_user.sql');
 
 -- Add columns: 
+--      is_deactivated
 --      is_deleted 
+--      deactivated_at
 --      deleted_at
 ALTER TABLE user 
+    ADD COLUMN is_deactivated BOOLEAN NOT NULL DEFAULT 0;
+
+ALTER TABLE user 
     ADD COLUMN is_deleted BOOLEAN NOT NULL DEFAULT 0;
+
+ALTER TABLE user
+    ADD COLUMN deactivated_at DEFAULT NULL CHECK(deactivated_at = NULL OR deactivated_at is datetime(deactivated_at));
 
 ALTER TABLE user
     ADD COLUMN deleted_at DEFAULT NULL CHECK(deleted_at = NULL OR deleted_at is datetime(deleted_at));
 
 
--- Change trigger: Update user.updated_at when user is updated and not deleted.
-DROP TRIGGER trig_user_updated_at;
-
-CREATE TRIGGER trig_user_updated_at
-    AFTER UPDATE ON user FOR EACH ROW
+-- New trigger: set deactivated_at when user is deactivated.
+CREATE TRIGGER trig_user_deactivated
+    AFTER UPDATE OF is_deactivated ON user 
+    FOR EACH ROW
 BEGIN
-    UPDATE user 
-    SET updated_at = current_timestamp
-    WHERE 
+    UPDATE user
+    SET 
+        deactivated_at = current_timestamp
+    WHERE
         user_id = OLD.user_id
-        AND OLD.is_deleted = 0
-        AND NEW.is_deleted = 0;
+        AND OLD.is_deactivated = 0
+        AND NEW.is_deactivated = 1;
+END;
+
+-- New trigger: set deactivated_at to NULL when user is reactivated.
+CREATE TRIGGER trig_user_reactivated
+    AFTER UPDATE OF is_deactivated ON user 
+    FOR EACH ROW
+BEGIN
+    UPDATE user
+    SET 
+        deactivated_at = NULL
+    WHERE
+        user_id = OLD.user_id
+        AND OLD.is_deactivated = 1
+        AND NEW.is_deactivated = 0;
 END;
 
 
 -- New trigger: Set deleted_at when user is deleted.
 CREATE TRIGGER trig_user_deleted
-    AFTER UPDATE OF is_deleted ON user FOR EACH ROW
+    AFTER UPDATE OF is_deleted ON user 
+    FOR EACH ROW
 BEGIN
     UPDATE user
     SET 
@@ -43,22 +66,23 @@ BEGIN
 END;
     
 
--- New trigger: Set deleted_at to NULL and updated_at when user is restored.
-CREATE TRIGGER trig_user_restored
+-- New trigger: Set deleted_at to NULL when user is undeleted.
+CREATE TRIGGER trig_user_undeleted
     AFTER UPDATE OF is_deleted ON user FOR EACH ROW
 BEGIN
     UPDATE user 
     SET 
-        deleted_at = NULL,
-        updated_at = current_timestamp
+        deleted_at = NULL
     WHERE 
         user_id = OLD.user_id
         AND OLD.is_deleted = 1
         AND NEW.is_deleted = 0;
 END;
 
--- Add fields to view vw_user:
+-- Add new fields to view vw_user:
+--      is_deactivated
 --      is_deleted
+--      deactivated_at
 --      deleted_at
 DROP VIEW vw_user;
 CREATE VIEW vw_user 
@@ -81,9 +105,11 @@ SELECT
     user_status.status as user_status,
     start_date,
     end_date,
+    is_deactivated,
+    is_deleted,
     created_at,
     updated_at,
-    is_deleted,
+    deactivated_at,
     deleted_at
 FROM
     user

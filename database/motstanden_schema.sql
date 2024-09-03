@@ -46,7 +46,7 @@ CREATE TABLE user (
     end_date TEXT DEFAULT NULL CHECK(end_date IS date(end_date, '+0 days')),                            -- Check that format is 'YYYY-MM-DD'
     profile_picture TEXT NOT NULL CHECK(like('files/private/profilbilder/%_._%', profile_picture)) DEFAULT 'files/private/profilbilder/boy.png',
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, is_deleted BOOLEAN NOT NULL DEFAULT 0, deleted_at DEFAULT NULL CHECK(deleted_at = NULL OR deleted_at is datetime(deleted_at)),
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, is_deactivated BOOLEAN NOT NULL DEFAULT 0, is_deleted BOOLEAN NOT NULL DEFAULT 0, deactivated_at DEFAULT NULL CHECK(deactivated_at = NULL OR deactivated_at is datetime(deactivated_at)), deleted_at DEFAULT NULL CHECK(deleted_at = NULL OR deleted_at is datetime(deleted_at)),
     FOREIGN KEY (user_group_id)
          REFERENCES user_group (user_group_id)
          ON UPDATE CASCADE
@@ -60,6 +60,12 @@ CREATE TABLE user (
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
+CREATE TRIGGER trig_user_updated_at
+    AFTER UPDATE ON user FOR EACH ROW
+BEGIN
+    UPDATE user SET updated_at = current_timestamp
+        WHERE user_id = old.user_id;
+END;
 CREATE TABLE login_token (
     token_id INTEGER PRIMARY KEY NOT NULL,
     user_id INTEGER NOT NULL,
@@ -601,18 +607,33 @@ BEGIN
     UPDATE unread_wall_post_comment SET updated_at = current_timestamp
         WHERE unread_wall_post_comment_id = old.unread_wall_post_comment_id;
 END;
-CREATE TRIGGER trig_user_updated_at
-    AFTER UPDATE ON user FOR EACH ROW
+CREATE TRIGGER trig_user_deactivated
+    AFTER UPDATE OF is_deactivated ON user 
+    FOR EACH ROW
 BEGIN
-    UPDATE user 
-    SET updated_at = current_timestamp
-    WHERE 
+    UPDATE user
+    SET 
+        deactivated_at = current_timestamp
+    WHERE
         user_id = OLD.user_id
-        AND OLD.is_deleted = 0
-        AND NEW.is_deleted = 0;
+        AND OLD.is_deactivated = 0
+        AND NEW.is_deactivated = 1;
+END;
+CREATE TRIGGER trig_user_reactivated
+    AFTER UPDATE OF is_deactivated ON user 
+    FOR EACH ROW
+BEGIN
+    UPDATE user
+    SET 
+        deactivated_at = NULL
+    WHERE
+        user_id = OLD.user_id
+        AND OLD.is_deactivated = 1
+        AND NEW.is_deactivated = 0;
 END;
 CREATE TRIGGER trig_user_deleted
-    AFTER UPDATE OF is_deleted ON user FOR EACH ROW
+    AFTER UPDATE OF is_deleted ON user 
+    FOR EACH ROW
 BEGIN
     UPDATE user
     SET 
@@ -622,13 +643,12 @@ BEGIN
         AND OLD.is_deleted = 0
         AND NEW.is_deleted = 1;
 END;
-CREATE TRIGGER trig_user_restored
+CREATE TRIGGER trig_user_undeleted
     AFTER UPDATE OF is_deleted ON user FOR EACH ROW
 BEGIN
     UPDATE user 
     SET 
-        deleted_at = NULL,
-        updated_at = current_timestamp
+        deleted_at = NULL
     WHERE 
         user_id = OLD.user_id
         AND OLD.is_deleted = 1
@@ -654,13 +674,15 @@ SELECT
     user_status.status as user_status,
     start_date,
     end_date,
+    is_deactivated,
+    is_deleted,
     created_at,
     updated_at,
-    is_deleted,
+    deactivated_at,
     deleted_at
 FROM
     user
 LEFT JOIN user_group USING (user_group_id)
 LEFT JOIN user_rank USING (user_rank_id)
 LEFT JOIN user_status USING (user_status_id)
-/* vw_user(user_id,user_group_id,user_group,user_rank_id,user_rank,email,first_name,middle_name,last_name,full_name,cape_name,profile_picture,phone_number,birth_date,user_status,start_date,end_date,created_at,updated_at,is_deleted,deleted_at) */;
+/* vw_user(user_id,user_group_id,user_group,user_rank_id,user_rank,email,first_name,middle_name,last_name,full_name,cape_name,profile_picture,phone_number,birth_date,user_status,start_date,end_date,is_deactivated,is_deleted,created_at,updated_at,deactivated_at,deleted_at) */;
