@@ -1,6 +1,7 @@
 import { APIRequestContext, expect, test } from "@playwright/test"
-import { LikeEntityType, UserGroup } from "common/enums"
-import { DeactivatedUser, Like, User } from "common/interfaces"
+import { CommentEntityType, LikeEntityType, UserGroup } from "common/enums"
+import { Comment, DeactivatedUser, Like, User } from "common/interfaces"
+import { randomUUID } from "crypto"
 import dayjs from "dayjs"
 import sinon from "sinon"
 import { job } from "../../../server/src/jobs/deleteDeactivatedUsers.js"
@@ -22,6 +23,13 @@ test("Job deletes all identifiable user data", async ({ request }, workerInfo) =
     await api.likes.create(request, LikeEntityType.WallPost, likeEntityId)
     await api.likes.create(request, LikeEntityType.WallPostComment, likeEntityId)
 
+    // Comment on all entities
+    const commentEntityId = 1
+    const comment = `${randomUUID()}`
+    await api.comments.new(request, CommentEntityType.Event, commentEntityId, comment)
+    await api.comments.new(request, CommentEntityType.Poll, commentEntityId, comment)
+    await api.comments.new(request, CommentEntityType.SongLyric, commentEntityId, comment)
+    await api.comments.new(request, CommentEntityType.WallPost, commentEntityId, comment)
 
     // Deactivate user
     await api.users.delete(workerInfo, user.id)
@@ -51,6 +59,12 @@ test("Job deletes all identifiable user data", async ({ request }, workerInfo) =
     expect(await getLike(request, user.id, LikeEntityType.SongLyricComment, likeEntityId)).toBe(undefined)
     expect(await getLike(request, user.id, LikeEntityType.WallPost, likeEntityId)).toBe(undefined)
     expect(await getLike(request, user.id, LikeEntityType.WallPostComment, likeEntityId)).toBe(undefined)
+
+    // Assert all comments are deleted
+    expect(await getComment(request, user.id, CommentEntityType.Event, commentEntityId)).toBe(undefined)
+    expect(await getComment(request, user.id, CommentEntityType.Poll, commentEntityId)).toBe(undefined)
+    expect(await getComment(request, user.id, CommentEntityType.SongLyric, commentEntityId)).toBe(undefined)
+    expect(await getComment(request, user.id, CommentEntityType.WallPost, commentEntityId)).toBe(undefined)
 })
 
 async function getUser(request: APIRequestContext, userId: number) : Promise<User | undefined> {
@@ -66,4 +80,9 @@ async function getDeactivatedUser(request: APIRequestContext, userId: number): P
 async function getLike(request: APIRequestContext, userId: number, entityType: LikeEntityType, entityId: number): Promise<Like | undefined> {
     const allLikes = await api.likes.getAll(request, entityType, entityId)
     return allLikes.find(l => l.userId === userId)
+}
+
+async function getComment(request: APIRequestContext, userId: number, entityType: CommentEntityType, entityId: number): Promise<Comment | undefined> {
+    const allComments = await api.comments.getAll(request, entityType, entityId)
+    return allComments.find(c => c.createdBy === userId)
 }
