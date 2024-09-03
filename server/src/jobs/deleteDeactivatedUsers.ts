@@ -15,7 +15,8 @@ async function main() {
     const users = getUsersToDelete()
     if(users.length === 0) 
         return
-    
+
+    const errors: Error[] = []
     const db = new Database(motstandenDB, dbReadWriteConfig)
 
     for(const user of users) { 
@@ -46,10 +47,24 @@ async function main() {
             // TODO:
             //  - Delete all events created by the user
         })
-        await transaction()
-    }
 
+        try {
+            await transaction()
+
+            // TODO: Send email to user that their account is deleted
+            
+        } catch(err) { 
+            console.error(err)
+            const error = err instanceof Error ? err : new Error(String(err))
+            errors.push(error)
+        }
+    }
     db.close()
+
+    if(errors.length > 0) {
+        const errorMessages = errors.map((err, index) => `Error ${index + 1}:\n${err.message}`).join("\n\n")
+        throw new Error(`Encountered ${errors.length} errors during deletion of deactivated users:\n\n${errorMessages}`)
+    }
 }
 
 /**
