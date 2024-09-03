@@ -37,6 +37,8 @@ async function main() {
             DB.wallPosts.deleteAllByUser(user.id, db)
             DB.wallPosts.deleteAllOnWall(user.id, db)
 
+            DB.events.participants.deleteAllByUser(user.id, db)
+
             // TODO:
             //  - Delete all login tokens
             //  - Delete all poll votes 
