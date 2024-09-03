@@ -1,4 +1,4 @@
-import { deletePost } from "./delete.js"
+import { deleteAllPostsByUser, deleteAllPostsOnWall, deletePost } from "./delete.js"
 import { get, getAll } from "./get.js"
 import { insertPostAndMarkUnread } from "./insert.js"
 import { getUnreadCount, resetUnreadCount } from "./unreadCount.js"
@@ -10,6 +10,8 @@ export const wallPostsDb = {
     insertPostAndMarkUnread: insertPostAndMarkUnread,
     updateContent: updateContent,
     delete: deletePost,
+    deleteAllByUser: deleteAllPostsByUser,
+    deleteAllOnWall: deleteAllPostsOnWall,
     getUnreadCount: getUnreadCount,
     resetUnreadCount: resetUnreadCount,
 }

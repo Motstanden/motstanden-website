@@ -29,14 +29,15 @@ async function main() {
             anonymizeUser(db, user.id)
 
             deleteAllLikes(db, user.id)
+            
             DB.comments.resetUnreadCount(user.id, db)
             deleteAllComments(db, user.id)
 
+            DB.wallPosts.resetUnreadCount(user.id, db)
+            DB.wallPosts.deleteAllByUser(user.id, db)
+            DB.wallPosts.deleteAllOnWall(user.id, db)
+
             // TODO:
-            //  - Delete all wall posts
-            //  - Delete all comments
-            //  - Delete all unread wall posts
-            //  - Delete all unread comments
             //  - Delete all login tokens
             //  - Delete all poll votes 
             //  - Delete all events created by the user
