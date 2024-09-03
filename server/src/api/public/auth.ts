@@ -38,7 +38,7 @@ router.post("/auth/magic-link",
     }
 );
 
-if (process.env.IS_DEV_ENV) {
+if (process.env.IS_DEV_ENV === "true") {
     router.post("/dev/auth/login", 
         requiresDevEnv,
         validateBody(MagicLinkPayloadSchema), 
