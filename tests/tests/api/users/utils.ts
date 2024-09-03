@@ -24,10 +24,9 @@ export function assertEqualUsers(actual: User, expected: User) {
 }
 
 
-type UrlType = "POST users" | "users/deleted/:id" | "users/*/personal-info" | "users/:id/membership" | "users/:id"
+type UrlType = "POST users" | "users/*/personal-info" | "users/:id/membership" | "users/:id"
 
 export function getRandomPayloadFor(url: "POST users"): NewUser;
-export function getRandomPayloadFor(url: "users/deleted/:id"): NewUser;
 export function getRandomPayloadFor(url: "users/*/personal-info"): UpdateUserPersonalInfoBody;
 export function getRandomPayloadFor(url: "users/:id/membership"): UpdateUserMembershipAsAdminBody;
 export function getRandomPayloadFor(url: "users/:id"): UpdateUserAsSuperAdminBody;
@@ -38,7 +37,6 @@ export function getRandomPayloadFor(url: UrlType): NewUser | UpdateUserAsSuperAd
     switch (url) {
 
         case "POST users":
-        case "users/deleted/:id":
             return {
                 firstName: `___firstName ${uuid}`,
                 middleName: `___middleName ${uuid}`,

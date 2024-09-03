@@ -1,9 +1,15 @@
 import Database, { Database as DatabaseType } from "better-sqlite3"
-import { DeletedUser, User, UserIdentity } from "common/interfaces"
+import { User, UserIdentity } from "common/interfaces"
 import { isNullOrWhitespace } from "common/utils"
-import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../../config/databaseConfig.js"
+import { dbReadOnlyConfig, motstandenDB } from "../../config/databaseConfig.js"
 
-export function getUser(id: number): User | undefined {
+type GetUserOptions = { onlyDeactivated?: boolean }
+
+
+export const getActivatedUser = (id: number) => getUser(id, { onlyDeactivated: false })
+export const getDeactivatedUser = (id: number) => getUser(id, { onlyDeactivated: true })
+
+function getUser(id: number, opts?: GetUserOptions): User | undefined {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
         `SELECT 
@@ -27,15 +33,22 @@ export function getUser(id: number): User | undefined {
         FROM 
             vw_user 
         WHERE 
-            user_id = ? AND is_deleted = 0`)
-    const user = stmt.get(id) as User
+            user_id = @userId 
+            AND is_deactivated = @isDeactivated 
+            AND is_deleted = 0`)
+    const user = stmt.get({
+        userId: id,
+        isDeactivated: opts?.onlyDeactivated ? 1 : 0
+    }) as User
     db.close()
-
-
     return user
 }
 
-export function getAllUsers(): User[] {
+
+export const getAllActivatedUsers = () => getAllUsers({ onlyDeactivated: false })
+export const getAllDeactivatedUsers = () => getAllUsers({ onlyDeactivated: true })
+
+function getAllUsers(opts?: GetUserOptions): User[] {
 
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
@@ -60,78 +73,17 @@ export function getAllUsers(): User[] {
         FROM 
             vw_user
         WHERE
-            is_deleted = 0 
+            is_deactivated = @isDeactivated AND is_deleted = 0 
         ORDER BY 
             first_name COLLATE NOCASE ASC`)
-    const user = stmt.all() as User[]
+    
+    const user = stmt.all({
+        isDeactivated: opts?.onlyDeactivated ? 1 : 0
+    }) as User[]
+
     db.close()
 
     return user
-}
-
-export function getDeletedUser(id: number): DeletedUser | undefined { 
-    const db = new Database(motstandenDB, dbReadOnlyConfig)
-    const stmt = db.prepare(
-        `SELECT 
-            user_id as id,
-            user_rank as rank,
-            cape_name as capeName,
-            start_date as startDate,
-            end_date as endDate,
-            created_at as createdAt,
-            updated_at as updatedAt,
-            deleted_at as deletedAt
-        FROM 
-            vw_user 
-        WHERE 
-            user_id = ? AND is_deleted = 1`)
-    const user = stmt.get(id) as DeletedUser | undefined
-    db.close()
-
-    return user
-}
-
-export function getAllDeletedUsers(): DeletedUser[] {
-    const db = new Database(motstandenDB, dbReadOnlyConfig)
-    const stmt = db.prepare(
-        `SELECT 
-            user_id as id,
-            user_rank as rank,
-            cape_name as capeName,
-            start_date as startDate,
-            end_date as endDate,
-            created_at as createdAt,
-            updated_at as updatedAt,
-            deleted_at as deletedAt
-        FROM 
-            vw_user
-        WHERE
-            is_deleted = 1 
-        ORDER BY 
-            deleted_at DESC`)
-    const users = stmt.all() as DeletedUser[]
-    db.close()
-
-    return users    
-}
-
-// TODO: Refactor this to return more data
-type DeactivatedUser = { id: number, email: string, deactivatedAt: string }
-export function getAllDeactivatedUsers() { 
-    const db = new Database(motstandenDB, dbReadWriteConfig)
-    const stmt = db.prepare(`
-        SELECT 
-            user_id as id,
-            email,
-            deactivated_at as deactivatedAt
-        FROM 
-            user 
-        WHERE 
-            is_deactivated = 1 AND is_deleted = 0
-    `)
-    const users = stmt.all() as DeactivatedUser[]
-    db.close()
-    return users
 }
 
 export function getAllUserIds(existingDbConnection?: DatabaseType): { id: number }[] { 
@@ -143,7 +95,7 @@ export function getAllUserIds(existingDbConnection?: DatabaseType): { id: number
         FROM
             user
         WHERE
-            is_deleted = 0
+            is_deactivated = 0 AND is_deleted = 0
     `)
     const userIds = stmt.all() as { id: number} []
 
@@ -169,7 +121,7 @@ export function getAllUsersAsIdentifiers(): UserIdentity[] {
         FROM 
             user
         WHERE
-            is_deleted = 0
+            is_deactivated = 0 AND is_deleted = 0
         `)
     const user = stmt.all() as UserIdentity[]
     db.close()
@@ -189,7 +141,7 @@ export function userExists(unsafeEmail: string | undefined): boolean {
         FROM 
             user 
         WHERE 
-            email = ? AND is_deleted = 0
+            email = ? AND is_deactivated = 0 AND is_deleted = 0
         `)
     const user = stmt.get(email)
     db.close()
@@ -221,7 +173,7 @@ export function getUserByMail(email: string): User | undefined {
         FROM 
             vw_user 
         WHERE 
-            email = ? AND is_deleted = 0`)
+            email = ? AND is_deactivated = 0 AND is_deleted = 0`)
     const user = <User | undefined>stmt.get(email)
     db.close()
     return user

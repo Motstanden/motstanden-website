@@ -48,10 +48,10 @@ router.get("/users", (req: Request, res: Response) => {
     res.json(users)
 })
 
-router.get("/users/deleted",
+router.get("/users/deactivated",
     RequiresGroup(UserGroup.SuperAdministrator),
     (req, res) => {
-        const users = db.users.getAllDeleted()
+        const users = db.users.getAllDeactivated()
         res.json(users)
     }
 )
@@ -73,9 +73,9 @@ router.get("/users/me", (req, res) => {
         //   2. A different device is used to delete the user
         //   3. The user can now use the access token from step 1 to appear as an active and valid user
         // Wow, what a journey!
-        console.error(`User authenticated but not found in database.\nUser: %j\nLogging user out of all units.`, user)
+        console.error(`User authenticated but it is deactivated or does not exist.\nUser: %j\nLogging user out of all units.`, user)
         logOutAllUnits(req, res)
-        res.status(410).send("User authenticated but not found in database")        
+        res.status(410).send("User authenticated but it is deactivated or does not exist")        
     }
 })
 
@@ -210,7 +210,7 @@ async function deleteUserHandler(req: Request, res: Response, id: number) {
     res.end()
 }
 
-router.patch("/users/deleted/:id",
+router.patch("/users/deactivated/:id",
     RequiresGroup(UserGroup.SuperAdministrator),
     validateParams(Schemas.params.id),
     validateBody(NewUserSchema),
@@ -219,8 +219,8 @@ router.patch("/users/deleted/:id",
         const newUserData = NewUserSchema.parse(req.body)
 
         // Ensure user exists and is soft deleted
-        const isDeleted = db.users.getDeleted(id) !== undefined
-        if(!isDeleted) {
+        const isDeactivated = db.users.getDeactivated(id) !== undefined
+        if(!isDeactivated) {
             return res.status(404).send("User not found")
         }
 

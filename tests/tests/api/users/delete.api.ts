@@ -35,8 +35,8 @@ test.describe("DELETE /api/users/:id", () => {
         expect(deleteUser).toBeUndefined()
     })
 
-    test("GET api/users/deleted", async ({ request }) => {
-        const res = await request.get("/api/users/deleted")
+    test("GET api/users/deactivated", async ({ request }) => {
+        const res = await request.get("/api/users/deactivated")
         expect(res.status(), `Expected 200, but got ${res.status()}: ${res.statusText()}`).toBe(200)
 
         const allDeletedUsers: DeletedUser[] = await res.json()
@@ -88,7 +88,7 @@ test("DELETE /api/users/me", async ({ request }, workerInfo) => {
     expect(res2.status(), `Expected 404, but got ${res2.status()}: ${res2.statusText()}`).toBe(404)
 })
 
-test("PATCH /api/users/deleted/:id", async ({ request }, workerInfo) => { 
+test("PATCH /api/users/deactivated/:id", async ({ request }, workerInfo) => { 
     
     let initialUser: User
 
@@ -106,33 +106,12 @@ test("PATCH /api/users/deleted/:id", async ({ request }, workerInfo) => {
 
     await test.step("[TEST] Recover deleted user", async () => { 
 
-        const restoreUserData = getRandomPayloadFor("users/deleted/:id")
-        const res = await request.patch(`/api/users/deleted/${initialUser.id}`, { data: restoreUserData })
+        const res = await request.patch(`/api/users/deactivated/${initialUser.id}`)
         expect(res.status(), `Expected 200, but got ${res.status()}: ${res.statusText()}`).toBe(200)
     
         const actualUser = await api.users.get(request, initialUser.id)
-        const expectedUser: User = { 
-            // New values from the payload
-            ...restoreUserData,
-    
-            // Values we don't expect to be change
-            id: initialUser.id,
-            rank: initialUser.rank,
-            capeName: initialUser.capeName,
-            startDate: initialUser.startDate,
-            endDate: initialUser.endDate,
-    
-            // Values that should have been erased
-            groupId: 1,
-            groupName: UserGroup.Contributor,
-            status: UserStatus.Active,
-            phoneNumber: null,
-            birthDate: null,
-            
-            // Don't compare createdAt and updatedAt
-            createdAt: actualUser.createdAt,
-            updatedAt: actualUser.updatedAt,
-        }
+        const expectedUser = initialUser
+        
         assertEqualUsers(actualUser, expectedUser)
     })
 
