@@ -1,4 +1,4 @@
-import { deleteComment } from "./delete.js"
+import { deleteAllCommentsByUser, deleteComment } from "./delete.js"
 import { get, getAll, getAllUnion } from "./get.js"
 import { insertCommentAndMarkUnread } from "./insert.js"
 import { getUnreadCount, resetUnreadCount } from "./unreadCount.js"
@@ -10,6 +10,7 @@ export const commentsDb = {
     getAllUnion: getAllUnion,
     insertNew: insertCommentAndMarkUnread,
     delete: deleteComment,
+    deleteAllByUser: deleteAllCommentsByUser,
     update: updateComment,
     getUnreadCount: getUnreadCount,
     resetUnreadCount: resetUnreadCount,

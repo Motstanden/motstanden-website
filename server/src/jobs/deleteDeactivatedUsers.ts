@@ -1,5 +1,5 @@
 import Database, { Database as DatabaseType } from "better-sqlite3"
-import { LikeEntityType, UserGroup, UserRank, UserStatus } from "common/enums"
+import { CommentEntityType, LikeEntityType, UserGroup, UserRank, UserStatus } from "common/enums"
 import { parentPort } from 'node:worker_threads'
 import { dbReadWriteConfig, motstandenDB } from '../config/databaseConfig.js'
 import { db as DB } from '../db/index.js'
@@ -29,6 +29,8 @@ async function main() {
             anonymizeUser(db, user.id)
 
             deleteAllLikes(db, user.id)
+            DB.comments.resetUnreadCount(user.id, db)
+            deleteAllComments(db, user.id)
 
             // TODO:
             //  - Delete all wall posts
@@ -118,6 +120,16 @@ function deleteAllLikes(db: DatabaseType, userId: number) {
     const likeEntities = Object.values(LikeEntityType)
     for(const entity of likeEntities) {
         DB.likes.deleteAllByUser(entity, userId, db)
+    }
+}
+
+/**
+ * Delete all comments by the user
+ */
+function deleteAllComments(db: DatabaseType, userId: number) {
+    const commentEntities = Object.values(CommentEntityType)
+    for(const entity of commentEntities) {
+        DB.comments.deleteAllByUser(entity, userId, db)
     }
 }
 
