@@ -16,28 +16,28 @@ async function main() {
         return
     
     const db = new Database(motstandenDB, dbReadWriteConfig)
-    const transaction = db.transaction(async () => { 
 
-        for (const user of users) {
+    for(const user of users) { 
+        const transaction = db.transaction(async () => { 
             markUserAsDeleted(db, user.id)
-        }
+        
+            // Avoid race conditions by waiting for any pending writes to the user table to finish
+            await sleepAsync( process.env.IS_DEV_ENV === "true" ? 2000 : 30 * 1000)
+    
+            // TODO:
+            //  - Reset all fields in the user table
+            //  - Delete all wall posts
+            //  - Delete all comments
+            //  - Delete all unread wall posts
+            //  - Delete all unread comments
+            //  - Delete all login tokens
+            //  - Delete all poll votes 
+            //  - Delete all likes
+            //  - Delete all events created by the user
+        })
+        await transaction()
+    }
 
-        // Avoid race conditions by waiting for any pending writes to the user table to finish
-        await sleepAsync( process.env.IS_DEV_ENV === "true" ? 2000 : 30 * 1000)
-
-        // TODO:
-        //  - Reset all fields in the user table
-        //  - Delete all wall posts
-        //  - Delete all comments
-        //  - Delete all unread wall posts
-        //  - Delete all unread comments
-        //  - Delete all login tokens
-        //  - Delete all poll votes 
-        //  - Delete all likes
-        //  - Delete all events created by the user
-    })
-
-    await transaction()
     db.close()
 }
 
