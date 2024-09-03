@@ -1,12 +1,11 @@
 import { activateUser, deactivateUser } from "./deactivate.js"
-import { softDeleteUser, undoSoftDeleteUser } from "./delete.js"
 import {
-    getActivatedUser,
-    getAllActivatedUsers,
     getAllDeactivatedUsers,
     getAllUserIds,
+    getAllUsers,
     getAllUsersAsIdentifiers,
     getDeactivatedUser,
+    getUser,
     getUserByMail,
     userExists
 } from "./get.js"
@@ -18,10 +17,10 @@ import { userStatusDb } from "./status/index.js"
 import { updateUser } from "./update.js"
 
 export const usersDb = {
-    get: getActivatedUser,
+    get: getUser,
     getDeactivated: getDeactivatedUser,
     
-    getAll: getAllActivatedUsers,
+    getAll: getAllUsers,
     getAllDeactivated: getAllDeactivatedUsers,
     
     getByMail: getUserByMail,

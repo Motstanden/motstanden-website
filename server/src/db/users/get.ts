@@ -1,88 +1,112 @@
 import Database, { Database as DatabaseType } from "better-sqlite3"
-import { User, UserIdentity } from "common/interfaces"
+import { DeactivatedUser, User, UserIdentity } from "common/interfaces"
 import { isNullOrWhitespace } from "common/utils"
 import { dbReadOnlyConfig, motstandenDB } from "../../config/databaseConfig.js"
 
-type GetUserOptions = { onlyDeactivated?: boolean }
+const userProps = `
+    user_id as id,
+    email,
+    user_group_id as groupId,
+    user_group as groupName,
+    user_rank as rank,
+    first_name as firstName,
+    middle_name as middleName,
+    last_name as lastName,
+    user_status as status,
+    cape_name as capeName,
+    phone_number as phoneNumber,
+    birth_date as birthDate,
+    profile_picture as profilePicture,
+    start_date as startDate,
+    end_date as endDate,
+    created_at as createdAt,
+    updated_at as updatedAt
+`
 
-
-export const getActivatedUser = (id: number) => getUser(id, { onlyDeactivated: false })
-export const getDeactivatedUser = (id: number) => getUser(id, { onlyDeactivated: true })
-
-function getUser(id: number, opts?: GetUserOptions): User | undefined {
+export function getUser(id: number): User | undefined {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
         `SELECT 
-            user_id as id,
-            email,
-            user_group_id as groupId,
-            user_group as groupName,
-            user_rank as rank,
-            first_name as firstName,
-            middle_name as middleName,
-            last_name as lastName,
-            user_status as status,
-            cape_name as capeName,
-            phone_number as phoneNumber,
-            birth_date as birthDate,
-            profile_picture as profilePicture,
-            start_date as startDate,
-            end_date as endDate,
-            created_at as createdAt,
-            updated_at as updatedAt
+            ${userProps}
         FROM 
             vw_user 
         WHERE 
             user_id = @userId 
-            AND is_deactivated = @isDeactivated 
-            AND is_deleted = 0`)
-    const user = stmt.get({
-        userId: id,
-        isDeactivated: opts?.onlyDeactivated ? 1 : 0
-    }) as User
+            AND is_deactivated = 0 
+            AND is_deleted = 0
+    `)
+    const user = stmt.get({userId: id}) as User | undefined
+    db.close()
+    return user
+}
+export function getUserByMail(email: string): User | undefined {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(
+        `SELECT 
+            ${userProps}
+        FROM 
+            vw_user 
+        WHERE 
+            email = @email 
+            AND is_deactivated = 0 
+            AND is_deleted = 0
+    `)
+    const user = stmt.get({email: email}) as User | undefined
     db.close()
     return user
 }
 
 
-export const getAllActivatedUsers = () => getAllUsers({ onlyDeactivated: false })
-export const getAllDeactivatedUsers = () => getAllUsers({ onlyDeactivated: true })
-
-function getAllUsers(opts?: GetUserOptions): User[] {
-
+export function getDeactivatedUser(id: number): DeactivatedUser | undefined {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(
         `SELECT 
-            user_id as id,
-            email,
-            user_group_id as groupId,
-            user_group as groupName,
-            user_rank as rank,
-            first_name as firstName,
-            middle_name as middleName,
-            last_name as lastName,
-            user_status as status,
-            cape_name as capeName,
-            phone_number as phoneNumber,
-            birth_date as birthDate,
-            profile_picture as profilePicture,
-            start_date as startDate,
-            end_date as endDate,
-            created_at as createdAt,
-            updated_at as updatedAt
+            ${userProps},
+            deactivated_at as deactivatedAt
+        FROM 
+            vw_user 
+        WHERE 
+            user_id = @userId 
+            AND is_deactivated = 1 
+            AND is_deleted = 0
+    `)
+    const user = stmt.get({userId: id}) as DeactivatedUser | undefined
+    db.close()
+    return user
+}
+
+export function getAllUsers(): User[] {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(
+        `SELECT 
+            ${userProps}
         FROM 
             vw_user
         WHERE
-            is_deactivated = @isDeactivated AND is_deleted = 0 
+            is_deactivated = 0 AND is_deleted = 0 
         ORDER BY 
-            first_name COLLATE NOCASE ASC`)
-    
-    const user = stmt.all({
-        isDeactivated: opts?.onlyDeactivated ? 1 : 0
-    }) as User[]
-
+            first_name COLLATE NOCASE ASC
+    `)
+    const user = stmt.all() as User[]
     db.close()
+    return user
+}
 
+export function getAllDeactivatedUsers(): DeactivatedUser[] {
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(
+        `SELECT 
+            ${userProps},
+            deactivated_at as deactivatedAt
+        FROM 
+            vw_user
+        WHERE
+            is_deactivated = 1 AND is_deleted = 0 
+        ORDER BY 
+            first_name COLLATE NOCASE ASC
+    `)
+    const user = stmt.all() as DeactivatedUser[]
+    db.close()
     return user
 }
 
@@ -147,34 +171,4 @@ export function userExists(unsafeEmail: string | undefined): boolean {
     db.close()
 
     return !!user
-}
-
-export function getUserByMail(email: string): User | undefined {
-    const db = new Database(motstandenDB, dbReadOnlyConfig)
-    const stmt = db.prepare(
-        `SELECT 
-            user_id as id,
-            email,
-            user_group_id as groupId,
-            user_group as groupName,
-            user_rank as rank,
-            first_name as firstName,
-            middle_name as middleName,
-            last_name as lastName,
-            user_status as status,
-            cape_name as capeName,
-            phone_number as phoneNumber,
-            birth_date as birthDate,
-            profile_picture as profilePicture,
-            start_date as startDate,
-            end_date as endDate,
-            created_at as createdAt,
-            updated_at as updatedAt
-        FROM 
-            vw_user 
-        WHERE 
-            email = ? AND is_deactivated = 0 AND is_deleted = 0`)
-    const user = <User | undefined>stmt.get(email)
-    db.close()
-    return user
 }
