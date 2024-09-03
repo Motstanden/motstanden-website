@@ -13,7 +13,7 @@ export function deleteToken(loginToken: string) {
     db.close()
 }
 
-export function deleteAllMatches(userId: number, existingDbConnection?: DatabaseType) {
+export function deleteAllByUser(userId: number, existingDbConnection?: DatabaseType) {
     const db = existingDbConnection ?? new Database(motstandenDB, dbReadWriteConfig)
 
     const stmt = db.prepare(`

@@ -63,7 +63,7 @@ export function softDeleteUser(userId: number) {
         DB.comments.resetUnreadCount(userId, db)
         DB.wallPosts.resetUnreadCount(userId, db)
      
-        DB.users.refreshTokens.deleteAllMatches(userId, db)     // Log user out of all devices
+        DB.users.refreshTokens.deleteAllByUser(userId, db)     // Log user out of all devices
         
         // TODO: Delete more ?
     })

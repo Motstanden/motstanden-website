@@ -201,7 +201,7 @@ export function logOut(req: Request, res: Response) {
 
 export function logOutAllUnits(req: Request, res: Response) {
     const user = getUser(req)
-    db.users.refreshTokens.deleteAllMatches(user.userId)
+    db.users.refreshTokens.deleteAllByUser(user.userId)
     clearAllAuthCookies(res)
 }
 
