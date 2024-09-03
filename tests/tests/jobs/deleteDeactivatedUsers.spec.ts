@@ -80,7 +80,7 @@ test("Job deletes all user-identifiable data", async ({ request }, workerInfo) =
     expect(deletedUser.rank).toBe(UserRank.ShortCircuit)
     expect(deletedUser.capeName).toBe("")
     expect(deletedUser.status).toBe(UserStatus.Inactive)
-    expect(deletedUser.startDate).toBe(user.createdAt)
+    expect(deletedUser.startDate).toBe(user.createdAt.split(" ")[0])
     expect(deletedUser.endDate).toBe(null)
 
     // --> Role info

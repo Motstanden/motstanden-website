@@ -1,4 +1,5 @@
 import Database, { Database as DatabaseType } from "better-sqlite3"
+import { UserGroup, UserRank, UserStatus } from "common/enums"
 import { parentPort } from 'node:worker_threads'
 import { dbReadWriteConfig, motstandenDB } from '../config/databaseConfig.js'
 import { db as DB } from '../db/index.js'
@@ -23,9 +24,9 @@ async function main() {
         
             // Avoid race conditions by waiting for any pending writes to the user table to finish
             await sleepAsync( process.env.IS_DEV_ENV === "true" ? 2000 : 30 * 1000)
-    
+            anonymizeUser(db, user.id)
+
             // TODO:
-            //  - Reset all fields in the user table
             //  - Delete all wall posts
             //  - Delete all comments
             //  - Delete all unread wall posts
@@ -62,6 +63,47 @@ function markUserAsDeleted(db: DatabaseType, userId: number) {
             user_id = @userId
     `)
     stmt.run({ userId: userId })
+}
+
+function anonymizeUser(db: DatabaseType, userId: number) { 
+
+    const email = `${userId}@slettet-bruker.motstanden.no`    // Should pass UNIQUE NOT NULL email constraint
+    const profilePic = 'files/private/profilbilder/boy.png'
+    
+    const rankId = DB.users.ranks.getId(UserRank.ShortCircuit, db)
+    const statusId = DB.users.status.getId(UserStatus.Inactive, db)
+    const groupId = DB.users.groups.getId(UserGroup.Contributor, db)
+    
+    // Set all fields to an empty or default value
+    const stmt = db.prepare(`
+        UPDATE user SET
+            first_name = '',
+            middle_name = '',
+            last_name = '',
+            birth_date = NULL,
+            email = @email,
+            phone_number = NULL,
+            profile_picture = @profilePic,
+
+            cape_name = '',
+            user_rank_id = @rankId,
+            user_status_id = @statusId,
+            start_date = DATE(created_at),
+            end_date = NULL,
+
+            user_group_id = @groupId
+        WHERE
+            user_id = @userId
+    `)
+
+    stmt.run({
+        email: email,
+        profilePic: profilePic,
+        rankId: rankId,
+        statusId: statusId,
+        groupId: groupId,
+        userId: userId,
+    })
 }
 
 if(isMainModule(import.meta.url)) {
