@@ -23,9 +23,11 @@ async function main() {
 
             // Mark user as deleted. This will block writes to the user table on the main thread.
             markUserAsDeleted(db, user.id)
+            DB.users.refreshTokens.deleteAllByUser(user.id, db)
 
             // Avoid race conditions by waiting for any pending writes to the user table to complete
-            await sleepAsync( process.env.IS_DEV_ENV === "true" ? 2000 : 30 * 1000)
+            // In production, we will wait 15 minutes for the AccessToken to expire
+            await sleepAsync( process.env.IS_DEV_ENV === "true" ? 2000 : 15 * 1000 * 60)
             anonymizeUser(db, user.id)
 
             deleteAllLikes(db, user.id)
@@ -40,9 +42,8 @@ async function main() {
             DB.events.participants.deleteAllByUser(user.id, db)
 
             DB.polls.votes.deleteAllBy(user.id, db)
-            
+
             // TODO:
-            //  - Delete all login tokens
             //  - Delete all events created by the user
         })
         await transaction()
