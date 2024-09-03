@@ -22,7 +22,7 @@ async function main() {
             markUserAsDeleted(db, user.id)
         }
 
-        // Avoid race conditions by waiting for any ongoing writes to the user table to finish
+        // Avoid race conditions by waiting for any pending writes to the user table to finish
         await sleepAsync( process.env.IS_DEV_ENV === "true" ? 2000 : 30 * 1000)
 
         // TODO:
@@ -55,7 +55,13 @@ function getUsersToDelete() {
  * Sets the `is_deleted` flag to `1` for the user with the given `userId`
  */
 function markUserAsDeleted(db: DatabaseType, userId: number) {
-    throw new Error("Not implemented")
+    const stmt = db.prepare(`
+        UPDATE user SET
+            is_deleted = 1 
+        WHERE
+            user_id = @userId
+    `)
+    stmt.run({ userId: userId })
 }
 
 if(isMainModule(import.meta.url)) {
