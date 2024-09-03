@@ -1,6 +1,6 @@
 import { APIRequestContext, expect, test } from "@playwright/test"
 import { CommentEntityType, LikeEntityType, UserGroup } from "common/enums"
-import { Comment, DeactivatedUser, Like, User } from "common/interfaces"
+import { Comment, DeactivatedUser, Like, User, WallPost } from "common/interfaces"
 import { randomUUID } from "crypto"
 import dayjs from "dayjs"
 import sinon from "sinon"
@@ -30,6 +30,9 @@ test("Job deletes all identifiable user data", async ({ request }, workerInfo) =
     await api.comments.new(request, CommentEntityType.Poll, commentEntityId, comment)
     await api.comments.new(request, CommentEntityType.SongLyric, commentEntityId, comment)
     await api.comments.new(request, CommentEntityType.WallPost, commentEntityId, comment)
+
+    // Create a wall post
+    await api.wallPosts.new(request, { wallUserId: user.id, content: randomUUID() })
 
     // Deactivate user
     await api.users.delete(workerInfo, user.id)
@@ -65,6 +68,9 @@ test("Job deletes all identifiable user data", async ({ request }, workerInfo) =
     expect(await getComment(request, user.id, CommentEntityType.Poll, commentEntityId)).toBe(undefined)
     expect(await getComment(request, user.id, CommentEntityType.SongLyric, commentEntityId)).toBe(undefined)
     expect(await getComment(request, user.id, CommentEntityType.WallPost, commentEntityId)).toBe(undefined)
+
+    // Assert wall post is deleted
+    expect(await getWallPost(request, user.id)).toBe(undefined)
 })
 
 async function getUser(request: APIRequestContext, userId: number) : Promise<User | undefined> {
@@ -85,4 +91,9 @@ async function getLike(request: APIRequestContext, userId: number, entityType: L
 async function getComment(request: APIRequestContext, userId: number, entityType: CommentEntityType, entityId: number): Promise<Comment | undefined> {
     const allComments = await api.comments.getAll(request, entityType, entityId)
     return allComments.find(c => c.createdBy === userId)
+}
+
+async function getWallPost(request: APIRequestContext, userId: number): Promise<WallPost | undefined> { 
+    const allPosts = await api.wallPosts.getAll(request)
+    return allPosts.find(p => p.wallUserId === userId)
 }
