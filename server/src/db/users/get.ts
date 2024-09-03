@@ -1,7 +1,7 @@
 import Database, { Database as DatabaseType } from "better-sqlite3"
 import { DeletedUser, User, UserIdentity } from "common/interfaces"
 import { isNullOrWhitespace } from "common/utils"
-import { dbReadOnlyConfig, motstandenDB } from "../../config/databaseConfig.js"
+import { dbReadOnlyConfig, dbReadWriteConfig, motstandenDB } from "../../config/databaseConfig.js"
 
 export function getUser(id: number): User | undefined {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
@@ -113,6 +113,25 @@ export function getAllDeletedUsers(): DeletedUser[] {
     db.close()
 
     return users    
+}
+
+// TODO: Refactor this to return more data
+type DeactivatedUser = { id: number, email: string, deactivatedAt: string }
+export function getAllDeactivatedUsers() { 
+    const db = new Database(motstandenDB, dbReadWriteConfig)
+    const stmt = db.prepare(`
+        SELECT 
+            user_id as id,
+            email,
+            deactivated_at as deactivatedAt
+        FROM 
+            user 
+        WHERE 
+            is_deactivated = 1 AND is_deleted = 0
+    `)
+    const users = stmt.all() as DeactivatedUser[]
+    db.close()
+    return users
 }
 
 export function getAllUserIds(existingDbConnection?: DatabaseType): { id: number }[] { 

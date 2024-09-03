@@ -1,5 +1,6 @@
 import { softDeleteUser, undoSoftDeleteUser } from "./delete.js"
 import {
+    getAllDeactivatedUsers,
     getAllDeletedUsers,
     getAllUserIds,
     getAllUsers,
@@ -23,6 +24,7 @@ export const usersDb = {
     getAllIds: getAllUserIds,
     getDeleted: getDeletedUser,
     getAllDeleted: getAllDeletedUsers,
+    getAllDeactivated: getAllDeactivatedUsers,
     getAllAsIdentifiers: getAllUsersAsIdentifiers,
     exists: userExists,
 
