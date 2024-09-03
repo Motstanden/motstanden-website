@@ -1,3 +1,4 @@
+import { activateUser, deactivateUser } from "./deactivate.js"
 import { softDeleteUser, undoSoftDeleteUser } from "./delete.js"
 import {
     getActivatedUser,
@@ -30,8 +31,9 @@ export const usersDb = {
 
     insert: insertUser,
     update: updateUser,
-    softDelete: softDeleteUser,
-    undoSoftDelete: undoSoftDeleteUser,
+
+    deactivate: deactivateUser,
+    activate: activateUser,
 
     groups: {
         ...userGroupsDb

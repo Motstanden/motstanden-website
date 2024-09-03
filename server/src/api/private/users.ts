@@ -28,7 +28,7 @@ function validateUserExists() {
     }
 }
 
-function validateCurrentUserNotDeleted() {
+function validateCurrentUserIsActivated() {
     return (req: Request, res: Response, next: NextFunction) => {
         const id = getUser(req).userId
         const user = db.users.get(id)
@@ -36,7 +36,7 @@ function validateCurrentUserNotDeleted() {
             next()
         } else {
             clearAllAuthCookies(res)
-            return res.status(410).send("User is deleted")
+            return res.status(410).send("User is deactivated or deleted")
         }
     }
 }
@@ -166,7 +166,7 @@ router.post("/users",
 // ---- DELETE users ----
 
 router.delete("/users/me", 
-    validateCurrentUserNotDeleted(),
+    validateCurrentUserIsActivated(),
     async (req, res) => { 
         const user = getUser(req)
         await deleteUserHandler(req, res, user.userId)
@@ -190,7 +190,8 @@ async function deleteUserHandler(req: Request, res: Response, id: number) {
         return res.status(404).send("User not found")
     }
 
-    db.users.softDelete(id)
+    // Deactivate the user. It will be deleted by an automatic job in 90 days.
+    db.users.deactivate(id)
 
     // If the user is deleting themselves, log them out
     const currentUser = getUser(req)
@@ -210,7 +211,7 @@ async function deleteUserHandler(req: Request, res: Response, id: number) {
     res.end()
 }
 
-router.patch("/users/deactivated/:id",
+router.put("/users/deactivated/:id",
     RequiresGroup(UserGroup.SuperAdministrator),
     validateParams(Schemas.params.id),
     validateBody(NewUserSchema),
@@ -224,7 +225,7 @@ router.patch("/users/deactivated/:id",
             return res.status(404).send("User not found")
         }
 
-        db.users.undoSoftDelete(id, newUserData)
+        db.users.activate(id)
 
         // Notify user by mail.
         // We are intentionally not awaiting the email to be sent, as it may take multiple minutes to complete.
@@ -289,7 +290,7 @@ const UpdateUserPersonalSchema = UserSchema.pick({
 })
 
 router.put("/users/me/personal-info",
-    validateCurrentUserNotDeleted(),
+    validateCurrentUserIsActivated(),
     validateBody(UpdateUserPersonalSchema),
     (req, res) => {
         const newUserData: UpdateUserPersonalInfoBody = UpdateUserPersonalSchema.parse(req.body)
@@ -351,7 +352,7 @@ const UpdateUserMembershipAsAdminSchema = UpdateUserMembershipAsMeBody.merge(
 }))
 
 router.patch("/users/me/membership",
-    validateCurrentUserNotDeleted(),
+    validateCurrentUserIsActivated(),
     validateBody(UpdateUserMembershipAsMeBody),
     (req, res) => {
         const newUserData: UpdateUserMembershipAsMeBody = UpdateUserMembershipAsMeBody.parse(req.body)

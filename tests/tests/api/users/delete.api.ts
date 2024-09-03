@@ -88,7 +88,7 @@ test("DELETE /api/users/me", async ({ request }, workerInfo) => {
     expect(res2.status(), `Expected 404, but got ${res2.status()}: ${res2.statusText()}`).toBe(404)
 })
 
-test("PATCH /api/users/deactivated/:id", async ({ request }, workerInfo) => { 
+test("PUT /api/users/deactivated/:id", async ({ request }, workerInfo) => { 
     
     let initialUser: User
 
@@ -106,7 +106,7 @@ test("PATCH /api/users/deactivated/:id", async ({ request }, workerInfo) => {
 
     await test.step("[TEST] Recover deleted user", async () => { 
 
-        const res = await request.patch(`/api/users/deactivated/${initialUser.id}`)
+        const res = await request.put(`/api/users/deactivated/${initialUser.id}`)
         expect(res.status(), `Expected 200, but got ${res.status()}: ${res.statusText()}`).toBe(200)
     
         const actualUser = await api.users.get(request, initialUser.id)
