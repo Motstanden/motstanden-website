@@ -39,9 +39,10 @@ async function main() {
 
             DB.events.participants.deleteAllByUser(user.id, db)
 
+            DB.polls.votes.deleteAllBy(user.id, db)
+            
             // TODO:
             //  - Delete all login tokens
-            //  - Delete all poll votes 
             //  - Delete all events created by the user
         })
         await transaction()
