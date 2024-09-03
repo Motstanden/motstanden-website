@@ -1,7 +1,11 @@
-import dotenv from "dotenv";
-import { fileURLToPath } from 'url';
-dotenv.config();
+import dotenv from "dotenv"
+import { fileURLToPath } from 'url'
 
+function resolvePath(relativePath: string) {
+    return fileURLToPath(new URL(relativePath, import.meta.url))
+}
+
+dotenv.config( {path: resolvePath("../../.env")});
 
 const motstandenDBName = process.env.IS_DEV_ENV === 'true' 
                         ? 'motstanden_dev.db'
