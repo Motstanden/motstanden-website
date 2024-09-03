@@ -1,5 +1,5 @@
 import Database, { Database as DatabaseType } from "better-sqlite3"
-import { UserGroup, UserRank, UserStatus } from "common/enums"
+import { LikeEntityType, UserGroup, UserRank, UserStatus } from "common/enums"
 import { parentPort } from 'node:worker_threads'
 import { dbReadWriteConfig, motstandenDB } from '../config/databaseConfig.js'
 import { db as DB } from '../db/index.js'
@@ -20,11 +20,15 @@ async function main() {
 
     for(const user of users) { 
         const transaction = db.transaction(async () => { 
+
+            // Mark user as deleted. This will block writes to the user table on the main thread.
             markUserAsDeleted(db, user.id)
-        
-            // Avoid race conditions by waiting for any pending writes to the user table to finish
+
+            // Avoid race conditions by waiting for any pending writes to the user table to complete
             await sleepAsync( process.env.IS_DEV_ENV === "true" ? 2000 : 30 * 1000)
             anonymizeUser(db, user.id)
+
+            deleteAllLikes(db, user.id)
 
             // TODO:
             //  - Delete all wall posts
@@ -33,7 +37,6 @@ async function main() {
             //  - Delete all unread comments
             //  - Delete all login tokens
             //  - Delete all poll votes 
-            //  - Delete all likes
             //  - Delete all events created by the user
         })
         await transaction()
@@ -65,6 +68,9 @@ function markUserAsDeleted(db: DatabaseType, userId: number) {
     stmt.run({ userId: userId })
 }
 
+/**
+ * For each property in the user table, sets the value to an empty or default value
+ */
 function anonymizeUser(db: DatabaseType, userId: number) { 
 
     const email = `${userId}@slettet-bruker.motstanden.no`    // Should pass UNIQUE NOT NULL email constraint
@@ -74,7 +80,6 @@ function anonymizeUser(db: DatabaseType, userId: number) {
     const statusId = DB.users.status.getId(UserStatus.Inactive, db)
     const groupId = DB.users.groups.getId(UserGroup.Contributor, db)
     
-    // Set all fields to an empty or default value
     const stmt = db.prepare(`
         UPDATE user SET
             first_name = '',
@@ -104,6 +109,16 @@ function anonymizeUser(db: DatabaseType, userId: number) {
         groupId: groupId,
         userId: userId,
     })
+}
+
+/**
+ * Delete all likes by the user
+ */
+function deleteAllLikes(db: DatabaseType, userId: number) {
+    const likeEntities = Object.values(LikeEntityType)
+    for(const entity of likeEntities) {
+        DB.likes.deleteAllByUser(entity, userId, db)
+    }
 }
 
 if(isMainModule(import.meta.url)) {
