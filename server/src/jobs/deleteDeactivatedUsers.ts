@@ -6,29 +6,42 @@ import { db as DB } from '../db/index.js'
 import { dayjs } from "../lib/dayjs.js"
 import { isMainModule } from '../utils/isMainModule.js'
 import { sleepAsync } from '../utils/sleepAsync.js'
+import { DeactivatedUser } from "common/interfaces"
 
 /**
  * Entry point for the job `deleteDeactivatedUsers`
  */
 async function main() {
+    const errors: Error[] = []
     
     const users = getUsersToDelete()
     if(users.length === 0) 
         return
-
-    const errors: Error[] = []
+    
     const db = new Database(motstandenDB, dbReadWriteConfig)
-
+    
+    // Prepare users for deletion
+    const preparedUsers: DeactivatedUser[] = [] 
     for(const user of users) { 
-        const transaction = db.transaction(async () => { 
-
-            // Mark user as deleted. This will block writes to the user table on the main thread.
+        try {
             markUserAsDeleted(db, user.id)
             DB.users.refreshTokens.deleteAllByUser(user.id, db)
+            preparedUsers.push(user)
+        } catch(err) { 
+            undoMarkUserAsDeleted(db, user.id)
+            const error = err instanceof Error ? err : new Error(String(err))
+            errors.push(error)
+        }
+    }
+    
+    
+    // Avoid race conditions by waiting for any pending writes to the user table to complete
+    // In production, we will wait 15 minutes for the AccessToken to expire
+    await sleepAsync( process.env.IS_DEV_ENV === "true" ? 2000 : 15 * 1000 * 60)
 
-            // Avoid race conditions by waiting for any pending writes to the user table to complete
-            // In production, we will wait 15 minutes for the AccessToken to expire
-            await sleepAsync( process.env.IS_DEV_ENV === "true" ? 2000 : 15 * 1000 * 60)
+    // Delete all user-identifiable data
+    for(const user of preparedUsers) { 
+        const transaction = db.transaction(() => { 
             anonymizeUser(db, user.id)
 
             deleteAllLikes(db, user.id)
@@ -48,15 +61,23 @@ async function main() {
             //  - Delete all events created by the user
         })
 
+        let success = false
         try {
-            await transaction()
-
-            // TODO: Send email to user that their account is deleted
-            
+            transaction()
+            success = true
         } catch(err) { 
-            console.error(err)
+            undoMarkUserAsDeleted(db, user.id)
             const error = err instanceof Error ? err : new Error(String(err))
             errors.push(error)
+        }
+
+        if(success) {
+            try {
+                // Send email to user
+            } catch(err) {
+                const error = err instanceof Error ? err : new Error(String(err))
+                errors.push(error)
+            }
         }
     }
     db.close()
@@ -84,6 +105,16 @@ function markUserAsDeleted(db: DatabaseType, userId: number) {
     const stmt = db.prepare(`
         UPDATE user SET
             is_deleted = 1 
+        WHERE
+            user_id = @userId
+    `)
+    stmt.run({ userId: userId })
+}
+
+function undoMarkUserAsDeleted(db: DatabaseType, userId: number) { 
+    const stmt = db.prepare(`
+        UPDATE user SET
+            is_deleted = 0 
         WHERE
             user_id = @userId
     `)
