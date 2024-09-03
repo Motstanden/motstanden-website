@@ -1,20 +1,29 @@
 import { APIRequestContext, expect, test } from "@playwright/test"
 import { UserGroup } from "common/enums"
 import { DeactivatedUser, User } from "common/interfaces"
+import dayjs from "dayjs"
+import sinon from "sinon"
 import { job } from "../../../server/src/jobs/deleteDeactivatedUsers.js"
 import { api } from "../../utils/api/index.js"
 import { apiLogIn } from "../../utils/auth.js"
 import { loadServerEnv } from "../../utils/loadServerEnv.js"
 
-test("Job deletes all identifiable user data", async ({ request }, workerInfo) => {
+test("Job deletes all identifiable user data", async ({ request, page }, workerInfo) => {
     await apiLogIn(request, workerInfo, UserGroup.SuperAdministrator)
     
     const user = await api.users.createRandom(workerInfo)
-
     await api.users.delete(workerInfo, user.id)
+
+    // Fast forward 90 days
+    const clock = sinon.useFakeTimers({
+        now: dayjs().add(90, "days").toDate(),
+        toFake: ["Date"]
+    })    
 
     loadServerEnv()
     await job()
+
+    clock.restore()
 
     // User is deleted if it is not found in the list of all active users nor the list of all deactivated users
     expect(await isActivated(request, user.id)).toBe(false)
