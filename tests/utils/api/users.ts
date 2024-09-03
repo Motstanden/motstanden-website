@@ -1,6 +1,6 @@
 import Playwright, { APIRequestContext, TestInfo } from '@playwright/test'
 import { UserGroup } from "common/enums"
-import { NewUser, UpdateUserRoleBody, User, UserIdentity } from "common/interfaces"
+import { DeactivatedUser, NewUser, UpdateUserRoleBody, User, UserIdentity } from "common/interfaces"
 import { randomUUID } from 'crypto'
 import { getUser as getTestUser } from '../../utils/auth.js'
 
@@ -21,6 +21,16 @@ async function getAllUsers(request: APIRequestContext) {
     }
     const users = await res.json() as User[]
     return users   
+}
+
+async function getAllDeactivatedUsers(request: APIRequestContext) {
+    const res = await request.get("/api/users/deactivated")
+    if(!res.ok()) {
+        throw new Error(`Failed to get all deactivated users.\n${res.status()}: ${res.statusText()}`)
+    }
+    const users = await res.json() as DeactivatedUser[]
+    return users   
+    
 }
 
 async function getAllUserIdentifiers(request: APIRequestContext) {
@@ -108,6 +118,7 @@ async function updateRole(request: APIRequestContext, userId: number, newGroup: 
 export const usersApi = {
     get: getUser,
     getAll: getAllUsers,
+    getAllDeactivated: getAllDeactivatedUsers,
     getAllIdentifiers: getAllUserIdentifiers,
     create: createUser,
     createRandom: createRandomUser,
