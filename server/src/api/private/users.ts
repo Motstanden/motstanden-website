@@ -214,14 +214,11 @@ async function deleteUserHandler(req: Request, res: Response, id: number) {
 router.put("/users/deactivated/:id",
     RequiresGroup(UserGroup.SuperAdministrator),
     validateParams(Schemas.params.id),
-    validateBody(NewUserSchema),
     async (req, res) => {
         const { id } = Schemas.params.id.parse(req.params)
-        const newUserData = NewUserSchema.parse(req.body)
 
-        // Ensure user exists and is soft deleted
-        const isDeactivated = db.users.getDeactivated(id) !== undefined
-        if(!isDeactivated) {
+        const user = db.users.getDeactivated(id)
+        if(user === undefined) {
             return res.status(404).send("User not found")
         }
 
@@ -234,7 +231,7 @@ router.put("/users/deactivated/:id",
             : `https://motstanden.no/medlem/${id}`
         const mailHtml = await mailTemplates.buildRestoredDeletedUserHtml(userProfileUrl)
         Mail.send({
-            to: newUserData.email,
+            to: user.email,
             subject: "Din bruker er gjenopprettet",
             html: mailHtml
         })
