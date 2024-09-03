@@ -1,5 +1,5 @@
 import { APIRequestContext, expect, test } from "@playwright/test"
-import { CommentEntityType, LikeEntityType, UserGroup } from "common/enums"
+import { CommentEntityType, LikeEntityType, ParticipationStatus, UserGroup } from "common/enums"
 import { Comment, DeactivatedUser, Like, User, WallPost } from "common/interfaces"
 import { randomUUID } from "crypto"
 import dayjs from "dayjs"
@@ -33,6 +33,10 @@ test("Job deletes all identifiable user data", async ({ request }, workerInfo) =
 
     // Create a wall post
     await api.wallPosts.new(request, { wallUserId: user.id, content: randomUUID() })
+
+    // Participate in an event
+    const eventId = 1
+    await api.events.participants.upsert(request, eventId, ParticipationStatus.Attending)
 
     // Deactivate user
     await api.users.delete(workerInfo, user.id)
@@ -71,6 +75,9 @@ test("Job deletes all identifiable user data", async ({ request }, workerInfo) =
 
     // Assert wall post is deleted
     expect(await getWallPost(request, user.id)).toBe(undefined)
+
+    // Assert event participation is deleted
+    expect(await getEventParticipant(request, user.id, eventId)).toBe(undefined)
 })
 
 async function getUser(request: APIRequestContext, userId: number) : Promise<User | undefined> {
@@ -96,4 +103,9 @@ async function getComment(request: APIRequestContext, userId: number, entityType
 async function getWallPost(request: APIRequestContext, userId: number): Promise<WallPost | undefined> { 
     const allPosts = await api.wallPosts.getAll(request)
     return allPosts.find(p => p.wallUserId === userId)
+}
+
+async function getEventParticipant(request: APIRequestContext, userId: number, eventId: number) {
+    const allParticipants = await api.events.participants.getAll(request, eventId)
+    return allParticipants.find(p => p.id === userId)
 }
