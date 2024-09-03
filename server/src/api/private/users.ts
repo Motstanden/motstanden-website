@@ -11,6 +11,7 @@ import { Mail } from "../../services/mail.js"
 import { getUser } from "../../utils/getUser.js"
 import { mailTemplates } from "../../utils/mailTemplateBuilders.js"
 import { Schemas } from "../../utils/zodSchema.js"
+import { requiresDevEnv } from "../../middleware/requiresDevEnv.js"
 
 const router = express.Router()
 
@@ -55,6 +56,28 @@ router.get("/users/deactivated",
         res.json(users)
     }
 )
+
+if(process.env.IS_DEV_ENV === "true") {
+
+    // This endpoint exists solely so that we can test our delete user functionality.
+    // The endpoint should under no circumstances be exposed to the production API.
+    // This api is used by: 
+    //      - tests/tests/jobs/deleteDeactivatedUsers.spec.ts
+    router.get("/users/deleted/:id",
+        requiresDevEnv,
+        RequiresGroup(UserGroup.SuperAdministrator),
+        validateParams(Schemas.params.id),
+        (req, res) => {
+            const { id } = Schemas.params.id.parse(req.params)
+            const user = db.users.getDeletedUser(id)
+            if(user !== undefined) {
+                res.json(user)
+            } else {
+                res.status(404).send("User not found")
+            }
+        }
+    )
+}
 
 router.get("/users/identifiers", (req: Request, res: Response) => {
     const users = db.users.getAllAsIdentifiers()

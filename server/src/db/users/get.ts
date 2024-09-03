@@ -1,5 +1,5 @@
 import Database, { Database as DatabaseType } from "better-sqlite3"
-import { DeactivatedUser, User, UserIdentity } from "common/interfaces"
+import { DeactivatedUser, DeletedUser, User, UserIdentity } from "common/interfaces"
 import { isNullOrWhitespace } from "common/utils"
 import { dbReadOnlyConfig, motstandenDB } from "../../config/databaseConfig.js"
 
@@ -71,6 +71,30 @@ export function getDeactivatedUser(id: number): DeactivatedUser | undefined {
             AND is_deleted = 0
     `)
     const user = stmt.get({userId: id}) as DeactivatedUser | undefined
+    db.close()
+    return user
+}
+
+export function getDeletedUser(id: number): DeletedUser | undefined { 
+
+    if(process.env.IS_DEV_ENV !== "true") {
+        throw new Error("This function is only intended to be used in development. It should not be exposed to the production API")
+    }
+
+    const db = new Database(motstandenDB, dbReadOnlyConfig)
+    const stmt = db.prepare(
+        `SELECT 
+            ${userProps},
+            deactivated_at as deactivatedAt,
+            deleted_at as deletedAt
+        FROM 
+            vw_user 
+        WHERE 
+            user_id = @userId 
+            AND is_deactivated = 1 
+            AND is_deleted = 1
+    `)
+    const user = stmt.get({userId: id}) as DeletedUser | undefined
     db.close()
     return user
 }

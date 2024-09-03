@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
-import { UserGroup, UserStatus } from 'common/enums'
-import { DeletedUser, UpdateUserRoleBody, User } from 'common/interfaces'
+import { UserGroup } from 'common/enums'
+import { DeactivatedUser, UpdateUserRoleBody, User } from 'common/interfaces'
 import { api } from '../../../utils/api/index.js'
 import { apiLogIn, unsafeApiLogIn } from '../../../utils/auth.js'
 import { assertEqualUsers, getRandomPayloadFor } from './utils.js'
@@ -39,8 +39,8 @@ test.describe("DELETE /api/users/:id", () => {
         const res = await request.get("/api/users/deactivated")
         expect(res.status(), `Expected 200, but got ${res.status()}: ${res.statusText()}`).toBe(200)
 
-        const allDeletedUsers: DeletedUser[] = await res.json()
-        const deletedUser = allDeletedUsers.find(u => u.id === user.id)
+        const allDeactivated: DeactivatedUser[] = await res.json()
+        const deletedUser = allDeactivated.find(u => u.id === user.id)
         expect(deletedUser).toBeDefined()
     })
 

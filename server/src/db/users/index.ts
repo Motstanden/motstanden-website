@@ -5,6 +5,7 @@ import {
     getAllUsers,
     getAllUsersAsIdentifiers,
     getDeactivatedUser,
+    getDeletedUser,
     getUser,
     getUserByMail,
     userExists
@@ -19,7 +20,8 @@ import { updateUser } from "./update.js"
 export const usersDb = {
     get: getUser,
     getDeactivated: getDeactivatedUser,
-    
+    getDeletedUser: getDeletedUser,
+
     getAll: getAllUsers,
     getAllDeactivated: getAllDeactivatedUsers,
     

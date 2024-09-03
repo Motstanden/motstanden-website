@@ -1,6 +1,6 @@
 import { APIRequestContext, expect, test } from "@playwright/test"
-import { CommentEntityType, LikeEntityType, ParticipationStatus, UserGroup } from "common/enums"
-import { Comment, DeactivatedUser, Like, User, WallPost } from "common/interfaces"
+import { CommentEntityType, LikeEntityType, ParticipationStatus, UserGroup, UserRank, UserStatus } from "common/enums"
+import { Comment, DeactivatedUser, DeletedUser, Like, User, WallPost } from "common/interfaces"
 import { randomUUID } from "crypto"
 import dayjs from "dayjs"
 import sinon from "sinon"
@@ -62,9 +62,29 @@ test("Job deletes all user-identifiable data", async ({ request }, workerInfo) =
     // Log in as super admin
     await apiLogIn(request, workerInfo, UserGroup.SuperAdministrator)
 
-    // Assert user is deleted
+    // Assert user is not activated nor deactivated
     expect(await getUser(request, user.id)).toBe(undefined)
     expect(await getDeactivatedUser(request, user.id)).toBe(undefined)
+
+    // Assert user properties are deleted
+    // --> Personal info
+    const deletedUser = await getDeletedUser(request, user.id)
+    expect(deletedUser.firstName).toBe("")
+    expect(deletedUser.middleName).toBe("")
+    expect(deletedUser.lastName).toBe("")
+    expect(deletedUser.email).toBe(`${deletedUser.id}@slettet-bruker.motstanden.no`)
+    expect(deletedUser.phoneNumber).toBe(null)
+    expect(deletedUser.birthDate).toBe(null)
+
+    // --> Membership info
+    expect(deletedUser.rank).toBe(UserRank.ShortCircuit)
+    expect(deletedUser.capeName).toBe("")
+    expect(deletedUser.status).toBe(UserStatus.Inactive)
+    expect(deletedUser.startDate).toBe(user.createdAt)
+    expect(deletedUser.endDate).toBe(null)
+
+    // --> Role info
+    expect(deletedUser.groupName).toBe(UserGroup.Contributor)
 
     // Assert all likes are deleted
     expect(await getLike(request, user.id, LikeEntityType.EventComment, likeEntityId)).toBe(undefined)
@@ -97,6 +117,15 @@ async function getUser(request: APIRequestContext, userId: number) : Promise<Use
 async function getDeactivatedUser(request: APIRequestContext, userId: number): Promise<DeactivatedUser | undefined> {
     const users = await api.users.getAllDeactivated(request)
     return users.find(user => user.id === userId)
+}
+
+async function getDeletedUser(request: APIRequestContext, userId: number): Promise<DeletedUser> {
+    const res = await request.get(`/api/users/deleted/${userId}`)
+    if(!res.ok()) { 
+        throw new Error(`Failed to get deleted user:\n${res.status()}: ${res.statusText()}`)
+    }
+    const deletedUser = await res.json() as DeletedUser
+    return deletedUser    
 }
 
 async function getLike(request: APIRequestContext, userId: number, entityType: LikeEntityType, entityId: number): Promise<Like | undefined> {

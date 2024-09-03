@@ -40,16 +40,8 @@ export interface DeactivatedUser extends User {
     deactivatedAt: string;          // Format: 'YYYY-MM-DD HH-MM-SS'
 }
 
-export interface DeletedUser extends Pick<User, 
-    "id" |
-    "rank" |
-    "capeName" |
-    "startDate" |
-    "endDate" |
-    "createdAt" |
-    "updatedAt" 
-> {
-    deletedAt: string               // Format: 'YYYY-MM-DD HH-MM-SS'
+export interface DeletedUser extends DeactivatedUser {
+    deletedAt: string
 }
 
 export interface UpdateUserPersonalInfoBody extends Pick<User,
@@ -61,14 +53,12 @@ export interface UpdateUserPersonalInfoBody extends Pick<User,
     "birthDate"
 > {}
 
-
 export interface UpdateUserMembershipAsMeBody extends Pick<User,
     "capeName" |
     "status" |
     "startDate" |
     "endDate"
 > {}    
-
 
 export interface UpdateUserMembershipAsAdminBody extends Pick<User,
     "rank" |
@@ -77,7 +67,6 @@ export interface UpdateUserMembershipAsAdminBody extends Pick<User,
     "startDate" |
     "endDate"
 > {}    
-
 
 export interface UpdateUserRoleBody extends Pick<User, "groupName"> {}
 
