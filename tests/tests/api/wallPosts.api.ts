@@ -3,6 +3,7 @@ import { UserGroup } from 'common/enums'
 import { Count, NewWallPost, WallPost } from 'common/interfaces'
 import { testUserVariationsCount, unsafeGetUser } from '../../utils/auth.js'
 import { randomString } from '../../utils/randomString.js'
+import { api } from '../../utils/api/index.js'
 
 // WARNING:
 // These tests may fail if they are run in parallel with e2e/wallPosts.spec.ts or themselves
@@ -33,11 +34,11 @@ test.describe.serial("api/wall/posts/unread", () => {
     })
 
     test("Initial count is 0", async ({ }) => { 
-        await resetUnreadCount(api1)
-        await resetUnreadCount(api2)
+        await api.wallPosts.resetUnreadCount(api1)
+        await api.wallPosts.resetUnreadCount(api2)
 
-        const count1 = await getUnreadCount(api1)
-        const count2 = await getUnreadCount(api2)
+        const count1 = await api.wallPosts.getUnreadCount(api1)
+        const count2 = await api.wallPosts.getUnreadCount(api2)
 
         expect(count1).toBe(0)
         expect(count2).toBe(0)
@@ -48,10 +49,10 @@ test.describe.serial("api/wall/posts/unread", () => {
             wallUserId: user1.id,
             content: randomString("[API tests] Wall post")
         }            
-        await createPost(api1, newPost)
+        await api.wallPosts.new(api1, newPost)
 
-        const count1 = await getUnreadCount(api1)
-        const count2 = await getUnreadCount(api2)
+        const count1 = await api.wallPosts.getUnreadCount(api1)
+        const count2 = await api.wallPosts.getUnreadCount(api2)
         
         expect(count1).toBe(0)
         expect(count2).toBe(1)
@@ -61,11 +62,11 @@ test.describe.serial("api/wall/posts/unread", () => {
     })
 
     test("Deleting post decreases count", async ({ }) => { 
-        await deletePost(api1, post!.id)
+        await api.wallPosts.delete(api1, post!.id)
 
         const deletedPost = await getMatchingPost(api1, post!)
-        const count1 = await getUnreadCount(api1)
-        const count2 = await getUnreadCount(api2)
+        const count1 = await api.wallPosts.getUnreadCount(api1)
+        const count2 = await api.wallPosts.getUnreadCount(api2)
         
         expect(deletedPost).toBeUndefined()
         expect(count1).toBe(0)
@@ -73,40 +74,8 @@ test.describe.serial("api/wall/posts/unread", () => {
     })
 })
 
-async function getUnreadCount(request: APIRequestContext) {
-    const res = await request.get("/api/wall/posts/unread/count")
-    const data = <Count>await res.json()
-    return data.count
-}
-
-async function resetUnreadCount(request: APIRequestContext) {
-    const res = await request.put("/api/wall/posts/unread/count")
-    if(!res.ok()) 
-        throw new Error(`Failed to reset unread count.\n${res.status()}: ${res.statusText()}`)
-}
-
-async function createPost(request: APIRequestContext, post: NewWallPost) {
-    const res = await request.post("/api/wall/posts", { data: post })
-    if(!res.ok()) 
-        throw new Error(`Failed to create post.\n${res.status()}: ${res.statusText()}`)
-}
-
-async function deletePost(request: APIRequestContext, postId: number) {
-    const res = await request.delete(`/api/wall/posts/${postId}`)
-    if(!res.ok()) 
-        throw new Error(`Failed to delete post.\n${res.status()}: ${res.statusText()}`)
-}
-
-async function getAllPosts(request: APIRequestContext) { 
-    const res = await request.get("/api/wall/posts")
-    if(!res.ok()) 
-        throw new Error(`Failed to get all posts.\n${res.status()}: ${res.statusText()}`)
-    const data = await res.json() as WallPost[]
-    return data
-}
-
 async function getMatchingPost(request: APIRequestContext, post: NewWallPost): Promise<WallPost | undefined>{
-    const allPosts = await getAllPosts(request)
+    const allPosts = await api.wallPosts.getAll(request)
     const matchingPost = allPosts.find(p => p.content === post.content)
     return matchingPost
 }
