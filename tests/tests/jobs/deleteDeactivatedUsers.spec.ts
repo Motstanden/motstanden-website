@@ -6,7 +6,7 @@ import dayjs from "dayjs"
 import sinon from "sinon"
 import { job } from "../../../server/src/jobs/deleteDeactivatedUsers.js"
 import { api } from "../../utils/api/index.js"
-import { apiLogIn, unsafeApiLogIn } from "../../utils/auth.js"
+import { apiLogIn, testUserVariationsCount, unsafeApiLogIn, unsafeGetUser } from "../../utils/auth.js"
 import { loadServerEnv } from "../../utils/loadServerEnv.js"
 
 test("Job deletes all user-identifiable data", async ({ request }, workerInfo) => {
@@ -31,7 +31,9 @@ test("Job deletes all user-identifiable data", async ({ request }, workerInfo) =
     await api.comments.new(request, CommentEntityType.SongLyric, commentEntityId, comment)
     await api.comments.new(request, CommentEntityType.WallPost, commentEntityId, comment)
 
-    // Create a wall post
+    // Create wall posts
+    const targetUser = unsafeGetUser(UserGroup.Contributor, testUserVariationsCount - 1)
+    await api.wallPosts.new(request, { wallUserId: targetUser.id, content: randomUUID() })
     await api.wallPosts.new(request, { wallUserId: user.id, content: randomUUID() })
 
     // Participate in an event
@@ -140,7 +142,7 @@ async function getComment(request: APIRequestContext, userId: number, entityType
 
 async function getWallPost(request: APIRequestContext, userId: number): Promise<WallPost | undefined> { 
     const allPosts = await api.wallPosts.getAll(request)
-    return allPosts.find(post => post.wallUserId === userId)
+    return allPosts.find(post => post.wallUserId === userId || post.createdBy === userId)
 }
 
 async function getEventParticipant(request: APIRequestContext, userId: number, eventId: number) {
