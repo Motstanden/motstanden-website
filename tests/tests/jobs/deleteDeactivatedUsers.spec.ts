@@ -9,9 +9,9 @@ import { api } from "../../utils/api/index.js"
 import { apiLogIn, unsafeApiLogIn } from "../../utils/auth.js"
 import { loadServerEnv } from "../../utils/loadServerEnv.js"
 
-test("Job deletes all identifiable user data", async ({ request }, workerInfo) => {
+test("Job deletes all user-identifiable data", async ({ request }, workerInfo) => {
 
-    // Create user and log in as user
+    // Create user and log in as the new user
     const user = await api.users.createRandom(workerInfo)
     await unsafeApiLogIn(request, user.email)
     
@@ -37,6 +37,12 @@ test("Job deletes all identifiable user data", async ({ request }, workerInfo) =
     // Participate in an event
     const eventId = 1
     await api.events.participants.upsert(request, eventId, ParticipationStatus.Attending)
+
+    // Vote on a poll
+    const pollId = 1
+    const pollOptions = await api.polls.options.getAll(request, pollId) 
+    const optionId = pollOptions[0].id
+    await api.polls.votes.upsert(request, pollId, [optionId])
 
     // Deactivate user
     await api.users.delete(workerInfo, user.id)
@@ -78,34 +84,48 @@ test("Job deletes all identifiable user data", async ({ request }, workerInfo) =
 
     // Assert event participation is deleted
     expect(await getEventParticipant(request, user.id, eventId)).toBe(undefined)
+
+    // Assert that the poll vote is deleted
+    expect(await getPollVote(request, user.id, pollId)).toBe(undefined)
 })
 
 async function getUser(request: APIRequestContext, userId: number) : Promise<User | undefined> {
     const users = await api.users.getAll(request)
-    return users.find(u => u.id === userId)
+    return users.find(user => user.id === userId)
 }
 
 async function getDeactivatedUser(request: APIRequestContext, userId: number): Promise<DeactivatedUser | undefined> {
     const users = await api.users.getAllDeactivated(request)
-    return users.find(u => u.id === userId)
+    return users.find(user => user.id === userId)
 }
 
 async function getLike(request: APIRequestContext, userId: number, entityType: LikeEntityType, entityId: number): Promise<Like | undefined> {
     const allLikes = await api.likes.getAll(request, entityType, entityId)
-    return allLikes.find(l => l.userId === userId)
+    return allLikes.find(like => like.userId === userId)
 }
 
 async function getComment(request: APIRequestContext, userId: number, entityType: CommentEntityType, entityId: number): Promise<Comment | undefined> {
     const allComments = await api.comments.getAll(request, entityType, entityId)
-    return allComments.find(c => c.createdBy === userId)
+    return allComments.find(comment => comment.createdBy === userId)
 }
 
 async function getWallPost(request: APIRequestContext, userId: number): Promise<WallPost | undefined> { 
     const allPosts = await api.wallPosts.getAll(request)
-    return allPosts.find(p => p.wallUserId === userId)
+    return allPosts.find(post => post.wallUserId === userId)
 }
 
 async function getEventParticipant(request: APIRequestContext, userId: number, eventId: number) {
     const allParticipants = await api.events.participants.getAll(request, eventId)
-    return allParticipants.find(p => p.id === userId)
+    return allParticipants.find(user => user.id === userId)
+}
+
+async function getPollVote(request: APIRequestContext, userId: number, pollId: number) {
+    const voteData = await api.polls.votes.getAll(request, pollId)
+    for (const option of voteData) {
+        const vote = option.voters.find(user => user.id === userId)
+        if (vote !== undefined) {
+            return option
+        }
+    }
+    return undefined
 }
