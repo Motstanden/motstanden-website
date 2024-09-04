@@ -25,14 +25,13 @@ export default function LoginPage() {
 	}
 
 	return (
-		<PageContainer disableGutters >
+		<PageContainer>
 			<div style={{
 				textAlign: "center",
 				paddingBottom: "100px"
 			}}>
 				<h1 style={{
-					margin: "0px",
-					paddingBlock: "20px"
+					marginBottom: "20px",
 				}}>
 					Logg Inn
 				</h1>
@@ -72,8 +71,8 @@ function LoginForm() {
 			<AnimationAvatar 
 				isAnimating={isLoading} 
 				style={{
-					maxHeight: "min(80vw,400px)",
-					maxWidth: "70%",
+					maxHeight: "min(85vw,400px)",
+					maxWidth: "100%",
 					marginLeft: "auto",
 					marginRight: "auto",
 				}}
@@ -84,7 +83,7 @@ function LoginForm() {
 						color: theme => theme.palette.success.main,
 						fontWeight: "bold"
 					}}>
-						E-posten er nå på veg...
+						Innloggingslink er nå på veg via e&#8209;post
 					</Box>
 					<Box sx={{
 						color: theme => theme.palette.text.disabled,
@@ -110,7 +109,7 @@ function LoginForm() {
                     style={{ 
                         maxWidth: "350px",
 						marginTop: "25px",
-                        marginBottom: "35px"
+                        marginBottom: "35px",
                     }}
                 />
             </div>
