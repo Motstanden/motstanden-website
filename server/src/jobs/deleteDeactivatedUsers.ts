@@ -5,8 +5,10 @@ import { parentPort } from 'node:worker_threads'
 import { dbReadWriteConfig, motstandenDB } from '../config/databaseConfig.js'
 import { db as DB } from '../db/index.js'
 import { dayjs } from "../lib/dayjs.js"
+import { Mail } from "../services/mail.js"
 import { ErrorLogger } from "../utils/ErrorLogger.js"
 import { isMainModule } from '../utils/isMainModule.js'
+import { mailTemplates } from "../utils/mailTemplateBuilders.js"
 import { sleepAsync } from '../utils/sleepAsync.js'
 
 /**
@@ -69,7 +71,12 @@ function tryDeleteUser(db: DatabaseType, user: DeactivatedUser, errorLogger: Err
  */
 async function notifyUserByEmail(user: DeactivatedUser, errorLogger: ErrorLogger) { 
     try {
-        // TODO: Send email to user
+        const html = await mailTemplates.buildDeletedUserHtml()
+        await Mail.send({
+            to: user.email,
+            subject: "Din bruker er slettet",
+            html: html
+        })
     } catch(err) {
         errorLogger.log(err)
     }
