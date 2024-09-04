@@ -1,17 +1,12 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react"
 
-import boy1 from "../../assets/pictures/loginAvatar/boy1.png";
-import boy2 from "../../assets/pictures/loginAvatar/boy2.png";
-import boy3 from "../../assets/pictures/loginAvatar/boy3.png";
+import boy1 from "../../assets/pictures/loginAvatar/boy1.png"
+import boy2 from "../../assets/pictures/loginAvatar/boy2.png"
+import boy3 from "../../assets/pictures/loginAvatar/boy3.png"
 
-import girl1 from "../../assets/pictures/loginAvatar/girl1.png";
-import girl2 from "../../assets/pictures/loginAvatar/girl2.png";
-import girl3 from "../../assets/pictures/loginAvatar/girl3.png";
-
-interface ILoadingImage {
-	gender: string,
-	images: string[]
-}
+import girl1 from "../../assets/pictures/loginAvatar/girl1.png"
+import girl2 from "../../assets/pictures/loginAvatar/girl2.png"
+import girl3 from "../../assets/pictures/loginAvatar/girl3.png"
 
 const BoyImg = {
 	gender: "boy",
@@ -20,7 +15,7 @@ const BoyImg = {
 		boy2,
 		boy3
 	]
-}
+} as const
 
 const GirlImg = {
 	gender: "girl",
@@ -29,20 +24,23 @@ const GirlImg = {
 		girl2,
 		girl3
 	]
-}
+} as const
+
+type ImageSrc = typeof BoyImg | typeof GirlImg
 
 export function AnimationAvatar({ isAnimating }: { isAnimating: boolean; }) {
 
-	const gender = useMemo(GetRandomImage, [])
+	const imageSrc = useMemo(GetRandomImageSrc, [])
 	const [index, setIndex] = useState(0)
 
-	if (isAnimating) {
-		setTimeout(() => setIndex(index + 1), 600)
-	}
+	useEffect( () => {
 
-	if (!isAnimating && index !== 0) {
-		setIndex(0)
-	}
+		const timeout = setTimeout( () => {
+			setIndex(prev => isAnimating ? prev + 1 : 0)
+		}, 600)
+		
+		return () => clearTimeout(timeout)
+	}, [index, isAnimating])
 
 	return (
 		<div style={{
@@ -51,20 +49,14 @@ export function AnimationAvatar({ isAnimating }: { isAnimating: boolean; }) {
 			height: "min(80vw,400px)",
 			maxHeight: "min(80vw,400px)"
 		}}>
-			<Image src={gender.images[2]} display={isAnimating && index % 2 === 0} />
-			<Image src={gender.images[1]} display={isAnimating && index % 2 === 1} />
-			<Image src={gender.images[0]} display={!isAnimating} />
+			<Image src={imageSrc.images[2]} display={isAnimating && index % 2 === 0} />
+			<Image src={imageSrc.images[1]} display={isAnimating && index % 2 === 1} />
+			<Image src={imageSrc.images[0]} display={!isAnimating} />
 		</div>
 	)
 }
 
-function GetRandomImage(): ILoadingImage {
-	return Math.random() >= 0.5 ? BoyImg : GirlImg
-}
-
-
-function Image({ src, display, style }: { src: string; display: boolean, style?: React.CSSProperties }) {
-	const displayCss = display ? { display: "inline-block" } : { display: "none" }
+function Image({ src, display, style }: { src: string; display?: boolean, style?: React.CSSProperties }) {
 	return (
 		<img
 			src={src}
@@ -77,8 +69,12 @@ function Image({ src, display, style }: { src: string; display: boolean, style?:
 				left: "0",
 				marginLeft: "auto",
 				marginRight: "auto",
-				...displayCss,
+				display: display ? "inline-block" : "none",
 				...style
 			}} />
 	)
+}
+
+function GetRandomImageSrc(): ImageSrc {
+	return Math.random() >= 0.5 ? BoyImg : GirlImg
 }
