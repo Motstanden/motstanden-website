@@ -4,23 +4,11 @@ import fs from "fs/promises"
 const basePath = "../../assets/mail-templates" 
 
 enum Templates {
-    MagicLink = `${basePath}/Login.html`,
     DeactivatedUser = `${basePath}/DeactivatedUser.html`,
     DeletedUser = `${basePath}/DeletedUser.html`,
+    Login = `${basePath}/Login.html`,
     ReactivatedUser = `${basePath}/ReactivatedUser.html`,
     Welcome = `${basePath}/Welcome.html`,
-}
-
-async function buildMagicLinkHtml(url: string, code: string): Promise<string> {
-    const html = await readFile(Templates.MagicLink)
-
-    const {date, time} = getMagicLinkExpireTime()
-
-    return html.replace(/{{magicLink}}/g, url)
-        .replace(/{{verificationCode}}/g, code)
-        .replace(/{{linkExpireDate}}/g, `${date}`)
-        .replace(/{{linkExpireTime}}/g, `${time}`)
-        .replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
 }
 
 async function buildDeactivatedUserHtml(): Promise<string> {
@@ -31,6 +19,18 @@ async function buildDeactivatedUserHtml(): Promise<string> {
 async function buildDeletedUserHtml(): Promise<string> {
     const html = await readFile(Templates.DeletedUser)
     return html.replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
+}
+
+async function buildLoginHtml(url: string, code: string): Promise<string> {
+    const html = await readFile(Templates.Login)
+
+    const {date, time} = getMagicLinkExpireTime()
+
+    return html.replace(/{{magicLink}}/g, url)
+        .replace(/{{verificationCode}}/g, code)
+        .replace(/{{linkExpireDate}}/g, `${date}`)
+        .replace(/{{linkExpireTime}}/g, `${time}`)
+        .replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
 }
 
 async function buildReactivatedUserHtml(userProfileUrl: string): Promise<string> {
@@ -69,7 +69,7 @@ function getMagicLinkExpireTime(): { date: string, time: string } {
 } 
 
 export const mailTemplates = {
-    buildMagicLinkHtml,
+    buildLoginHtml,
     buildDeactivatedUserHtml,
     buildDeletedUserHtml,
     buildReactivatedUserHtml,
