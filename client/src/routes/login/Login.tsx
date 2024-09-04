@@ -3,6 +3,7 @@ import { useState } from 'react'
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox'
 import { LoadingButton } from '@mui/lab'
 import { Box, TextField } from '@mui/material'
+import { useQueryClient } from '@tanstack/react-query'
 import React from "react"
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAppBarHeader } from 'src/context/AppBarHeader'
@@ -10,8 +11,7 @@ import { usePotentialUser, userAuthQueryKey } from 'src/context/Authentication'
 import { postJson } from 'src/utils/postJson'
 import { useTitle } from '../../hooks/useTitle'
 import { PageContainer } from '../../layout/PageContainer/PageContainer'
-import { AnimationAvatar } from './AnimationAvatar'
-import { useQueryClient } from '@tanstack/react-query'
+import { AnimationAvatar } from './components/AnimationAvatar'
 
 export default function LoginPage() {
 	useTitle("Logg inn")

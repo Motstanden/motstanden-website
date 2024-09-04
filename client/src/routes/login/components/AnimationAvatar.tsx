@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react"
 
-import boy1 from "../../assets/pictures/loginAvatar/boy1.png"
-import boy2 from "../../assets/pictures/loginAvatar/boy2.png"
-import boy3 from "../../assets/pictures/loginAvatar/boy3.png"
+import boy1 from "../../../assets/pictures/loginAvatar/boy1.png"
+import boy2 from "../../../assets/pictures/loginAvatar/boy2.png"
+import boy3 from "../../../assets/pictures/loginAvatar/boy3.png"
 
-import girl1 from "../../assets/pictures/loginAvatar/girl1.png"
-import girl2 from "../../assets/pictures/loginAvatar/girl2.png"
-import girl3 from "../../assets/pictures/loginAvatar/girl3.png"
+import girl1 from "../../../assets/pictures/loginAvatar/girl1.png"
+import girl2 from "../../../assets/pictures/loginAvatar/girl2.png"
+import girl3 from "../../../assets/pictures/loginAvatar/girl3.png"
 
 const BoyImg = {
 	gender: "boy",
