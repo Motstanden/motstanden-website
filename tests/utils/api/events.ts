@@ -1,6 +1,24 @@
 import { APIRequestContext } from "@playwright/test"
 import { ParticipationStatus } from "common/enums"
-import { Participant } from "common/interfaces"
+import { EventData, NewEventData, Participant } from "common/interfaces"
+
+async function createNewEvent(request: APIRequestContext, event: NewEventData) {
+    const res = await request.post("/api/events", { data: event })
+    if(!res.ok()) {
+        throw new Error(`Failed to create new event.\n${res.status()}: ${res.statusText()}`)
+    }
+    const data = await res.json() as { id: number }
+    return data.id
+}
+
+async function getAllEvents(request: APIRequestContext) { 
+    const res = await request.get("/api/events")
+    if(!res.ok()) {
+        throw new Error(`Failed to get all events.\n${res.status()}: ${res.statusText()}`)
+    }
+    const data = await res.json() as EventData[]
+    return data
+}
 
 async function getAllEventParticipants(request: APIRequestContext, eventId: number) {
     const res = await request.get(`/api/events/${eventId}/participants`)
@@ -19,6 +37,8 @@ async function upsertEventParticipant(request: APIRequestContext, eventId: numbe
 }
 
 export const eventsApi = {
+    new: createNewEvent,
+    getAll: getAllEvents,
     participants: {
         getAll: getAllEventParticipants,
         upsert: upsertEventParticipant

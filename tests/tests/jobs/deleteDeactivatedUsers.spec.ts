@@ -1,6 +1,6 @@
 import { APIRequestContext, expect, test } from "@playwright/test"
 import { CommentEntityType, LikeEntityType, ParticipationStatus, UserGroup, UserRank, UserStatus } from "common/enums"
-import { Comment, DeactivatedUser, DeletedUser, Like, User, WallPost } from "common/interfaces"
+import { Comment, DeactivatedUser, DeletedUser, Like, NewEventData, User, WallPost } from "common/interfaces"
 import { randomUUID } from "crypto"
 import dayjs from "dayjs"
 import sinon from "sinon"
@@ -39,6 +39,9 @@ test("Job deletes all user-identifiable data", async ({ request }, workerInfo) =
     // Participate in an event
     const eventId = 1
     await api.events.participants.upsert(request, eventId, ParticipationStatus.Attending)
+
+    // Create an event
+    await api.events.new(request, createNewEvent())
 
     // Vote on a poll
     const pollId = 1
@@ -107,6 +110,9 @@ test("Job deletes all user-identifiable data", async ({ request }, workerInfo) =
     // Assert event participation is deleted
     expect(await getEventParticipant(request, user.id, eventId)).toBe(undefined)
 
+    // Assert that all events created by the user are deleted
+    expect(await getEvent(request, user.id)).toBe(undefined)
+
     // Assert that the poll vote is deleted
     expect(await getPollVote(request, user.id, pollId)).toBe(undefined)
 })
@@ -150,6 +156,12 @@ async function getEventParticipant(request: APIRequestContext, userId: number, e
     return allParticipants.find(user => user.id === userId)
 }
 
+async function getEvent(request: APIRequestContext, userId: number) {
+    const allEvents = await api.events.getAll(request)
+    return allEvents.find(event => event.createdBy === userId)
+    
+}
+
 async function getPollVote(request: APIRequestContext, userId: number, pollId: number) {
     const voteData = await api.polls.votes.getAll(request, pollId)
     for (const option of voteData) {
@@ -159,4 +171,15 @@ async function getPollVote(request: APIRequestContext, userId: number, pollId: n
         }
     }
     return undefined
+}
+
+function createNewEvent(): NewEventData {
+    const uuid = randomUUID()
+    return {
+        title: `Title: ${uuid}`,
+        startDateTime: dayjs().add(1, "day").format("YYYY-MM-DD HH:mm:ss"),
+        endDateTime: dayjs().add(2, "day").format("YYYY-MM-DD HH:mm:ss"),
+        keyInfo: [],
+        description: `Description: ${uuid}`
+    }
 }
