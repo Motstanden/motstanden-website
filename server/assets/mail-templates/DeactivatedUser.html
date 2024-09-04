@@ -7,24 +7,41 @@
     <title>Motstanden</title>
     <style>
             
-        body {
-            background-color: white;
-            font-family: Arial, sans-serif;
-            font-size: 14pt;
-            color: #222222;
+        .body {
             max-width: 600px;
+            font-family:arial,helvetica,sans-serif;
+            font-size: 14pt;
+            background-color: white;
+            color: #222222;
         }
 
-        h1, h2, h3 {
-            font-family: Helvetica, sans-serif;
+        .main {
+            border: 1.5px solid #ddd;
+            border-radius: 10px;
+            padding-top: min(1em, 30px);
+            padding-bottom: min(1em, 30px);
+            padding-left: min(4vw, 30px);
+            padding-right: min(4vw, 30px);
         }
-        
-        footer {
-            margin-top: 2em;
-            padding-top: 1em;
+
+        .green-text {
+            color: #196E45;
+        }
+
+        .black-text {
+            color: #222222;
+        }
+
+        .anchor {
+            text-decoration: none;
+        }
+
+        .footer {
+            margin-top: 30px;
+            margin-left: min(4vw, 30px);
+            margin-right: min(4vw, 30px);
             font-size: 11pt;
             color: #666;
-            border-top: 1px solid #ddd;
         }
 
         .invisible {
@@ -35,57 +52,34 @@
             opacity: 0;
             visibility: hidden;
             display: none; 
-            mso-hide: all;      
+            mso-hide: all;
         }
         
     </style>
 </head>
-<body>
-    <main>
-        <h2>Brukeren din er slettet</h2>
-        <p>
-            Din personlige data på <a href="https://motstanden.no">Motstanden.no</a> er herved permanent slettet.<br/>
-        </p>
-        <p>
-            Din tidligere brukerkonto er ellers anonymisert og deaktivert fram til du eventuelt skulle ønske å gjenopprette den.
+<div class="body">
+    <div class="main">
+
+        <h3 class="black-text">
+            Din bruker på <a href="https://motstanden.no" class="anchor">motstanden.no</a> er deaktivert og vil bli permanent slettet om 90 dager.
+        </h3>
+    
+        <p style="margin-block: 35px;" class="black-text">
+            <b class="green-text" >Du kan gjenopprette brukeren din innen 90 dager</b> ved å kontakte <i>Motstandenstyret</i>. <br/>
+            Forespørsler kan sendes i etablerte kommunikasjonkanaler eller til <a href="mailto:styret@motstanden.no" class="anchor">styret@motstanden.no</a>.
         </p>
 
-        <h3>Hva er ikke slettet?</h3>
-        <p>
-            Data som ikke er personlig identifiserbar, som for eksempel din tidligere <i>brukerID</i>, er arkivert og gjort så utilgjengelig som mulig.
-            Dette er for å bevare integritet i vår database, og for å kunne gjenopprette din bruker dersom du ønsker det i fremtiden.
+        <p class="black-text">
+            <b>Hvorfor 90 dager?</b><br/>
+            Dette sikrer at du har tilstrekelig med tid til å ombestemme deg og etablere kontakt med <i>Motstandenstyret</i>.<br/>
+            <i>Motstanden</i> er drevet av frivilige studenter, og det kan derfor ta lang tid å behandle forespørsler.
         </p>
 
-        <h3>Gjenopprett bruker?</h3>
-        <p>
-            <i>
-                Har det skjedd en feil? <br/>
-                Ønsker du å gjenopprette din tidligere bruker?
-            </i>
-        </p>
-        <p>
-            Meld fra til Motstandenstyret at du ønsker å gjenopprette <b><i>brukerID</i> {{userId}}</b> med følgende informasjon:
-            <ul>
-                <li>Fornavn</li>
-                <li>Mellomnavn</li>
-                <li>Etternavn</li>
-                <li>E-post</li>
-                <li>Foretrukket profilbilde: Mannlig- eller kvinnelig avatar. </li>
-            </ul>
-        </p>
-        <p>
-            Motstandenstyret kan blant annet kontaktes på E-post: <a href="mailto:styret@motstanden.no">styret@motstanden.no</a>. 
-        </p>
-
-        <h3>Har du spørsmål?</h3>
-        <p>
-            Ta kontakt med Motstandenstyret eller spør våre nettsideutviklere på <a href="https://github.com/Motstanden/motstanden-website/issues">GitHub</a>.
-        </p>
-    </main>
-    <footer>
+    </div>
+    <div class="footer">
         <p>
             Med vennlig hilsen,<br/>
-            Motstandens utviklerteam.
+            <i>Studentorchesteret den Ohmske Motstanden</i>
         </p>
         <p>
             <i>I en sluttet krets..!</i>
@@ -93,6 +87,6 @@
         <div class="invisible">
             {{randomFooterNumber}}
         </div>
-    </footer>
-</body>
+    </div>
+</div>
 </html>

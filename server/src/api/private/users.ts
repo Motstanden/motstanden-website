@@ -226,7 +226,7 @@ async function deleteUserHandler(req: Request, res: Response, id: number) {
 
     // Notify user by mail.
     // We are intentionally not awaiting the email to be sent, as it may take multiple minutes to complete.
-    const mailHtml = await mailTemplates.buildDeactivatedUserHtml(user.id)
+    const mailHtml = await mailTemplates.buildDeactivatedUserHtml()
     Mail.send({
         to: user.email,
         subject: "Din bruker er slettet",

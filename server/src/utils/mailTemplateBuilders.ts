@@ -22,11 +22,9 @@ async function buildMagicLinkHtml(url: string, code: string): Promise<string> {
         .replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
 }
 
-async function buildDeactivatedUserHtml(userId: number): Promise<string> {
+async function buildDeactivatedUserHtml(): Promise<string> {
     const html = await readFile(Templates.DeactivatedUser)
-
-    return html.replace(/{{userId}}/g, `${userId}`)
-    .replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
+    return html.replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
 }
 
 async function buildRestoredDeletedUserHtml(userProfileUrl: string): Promise<string> {
