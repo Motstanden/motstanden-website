@@ -92,6 +92,7 @@ function deleteUser(db: DatabaseType, user: DeactivatedUser) {
         DB.wallPosts.deleteAllOnWall(user.id, db)
 
         DB.events.participants.deleteAllByUser(user.id, db)
+        DB.events.deleteAllByAuthor(user.id, db)
 
         DB.polls.votes.deleteAllBy(user.id, db)
 
