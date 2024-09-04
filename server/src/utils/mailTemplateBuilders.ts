@@ -5,7 +5,7 @@ const basePath = "../../assets/mail-templates"
 
 enum Templates {
     MagicLink = `${basePath}/Login.html`,
-    DeletedUser = `${basePath}/DeletedUser.html`,
+    DeactivatedUser = `${basePath}/DeactivatedUser.html`,
     RestoredDeletedUser = `${basePath}/RestoredDeletedUser.html`,
     Welcome = `${basePath}/Welcome.html`,
 }
@@ -22,8 +22,8 @@ async function buildMagicLinkHtml(url: string, code: string): Promise<string> {
         .replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
 }
 
-async function buildDeletedUserHtml(userId: number): Promise<string> {
-    const html = await readFile(Templates.DeletedUser)
+async function buildDeactivatedUserHtml(userId: number): Promise<string> {
+    const html = await readFile(Templates.DeactivatedUser)
 
     return html.replace(/{{userId}}/g, `${userId}`)
     .replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
@@ -66,7 +66,7 @@ function getMagicLinkExpireTime(): { date: string, time: string } {
 
 export const mailTemplates = {
     buildMagicLinkHtml,
-    buildDeletedUserHtml,
+    buildDeactivatedUserHtml,
     buildRestoredDeletedUserHtml,
     buildWelcomeHtml,
 }

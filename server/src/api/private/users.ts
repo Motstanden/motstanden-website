@@ -5,13 +5,13 @@ import { z } from "zod"
 import * as passportConfig from "../../config/passportConfig.js"
 import { db } from "../../db/index.js"
 import { clearAllAuthCookies, logOutAllUnits, updateAccessToken } from "../../middleware/jwtAuthenticate.js"
+import { requiresDevEnv } from "../../middleware/requiresDevEnv.js"
 import { RequiresGroup } from "../../middleware/requiresGroup.js"
 import { validateBody, validateParams } from "../../middleware/zodValidation.js"
 import { Mail } from "../../services/mail.js"
 import { getUser } from "../../utils/getUser.js"
 import { mailTemplates } from "../../utils/mailTemplateBuilders.js"
 import { Schemas } from "../../utils/zodSchema.js"
-import { requiresDevEnv } from "../../middleware/requiresDevEnv.js"
 
 const router = express.Router()
 
@@ -226,7 +226,7 @@ async function deleteUserHandler(req: Request, res: Response, id: number) {
 
     // Notify user by mail.
     // We are intentionally not awaiting the email to be sent, as it may take multiple minutes to complete.
-    const mailHtml = await mailTemplates.buildDeletedUserHtml(user.id)
+    const mailHtml = await mailTemplates.buildDeactivatedUserHtml(user.id)
     Mail.send({
         to: user.email,
         subject: "Din bruker er slettet",
