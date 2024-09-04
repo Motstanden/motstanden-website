@@ -30,7 +30,7 @@ function GetRandomImageSrc() {
 	return Math.random() >= 0.5 ? BoyImg : GirlImg
 }
 
-export function AnimationAvatar({ isAnimating }: { isAnimating: boolean; }) {
+export function AnimationAvatar({ isAnimating, style }: { isAnimating: boolean, style?: React.CSSProperties }) {
 
 	const imageSrc = useMemo(GetRandomImageSrc, [])
 	
@@ -59,24 +59,13 @@ export function AnimationAvatar({ isAnimating }: { isAnimating: boolean; }) {
 		src = imageSrc.images[index % 2 + 1]
 	}
 	return (
-		<div style={{
-			position: "relative",
-			width: "100%",
-			height: "min(80vw,400px)",
-			maxHeight: "min(80vw,400px)"
-		}}>
-			<img
-				src={src}
-				alt="Person kledd i Motstanden-uniform"
-				style={{
-					borderRadius: "100%",
-					maxHeight: "min(80vw,400px)",
-					position: "absolute",
-					right: "0",
-					left: "0",
-					marginLeft: "auto",
-					marginRight: "auto",
-				}} />
-		</div>
+		
+		<img
+			src={src}
+			alt="Person kledd i Motstanden-uniform"
+			style={{
+				borderRadius: "100%",
+				...style,
+			}} />
 	)
 }
