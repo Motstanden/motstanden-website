@@ -6,12 +6,12 @@ import { Box, TextField } from '@mui/material'
 import React from "react"
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAppBarHeader } from 'src/context/AppBarHeader'
-import { usePotentialUser } from 'src/context/Authentication'
+import { usePotentialUser, userAuthQueryKey } from 'src/context/Authentication'
 import { postJson } from 'src/utils/postJson'
 import { useTitle } from '../../hooks/useTitle'
 import { PageContainer } from '../../layout/PageContainer/PageContainer'
 import { AnimationAvatar } from './AnimationAvatar'
-import DevLogin from './DevLogin'
+import { useQueryClient } from '@tanstack/react-query'
 
 export default function LoginPage() {
 	useTitle("Logg inn")
@@ -123,7 +123,55 @@ function LoginForm() {
                 endIcon={<ForwardToInboxIcon />}>
                 Send E-post
             </LoadingButton>
-            <DevLogin email={email} />
+			{import.meta.env.VITE_ENABLE_DEV_LOGIN === "true" && (
+				<DevLoginButton 
+					email={email} 
+					disabled={isLoading} 
+				/>
+			)}
         </form>
+    )
+}
+
+
+function DevLoginButton( props: {email: string, disabled?: boolean} ) { 
+	return import.meta.env.VITE_ENABLE_DEV_LOGIN === "true" 
+		? <UnsafeDevLoginButton {...props} /> 
+		: <></>
+}
+
+function UnsafeDevLoginButton({email, disabled}: {email: string, disabled?: boolean}) {
+	const [isPosting, setIsPosting] = useState(false)
+	const queryClient = useQueryClient()
+
+    const onClick = async () => {
+		setIsPosting(true)
+		const res = await postJson("/api/dev/auth/login", {destination: email.toLowerCase().trim()}, { 
+			alertOnFailure: true,
+		})
+
+		if(res === undefined || res.ok === false) { 
+			setIsPosting(false)
+		}
+
+		if(res && res.ok) { 
+			await queryClient.invalidateQueries({queryKey: userAuthQueryKey})
+		}
+    }
+
+    return (
+        <div style={{marginTop: "35px"}}> 
+            <LoadingButton
+                variant="contained"
+                color="secondary"
+                size="large"
+                onClick={onClick}
+				loading={isPosting}
+				disabled={disabled}
+                sx={{ width: "172px" }}
+            >
+                Dev logg inn
+            </LoadingButton>
+        </div>
     )
 }
