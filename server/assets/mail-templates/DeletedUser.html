@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motstanden</title>
+    <style>
+            
+        .body {
+            max-width: 600px;
+            font-family:arial,helvetica,sans-serif;
+            font-size: 14pt;
+            background-color: white;
+            color: #222222;
+        }
+
+        .frame {
+            border: 1.5px solid #ddd;
+            border-radius: 10px;
+            padding-top: min(1em, 30px);
+            padding-bottom: min(1em, 30px);
+            padding-left: min(4vw, 30px);
+            padding-right: min(4vw, 30px);
+        }
+
+        .main {
+            font-size: 14pt;
+        }
+
+        .green-text {
+            color: #196E45;
+        }
+
+        .black-text {
+            color: #222222;
+        }
+
+        .anchor {
+            text-decoration: none;
+        }
+        
+        .li {
+            margin-block: 10px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 11pt;
+            color: #666;
+        }
+
+        .invisible {
+            display: none;
+            font-size: 0px;     
+            max-height:0px; 
+            overflow: hidden;    
+            opacity: 0;
+            visibility: hidden;
+            display: none; 
+            mso-hide: all;
+        }
+
+    </style>
+</head>
+<div class="body">
+    <div class="frame">
+
+        <div class="main">
+            <h3>Hei,</h3>
+
+            <p class="black-text">
+                Din bruker og personlige data på <a href="https://motstanden.no" class="anchor">motstanden.no</a> er herved permanent slettet.
+            </p>
+
+            <p class="black-text">
+                Det er herved umulig å gjenopprette brukeren din eller dataen som tilhørte den.
+            </p>
+
+            <p class="black-text">
+                <b>Har du spørsmål?</b><br/>
+                Kontakt oss gjerne! <br/>
+                <ul class="ul">
+                    <li class="li">
+                        Send e-post til <i>Motstandenstyret</i>: <a href="mailto:styret@motstanden.no" class="anchor">styret@motstanden.no</a>
+                    </li>
+                    <li class="li">
+                        Spør våre nettsideutviklere på <a href="https://github.com/Motstanden/motstanden-website/issues" class="anchor" >GitHub</a>.
+                    </li>
+                </ul>
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>
+                Med vennlig hilsen,<br/>
+                <i>Studentorchesteret den Ohmske Motstanden</i>
+            </p>
+            <p>
+                <i>I en sluttet krets..!</i>
+            </p>
+        </div>
+
+    </div>
+    <div class="invisible">
+        {{randomFooterNumber}}
+    </div>
+</div>
+</html>
