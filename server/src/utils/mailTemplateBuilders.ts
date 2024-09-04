@@ -30,13 +30,12 @@ async function buildDeletedUserHtml(): Promise<string> {
 /**
  * Converts `server/assets/mail-templates/Login.html` to a string
  */
-async function buildLoginHtml(url: string, code: string): Promise<string> {
+async function buildLoginHtml(url: string): Promise<string> {
     const html = await readFile(Templates.Login)
 
     const {date, time} = getMagicLinkExpireTime()
 
     return html.replace(/{{magicLink}}/g, url)
-        .replace(/{{verificationCode}}/g, code)
         .replace(/{{linkExpireDate}}/g, `${date}`)
         .replace(/{{linkExpireTime}}/g, `${time}`)
         .replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())

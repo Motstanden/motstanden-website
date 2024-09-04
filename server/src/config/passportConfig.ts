@@ -40,7 +40,7 @@ async function onSendMagicLinkRequest(email: string, href: string, code: string)
     const url = process.env.IS_DEV_ENV === 'true' 
         ? `http://localhost:3000/${href}` 
         : `https://motstanden.no/${href}`
-    const htmlStr = await mailTemplates.buildLoginHtml(url, code)
+    const htmlStr = await mailTemplates.buildLoginHtml(url)
 
     // We are intentionally not awaiting the email to be sent, as it may take multiple minutes to complete.
     Mail.send({
