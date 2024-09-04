@@ -5,21 +5,23 @@ import { parentPort } from 'node:worker_threads'
 import { dbReadWriteConfig, motstandenDB } from '../config/databaseConfig.js'
 import { db as DB } from '../db/index.js'
 import { dayjs } from "../lib/dayjs.js"
+import { ErrorLogger } from "../utils/ErrorLogger.js"
 import { isMainModule } from '../utils/isMainModule.js'
 import { sleepAsync } from '../utils/sleepAsync.js'
-import { ErrorLogger } from "../utils/ErrorLogger.js"
 
 /**
  * Entry point for the job `deleteDeactivatedUsers`
  */
 async function main() {
 
-    const users = getUsersToDelete()
-    if(users.length === 0) 
-        return
-    
-    const errors = new ErrorLogger()
     const db = new Database(motstandenDB, dbReadWriteConfig)
+    const errorLogger = new ErrorLogger()
+    const users = getUsersToDelete()
+
+    if(users.length === 0) {
+        db.close()
+        return
+    }
     
     // Prepare users for deletion
     const preparedUsers: DeactivatedUser[] = [] 
@@ -29,7 +31,7 @@ async function main() {
             DB.users.refreshTokens.deleteAllByUser(user.id, db)
             preparedUsers.push(user)
         } catch(err) { 
-            errors.log(err)
+            errorLogger.log(err)
             undoMarkUserAsDeleted(db, user.id)
         }
     }
@@ -39,30 +41,43 @@ async function main() {
     await sleepAsync(process.env.IS_DEV_ENV === "true" ? 2000 : 15 * 1000 * 60)
 
     for(const user of preparedUsers) { 
-        
-        // Delete all user-identifiable data
-        let success = false
-        try {
-            deleteUser(db, user)
-            success = true
-        } catch(err) { 
-            errors.log(err)
-            undoMarkUserAsDeleted(db, user.id)
-        }
-
-        // TODO: Notify the user by mail
+        let success = tryDeleteUser(db, user, errorLogger)
         if(success) {
-            try {
-                // TODO: Send email to user
-            } catch(err) {
-                errors.log(err)
-            }
+            await notifyUserByEmail(user, errorLogger)
+        } else {
+            undoMarkUserAsDeleted(db, user.id)
         }
     }
 
     db.close()
-    if(errors.hasErrors()) {
-        throw new Error(errors.message())
+    if(errorLogger.hasErrors()) {
+        throw new Error(errorLogger.message())
+    }
+}
+
+/**
+ * Runs the `deleteUser` function and logs any errors that occur.
+ * @Returns `true` if the user was successfully deleted, otherwise `false`
+ */
+function tryDeleteUser(db: DatabaseType, user: DeactivatedUser, errorLogger: ErrorLogger) { 
+    let success = false
+    try {
+        deleteUser(db, user)
+        success = true
+    } catch(err) { 
+        errorLogger.log(err)
+    }
+    return success
+}
+
+/**
+ * Notifies the user by mail that their account has been deleted
+ */
+async function notifyUserByEmail(user: DeactivatedUser, errorLogger: ErrorLogger) { 
+    try {
+        // TODO: Send email to user
+    } catch(err) {
+        errorLogger.log(err)
     }
 }
 
@@ -70,7 +85,7 @@ async function main() {
  * Deletes all user-identifiable data for the given user
  */
 function deleteUser(db: DatabaseType, user: DeactivatedUser) { 
-    return db.transaction(() => { 
+    const transaction = db.transaction(() => { 
         anonymizeUser(db, user.id)
 
         deleteAllLikes(db, user.id)
@@ -89,7 +104,10 @@ function deleteUser(db: DatabaseType, user: DeactivatedUser) {
         // TODO:
         //  - Delete all events created by the user
     })
+    transaction()
 }
+
+
 /**
  * Gets all users that have been deactivated for more than 90 days
  */
