@@ -22,25 +22,19 @@ async function main() {
         db.close()
         return
     }
-    
-    // Prepare users for deletion
-    const preparedUsers: DeactivatedUser[] = [] 
+
+    // 1. Lock the user from being changed by other processes
     for(const user of users) { 
-        try {
-            markUserAsDeleted(db, user.id)
-            DB.users.refreshTokens.deleteAllByUser(user.id, db)
-            preparedUsers.push(user)
-        } catch(err) { 
-            errorLogger.log(err)
-            undoMarkUserAsDeleted(db, user.id)
-        }
+        DB.users.refreshTokens.deleteAllByUser(user.id, db)         // Should not be necessary, but just in case
+        markUserAsDeleted(db, user.id)
     }
     
-    // Avoid race conditions by waiting for any pending writes to the user table to complete
-    // In production, we will wait 15 minutes for the AccessToken to expire
+    // 2. Wait for any pending writes to the user table to complete
+    //    In production, wait 15 minutes just to be sure that all AccessTokens for the user has expired
     await sleepAsync(process.env.IS_DEV_ENV === "true" ? 2000 : 15 * 1000 * 60)
 
-    for(const user of preparedUsers) { 
+    // 3. Delete all user data, and notify the user by email
+    for(const user of users) { 
         let success = tryDeleteUser(db, user, errorLogger)
         if(success) {
             await notifyUserByEmail(user, errorLogger)
