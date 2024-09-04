@@ -254,7 +254,7 @@ router.put("/users/deactivated/:id",
         const userProfileUrl = process.env.IS_DEV_ENV === 'true' 
             ? `http://localhost:3000/medlem/${id}` 
             : `https://motstanden.no/medlem/${id}`
-        const mailHtml = await mailTemplates.buildRestoredDeletedUserHtml(userProfileUrl)
+        const mailHtml = await mailTemplates.buildReactivatedUserHtml(userProfileUrl)
         Mail.send({
             to: user.email,
             subject: "Din bruker er gjenopprettet",
