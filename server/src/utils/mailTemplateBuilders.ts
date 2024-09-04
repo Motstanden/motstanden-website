@@ -11,16 +11,25 @@ enum Templates {
     Welcome = `${basePath}/Welcome.html`,
 }
 
+/**
+ * Converts `server/assets/mail-templates/DeactivatedUser.html` to a string
+ */
 async function buildDeactivatedUserHtml(): Promise<string> {
     const html = await readFile(Templates.DeactivatedUser)
     return html.replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
 }
 
+/**
+ * Converts `server/assets/mail-templates/DeletedUser.html` to a string
+ */
 async function buildDeletedUserHtml(): Promise<string> {
     const html = await readFile(Templates.DeletedUser)
     return html.replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
 }
 
+/**
+ * Converts `server/assets/mail-templates/Login.html` to a string
+ */
 async function buildLoginHtml(url: string, code: string): Promise<string> {
     const html = await readFile(Templates.Login)
 
@@ -33,6 +42,9 @@ async function buildLoginHtml(url: string, code: string): Promise<string> {
         .replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
 }
 
+/**
+ * Converts `server/assets/mail-templates/ReactivatedUser.html` to a string
+ */
 async function buildReactivatedUserHtml(userProfileUrl: string): Promise<string> {
     const html = await readFile(Templates.ReactivatedUser)
     
@@ -40,6 +52,9 @@ async function buildReactivatedUserHtml(userProfileUrl: string): Promise<string>
         .replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
 }
 
+/**
+ * Converts `server/assets/mail-templates/Welcome.html` to a string
+ */
 async function buildWelcomeHtml(url: string): Promise<string> {
     const html = await readFile(Templates.Welcome)
     const { time } = getMagicLinkExpireTime()
