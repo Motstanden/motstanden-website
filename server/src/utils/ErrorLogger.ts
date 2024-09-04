@@ -10,6 +10,16 @@ export class ErrorLogger {
         this.errors.push(error);
     }
 
+    logMany(errors: unknown[]) { 
+        for(const err of errors) {
+            this.log(err)
+        }
+    }
+
+    append(logger: ErrorLogger) {
+        this.logMany(logger.getErrors())
+    }
+
     hasErrors(): boolean {
         return this.errors.length > 0;
     }
