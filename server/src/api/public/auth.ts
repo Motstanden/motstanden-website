@@ -28,7 +28,7 @@ router.post("/auth/magic-link",
         // A random delay to make timing attacks less feasible.
         // Although, it is important to note that this does not fully prevent timing attacks:
         // https://security.stackexchange.com/questions/96489/can-i-prevent-timing-attacks-with-random-delays  
-        await sleepAsync(randomInt(0, 10000))
+        await sleepAsync(randomInt(0, 15 * 1000))
 
         const { destination: email } = MagicLinkPayloadSchema.parse(req.body)
 
