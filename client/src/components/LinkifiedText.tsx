@@ -17,6 +17,9 @@ function RenderLink({ attributes, content }: { [attributes: string]: any, conten
             href={attributes.href} 
             color="secondary"
             underline="hover"
+            sx={{
+                wordBreak: "break-word",
+            }}
             >
             {content}
         </Link>   
