@@ -7,6 +7,7 @@ import {
     Link,
     Paper,
     Skeleton,
+    Stack,
     Table,
     TableBody,
     TableCell,
@@ -22,6 +23,7 @@ import { User } from "common/interfaces"
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
 import dayjs from 'dayjs'
 import { Link as RouterLink } from 'react-router-dom'
+import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
 import { TitleCard } from 'src/components/TitleCard'
 import { useAppBarHeader } from "src/context/AppBarHeader"
 import { useAppSnackBar } from "src/context/AppSnackBar"
@@ -48,17 +50,6 @@ export default function UserListPage() {
             <Divider sx={{ mt: "60px", mb: "40px" }} />
             <EmailLists users={actualUsers} isLoading={isPending}/>
         </>
-    )
-}
-
-function FilterBox({ label, checked, onClick }: { label: string, checked: boolean, onClick: React.MouseEventHandler<HTMLButtonElement> }) {
-    return (
-        <Grid item xs={6} sm={3} md={2}>
-            <FormControlLabel
-                control={<Checkbox checked={checked} onClick={onClick} />}
-                label={label}
-            />
-        </Grid>
     )
 }
 
@@ -154,9 +145,11 @@ function UserTable({
             Columns.CapeName,
             Columns.Rank,
             variant === "activeUsers" ? Columns.Status : Columns.DeactivatedAt,
-        ])
+        ]),
+        serialize: (set) => JSON.stringify(Array.from(set)),
+        deserialize: (str) => new Set(JSON.parse(str))
     })
-    
+
     const toggleVisibility = (col: Columns) => { 
         setVisibleColumns((prev) => {
             const newCols = new Set(prev)
@@ -166,9 +159,12 @@ function UserTable({
             else
                 newCols.add(col)
     
+            console.log(newCols)
             return newCols
         })
     }
+    
+    console.log(visibleColumns)
 
     const lastVisibleColumn = visibleColumns.size === 0 
         ? undefined 
@@ -199,7 +195,10 @@ function UserTable({
                         <TableCell {...getHeaderProps(Columns.EndDate)}>Slutt</TableCell>
                         <TableCell {...getHeaderProps(Columns.Role)}>Rolle</TableCell>
                         <TableCell align="right">
-                            {/* TODO: Put menu here */}
+                            <ChangeColumnVisibilityMenu 
+                                visibleColumns={visibleColumns} 
+                                toggleVisibility={toggleVisibility} 
+                            />
                         </TableCell>
                     </TableRow>
                 </TableHead>
@@ -242,7 +241,7 @@ function UserTable({
 
                     {!isLoading && users.map((user: User) => (
                         <TableRow sx={rowStyle} key={user.email}>
-                            <TableCell {...getRowProps(Columns.Name)}>
+                            <TableCell colSpan={lastVisibleColumn === Columns.Name ? 2 : 1}> 
                                 <Link
                                     component={RouterLink}
                                     to={`/brukere/${user.id}`}
@@ -284,6 +283,66 @@ function UserTable({
                 </TableBody>
             </Table>
         </TableContainer>
+    )
+}
+
+function ChangeColumnVisibilityMenu({ visibleColumns, toggleVisibility }: { visibleColumns: Set<Columns>, toggleVisibility: (col: Columns) => void }) { 
+
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>, col: Columns) => {
+        e.stopPropagation()     // Prevent IconPopupMenu from closing
+        toggleVisibility(col)
+    }
+
+    const getProps = (col: Columns): ColumnCheckboxProps => ({ 
+        checked: visibleColumns.has(col),
+        onClick: (e) => handleClick(e, col)
+    })
+
+    return (
+        <IconPopupMenu>
+            <div style={{
+                paddingInline: "15px",
+                paddingTop: "10px",
+                paddingBottom: "20px",
+                minWidth: "180px"
+            }}>
+                <h3 style={{
+                    margin: "0px", 
+                    marginBottom: "10px"
+                }}>
+                    Vis kolonner
+                </h3>
+                <Stack>
+                    <ColumnCheckbox label="Rang" {...getProps(Columns.Rank)} />
+                    <ColumnCheckbox label="Kappe" {...getProps(Columns.CapeName)} />
+                    <ColumnCheckbox label="Status" {...getProps(Columns.Status)} />
+                    <ColumnCheckbox label="E-post" {...getProps(Columns.Email)} />
+                    <ColumnCheckbox label="Tlf." {...getProps(Columns.PhoneNumber)} />
+                    <ColumnCheckbox label="Bursdag" {...getProps(Columns.BirthDate)} />
+                    <ColumnCheckbox label="Start" {...getProps(Columns.StartDate)} />
+                    <ColumnCheckbox label="Slutt" {...getProps(Columns.EndDate)} />
+                </Stack>
+            </div>
+        </IconPopupMenu>
+    )
+}
+
+type ColumnCheckboxProps = {
+    label?: string,
+    checked?: boolean,
+    onClick?: React.MouseEventHandler<HTMLButtonElement> 
+}
+
+function ColumnCheckbox({label, checked, onClick }: ColumnCheckboxProps) {
+    return (
+        <FormControlLabel
+            control={
+                <Checkbox 
+                    checked={checked} 
+                    onClick={onClick}
+            />}
+            label={label}
+            />
     )
 }
 
