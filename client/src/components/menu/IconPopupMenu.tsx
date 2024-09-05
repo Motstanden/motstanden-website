@@ -1,9 +1,11 @@
-import { ClickAwayListener, IconButton, Menu, PopoverOrigin, SxProps } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
+import { ClickAwayListener, IconButton, Menu, PopoverOrigin, SxProps } from "@mui/material"
+import React, { useEffect, useRef, useState } from "react"
 
 export function IconPopupMenu({
     children,
-    icon,
+    icon = "horizontal",
     disabled,
     onMouseEnter,
     onMouseLeave,
@@ -19,7 +21,7 @@ export function IconPopupMenu({
     elevation,
 }: {
     children: React.ReactNode,
-    icon: React.ReactNode,
+    icon?: React.ReactNode | "horizontal" | "vertical",
     disabled?: boolean,
     onMouseEnter?: React.MouseEventHandler<HTMLButtonElement>,
     onMouseLeave?: React.MouseEventHandler<HTMLButtonElement>,
@@ -50,6 +52,12 @@ export function IconPopupMenu({
         onClick?.(event)
     }
 
+    let menuIcon = icon
+    if(icon === "horizontal")  
+        menuIcon = <MoreHorizIcon/>
+    else if(icon === "vertical") 
+        menuIcon === <MoreVertIcon/>
+
     return (
         <>
             <ClickAwayListener onClickAway={() => setIsOpen(false)}>
@@ -63,7 +71,7 @@ export function IconPopupMenu({
                     style={style}
                     sx={sx}
                 >
-                    {icon}
+                    {menuIcon}
                 </IconButton>
             </ClickAwayListener>
             <Menu
