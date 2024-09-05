@@ -17,7 +17,7 @@ import { selectDate } from '../../utils/datePicker.js'
 
 test("Create new user @smoke", async ({browser}, workerInfo) => {
     const { page } = await logIn(browser, workerInfo, UserGroup.SuperAdministrator)
-    await page.goto("/medlem/ny")
+    await page.goto("/brukere/ny")
     
     const user: PersonalInfo = {
         firstName: `___firstName ${randomUUID().toLowerCase()}`,
@@ -28,7 +28,7 @@ test("Create new user @smoke", async ({browser}, workerInfo) => {
 
     await fillPersonalForm(page, user)
     await Promise.all([
-        page.waitForURL(/\/medlem\/[0-9]+/),
+        page.waitForURL(/\/brukere\/[0-9]+/),
         page.getByRole('button', { name: 'Legg til bruker' }).click()
     ])
     await validatePersonalInfo(page, user)
@@ -66,7 +66,7 @@ test.describe("Update personal info", () => {
     })
 
     async function runTest(page: Page, user: User) {
-        await page.goto(`/medlem/${user.id}`)
+        await page.goto(`/brukere/${user.id}`)
         
         const newUserData: UpdateUserPersonalInfoBody = {
             firstName: `___firstName ${randomUUID().toLowerCase()}`,
@@ -102,7 +102,7 @@ async function fillPersonalForm(page: Page, user: PersonalInfo) {
 
 
 async function validatePersonalInfo(page: Page, user: PersonalInfo) {
-    await expect(page).toHaveURL(/\/medlem\/[0-9]+$/)
+    await expect(page).toHaveURL(/\/brukere\/[0-9]+$/)
     await expect(page.getByText(getFullName(user)).first()).toBeVisible()
     await expect(page.getByText(user.email)).toBeVisible()
 
@@ -157,7 +157,7 @@ test.describe("Update membership", () => {
             ? { ...base, rank: UserRank.MegaOhm }
             : base 
 
-        await page.goto(`/medlem/${user.id}`)
+        await page.goto(`/brukere/${user.id}`)
         await clickEdit(page, "membership")
         await fillMembershipForm(page, newData)
         await clickSave(page)
@@ -238,7 +238,7 @@ test.describe("Update role", () => {
             const user = await api.users.createRandom(workerInfo)
             const { page } = await logIn(browser, workerInfo, updater)
 
-            await page.goto(`/medlem/${user.id}`)
+            await page.goto(`/brukere/${user.id}`)
             await clickEdit(page, "role")
             await select(page, "UserGroup", newRole)
             await clickSave(page)

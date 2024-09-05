@@ -1,6 +1,6 @@
-import { Link, Skeleton } from "@mui/material"
-import { Link as RouterLink } from "react-router-dom"
-import { useUserReference } from "src/context/UserReference"
+import { Link, Skeleton } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
+import { useUserReference } from "src/context/UserReference";
 
 
 export function UserFullName({
@@ -47,7 +47,7 @@ export function UserFullName({
     return (
         <Link
             component={RouterLink}
-            to={`/medlem/${userId}`}
+            to={`/brukere/${userId}`}
             underline="hover"
             color="secondary"
             style={{

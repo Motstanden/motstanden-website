@@ -1,5 +1,5 @@
-import LogoutIcon from '@mui/icons-material/Logout';
-import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout'
+import PersonIcon from '@mui/icons-material/Person'
 import {
     Avatar,
     Box,
@@ -8,12 +8,12 @@ import {
     ListItemText,
     MenuItem,
     Tooltip
-} from "@mui/material";
-import { getFullName } from 'common/utils';
-import { Link as RouterLink } from 'react-router-dom';
-import { IconPopupMenu } from 'src/components/menu/IconPopupMenu';
-import { useAuthenticatedUser } from 'src/context/Authentication';
-import { useAppBarIconSize } from '../useAppSizes';
+} from "@mui/material"
+import { getFullName } from 'common/utils'
+import { Link as RouterLink } from 'react-router-dom'
+import { IconPopupMenu } from 'src/components/menu/IconPopupMenu'
+import { useAuthenticatedUser } from 'src/context/Authentication'
+import { useAppBarIconSize } from '../useAppSizes'
 
 
 export default function UserAvatar() {
@@ -71,7 +71,7 @@ export default function UserAvatar() {
                 </Tooltip>
             )}
         >
-            <MenuItem component={RouterLink} to={`/medlem/${user.id}`} >
+            <MenuItem component={RouterLink} to={`/brukere/${user.id}`} >
                 <ListItemIcon><PersonIcon /></ListItemIcon>
                 Profil
             </MenuItem>

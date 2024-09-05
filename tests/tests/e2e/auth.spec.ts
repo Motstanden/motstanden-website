@@ -70,7 +70,7 @@ test.describe("Routes that require authentication are protected", () => {
     testRoute("/studenttraller/1/rediger")
     testRoute("/studenttraller/ny")
 
-    testRoute("/medlem")
+    testRoute("/brukere")
 
     testRoute("/kommentarer")
     testRoute("/admin")
@@ -89,7 +89,7 @@ test.describe("Routes that require authentication are protected", () => {
 
 test.describe("Routes that require groups are protected", () => { 
     
-    testRoute("/medlem/ny", UserGroup.Administrator)
+    testRoute("/brukere/ny", UserGroup.Administrator)
 
     function testRoute(route: string, group: UserGroup) {
         return test(route, async ({browser}, workerInfo) => { 

@@ -1,28 +1,28 @@
-import { List, Theme, useMediaQuery } from "@mui/material";
-import { useMatch } from "react-router-dom";
-import { usePotentialUser } from "src/context/Authentication";
-import { ListItemExpander, ListItemHeader, ListItemLink } from './ListItem';
+import { List, Theme, useMediaQuery } from "@mui/material"
+import { useMatch } from "react-router-dom"
+import { usePotentialUser } from "src/context/Authentication"
+import { ListItemExpander, ListItemHeader, ListItemLink } from './ListItem'
 
 // Icons. See https://mui.com/components/material-icons/ for more icons
 // The icons are renamed to be more semantic.
-import BoardWebsiteListIcon from '@mui/icons-material/Code';
-import DocumentsIcon from '@mui/icons-material/Description';
-import BecomeMemberIcon from '@mui/icons-material/EmojiPeople';
-import EventIcon from '@mui/icons-material/EventNote';
-import QuotesIcon from '@mui/icons-material/FormatQuote';
-import RumourIcon from '@mui/icons-material/Forum';
-import MemberListIcon from '@mui/icons-material/Groups';
-import HomeIcon from '@mui/icons-material/Home';
-import FrontPageIcon from '@mui/icons-material/Info';
-import WikiIcon from '@mui/icons-material/Language';
-import LicenseIcon from '@mui/icons-material/LocalPolice';
-import HistoryIcon from '@mui/icons-material/MenuBook';
-import SheetArchiveIcon from '@mui/icons-material/MusicVideo';
-import LyricIcon from '@mui/icons-material/Nightlife';
-import MemberAddIcon from '@mui/icons-material/PersonAdd';
-import PollIcon from '@mui/icons-material/Poll';
-import FaqIcon from '@mui/icons-material/QuestionMark';
-import { strToNumber } from "common/utils";
+import BoardWebsiteListIcon from '@mui/icons-material/Code'
+import DocumentsIcon from '@mui/icons-material/Description'
+import BecomeMemberIcon from '@mui/icons-material/EmojiPeople'
+import EventIcon from '@mui/icons-material/EventNote'
+import QuotesIcon from '@mui/icons-material/FormatQuote'
+import RumourIcon from '@mui/icons-material/Forum'
+import MemberListIcon from '@mui/icons-material/Groups'
+import HomeIcon from '@mui/icons-material/Home'
+import FrontPageIcon from '@mui/icons-material/Info'
+import WikiIcon from '@mui/icons-material/Language'
+import LicenseIcon from '@mui/icons-material/LocalPolice'
+import HistoryIcon from '@mui/icons-material/MenuBook'
+import SheetArchiveIcon from '@mui/icons-material/MusicVideo'
+import LyricIcon from '@mui/icons-material/Nightlife'
+import MemberAddIcon from '@mui/icons-material/PersonAdd'
+import PollIcon from '@mui/icons-material/Poll'
+import FaqIcon from '@mui/icons-material/QuestionMark'
+import { strToNumber } from "common/utils"
 
 export function NavContent({onItemClick}: {onItemClick: VoidFunction}) {
     const { isLoggedIn } = usePotentialUser()
@@ -104,7 +104,7 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
     const matchesFrontPage = !!useMatch("/hjem/*")
     const matchesWallPage = !!useMatch("/vegg/*")
 
-    const userPageMatch = useMatch("/medlem/:id/*")
+    const userPageMatch = useMatch("/brukere/:id/*")
     const matchesUserPage = userPageMatch !== null && !!strToNumber(userPageMatch.params.id)  
 
     const isMobile = useMediaQuery( (theme: Theme) => theme.breakpoints.only("xs"))
@@ -166,12 +166,12 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 <ListItemExpander text="Medlem" dense={isMobile} iconFontSize={iconSize}>
                     <ListItemLink 
                         text="Ny" 
-                        to="/medlem/ny" 
+                        to="/brukere/ny" 
                         icon={<MemberAddIcon fontSize={iconSize}/>} 
                         onLinkClick={onItemClick}/>
                     <ListItemLink 
                         text="Liste" 
-                        to="/medlem/liste" 
+                        to="/brukere" 
                         activate={matchesUserPage}
                         icon={<MemberListIcon fontSize={iconSize}/>} 
                         onLinkClick={onItemClick}/>
@@ -181,8 +181,8 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
             {!isSuperAdmin && (
                 <ListItemLink 
                 text="Medlemmer" 
-                to="/medlem/liste" 
-                matchPattern="/medlem/*"
+                to="/brukere" 
+                matchPattern="/brukere/*"
                 icon={<MemberListIcon fontSize={iconSize}/>}
                 onLinkClick={onItemClick}/>
             )}

@@ -252,8 +252,8 @@ router.put("/users/deactivated/:id",
         // Notify user by mail.
         // We are intentionally not awaiting the email to be sent, as it may take multiple minutes to complete.
         const userProfileUrl = process.env.IS_DEV_ENV === 'true' 
-            ? `http://localhost:3000/medlem/${id}` 
-            : `https://motstanden.no/medlem/${id}`
+            ? `http://localhost:3000/brukere/${id}` 
+            : `https://motstanden.no/brukere/${id}`
         const mailHtml = await mailTemplates.buildReactivatedUserHtml(userProfileUrl)
         Mail.send({
             to: user.email,

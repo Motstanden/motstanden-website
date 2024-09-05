@@ -161,7 +161,7 @@ function DeleteUserDialog( {
             autoHideDuration: null,
             severity: "success" 
         })   
-        navigate(isDeletingSelf ? "/framside" : "/medlem")
+        navigate(isDeletingSelf ? "/framside" : "/brukere")
 
         await Promise.all([
             queryClient.invalidateQueries({queryKey: userAuthQueryKey}),

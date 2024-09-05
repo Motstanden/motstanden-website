@@ -69,7 +69,7 @@ function NewUserForm() {
         if (response && response.ok) {
             const data: {userId: number} = await response.json() 
             await queryClient.resetQueries({queryKey: userListQueryKey})
-            navigate(`/medlem/${data.userId}`, {replace: true})
+            navigate(`/brukere/${data.userId}`, {replace: true})
         }
 
         setIsSubmitting(false)

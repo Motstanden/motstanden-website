@@ -140,9 +140,8 @@ function App() {
 							<Route path="ny" element={<NewPollPage/>}/>
 							<Route path=":pollId" element={<PollItemPage/>}/>
 						</Route>
-						<Route path="/medlem" element={<UserListContext />}>
-							<Route path="" element={<Navigate to="liste" replace/>} />
-							<Route path="liste" element={<UserListPage />} />
+						<Route path="/brukere" element={<UserListContext />}>
+							<Route path="" element={<UserListPage />} />
 							<Route path=":userId" element={<UserProfileContext />}>
 								<Route index element={<UserPage />} />
 							</Route>

@@ -91,7 +91,7 @@ export function AuthorItem({ userId, dateTime }: { userId: number, dateTime: str
                 <Link
                     color="secondary"
                     component={RouterLink}
-                    to={`/medlem/${userId}`}
+                    to={`/brukere/${userId}`}
                     underline="hover"
                 >
                     {user.fullName}
