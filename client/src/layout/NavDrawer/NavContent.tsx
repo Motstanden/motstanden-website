@@ -11,7 +11,8 @@ import BecomeMemberIcon from '@mui/icons-material/EmojiPeople'
 import EventIcon from '@mui/icons-material/EventNote'
 import QuotesIcon from '@mui/icons-material/FormatQuote'
 import RumourIcon from '@mui/icons-material/Forum'
-import MemberListIcon from '@mui/icons-material/Groups'
+import UserTrashIcon from '@mui/icons-material/GroupRemove'
+import UserListIcon from '@mui/icons-material/Groups'
 import HomeIcon from '@mui/icons-material/Home'
 import FrontPageIcon from '@mui/icons-material/Info'
 import WikiIcon from '@mui/icons-material/Language'
@@ -19,9 +20,10 @@ import LicenseIcon from '@mui/icons-material/LocalPolice'
 import HistoryIcon from '@mui/icons-material/MenuBook'
 import SheetArchiveIcon from '@mui/icons-material/MusicVideo'
 import LyricIcon from '@mui/icons-material/Nightlife'
-import MemberAddIcon from '@mui/icons-material/PersonAdd'
+import UserAddIcon from '@mui/icons-material/PersonAddAlt1'
 import PollIcon from '@mui/icons-material/Poll'
 import FaqIcon from '@mui/icons-material/QuestionMark'
+
 import { strToNumber } from "common/utils"
 
 export function NavContent({onItemClick}: {onItemClick: VoidFunction}) {
@@ -163,18 +165,25 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 onLinkClick={onItemClick}/>
 
             {isSuperAdmin && (
-                <ListItemExpander text="Medlem" dense={isMobile} iconFontSize={iconSize}>
+                <ListItemExpander text="Brukere" dense={isMobile} iconFontSize={iconSize}>
                     <ListItemLink 
-                        text="Ny" 
-                        to="/brukere/ny" 
-                        icon={<MemberAddIcon fontSize={iconSize}/>} 
-                        onLinkClick={onItemClick}/>
-                    <ListItemLink 
-                        text="Liste" 
+                        text="Alle brukere" 
                         to="/brukere" 
                         activate={matchesUserPage}
-                        icon={<MemberListIcon fontSize={iconSize}/>} 
+                        matchPattern="/brukere"
+                        icon={<UserListIcon fontSize={iconSize}/>} 
                         onLinkClick={onItemClick}/>
+                    <ListItemLink 
+                        text="Ny bruker" 
+                        to="/brukere/ny" 
+                        icon={<UserAddIcon fontSize={iconSize}/>} 
+                        onLinkClick={onItemClick}/>
+                    <ListItemLink 
+                        text="Søppelbøtte"
+                        to="/brukere/deaktiverte"
+                        icon={<UserTrashIcon fontSize={iconSize}/>}
+                        onLinkClick={onItemClick}
+                    />
                 </ListItemExpander>
             )}
 
@@ -183,7 +192,7 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 text="Medlemmer" 
                 to="/brukere" 
                 matchPattern="/brukere/*"
-                icon={<MemberListIcon fontSize={iconSize}/>}
+                icon={<UserListIcon fontSize={iconSize}/>}
                 onLinkClick={onItemClick}/>
             )}
 
