@@ -73,7 +73,7 @@ function UserTable({
     users: User[],
     stateStorageKey: string,
     variant?: "activeUsers" | "deactivatedUser",
-    isLoading?: boolean 
+    isLoading?: boolean
 }) {
 
     const [visibleColumns, setVisibleColumns] = useLocalStorage<Set<Column>>({
@@ -88,29 +88,29 @@ function UserTable({
         deserialize: (str) => new Set(JSON.parse(str))
     })
 
-    const toggleVisibility = (col: Column) => { 
+    const toggleVisibility = (col: Column) => {
         setVisibleColumns((prev) => {
             const newCols = new Set(prev)
-    
+
             if (newCols.has(col) && newCols.size > 1)
                 newCols.delete(col)
             else
                 newCols.add(col)
-    
+
             return newCols
         })
     }
-    
+
     const deferredVisibleColumns = useDeferredValue(visibleColumns)     // We defer changes because it can be expensive to update the table
-    const lastVisibleColumn = visibleColumns.size === 0 
-        ? undefined 
+    const lastVisibleColumn = visibleColumns.size === 0
+        ? undefined
         : Math.max(...visibleColumns) satisfies Column
 
     const getHeaderProps = (col: Column): TableCellProps => ({
         sx: visibleColumns.has(col) ? {} : { display: "none" },
     })
 
-    const getRowProps = (col: Column): TableCellProps => ({ 
+    const getRowProps = (col: Column): TableCellProps => ({
         sx: deferredVisibleColumns.has(col) ? {} : { display: "none" },
         colSpan: col === lastVisibleColumn ? 2 : 1,
     })
@@ -130,59 +130,59 @@ function UserTable({
                         <TableCell {...getHeaderProps(Column.StartDate)}>Start</TableCell>
                         <TableCell {...getHeaderProps(Column.EndDate)}>Slutt</TableCell>
                         <TableCell {...getHeaderProps(Column.Role)}>Rolle</TableCell>
-                        <TableCell 
-                            align="right" 
+                        <TableCell
+                            align="right"
                             padding="none"
-                            sx={{whiteSpace: "nowrap", paddingRight: "5px" }} 
-                        >   
-                            <EmailButton users={users} sx={{marginRight: "-7px"}} />
-                            <ChangeVisibilityButton 
-                                visibleColumns={visibleColumns} 
-                                toggleVisibility={toggleVisibility} 
+                            sx={{ whiteSpace: "nowrap", paddingRight: "5px" }}
+                        >
+                            <EmailButton users={users} sx={{ marginRight: "-7px" }} />
+                            <ChangeVisibilityButton
+                                visibleColumns={visibleColumns}
+                                toggleVisibility={toggleVisibility}
                             />
                         </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
 
-                    {isLoading && Array(40).fill(1).map( (_, index) => (
+                    {isLoading && Array(40).fill(1).map((_, index) => (
                         <TableRow sx={rowStyle} key={index}>
                             <TableCell {...getRowProps(Column.Name)}>
                                 <Skeleton variant="text" width="185px" />
                             </TableCell>
                             <TableCell {...getRowProps(Column.Rank)}>
-                                <Skeleton variant="text" width="85px"/>
+                                <Skeleton variant="text" width="85px" />
                             </TableCell>
                             <TableCell {...getRowProps(Column.CapeName)}>
-                                <Skeleton variant="text" width="180px"/>
+                                <Skeleton variant="text" width="180px" />
                             </TableCell>
                             <TableCell {...getRowProps(Column.Status)}>
                                 <Skeleton variant="text" width="50px" />
                             </TableCell>
                             <TableCell {...getRowProps(Column.Email)}>
-                                <Skeleton variant="text" width="200px"/>
+                                <Skeleton variant="text" width="200px" />
                             </TableCell>
                             <TableCell {...getRowProps(Column.PhoneNumber)}>
                                 <Skeleton variant="text" width="80px" />
                             </TableCell>
                             <TableCell {...getRowProps(Column.BirthDate)}>
-                                <Skeleton variant="text" width="70px"/>
+                                <Skeleton variant="text" width="70px" />
                             </TableCell>
                             <TableCell {...getRowProps(Column.StartDate)}>
-                                <Skeleton variant="text" width="70px"/>                                
+                                <Skeleton variant="text" width="70px" />
                             </TableCell>
                             <TableCell {...getRowProps(Column.EndDate)}>
-                                <Skeleton variant="text" width="70px"/>
+                                <Skeleton variant="text" width="70px" />
                             </TableCell>
                             <TableCell {...getRowProps(Column.Role)}>
-                                <Skeleton variant="text" width="80px" />                                
+                                <Skeleton variant="text" width="80px" />
                             </TableCell>
                         </TableRow>
                     ))}
 
                     {!isLoading && users.map((user: User) => (
                         <TableRow sx={rowStyle} key={user.email}>
-                            <TableCell colSpan={lastVisibleColumn === Column.Name ? 2 : 1}> 
+                            <TableCell colSpan={lastVisibleColumn === Column.Name ? 2 : 1}>
                                 <Link
                                     component={RouterLink}
                                     to={`/brukere/${user.id}`}
@@ -227,17 +227,17 @@ function UserTable({
     )
 }
 
-function ChangeVisibilityButton({ visibleColumns, toggleVisibility }: { visibleColumns: Set<Column>, toggleVisibility: (col: Column) => void }) { 
+function ChangeVisibilityButton({ visibleColumns, toggleVisibility }: { visibleColumns: Set<Column>, toggleVisibility: (col: Column) => void }) {
 
     const handleClick = (e: React.MouseEvent<Element> | React.TouchEvent<Element>) => {
         e.stopPropagation()     // Prevent IconPopupMenu from closing
     }
 
-    const handleChange = (col: Column) => { 
+    const handleChange = (col: Column) => {
         toggleVisibility(col)
     }
 
-    const getProps = (col: Column): ColumnCheckboxProps => ({ 
+    const getProps = (col: Column): ColumnCheckboxProps => ({
         checked: visibleColumns.has(col),
         onChange: () => handleChange(col),
         onClick: handleClick,
@@ -246,31 +246,33 @@ function ChangeVisibilityButton({ visibleColumns, toggleVisibility }: { visibleC
 
     return (
         <Tooltip title="Endre hvilke kolonner som vies i tabellen">
-            <IconPopupMenu icon={<TableChartIcon/>}>
-                <div style={{
-                    paddingInline: "15px",
-                    paddingTop: "10px",
-                    paddingBottom: "20px",
-                    minWidth: "180px"
-                }}>
-                    <h3 style={{
-                        margin: "0px", 
-                        marginBottom: "10px"
+            <span>
+                <IconPopupMenu icon={<TableChartIcon />}>
+                    <div style={{
+                        paddingInline: "15px",
+                        paddingTop: "10px",
+                        paddingBottom: "20px",
+                        minWidth: "180px"
                     }}>
-                        Vis kolonner
-                    </h3>
-                    <Stack>
-                        <ColumnCheckbox label="Rang" {...getProps(Column.Rank)} />
-                        <ColumnCheckbox label="Kappe" {...getProps(Column.CapeName)} />
-                        <ColumnCheckbox label="Status" {...getProps(Column.Status)} />
-                        <ColumnCheckbox label="E-post" {...getProps(Column.Email)} />
-                        <ColumnCheckbox label="Tlf." {...getProps(Column.PhoneNumber)} />
-                        <ColumnCheckbox label="Bursdag" {...getProps(Column.BirthDate)} />
-                        <ColumnCheckbox label="Start" {...getProps(Column.StartDate)} />
-                        <ColumnCheckbox label="Slutt" {...getProps(Column.EndDate)} />
-                    </Stack>
-                </div>
-            </IconPopupMenu>
+                        <h3 style={{
+                            margin: "0px",
+                            marginBottom: "10px"
+                        }}>
+                            Vis kolonner
+                        </h3>
+                        <Stack>
+                            <ColumnCheckbox label="Rang" {...getProps(Column.Rank)} />
+                            <ColumnCheckbox label="Kappe" {...getProps(Column.CapeName)} />
+                            <ColumnCheckbox label="Status" {...getProps(Column.Status)} />
+                            <ColumnCheckbox label="E-post" {...getProps(Column.Email)} />
+                            <ColumnCheckbox label="Tlf." {...getProps(Column.PhoneNumber)} />
+                            <ColumnCheckbox label="Bursdag" {...getProps(Column.BirthDate)} />
+                            <ColumnCheckbox label="Start" {...getProps(Column.StartDate)} />
+                            <ColumnCheckbox label="Slutt" {...getProps(Column.EndDate)} />
+                        </Stack>
+                    </div>
+                </IconPopupMenu>
+            </span>
         </Tooltip>
     )
 }
@@ -283,7 +285,7 @@ type ColumnCheckboxProps = {
     onTouchEnd?: React.TouchEventHandler<Element>,
 }
 
-function ColumnCheckbox({label, checked, onChange, onClick, onTouchEnd }: ColumnCheckboxProps) {
+function ColumnCheckbox({ label, checked, onChange, onClick, onTouchEnd }: ColumnCheckboxProps) {
     return (
         <FormControlLabel
             onClick={onClick}
@@ -291,19 +293,19 @@ function ColumnCheckbox({label, checked, onChange, onClick, onTouchEnd }: Column
             onTouchEnd={onTouchEnd}
             label={label}
             control={
-                <Checkbox 
-                    checked={checked} 
+                <Checkbox
+                    checked={checked}
                     onTouchEnd={onTouchEnd}
-            />}
-            />
+                />}
+        />
     )
 }
 
-function EmailButton( {users, sx}: {users: User[], sx?: SxProps}) {
+function EmailButton({ users, sx }: { users: User[], sx?: SxProps }) {
     const emailList = users.map(user => user.email).join(",")
     return (
         <Tooltip title="Send e-post til brukerne som vises i tabellen">
-            <IconButton 
+            <IconButton
                 sx={sx}
                 href={`mailto:${emailList}`}
                 target="_blank"
