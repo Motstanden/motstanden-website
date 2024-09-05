@@ -77,7 +77,6 @@ export default function UserListPage() {
             <UserTable
                 isLoading={isPending}
                 users={filteredUsers}
-                stateStorageKey="url: /brukere"
             />
         </>
     )
@@ -89,10 +88,10 @@ function useStatusFilter() {
         key: "user-list-status-filter",
     })
 
-    // Remove deactivated status from filter if the user is not super admin
+    // Remove deactivated status from filter if the curent user is suddenly not super admin
     const { isSuperAdmin } = usePotentialUser()
     useEffect(() => {
-        if(!isSuperAdmin && statusFilter.has(UserStatus.Deactivated)) {
+        if(!isSuperAdmin) {
             setStatusFilter(prev => {
                 const newSet = new Set(prev)
                 newSet.delete(UserStatus.Deactivated)
@@ -191,27 +190,30 @@ enum Column {
     DeactivatedAt = 10
 }
 
-function UserTable({
-    users,
-    stateStorageKey,
-    variant = "activeUsers",
-    isLoading = false,
-}: {
-    users: User[],
-    stateStorageKey: string,
-    variant?: "activeUsers" | "deactivatedUser",
-    isLoading?: boolean
-}) {
+function useVisibleColumns() {
+
+    const { isSuperAdmin } = usePotentialUser()
 
     const [visibleColumns, setVisibleColumns] = useLocalStorage<Set<Column>>({
-        key: ["user-table-column-visibility", stateStorageKey],
+        key: ["user-table-column-visibility"],
         initialValue: new Set([
             Column.Name,
             Column.CapeName,
             Column.Rank,
-            variant === "activeUsers" ? Column.Status : Column.DeactivatedAt,
+            isSuperAdmin ? Column.Status : Column.DeactivatedAt,
         ]),
     })
+
+    // Remove columns related to deactivation if the current user is suddenly not super admin anymore
+    useEffect(() => {
+        if(!isSuperAdmin) {
+            setVisibleColumns(prev => {
+                const newCols = new Set(prev)
+                newCols.delete(Column.DeactivatedAt)
+                return newCols
+            })
+        }
+    }, [isSuperAdmin])
 
     const toggleVisibility = (col: Column) => {
         setVisibleColumns((prev) => {
@@ -224,7 +226,20 @@ function UserTable({
 
             return newCols
         })
-    }
+    }   
+
+    return { visibleColumns, toggleVisibility }
+}
+
+function UserTable({
+    users,
+    isLoading = false,
+}: {
+    users: User[],
+    isLoading?: boolean
+}) {
+
+    const { visibleColumns, toggleVisibility } = useVisibleColumns()
 
     const deferredVisibleColumns = useDeferredValue(visibleColumns)     // We defer changes because it can be expensive to update the table
     const lastVisibleColumn = visibleColumns.size === 0
