@@ -27,7 +27,7 @@ import { UserStatus } from "common/enums"
 import { User } from "common/interfaces"
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
 import dayjs from 'dayjs'
-import React, { useDeferredValue } from "react"
+import React, { useDeferredValue, useEffect } from "react"
 import { Link as RouterLink } from 'react-router-dom'
 import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
 import { MultiSelect } from "src/components/MultiSelect"
@@ -41,10 +41,7 @@ export default function UserListPage() {
     useTitle("Medlemsliste")
     useAppBarHeader("Medlemsliste")
     
-    const [statusFilter, setStatusFilter] = useLocalStorage<Set<UserStatus>>({
-        initialValue: new Set([UserStatus.Active, UserStatus.Veteran]),
-        key: "user-list-status-filter",
-    })
+    const { statusFilter, setStatusFilter } = useStatusFilter()
 
     const normalUsers = userUsersQuery()
     const deactivatedUsers = useDeactivatedUsersQuery()
@@ -83,6 +80,27 @@ export default function UserListPage() {
             />
         </>
     )
+}
+
+function useStatusFilter() {
+    const [statusFilter, setStatusFilter] = useLocalStorage<Set<UserStatus>>({
+        initialValue: new Set([UserStatus.Active, UserStatus.Veteran]),
+        key: "user-list-status-filter",
+    })
+
+    // Remove deactivated status from filter if the user is not super admin
+    const { isSuperAdmin } = usePotentialUser()
+    useEffect(() => {
+        if(!isSuperAdmin && statusFilter.has(UserStatus.Deactivated)) {
+            setStatusFilter(prev => {
+                const newSet = new Set(prev)
+                newSet.delete(UserStatus.Deactivated)
+                return newSet
+            })
+        }
+    }, [isSuperAdmin])
+
+    return { statusFilter, setStatusFilter }
 }
 
 function SelectStatus({ 
