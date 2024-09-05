@@ -13,7 +13,8 @@ import {
     TableCellProps,
     TableContainer,
     TableHead,
-    TableRow
+    TableRow,
+    Tooltip
 } from "@mui/material"
 
 import { headerStyle, noVisitedLinkStyle, rowStyle } from 'src/assets/style/tableStyle'
@@ -244,31 +245,33 @@ function ChangeVisibilityButton({ visibleColumns, toggleVisibility }: { visibleC
     })
 
     return (
-        <IconPopupMenu icon={<TableChartIcon/>}>
-            <div style={{
-                paddingInline: "15px",
-                paddingTop: "10px",
-                paddingBottom: "20px",
-                minWidth: "180px"
-            }}>
-                <h3 style={{
-                    margin: "0px", 
-                    marginBottom: "10px"
+        <Tooltip title="Endre hvilke kolonner som vies i tabellen">
+            <IconPopupMenu icon={<TableChartIcon/>}>
+                <div style={{
+                    paddingInline: "15px",
+                    paddingTop: "10px",
+                    paddingBottom: "20px",
+                    minWidth: "180px"
                 }}>
-                    Vis kolonner
-                </h3>
-                <Stack>
-                    <ColumnCheckbox label="Rang" {...getProps(Column.Rank)} />
-                    <ColumnCheckbox label="Kappe" {...getProps(Column.CapeName)} />
-                    <ColumnCheckbox label="Status" {...getProps(Column.Status)} />
-                    <ColumnCheckbox label="E-post" {...getProps(Column.Email)} />
-                    <ColumnCheckbox label="Tlf." {...getProps(Column.PhoneNumber)} />
-                    <ColumnCheckbox label="Bursdag" {...getProps(Column.BirthDate)} />
-                    <ColumnCheckbox label="Start" {...getProps(Column.StartDate)} />
-                    <ColumnCheckbox label="Slutt" {...getProps(Column.EndDate)} />
-                </Stack>
-            </div>
-        </IconPopupMenu>
+                    <h3 style={{
+                        margin: "0px", 
+                        marginBottom: "10px"
+                    }}>
+                        Vis kolonner
+                    </h3>
+                    <Stack>
+                        <ColumnCheckbox label="Rang" {...getProps(Column.Rank)} />
+                        <ColumnCheckbox label="Kappe" {...getProps(Column.CapeName)} />
+                        <ColumnCheckbox label="Status" {...getProps(Column.Status)} />
+                        <ColumnCheckbox label="E-post" {...getProps(Column.Email)} />
+                        <ColumnCheckbox label="Tlf." {...getProps(Column.PhoneNumber)} />
+                        <ColumnCheckbox label="Bursdag" {...getProps(Column.BirthDate)} />
+                        <ColumnCheckbox label="Start" {...getProps(Column.StartDate)} />
+                        <ColumnCheckbox label="Slutt" {...getProps(Column.EndDate)} />
+                    </Stack>
+                </div>
+            </IconPopupMenu>
+        </Tooltip>
     )
 }
 
@@ -299,15 +302,17 @@ function ColumnCheckbox({label, checked, onChange, onClick, onTouchEnd }: Column
 function EmailButton( {users, sx}: {users: User[], sx?: SxProps}) {
     const emailList = users.map(user => user.email).join(",")
     return (
-        <IconButton 
-            sx={sx}
-            href={`mailto:${emailList}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            LinkComponent="a"
-        >
-            <ForwardToInboxIcon />
-        </IconButton>
+        <Tooltip title="Send e-post til brukerne som vises i tabellen">
+            <IconButton 
+                sx={sx}
+                href={`mailto:${emailList}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                LinkComponent="a"
+            >
+                <ForwardToInboxIcon />
+            </IconButton>
+        </Tooltip>
     )
 }
 
