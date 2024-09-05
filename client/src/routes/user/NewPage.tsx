@@ -14,8 +14,8 @@ import { useNavigate } from 'react-router-dom'
 import { useAppBarHeader } from 'src/context/AppBarHeader'
 import { useTitle } from 'src/hooks/useTitle'
 import { postJson } from 'src/utils/postJson'
+import { usersQueryKey } from './Queries'
 import { profilePictureTVPair } from "./utils/TextValuePair"
-import { usersQueryKey } from './Context'
 
 export default function NewUserPage() {
     useTitle("Ny Bruker")

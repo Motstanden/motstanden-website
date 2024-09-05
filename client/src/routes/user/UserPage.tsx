@@ -39,7 +39,7 @@ import { userReferenceQueryKey } from 'src/context/UserReference'
 import { useTitle } from "src/hooks/useTitle"
 import { httpDelete } from 'src/utils/postJson'
 import { NotFoundPage } from '../notFound/NotFound'
-import { deactivatedUsersQueryKey, userUsersQuery, usersQueryKey } from './Context'
+import { deactivatedUsersQueryKey, userUsersQuery, usersQueryKey } from './Queries'
 import { Card, CardTextItem, CardTextList } from "./components/Card"
 import { UserPageSkeleton } from './skeleton/UserPage'
 

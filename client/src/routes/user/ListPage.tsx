@@ -27,14 +27,14 @@ import { UserStatus } from "common/enums"
 import { User } from "common/interfaces"
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
 import dayjs from 'dayjs'
-import React, { useDeferredValue, useMemo, useState } from "react"
+import React, { useDeferredValue, useState } from "react"
 import { Link as RouterLink } from 'react-router-dom'
 import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
 import { MultiSelect } from "src/components/MultiSelect"
 import { useAppBarHeader } from "src/context/AppBarHeader"
 import { useLocalStorage } from "src/hooks/useStorage"
 import { useTitle } from 'src/hooks/useTitle'
-import { useUserListContext } from "./Context"
+import { useDeactivatedUsersQuery, userUsersQuery } from "./Queries"
 
 export default function UserListPage() {
     useTitle("Medlemsliste")
@@ -42,14 +42,24 @@ export default function UserListPage() {
     
     const [statusFilter, setStatusFilter] = useState<Set<UserStatus>>(new Set([UserStatus.Active, UserStatus.Veteran]))
 
-    const { users: enabledUsers, isPending } = useUserListContext()
-    
-    const users =  [...( enabledUsers ?? [])] 
+    const normalUsers = userUsersQuery()
+    const deactivatedUsers = useDeactivatedUsersQuery()
+    const users =  [
+        ...( normalUsers.data ?? []), 
+        ...(deactivatedUsers.data ?? [])
+    ]
 
-    const filteredUsers = useMemo( () => users
+    const isPending = normalUsers.isPending && deactivatedUsers.isPending   // Todo: Check filter
+    const isError = normalUsers.isError || deactivatedUsers.isError
+
+    const filteredUsers = useDeferredValue(users
         .filter(user => !user.email.toLowerCase().endsWith("@motstanden.no"))
         .filter(user => statusFilter.size === 0 || statusFilter.has(user.status))
-    , [users, statusFilter])
+    )
+
+    if(isError) {
+        return `${normalUsers.isError ? normalUsers.error : deactivatedUsers.error}`
+    }
 
     return (
         <>
@@ -191,7 +201,7 @@ function UserTable({
         : Math.max(...visibleColumns) satisfies Column
 
     const getHeaderProps = (col: Column): TableCellProps => ({
-        sx: visibleColumns.has(col) ? {} : { display: "none" },
+        sx: deferredVisibleColumns.has(col) ? {} : { display: "none" },
     })
 
     const getRowProps = (col: Column): TableCellProps => ({

@@ -13,7 +13,6 @@ import EventListPage from "src/routes/event/ListPage"
 import NewEventPage from "src/routes/event/NewPage"
 
 // -- User pages --
-import { UserListContext } from 'src/routes/user/Context'
 import UserListPage from "src/routes/user/ListPage"
 import NewUserPage from "src/routes/user/NewPage"
 import UserPage from "src/routes/user/UserPage"
@@ -55,6 +54,7 @@ import { LyricContext, LyricItemContext } from "./routes/lyric/Context"
 import { AllPollsPage } from "./routes/poll/AllPollsPage"
 import { PollItemPage } from "./routes/poll/PollItemPage"
 import { NewRumourPage } from "./routes/rumour/NewPage"
+import { UserPageContainer } from "./routes/user/components/PageContainer"
 
 function App() {
 	const { isLoggedIn } = usePotentialUser()
@@ -141,7 +141,7 @@ function App() {
 							<Route path="ny" element={<NewPollPage/>}/>
 							<Route path=":pollId" element={<PollItemPage/>}/>
 						</Route>
-						<Route path="/brukere" element={<UserListContext />}>
+						<Route path="/brukere" element={<UserPageContainer />}>
 							<Route path="" element={<UserListPage />} />
 							<Route path=":userId" element={<UserPage/>} />
 							<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator} />}>
