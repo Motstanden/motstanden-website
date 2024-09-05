@@ -14,8 +14,8 @@ import { useNavigate } from 'react-router-dom'
 import { useAppBarHeader } from 'src/context/AppBarHeader'
 import { useTitle } from 'src/hooks/useTitle'
 import { postJson } from 'src/utils/postJson'
-import { userListQueryKey } from './Context'
 import { profilePictureTVPair } from "./utils/TextValuePair"
+import { usersQueryKey } from './Context'
 
 export default function NewUserPage() {
     useTitle("Ny Bruker")
@@ -68,7 +68,7 @@ function NewUserForm() {
 
         if (response && response.ok) {
             const data: {userId: number} = await response.json() 
-            await queryClient.resetQueries({queryKey: userListQueryKey})
+            await queryClient.resetQueries({queryKey: usersQueryKey})
             navigate(`/brukere/${data.userId}`, {replace: true})
         }
 

@@ -1,14 +1,27 @@
 import { useQuery } from "@tanstack/react-query"
-import { User } from "common/interfaces"
-import { strToNumber } from "common/utils"
-import { Outlet, useOutletContext, useParams } from "react-router-dom"
-import { useAppBarHeader } from "src/context/AppBarHeader"
+import { DeactivatedUser, User } from "common/interfaces"
+import { Outlet, useOutletContext } from "react-router-dom"
+import { usePotentialUser } from "src/context/Authentication"
 import { PageContainer } from "src/layout/PageContainer/PageContainer"
 import { fetchFn } from "src/utils/fetchAsync"
-import { NotFoundPage } from "../notFound/NotFound"
-import { UserPageSkeleton } from "./skeleton/UserPage"
 
-export const userListQueryKey = ["FetchAllUsers"]
+export const usersQueryKey = ["users"]
+export function userUsersQuery() {
+    return useQuery<User[]>({
+        queryKey: usersQueryKey,
+        queryFn: fetchFn<User[]>("/api/users"),
+    })
+}
+
+export const deactivatedUsersQueryKey = [ ...usersQueryKey, "deactivated"]
+export function useDeactivatedUsersQuery() { 
+    const {isSuperAdmin} = usePotentialUser()
+    return useQuery<DeactivatedUser[]>({ 
+        queryKey: deactivatedUsersQueryKey,
+        queryFn: fetchFn<DeactivatedUser[]>("/api/users/deactivated"),
+        enabled: isSuperAdmin
+    })
+}
 
 export {
     RootPageContainer as UserListContext
@@ -24,7 +37,7 @@ function RootPageContainer() {
 
 function UserListContext() {
     const { isPending, isError, data, error } = useQuery<User[]>({
-        queryKey: userListQueryKey,
+        queryKey: usersQueryKey,
         queryFn: fetchFn<User[]>("/api/users"),
     })
 
@@ -51,41 +64,4 @@ type UserListContextProps = {
 
 export function useUserListContext(): UserListContextProps {
     return useOutletContext<UserListContextProps>()
-}
-
-
-export function UserProfileContext() {
-    const {users, isPending} = useUserListContext()
-    
-    const params = useParams();
-    const userId = strToNumber(params.userId)
-    
-    const user = users?.find(item => item.id === userId)
-    
-    useAppBarHeader(user?.firstName || "Medlem")
-
-    if(!userId)
-        return <NotFoundPage/>
-
-    if(isPending)
-        return <UserPageSkeleton/>
-
-    if (!user) {
-        return <NotFoundPage/>
-    }
-
-    const context: UserProfileContextProps = { 
-        users: users, 
-        viewedUser: user 
-    }
-
-    return (
-        <Outlet context={context} />
-    )
-}
-
-type UserProfileContextProps = { users: User[], viewedUser: User }
-
-export function useUserProfileContext(): UserProfileContextProps {
-    return useOutletContext<UserProfileContextProps>()
 }

@@ -21,7 +21,7 @@ import { UpdateUserMembershipAsAdminBody, UpdateUserMembershipAsMeBody, UpdateUs
 import { isNtnuMail as checkIsNtnuMail, getFullName, isNullOrWhitespace, strToNumber, userGroupToPrettyStr, userRankToPrettyStr, userStatusToPrettyStr } from "common/utils"
 import dayjs, { Dayjs } from "dayjs"
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { datePickerStyle } from "src/assets/style/timePickerStyles"
 import { CloseModalButton } from 'src/components/CloseModalButton'
 import { HelpButton } from "src/components/HelpButton"
@@ -31,18 +31,48 @@ import { Form } from "src/components/form/Form"
 import { DeleteMenuItem } from 'src/components/menu/DeleteMenuItem'
 import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
 import { UserAvatar } from 'src/components/user/UserAvatar'
+import { useAppBarHeader } from 'src/context/AppBarHeader'
 import { useAppSnackBar } from 'src/context/AppSnackBar'
 import { useAuthenticatedUser, userAuthQueryKey } from "src/context/Authentication"
 import { useTimeZone } from 'src/context/TimeZone'
 import { userReferenceQueryKey } from 'src/context/UserReference'
 import { useTitle } from "src/hooks/useTitle"
 import { httpDelete } from 'src/utils/postJson'
-import { useUserProfileContext, userListQueryKey } from './Context'
+import { NotFoundPage } from '../notFound/NotFound'
+import { deactivatedUsersQueryKey, userUsersQuery, usersQueryKey } from './Context'
 import { Card, CardTextItem, CardTextList } from "./components/Card"
+import { UserPageSkeleton } from './skeleton/UserPage'
 
-export default function UserPage() {
-    const { viewedUser: user } = useUserProfileContext()
-    useTitle(user.firstName)
+export default function UserProfileContext() {
+    const {data: users, isPending, isError, error} = userUsersQuery()
+    
+    const params = useParams();
+    const userId = strToNumber(params.userId)
+    
+    const user = users?.find(item => item.id === userId)
+    useAppBarHeader(user?.firstName ?? "Bruker")
+    useTitle(user?.firstName ?? "")
+
+    if(!userId)
+        return <NotFoundPage/>
+
+    if(isPending)
+        return <UserPageSkeleton/>
+
+    if (isError) {
+        return `${error}`
+    }
+
+    if (!user) {
+        return <NotFoundPage/>
+    }
+
+    return (
+        <UserProfilePage user={user}/>
+    )
+}
+
+function UserProfilePage( {user}: {user: User}) {
     return (
         <div style={{maxWidth: "1300px"}}>
             <ProfileHeader 
@@ -50,7 +80,7 @@ export default function UserPage() {
                 sx={{
                     mb: {xs: 2, md: 2, lg: 4}
                 }} />
-            <ProfileInfoGrid />
+            <ProfileInfoGrid user={user}/>
             <Divider sx={{my: 4}} />
             <h1>Tidslinje</h1>
             <PostingWall userId={user.id} userFirstName={user.firstName}/>
@@ -165,8 +195,9 @@ function DeleteUserDialog( {
 
         await Promise.all([
             queryClient.invalidateQueries({queryKey: userAuthQueryKey}),
-            queryClient.invalidateQueries({queryKey: userListQueryKey}),
-            queryClient.invalidateQueries({queryKey: userReferenceQueryKey})
+            queryClient.invalidateQueries({queryKey: usersQueryKey}),
+            queryClient.invalidateQueries({queryKey: deactivatedUsersQueryKey}),
+            queryClient.invalidateQueries({queryKey: userReferenceQueryKey}),
         ])
     }
 
@@ -244,17 +275,17 @@ function DeleteUserDialog( {
     )
 }
 
-function ProfileInfoGrid() {
+function ProfileInfoGrid( {user}: {user: User}) {
     return (
         <Grid container alignItems="top" spacing={{xs: 2, md: 2, lg: 4}}>
             <Grid item xs={12} md={6}>
-                <PersonalDetailsController/>
+                <PersonalDetailsController user={user}/>
             </Grid>
             <Grid item xs={12} md={6}>
-                <MembershipDetailsController/>
+                <MembershipDetailsController user={user}/>
             </Grid>
             <Grid item xs={12} md={6}>
-                <AccountDetailsController/>
+                <AccountDetailsController user={user}/>
             </Grid>
         </Grid>
     )
@@ -265,21 +296,23 @@ function ProfileInfoGrid() {
 //                     CONTROLLERS
 // ********************************************************
 
-function PersonalDetailsController() { 
-    
+type DetailsControlProps = {
+    user: User
+}
+
+function PersonalDetailsController( {user}: DetailsControlProps) { 
     const { user: currentUser, isSuperAdmin} = useAuthenticatedUser()
-    const { viewedUser } = useUserProfileContext()
     const [isEditing, setIsEditing] = useState(false)
     
     // People who can edit:
     //  - Super admins
     //  - Users who are viewing their own profile
-    const canEdit = isSuperAdmin || currentUser.id === viewedUser.id
+    const canEdit = isSuperAdmin || currentUser.id === user.id
     
     if(canEdit && isEditing) 
         return (
             <PersonalDetailsForm 
-                initialValue={viewedUser} 
+                initialValue={user} 
                 onCancel={() => setIsEditing(false)}
                 onSave={() => setIsEditing(false)}        
         />
@@ -287,28 +320,27 @@ function PersonalDetailsController() {
 
     return (
         <PersonalDetailsCard 
-            user={viewedUser} 
+            user={user} 
             showEditMenu={canEdit}
             onEditClick={() => setIsEditing(true)}
         />
     )
 }
 
-function MembershipDetailsController() {
+function MembershipDetailsController( {user}: DetailsControlProps ) {
     
     const { user: currentUser, isAdmin } = useAuthenticatedUser()
-    const { viewedUser } = useUserProfileContext()
     const [isEditing, setIsEditing] = useState(false)
 
     // People who can edit:
     //  - Admins
     //  - Users who are viewing their own profile
-    const canEdit = isAdmin || currentUser.id === viewedUser.id
+    const canEdit = isAdmin || currentUser.id === user.id
 
     if(canEdit && isEditing) 
         return (
             <MembershipDetailsForm 
-                initialValue={viewedUser} 
+                initialValue={user} 
                 onCancel={() => setIsEditing(false)}
                 onSave={() => setIsEditing(false)}    
              />    
@@ -316,28 +348,27 @@ function MembershipDetailsController() {
 
     return (
         <MembershipDetailsCard 
-            user={viewedUser} 
+            user={user} 
             showEditMenu={canEdit}
             onEditClick={() => setIsEditing(true)}
         />
     )
 }
 
-function AccountDetailsController() {
+function AccountDetailsController({user}: DetailsControlProps) {
 
-    const { viewedUser } = useUserProfileContext()
     const { isSuperAdmin, isAdmin} = useAuthenticatedUser()
     const [isEditing, setIsEditing] = useState(false)
 
     // People who can edit:
     // - Super admins
     // - Admin, if the viewedUser is not a super admin
-    const canEdit = isSuperAdmin || (isAdmin && viewedUser.groupName !== UserGroup.SuperAdministrator)
+    const canEdit = isSuperAdmin || (isAdmin && user.groupName !== UserGroup.SuperAdministrator)
 
     if(canEdit && isEditing) 
         return (
             <AccountDetailsForm 
-                initialValue={viewedUser} 
+                initialValue={user} 
                 onCancel={() => setIsEditing(false)}
                 onSave={() => setIsEditing(false)}        
             />
@@ -345,7 +376,7 @@ function AccountDetailsController() {
 
     return (
         <AccountDetailsCard 
-            user={viewedUser}
+            user={user}
             showEditMenu={canEdit}
             onEditClick={() => setIsEditing(true)} 
         />
@@ -798,7 +829,7 @@ function FormCard({
     const handleOnSuccess = async () => { 
         await Promise.all([
             queryClient.invalidateQueries({queryKey: userAuthQueryKey}),
-            queryClient.invalidateQueries({queryKey: userListQueryKey})
+            queryClient.invalidateQueries({queryKey: usersQueryKey})
         ])
         await onSuccess?.()   
     }
