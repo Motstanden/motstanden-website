@@ -14,9 +14,13 @@ export function userUsersQuery() {
 export const deactivatedUsersQueryKey = [ ...usersQueryKey, "deactivated"]
 export function useDeactivatedUsersQuery() { 
     const {isSuperAdmin} = usePotentialUser()
-    return useQuery<DeactivatedUser[]>({ 
+    const query = useQuery<DeactivatedUser[]>({ 
         queryKey: deactivatedUsersQueryKey,
         queryFn: fetchFn<DeactivatedUser[]>("/api/users/deactivated"),
         enabled: isSuperAdmin
     })
+    return {
+        ...query,
+        isPending: query.isPending && isSuperAdmin,
+    }
 }

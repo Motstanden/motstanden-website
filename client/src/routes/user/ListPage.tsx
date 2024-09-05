@@ -42,7 +42,7 @@ export default function UserListPage() {
     useTitle("Medlemsliste")
     useAppBarHeader("Medlemsliste")
     
-    const { statusFilter, setStatusFilter } = useStatusFilter()
+    const { statusFilter, deferredStatusFilter, setStatusFilter } = useStatusFilter()
 
     const normalUsers = userUsersQuery()
     const deactivatedUsers = useDeactivatedUsersQuery()
@@ -51,14 +51,13 @@ export default function UserListPage() {
         ...(deactivatedUsers.data ?? [])
     ]
 
-    const isPending = normalUsers.isPending && deactivatedUsers.isPending   // Todo: Check filter
+    const isLoading = normalUsers.isPending || deactivatedUsers.isPending 
     const isError = normalUsers.isError || deactivatedUsers.isError
 
-    const filteredUsers = useDeferredValue(users
+    const filteredUsers = users
         .filter(user => !user.email.toLowerCase().endsWith("@motstanden.no"))
-        .filter(user => statusFilter.has(user.status))
-    )
-
+        .filter(user => deferredStatusFilter.has(user.status))
+    
     if(isError) {
         return `${normalUsers.isError ? normalUsers.error : deactivatedUsers.error}`
     }
@@ -75,7 +74,7 @@ export default function UserListPage() {
                 }}
             />
             <UserTable
-                isLoading={isPending}
+                isLoading={isLoading}
                 users={filteredUsers}
             />
         </>
@@ -87,6 +86,8 @@ function useStatusFilter() {
         initialValue: new Set([UserStatus.Active, UserStatus.Veteran]),
         key: "user-list-status-filter",
     })
+
+    const deferredStatusFilter = useDeferredValue(statusFilter)
 
     // Remove deactivated status from filter if the curent user is suddenly not super admin
     const { isSuperAdmin } = usePotentialUser()
@@ -100,7 +101,7 @@ function useStatusFilter() {
         }
     }, [isSuperAdmin])
 
-    return { statusFilter, setStatusFilter }
+    return { statusFilter, deferredStatusFilter, setStatusFilter }
 }
 
 function SelectStatus({ 
@@ -286,44 +287,6 @@ function UserTable({
                 </TableHead>
                 <TableBody>
 
-                    {isLoading && Array(40).fill(1).map((_, index) => (
-                        <TableRow sx={rowStyle} key={index}>
-                            <TableCell {...getRowProps(Column.Name)}>
-                                <Skeleton variant="text" width="185px" />
-                            </TableCell>
-                            <TableCell {...getRowProps(Column.Rank)}>
-                                <Skeleton variant="text" width="85px" />
-                            </TableCell>
-                            <TableCell {...getRowProps(Column.CapeName)}>
-                                <Skeleton variant="text" width="180px" />
-                            </TableCell>
-                            <TableCell {...getRowProps(Column.Status)}>
-                                <Skeleton variant="text" width="50px" />
-                            </TableCell>
-                            <TableCell {...getRowProps(Column.Email)}>
-                                <Skeleton variant="text" width="200px" />
-                            </TableCell>
-                            <TableCell {...getRowProps(Column.PhoneNumber)}>
-                                <Skeleton variant="text" width="80px" />
-                            </TableCell>
-                            <TableCell {...getRowProps(Column.BirthDate)}>
-                                <Skeleton variant="text" width="70px" />
-                            </TableCell>
-                            <TableCell {...getRowProps(Column.Role)}>
-                                <Skeleton variant="text" width="80px" />
-                            </TableCell>
-                            <TableCell {...getRowProps(Column.StartDate)}>
-                                <Skeleton variant="text" width="70px" />
-                            </TableCell>
-                            <TableCell {...getRowProps(Column.EndDate)}>
-                                <Skeleton variant="text" width="70px" />
-                            </TableCell>
-                            <TableCell {...getRowProps(Column.DeactivatedAt)}>
-                                <Skeleton variant="text" width="70px" />
-                            </TableCell>
-                        </TableRow>
-                    ))}
-
                     {!isLoading && users.map((user) => (
                         <TableRow sx={rowStyle} key={user.email}>
                             <TableCell colSpan={lastVisibleColumn === Column.Name ? 2 : 1}>
@@ -367,9 +330,26 @@ function UserTable({
                                 {formatDate(user.endDate)}
                             </TableCell>
                             <TableCell {...getRowProps(Column.DeactivatedAt)}>
-                                {"deactivatedAt" in user 
-                                ? dayjs.utc(user.deactivatedAt).tz().format("DD MMM YYYY HH:mm:ss") 
-                                : "-"}
+                                 {"deactivatedAt" in user === false && "-"}
+                                 {"deactivatedAt" in user === true && (
+                                    <span>
+                                        <span style={{whiteSpace: "nowrap"}}>
+                                            {dayjs.utc(user.deactivatedAt).tz().format("DD MMM YYYY")}
+                                        </span>
+                                        {" "}
+                                        <span style={{whiteSpace: "nowrap"}}>
+                                            {dayjs.utc(user.deactivatedAt).tz().format("[kl]: HH:mm:ss")}
+                                        </span>
+                                    </span>
+                                 )}
+                            </TableCell>
+                        </TableRow>
+                    ))}
+
+                    {isLoading && Array(40).fill(1).map((_, index) => (
+                        <TableRow sx={rowStyle} key={index}>
+                            <TableCell colSpan={visibleColumns.size + 1}>
+                                <Skeleton variant="text" width="100%" />
                             </TableCell>
                         </TableRow>
                     ))}
