@@ -1,14 +1,15 @@
 import {
     Box,
     Checkbox,
+    Divider,
     FormControlLabel,
+    Grid,
     IconButton,
     Link,
     ListItemText,
     MenuItem,
     Paper,
     Skeleton,
-    Stack,
     SxProps,
     Table,
     TableBody,
@@ -373,6 +374,8 @@ function UserTable({
 
 function ChangeVisibilityButton({ visibleColumns, toggleVisibility }: { visibleColumns: Set<Column>, toggleVisibility: (col: Column) => void }) {
 
+    const { isSuperAdmin } = usePotentialUser()
+
     const handleClick = (e: React.MouseEvent<Element> | React.TouchEvent<Element>) => {
         e.stopPropagation()     // Prevent IconPopupMenu from closing
     }
@@ -407,18 +410,23 @@ function ChangeVisibilityButton({ visibleColumns, toggleVisibility }: { visibleC
                 }}>
                     Vis kolonner
                 </h3>
-                <Stack>
+                <Divider/>
+                <Grid container
+                    sx={{
+                        maxWidth: "300px",
+                        marginTop: "10px",
+                    }}>
                     <ColumnCheckbox label="Rang" {...getProps(Column.Rank)} />
-                    <ColumnCheckbox label="Kappe" {...getProps(Column.CapeName)} />
-                    <ColumnCheckbox label="Status" {...getProps(Column.Status)} />
-                    <ColumnCheckbox label="E-post" {...getProps(Column.Email)} />
-                    <ColumnCheckbox label="Tlf." {...getProps(Column.PhoneNumber)} />
                     <ColumnCheckbox label="Bursdag" {...getProps(Column.BirthDate)} />
+                    <ColumnCheckbox label="Kappe" {...getProps(Column.CapeName)} />
                     <ColumnCheckbox label="Rolle" {...getProps(Column.Role)} />
+                    <ColumnCheckbox label="Status" {...getProps(Column.Status)} />
                     <ColumnCheckbox label="Start" {...getProps(Column.StartDate)} />
+                    <ColumnCheckbox label="E-post" {...getProps(Column.Email)} />
                     <ColumnCheckbox label="Slutt" {...getProps(Column.EndDate)} />
-                    <ColumnCheckbox label="Deaktivert" {...getProps(Column.DeactivatedAt)} />
-                </Stack>
+                    <ColumnCheckbox label="Tlf." {...getProps(Column.PhoneNumber)} />
+                    {isSuperAdmin && <ColumnCheckbox label="Deaktivert" {...getProps(Column.DeactivatedAt)} /> }
+                </Grid>
             </div>
         </IconPopupMenu>
     )
@@ -434,18 +442,21 @@ type ColumnCheckboxProps = {
 
 function ColumnCheckbox({ label, checked, onChange, onClick, onTouchEnd }: ColumnCheckboxProps) {
     return (
-        <FormControlLabel
-            onClick={onClick}
-            onChange={onChange}
-            onTouchEnd={onTouchEnd}
-            label={label}
-            control={
-                <Checkbox
-                    checked={checked}
-                    color="secondary"
-                    onTouchEnd={onTouchEnd}
-                />}
-        />
+        <Grid item xs={6}>
+            <FormControlLabel
+                onClick={onClick}
+                onChange={onChange}
+                onTouchEnd={onTouchEnd}
+                label={label}
+                control={
+                    <Checkbox
+                        checked={checked}
+                        color="secondary"
+                        onTouchEnd={onTouchEnd}
+                    />}
+            />
+        </Grid>
+
     )
 }
 
