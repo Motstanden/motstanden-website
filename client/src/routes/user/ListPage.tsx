@@ -27,11 +27,12 @@ import { UserStatus } from "common/enums"
 import { User } from "common/interfaces"
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
 import dayjs from 'dayjs'
-import React, { useDeferredValue, useState } from "react"
+import React, { useDeferredValue } from "react"
 import { Link as RouterLink } from 'react-router-dom'
 import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
 import { MultiSelect } from "src/components/MultiSelect"
 import { useAppBarHeader } from "src/context/AppBarHeader"
+import { usePotentialUser } from "src/context/Authentication"
 import { useLocalStorage } from "src/hooks/useStorage"
 import { useTitle } from 'src/hooks/useTitle'
 import { useDeactivatedUsersQuery, userUsersQuery } from "./Queries"
@@ -40,7 +41,10 @@ export default function UserListPage() {
     useTitle("Medlemsliste")
     useAppBarHeader("Medlemsliste")
     
-    const [statusFilter, setStatusFilter] = useState<Set<UserStatus>>(new Set([UserStatus.Active, UserStatus.Veteran]))
+    const [statusFilter, setStatusFilter] = useLocalStorage<Set<UserStatus>>({
+        initialValue: new Set([UserStatus.Active, UserStatus.Veteran]),
+        key: "user-list-status-filter",
+    })
 
     const normalUsers = userUsersQuery()
     const deactivatedUsers = useDeactivatedUsersQuery()
@@ -89,6 +93,8 @@ function SelectStatus({
     sx?: SxProps 
 }) {
 
+    const { isSuperAdmin } = usePotentialUser()
+
     const handleChange = (newValues: UserStatus[]) => { 
         const sortedValues = newValues.sort((a, b) => compareByUserStatus(a, b, "asc"))
         onChange?.(new Set(sortedValues))
@@ -121,6 +127,13 @@ function SelectStatus({
                     <Checkbox checked={value.has(UserStatus.Inactive)} color="secondary" />
                     <ListItemText primary={"Inaktiv"} secondary={""}/>
                 </MenuItem>
+
+                {isSuperAdmin && (
+                    <MenuItem value={UserStatus.Deactivated}>
+                        <Checkbox checked={value.has(UserStatus.Deactivated)} color="secondary" />
+                        <ListItemText primary={"Deaktivert"} secondary={""}/>
+                    </MenuItem>
+                )}
 
         </MultiSelect>
     )
@@ -179,8 +192,6 @@ function UserTable({
             Column.Rank,
             variant === "activeUsers" ? Column.Status : Column.DeactivatedAt,
         ]),
-        serialize: (set) => JSON.stringify(Array.from(set)),
-        deserialize: (str) => new Set(JSON.parse(str))
     })
 
     const toggleVisibility = (col: Column) => {

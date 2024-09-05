@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { useDebounce } from "./useDebounce";
+import { useMemo, useState } from "react"
+import { useDebounce } from "./useDebounce"
 
 type InitialValueType<T> = T | (() => T);
 
@@ -42,15 +42,17 @@ function useStorage<T>( {key: rawKey, initialValue, storage, ...options}: Extend
 
     // Get the stored value from the storage or use the initial value
     const [storedValue, setStoredValue] = useState<T>(() => {
-        const item = getStoredItem(storage, key, options?.deserialize, options?.validateStorage)
-        if (item !== null){
-            return item
+
+        const initialVal = initialValue instanceof Function 
+            ? initialValue() 
+            : initialValue;
+        const storageValue = getStoredItem<T>(storage, key, initialVal, options?.deserialize, options?.validateStorage)
+
+        if (storageValue !== null){
+            return storageValue
+        } else {
+            return initialVal
         }
-
-        if (initialValue instanceof Function)
-            return initialValue();
-
-        return initialValue;
     });
     
     // Save to storage when the stored value changes
@@ -78,15 +80,22 @@ function useStorage<T>( {key: rawKey, initialValue, storage, ...options}: Extend
 function getStoredItem<T>(
     storage: Storage, 
     key: string,
+    testObject: T,
     deserialize?: (value: string) => T, 
     validate?: ValidateStorageFunction
 ): T | null {
     const storageItem = storage.getItem(key);
     if (storageItem !== null) {
 
-        let item: unknown;                          
+        let item: T;                          
         try {
-            item = deserialize ? deserialize(storageItem) : JSON.parse(storageItem);
+            if(deserialize instanceof Function) {
+                item = deserialize(storageItem);
+            } else if (testObject instanceof Set) { 
+                item = new Set(JSON.parse(storageItem)) as T;
+            } else {
+                item = JSON.parse(storageItem) as T;
+            }
         } catch(err) {
             if(import.meta.env.PROD) {
                 console.error(err)
@@ -99,7 +108,7 @@ function getStoredItem<T>(
         const isValid = validate ? validate(item) : true;
 
         if (isValid) {
-            return item as T;
+            return item;
         }
     }
     return null;
@@ -111,10 +120,16 @@ function setStorageItem<T>(
     value: T, 
     serialize?: (value: T) => string
 ) {
-    const item = serialize ? 
-        serialize(value) : 
-        JSON.stringify(value);
-    storage.setItem(key, item);
+    let strValue;
+    if(serialize){
+        strValue = serialize(value);
+    } else if (value instanceof Set) {
+        strValue = JSON.stringify(Array.from(value));
+    } else {
+        strValue = JSON.stringify(value);
+    }
+
+    storage.setItem(key, strValue);
 }
 
 /**
