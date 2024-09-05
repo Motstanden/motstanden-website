@@ -25,7 +25,7 @@ import { headerStyle, noVisitedLinkStyle, rowStyle } from 'src/assets/style/tabl
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox'
 import TableChartIcon from '@mui/icons-material/TableChart'
 import { UserStatus } from "common/enums"
-import { User } from "common/interfaces"
+import { DeactivatedUser, User } from "common/interfaces"
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
 import dayjs from 'dayjs'
 import React, { useDeferredValue, useEffect } from "react"
@@ -184,10 +184,10 @@ enum Column {
     Email = 4,
     PhoneNumber = 5,
     BirthDate = 6,
-    StartDate = 7,
-    EndDate = 8,
-    Role = 9,
-    DeactivatedAt = 10
+    Role = 7,
+    StartDate = 8,
+    EndDate = 9,
+    DeactivatedAt = 10,
 }
 
 function useVisibleColumns() {
@@ -235,7 +235,7 @@ function UserTable({
     users,
     isLoading = false,
 }: {
-    users: User[],
+    users: (User | DeactivatedUser)[],
     isLoading?: boolean
 }) {
 
@@ -267,9 +267,10 @@ function UserTable({
                         <TableCell {...getHeaderProps(Column.Email)}>E-post</TableCell>
                         <TableCell {...getHeaderProps(Column.PhoneNumber)}>Tlf.</TableCell>
                         <TableCell {...getHeaderProps(Column.BirthDate)}>Bursdag</TableCell>
+                        <TableCell {...getHeaderProps(Column.Role)}>Rolle</TableCell>
                         <TableCell {...getHeaderProps(Column.StartDate)}>Start</TableCell>
                         <TableCell {...getHeaderProps(Column.EndDate)}>Slutt</TableCell>
-                        <TableCell {...getHeaderProps(Column.Role)}>Rolle</TableCell>
+                        <TableCell {...getHeaderProps(Column.DeactivatedAt)}>Deaktivert</TableCell>
                         <TableCell
                             align="right"
                             padding="none"
@@ -308,29 +309,35 @@ function UserTable({
                             <TableCell {...getRowProps(Column.BirthDate)}>
                                 <Skeleton variant="text" width="70px" />
                             </TableCell>
+                            <TableCell {...getRowProps(Column.Role)}>
+                                <Skeleton variant="text" width="80px" />
+                            </TableCell>
                             <TableCell {...getRowProps(Column.StartDate)}>
                                 <Skeleton variant="text" width="70px" />
                             </TableCell>
                             <TableCell {...getRowProps(Column.EndDate)}>
                                 <Skeleton variant="text" width="70px" />
                             </TableCell>
-                            <TableCell {...getRowProps(Column.Role)}>
-                                <Skeleton variant="text" width="80px" />
+                            <TableCell {...getRowProps(Column.DeactivatedAt)}>
+                                <Skeleton variant="text" width="70px" />
                             </TableCell>
                         </TableRow>
                     ))}
 
-                    {!isLoading && users.map((user: User) => (
+                    {!isLoading && users.map((user) => (
                         <TableRow sx={rowStyle} key={user.email}>
                             <TableCell colSpan={lastVisibleColumn === Column.Name ? 2 : 1}>
-                                <Link
-                                    component={RouterLink}
-                                    to={`/brukere/${user.id}`}
-                                    underline="hover"
-                                    sx={noVisitedLinkStyle}
-                                >
-                                    {getFullName(user)}
-                                </Link>
+                                 { "deactivatedAt" in user === true && getFullName(user)}
+                                 { "deactivatedAt" in user === false && (
+                                    <Link
+                                        component={RouterLink}
+                                        to={`/brukere/${user.id}`}
+                                        underline="hover"
+                                        sx={noVisitedLinkStyle}
+                                    >
+                                        {getFullName(user)}
+                                    </Link>
+                                 )}
                             </TableCell>
                             <TableCell {...getRowProps(Column.Rank)}>
                                 {userRankToPrettyStr(user.rank)}
@@ -350,14 +357,19 @@ function UserTable({
                             <TableCell {...getRowProps(Column.BirthDate)}>
                                 {formatDate(user.birthDate)}
                             </TableCell>
+                            <TableCell {...getRowProps(Column.Role)}>
+                                {userGroupToPrettyStr(user.groupName)}
+                            </TableCell>
                             <TableCell {...getRowProps(Column.StartDate)}>
                                 {formatDate(user.startDate)}
                             </TableCell>
                             <TableCell {...getRowProps(Column.EndDate)}>
                                 {formatDate(user.endDate)}
                             </TableCell>
-                            <TableCell {...getRowProps(Column.Role)}>
-                                {userGroupToPrettyStr(user.groupName)}
+                            <TableCell {...getRowProps(Column.DeactivatedAt)}>
+                                {"deactivatedAt" in user 
+                                ? dayjs.utc(user.deactivatedAt).tz().format("DD MMM YYYY HH:mm:ss") 
+                                : "-"}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -422,8 +434,10 @@ function ChangeVisibilityButton({ visibleColumns, toggleVisibility }: { visibleC
                     <ColumnCheckbox label="E-post" {...getProps(Column.Email)} />
                     <ColumnCheckbox label="Tlf." {...getProps(Column.PhoneNumber)} />
                     <ColumnCheckbox label="Bursdag" {...getProps(Column.BirthDate)} />
+                    <ColumnCheckbox label="Rolle" {...getProps(Column.Role)} />
                     <ColumnCheckbox label="Start" {...getProps(Column.StartDate)} />
                     <ColumnCheckbox label="Slutt" {...getProps(Column.EndDate)} />
+                    <ColumnCheckbox label="Deaktivert" {...getProps(Column.DeactivatedAt)} />
                 </Stack>
             </div>
         </IconPopupMenu>
