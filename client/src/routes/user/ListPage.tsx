@@ -1,16 +1,16 @@
 import {
-    Button,
     Checkbox,
-    Divider,
     FormControlLabel,
-    Grid,
+    IconButton,
     Link,
     Paper,
     Skeleton,
     Stack,
+    SxProps,
     Table,
     TableBody,
     TableCell,
+    TableCellProps,
     TableContainer,
     TableHead,
     TableRow
@@ -18,16 +18,15 @@ import {
 
 import { headerStyle, noVisitedLinkStyle, rowStyle } from 'src/assets/style/tableStyle'
 
-import { UserStatus } from 'common/enums'
+import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox'
+import TableChartIcon from '@mui/icons-material/TableChart'
 import { User } from "common/interfaces"
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
 import dayjs from 'dayjs'
 import React, { useDeferredValue } from "react"
 import { Link as RouterLink } from 'react-router-dom'
 import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
-import { TitleCard } from 'src/components/TitleCard'
 import { useAppBarHeader } from "src/context/AppBarHeader"
-import { useAppSnackBar } from "src/context/AppSnackBar"
 import { useLocalStorage } from "src/hooks/useStorage"
 import { useTitle } from 'src/hooks/useTitle'
 import { useUserListContext } from "./Context"
@@ -38,77 +37,14 @@ export default function UserListPage() {
 
     const {users, isPending} = useUserListContext()
 
-    const actualUsers = users?.filter(user => !isMotstandenMail(user.email)) || []
-    const boardUsers = users?.filter(user => isMotstandenMail(user.email)) || []
-    
     return (
         <>
             <UserTable
                 isLoading={isPending}
-                users={actualUsers}
+                users={users ?? []}
                 stateStorageKey="url: /brukere"
             />
-            <Divider sx={{ mt: "60px", mb: "40px" }} />
-            <EmailLists users={actualUsers} isLoading={isPending}/>
         </>
-    )
-}
-
-function EmailLists( { users, isLoading }: { users: User[], isLoading?: boolean}) {
-    const activeUsers = users.filter(user => user.status === UserStatus.Active)
-    const veteranUsers = users.filter(user => user.status === UserStatus.Veteran)
-    const retiredUsers = users.filter(user => user.status === UserStatus.Retired)
-    const inactiveUsers = users.filter(user => user.status === UserStatus.Inactive)
-
-    return (
-        <Grid container> 
-            <Grid item xs={12} sm={8} md={5} >
-                <TitleCard title='E-postlister' sx={{width: "100%"}}>
-
-                    {isLoading && <Skeleton variant="rounded" width="100%" height="150px" />}
-
-                    {!isLoading && (
-                         <ul style={{paddingLeft: "30px", listStyleType: `"-"`}}>
-                            <EmailListItem users={users} label="Alle"/>
-                            <EmailListItem users={activeUsers} label="Aktive"/>
-                            <EmailListItem users={veteranUsers} label="Veteraner"/>
-                            <EmailListItem users={retiredUsers} label="Pensjonister"/>
-                            <EmailListItem users={inactiveUsers} label="Inaktive"/>
-                        </ul>
-                    )}
-                </TitleCard>
-            </Grid>
-        </Grid>
-    )
-}
-
-function EmailListItem({users, label }:{ users: User[], label: string }) {
-
-    const showSnackbar = useAppSnackBar()
-
-    const onClick = () => {
-        const data = users.map((user: User) => (user.email))
-                          .join("\n")
-        navigator.clipboard.writeText(data);
-        showSnackbar({message: "Kopiert til utklippstavlen"})
-    }
-
-    if(users.length <= 0)
-        return <></>
-
-    return (
-        <li style={{marginBottom: "10px"}}>
-            <Button 
-                onClick={onClick} 
-                color="secondary" 
-                sx={{
-                    textTransform: "none", 
-                    px: 1.5, 
-                    minWidth: "0px"
-                }}>
-                {label}
-            </Button>
-        </li>
     )
 }
 
@@ -169,11 +105,11 @@ function UserTable({
         ? undefined 
         : Math.max(...visibleColumns) satisfies Column
 
-    const getHeaderProps = (col: Column) => ({
-        sx: visibleColumns.has(col) ? {} : { display: "none" }
+    const getHeaderProps = (col: Column): TableCellProps => ({
+        sx: visibleColumns.has(col) ? {} : { display: "none" },
     })
 
-    const getRowProps = (col: Column) => ({ 
+    const getRowProps = (col: Column): TableCellProps => ({ 
         sx: deferredVisibleColumns.has(col) ? {} : { display: "none" },
         colSpan: col === lastVisibleColumn ? 2 : 1,
     })
@@ -193,8 +129,13 @@ function UserTable({
                         <TableCell {...getHeaderProps(Column.StartDate)}>Start</TableCell>
                         <TableCell {...getHeaderProps(Column.EndDate)}>Slutt</TableCell>
                         <TableCell {...getHeaderProps(Column.Role)}>Rolle</TableCell>
-                        <TableCell align="right">
-                            <ChangeColumnVisibilityMenu 
+                        <TableCell 
+                            align="right" 
+                            padding="none"
+                            sx={{whiteSpace: "nowrap", paddingRight: "5px" }} 
+                        >   
+                            <EmailButton users={users} sx={{marginRight: "-7px"}} />
+                            <ChangeVisibilityButton 
                                 visibleColumns={visibleColumns} 
                                 toggleVisibility={toggleVisibility} 
                             />
@@ -285,7 +226,7 @@ function UserTable({
     )
 }
 
-function ChangeColumnVisibilityMenu({ visibleColumns, toggleVisibility }: { visibleColumns: Set<Column>, toggleVisibility: (col: Column) => void }) { 
+function ChangeVisibilityButton({ visibleColumns, toggleVisibility }: { visibleColumns: Set<Column>, toggleVisibility: (col: Column) => void }) { 
 
     const handleClick = (e: React.MouseEvent<Element> | React.TouchEvent<Element>) => {
         e.stopPropagation()     // Prevent IconPopupMenu from closing
@@ -303,7 +244,7 @@ function ChangeColumnVisibilityMenu({ visibleColumns, toggleVisibility }: { visi
     })
 
     return (
-        <IconPopupMenu>
+        <IconPopupMenu icon={<TableChartIcon/>}>
             <div style={{
                 paddingInline: "15px",
                 paddingTop: "10px",
@@ -345,18 +286,29 @@ function ColumnCheckbox({label, checked, onChange, onClick, onTouchEnd }: Column
             onClick={onClick}
             onChange={onChange}
             onTouchEnd={onTouchEnd}
+            label={label}
             control={
                 <Checkbox 
                     checked={checked} 
                     onTouchEnd={onTouchEnd}
             />}
-            label={label}
             />
     )
 }
 
-function isMotstandenMail(email: string): boolean {
-    return email.trim().toLowerCase().endsWith("@motstanden.no")
+function EmailButton( {users, sx}: {users: User[], sx?: SxProps}) {
+    const emailList = users.map(user => user.email).join(",")
+    return (
+        <IconButton 
+            sx={sx}
+            href={`mailto:${emailList}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            LinkComponent="a"
+        >
+            <ForwardToInboxIcon />
+        </IconButton>
+    )
 }
 
 function formatDate(dateStr: string | null) {
