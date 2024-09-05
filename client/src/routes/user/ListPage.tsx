@@ -13,38 +13,25 @@ import {
     TableContainer,
     TableHead,
     TableRow
-} from "@mui/material";
+} from "@mui/material"
 
-import { headerStyle, noVisitedLinkStyle, rowStyle } from 'src/assets/style/tableStyle';
+import { headerStyle, noVisitedLinkStyle, rowStyle } from 'src/assets/style/tableStyle'
 
-import { UserStatus } from 'common/enums';
-import { User } from "common/interfaces";
-import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils";
-import dayjs from 'dayjs';
-import { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
-import { TitleCard } from 'src/components/TitleCard';
-import { useAppBarHeader } from "src/context/AppBarHeader";
-import { useAppSnackBar } from "src/context/AppSnackBar";
-import { useTitle } from 'src/hooks/useTitle';
-import { useUserListContext } from "./Context";
+import { UserStatus } from 'common/enums'
+import { User } from "common/interfaces"
+import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
+import dayjs from 'dayjs'
+import { Link as RouterLink } from 'react-router-dom'
+import { TitleCard } from 'src/components/TitleCard'
+import { useAppBarHeader } from "src/context/AppBarHeader"
+import { useAppSnackBar } from "src/context/AppSnackBar"
+import { useLocalStorage } from "src/hooks/useStorage"
+import { useTitle } from 'src/hooks/useTitle'
+import { useUserListContext } from "./Context"
 
 export default function UserListPage() {
     useTitle("Medlemsliste")
     useAppBarHeader("Medlemsliste")
-
-    const [showName, setShowName] = useState(true)
-    const [showRank, setShowRank] = useState(true)
-    const [showCape, setShowCape] = useState(true)
-    const [showStatus, setShowStatus] = useState(true)
-    const [showMail, setShowMail] = useState(false)
-    const [showPhone, setShowPhone] = useState(false)
-    const [showBirth, setShowBirth] = useState(false)
-    const [showStart, setShowStart] = useState(false)
-    const [showEnd, setShowEnd] = useState(false)
-    const [showRole, setShowRole] = useState(false)
-
-    const [showBoard, setShowBoard] = useState(false)
 
     const {users, isPending} = useUserListContext()
 
@@ -53,67 +40,11 @@ export default function UserListPage() {
     
     return (
         <>
-            <Paper sx={{
-                mb: 4,
-                pt: 2,
-                pb: 1,
-                px: 2
-            }}>
-                <h4 style={{margin: "0px"}}>Visning</h4>
-                <Grid container spacing={0} justifyContent="start">
-                    <FilterBox label="Navn"   checked={showName}    onClick={() => setShowName(!showName)}/>
-                    <FilterBox label="Rang"   checked={showRank}    onClick={() => setShowRank(!showRank)}/>
-                    <FilterBox label="Kappe"  checked={showCape}    onClick={() => setShowCape(!showCape)}/>
-                    <FilterBox label="Status" checked={showStatus}  onClick={() => setShowStatus(!showStatus)}/>
-                    <FilterBox label="E-post" checked={showMail}    onClick={() => setShowMail(!showMail)}/>
-                    <FilterBox label="Tlf"     checked={showPhone}  onClick={() => setShowPhone(!showPhone)}/>
-                    <FilterBox label="Bursdag" checked={showBirth}  onClick={() => setShowBirth(!showBirth)}/>
-                    <FilterBox label="Start"   checked={showStart}  onClick={() => setShowStart(!showStart)}/>
-                    <FilterBox label="Slutt"   checked={showEnd}    onClick={() => setShowEnd(!showEnd)}/>
-                    <FilterBox label="Rolle"  checked={showRole}    onClick={() => setShowRole(!showRole)}/>
-                    <FilterBox label="Styret" checked={showBoard}   onClick={() => setShowBoard(!showBoard)}/>
-                </Grid>
-            </Paper>
             <UserTable
                 isLoading={isPending}
-
                 users={actualUsers}
-                showName={showName}
-                showRank={showRank}
-                showMail={showMail}
-                showRole={showRole}
-
-                showStatus={showStatus}
-                showCape={showCape}
-                showStart={showStart}
-                showEnd={showEnd}
-                showPhone={showPhone}
-                showBirth={showBirth}
+                stateStorageKey="url: /brukere"
             />
-            {showBoard && !isPending && (
-                <>
-                    <Divider sx={{ mt: "60px", mb: "40px" }} />
-                    <h1>Styrebrukere</h1>
-                    <UserTable
-                        isLoading={isPending}
-                        
-                        users={boardUsers}
-                        showName={showName}
-                        showRank={showRank}
-                        showMail={showMail}
-                        showRole={showRole}
-
-                        showStatus={showStatus}
-                        showCape={showCape}
-                        showStart={showStart}
-                        showEnd={showEnd}
-                        showPhone={showPhone}
-                        showBirth={showBirth}
-
-
-                    />
-                </>
-            )}
             <Divider sx={{ mt: "60px", mb: "40px" }} />
             <EmailLists users={actualUsers} isLoading={isPending}/>
         </>
@@ -189,95 +120,121 @@ function EmailListItem({users, label }:{ users: User[], label: string }) {
     )
 }
 
+// The number corresponds to the index of the column in the table
+enum Columns {
+    Name = 0,
+    Rank = 1,
+    CapeName = 2,
+    Status = 3,
+    Email = 4,
+    PhoneNumber = 5,
+    BirthDate = 6,
+    StartDate = 7,
+    EndDate = 8,
+    Role = 9,
+    DeactivatedAt = 10
+}
+
 function UserTable({
     users,
-    showName,
-    showRank,
-    showCape,
-    showStatus,
-    showMail,
-    showPhone,
-    showBirth,
-    showStart,
-    showEnd,
-    showRole,
-    isLoading,
+    stateStorageKey,
+    variant = "activeUsers",
+    isLoading = false,
 }: {
     users: User[],
-    showName: boolean,
-    showRank: boolean,
-    showCape: boolean,
-    showStatus: boolean,
-    showMail: boolean,
-    showPhone: boolean,
-    showBirth: boolean,
-    showStart: boolean,
-    showEnd: boolean,
-    showRole: boolean,
-    isLoading: boolean,
+    stateStorageKey: string,
+    variant?: "activeUsers" | "deactivatedUser",
+    isLoading?: boolean 
 }) {
 
-    const hideSx = { display: "none" }
-    const nameSx = showName ? {} : hideSx
-    const rankSx = showRank ? {} : hideSx
-    const capeSx = showCape ? {} : hideSx
-    const statusSx = showStatus ? {} : hideSx
-    const mailSx = showMail ? {} : hideSx
-    const phoneSx = showPhone ? {} : hideSx
-    const birthSx = showBirth ? {} : hideSx
-    const startSx = showStart ? {} : hideSx
-    const endSx = showEnd ? {} : hideSx
-    const roleSx = showRole ? {} : hideSx
+    const [visibleColumns, setVisibleColumns] = useLocalStorage<Set<Columns>>({
+        key: ["user-table-column-visibility", stateStorageKey],
+        initialValue: new Set([
+            Columns.Name,
+            Columns.CapeName,
+            Columns.Rank,
+            variant === "activeUsers" ? Columns.Status : Columns.DeactivatedAt,
+        ])
+    })
+    
+    const toggleVisibility = (col: Columns) => { 
+        setVisibleColumns((prev) => {
+            const newCols = new Set(prev)
+    
+            if (newCols.has(col) && newCols.size > 1)
+                newCols.delete(col)
+            else
+                newCols.add(col)
+    
+            return newCols
+        })
+    }
+
+    const lastVisibleColumn = visibleColumns.size === 0 
+        ? undefined 
+        : Math.max(...visibleColumns) satisfies Columns
+
+    const getHeaderProps = (col: Columns) => ({
+        sx: visibleColumns.has(col) ? {} : { display: "none" }
+    })
+
+    const getRowProps = (col: Columns) => ({ 
+        ...getHeaderProps(col),
+        colSpan: col === lastVisibleColumn ? 2 : 1,
+    })
 
     return (
         <TableContainer component={Paper}>
             <Table>
                 <TableHead sx={headerStyle}>
                     <TableRow>
-                        <TableCell sx={nameSx}      >Navn</TableCell>
-                        <TableCell sx={rankSx}      >Rang</TableCell>
-                        <TableCell sx={capeSx}      >Kappe</TableCell>
-                        <TableCell sx={statusSx}    >Status</TableCell>
-                        <TableCell sx={mailSx}      >E-post</TableCell>
-                        <TableCell sx={phoneSx}     >Tlf.</TableCell>
-                        <TableCell sx={birthSx}     >Bursdag</TableCell>
-                        <TableCell sx={startSx}     >Start</TableCell>
-                        <TableCell sx={endSx}       >Slutt</TableCell>
-                        <TableCell sx={roleSx}      >Rolle</TableCell>
+                        <TableCell {...getHeaderProps(Columns.Name)}>Navn</TableCell>
+                        <TableCell {...getHeaderProps(Columns.Rank)}>Rang</TableCell>
+                        <TableCell {...getHeaderProps(Columns.CapeName)}>Kappe</TableCell>
+                        <TableCell {...getHeaderProps(Columns.Status)}>Status</TableCell>
+                        <TableCell {...getHeaderProps(Columns.Email)}>E-post</TableCell>
+                        <TableCell {...getHeaderProps(Columns.PhoneNumber)}>Tlf.</TableCell>
+                        <TableCell {...getHeaderProps(Columns.BirthDate)}>Bursdag</TableCell>
+                        <TableCell {...getHeaderProps(Columns.StartDate)}>Start</TableCell>
+                        <TableCell {...getHeaderProps(Columns.EndDate)}>Slutt</TableCell>
+                        <TableCell {...getHeaderProps(Columns.Role)}>Rolle</TableCell>
+                        <TableCell align="right">
+                            {/* TODO: Put menu here */}
+                        </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
 
                     {isLoading && Array(40).fill(1).map( (_, index) => (
                         <TableRow sx={rowStyle} key={index}>
-                            <TableCell sx={nameSx}>
+                            <TableCell {...getRowProps(Columns.Name)}>
                                 <Skeleton variant="text" width="185px" />
                             </TableCell>
-                            <TableCell sx={rankSx}>
+                            <TableCell {...getRowProps(Columns.Rank)}>
                                 <Skeleton variant="text" width="85px"/>
                             </TableCell>
-                            <TableCell sx={capeSx}>
+                            <TableCell {...getRowProps(Columns.CapeName)}>
                                 <Skeleton variant="text" width="180px"/>
                             </TableCell>
-                            <TableCell sx={statusSx}>
+                            <TableCell {...getRowProps(Columns.Status)}>
                                 <Skeleton variant="text" width="50px" />
                             </TableCell>
-                            <TableCell sx={mailSx}>
+                            <TableCell {...getRowProps(Columns.Email)}>
                                 <Skeleton variant="text" width="200px"/>
                             </TableCell>
-                            <TableCell sx={phoneSx}>
+                            <TableCell {...getRowProps(Columns.PhoneNumber)}>
                                 <Skeleton variant="text" width="80px" />
                             </TableCell>
-                            <TableCell sx={birthSx}>
+                            <TableCell {...getRowProps(Columns.BirthDate)}>
                                 <Skeleton variant="text" width="70px"/>
                             </TableCell>
-                            <TableCell sx={startSx}>
+                            <TableCell {...getRowProps(Columns.StartDate)}>
                                 <Skeleton variant="text" width="70px"/>                                
                             </TableCell>
-                            <TableCell sx={endSx}>
+                            <TableCell {...getRowProps(Columns.EndDate)}>
                                 <Skeleton variant="text" width="70px"/>
                             </TableCell>
-                            <TableCell sx={roleSx}>
+                            <TableCell {...getRowProps(Columns.Role)}>
                                 <Skeleton variant="text" width="80px" />                                
                             </TableCell>
                         </TableRow>
@@ -285,7 +242,7 @@ function UserTable({
 
                     {!isLoading && users.map((user: User) => (
                         <TableRow sx={rowStyle} key={user.email}>
-                            <TableCell sx={nameSx}>
+                            <TableCell {...getRowProps(Columns.Name)}>
                                 <Link
                                     component={RouterLink}
                                     to={`/brukere/${user.id}`}
@@ -295,31 +252,31 @@ function UserTable({
                                     {getFullName(user)}
                                 </Link>
                             </TableCell>
-                            <TableCell sx={rankSx}>
+                            <TableCell {...getRowProps(Columns.Rank)}>
                                 {userRankToPrettyStr(user.rank)}
                             </TableCell>
-                            <TableCell sx={capeSx}>
+                            <TableCell {...getRowProps(Columns.CapeName)}>
                                 {user.capeName ? user.capeName : "-"}
                             </TableCell>
-                            <TableCell sx={statusSx}>
+                            <TableCell {...getRowProps(Columns.Status)}>
                                 {user.status}
                             </TableCell>
-                            <TableCell sx={mailSx}>
+                            <TableCell {...getRowProps(Columns.Email)}>
                                 {user.email}
                             </TableCell>
-                            <TableCell sx={phoneSx}>
+                            <TableCell {...getRowProps(Columns.PhoneNumber)}>
                                 {user.phoneNumber ? user.phoneNumber : "-"}
                             </TableCell>
-                            <TableCell sx={birthSx}>
+                            <TableCell {...getRowProps(Columns.BirthDate)}>
                                 {formatDate(user.birthDate)}
                             </TableCell>
-                            <TableCell sx={startSx}>
+                            <TableCell {...getRowProps(Columns.StartDate)}>
                                 {formatDate(user.startDate)}
                             </TableCell>
-                            <TableCell sx={endSx}>
+                            <TableCell {...getRowProps(Columns.EndDate)}>
                                 {formatDate(user.endDate)}
                             </TableCell>
-                            <TableCell sx={roleSx}>
+                            <TableCell {...getRowProps(Columns.Role)}>
                                 {userGroupToPrettyStr(user.groupName)}
                             </TableCell>
                         </TableRow>
