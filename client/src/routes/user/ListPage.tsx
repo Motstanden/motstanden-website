@@ -3,6 +3,8 @@ import {
     FormControlLabel,
     IconButton,
     Link,
+    ListItemText,
+    MenuItem,
     Paper,
     Skeleton,
     Stack,
@@ -21,12 +23,14 @@ import { headerStyle, noVisitedLinkStyle, rowStyle } from 'src/assets/style/tabl
 
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox'
 import TableChartIcon from '@mui/icons-material/TableChart'
+import { UserStatus } from "common/enums"
 import { User } from "common/interfaces"
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
 import dayjs from 'dayjs'
-import React, { useDeferredValue } from "react"
+import React, { useDeferredValue, useState } from "react"
 import { Link as RouterLink } from 'react-router-dom'
 import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
+import { MultiSelect } from "src/components/MultiSelect"
 import { useAppBarHeader } from "src/context/AppBarHeader"
 import { useLocalStorage } from "src/hooks/useStorage"
 import { useTitle } from 'src/hooks/useTitle'
@@ -36,18 +40,93 @@ export default function UserListPage() {
     useTitle("Medlemsliste")
     useAppBarHeader("Medlemsliste")
 
-    const {users, isPending} = useUserListContext()
+    const { users, isPending } = useUserListContext()
+
+    const filteredUsers = users?.filter(user => !user.email.toLowerCase().endsWith("@motstanden.no")) ?? []
+
+    const [statusFilter, setStatusFilter] = useState<Set<UserStatus>>(new Set([UserStatus.Active]))
 
     return (
         <>
+            <SelectStatus 
+                value={statusFilter} 
+                onChange={(value) => setStatusFilter(value)}
+                sx={{
+                    marginBottom: "20px",
+                    width: "220px",
+                    minWidth: "0px",
+                }}
+            />
             <UserTable
                 isLoading={isPending}
-                users={users ?? []}
+                users={filteredUsers}
                 stateStorageKey="url: /brukere"
             />
         </>
     )
 }
+
+function SelectStatus({ 
+    value, onChange, sx 
+}: { 
+    value: Set<UserStatus>, 
+    onChange?: (value: Set<UserStatus>) => void, 
+    sx?: SxProps 
+}) {
+
+    const handleChange = (newValues: UserStatus[]) => { 
+        const sortedValues = newValues.sort((a, b) => compareByUserStatus(a, b, "asc"))
+        onChange?.(new Set(sortedValues))
+    }
+
+    return (
+        <MultiSelect
+            value={Array.from(value)} 
+            label="Statusfilter"
+            color="secondary"
+            onChange={handleChange}
+            sx={sx}
+            >
+                <MenuItem value={UserStatus.Active}>
+                    <Checkbox checked={value.has(UserStatus.Active)} color="secondary" />
+                    <ListItemText primary={"Aktiv"} secondary={""}/>
+                </MenuItem>
+
+                <MenuItem value={UserStatus.Veteran}>
+                    <Checkbox checked={value.has(UserStatus.Veteran)} color="secondary" />
+                    <ListItemText primary={"Veteran"} secondary={""}/>
+                </MenuItem>
+
+                <MenuItem value={UserStatus.Retired}>
+                    <Checkbox checked={value.has(UserStatus.Retired)} color="secondary" />
+                    <ListItemText primary={"Pensjonist"} secondary={""}/>
+                </MenuItem>
+
+                <MenuItem value={UserStatus.Inactive}>
+                    <Checkbox checked={value.has(UserStatus.Inactive)} color="secondary" />
+                    <ListItemText primary={"Inaktiv"} secondary={""}/>
+                </MenuItem>
+
+        </MultiSelect>
+    )
+}
+
+function compareByUserStatus(a: UserStatus, b: UserStatus, sortDirection: "asc" | "desc"): number { 
+    const numA = userStatusToNumber(a)
+    const numB = userStatusToNumber(b)
+    return sortDirection === "asc" ? numA - numB : numB - numA
+}
+
+function userStatusToNumber(status: UserStatus): number { 
+    switch(status) { 
+        case UserStatus.Active: return 0
+        case UserStatus.Veteran: return 1
+        case UserStatus.Retired: return 2
+        case UserStatus.Inactive: return 3
+        default: return 4
+    }
+}
+
 
 // The number corresponds to the index of the column in the table
 enum Column {
@@ -295,6 +374,7 @@ function ColumnCheckbox({ label, checked, onChange, onClick, onTouchEnd }: Colum
             control={
                 <Checkbox
                     checked={checked}
+                    color="secondary"
                     onTouchEnd={onTouchEnd}
                 />}
         />
