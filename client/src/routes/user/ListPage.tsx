@@ -27,7 +27,7 @@ import { UserStatus } from "common/enums"
 import { User } from "common/interfaces"
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
 import dayjs from 'dayjs'
-import React, { useDeferredValue, useState } from "react"
+import React, { useDeferredValue, useMemo, useState } from "react"
 import { Link as RouterLink } from 'react-router-dom'
 import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
 import { MultiSelect } from "src/components/MultiSelect"
@@ -39,12 +39,17 @@ import { useUserListContext } from "./Context"
 export default function UserListPage() {
     useTitle("Medlemsliste")
     useAppBarHeader("Medlemsliste")
+    
+    const [statusFilter, setStatusFilter] = useState<Set<UserStatus>>(new Set([UserStatus.Active, UserStatus.Veteran]))
 
-    const { users, isPending } = useUserListContext()
+    const { users: enabledUsers, isPending } = useUserListContext()
+    
+    const users =  [...( enabledUsers ?? [])] 
 
-    const filteredUsers = users?.filter(user => !user.email.toLowerCase().endsWith("@motstanden.no")) ?? []
-
-    const [statusFilter, setStatusFilter] = useState<Set<UserStatus>>(new Set([UserStatus.Active]))
+    const filteredUsers = useMemo( () => users
+        .filter(user => !user.email.toLowerCase().endsWith("@motstanden.no"))
+        .filter(user => statusFilter.size === 0 || statusFilter.has(user.status))
+    , [users, statusFilter])
 
     return (
         <>
