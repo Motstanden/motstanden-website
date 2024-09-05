@@ -22,6 +22,7 @@ import { UserStatus } from 'common/enums'
 import { User } from "common/interfaces"
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
 import dayjs from 'dayjs'
+import React, { useDeferredValue } from "react"
 import { Link as RouterLink } from 'react-router-dom'
 import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
 import { TitleCard } from 'src/components/TitleCard'
@@ -112,7 +113,7 @@ function EmailListItem({users, label }:{ users: User[], label: string }) {
 }
 
 // The number corresponds to the index of the column in the table
-enum Columns {
+enum Column {
     Name = 0,
     Rank = 1,
     CapeName = 2,
@@ -138,19 +139,19 @@ function UserTable({
     isLoading?: boolean 
 }) {
 
-    const [visibleColumns, setVisibleColumns] = useLocalStorage<Set<Columns>>({
+    const [visibleColumns, setVisibleColumns] = useLocalStorage<Set<Column>>({
         key: ["user-table-column-visibility", stateStorageKey],
         initialValue: new Set([
-            Columns.Name,
-            Columns.CapeName,
-            Columns.Rank,
-            variant === "activeUsers" ? Columns.Status : Columns.DeactivatedAt,
+            Column.Name,
+            Column.CapeName,
+            Column.Rank,
+            variant === "activeUsers" ? Column.Status : Column.DeactivatedAt,
         ]),
         serialize: (set) => JSON.stringify(Array.from(set)),
         deserialize: (str) => new Set(JSON.parse(str))
     })
 
-    const toggleVisibility = (col: Columns) => { 
+    const toggleVisibility = (col: Column) => { 
         setVisibleColumns((prev) => {
             const newCols = new Set(prev)
     
@@ -159,23 +160,21 @@ function UserTable({
             else
                 newCols.add(col)
     
-            console.log(newCols)
             return newCols
         })
     }
     
-    console.log(visibleColumns)
-
+    const deferredVisibleColumns = useDeferredValue(visibleColumns)     // We defer changes because it can be expensive to update the table
     const lastVisibleColumn = visibleColumns.size === 0 
         ? undefined 
-        : Math.max(...visibleColumns) satisfies Columns
+        : Math.max(...visibleColumns) satisfies Column
 
-    const getHeaderProps = (col: Columns) => ({
+    const getHeaderProps = (col: Column) => ({
         sx: visibleColumns.has(col) ? {} : { display: "none" }
     })
 
-    const getRowProps = (col: Columns) => ({ 
-        ...getHeaderProps(col),
+    const getRowProps = (col: Column) => ({ 
+        sx: deferredVisibleColumns.has(col) ? {} : { display: "none" },
         colSpan: col === lastVisibleColumn ? 2 : 1,
     })
 
@@ -184,16 +183,16 @@ function UserTable({
             <Table>
                 <TableHead sx={headerStyle}>
                     <TableRow>
-                        <TableCell {...getHeaderProps(Columns.Name)}>Navn</TableCell>
-                        <TableCell {...getHeaderProps(Columns.Rank)}>Rang</TableCell>
-                        <TableCell {...getHeaderProps(Columns.CapeName)}>Kappe</TableCell>
-                        <TableCell {...getHeaderProps(Columns.Status)}>Status</TableCell>
-                        <TableCell {...getHeaderProps(Columns.Email)}>E-post</TableCell>
-                        <TableCell {...getHeaderProps(Columns.PhoneNumber)}>Tlf.</TableCell>
-                        <TableCell {...getHeaderProps(Columns.BirthDate)}>Bursdag</TableCell>
-                        <TableCell {...getHeaderProps(Columns.StartDate)}>Start</TableCell>
-                        <TableCell {...getHeaderProps(Columns.EndDate)}>Slutt</TableCell>
-                        <TableCell {...getHeaderProps(Columns.Role)}>Rolle</TableCell>
+                        <TableCell {...getHeaderProps(Column.Name)}>Navn</TableCell>
+                        <TableCell {...getHeaderProps(Column.Rank)}>Rang</TableCell>
+                        <TableCell {...getHeaderProps(Column.CapeName)}>Kappe</TableCell>
+                        <TableCell {...getHeaderProps(Column.Status)}>Status</TableCell>
+                        <TableCell {...getHeaderProps(Column.Email)}>E-post</TableCell>
+                        <TableCell {...getHeaderProps(Column.PhoneNumber)}>Tlf.</TableCell>
+                        <TableCell {...getHeaderProps(Column.BirthDate)}>Bursdag</TableCell>
+                        <TableCell {...getHeaderProps(Column.StartDate)}>Start</TableCell>
+                        <TableCell {...getHeaderProps(Column.EndDate)}>Slutt</TableCell>
+                        <TableCell {...getHeaderProps(Column.Role)}>Rolle</TableCell>
                         <TableCell align="right">
                             <ChangeColumnVisibilityMenu 
                                 visibleColumns={visibleColumns} 
@@ -206,34 +205,34 @@ function UserTable({
 
                     {isLoading && Array(40).fill(1).map( (_, index) => (
                         <TableRow sx={rowStyle} key={index}>
-                            <TableCell {...getRowProps(Columns.Name)}>
+                            <TableCell {...getRowProps(Column.Name)}>
                                 <Skeleton variant="text" width="185px" />
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.Rank)}>
+                            <TableCell {...getRowProps(Column.Rank)}>
                                 <Skeleton variant="text" width="85px"/>
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.CapeName)}>
+                            <TableCell {...getRowProps(Column.CapeName)}>
                                 <Skeleton variant="text" width="180px"/>
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.Status)}>
+                            <TableCell {...getRowProps(Column.Status)}>
                                 <Skeleton variant="text" width="50px" />
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.Email)}>
+                            <TableCell {...getRowProps(Column.Email)}>
                                 <Skeleton variant="text" width="200px"/>
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.PhoneNumber)}>
+                            <TableCell {...getRowProps(Column.PhoneNumber)}>
                                 <Skeleton variant="text" width="80px" />
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.BirthDate)}>
+                            <TableCell {...getRowProps(Column.BirthDate)}>
                                 <Skeleton variant="text" width="70px"/>
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.StartDate)}>
+                            <TableCell {...getRowProps(Column.StartDate)}>
                                 <Skeleton variant="text" width="70px"/>                                
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.EndDate)}>
+                            <TableCell {...getRowProps(Column.EndDate)}>
                                 <Skeleton variant="text" width="70px"/>
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.Role)}>
+                            <TableCell {...getRowProps(Column.Role)}>
                                 <Skeleton variant="text" width="80px" />                                
                             </TableCell>
                         </TableRow>
@@ -241,7 +240,7 @@ function UserTable({
 
                     {!isLoading && users.map((user: User) => (
                         <TableRow sx={rowStyle} key={user.email}>
-                            <TableCell colSpan={lastVisibleColumn === Columns.Name ? 2 : 1}> 
+                            <TableCell colSpan={lastVisibleColumn === Column.Name ? 2 : 1}> 
                                 <Link
                                     component={RouterLink}
                                     to={`/brukere/${user.id}`}
@@ -251,31 +250,31 @@ function UserTable({
                                     {getFullName(user)}
                                 </Link>
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.Rank)}>
+                            <TableCell {...getRowProps(Column.Rank)}>
                                 {userRankToPrettyStr(user.rank)}
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.CapeName)}>
+                            <TableCell {...getRowProps(Column.CapeName)}>
                                 {user.capeName ? user.capeName : "-"}
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.Status)}>
+                            <TableCell {...getRowProps(Column.Status)}>
                                 {user.status}
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.Email)}>
+                            <TableCell {...getRowProps(Column.Email)}>
                                 {user.email}
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.PhoneNumber)}>
+                            <TableCell {...getRowProps(Column.PhoneNumber)}>
                                 {user.phoneNumber ? user.phoneNumber : "-"}
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.BirthDate)}>
+                            <TableCell {...getRowProps(Column.BirthDate)}>
                                 {formatDate(user.birthDate)}
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.StartDate)}>
+                            <TableCell {...getRowProps(Column.StartDate)}>
                                 {formatDate(user.startDate)}
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.EndDate)}>
+                            <TableCell {...getRowProps(Column.EndDate)}>
                                 {formatDate(user.endDate)}
                             </TableCell>
-                            <TableCell {...getRowProps(Columns.Role)}>
+                            <TableCell {...getRowProps(Column.Role)}>
                                 {userGroupToPrettyStr(user.groupName)}
                             </TableCell>
                         </TableRow>
@@ -286,16 +285,21 @@ function UserTable({
     )
 }
 
-function ChangeColumnVisibilityMenu({ visibleColumns, toggleVisibility }: { visibleColumns: Set<Columns>, toggleVisibility: (col: Columns) => void }) { 
+function ChangeColumnVisibilityMenu({ visibleColumns, toggleVisibility }: { visibleColumns: Set<Column>, toggleVisibility: (col: Column) => void }) { 
 
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>, col: Columns) => {
+    const handleClick = (e: React.MouseEvent<Element> | React.TouchEvent<Element>) => {
         e.stopPropagation()     // Prevent IconPopupMenu from closing
+    }
+
+    const handleChange = (col: Column) => { 
         toggleVisibility(col)
     }
 
-    const getProps = (col: Columns): ColumnCheckboxProps => ({ 
+    const getProps = (col: Column): ColumnCheckboxProps => ({ 
         checked: visibleColumns.has(col),
-        onClick: (e) => handleClick(e, col)
+        onChange: () => handleChange(col),
+        onClick: handleClick,
+        onTouchEnd: handleClick
     })
 
     return (
@@ -313,14 +317,14 @@ function ChangeColumnVisibilityMenu({ visibleColumns, toggleVisibility }: { visi
                     Vis kolonner
                 </h3>
                 <Stack>
-                    <ColumnCheckbox label="Rang" {...getProps(Columns.Rank)} />
-                    <ColumnCheckbox label="Kappe" {...getProps(Columns.CapeName)} />
-                    <ColumnCheckbox label="Status" {...getProps(Columns.Status)} />
-                    <ColumnCheckbox label="E-post" {...getProps(Columns.Email)} />
-                    <ColumnCheckbox label="Tlf." {...getProps(Columns.PhoneNumber)} />
-                    <ColumnCheckbox label="Bursdag" {...getProps(Columns.BirthDate)} />
-                    <ColumnCheckbox label="Start" {...getProps(Columns.StartDate)} />
-                    <ColumnCheckbox label="Slutt" {...getProps(Columns.EndDate)} />
+                    <ColumnCheckbox label="Rang" {...getProps(Column.Rank)} />
+                    <ColumnCheckbox label="Kappe" {...getProps(Column.CapeName)} />
+                    <ColumnCheckbox label="Status" {...getProps(Column.Status)} />
+                    <ColumnCheckbox label="E-post" {...getProps(Column.Email)} />
+                    <ColumnCheckbox label="Tlf." {...getProps(Column.PhoneNumber)} />
+                    <ColumnCheckbox label="Bursdag" {...getProps(Column.BirthDate)} />
+                    <ColumnCheckbox label="Start" {...getProps(Column.StartDate)} />
+                    <ColumnCheckbox label="Slutt" {...getProps(Column.EndDate)} />
                 </Stack>
             </div>
         </IconPopupMenu>
@@ -330,16 +334,21 @@ function ChangeColumnVisibilityMenu({ visibleColumns, toggleVisibility }: { visi
 type ColumnCheckboxProps = {
     label?: string,
     checked?: boolean,
-    onClick?: React.MouseEventHandler<HTMLButtonElement> 
+    onChange?: () => void
+    onClick?: React.MouseEventHandler<Element>,
+    onTouchEnd?: React.TouchEventHandler<Element>,
 }
 
-function ColumnCheckbox({label, checked, onClick }: ColumnCheckboxProps) {
+function ColumnCheckbox({label, checked, onChange, onClick, onTouchEnd }: ColumnCheckboxProps) {
     return (
         <FormControlLabel
+            onClick={onClick}
+            onChange={onChange}
+            onTouchEnd={onTouchEnd}
             control={
                 <Checkbox 
                     checked={checked} 
-                    onClick={onClick}
+                    onTouchEnd={onTouchEnd}
             />}
             label={label}
             />
