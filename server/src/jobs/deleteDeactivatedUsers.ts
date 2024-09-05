@@ -152,7 +152,7 @@ function anonymizeUser(db: DatabaseType, userId: number) {
     const profilePic = 'files/private/profilbilder/boy.png'
     
     const rankId = DB.users.ranks.getId(UserRank.ShortCircuit, db)
-    const statusId = DB.users.status.getId(UserStatus.Inactive, db)
+    const statusId = DB.users.status.getId(UserStatus.Deactivated, db)
     const groupId = DB.users.groups.getId(UserGroup.Contributor, db)
     
     const stmt = db.prepare(`

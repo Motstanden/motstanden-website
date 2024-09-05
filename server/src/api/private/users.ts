@@ -147,7 +147,12 @@ const UserSchema = z.object({
     // Membership details
     capeName: z.string().trim(),
     rank: z.string().trim().pipe(z.nativeEnum(UserRank)),
-    status: z.string().trim().pipe(z.nativeEnum(UserStatus)),
+    status: z.string()
+        .trim()
+        .pipe(
+            z.nativeEnum(UserStatus)
+            .refine(value => value !== UserStatus.Deactivated, "User cannot be deactivated through this API endpoint")
+        ),
     startDate: z.string().date(),
     endDate: z.string().date().nullable(),
     

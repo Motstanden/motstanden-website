@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { UserGroup } from 'common/enums'
+import { UserGroup, UserStatus } from 'common/enums'
 import { DeactivatedUser, UpdateUserRoleBody, User } from 'common/interfaces'
 import { api } from '../../../utils/api/index.js'
 import { apiLogIn, unsafeApiLogIn } from '../../../utils/auth.js'
@@ -42,6 +42,7 @@ test.describe("DELETE /api/users/:id", () => {
         const allDeactivated: DeactivatedUser[] = await res.json()
         const deletedUser = allDeactivated.find(u => u.id === user.id)
         expect(deletedUser).toBeDefined()
+        expect(deletedUser?.status).toBe(UserStatus.Deactivated)
     })
 
     test("PATCH /users/:id", async ({request}) => {
@@ -110,7 +111,10 @@ test("PUT /api/users/deactivated/:id", async ({ request }, workerInfo) => {
         expect(res.status(), `Expected 200, but got ${res.status()}: ${res.statusText()}`).toBe(200)
     
         const actualUser = await api.users.get(request, initialUser.id)
-        const expectedUser = initialUser
+        const expectedUser: User = {
+            ...initialUser,
+            status: UserStatus.Active       // Status will change to deactivated on deletion, and then to active on recovery
+        }
         
         assertEqualUsers(actualUser, expectedUser)
     })

@@ -4,6 +4,12 @@ PRAGMA foreign_keys = ON;
 INSERT INTO version(migration) VALUES
     ('24_delete_user.sql');
 
+INSERT INTO
+    user_status(user_status_id, status)
+VALUES
+    (5, 'Deaktivert');
+
+
 -- Add columns: 
 --      is_deactivated
 --      is_deleted 
@@ -20,7 +26,6 @@ ALTER TABLE user
 
 ALTER TABLE user
     ADD COLUMN deleted_at DEFAULT NULL CHECK(deleted_at = NULL OR deleted_at is datetime(deleted_at));
-
 
 -- New trigger: set deactivated_at when user is deactivated.
 CREATE TRIGGER trig_user_deactivated

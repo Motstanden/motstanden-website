@@ -138,7 +138,8 @@ function userStatusToNumber(status: UserStatus): number {
         case UserStatus.Veteran: return 1
         case UserStatus.Retired: return 2
         case UserStatus.Inactive: return 3
-        default: return 4
+        case UserStatus.Deactivated: return 4
+        default: return 5
     }
 }
 

@@ -655,7 +655,9 @@ function MembershipDetailsForm( { initialValue, onCancel, onSave }: DetailsFormP
                     value={value.status}
                     onChange={e => setValue( prev => ({ ...prev, status: e.target.value as UserStatus }))}
                 >
-                    {Object.values(UserStatus).map(status => (
+                    {Object.values(UserStatus)
+                        .filter(status => status !== UserStatus.Deactivated)
+                        .map(status => (
                         <MenuItem key={status} value={status}>
                             {userStatusToPrettyStr(status)}
                         </MenuItem>
@@ -736,6 +738,7 @@ function getStatusExplanation(status: UserStatus): string {
         case UserStatus.Veteran: return "Veteran: Medlem som generelt ikke er aktiv, men som likevel deltar på ting av og til (f.eks SMASH og Forohming)"
         case UserStatus.Retired: return "Pensjonist: Medlem som hverken er aktiv eller deltar på ting. Medlemmet deltar kanskje på større jubileum."
         case UserStatus.Inactive: return "Inaktiv: Medlem som sluttet kort tid etter at vedkommende ble medlem"
+        case UserStatus.Deactivated: return "Deaktivert: Medlem som er midlertidig deaktivert og vil bli slettet etter en viss tid"
     }
 }
 
