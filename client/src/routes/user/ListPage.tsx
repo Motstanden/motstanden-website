@@ -1,4 +1,5 @@
 import {
+    Box,
     Checkbox,
     FormControlLabel,
     IconButton,
@@ -55,7 +56,7 @@ export default function UserListPage() {
 
     const filteredUsers = useDeferredValue(users
         .filter(user => !user.email.toLowerCase().endsWith("@motstanden.no"))
-        .filter(user => statusFilter.size === 0 || statusFilter.has(user.status))
+        .filter(user => statusFilter.has(user.status))
     )
 
     if(isError) {
@@ -345,6 +346,18 @@ function UserTable({
                             </TableCell>
                         </TableRow>
                     ))}
+
+                    {!isLoading && users.length === 0 && (
+                        <TableRow>
+                            <TableCell colSpan={visibleColumns.size + 1} sx={{ textAlign: "center" }}>
+                                <Box sx={{
+                                    color: theme => theme.palette.text.disabled,
+                                }}>
+                                    Ingen brukere...
+                                </Box>
+                            </TableCell>
+                        </TableRow>
+                    )}
                 </TableBody>
             </Table>
         </TableContainer>
@@ -431,16 +444,17 @@ function EmailButton({ users, sx }: { users: User[], sx?: SxProps }) {
     const emailList = users.map(user => user.email).join(",")
     return (
         <IconButton
-                sx={sx}
-                href={`mailto:${emailList}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                LinkComponent="a"
-            >
-                <Tooltip title="Send e-post til brukerne som nå vises i tabellen">
-                    <ForwardToInboxIcon />
-                </Tooltip>
-            </IconButton>
+            sx={sx}
+            disabled={users.length <= 0}
+            href={`mailto:${emailList}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            LinkComponent="a"
+        >
+            <Tooltip title="Send e-post til brukerne som nå vises i tabellen">
+                <ForwardToInboxIcon />
+            </Tooltip>
+        </IconButton>
     )
 }
 
