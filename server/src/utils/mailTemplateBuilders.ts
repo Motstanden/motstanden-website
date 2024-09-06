@@ -1,5 +1,6 @@
 import { randomInt } from "crypto"
 import fs from "fs/promises"
+import { dayjs } from "../lib/dayjs.js"
 
 const basePath = "../../assets/mail-templates" 
 
@@ -33,11 +34,8 @@ async function buildDeletedUserHtml(): Promise<string> {
 async function buildLoginHtml(url: string): Promise<string> {
     const html = await readFile(Templates.Login)
 
-    const {date, time} = getMagicLinkExpireTime()
-
     return html.replace(/{{magicLink}}/g, url)
-        .replace(/{{linkExpireDate}}/g, `${date}`)
-        .replace(/{{linkExpireTime}}/g, `${time}`)
+        .replace(/{{linkExpireDateTime}}/g, dayjs().tz().add(1, "hour").format("[kl.] HH:mm, DD.MM.YYYY"))
         .replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
 }
 
@@ -56,10 +54,8 @@ async function buildReactivatedUserHtml(userProfileUrl: string): Promise<string>
  */
 async function buildWelcomeHtml(url: string): Promise<string> {
     const html = await readFile(Templates.Welcome)
-    const { time } = getMagicLinkExpireTime()
-
     return html.replace(/{{magicLink}}/g, url)
-        .replace(/{{linkExpireTime}}/g, `${time}`)
+        .replace(/{{linkExpireTime}}/g, dayjs().tz().add(1, "hour").format("[kl.] HH:mm"))
         .replace(/{{randomFooterNumber}}/g, randomInt(0, 10000).toString())
 }
 
@@ -67,20 +63,6 @@ async function readFile(filePath: Templates) {
     const url = new URL(filePath.valueOf(), import.meta.url)  
     return await fs.readFile(url, "utf-8")
 }
-
-// The magic link is valid for 1 hour from now
-function getMagicLinkExpireTime(): { date: string, time: string } {
-    const date = new Date()
-    date.setHours(date.getHours() + 1)
-
-    const datePart = date.toLocaleDateString("no-no", { timeZone: "cet" })
-    const timePart = date.toLocaleTimeString("no-no", { timeZone: "cet", hour: '2-digit', minute: '2-digit' })
-
-    return {
-        date: datePart,
-        time: timePart
-    }
-} 
 
 export const mailTemplates = {
     buildLoginHtml,
