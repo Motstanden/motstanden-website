@@ -163,37 +163,19 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
                 to="/dokumenter" 
                 icon={<DocumentsIcon fontSize={iconSize} />} 
                 onLinkClick={onItemClick}/>
-
-            {isSuperAdmin && (
-                <ListItemExpander text="Brukere" dense={isMobile} iconFontSize={iconSize}>
-                    <ListItemLink 
-                        text="Alle brukere" 
-                        to="/brukere" 
-                        activate={matchesUserPage}
-                        matchPattern="/brukere"
-                        icon={<UserListIcon fontSize={iconSize}/>} 
-                        onLinkClick={onItemClick}/>
-                    <ListItemLink 
-                        text="Ny bruker" 
-                        to="/brukere/ny" 
-                        icon={<UserAddIcon fontSize={iconSize}/>} 
-                        onLinkClick={onItemClick}/>
-                    <ListItemLink 
-                        text="Søppelbøtte"
-                        to="/brukere/deaktiverte"
-                        icon={<UserTrashIcon fontSize={iconSize}/>}
-                        onLinkClick={onItemClick}
-                    />
-                </ListItemExpander>
-            )}
-
-            {!isSuperAdmin && (
-                <ListItemLink 
-                text="Medlemmer" 
+            <ListItemLink 
+                text="Brukere" 
                 to="/brukere" 
-                matchPattern="/brukere/*"
+                matchPattern="/brukere"
+                activate={matchesUserPage}
                 icon={<UserListIcon fontSize={iconSize}/>}
                 onLinkClick={onItemClick}/>
+            {isSuperAdmin && (
+                <ListItemLink 
+                    text="Ny bruker" 
+                    to="/brukere/ny" 
+                    icon={<UserAddIcon fontSize={iconSize}/>} 
+                    onLinkClick={onItemClick}/>
             )}
 
             <ListItemHeader title="Eksternt"/>

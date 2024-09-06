@@ -16,7 +16,6 @@ import NewEventPage from "src/routes/event/NewPage"
 import UserListPage from "src/routes/user/ListPage"
 import NewUserPage from "src/routes/user/NewPage"
 import UserPage from "src/routes/user/UserPage"
-import { DeactivatedUserListPage } from "./routes/user/DeactivatedListPage"
 
 // -- Other pages --
 import AdminPage from "src/routes/admin/Admin"
@@ -146,7 +145,6 @@ function App() {
 							<Route path=":userId" element={<UserPage/>} />
 							<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator} />}>
 								<Route path="ny" element={<NewUserPage/>} />
-								<Route path="deaktiverte" element={<DeactivatedUserListPage/>} />
 							</Route>
 						</Route>
 						<Route path="/arrangement" element={<EventContext />}>
