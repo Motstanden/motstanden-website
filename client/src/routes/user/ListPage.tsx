@@ -356,7 +356,7 @@ function UserTable({
                                 {user.phoneNumber ? user.phoneNumber : "-"}
                             </TableCell>
                             <TableCell {...getRowProps(Column.BirthDate)}>
-                                {formatDate(user.birthDate)}
+                                {user.birthDate ? dayjs.utc(user.birthDate).tz().format("DD MMM YYYY") : "-"}
                             </TableCell>
                             <TableCell {...getRowProps(Column.Role)}>
                                 {userGroupToPrettyStr(user.groupName)}
