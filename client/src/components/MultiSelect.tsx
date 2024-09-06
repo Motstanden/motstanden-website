@@ -41,13 +41,13 @@ export function MultiSelect<T extends string>({
     return (
         <FormControl 
             fullWidth={fullWidth}
-            color="secondary"
+            color={color}
             variant="standard"
             sx={{
                 minWidth: "250px",
                 ...sx,
             }}>
-            <InputLabel>
+            <InputLabel >
                 {label}
             </InputLabel>
             <Select
@@ -56,13 +56,21 @@ export function MultiSelect<T extends string>({
                 color={color}
                 onChange={handleChange}
                 sx={{height: "100%"}}
+                SelectDisplayProps={{
+                    style: { 
+                        height: "100%",
+                    }
+                }}
                 renderValue={(selected) => (
                     <Box sx={{ 
                         display: 'flex', 
                         flexWrap: 'wrap', 
-                        gap: 0.5,
-                        mt: 0.2,
-                        mb: 0.5,
+                        columnGap: 0.5,
+                        rowGap: 0.4,
+                        mb: 0.4,
+                        height: "100%",
+                        alignContent: "center",
+                        
                     }}>
                         {selected.map((selectedValue) => (
                             <Chip 
