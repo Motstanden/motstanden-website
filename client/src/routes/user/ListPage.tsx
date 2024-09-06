@@ -42,7 +42,7 @@ import { useAppBarHeader } from "src/context/AppBarHeader"
 import { useAppSnackBar } from 'src/context/AppSnackBar'
 import { usePotentialUser } from "src/context/Authentication"
 import { userReferenceQueryKey } from "src/context/UserReference"
-import { useLocalStorage } from "src/hooks/useStorage"
+import { useLocalStorage, useSessionStorage } from "src/hooks/useStorage"
 import { useTitle } from 'src/hooks/useTitle'
 import { Compare } from "src/utils/compareValue"
 import { putJson } from "src/utils/postJson"
@@ -177,14 +177,20 @@ function useStatusFilter() {
 }
 
 function useRankFilter() {
-    const [rankFilter, setRankFilter] = useState<Set<UserRank>>(new Set())
+    const [rankFilter, setRankFilter] = useLocalStorage<Set<UserRank>>({
+        initialValue: new Set(),
+        key: "user-list-rank-filter",
+    })
     const deferredRankFilter = useDeferredValue(rankFilter)
 
     return { rankFilter, deferredRankFilter, setRankFilter }
 }
 
 function useGroupFilter() {
-    const [groupFilter, setGroupFilter] = useState<Set<UserGroup>>(new Set())
+    const [groupFilter, setGroupFilter] = useLocalStorage<Set<UserGroup>>({
+        initialValue: new Set(),
+        key: "user-list-group-filter",
+    })
     const deferredGroupFilter = useDeferredValue(groupFilter)
 
     return { groupFilter, deferredGroupFilter, setGroupFilter }
@@ -600,8 +606,14 @@ type SortableColumnProps = {
 
 function useSortableColumns(users: (User | DeactivatedUser)[]): SortableColumnProps { 
 
-    const [sortedColumn, setSortedColumn] = useState<Column>(Column.Name)
-    const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
+    const [sortedColumn, setSortedColumn] = useSessionStorage<Column>({
+        key: "user-list-sorted-column",
+        initialValue: Column.Name,
+    })
+    const [sortDirection, setSortDirection] = useSessionStorage<SortDirection>({
+        key: "user-list-sort-direction",
+        initialValue: getDefaultSortDirection(Column.Name),
+    })
 
     const onClick = (column: Column) => { 
         if(column === sortedColumn) {
