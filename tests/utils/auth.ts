@@ -85,7 +85,7 @@ export function unsafeGetUser(group: UserGroup, variantIndex: number): TestUser 
                 storageStatePath: path.join(storageStateDir, `contributor-${variantId}.json`),
 
                 id: contributorStartId + variantId,
-                email: `test-contributor-${variantId}@motstanden.no`,
+                email: `test-contributor-${variantId}@test.motstanden.no`,
                 groupName: UserGroup.Contributor,
                 rank: UserRank.KiloOhm,
                 firstName: "__Test User",
@@ -104,7 +104,7 @@ export function unsafeGetUser(group: UserGroup, variantIndex: number): TestUser 
                 storageStatePath: path.join(storageStateDir, `editor-${variantId}.json`),
 
                 id: editorStartId + variantId,
-                email: `test-editor-${variantId}@motstanden.no`,
+                email: `test-editor-${variantId}@test.motstanden.no`,
                 groupName: UserGroup.Editor,
                 rank: UserRank.MegaOhm,
                 firstName: "__Test User",
@@ -123,7 +123,7 @@ export function unsafeGetUser(group: UserGroup, variantIndex: number): TestUser 
                 storageStatePath: path.join(storageStateDir, `admin-${variantId}.json`),
 
                 id: adminStartId + variantId,
-                email: `test-admin-${variantId}@motstanden.no`,
+                email: `test-admin-${variantId}@test.motstanden.no`,
                 groupName: UserGroup.Administrator,
                 rank: UserRank.GigaOhm,
                 firstName: "__Test User",
@@ -142,7 +142,7 @@ export function unsafeGetUser(group: UserGroup, variantIndex: number): TestUser 
                 storageStatePath: path.join(storageStateDir, `superAdmin-${variantId}.json`),
 
                 id: superAdminStartId + variantId,
-                email: `test-superadmin-${variantId}@motstanden.no`,
+                email: `test-superadmin-${variantId}@test.motstanden.no`,
                 groupName: UserGroup.SuperAdministrator,
                 rank: UserRank.HighImpedance,
                 firstName: "__Test User",

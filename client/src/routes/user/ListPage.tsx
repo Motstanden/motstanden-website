@@ -83,7 +83,7 @@ export default function UserListPage() {
             if(showTestUsers) {
                 return true
             }
-            return !user.email.toLowerCase().endsWith("@motstanden.no")
+            return !user.email.toLowerCase().endsWith("@test.motstanden.no")
         })
         
     if(isError) {

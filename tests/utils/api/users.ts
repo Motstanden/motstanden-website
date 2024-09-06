@@ -91,7 +91,7 @@ async function createRandomUser(workerInfo: TestInfo, group: UserGroup = UserGro
         firstName: `__firstName ${randomUUID().toLowerCase()}`,
         middleName: `__middleName ${randomUUID().toLowerCase()}`,
         lastName: `__lastName ${randomUUID().toLowerCase()}`,
-        email: `${randomUUID().toLowerCase()}@motstanden.no`,
+        email: `${randomUUID().toLowerCase()}@test.motstanden.no`,
         profilePicture: "files/private/profilbilder/girl.png"
     }
     const id = await createUser(request, newUser)

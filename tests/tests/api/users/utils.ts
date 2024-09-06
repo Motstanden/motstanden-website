@@ -41,7 +41,7 @@ export function getRandomPayloadFor(url: UrlType): NewUser | UpdateUserAsSuperAd
                 firstName: `___firstName ${uuid}`,
                 middleName: `___middleName ${uuid}`,
                 lastName: `___lastName ${uuid}`,
-                email: `${uuid}@motstanden.no`,
+                email: `${uuid}@test.motstanden.no`,
                 profilePicture: "files/private/profilbilder/girl.png"
             } satisfies NewUser
         
@@ -50,7 +50,7 @@ export function getRandomPayloadFor(url: UrlType): NewUser | UpdateUserAsSuperAd
                 firstName: `___firstName ${uuid}`,
                 middleName: `___middleName ${uuid}`,
                 lastName: `___lastName ${uuid}`,
-                email: `${uuid}@motstanden.no`,
+                email: `${uuid}@test.motstanden.no`,
                 phoneNumber: randomInt(10000000, 99999999),
                 birthDate: dayjs().subtract(20, "years").utc().format("YYYY-MM-DD"),
             } satisfies UpdateUserPersonalInfoBody;
@@ -70,7 +70,7 @@ export function getRandomPayloadFor(url: UrlType): NewUser | UpdateUserAsSuperAd
                 firstName: `___firstName ${uuid}`,
                 middleName: `___middleName ${uuid}`,
                 lastName: `___lastName ${uuid}`,
-                email: `${uuid}@motstanden.no`,
+                email: `${uuid}@test.motstanden.no`,
                 groupName: UserGroup.Editor,
                 status: UserStatus.Inactive,
                 rank: UserRank.KiloOhm,

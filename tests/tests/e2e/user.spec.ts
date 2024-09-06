@@ -23,7 +23,7 @@ test("Create new user @smoke", async ({browser}, workerInfo) => {
         firstName: `___firstName ${randomUUID().toLowerCase()}`,
         middleName: `___middleName ${randomUUID().toLowerCase()}`,
         lastName: `___lastName ${randomUUID().toLowerCase()}`,
-        email: `${randomUUID().toLowerCase()}@motstanden.no`,
+        email: `${randomUUID().toLowerCase()}@test.motstanden.no`,
     }
 
     await fillPersonalForm(page, user)
@@ -72,7 +72,7 @@ test.describe("Update personal info", () => {
             firstName: `___firstName ${randomUUID().toLowerCase()}`,
             middleName: `___middleName ${randomUUID().toLowerCase()}`,
             lastName: `___lastName ${randomUUID().toLowerCase()}`,
-            email: `${randomUUID().toLowerCase()}@motstanden.no`,
+            email: `${randomUUID().toLowerCase()}@test.motstanden.no`,
             phoneNumber: randomInt(10000000, 99999999),
             birthDate: `${randomInt(1980, 2003)}-${randomInt(1, 12)}-${randomInt(1, 28)}`,
         }

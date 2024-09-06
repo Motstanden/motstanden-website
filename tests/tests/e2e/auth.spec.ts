@@ -3,7 +3,7 @@ import { UserGroup } from 'common/enums'
 import { disposeLogIn, logIn, unsafeApiLogIn } from '../../utils/auth.js'
 
 function getReservedMail(workerInfo: TestInfo) {
-    return `test-auth-${workerInfo.parallelIndex + 1}@motstanden.no`
+    return `test-auth-${workerInfo.parallelIndex + 1}@test.motstanden.no`
 }
 
 // We must do a manual log in to prevent flaky tests.
