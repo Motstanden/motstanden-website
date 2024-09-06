@@ -105,6 +105,7 @@ export default function UserListPage() {
                 rowSpacing={{xs: 2, sm: 3, md: 4}}  
                 sx={{
                     mb: {xs: 3, md: 2},
+                    maxWidth: "1300px",
                 }}
                 >
                 <Grid item xs={12} sm={12} md={4}>
