@@ -514,7 +514,6 @@ function UserRowMenu({ user }: { user: DeactivatedUser }) {
         })
 
         if(res?.ok) {
-
             queryClient.invalidateQueries({queryKey: userReferenceQueryKey})
             await Promise.all([
                 queryClient.invalidateQueries({queryKey: usersQueryKey}),
@@ -523,15 +522,18 @@ function UserRowMenu({ user }: { user: DeactivatedUser }) {
 
             showSnackBar({
                 severity: "success",
-                message: `Brukeren til ${user.firstName} har blitt gjenopprettet`,
-                autoHideDuration: 10000
+                title: "Bruker gjenopprettet",
+                message: `Brukeren til ${user.firstName} har blitt gjenopprettet.`,
+                messageDetails: `${user.firstName} har blitt varslet på e-post.`,
+                autoHideDuration: null
             })
-        } else {
+        } 
+        else if(res !== undefined) {
             showSnackBar({
                 severity: "error",
                 title: "Uventet feil",
-                message: `Kunne ikke gjenopprette brukeren til ${user.firstName}`,
-                messageDetails: "Si ifra til webansvarlig hvis problemet vedvarer",
+                message: `Kunne ikke gjenopprette brukeren til ${user.firstName}.`,
+                messageDetails: "Si ifra til webansvarlig hvis problemet vedvarer.",
                 autoHideDuration: null
             })
         }

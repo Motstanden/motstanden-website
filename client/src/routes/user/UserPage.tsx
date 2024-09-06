@@ -188,19 +188,27 @@ function DeleteUserDialog( {
 
         if(isDeletingSelf) {
             queryClient.resetQueries({queryKey: userAuthQueryKey})
+            showSnackbar({
+                title: "Bruker deaktivert",
+                message: "Brukeren din er deaktivert og vil bli permanent slettet om 90 dager.",
+                messageDetails: "Kontakt Motstandenstyret om du ønsker å gjenopprette brukerkontoen din.",
+                autoHideDuration: null,
+                severity: "success"
+            })
+            navigate("/framside")
         } else {
             queryClient.invalidateQueries({queryKey: userReferenceQueryKey})
             queryClient.resetQueries({queryKey: deactivatedUsersQueryKey}) 
             queryClient.resetQueries({queryKey: usersQueryKey})           
+            showSnackbar({ 
+                title: "Bruker deaktivert",
+                message: `Brukeren til ${user.firstName} er deaktivert og vil bli permanent slettet om 90 dager.`,
+                messageDetails: `${user.firstName} har blitt varslet på e-post.`,
+                autoHideDuration: null,
+                severity: "success" 
+            })
+            navigate("/brukere")
         }
-
-        showSnackbar({ 
-            message: isDeletingSelf ? "Brukeren din har blitt slettet" : `Brukeren til ${user.firstName} har blitt slettet`,
-            autoHideDuration: null,
-            severity: "success" 
-        })
-
-        navigate(isDeletingSelf ? "/framside" : "/brukere")
     }
 
     return (
