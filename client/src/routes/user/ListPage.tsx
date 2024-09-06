@@ -30,7 +30,7 @@ import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox'
 import RestoreIcon from '@mui/icons-material/Restore'
 import TableChartIcon from '@mui/icons-material/TableChart'
 import { useQueryClient } from "@tanstack/react-query"
-import { UserStatus } from "common/enums"
+import { UserGroup, UserRank, UserStatus } from "common/enums"
 import { DeactivatedUser, User } from "common/interfaces"
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
 import dayjs from 'dayjs'
@@ -276,26 +276,31 @@ function UserTable({
         colSpan: col === lastCol ? 2 : 1,
     })
 
-
     return (
         <TableContainer component={Paper}>
             <Table>
                 <TableHead sx={headerStyle}>
                     <TableRow>
+                        {/* <TableCell {...getHeaderProps(Column.Name)}>Navn</TableCell> */}
                         <TableHeaderCell value={Column.Name} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
                             Navn
                         </TableHeaderCell>
-                        {/* <TableCell {...getHeaderProps(Column.Name)}>Navn</TableCell> */}
-                        <TableCell {...getHeaderProps(Column.Rank)}>Rang</TableCell>
+                        {/* <TableCell {...getHeaderProps(Column.Rank)}>Rang</TableCell> */}
+                        <TableHeaderCell value={Column.Rank} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
+                            Rang
+                        </TableHeaderCell>
                         <TableCell {...getHeaderProps(Column.CapeName)}>Kappe</TableCell>
+                        {/* <TableCell {...getHeaderProps(Column.Status)}>Status</TableCell> */}
                         <TableHeaderCell value={Column.Status} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
                             Status
                         </TableHeaderCell>
-                        {/* <TableCell {...getHeaderProps(Column.Status)}>Status</TableCell> */}
                         <TableCell {...getHeaderProps(Column.Email)}>E-post</TableCell>
                         <TableCell {...getHeaderProps(Column.PhoneNumber)}>Tlf.</TableCell>
                         <TableCell {...getHeaderProps(Column.BirthDate)}>Bursdag</TableCell>
-                        <TableCell {...getHeaderProps(Column.Role)}>Rolle</TableCell>
+                        {/* <TableCell {...getHeaderProps(Column.Role)}>Rolle</TableCell> */}
+                        <TableHeaderCell value={Column.Role} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
+                            Rolle
+                        </TableHeaderCell>
                         <TableCell {...getHeaderProps(Column.StartDate)}>Start</TableCell>
                         <TableCell {...getHeaderProps(Column.EndDate)}>Slutt</TableCell>
                         <TableCell {...getHeaderProps(Column.DeactivatedAt)}>Deaktivert</TableCell>
@@ -426,16 +431,11 @@ function useSortableColumns(users: (User | DeactivatedUser)[]): SortableColumnPr
             setSortDirection(sortDirection === "asc" ? "desc" : "asc")
         } else {
             setSortedColumn(column)
-            setSortDirection("asc")
+            setSortDirection(getDefaultSortDirection(column))
         }
     }
 
-    const sortedUsers = [...users]
-    if(sortedColumn === Column.Name) { 
-        sortedUsers.sort((a, b) => Compare.alphanumerical(getFullName(a), getFullName(b), sortDirection))
-    } else if (sortedColumn === Column.Status) {
-        sortedUsers.sort((a, b) => compareByUserStatus(a.status, b.status, sortDirection))
-    }
+    const sortedUsers = sortUsers(users, sortedColumn, sortDirection)
 
     return {
         sortedUsers,
@@ -444,6 +444,16 @@ function useSortableColumns(users: (User | DeactivatedUser)[]): SortableColumnPr
         sortedColumn
     }
 }  
+
+function getDefaultSortDirection(column: Column): SortDirection { 
+    switch(column) { 
+        case Column.Rank:
+        case Column.Status:
+        case Column.Role: 
+            return "desc"
+        default: return "asc"
+    }
+}
 
 type TableHeaderCellProps = Omit<SortableColumnProps, "sortedUsers"> & {
     value: Column,
@@ -467,7 +477,7 @@ function TableHeaderCell( {
         >
             <TableSortLabel
                 active={sortedColumn === value}
-                direction={sortedColumn === value ? sortDirection : "asc"}
+                direction={sortedColumn === value ? sortDirection : getDefaultSortDirection(value)}
                 onClick={() => onClick?.(value)}
                 >
                 {children}
@@ -648,10 +658,35 @@ function UserRowMenu({ user }: { user: DeactivatedUser | User }) {
     )
 }
 
+function sortUsers(users: (User | DeactivatedUser)[], column: Column, direction: SortDirection): (User | DeactivatedUser)[] { 
+    const sortedUsers = [...users]
+    switch(column) { 
+        case Column.Name: 
+            return sortedUsers.sort((a, b) => Compare.alphanumerical(getFullName(a), getFullName(b), direction))
+        case Column.Rank: 
+            return sortedUsers.sort((a, b) => compareByUserRank(a.rank, b.rank, direction))
+        case Column.Status: 
+            return sortedUsers.sort((a, b) => compareByUserStatus(a.status, b.status, direction))
+        case Column.Role: 
+            return sortedUsers.sort((a, b) => compareByUserRole(a.groupName, b.groupName, direction))
+        default: {
+            if(import.meta.env.DEV)
+                throw new Error("Not implemented")
+            return sortedUsers
+        }
+    }
+}
+
 function compareByUserStatus(a: UserStatus, b: UserStatus, sortDirection: "asc" | "desc"): number { 
-    const numA = userStatusToNumber(a)
-    const numB = userStatusToNumber(b)
-    return sortDirection === "asc" ? numA - numB : numB - numA
+    return Compare.number(userStatusToNumber(a), userStatusToNumber(b), sortDirection)
+}
+
+function compareByUserRank(a: UserRank, b: UserRank, sortDirection: "asc" | "desc"): number { 
+    return Compare.number(userRankToNumber(a), userRankToNumber(b), sortDirection)
+}
+
+function compareByUserRole(a: UserGroup, b: UserGroup, sortDirection: "asc" | "desc"): number { 
+    return Compare.number(userRoleToNumber(a), userRoleToNumber(b), sortDirection)
 }
 
 function userStatusToNumber(status: UserStatus): number { 
@@ -665,6 +700,27 @@ function userStatusToNumber(status: UserStatus): number {
     }
 }
 
+function userRankToNumber(rank: UserRank): number { 
+    switch(rank) { 
+        case UserRank.ShortCircuit: return 1
+        case UserRank.Ohm: return 2
+        case UserRank.KiloOhm: return 3
+        case UserRank.MegaOhm: return 4
+        case UserRank.GigaOhm: return 5
+        case UserRank.HighImpedance: return 6
+        default: return 0
+    }
+}
+
+function userRoleToNumber(role: UserGroup): number { 
+    switch(role) { 
+        case UserGroup.Contributor: return 1
+        case UserGroup.Editor: return 2
+        case UserGroup.Administrator: return 3
+        case UserGroup.SuperAdministrator: return 4
+        default: return 0
+    }
+}
 
 function formatDate(dateStr: string | null) {
     return dateStr ? dayjs.utc(dateStr).tz().format("MMM YYYY") : "-"
