@@ -251,6 +251,13 @@ function SelectGroup({value, onChange, sx}: SelectFilterProps<UserGroup>) {
         onChange?.(new Set(sortedValues))
     }
 
+    const groupToPrettyString = (group: UserGroup) => { 
+        if(group === UserGroup.Contributor) 
+            return "Ingen rolle"
+        else 
+            return userGroupToPrettyStr(group)
+    }
+
     return (
         <MultiSelect
             value={Array.from(value)} 
@@ -259,22 +266,23 @@ function SelectGroup({value, onChange, sx}: SelectFilterProps<UserGroup>) {
             onChange={handleChange}
             sx={sx}
             fullWidth
+            prettifyValue={groupToPrettyString}
             >
                 <MenuItem value={UserGroup.Contributor}>
                     <Checkbox checked={value.has(UserGroup.Contributor)} color="secondary" />
-                    <ListItemText primary="Bidragsyter"/>
+                    <ListItemText primary={groupToPrettyString(UserGroup.Contributor)}/>
                 </MenuItem>
                 <MenuItem value={UserGroup.Editor}>
                     <Checkbox checked={value.has(UserGroup.Editor)} color="secondary" />
-                    <ListItemText primary="Redaktør"/>
+                    <ListItemText primary={groupToPrettyString(UserGroup.Editor)}/>
                 </MenuItem>
                 <MenuItem value={UserGroup.Administrator}>
                     <Checkbox checked={value.has(UserGroup.Administrator)} color="secondary" />
-                    <ListItemText primary="Administrator"/>
+                    <ListItemText primary={groupToPrettyString(UserGroup.Administrator)}/>
                 </MenuItem>
                 <MenuItem value={UserGroup.SuperAdministrator}>
                     <Checkbox checked={value.has(UserGroup.SuperAdministrator)} color="secondary" />
-                    <ListItemText primary="Superadministrator"/>
+                    <ListItemText primary={groupToPrettyString(UserGroup.SuperAdministrator)}/>
                 </MenuItem>
         </MultiSelect>
     )
@@ -296,35 +304,36 @@ function SelectRank( {value, onChange, sx}: SelectFilterProps<UserRank>) {
             onChange={handleChange}
             sx={sx}
             fullWidth
+            prettifyValue={userRankToPrettyStr}
             >
                 <MenuItem value={UserRank.ShortCircuit}>
                     <Checkbox checked={value.has(UserRank.ShortCircuit)} color="secondary"  />
-                    <ListItemText primary="0Ω"/>
+                    <ListItemText primary={userRankToPrettyStr(UserRank.ShortCircuit)}/>
                 </MenuItem>
 
                 <MenuItem value={UserRank.Ohm}>
                     <Checkbox checked={value.has(UserRank.Ohm)} color="secondary" />
-                    <ListItemText primary="1Ω"/>
+                    <ListItemText primary={userRankToPrettyStr(UserRank.Ohm)}/>
                 </MenuItem>
 
                 <MenuItem value={UserRank.KiloOhm}>
                     <Checkbox checked={value.has(UserRank.KiloOhm)} color="secondary" />
-                    <ListItemText primary="kΩ"/>
+                    <ListItemText primary={userRankToPrettyStr(UserRank.KiloOhm)}/>
                 </MenuItem>
 
                 <MenuItem value={UserRank.MegaOhm}>
                     <Checkbox checked={value.has(UserRank.MegaOhm)} color="secondary" />
-                    <ListItemText primary="MΩ"/>
+                    <ListItemText primary={userRankToPrettyStr(UserRank.MegaOhm)}/>
                 </MenuItem>
 
                 <MenuItem value={UserRank.GigaOhm}>
                     <Checkbox checked={value.has(UserRank.GigaOhm)} color="secondary" />
-                    <ListItemText primary="GΩ"/>
+                    <ListItemText primary={userRankToPrettyStr(UserRank.GigaOhm)}/>
                 </MenuItem>
 
                 <MenuItem value={UserRank.HighImpedance}>
                     <Checkbox checked={value.has(UserRank.HighImpedance)} color="secondary" />
-                    <ListItemText primary="Høyimpedant" secondary=""/>
+                    <ListItemText primary={userRankToPrettyStr(UserRank.HighImpedance)}/>
                 </MenuItem>
         </MultiSelect>
     )

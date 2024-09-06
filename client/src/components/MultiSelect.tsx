@@ -13,7 +13,8 @@ type Color = "primary" | "secondary" | "error" | "info" | "success" | "warning"
 
 export function MultiSelect<T extends string>({ 
     label, 
-    value, 
+    value,
+    prettifyValue,
     onChange, 
     children,
     sx, 
@@ -22,6 +23,7 @@ export function MultiSelect<T extends string>({
 }: { 
     value: T[], 
     label?: string,
+    prettifyValue?: (value: T) => string,
     onChange?: (value: T[]) => void, 
     children?: ReactNode,
     sx?: SxProps,
@@ -65,7 +67,7 @@ export function MultiSelect<T extends string>({
                         {selected.map((selectedValue) => (
                             <Chip 
                                 key={selectedValue} 
-                                label={selectedValue} 
+                                label={prettifyValue === undefined ? selectedValue : prettifyValue(selectedValue)} 
                                 color={color}
                                 variant="outlined"
                                 size="small"
