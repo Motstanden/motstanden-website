@@ -1,22 +1,23 @@
-import { Grid, Link, Skeleton, Theme, useMediaQuery } from "@mui/material";
-import { UseQueryResult, useQuery, useQueryClient } from "@tanstack/react-query";
-import { EventData, Poll, Quote, Rumour } from "common/interfaces";
-import dayjs, { Dayjs } from "dayjs";
-import React from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { TitleCard } from "src/components/TitleCard";
-import { useTimeZone } from "src/context/TimeZone";
-import { useTitle } from "src/hooks/useTitle";
-import { buildEventItemUrl } from "src/routes/event/Context";
-import { QuoteList } from "src/routes/quotes/ListPage";
-import { QuotesListSkeleton } from "src/routes/quotes/skeleton/ListPage";
-import { RumourList } from "src/routes/rumour/RumourPage";
-import { fetchFn } from "src/utils/fetchAsync";
-import { BoardPageUtils, RawProjectData } from "../boardWebsiteList/BoardWebsiteList";
-import { pollBaseQueryKey } from "../poll/Context";
-import { PollCard } from '../poll/components/PollCard';
-import { PollCardSkeleton } from '../poll/skeleton/PollCard';
-import { RumourListSkeleton } from "../rumour/skeleton/RumourPage";
+import { Grid, Link, Skeleton, Theme, useMediaQuery } from "@mui/material"
+import { UseQueryResult, useQuery, useQueryClient } from "@tanstack/react-query"
+import { EventData, Poll, Quote, Rumour } from "common/interfaces"
+import dayjs, { Dayjs } from "dayjs"
+import React from "react"
+import { Link as RouterLink } from "react-router-dom"
+import { TitleCard } from "src/components/TitleCard"
+import { useTimeZone } from "src/context/TimeZone"
+import { useTitle } from "src/hooks/useTitle"
+import { buildEventItemUrl } from "src/routes/event/Context"
+import { QuoteList } from "src/routes/quotes/ListPage"
+import { QuotesListSkeleton } from "src/routes/quotes/skeleton/ListPage"
+import { RumourList } from "src/routes/rumour/RumourPage"
+import { fetchFn } from "src/utils/fetchAsync"
+import { BoardPageUtils, RawProjectData } from "../boardWebsiteList/BoardWebsiteList"
+import { pollBaseQueryKey } from "../poll/Context"
+import { PollCard } from '../poll/components/PollCard'
+import { PollCardSkeleton } from '../poll/skeleton/PollCard'
+import { RumourListSkeleton } from "../rumour/skeleton/RumourPage"
+import { Compare } from "src/utils/compareValue"
 
 
 export default function Home() {
@@ -225,7 +226,7 @@ function RenderBoardPageList(props: RenderItemProps<RawProjectData>){
     const pages = BoardPageUtils.cleanPageData(props.items.pages)
     
     const updatedPages = pages.filter(page => page.isUpdated)
-        .sort((a, b) => BoardPageUtils.compareByTimestamp(a.updated, b.updated, "desc"))
+        .sort((a, b) => Compare.timestamp(a.updated, b.updated, "desc"))
         .slice(0, 4)
 
     const formatUpdateText = (date: Dayjs | undefined) => {

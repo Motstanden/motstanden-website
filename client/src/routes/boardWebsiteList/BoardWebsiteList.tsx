@@ -20,6 +20,7 @@ import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton"
 import { useAppBarHeader } from "src/context/AppBarHeader"
 import { useTitle } from "src/hooks/useTitle"
 import { PageContainer } from "src/layout/PageContainer/PageContainer"
+import { Compare } from "src/utils/compareValue"
 import { fetchFn } from "src/utils/fetchAsync"
 
 const topSimpleTextKey = "board-website-list-top"
@@ -98,6 +99,10 @@ function removeIndexFromUrl(url: string) {
     return url;
 }
 
+export const BoardPageUtils = {
+    cleanPageData
+}
+
 function cleanPageData( rawPage: RawPageData[] | undefined): PageData[] {
     if(!rawPage)
         return []
@@ -114,11 +119,6 @@ function cleanPageData( rawPage: RawPageData[] | undefined): PageData[] {
             }
         })
         .reverse()
-}
-
-export const BoardPageUtils = {
-    cleanPageData: cleanPageData,
-    compareByTimestamp: compareByTimestamp,
 }
 
 function BoardPageTableLoader() {
@@ -165,16 +165,16 @@ function BoardPageTable( {data: pages} : {data: PageData[]}) {
 
     const sortedPages: PageData[] = [...pages]
     if (sortedColumn === "year") {
-        sortedPages.sort((a, b) => compareByNumber(a.year, b.year, sortDirection));
+        sortedPages.sort((a, b) => Compare.number(a.year, b.year, sortDirection));
     } 
     else if (sortedColumn === "isUpdated") {
-        sortedPages.sort((a, b) => compareByBoolean(a.isUpdated, b.isUpdated, sortDirection));
+        sortedPages.sort((a, b) => Compare.boolean(a.isUpdated, b.isUpdated, sortDirection));
     } 
     else if (sortedColumn === "created") {
-        sortedPages.sort((a, b) => compareByTimestamp(a.created, b.created, sortDirection));
+        sortedPages.sort((a, b) => Compare.timestamp(a.created, b.created, sortDirection));
     } 
     else if (sortedColumn === "updated") {
-        sortedPages.sort((a, b) => compareByTimestamp(a.updated, b.updated, sortDirection));
+        sortedPages.sort((a, b) => Compare.timestamp(a.updated, b.updated, sortDirection));
     }
 
     return (
@@ -246,18 +246,4 @@ function BoardPageTable( {data: pages} : {data: PageData[]}) {
             </Table>
         </TableContainer>
     )
-}
-
-function compareByNumber(a: number, b: number, sortDirection: "asc" | "desc"): number {
-    return sortDirection === "asc" ? a - b : b - a;
-}
-
-function compareByBoolean(a: boolean, b: boolean, sortDirection: "asc" | "desc"): number {
-    return sortDirection === "asc" ? (a ? -1 : 1) : (a ? 1 : -1);
-}
-
-function compareByTimestamp(a: Dayjs | undefined, b: Dayjs | undefined, sortDirection: "asc" | "desc"): number {
-    const aValue = a?.unix() ?? 0;
-    const bValue = b?.unix() ?? 0;
-    return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
 }
