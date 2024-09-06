@@ -44,9 +44,9 @@ import { usePotentialUser } from "src/context/Authentication"
 import { userReferenceQueryKey } from "src/context/UserReference"
 import { useLocalStorage } from "src/hooks/useStorage"
 import { useTitle } from 'src/hooks/useTitle'
+import { Compare } from "src/utils/compareValue"
 import { putJson } from "src/utils/postJson"
 import { deactivatedUsersQueryKey, useDeactivatedUsersQuery, usersQueryKey, userUsersQuery } from "./Queries"
-import { Compare } from "src/utils/compareValue"
 
 export default function UserListPage() {
     useTitle("Medlemsliste")
@@ -271,7 +271,7 @@ function UserTable({
     const { visibleColumns, toggleVisibility, updateVisibility } = useVisibleColumns()
     const { sortedUsers, ...tableHeaderCellProps } = useSortableColumns(users)
 
-    const hasDeactivatedUsers = users.some(user => "deactivatedAt" in user)
+    const hasDeactivatedUsers = users.some(user => user.status === UserStatus.Deactivated)
     if(hasDeactivatedUsers) { 
         updateVisibility(Column.RestoreUserMenu, true)
     } else if(!hasDeactivatedUsers) { 
@@ -330,8 +330,8 @@ function UserTable({
                     {!isLoading && sortedUsers.map((user) => (
                         <TableRow sx={rowStyle} key={user.email}>
                             <TableCell colSpan={lastCol === Column.Name ? 2 : 1}>
-                                 { "deactivatedAt" in user === true && getFullName(user)}
-                                 { "deactivatedAt" in user === false && (
+                                 { user.status === UserStatus.Deactivated && getFullName(user)}
+                                 { user.status !== UserStatus.Deactivated && (
                                     <Link
                                         component={RouterLink}
                                         to={`/brukere/${user.id}`}
@@ -390,7 +390,7 @@ function UserTable({
                                     display: visibleColumns.has(Column.RestoreUserMenu) ? "table-cell" : "none",
                                     paddingRight: "5px",
                                 }}>
-                                { "deactivatedAt" in user === true && <UserRowMenu user={user} />}
+                                { user.status === UserStatus.Deactivated && <UserRowMenu user={user} />}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -576,7 +576,6 @@ function ColumnCheckbox({ label, checked, onChange, onClick, onTouchEnd }: Colum
                     />}
             />
         </Grid>
-
     )
 }
 
@@ -598,7 +597,7 @@ function EmailButton({ users, sx }: { users: User[], sx?: SxProps }) {
     )
 }
 
-function UserRowMenu({ user }: { user: DeactivatedUser }) { 
+function UserRowMenu({ user }: { user: DeactivatedUser | User }) { 
 
     const [ isPosting, setIsPosting ] = useState(false)
     const showSnackBar = useAppSnackBar()
