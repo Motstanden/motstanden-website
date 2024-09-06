@@ -523,12 +523,16 @@ function UserRowMenu({ user }: { user: DeactivatedUser }) {
 
             showSnackBar({
                 severity: "success",
-                message: `Brukeren til ${user.firstName} har blitt gjenopprettet`
+                message: `Brukeren til ${user.firstName} har blitt gjenopprettet`,
+                autoHideDuration: 10000
             })
         } else {
             showSnackBar({
                 severity: "error",
-                message: `Kunne ikke gjenopprette brukeren til ${user.firstName}`
+                title: "Uventet feil",
+                message: `Kunne ikke gjenopprette brukeren til ${user.firstName}`,
+                messageDetails: "Si ifra til webansvarlig hvis problemet vedvarer",
+                autoHideDuration: null
             })
         }
 
