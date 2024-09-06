@@ -289,14 +289,26 @@ function UserTable({
                         <TableHeaderCell value={Column.Rank} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
                             Rang
                         </TableHeaderCell>
-                        <TableCell {...getHeaderProps(Column.CapeName)}>Kappe</TableCell>
+                        {/* <TableCell {...getHeaderProps(Column.CapeName)}>Kappe</TableCell> */}
+                        <TableHeaderCell value={Column.CapeName} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
+                            Kappe
+                        </TableHeaderCell>
                         {/* <TableCell {...getHeaderProps(Column.Status)}>Status</TableCell> */}
                         <TableHeaderCell value={Column.Status} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
                             Status
                         </TableHeaderCell>
-                        <TableCell {...getHeaderProps(Column.Email)}>E-post</TableCell>
-                        <TableCell {...getHeaderProps(Column.PhoneNumber)}>Tlf.</TableCell>
-                        <TableCell {...getHeaderProps(Column.BirthDate)}>Bursdag</TableCell>
+                        {/* <TableCell {...getHeaderProps(Column.Email)}>E-post</TableCell> */}
+                        <TableHeaderCell value={Column.Email} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
+                            E-post
+                        </TableHeaderCell>
+                        {/* <TableCell {...getHeaderProps(Column.PhoneNumber)}>Tlf.</TableCell> */}
+                        <TableHeaderCell value={Column.PhoneNumber} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
+                            Tlf.
+                        </TableHeaderCell>
+                        {/* <TableCell {...getHeaderProps(Column.BirthDate)}>Bursdag</TableCell> */}
+                        <TableHeaderCell value={Column.BirthDate} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
+                            Bursdag
+                        </TableHeaderCell>
                         {/* <TableCell {...getHeaderProps(Column.Role)}>Rolle</TableCell> */}
                         <TableHeaderCell value={Column.Role} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
                             Rolle
@@ -665,10 +677,24 @@ function sortUsers(users: (User | DeactivatedUser)[], column: Column, direction:
             return sortedUsers.sort((a, b) => Compare.alphanumerical(getFullName(a), getFullName(b), direction))
         case Column.Rank: 
             return sortedUsers.sort((a, b) => compareByUserRank(a.rank, b.rank, direction))
+        case Column.CapeName:
+            return sortedUsers.sort((a, b) => Compare.alphanumerical(a.capeName, b.capeName, direction))
         case Column.Status: 
             return sortedUsers.sort((a, b) => compareByUserStatus(a.status, b.status, direction))
+        case Column.Email:
+            return sortedUsers.sort((a, b) => Compare.alphanumerical(a.email, b.email, direction))
+        case Column.PhoneNumber:
+            return sortedUsers.sort((a, b) => Compare.number(a.phoneNumber ?? 0, b.phoneNumber ?? 0, direction))
+        case Column.BirthDate:
+            throw new Error("Not implemented")
         case Column.Role: 
             return sortedUsers.sort((a, b) => compareByUserRole(a.groupName, b.groupName, direction))
+        case Column.StartDate:
+            throw new Error("Not implemented")
+        case Column.EndDate:
+            throw new Error("Not implemented")
+        case Column.DeactivatedAt:
+            throw new Error("Not implemented")
         default: {
             if(import.meta.env.DEV)
                 throw new Error("Not implemented")
