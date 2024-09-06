@@ -19,8 +19,8 @@ const bree = new Bree({
     // Prevents jobs from running when the server starts up
     timeout: false,
 
-    // Forcefully close a job after 1 hour. Something must be wrong if a job takes this long to complete.
-    closeWorkerAfterMs: 1000 * 60 * 60,
+    // Forcefully close a job after 5 hour. Something must be wrong if a job takes this long to complete.
+    closeWorkerAfterMs: 5000 * 60 * 60,
 
     jobs: [
         // Runs `jobs/deleteDeactivatedUsers.js` every day at midnight
