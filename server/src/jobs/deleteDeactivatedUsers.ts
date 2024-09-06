@@ -207,7 +207,7 @@ function deleteAllComments(db: DatabaseType, userId: number) {
 }
 
 if(isMainModule(import.meta.url)) {
-    main()
+    await main()
     parentPort?.postMessage("done")
 }
 
