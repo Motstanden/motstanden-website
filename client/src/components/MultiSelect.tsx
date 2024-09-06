@@ -61,6 +61,13 @@ export function MultiSelect<T extends string>({
                         height: "100%",
                     }
                 }}
+                MenuProps={{
+                    sx: {
+                        "&& .Mui-selected": {
+                            backgroundColor: theme => theme.palette.action.selected,
+                        }
+                    }
+                }}
                 renderValue={(selected) => (
                     <Box sx={{ 
                         display: 'flex', 
@@ -84,9 +91,6 @@ export function MultiSelect<T extends string>({
                         ))}
                     </Box>
                 )}
-                MenuProps={{
-                    color: color,
-                }}
             >
                 {children}
             </Select>

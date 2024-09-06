@@ -95,7 +95,7 @@ export default function UserListPage() {
             {import.meta.env.DEV && (
                 <FormControlLabel 
                     label="Vis testbrukere"
-                    onChange={(e) => setShowTestUsers?.(prev => !prev)}
+                    onChange={(_e) => setShowTestUsers?.(prev => !prev)}
                     control={
                         <Checkbox checked={showTestUsers} color="secondary"/>}
                 />
