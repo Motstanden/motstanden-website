@@ -53,6 +53,7 @@ export function MultiSelect<T extends string>({
                 value={value}
                 color={color}
                 onChange={handleChange}
+                sx={{height: "100%"}}
                 renderValue={(selected) => (
                     <Box sx={{ 
                         display: 'flex', 

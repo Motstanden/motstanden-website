@@ -53,6 +53,8 @@ export default function UserListPage() {
     useAppBarHeader("Medlemsliste")
     
     const { statusFilter, deferredStatusFilter, setStatusFilter } = useStatusFilter()
+    const { rankFilter, deferredRankFilter, setRankFilter } = useRankFilter()
+    const { groupFilter, deferredGroupFilter, setGroupFilter } = useGroupFilter()
 
     const normalUsers = userUsersQuery()
     const deactivatedUsers = useDeactivatedUsersQuery()
@@ -67,6 +69,8 @@ export default function UserListPage() {
     const filteredUsers = users
         .filter(user => !user.email.toLowerCase().endsWith("@motstanden.no"))
         .filter(user => deferredStatusFilter.size === 0 || deferredStatusFilter.has(user.status))
+        .filter(user => deferredRankFilter.size === 0 || deferredRankFilter.has(user.rank))
+        .filter(user => deferredGroupFilter.size === 0 || deferredGroupFilter.has(user.groupName))
     
     if(isError) {
         return `${normalUsers.isError ? normalUsers.error : deactivatedUsers.error}`
@@ -74,15 +78,50 @@ export default function UserListPage() {
 
     return (
         <>
-            <SelectStatus 
-                value={statusFilter} 
-                onChange={(value) => setStatusFilter(value)}
+            <Grid container 
+                columnSpacing={4} 
+                rowSpacing={{xs: 2, sm: 3, md: 4}}  
                 sx={{
-                    marginBottom: "20px",
-                    width: "220px",
-                    minWidth: "0px",
+                    mb: {xs: 3, md: 2},
                 }}
-            />
+                >
+                <Grid item xs={12} sm={12} md={4}>
+                    <SelectStatus 
+                        value={statusFilter} 
+                        onChange={(value) => setStatusFilter(value)}
+                        sx={{
+                            height: "100%",
+                            minHeight: "100%",
+                            minWidth: "0px",
+                            maxWidth: "400px"
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={12} md={4}> 
+                    <SelectRank 
+                        value={rankFilter} 
+                        onChange={(value) => setRankFilter(value)}
+                        sx={{
+                            height: "100%",
+                            minHeight: "100%",
+                            minWidth: "0px",
+                            maxWidth: "400px"
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={12} md={4}>
+                    <SelectGroup 
+                        value={groupFilter} 
+                        onChange={(value) => setGroupFilter(value)}
+                        sx={{
+                            height: "100%",
+                            minHeight: "100%",
+                            minWidth: "0px",
+                            maxWidth: "400px"
+                        }}
+                        />
+                </Grid>
+            </Grid>
             <UserTable
                 isLoading={isLoading}
                 users={filteredUsers}
@@ -114,13 +153,27 @@ function useStatusFilter() {
     return { statusFilter, deferredStatusFilter, setStatusFilter }
 }
 
-function SelectStatus({ 
-    value, onChange, sx 
-}: { 
-    value: Set<UserStatus>, 
-    onChange?: (value: Set<UserStatus>) => void, 
-    sx?: SxProps 
-}) {
+function useRankFilter() {
+    const [rankFilter, setRankFilter] = useState<Set<UserRank>>(new Set())
+    const deferredRankFilter = useDeferredValue(rankFilter)
+
+    return { rankFilter, deferredRankFilter, setRankFilter }
+}
+
+function useGroupFilter() {
+    const [groupFilter, setGroupFilter] = useState<Set<UserGroup>>(new Set())
+    const deferredGroupFilter = useDeferredValue(groupFilter)
+
+    return { groupFilter, deferredGroupFilter, setGroupFilter }
+}
+
+interface SelectFilterProps<T> {
+    value: Set<T>,
+    onChange?: (value: Set<T>) => void,
+    sx?: SxProps
+}
+
+function SelectStatus({value, onChange, sx}: SelectFilterProps<UserStatus>) {
 
     const { isSuperAdmin } = usePotentialUser()
 
@@ -135,6 +188,7 @@ function SelectStatus({
             label="Statusfilter"
             color="secondary"
             onChange={handleChange}
+            fullWidth
             sx={sx}
             >
                 <MenuItem value={UserStatus.Active}>
@@ -164,6 +218,91 @@ function SelectStatus({
                     </MenuItem>
                 )}
 
+        </MultiSelect>
+    )
+}
+
+function SelectGroup({value, onChange, sx}: SelectFilterProps<UserGroup>) { 
+    const handleChange = (newValues: UserGroup[]) => { 
+        const sortedValues = newValues.sort((a, b) => compareByUserRole(a, b, "asc"))
+        onChange?.(new Set(sortedValues))
+    }
+
+    return (
+        <MultiSelect
+            value={Array.from(value)} 
+            label="Rollefilter"
+            color="secondary"
+            onChange={handleChange}
+            sx={sx}
+            fullWidth
+            >
+                <MenuItem value={UserGroup.Contributor}>
+                    <Checkbox checked={value.has(UserGroup.Contributor)} color="secondary" />
+                    <ListItemText primary="Bidragsyter"/>
+                </MenuItem>
+                <MenuItem value={UserGroup.Editor}>
+                    <Checkbox checked={value.has(UserGroup.Editor)} color="secondary" />
+                    <ListItemText primary="Redaktør"/>
+                </MenuItem>
+                <MenuItem value={UserGroup.Administrator}>
+                    <Checkbox checked={value.has(UserGroup.Administrator)} color="secondary" />
+                    <ListItemText primary="Administrator"/>
+                </MenuItem>
+                <MenuItem value={UserGroup.SuperAdministrator}>
+                    <Checkbox checked={value.has(UserGroup.SuperAdministrator)} color="secondary" />
+                    <ListItemText primary="Superadministrator"/>
+                </MenuItem>
+        </MultiSelect>
+    )
+}
+
+
+function SelectRank( {value, onChange, sx}: SelectFilterProps<UserRank>) {
+
+    const handleChange = (newValues: UserRank[]) => { 
+        const sortedValues = newValues.sort((a, b) => compareByUserRank(a, b, "asc"))
+        onChange?.(new Set(sortedValues))
+    }
+
+    return (
+        <MultiSelect
+            value={Array.from(value)} 
+            label="Rangfilter"
+            color="secondary"
+            onChange={handleChange}
+            sx={sx}
+            fullWidth
+            >
+                <MenuItem value={UserRank.ShortCircuit}>
+                    <Checkbox checked={value.has(UserRank.ShortCircuit)} color="secondary"  />
+                    <ListItemText primary="0Ω"/>
+                </MenuItem>
+
+                <MenuItem value={UserRank.Ohm}>
+                    <Checkbox checked={value.has(UserRank.Ohm)} color="secondary" />
+                    <ListItemText primary="1Ω"/>
+                </MenuItem>
+
+                <MenuItem value={UserRank.KiloOhm}>
+                    <Checkbox checked={value.has(UserRank.KiloOhm)} color="secondary" />
+                    <ListItemText primary="kΩ"/>
+                </MenuItem>
+
+                <MenuItem value={UserRank.MegaOhm}>
+                    <Checkbox checked={value.has(UserRank.MegaOhm)} color="secondary" />
+                    <ListItemText primary="MΩ"/>
+                </MenuItem>
+
+                <MenuItem value={UserRank.GigaOhm}>
+                    <Checkbox checked={value.has(UserRank.GigaOhm)} color="secondary" />
+                    <ListItemText primary="GΩ"/>
+                </MenuItem>
+
+                <MenuItem value={UserRank.HighImpedance}>
+                    <Checkbox checked={value.has(UserRank.HighImpedance)} color="secondary" />
+                    <ListItemText primary="Høyimpedant" secondary=""/>
+                </MenuItem>
         </MultiSelect>
     )
 }
