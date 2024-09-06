@@ -449,7 +449,7 @@ function useSortableColumns(users: (User | DeactivatedUser)[]): SortableColumnPr
 
     const sortedUsers = [...users]
     if(sortedColumn === Column.Name) { 
-        sortedUsers.sort((a, b) => Compare.alphanum(getFullName(a), getFullName(b), sortDirection))
+        sortedUsers.sort((a, b) => Compare.alphanumerical(getFullName(a), getFullName(b), sortDirection))
     }
 
     return {
