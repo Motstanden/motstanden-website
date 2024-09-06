@@ -183,7 +183,6 @@ function userStatusToNumber(status: UserStatus): number {
     }
 }
 
-
 // The number corresponds to the index of the column in the table
 enum Column {
     Name = 0,
@@ -197,6 +196,7 @@ enum Column {
     StartDate = 8,
     EndDate = 9,
     DeactivatedAt = 10,
+    RestoreUserMenu = 11,
 }
 
 function useVisibleColumns() {
@@ -209,7 +209,6 @@ function useVisibleColumns() {
             Column.Name,
             Column.CapeName,
             Column.Rank,
-            isSuperAdmin ? Column.Status : Column.DeactivatedAt,
         ]),
     })
 
@@ -219,10 +218,30 @@ function useVisibleColumns() {
             setVisibleColumns(prev => {
                 const newCols = new Set(prev)
                 newCols.delete(Column.DeactivatedAt)
+                newCols.delete(Column.RestoreUserMenu)
                 return newCols
             })
         }
     }, [isSuperAdmin])
+
+    const updateVisibility = (col: Column, isVisible: boolean) => {
+
+        if(isVisible && visibleColumns.has(col)) 
+            return
+
+        if(!isVisible && !visibleColumns.has(col))
+            return
+
+        setVisibleColumns((prev) => {
+            const newCols = new Set(prev);
+            if (isVisible) {
+                newCols.add(col);
+            } else {
+                newCols.delete(col);
+            }
+            return newCols;
+        });
+    };
 
     const toggleVisibility = (col: Column) => {
         setVisibleColumns((prev) => {
@@ -237,7 +256,7 @@ function useVisibleColumns() {
         })
     }   
 
-    return { visibleColumns, toggleVisibility }
+    return { visibleColumns, toggleVisibility, updateVisibility }
 }
 
 function UserTable({
@@ -247,10 +266,15 @@ function UserTable({
     users: (User | DeactivatedUser)[],
     isLoading?: boolean
 }) {
-    const { isSuperAdmin } = usePotentialUser()
-    const showMenuCol = isSuperAdmin && users.some(user => "deactivatedAt" in user)
+    const { visibleColumns, toggleVisibility, updateVisibility } = useVisibleColumns()
     
-    const { visibleColumns, toggleVisibility } = useVisibleColumns()
+
+    const hasDeactivatedUsers = users.some(user => "deactivatedAt" in user)
+    if(hasDeactivatedUsers) { 
+        updateVisibility(Column.RestoreUserMenu, true)
+    } else if(!hasDeactivatedUsers) { 
+        updateVisibility(Column.RestoreUserMenu, false)
+    }
 
     const deferredVisibleColumns = useDeferredValue(visibleColumns)     // We defer changes because it can be expensive to update the table
     const lastCol = visibleColumns.size === 0
@@ -263,9 +287,7 @@ function UserTable({
 
     const getRowProps = (col: Column): TableCellProps => ({
         sx: deferredVisibleColumns.has(col) ? {} : { display: "none" },
-        colSpan: showMenuCol 
-            ? 1 
-            : col === lastCol  ? 2 : 1,
+        colSpan: col === lastCol ? 2 : 1,
     })
 
 
@@ -302,7 +324,7 @@ function UserTable({
 
                     {!isLoading && users.map((user) => (
                         <TableRow sx={rowStyle} key={user.email}>
-                            <TableCell colSpan={lastCol === Column.Name && !showMenuCol ? 2 : 1}>
+                            <TableCell colSpan={lastCol === Column.Name ? 2 : 1}>
                                  { "deactivatedAt" in user === true && getFullName(user)}
                                  { "deactivatedAt" in user === false && (
                                     <Link
@@ -360,7 +382,7 @@ function UserTable({
                                 align="right"
                                 padding="none" 
                                 sx={{
-                                    display: showMenuCol ? "table-cell" : "none",
+                                    display: visibleColumns.has(Column.RestoreUserMenu) ? "table-cell" : "none",
                                     paddingRight: "5px",
                                 }}>
                                 { "deactivatedAt" in user === true && <UserRowMenu user={user} />}
