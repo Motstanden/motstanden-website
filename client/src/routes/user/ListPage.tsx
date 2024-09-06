@@ -64,7 +64,7 @@ export default function UserListPage() {
 
     const filteredUsers = users
         .filter(user => !user.email.toLowerCase().endsWith("@motstanden.no"))
-        .filter(user => deferredStatusFilter.has(user.status))
+        .filter(user => deferredStatusFilter.size === 0 || deferredStatusFilter.has(user.status))
     
     if(isError) {
         return `${normalUsers.isError ? normalUsers.error : deactivatedUsers.error}`
