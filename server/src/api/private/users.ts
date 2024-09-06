@@ -234,7 +234,7 @@ async function deleteUserHandler(req: Request, res: Response, id: number) {
     const mailHtml = await mailTemplates.buildDeactivatedUserHtml()
     Mail.send({
         to: user.email,
-        subject: "Din bruker er deaktivert og vil bli slettet",
+        subject: "Din bruker er deaktivert og vil snart bli slettet",
         html: mailHtml
     })
 
