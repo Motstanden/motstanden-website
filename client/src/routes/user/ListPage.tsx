@@ -56,6 +56,12 @@ export default function UserListPage() {
     const { rankFilter, deferredRankFilter, setRankFilter } = useRankFilter()
     const { groupFilter, deferredGroupFilter, setGroupFilter } = useGroupFilter()
 
+    let showTestUsers: boolean | undefined, setShowTestUsers: React.Dispatch<React.SetStateAction<boolean>> | undefined;
+    if (import.meta.env.DEV) {
+        [showTestUsers, setShowTestUsers] = useState(false);
+    }
+
+
     const normalUsers = userUsersQuery()
     const deactivatedUsers = useDeactivatedUsersQuery()
     const users =  [
@@ -67,17 +73,33 @@ export default function UserListPage() {
     const isError = normalUsers.isError || deactivatedUsers.isError
 
     const filteredUsers = users
-        .filter(user => !user.email.toLowerCase().endsWith("@motstanden.no"))
         .filter(user => deferredStatusFilter.size === 0 || deferredStatusFilter.has(user.status))
         .filter(user => deferredRankFilter.size === 0 || deferredRankFilter.has(user.rank))
         .filter(user => deferredGroupFilter.size === 0 || deferredGroupFilter.has(user.groupName))
-    
+        .filter(user => {
+            if(!import.meta.env.DEV ) {
+                return true
+            }
+            if(showTestUsers) {
+                return true
+            }
+            return !user.email.toLowerCase().endsWith("@motstanden.no")
+        })
+        
     if(isError) {
         return `${normalUsers.isError ? normalUsers.error : deactivatedUsers.error}`
     }
 
     return (
         <>
+            {import.meta.env.DEV && (
+                <FormControlLabel 
+                    label="Vis testbrukere"
+                    onChange={(e) => setShowTestUsers?.(prev => !prev)}
+                    control={
+                        <Checkbox checked={showTestUsers} color="secondary"/>}
+                />
+           )}
             <Grid container 
                 columnSpacing={4} 
                 rowSpacing={{xs: 2, sm: 3, md: 4}}  
