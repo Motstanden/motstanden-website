@@ -14,8 +14,14 @@ function compareByTimestamp(a: Dayjs | undefined, b: Dayjs | undefined, sortDire
     return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
 }
 
+function compareByAlphanum(a: string, b: string, sortDirection: "asc" | "desc"): number {
+    const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
+    return sortDirection === "asc" ? collator.compare(a, b) : collator.compare(b, a);
+}
+
 export const Compare = {
     number: compareByNumber,
+    alphanum: compareByAlphanum,
     boolean: compareByBoolean,
     timestamp: compareByTimestamp,
 }

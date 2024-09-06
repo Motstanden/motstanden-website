@@ -20,6 +20,7 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    TableSortLabel,
     Tooltip
 } from "@mui/material"
 
@@ -45,6 +46,7 @@ import { useLocalStorage } from "src/hooks/useStorage"
 import { useTitle } from 'src/hooks/useTitle'
 import { putJson } from "src/utils/postJson"
 import { deactivatedUsersQueryKey, useDeactivatedUsersQuery, usersQueryKey, userUsersQuery } from "./Queries"
+import { Compare } from "src/utils/compareValue"
 
 export default function UserListPage() {
     useTitle("Medlemsliste")
@@ -267,7 +269,7 @@ function UserTable({
     isLoading?: boolean
 }) {
     const { visibleColumns, toggleVisibility, updateVisibility } = useVisibleColumns()
-    
+    const { sortedUsers, ...tableHeaderCellProps } = useSortableColumns(users)
 
     const hasDeactivatedUsers = users.some(user => "deactivatedAt" in user)
     if(hasDeactivatedUsers) { 
@@ -296,7 +298,10 @@ function UserTable({
             <Table>
                 <TableHead sx={headerStyle}>
                     <TableRow>
-                        <TableCell {...getHeaderProps(Column.Name)}>Navn</TableCell>
+                        <TableHeaderCell value={Column.Name} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
+                            Navn
+                        </TableHeaderCell>
+                        {/* <TableCell {...getHeaderProps(Column.Name)}>Navn</TableCell> */}
                         <TableCell {...getHeaderProps(Column.Rank)}>Rang</TableCell>
                         <TableCell {...getHeaderProps(Column.CapeName)}>Kappe</TableCell>
                         <TableCell {...getHeaderProps(Column.Status)}>Status</TableCell>
@@ -322,7 +327,7 @@ function UserTable({
                 </TableHead>
                 <TableBody>
 
-                    {!isLoading && users.map((user) => (
+                    {!isLoading && sortedUsers.map((user) => (
                         <TableRow sx={rowStyle} key={user.email}>
                             <TableCell colSpan={lastCol === Column.Name ? 2 : 1}>
                                  { "deactivatedAt" in user === true && getFullName(user)}
@@ -414,6 +419,78 @@ function UserTable({
         </TableContainer>
     )
 }
+
+type SortDirection = "asc" | "desc"
+
+type SortableColumnProps = {
+    sortedUsers: (User | DeactivatedUser)[],
+    sortedColumn: Column,
+    sortDirection: SortDirection,
+    onClick: (column: Column) => void
+}
+
+function useSortableColumns(users: (User | DeactivatedUser)[]): SortableColumnProps { 
+
+    const [sortedColumn, setSortedColumn] = useState<Column>(Column.Name)
+    const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
+
+    const onClick = (column: Column) => { 
+        if(column === sortedColumn) {
+            setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+        } else {
+            setSortedColumn(column)
+            if(column === Column.Name || column === Column.CapeName || column === Column.Email) {
+                setSortDirection("asc")
+            } else {
+                setSortDirection("desc")
+            }
+        }
+    }
+
+    const sortedUsers = [...users]
+    if(sortedColumn === Column.Name) { 
+        sortedUsers.sort((a, b) => Compare.alphanum(getFullName(a), getFullName(b), sortDirection))
+    }
+
+    return {
+        sortedUsers,
+        onClick,
+        sortDirection,
+        sortedColumn
+    }
+}  
+
+type TableHeaderCellProps = Omit<SortableColumnProps, "sortedUsers"> & {
+    value: Column,
+    visibleColumns: Set<Column>,
+    children?: React.ReactNode
+}
+
+function TableHeaderCell( { 
+    value, 
+    visibleColumns, 
+    onClick,
+    sortDirection,
+    sortedColumn, 
+    children 
+}: TableHeaderCellProps) { 
+    return (
+        <TableCell 
+            sx={{
+                display: visibleColumns.has(value) ? "table-cell" : "none",
+            }}
+        >
+            <TableSortLabel
+                active={sortedColumn === value}
+                direction={sortDirection}
+                onClick={() => onClick?.(value)}
+                >
+                {children}
+            </TableSortLabel>
+        </TableCell>
+    )
+}
+
 
 function ChangeVisibilityButton({ visibleColumns, toggleVisibility }: { visibleColumns: Set<Column>, toggleVisibility: (col: Column) => void }) {
 
