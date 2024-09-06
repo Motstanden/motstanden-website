@@ -15,6 +15,7 @@ import { sleepAsync } from '../utils/sleepAsync.js'
  * Entry point for the job `deleteDeactivatedUsers`
  */
 async function main() {
+    console.log("Starting job: deleteDeactivatedUsers")
 
     const db = new Database(motstandenDB, dbReadWriteConfig)
     const errorLogger = new ErrorLogger()
@@ -22,13 +23,16 @@ async function main() {
 
     if(users.length === 0) {
         db.close()
+        console.log("Found no users to delete. Exiting job.")
         return
     }
+    console.log(`Found ${users.length} users to delete`)
 
     // 1. Lock the user from being changed by other processes
     for(const user of users) { 
         DB.users.refreshTokens.deleteAllByUser(user.id, db)         // Should not be necessary, but just in case
         markUserAsDeleted(db, user.id)
+        console.log(`Marked 'userId ${user.id}' as deleted`)
     }
     
     // 2. Wait for any pending writes to the user table to complete
@@ -39,8 +43,11 @@ async function main() {
     for(const user of users) { 
         let success = tryDeleteUser(db, user, errorLogger)
         if(success) {
+            console.log(`Successfully deleted 'userId ${user.id}'`)
             await notifyUserByEmail(user, errorLogger)
+            console.log(`Mail sent to 'userId ${user.id}'`)
         } else {
+            console.log(`Failed to delete 'userId ${user.id}'. Rolling back`)
             undoMarkUserAsDeleted(db, user.id)
         }
     }
