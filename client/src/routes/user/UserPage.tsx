@@ -185,20 +185,22 @@ function DeleteUserDialog( {
             setIsPosting(false)
             return
         }
-        
-        showSnackbar({
+
+        if(isDeletingSelf) {
+            queryClient.resetQueries({queryKey: userAuthQueryKey})
+        } else {
+            queryClient.invalidateQueries({queryKey: userReferenceQueryKey})
+            queryClient.resetQueries({queryKey: deactivatedUsersQueryKey}) 
+            queryClient.resetQueries({queryKey: usersQueryKey})           
+        }
+
+        showSnackbar({ 
             message: isDeletingSelf ? "Brukeren din har blitt slettet" : `Brukeren til ${user.firstName} har blitt slettet`,
             autoHideDuration: null,
             severity: "success" 
-        })   
-        navigate(isDeletingSelf ? "/framside" : "/brukere")
+        })
 
-        await Promise.all([
-            queryClient.invalidateQueries({queryKey: userAuthQueryKey}),
-            queryClient.invalidateQueries({queryKey: usersQueryKey}),
-            queryClient.invalidateQueries({queryKey: deactivatedUsersQueryKey}),
-            queryClient.invalidateQueries({queryKey: userReferenceQueryKey}),
-        ])
+        navigate(isDeletingSelf ? "/framside" : "/brukere")
     }
 
     return (

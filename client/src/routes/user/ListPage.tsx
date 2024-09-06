@@ -1,11 +1,13 @@
 import {
     Box,
     Checkbox,
+    CircularProgress,
     Divider,
     FormControlLabel,
     Grid,
     IconButton,
     Link,
+    ListItemIcon,
     ListItemText,
     MenuItem,
     Paper,
@@ -24,20 +26,25 @@ import {
 import { headerStyle, noVisitedLinkStyle, rowStyle } from 'src/assets/style/tableStyle'
 
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox'
+import RestoreIcon from '@mui/icons-material/Restore'
 import TableChartIcon from '@mui/icons-material/TableChart'
+import { useQueryClient } from "@tanstack/react-query"
 import { UserStatus } from "common/enums"
 import { DeactivatedUser, User } from "common/interfaces"
 import { getFullName, userGroupToPrettyStr, userRankToPrettyStr } from "common/utils"
 import dayjs from 'dayjs'
-import React, { useDeferredValue, useEffect } from "react"
+import React, { useDeferredValue, useEffect, useState } from "react"
 import { Link as RouterLink } from 'react-router-dom'
-import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
 import { MultiSelect } from "src/components/MultiSelect"
+import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
 import { useAppBarHeader } from "src/context/AppBarHeader"
+import { useAppSnackBar } from 'src/context/AppSnackBar'
 import { usePotentialUser } from "src/context/Authentication"
+import { userReferenceQueryKey } from "src/context/UserReference"
 import { useLocalStorage } from "src/hooks/useStorage"
 import { useTitle } from 'src/hooks/useTitle'
-import { useDeactivatedUsersQuery, userUsersQuery } from "./Queries"
+import { putJson } from "src/utils/postJson"
+import { deactivatedUsersQueryKey, useDeactivatedUsersQuery, usersQueryKey, userUsersQuery } from "./Queries"
 
 export default function UserListPage() {
     useTitle("Medlemsliste")
@@ -240,22 +247,27 @@ function UserTable({
     users: (User | DeactivatedUser)[],
     isLoading?: boolean
 }) {
-
+    const { isSuperAdmin } = usePotentialUser()
+    const showMenuCol = isSuperAdmin && users.some(user => "deactivatedAt" in user)
+    
     const { visibleColumns, toggleVisibility } = useVisibleColumns()
 
     const deferredVisibleColumns = useDeferredValue(visibleColumns)     // We defer changes because it can be expensive to update the table
-    const lastVisibleColumn = visibleColumns.size === 0
+    const lastCol = visibleColumns.size === 0
         ? undefined
         : Math.max(...visibleColumns) satisfies Column
-
+        
     const getHeaderProps = (col: Column): TableCellProps => ({
         sx: deferredVisibleColumns.has(col) ? {} : { display: "none" },
     })
 
     const getRowProps = (col: Column): TableCellProps => ({
         sx: deferredVisibleColumns.has(col) ? {} : { display: "none" },
-        colSpan: col === lastVisibleColumn ? 2 : 1,
+        colSpan: showMenuCol 
+            ? 1 
+            : col === lastCol  ? 2 : 1,
     })
+
 
     return (
         <TableContainer component={Paper}>
@@ -277,7 +289,7 @@ function UserTable({
                             align="right"
                             padding="none"
                             sx={{ whiteSpace: "nowrap", paddingRight: "5px" }}
-                        >
+                        > 
                             <EmailButton users={users} sx={{ marginRight: "-7px" }} />
                             <ChangeVisibilityButton
                                 visibleColumns={visibleColumns}
@@ -290,7 +302,7 @@ function UserTable({
 
                     {!isLoading && users.map((user) => (
                         <TableRow sx={rowStyle} key={user.email}>
-                            <TableCell colSpan={lastVisibleColumn === Column.Name ? 2 : 1}>
+                            <TableCell colSpan={lastCol === Column.Name && !showMenuCol ? 2 : 1}>
                                  { "deactivatedAt" in user === true && getFullName(user)}
                                  { "deactivatedAt" in user === false && (
                                     <Link
@@ -343,6 +355,15 @@ function UserTable({
                                         </span>
                                     </span>
                                  )}
+                            </TableCell>
+                            <TableCell
+                                align="right"
+                                padding="none" 
+                                sx={{
+                                    display: showMenuCol ? "table-cell" : "none",
+                                    paddingRight: "5px",
+                                }}>
+                                { "deactivatedAt" in user === true && <UserRowMenu user={user} />}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -477,6 +498,68 @@ function EmailButton({ users, sx }: { users: User[], sx?: SxProps }) {
         </IconButton>
     )
 }
+
+function UserRowMenu({ user }: { user: DeactivatedUser }) { 
+
+    const [ isPosting, setIsPosting ] = useState(false)
+    const showSnackBar = useAppSnackBar()
+
+    const queryClient = useQueryClient()
+
+    const onClick = async () => {
+        setIsPosting(true)
+
+        const res = await putJson(`/api/users/deactivated/${user.id}`, {}, {
+            confirmText: `Er du sikker på at du vil gjenopprette brukeren til ${user.firstName}?`,
+        })
+
+        if(res?.ok) {
+
+            queryClient.invalidateQueries({queryKey: userReferenceQueryKey})
+            await Promise.all([
+                queryClient.invalidateQueries({queryKey: usersQueryKey}),
+                queryClient.invalidateQueries({queryKey: deactivatedUsersQueryKey}),
+            ])
+
+            showSnackBar({
+                severity: "success",
+                message: `Brukeren til ${user.firstName} har blitt gjenopprettet`
+            })
+        } else {
+            showSnackBar({
+                severity: "error",
+                message: `Kunne ikke gjenopprette brukeren til ${user.firstName}`
+            })
+        }
+
+        setIsPosting(false)
+    }
+
+    if((isPosting)) {
+        return (
+            <CircularProgress size="19px" color="secondary" sx={{ marginRight: "11px"}} />
+        )
+    }
+
+    return(
+        <IconPopupMenu>
+            <MenuItem 
+                onClick={onClick}
+                style={{ 
+                    minHeight: "50px", 
+                    minWidth: "180px" 
+                }}>
+                <ListItemIcon>
+                    <RestoreIcon/>
+                </ListItemIcon>
+                <ListItemText>
+                    Gjenopprett bruker
+                </ListItemText>
+            </MenuItem>
+        </IconPopupMenu>
+    )
+}
+
 
 function formatDate(dateStr: string | null) {
     return dateStr ? dayjs.utc(dateStr).tz().format("MMM YYYY") : "-"

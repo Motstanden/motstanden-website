@@ -3,7 +3,7 @@ import { DeactivatedUser, User } from "common/interfaces"
 import { usePotentialUser } from "src/context/Authentication"
 import { fetchFn } from "src/utils/fetchAsync"
 
-export const usersQueryKey = ["users"]
+export const usersQueryKey = ["users", "all"]
 export function userUsersQuery() {
     return useQuery<User[]>({
         queryKey: usersQueryKey,
@@ -11,7 +11,7 @@ export function userUsersQuery() {
     })
 }
 
-export const deactivatedUsersQueryKey = [ ...usersQueryKey, "deactivated"]
+export const deactivatedUsersQueryKey = [ "users", "deactivated"]
 export function useDeactivatedUsersQuery() { 
     const {isSuperAdmin} = usePotentialUser()
     const query = useQuery<DeactivatedUser[]>({ 
