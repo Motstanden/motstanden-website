@@ -125,7 +125,7 @@ function SelectStatus({
     const { isSuperAdmin } = usePotentialUser()
 
     const handleChange = (newValues: UserStatus[]) => { 
-        const sortedValues = newValues.sort((a, b) => compareByUserStatus(a, b, "asc"))
+        const sortedValues = newValues.sort((a, b) => compareByUserStatus(a, b, "desc"))
         onChange?.(new Set(sortedValues))
     }
 
@@ -168,22 +168,6 @@ function SelectStatus({
     )
 }
 
-function compareByUserStatus(a: UserStatus, b: UserStatus, sortDirection: "asc" | "desc"): number { 
-    const numA = userStatusToNumber(a)
-    const numB = userStatusToNumber(b)
-    return sortDirection === "asc" ? numA - numB : numB - numA
-}
-
-function userStatusToNumber(status: UserStatus): number { 
-    switch(status) { 
-        case UserStatus.Active: return 0
-        case UserStatus.Veteran: return 1
-        case UserStatus.Retired: return 2
-        case UserStatus.Inactive: return 3
-        case UserStatus.Deactivated: return 4
-        default: return 5
-    }
-}
 
 // The number corresponds to the index of the column in the table
 enum Column {
@@ -304,7 +288,10 @@ function UserTable({
                         {/* <TableCell {...getHeaderProps(Column.Name)}>Navn</TableCell> */}
                         <TableCell {...getHeaderProps(Column.Rank)}>Rang</TableCell>
                         <TableCell {...getHeaderProps(Column.CapeName)}>Kappe</TableCell>
-                        <TableCell {...getHeaderProps(Column.Status)}>Status</TableCell>
+                        <TableHeaderCell value={Column.Status} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
+                            Status
+                        </TableHeaderCell>
+                        {/* <TableCell {...getHeaderProps(Column.Status)}>Status</TableCell> */}
                         <TableCell {...getHeaderProps(Column.Email)}>E-post</TableCell>
                         <TableCell {...getHeaderProps(Column.PhoneNumber)}>Tlf.</TableCell>
                         <TableCell {...getHeaderProps(Column.BirthDate)}>Bursdag</TableCell>
@@ -439,17 +426,15 @@ function useSortableColumns(users: (User | DeactivatedUser)[]): SortableColumnPr
             setSortDirection(sortDirection === "asc" ? "desc" : "asc")
         } else {
             setSortedColumn(column)
-            if(column === Column.Name || column === Column.CapeName || column === Column.Email) {
-                setSortDirection("asc")
-            } else {
-                setSortDirection("desc")
-            }
+            setSortDirection("asc")
         }
     }
 
     const sortedUsers = [...users]
     if(sortedColumn === Column.Name) { 
         sortedUsers.sort((a, b) => Compare.alphanumerical(getFullName(a), getFullName(b), sortDirection))
+    } else if (sortedColumn === Column.Status) {
+        sortedUsers.sort((a, b) => compareByUserStatus(a.status, b.status, sortDirection))
     }
 
     return {
@@ -482,7 +467,7 @@ function TableHeaderCell( {
         >
             <TableSortLabel
                 active={sortedColumn === value}
-                direction={sortDirection}
+                direction={sortedColumn === value ? sortDirection : "asc"}
                 onClick={() => onClick?.(value)}
                 >
                 {children}
@@ -490,7 +475,6 @@ function TableHeaderCell( {
         </TableCell>
     )
 }
-
 
 function ChangeVisibilityButton({ visibleColumns, toggleVisibility }: { visibleColumns: Set<Column>, toggleVisibility: (col: Column) => void }) {
 
@@ -662,6 +646,23 @@ function UserRowMenu({ user }: { user: DeactivatedUser | User }) {
             </MenuItem>
         </IconPopupMenu>
     )
+}
+
+function compareByUserStatus(a: UserStatus, b: UserStatus, sortDirection: "asc" | "desc"): number { 
+    const numA = userStatusToNumber(a)
+    const numB = userStatusToNumber(b)
+    return sortDirection === "asc" ? numA - numB : numB - numA
+}
+
+function userStatusToNumber(status: UserStatus): number { 
+    switch(status) { 
+        case UserStatus.Active: return 5
+        case UserStatus.Veteran: return 4
+        case UserStatus.Retired: return 3
+        case UserStatus.Inactive: return 2
+        case UserStatus.Deactivated: return 1
+        default: return 0
+    }
 }
 
 
