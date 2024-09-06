@@ -21,7 +21,9 @@ import {
     TableHead,
     TableRow,
     TableSortLabel,
-    Tooltip
+    Theme,
+    Tooltip,
+    useMediaQuery
 } from "@mui/material"
 
 import { headerStyle, noVisitedLinkStyle, rowStyle } from 'src/assets/style/tableStyle'
@@ -47,6 +49,7 @@ import { useTitle } from 'src/hooks/useTitle'
 import { Compare } from "src/utils/compareValue"
 import { putJson } from "src/utils/postJson"
 import { deactivatedUsersQueryKey, useDeactivatedUsersQuery, usersQueryKey, userUsersQuery } from "./Queries"
+import { useIsMobileScreen } from "src/layout/useAppSizes"
 
 export default function UserListPage() {
     useTitle("Medlemsliste")
@@ -60,7 +63,6 @@ export default function UserListPage() {
     if (import.meta.env.DEV) {
         [showTestUsers, setShowTestUsers] = useState(false);
     }
-
 
     const normalUsers = userUsersQuery()
     const deactivatedUsers = useDeactivatedUsersQuery()
@@ -368,11 +370,17 @@ function useVisibleColumns() {
 
     const [visibleColumns, setVisibleColumns] = useLocalStorage<Set<Column>>({
         key: ["user-table-column-visibility"],
-        initialValue: new Set([
-            Column.Name,
-            Column.CapeName,
-            Column.Rank,
-        ]),
+        initialValue: () => {
+            if(window.matchMedia("(max-width: 710px)").matches) {
+                return new Set([Column.Name, Column.CapeName])
+            } else if (window.matchMedia("(max-width: 850px)").matches) {
+                return new Set([Column.Name, Column.Rank, Column.CapeName])
+            } else if (window.matchMedia("(max-width: 1100px)").matches) {
+                return new Set([Column.Name, Column.Rank, Column.CapeName, Column.StartDate])
+            } else { 
+                return new Set([Column.Name, Column.Rank, Column.CapeName, Column.Status, Column.StartDate,])
+            }
+        },
     })
 
     // Remove columns related to deactivation if the current user is suddenly not super admin anymore
