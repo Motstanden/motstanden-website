@@ -267,10 +267,6 @@ function UserTable({
         ? undefined
         : Math.max(...visibleColumns) satisfies Column
         
-    const getHeaderProps = (col: Column): TableCellProps => ({
-        sx: deferredVisibleColumns.has(col) ? {} : { display: "none" },
-    })
-
     const getRowProps = (col: Column): TableCellProps => ({
         sx: deferredVisibleColumns.has(col) ? {} : { display: "none" },
         colSpan: col === lastCol ? 2 : 1,
@@ -281,41 +277,39 @@ function UserTable({
             <Table>
                 <TableHead sx={headerStyle}>
                     <TableRow>
-                        {/* <TableCell {...getHeaderProps(Column.Name)}>Navn</TableCell> */}
                         <TableHeaderCell value={Column.Name} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
                             Navn
                         </TableHeaderCell>
-                        {/* <TableCell {...getHeaderProps(Column.Rank)}>Rang</TableCell> */}
                         <TableHeaderCell value={Column.Rank} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
                             Rang
                         </TableHeaderCell>
-                        {/* <TableCell {...getHeaderProps(Column.CapeName)}>Kappe</TableCell> */}
                         <TableHeaderCell value={Column.CapeName} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
                             Kappe
                         </TableHeaderCell>
-                        {/* <TableCell {...getHeaderProps(Column.Status)}>Status</TableCell> */}
                         <TableHeaderCell value={Column.Status} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
                             Status
                         </TableHeaderCell>
-                        {/* <TableCell {...getHeaderProps(Column.Email)}>E-post</TableCell> */}
                         <TableHeaderCell value={Column.Email} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
                             E-post
                         </TableHeaderCell>
-                        {/* <TableCell {...getHeaderProps(Column.PhoneNumber)}>Tlf.</TableCell> */}
                         <TableHeaderCell value={Column.PhoneNumber} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
                             Tlf.
                         </TableHeaderCell>
-                        {/* <TableCell {...getHeaderProps(Column.BirthDate)}>Bursdag</TableCell> */}
                         <TableHeaderCell value={Column.BirthDate} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
                             Bursdag
                         </TableHeaderCell>
-                        {/* <TableCell {...getHeaderProps(Column.Role)}>Rolle</TableCell> */}
                         <TableHeaderCell value={Column.Role} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
                             Rolle
                         </TableHeaderCell>
-                        <TableCell {...getHeaderProps(Column.StartDate)}>Start</TableCell>
-                        <TableCell {...getHeaderProps(Column.EndDate)}>Slutt</TableCell>
-                        <TableCell {...getHeaderProps(Column.DeactivatedAt)}>Deaktivert</TableCell>
+                        <TableHeaderCell value={Column.StartDate} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
+                            Start
+                        </TableHeaderCell>
+                        <TableHeaderCell value={Column.EndDate} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
+                            Slutt
+                        </TableHeaderCell>
+                        <TableHeaderCell value={Column.DeactivatedAt} visibleColumns={visibleColumns} {...tableHeaderCellProps}>
+                            Deaktivert
+                        </TableHeaderCell>
                         <TableCell
                             align="right"
                             padding="none"
@@ -684,21 +678,22 @@ function sortUsers(users: (User | DeactivatedUser)[], column: Column, direction:
         case Column.Email:
             return sortedUsers.sort((a, b) => Compare.alphanumerical(a.email, b.email, direction))
         case Column.PhoneNumber:
-            return sortedUsers.sort((a, b) => Compare.number(a.phoneNumber ?? 0, b.phoneNumber ?? 0, direction))
+            return sortedUsers.sort((a, b) => Compare.number(a.phoneNumber ?? Number.MAX_SAFE_INTEGER, b.phoneNumber ?? Number.MAX_SAFE_INTEGER, direction))
         case Column.BirthDate:
-            throw new Error("Not implemented")
+            return sortedUsers.sort((a, b) => comparByDate(a.birthDate, b.birthDate, direction))
         case Column.Role: 
             return sortedUsers.sort((a, b) => compareByUserRole(a.groupName, b.groupName, direction))
         case Column.StartDate:
-            throw new Error("Not implemented")
+            return sortedUsers.sort((a, b) => comparByDate(a.startDate, b.startDate, direction))
         case Column.EndDate:
-            throw new Error("Not implemented")
+            return sortedUsers.sort((a, b) => comparByDate(a.endDate, b.endDate, direction))
         case Column.DeactivatedAt:
-            throw new Error("Not implemented")
+            return sortedUsers.sort((a, b) => comparByDate("deactivatedAt" in a ? a.deactivatedAt : null, "deactivatedAt" in b ? b.deactivatedAt : null, direction))
         default: {
             if(import.meta.env.DEV)
                 throw new Error("Not implemented")
-            return sortedUsers
+            else 
+                return sortedUsers
         }
     }
 }
@@ -713,6 +708,10 @@ function compareByUserRank(a: UserRank, b: UserRank, sortDirection: "asc" | "des
 
 function compareByUserRole(a: UserGroup, b: UserGroup, sortDirection: "asc" | "desc"): number { 
     return Compare.number(userRoleToNumber(a), userRoleToNumber(b), sortDirection)
+}
+
+function comparByDate(a: string | null | undefined, b: string | null | undefined, sortDirection: "asc" | "desc"): number { 
+    return Compare.timestamp( a ? dayjs(a) : undefined, b ? dayjs(b) : undefined, sortDirection)
 }
 
 function userStatusToNumber(status: UserStatus): number { 
