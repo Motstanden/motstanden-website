@@ -88,7 +88,7 @@ export default function UserListPage() {
     }
 
     return (
-        <Box sx={{mt: {xs: -3, sm: -5, md: -5}}} >
+        <Box sx={{mt: {xs: -2, sm: -4, md: -5}}} >
             {import.meta.env.DEV && (
                 <FormControlLabel 
                     label="Vis testbrukere"
