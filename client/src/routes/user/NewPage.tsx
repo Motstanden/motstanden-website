@@ -11,7 +11,6 @@ import { NewUser } from 'common/interfaces'
 import { isNtnuMail as checkIsNtnuMail, isNullOrWhitespace } from 'common/utils'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAppBarHeader } from 'src/context/AppBarHeader'
 import { useTitle } from 'src/hooks/useTitle'
 import { postJson } from 'src/utils/postJson'
 import { usersQueryKey } from './Queries'
@@ -19,7 +18,6 @@ import { profilePictureTVPair } from "./utils/TextValuePair"
 
 export default function NewUserPage() {
     useTitle("Ny Bruker")
-    useAppBarHeader("Ny Bruker")
     return (
         <Paper elevation={6}
             sx={{

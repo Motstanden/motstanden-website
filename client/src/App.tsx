@@ -53,7 +53,7 @@ import { LyricContext, LyricItemContext } from "./routes/lyric/Context"
 import { AllPollsPage } from "./routes/poll/AllPollsPage"
 import { PollItemPage } from "./routes/poll/PollItemPage"
 import { NewRumourPage } from "./routes/rumour/NewPage"
-import { UserPageContainer } from "./routes/user/components/PageContainer"
+import { UserListPageContainer } from "./routes/user/components/UserListPageContainer"
 
 function App() {
 	const { isLoggedIn } = usePotentialUser()
@@ -140,12 +140,14 @@ function App() {
 							<Route path="ny" element={<NewPollPage/>}/>
 							<Route path=":pollId" element={<PollItemPage/>}/>
 						</Route>
-						<Route path="/brukere" element={<UserPageContainer />}>
-							<Route path="" element={<UserListPage />} />
-							<Route path=":userId" element={<UserPage/>} />
-							<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator} />}>
-								<Route path="ny" element={<NewUserPage/>} />
+						<Route path="/brukere">
+							<Route path="" element={<UserListPageContainer />}>
+								<Route path="" element={<UserListPage />} />
+								<Route element={<RequireAuthRouter requiredGroup={UserGroup.SuperAdministrator} />}>
+									<Route path="ny" element={<NewUserPage/>} />
+								</Route>
 							</Route>
+							<Route path=":userId" element={<UserPage/>} />
 						</Route>
 						<Route path="/arrangement" element={<EventContext />}>
 							<Route path="" element={<Navigate to="kommende" replace/>} />

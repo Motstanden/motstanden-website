@@ -21,9 +21,7 @@ import {
     TableHead,
     TableRow,
     TableSortLabel,
-    Theme,
-    Tooltip,
-    useMediaQuery
+    Tooltip
 } from "@mui/material"
 
 import { headerStyle, noVisitedLinkStyle, rowStyle } from 'src/assets/style/tableStyle'
@@ -40,7 +38,6 @@ import React, { useDeferredValue, useEffect, useState } from "react"
 import { Link as RouterLink } from 'react-router-dom'
 import { MultiSelect } from "src/components/MultiSelect"
 import { IconPopupMenu } from "src/components/menu/IconPopupMenu"
-import { useAppBarHeader } from "src/context/AppBarHeader"
 import { useAppSnackBar } from 'src/context/AppSnackBar'
 import { usePotentialUser } from "src/context/Authentication"
 import { userReferenceQueryKey } from "src/context/UserReference"
@@ -49,11 +46,9 @@ import { useTitle } from 'src/hooks/useTitle'
 import { Compare } from "src/utils/compareValue"
 import { putJson } from "src/utils/postJson"
 import { deactivatedUsersQueryKey, useDeactivatedUsersQuery, usersQueryKey, userUsersQuery } from "./Queries"
-import { useIsMobileScreen } from "src/layout/useAppSizes"
 
 export default function UserListPage() {
-    useTitle("Medlemsliste")
-    useAppBarHeader("Medlemsliste")
+    useTitle("Brukere")
     
     const { statusFilter, deferredStatusFilter, setStatusFilter } = useStatusFilter()
     const { rankFilter, deferredRankFilter, setRankFilter } = useRankFilter()
@@ -98,6 +93,10 @@ export default function UserListPage() {
                 <FormControlLabel 
                     label="Vis testbrukere"
                     onChange={(_e) => setShowTestUsers?.(prev => !prev)}
+                    sx={{
+                        mt: {xs: -1, sm: -2, md: -3}, 
+                        mb: 2
+                    }}
                     control={
                         <Checkbox checked={showTestUsers} color="secondary"/>}
                 />

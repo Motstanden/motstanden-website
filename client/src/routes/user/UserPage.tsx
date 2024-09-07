@@ -42,8 +42,9 @@ import { NotFoundPage } from '../notFound/NotFound'
 import { deactivatedUsersQueryKey, userUsersQuery, usersQueryKey } from './Queries'
 import { Card, CardTextItem, CardTextList } from "./components/Card"
 import { UserPageSkeleton } from './skeleton/UserPage'
+import { PageContainer } from 'src/layout/PageContainer/PageContainer'
 
-export default function UserProfileContext() {
+export default function UserProfileFetcher() {
     const {data: users, isPending, isError, error} = userUsersQuery()
     
     const params = useParams();
@@ -68,7 +69,9 @@ export default function UserProfileContext() {
     }
 
     return (
-        <UserProfilePage user={user}/>
+        <PageContainer>
+            <UserProfilePage user={user}/>
+        </PageContainer>
     )
 }
 

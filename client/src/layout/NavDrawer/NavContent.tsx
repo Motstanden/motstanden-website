@@ -11,7 +11,6 @@ import BecomeMemberIcon from '@mui/icons-material/EmojiPeople'
 import EventIcon from '@mui/icons-material/EventNote'
 import QuotesIcon from '@mui/icons-material/FormatQuote'
 import RumourIcon from '@mui/icons-material/Forum'
-import UserTrashIcon from '@mui/icons-material/GroupRemove'
 import UserListIcon from '@mui/icons-material/Groups'
 import HomeIcon from '@mui/icons-material/Home'
 import FrontPageIcon from '@mui/icons-material/Info'
@@ -20,11 +19,9 @@ import LicenseIcon from '@mui/icons-material/LocalPolice'
 import HistoryIcon from '@mui/icons-material/MenuBook'
 import SheetArchiveIcon from '@mui/icons-material/MusicVideo'
 import LyricIcon from '@mui/icons-material/Nightlife'
-import UserAddIcon from '@mui/icons-material/PersonAddAlt1'
 import PollIcon from '@mui/icons-material/Poll'
 import FaqIcon from '@mui/icons-material/QuestionMark'
 
-import { strToNumber } from "common/utils"
 
 export function NavContent({onItemClick}: {onItemClick: VoidFunction}) {
     const { isLoggedIn } = usePotentialUser()
@@ -101,13 +98,9 @@ function PublicNavContent({onItemClick}: {onItemClick: VoidFunction}) {
 }
 
 function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
-    const { isSuperAdmin } = usePotentialUser();
-    
+
     const matchesFrontPage = !!useMatch("/hjem/*")
     const matchesWallPage = !!useMatch("/vegg/*")
-
-    const userPageMatch = useMatch("/brukere/:id/*")
-    const matchesUserPage = userPageMatch !== null && !!strToNumber(userPageMatch.params.id)  
 
     const isMobile = useMediaQuery( (theme: Theme) => theme.breakpoints.only("xs"))
     const iconSize = isMobile ? "small" : "medium"
@@ -166,17 +159,8 @@ function PrivateNavContent({onItemClick}: {onItemClick: VoidFunction}) {
             <ListItemLink 
                 text="Brukere" 
                 to="/brukere" 
-                matchPattern="/brukere"
-                activate={matchesUserPage}
                 icon={<UserListIcon fontSize={iconSize}/>}
                 onLinkClick={onItemClick}/>
-            {isSuperAdmin && (
-                <ListItemLink 
-                    text="Ny bruker" 
-                    to="/brukere/ny" 
-                    icon={<UserAddIcon fontSize={iconSize}/>} 
-                    onLinkClick={onItemClick}/>
-            )}
 
             <ListItemHeader title="Eksternt"/>
             <ListItemLink 
