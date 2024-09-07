@@ -10,8 +10,8 @@ import DocumentsIcon from '@mui/icons-material/Description'
 import BecomeMemberIcon from '@mui/icons-material/EmojiPeople'
 import EventIcon from '@mui/icons-material/EventNote'
 import QuotesIcon from '@mui/icons-material/FormatQuote'
-import RumourIcon from '@mui/icons-material/Forum'
 import UserListIcon from '@mui/icons-material/Groups'
+import RumourIcon from '@mui/icons-material/Hearing'
 import HomeIcon from '@mui/icons-material/Home'
 import FrontPageIcon from '@mui/icons-material/Info'
 import WikiIcon from '@mui/icons-material/Language'
@@ -21,7 +21,6 @@ import SheetArchiveIcon from '@mui/icons-material/MusicVideo'
 import LyricIcon from '@mui/icons-material/Nightlife'
 import PollIcon from '@mui/icons-material/Poll'
 import FaqIcon from '@mui/icons-material/QuestionMark'
-
 
 export function NavContent({onItemClick}: {onItemClick: VoidFunction}) {
     const { isLoggedIn } = usePotentialUser()
