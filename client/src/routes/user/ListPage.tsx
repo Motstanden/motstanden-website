@@ -88,14 +88,13 @@ export default function UserListPage() {
     }
 
     return (
-        <>
+        <Box sx={{mt: {xs: -3, sm: -5, md: -5}}} >
             {import.meta.env.DEV && (
                 <FormControlLabel 
                     label="Vis testbrukere"
                     onChange={(_e) => setShowTestUsers?.(prev => !prev)}
                     sx={{
-                        mt: {xs: -1, sm: -2, md: -3}, 
-                        mb: 2
+                        my: 2
                     }}
                     control={
                         <Checkbox checked={showTestUsers} color="secondary"/>}
@@ -105,7 +104,7 @@ export default function UserListPage() {
                 columnSpacing={4} 
                 rowSpacing={{xs: 2, sm: 3, md: 4}}  
                 sx={{
-                    mb: {xs: 3, md: 2},
+                    mb: {xs: 4, md: 2},
                     maxWidth: "1300px",
                 }}
                 >
@@ -150,7 +149,7 @@ export default function UserListPage() {
                 isLoading={isLoading}
                 users={filteredUsers}
             />
-        </>
+        </Box>
     )
 }
 
