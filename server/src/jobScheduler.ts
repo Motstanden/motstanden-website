@@ -28,7 +28,7 @@ const bree = new Bree({
         // Runs `jobs/deleteDeactivatedUsers.js` every day at midnight
         {
             name: "deleteDeactivatedUsers",
-            interval: "at 14:14",
+            interval: "at 00:00",
             timeout: false,                 // <-- specify `false` here to prevent the job from running when the server starts up
         }
     ]
