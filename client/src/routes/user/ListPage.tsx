@@ -704,7 +704,9 @@ function ChangeVisibilityButton({ visibleColumns, toggleVisibility }: { visibleC
         <IconPopupMenu 
             icon={(
                 <Tooltip title="Endre hvilke kolonner som vies i tabellen">
-                    <TableChartIcon />
+                    <TableChartIcon sx={{
+                        color: theme => theme.palette.primary.contrastText,
+                    }}/>
                 </Tooltip>
             )}>
             <div style={{
@@ -772,7 +774,10 @@ function EmailButton({ users, sx }: { users: User[], sx?: SxProps }) {
     const emailList = users.map(user => user.email).join(",")
     return (
         <IconButton
-            sx={sx}
+            sx={{
+                color: theme => theme.palette.primary.contrastText,
+                ...sx,
+            }}
             disabled={users.length <= 0}
             href={`mailto:${emailList}`}
             target="_blank"
