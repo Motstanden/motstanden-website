@@ -99,6 +99,10 @@ sqlite3 motstanden_dev.db < migrations/motstanden_db/23_unread_comments_rewrite.
 echo "Running: 24_delete_user.sql"
 sqlite3 motstanden_dev.db < migrations/motstanden_db/24_delete_user.sql;
 
+# Add feed view
+echo "Running: 25_feed.sql"
+sqlite3 motstanden_dev.db < migrations/motstanden_db/25_feed.sql;
+
 # Insert data that is representative for the current data in the database
 cd data/db
 sh motstanden-db-data.sh 
