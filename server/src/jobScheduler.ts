@@ -19,8 +19,6 @@ const bree = new Bree({
     // Prevents jobs from running when the server starts up
     timeout: false,
 
-    logger: console,
-
     // Forcefully close a job after 5 hour. Something must be wrong if a job takes this long to complete.
     closeWorkerAfterMs: 5000 * 60 * 60,
 
