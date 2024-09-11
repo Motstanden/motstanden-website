@@ -1,28 +1,21 @@
 import Database from "better-sqlite3"
 import { Quote } from "common/interfaces"
 import { dbReadOnlyConfig, motstandenDB } from "../../config/databaseConfig.js"
+import { AuthoredItem } from "../../ts/interfaces/AuthoredItem.js"
 
 
-export function getQuote(quoteId: number): Quote {
+export function getQuoteAuthorInfo(quoteId: number): AuthoredItem | undefined {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT 
             quote_id as id, 
-            utterer, 
-            quote,
-            created_by as createdBy,
-            created_at as createdAt,
-            updated_at as updatedAt 
+            created_by as createdBy
         FROM 
             quote 
         WHERE quote_id = ?
     `)
-    const quote = <Quote | undefined>stmt.get(quoteId)
+    const quote = <AuthoredItem | undefined>stmt.get(quoteId)
     db.close()
-
-    if (!quote)
-        throw "Bad data"
-
     return quote
 }
 

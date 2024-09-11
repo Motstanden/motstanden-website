@@ -60,7 +60,7 @@ router.delete("/quotes/:id",
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => Schemas.params.id.parse(req.params).id,
-        getAuthorInfo: id => db.quotes.get(id)
+        getAuthorInfo: id => db.quotes.getAuthorInfo(id)
     }),
     (req: Request, res: Response) => {
         const { id } = Schemas.params.id.parse(req.params)
@@ -76,7 +76,7 @@ router.patch("/quotes/:id",
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
-        getAuthorInfo: id => db.quotes.get(id)
+        getAuthorInfo: id => db.quotes.getAuthorInfo(id)
     }),
     validateBody(NewQuoteSchema),
     (req: Request, res: Response) => {

@@ -57,7 +57,7 @@ router.delete("/rumours/:id",
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => Schemas.params.id.parse(req.params).id,
-        getAuthorInfo: (id) => db.rumours.get(id)
+        getAuthorInfo: (id) => db.rumours.getAuthorInfo(id)
     }),
     (req: Request, res: Response) => {
         const { id } = Schemas.params.id.parse(req.params)
@@ -73,7 +73,7 @@ router.patch("/rumours/:id",
     requiresGroupOrAuthor({
         requiredGroup: UserGroup.Administrator,
         getId: (req) => req.body.id,
-        getAuthorInfo: id => db.rumours.get(id)
+        getAuthorInfo: id => db.rumours.getAuthorInfo(id)
     }),
     validateBody(NewRumourSchema),
     (req: Request, res: Response) => {
