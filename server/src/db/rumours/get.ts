@@ -18,22 +18,44 @@ export function getRumourAuthorInfo(rumourId: number): AuthoredItem | undefined 
     return rumour
 }
 
-export function getAll(limit?: number): Rumour[] {
+type DbRumour = Omit<Rumour, "isCreatedByCurrentUser"> & { 
+    isCreatedByCurrentUser: number 
+}
+
+export function getAll({
+    limit,
+    currentUserId,
+}: {
+    currentUserId: number
+    limit?: number,
+}): Rumour[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT 
             rumour_id as id, 
             rumour, 
-            created_by as createdBy,
+            CASE 
+                WHEN created_by = @currentUserId 
+                    THEN 1 
+                ELSE 0 
+            END as isCreatedByCurrentUser,
             created_at as createdAt,
             updated_at as updatedAt 
         FROM 
             rumour 
         ORDER BY 
             rumour_id DESC
-        ${!!limit ? "LIMIT ?" : ""}
+        ${!!limit ? "LIMIT @limit" : ""}
     `)
-    const rumours = !!limit ? stmt.all(limit) : stmt.all()
+    // const rumours = !!limit ? stmt.all(limit) : stmt.all()
+    const dbResult = stmt.all({ 
+        currentUserId: currentUserId,
+        limit: limit 
+    }) as DbRumour[]
+    const rumours = dbResult.map(rumour => ({ 
+        ...rumour, 
+        isCreatedByCurrentUser: rumour.isCreatedByCurrentUser === 1 
+    }))
     db.close()
-    return rumours as Rumour[]
+    return rumours
 }

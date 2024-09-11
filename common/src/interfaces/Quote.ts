@@ -5,7 +5,7 @@ export interface NewQuote {
 
 export interface Quote extends NewQuote {
     id: number,
-    createdBy: number,
+    isCreatedByCurrentUser: boolean,
     createdAt: string,          // Format: 'YYYY-MM-DD HH-MM-SS'
     updatedAt: string           // Format: 'YYYY-MM-DD HH-MM-SS'
 }

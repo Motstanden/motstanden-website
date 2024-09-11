@@ -16,7 +16,11 @@ router.get("/quotes?:limit",
     validateQuery(Schemas.queries.limit),
     (req, res) => {
         const { limit } = Schemas.queries.limit.parse(req.query)
-        const quotes = db.quotes.getAll(limit)
+        const { userId } = getUser(req)
+        const quotes = db.quotes.getAll({ 
+            currentUserId: userId, 
+            limit: limit
+        })
         res.json(quotes)
     }
 )
@@ -24,7 +28,12 @@ router.get("/quotes?:limit",
 router.get("/quotes/random-daily",
     (req, res) => {
         const limit = 100
-        const quotes = db.quotes.getAll(limit)
+        const { userId } = getUser(req)
+        const quotes = db.quotes.getAll({
+            currentUserId: userId,
+            limit: limit
+        })
+        
         const i = dailyRandomInt(limit)
         const mod = Math.min(limit, quotes.length)
         res.send([

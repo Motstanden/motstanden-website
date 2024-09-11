@@ -19,22 +19,43 @@ export function getQuoteAuthorInfo(quoteId: number): AuthoredItem | undefined {
     return quote
 }
 
-export function getAll(limit?: number): Quote[] {
+type DbQuote = Omit<Quote, "isCreatedByCurrentUser"> & {
+    isCreatedByCurrentUser: number
+}
+
+export function getAll({
+    limit,
+    currentUserId,
+}: {
+    currentUserId: number
+    limit?: number,
+}): Quote[] {
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT 
             quote_id as id, 
             utterer, 
             quote,
-            created_by as createdBy,
+            CASE 
+                WHEN created_by = @currentUserId 
+                    THEN 1 
+                ELSE 0 
+            END as isCreatedByCurrentUser,
             created_at as createdAt,
             updated_at as updatedAt 
         FROM 
             quote 
         ORDER BY quote_id DESC
-        ${!!limit ? "LIMIT ?" : ""}
+        ${!!limit ? "LIMIT @limit" : ""}
     `)
-    const quotes = !!limit ? stmt.all(limit) : stmt.all()
+    const dbResult = stmt.all({
+        currentUserId: currentUserId,
+        limit: limit
+    }) as DbQuote[]
+    const quotes = dbResult.map(quote => ({
+        ...quote, 
+        isCreatedByCurrentUser: quote.isCreatedByCurrentUser === 1
+    }))
     db.close()
-    return quotes as Quote[]
+    return quotes
 }

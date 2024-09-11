@@ -16,14 +16,22 @@ router.get("/rumours?:limit",
     validateQuery(Schemas.queries.limit),
     (req, res) => {
         const { limit } = Schemas.queries.limit.parse(req.query)
-        const rumours = db.rumours.getAll(limit)
+        const { userId } = getUser(req)
+        const rumours = db.rumours.getAll({
+            currentUserId: userId,
+            limit: limit
+        })
         res.json(rumours)
     }
 )
 
 router.get("/rumours/random-daily", (req, res) => {
     const limit = 100
-    const rumours = db.rumours.getAll(limit)
+    const { userId } = getUser(req)
+    const rumours = db.rumours.getAll({
+        currentUserId: userId,
+        limit: limit
+    })
     const i = dailyRandomInt(limit)
     const mod = Math.min(limit, rumours.length)
     res.send([

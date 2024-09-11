@@ -4,7 +4,7 @@ export interface NewRumour {
 
 export interface Rumour extends NewRumour {
     id: number,
-    createdBy: number,
+    isCreatedByCurrentUser: boolean,
     createdAt: string,          // Format: 'YYYY-MM-DD HH-MM-SS'
     updatedAt: string           // Format: 'YYYY-MM-DD HH-MM-SS'
 }

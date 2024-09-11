@@ -18,7 +18,7 @@ interface EditListProps<T> {
 
 type ItemBase = {
     id: number,
-    createdBy: number
+    isCreatedByCurrentUser: boolean
 }
 
 export type RenderEditFormProps<T> = {
@@ -149,8 +149,8 @@ function DefaultItem<T extends ItemBase>({
         }
     }
 
-    const { user, isAdmin } = useAuthenticatedUser()
-    const canEdit = isAdmin || user.id === data.createdBy
+    const { isAdmin } = useAuthenticatedUser()
+    const canEdit = isAdmin || data.isCreatedByCurrentUser
 
     return (
         <Stack
