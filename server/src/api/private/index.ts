@@ -10,11 +10,13 @@ import { sheetArchiveApi } from "./sheetMusic.js"
 import { privateSimpleTextApi } from "./simpleTexts.js"
 import { userApi } from "./users.js"
 import { wallPostApi } from "./wallPosts.js"
+import { feedApi } from "./feed.js"
 
 const router = express.Router()
 
 router.use(commentsApi)
 router.use(eventsApi)
+router.use(feedApi)
 router.use(likesApi)
 router.use(privateLyricsApi)
 router.use(pollApi)

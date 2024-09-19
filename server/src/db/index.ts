@@ -1,6 +1,7 @@
 import { commentsDb } from "./comments/index.js"
 import { documentsDb } from "./documents/index.js"
 import { eventsDb } from "./events/index.js"
+import { feedDb } from "./feed/index.js"
 import { likesDb } from "./likes/index.js"
 import { pollsDb } from "./polls/index.js"
 import { quotesDb } from "./quotes/index.js"
@@ -20,6 +21,9 @@ export const db = {
     },
     events: {
         ...eventsDb
+    },
+    feed: {
+        ...feedDb
     },
     likes: {
         ...likesDb   
