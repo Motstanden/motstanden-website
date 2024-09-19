@@ -688,7 +688,7 @@ LEFT JOIN user_status USING (user_status_id)
 /* vw_user(user_id,user_group_id,user_group,user_rank_id,user_rank,email,first_name,middle_name,last_name,full_name,cape_name,profile_picture,phone_number,birth_date,user_status,start_date,end_date,is_deactivated,is_deleted,created_at,updated_at,deactivated_at,deleted_at) */;
 CREATE VIEW vw_feed AS 
 SELECT 
-    'newUser' AS entity,
+    'new-user' AS entity,
     user_id AS id,
     created_at AS modified_at,
     null AS created_by,
@@ -711,7 +711,7 @@ SELECT
     'quote' AS entity,
     quote_id AS id,
     created_at AS modified_at,
-    null AS created_by,
+    created_by AS created_by,
     null AS full_name,
     quote,
     utterer,
@@ -729,7 +729,7 @@ SELECT
     'rumour' AS entity,
     rumour_id AS id,
     created_at AS modified_at,
-    null AS modified_by,
+    created_by AS modified_by,
     null AS full_name, 
     null AS quote,
     null AS utterer,   
@@ -744,7 +744,7 @@ FROM
     rumour
 UNION ALL
 SELECT
-    'songLyric' AS entity,
+    'song-lyric' AS entity,
     song_lyric_id AS id,
     updated_at AS modified_at,
     updated_by AS modified_by,
@@ -780,7 +780,7 @@ FROM
     poll
 UNION ALL
 SELECT 
-    'wallPost' AS entity,
+    'wall-post' AS entity,
     wall_post_id AS id,
     created_at AS modified_at,
     created_by AS modified_by,
@@ -798,7 +798,7 @@ FROM
     wall_post
 UNION ALL
 SELECT 
-    'simpleText' AS entity,
+    'simple-text' AS entity,
     simple_text_id AS id,
     updated_at AS modified_at,
     updated_by AS modified_by,
