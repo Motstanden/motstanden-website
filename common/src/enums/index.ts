@@ -1,5 +1,6 @@
 export * from "./Clef.js"
 export * from "./CommentEntityType.js"
+export * from "./FeedEntity.js"
 export * from "./LikeEntityType.js"
 export * from "./ParticipationStatus.js"
 export * from "./Tone.js"

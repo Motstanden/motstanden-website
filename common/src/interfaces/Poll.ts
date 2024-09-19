@@ -1,8 +1,10 @@
 import { UserIdentity } from "./User.js";
 
+export type PollType = "single" | "multiple"
+
 export interface NewPoll {
     title: string;
-    type: 'single' | 'multiple';
+    type: PollType;
 }
 
 export interface Poll extends NewPoll {

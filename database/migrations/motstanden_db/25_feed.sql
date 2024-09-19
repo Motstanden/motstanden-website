@@ -6,7 +6,7 @@ INSERT INTO version(migration) VALUES
 
 CREATE VIEW vw_feed AS 
 SELECT 
-    'newUser' AS entity,
+    'new-user' AS entity,
     user_id AS id,
     created_at AS modified_at,
     null AS created_by,
@@ -62,7 +62,7 @@ FROM
     rumour
 UNION ALL
 SELECT
-    'songLyric' AS entity,
+    'song-lyric' AS entity,
     song_lyric_id AS id,
     updated_at AS modified_at,
     updated_by AS modified_by,
@@ -98,7 +98,7 @@ FROM
     poll
 UNION ALL
 SELECT 
-    'wallPost' AS entity,
+    'wall-post' AS entity,
     wall_post_id AS id,
     created_at AS modified_at,
     created_by AS modified_by,
@@ -116,7 +116,7 @@ FROM
     wall_post
 UNION ALL
 SELECT 
-    'simpleText' AS entity,
+    'simple-text' AS entity,
     simple_text_id AS id,
     updated_at AS modified_at,
     updated_by AS modified_by,
