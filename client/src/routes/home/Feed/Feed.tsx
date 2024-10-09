@@ -38,15 +38,21 @@ function FeedFetcher() {
 }
 
 function FeedList({ items }: { items: FeedItemType[] }) { 
-    return items.map( item => (
-        <div key={`${item.entity} ${item.id}`}
-            style={{
-                marginBottom: "10px",
-            }}
-        >
-            <FeedItem item={item}/>
+    return (
+        <div style={{
+            maxWidth: "700px",
+        }}>
+            {items.map( item => (
+                <div key={`${item.entity} ${item.id}`}
+                    style={{
+                        marginBottom: "30px",
+                    }}
+                >
+                    <FeedItem item={item}/>
+                </div>
+            ))}
         </div>
-    ))
+    )
 }
 
 function FeedItem( { item }: { item: FeedItemType } ) {

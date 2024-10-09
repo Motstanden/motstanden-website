@@ -7,7 +7,7 @@ export {
 function SimpleText({ data }: {data: SimpleTextFeedItem }) {
     return (
         <>
-            {data.key}
+            {/* {data.key} */}
         </>
     )
 }

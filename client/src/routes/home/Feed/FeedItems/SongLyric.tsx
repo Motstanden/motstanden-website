@@ -7,7 +7,7 @@ export {
 function SongLyric({ data }: {data: SongLyricFeedItem }) {
     return (
         <>
-            {data.title}
+            {/* {data.title} */}
         </>
     )
 }
