@@ -42,11 +42,13 @@ type PollEntity = BaseEntity & AuthoredEntity & {
 }
 
 type WallPostEntity = BaseEntity & AuthoredEntity & {
+    entity: FeedEntity.WallPost,
     content: string,
     wallUserId: number,
 }
 
 type SimpleTextEntity = BaseEntity & AuthoredEntity & {
+    entity: FeedEntity.SimpleText,
     key: string
 }
 
