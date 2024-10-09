@@ -691,7 +691,7 @@ SELECT
     'new-user' AS entity,
     user_id AS id,
     created_at AS modified_at,
-    null AS created_by,
+    null AS modified_by,
     full_name,
     null AS quote,
     null AS utterer,
@@ -705,13 +705,13 @@ SELECT
 FROM 
     user
 WHERE 
-    is_deactivated != 1 OR is_deleted != 1
+    is_deactivated = 0 AND is_deleted = 0
 UNION ALL
 SELECT 
     'quote' AS entity,
     quote_id AS id,
     created_at AS modified_at,
-    created_by AS created_by,
+    created_by AS modified_by,
     null AS full_name,
     quote,
     utterer,
@@ -814,4 +814,4 @@ SELECT
     key
 FROM 
     simple_text
-/* vw_feed(entity,id,modified_at,created_by,full_name,quote,utterer,rumour,title,is_new,type,content,wall_user_id,"key") */;
+/* vw_feed(entity,id,modified_at,modified_by,full_name,quote,utterer,rumour,title,is_new,type,content,wall_user_id,"key") */;
