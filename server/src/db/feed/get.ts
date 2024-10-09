@@ -65,7 +65,17 @@ export function getFeed({
             entity,
             id,
             modified_at as modifiedAt,
-            modified_by as modifiedBy
+            modified_by as modifiedBy,
+            full_name as fullName,
+            quote,
+            utterer,
+            rumour,
+            title,
+            is_new as isNew,
+            type,
+            content,
+            wall_user_id as wallUserId,
+            key
         FROM
             vw_feed
         ${!!limit ? "LIMIT @limit" : ""}
