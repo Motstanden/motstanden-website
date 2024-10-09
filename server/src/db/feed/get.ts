@@ -14,7 +14,7 @@ import {
 import { dbReadOnlyConfig, motstandenDB } from "../../config/databaseConfig.js"
 
 type DbBaseFeedItem = BaseFeedItem & { 
-    modifiedBy: number
+    modifiedBy: number | null
     fullName: null,
     quote: null,
     utterer: null,
@@ -59,7 +59,6 @@ export function getFeed({
     currentUserId: number
     limit?: number,
 }): FeedItem[] {
-
     const db = new Database(motstandenDB, dbReadOnlyConfig)
     const stmt = db.prepare(`
         SELECT
@@ -70,8 +69,10 @@ export function getFeed({
         FROM
             vw_feed
         ${!!limit ? "LIMIT @limit" : ""}
+        ORDER BY modified_at DESC
     `)
     const dbResult = stmt.all({limit: limit}) as DbFeedItem[] 
+    db.close()
     const feed = dbResult.map((item) => convertFeedItem(item, currentUserId))
     return feed
 }
@@ -85,7 +86,7 @@ function convertFeedItem(data: DbFeedItem, currentUserId: number) : FeedItem {
     }
     const authoredBaseProps = { 
         ...baseProps,
-        modifiedBy: data.modifiedBy
+        modifiedBy: data.modifiedBy!
     }
 
     switch(entity) { 
@@ -97,7 +98,7 @@ function convertFeedItem(data: DbFeedItem, currentUserId: number) : FeedItem {
             } satisfies NewUserFeedItem
         case FeedEntity.Quote: 
             return { 
-            ...baseProps,
+                ...baseProps,
                 entity: FeedEntity.Quote,
                 quote: data.quote!,
                 utterer: data.utterer!,
