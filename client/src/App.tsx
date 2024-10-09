@@ -25,10 +25,10 @@ import BoardWebsiteListPage from "src/routes/boardWebsiteList/BoardWebsiteList"
 import DocumentsPage from "src/routes/documents/DocumentsPage"
 import { FaqPage } from "src/routes/faq/FaqPage"
 import FrontPage from "src/routes/frontPage/FrontPage"
-import HomePage from "src/routes/home/Home"
-import WallPage from "src/routes/home/Wall"
-import { WallPostItemPage } from "src/routes/home/WallPostItem"
-import HomePageContainer from "src/routes/home/components/PageContainer"
+import { HomePage } from "src/routes/home/Home"
+// import WallPage from "src/routes/home/Wall"
+// import { WallPostItemPage } from "src/routes/home/WallPostItem"
+// import HomePageContainer from "src/routes/home/components/PageContainer"
 import { LicenseOnlyPage, LicensePage } from "src/routes/license/LicensePage"
 import LoginPage from "src/routes/login/Login"
 import { EditLyricPage } from "src/routes/lyric/EditPage"
@@ -104,12 +104,12 @@ function App() {
 					)} 
 
 					<Route element={<RequireAuthRouter/>}> 
-						<Route path="/" element={<HomePageContainer />}>
-							<Route path="" element={<HomePage />} />
-							<Route path="hjem" element={<HomePage />} />
+						<Route path="/" element={<HomePage />} />
+						<Route path="/hjem" element={<HomePage />} />
+						{/* <Route path="/" element={<HomePageContainer />}>
 							<Route path="vegg" element={<WallPage />} />
 							<Route path="vegg/:postId" element={<WallPostItemPage/>}/>
-						</Route>
+						</Route> */}
 					</Route>
 
 					{/* Routes that requires the user to be logged in */}
