@@ -59,6 +59,7 @@ export type FeedItem = NewUserEntity |
     SimpleTextEntity
     
 export {
+    BaseEntity as BaseFeedItem,
     NewUserEntity as NewUserFeedItem,
     QuoteEntity as QuoteFeedItem,
     RumourEntity as RumourFeedItem,
