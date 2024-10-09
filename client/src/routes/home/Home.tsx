@@ -1,6 +1,7 @@
 import { useAppBarHeader } from "src/context/AppBarHeader"
 import { useTitle } from "src/hooks/useTitle"
 import { PageContainer } from "src/layout/PageContainer/PageContainer"
+import { Feed } from "./Feed/Feed"
 
 export function HomePage() {
     useAppBarHeader("Hjem")
@@ -8,7 +9,7 @@ export function HomePage() {
 
     return (
         <PageContainer>
-            Todo...
+            <Feed/>
         </PageContainer>
     )
 }
