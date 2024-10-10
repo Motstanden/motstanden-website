@@ -118,11 +118,11 @@ function groupFeedItems(items: FeedItemType[]): FeedItemType[][] {
  * @param entity The entity to check
  */
 function isGroupedEntity( entity: FeedEntity): boolean {
-    return entity === FeedEntity.NewUser ||
-        entity === FeedEntity.Quote ||
-        entity === FeedEntity.Rumour ||
-        entity === FeedEntity.SongLyric ||
-        entity === FeedEntity.SimpleText
+    return entity === FeedEntity.Quote ||
+        entity === FeedEntity.Rumour // ||      
+        // entity === FeedEntity.NewUser ||     // <-- Maybe group these together as well in the future?
+        // entity === FeedEntity.SongLyric ||
+        // entity === FeedEntity.SimpleText
 }
 
 function FeedItem( { item, onItemChanged }: { item: FeedItemType[], onItemChanged: VoidFunction } ) {
@@ -132,7 +132,7 @@ function FeedItem( { item, onItemChanged }: { item: FeedItemType[], onItemChange
 
     // The type assertion should be safe here because the groupFeedItems function ensures that all items are of the same entity.
     // However, TypeScript doesn't know that, and it is really cumbersome to prove it to the type checker.
-    // So we will just trust that the groupFeedItems function is correct and assert the type here.
+    // So we will just trust that the groupFeedItems function is correct and assert the type.
     switch(item[0].entity) { 
         case FeedEntity.NewUser:
             return <NewUserFeedItem data={item[0]}/>
