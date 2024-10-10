@@ -1,25 +1,19 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { FeedEntity } from "common/enums"
-import { 
-    FeedItem as FeedItemType, 
+import {
+    FeedItem as FeedItemType,
     // NewUserFeedItem as NewUserFeedItemType,
     QuoteFeedItem as QuoteFeedItemType,
     RumourFeedItem as RumourFeedItemType,
-    // SongLyricFeedItem as SongLyricFeedItemType,
-    // PollFeedItem as PollFeedItemType,
-    // WallPostFeedItem as WallPostFeedItemType,
-    // SimpleTextFeedItem as SimpleTextFeedItemType, 
 } from "common/types"
-import { fetchFn } from "src/utils/fetchAsync"
-import { QuoteFeedItem } from "./FeedItems/Quote"
-import { FeedSkeleton } from "./FeedSkeleton"
-import { NewUserFeedItem } from "./FeedItems/NewUser"
-import { SongLyricFeedItem } from "./FeedItems/SongLyric"
-import { RumourFeedItem } from "./FeedItems/Rumour"
-import { PollFeedItem } from "./FeedItems/Poll"
-import { WallPostFeedItem } from "./FeedItems/WallPost"
-import { SimpleTextFeedItem } from "./FeedItems/SimpleText"
 import { useMemo } from "react"
+import { fetchFn } from "src/utils/fetchAsync"
+import { ActivityFeedItem, ActivityFeedItemType } from "./FeedItems/Activity"
+import { PollFeedItem } from "./FeedItems/Poll"
+import { QuoteFeedItem } from "./FeedItems/Quote"
+import { RumourFeedItem } from "./FeedItems/Rumour"
+import { WallPostFeedItem } from "./FeedItems/WallPost"
+import { FeedSkeleton } from "./FeedSkeleton"
 
 export function Feed() {
 
@@ -89,7 +83,7 @@ function groupFeedItems(items: FeedItemType[]): FeedItemType[][] {
     for (const item of items) {
         if(isGroupedEntity(item.entity)) {      
             // If the current group is empty or the entity matches the current group, add to the current group
-            if(currentGroup.length === 0 || currentGroup[0].entity === item.entity) {
+            if(currentGroup.length === 0 || isSameGroup(currentGroup[0].entity, item.entity)) {
                 currentGroup.push(item)
             } else {
                 // Save the current group and start a new one
@@ -119,10 +113,26 @@ function groupFeedItems(items: FeedItemType[]): FeedItemType[][] {
  */
 function isGroupedEntity( entity: FeedEntity): boolean {
     return entity === FeedEntity.Quote ||
-        entity === FeedEntity.Rumour // ||      
-        // entity === FeedEntity.NewUser ||     // <-- Maybe group these together as well in the future?
-        // entity === FeedEntity.SongLyric ||
-        // entity === FeedEntity.SimpleText
+        entity === FeedEntity.Rumour  ||      
+        entity === FeedEntity.NewUser ||   
+        entity === FeedEntity.SongLyric ||
+        entity === FeedEntity.SimpleText
+}
+
+function isSameGroup(a: FeedEntity, b: FeedEntity): boolean { 
+    if(a === b)
+        return true
+
+    if(isActivityItem(a) && isActivityItem(b))
+        return true
+
+    return false
+}
+
+function isActivityItem(entity: FeedEntity) { 
+    return entity === FeedEntity.NewUser ||
+        entity === FeedEntity.SimpleText ||
+        entity === FeedEntity.SongLyric
 }
 
 function FeedItem( { item, onItemChanged }: { item: FeedItemType[], onItemChanged: VoidFunction } ) {
@@ -134,19 +144,17 @@ function FeedItem( { item, onItemChanged }: { item: FeedItemType[], onItemChange
     // However, TypeScript doesn't know that, and it is really cumbersome to prove it to the type checker.
     // So we will just trust that the groupFeedItems function is correct and assert the type.
     switch(item[0].entity) { 
-        case FeedEntity.NewUser:
-            return <NewUserFeedItem data={item[0]}/>
         case FeedEntity.Quote: 
             return <QuoteFeedItem data={item as QuoteFeedItemType[]} onItemChanged={onItemChanged}/>
         case FeedEntity.Rumour:
             return <RumourFeedItem data={item as RumourFeedItemType[]} onItemChanged={onItemChanged}/>
-        case FeedEntity.SongLyric:
-            return <SongLyricFeedItem data={item[0]}/>
         case FeedEntity.Poll:
             return <PollFeedItem data={item[0]}/>
         case FeedEntity.WallPost:
             return <WallPostFeedItem data={item[0]}/>
+        case FeedEntity.NewUser:
+        case FeedEntity.SongLyric:
         case FeedEntity.SimpleText:
-            return <SimpleTextFeedItem data={item[0]}/>
+            return <ActivityFeedItem data={item as ActivityFeedItemType[]}/>
     }
 }

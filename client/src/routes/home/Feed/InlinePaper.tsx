@@ -31,6 +31,7 @@ export function InlinePaper({
                 <span style={{
                     justifySelf: "center",
                     alignSelf: "center",
+                    gridRow: "1",
                 }}>
                     {icon}
                 </span>
@@ -38,7 +39,8 @@ export function InlinePaper({
                     title={title} 
                     href={href} 
                     style={{
-                        gridColumn: icon === undefined ? "1 / span 2" : "2",
+                        gridRow: "1",
+                        gridColumn: "2",
                         alignSelf: "center",
                     }} />
                 <Box sx={{
