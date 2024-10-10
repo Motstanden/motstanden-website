@@ -1,6 +1,15 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { FeedEntity } from "common/enums"
-import { FeedItem as FeedItemType } from "common/types"
+import { 
+    FeedItem as FeedItemType, 
+    // NewUserFeedItem as NewUserFeedItemType,
+    QuoteFeedItem as QuoteFeedItemType,
+    RumourFeedItem as RumourFeedItemType,
+    // SongLyricFeedItem as SongLyricFeedItemType,
+    // PollFeedItem as PollFeedItemType,
+    // WallPostFeedItem as WallPostFeedItemType,
+    // SimpleTextFeedItem as SimpleTextFeedItemType, 
+} from "common/types"
 import { fetchFn } from "src/utils/fetchAsync"
 import { QuoteFeedItem } from "./FeedItems/Quote"
 import { FeedSkeleton } from "./FeedSkeleton"
@@ -70,6 +79,9 @@ function FeedList({ items, onItemChanged }: { items: FeedItemType[], onItemChang
  * Items that should be rendered separately in the UI are not grouped. E.G. polls, wall posts, etc.
  * @returns An array of grouped items.
  */
+// WARNING: 
+//  <FeedItem/> blindly trusts that the output of this function is correct.
+//  Be careful if you change this functions. Errors might not be caught by the type checker.
 function groupFeedItems(items: FeedItemType[]): FeedItemType[][] {
     const result: FeedItemType[][] = []
     let currentGroup: FeedItemType[] = []
@@ -118,13 +130,16 @@ function FeedItem( { item, onItemChanged }: { item: FeedItemType[], onItemChange
     if(item.length <= 0)
         return <></>
 
+    // The type assertion should be safe here because the groupFeedItems function ensures that all items are of the same entity.
+    // However, TypeScript doesn't know that, and it is really cumbersome to prove it to the type checker.
+    // So we will just trust that the groupFeedItems function is correct and assert the type here.
     switch(item[0].entity) { 
         case FeedEntity.NewUser:
             return <NewUserFeedItem data={item[0]}/>
         case FeedEntity.Quote: 
-            return <QuoteFeedItem data={item} onItemChanged={onItemChanged}/>
+            return <QuoteFeedItem data={item as QuoteFeedItemType[]} onItemChanged={onItemChanged}/>
         case FeedEntity.Rumour:
-            return <RumourFeedItem data={item} onItemChanged={onItemChanged}/>
+            return <RumourFeedItem data={item as RumourFeedItemType[]} onItemChanged={onItemChanged}/>
         case FeedEntity.SongLyric:
             return <SongLyricFeedItem data={item[0]}/>
         case FeedEntity.Poll:
