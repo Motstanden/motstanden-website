@@ -30,8 +30,9 @@ export type RenderEditFormProps<T> = {
 export function EditList<T extends ItemBase>(props: EditListProps<T>) {
     return (
         <ul style={{
-            paddingLeft: "5px",
-            listStyleType: "none"
+            listStyleType: "none",
+            padding: "0px",
+            margin: "0px"
         }}
         >
             {props.items.map(item => (

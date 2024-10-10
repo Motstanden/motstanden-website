@@ -1,9 +1,8 @@
 import RumourIcon from '@mui/icons-material/Hearing'
-import { Box, Link, Paper, Stack } from "@mui/material"
 import { Rumour } from "common/interfaces"
 import { RumourFeedItem as RumourFeedItemType } from "common/types"
-import { Link as RouterLink } from "react-router-dom"
 import { RumourList } from "src/routes/rumour/RumourPage"
+import { InlinePaper } from '../InlinePaper'
 
 export function RumourFeedItem({ 
     data, 
@@ -17,52 +16,23 @@ export function RumourFeedItem({
         createdAt: item.modifiedAt,
         updatedAt: item.modifiedAt,
     }) satisfies Rumour)
-    
+
     return (
-        <Paper
-            sx={{
-                pt: 1.5,
-                px: 1,
-                borderRadius: "10px",
-            }}
-            variant="outlined"
+        <InlinePaper
+            icon={<RumourIcon sx={{
+                fontSize: "26px", 
+                ml: "-4px", 
+                mb: "-5px", 
+                color: theme => theme.palette.text.secondary
+            }}/>}
+            title='Har du hørt at...'
+            href='/rykter'
         >
-            <Stack direction="row" 
-                gap="11px"            
-                sx={{
-                    marginBottom: "-7px",
-                }}
-            >
-                <RumourIcon sx={{
-                    opacity: 0.8,
-                }}/>
-                <Link
-                    color="Inherit"
-                    component={RouterLink}
-                    to={`/sitater`}
-                    underline="hover"
-                    sx={{
-                        fontWeight: "bold",
-                        fontSize: "small",
-                        opacity: 0.8,
-                    }}
-                >
-                    Har du hørt at...
-                </Link> 
-            </Stack>
-            <Box sx={{
-                borderLeftStyle: "solid",
-                marginLeft: "10px",
-                borderLeftWidth: "6px",
-                borderLeftColor: theme => theme.palette.divider,
-                paddingLeft: "15px",
-            }}>
-                <RumourList 
-                    rumours={rumours}
-                    onItemChanged={onItemChanged}
-                    itemSpacing={rumours.length < 3 ? "0px" : "10px"}
-                    />
-            </Box>
-        </Paper>
+            <RumourList 
+                rumours={rumours}
+                onItemChanged={onItemChanged}
+                itemSpacing={rumours.length < 3 ? "0px" : "10px"}
+            />
+        </InlinePaper>
     )
 }
