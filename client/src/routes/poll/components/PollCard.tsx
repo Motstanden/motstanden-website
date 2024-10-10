@@ -6,7 +6,14 @@ import { PollContent } from './PollContent'
 import { PollMenu } from './PollMenu'
 import { useDeletePollFunction } from "./useDeletePollFunction"
 
-export function PollCard({ poll, style, }: { poll: Poll, style?: React.CSSProperties }) {
+export function PollCard({ 
+    poll, style, elevation = 6, variant = "elevation" 
+}: { 
+    poll: Poll, 
+    style?: React.CSSProperties, 
+    elevation?: number,
+    variant?: "outlined" | "elevation"
+}) {
 
     const { isDeleting, deletePoll } = useDeletePollFunction(poll);
 
@@ -20,6 +27,8 @@ export function PollCard({ poll, style, }: { poll: Poll, style?: React.CSSProper
             menu={<PollMenu onDeleteClick={deletePoll} poll={poll}/>}
             showMenu={true}
             paddingTop={0}
+            elevation={elevation}
+            variant={variant}
         >
             <PollContent poll={poll} />
         </TitleCard>

@@ -24,7 +24,7 @@ function Poll({ data }: {data: PollFeedItem }) {
     }
     return (
         <div>
-            <PollCard poll={poll}/>
+            <PollCard poll={poll} elevation={5} variant="outlined"/>
         </div>
     )
 }

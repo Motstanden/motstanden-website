@@ -1,7 +1,7 @@
 import { Divider, Paper, Skeleton, Stack, SxProps } from "@mui/material"
 
 export function TitleCard({ 
-    title, sx, children, paddingTop, menu, showMenu, noMenuMargin: noMenuMargin 
+    title, sx, children, paddingTop, menu, showMenu, noMenuMargin: noMenuMargin, elevation = 6, variant = "elevation"
 }: {
     title: string,
     children: React.ReactNode,
@@ -9,16 +9,21 @@ export function TitleCard({
     paddingTop?: number,
     menu?: React.ReactNode,
     showMenu?: boolean
-    noMenuMargin?: boolean
+    noMenuMargin?: boolean,
+    elevation?: number,
+    variant?: "outlined" | "elevation"
 }) {
     return (
         <Paper 
             sx={{ 
                 p: 2,
                 pt: "10px", 
+                borderRadius: "10px",
                 ...sx 
             }} 
-            elevation={6}>
+            elevation={elevation}
+            variant={variant}
+            >
             <Stack
                 flexDirection="row"
                 justifyContent="space-between"
