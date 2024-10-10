@@ -1,30 +1,26 @@
-import { RumourFeedItem } from "common/types";
-import dayjs from "dayjs"
-import { NewlineText } from "src/routes/quotes/components/NewlineText"
+import { Rumour } from "common/interfaces"
+import { RumourFeedItem as RumourFeedItemType } from "common/types"
+import { RumourList } from "src/routes/rumour/RumourPage"
 
-export {
-    Rumour as RumourFeedItem
-}
-
-function Rumour({ data }: {data: RumourFeedItem }) {
+export function RumourFeedItem({ 
+    data, 
+    onItemChanged 
+}: {
+    data: RumourFeedItemType[], 
+    onItemChanged: VoidFunction 
+}) {
+    const rumours: Rumour[] = data.map((item) => ({
+        ...item,
+        createdAt: item.modifiedAt,
+        updatedAt: item.modifiedAt,
+    }) satisfies Rumour)
+    
     return (
         <div style={{ marginTop: "10px", marginBottom: "10px" }}>
-            <div style = {{
-                fontSize: "small",
-                opacity: 0.6,
-                marginBottom: "5px"
-            }}>
-                Har du hørt at...
-            </div>
-            <NewlineText text={"- " + data.rumour} />
-            <div style={{
-                marginLeft: "30px",
-                marginTop: "2px",
-                opacity: 0.6,
-                fontSize: "xx-small"
-            }}>
-                {`${dayjs.utc(data.modifiedAt).tz().format("D MMMM YYYY")}`}
-            </div>
+            <RumourList 
+                rumours={rumours}
+                onItemChanged={onItemChanged}
+                />
         </div>
     )
 }
