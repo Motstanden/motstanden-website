@@ -1,5 +1,5 @@
 import RumourIcon from '@mui/icons-material/Hearing'
-import { Box, Link, Stack } from "@mui/material"
+import { Box, Link, Paper, Stack } from "@mui/material"
 import { Rumour } from "common/interfaces"
 import { RumourFeedItem as RumourFeedItemType } from "common/types"
 import { Link as RouterLink } from "react-router-dom"
@@ -19,13 +19,17 @@ export function RumourFeedItem({
     }) satisfies Rumour)
     
     return (
-        <div style={{
-            marginLeft: "5px"
-        }}>
+        <Paper
+            sx={{
+                pt: 1.5,
+                px: 1,
+                borderRadius: "10px",
+            }}
+            variant="outlined"
+        >
             <Stack direction="row" 
                 gap="11px"            
                 sx={{
-                    marginLeft: "-13px",
                     marginBottom: "-7px",
                 }}
             >
@@ -48,6 +52,7 @@ export function RumourFeedItem({
             </Stack>
             <Box sx={{
                 borderLeftStyle: "solid",
+                marginLeft: "10px",
                 borderLeftWidth: "6px",
                 borderLeftColor: theme => theme.palette.divider,
                 paddingLeft: "15px",
@@ -58,6 +63,6 @@ export function RumourFeedItem({
                     itemSpacing={rumours.length < 3 ? "0px" : "10px"}
                     />
             </Box>
-        </div>
+        </Paper>
     )
 }

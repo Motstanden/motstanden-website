@@ -1,4 +1,4 @@
-import { Box, Link } from "@mui/material"
+import { Box, Link, Paper } from "@mui/material"
 import { Quote } from "common/interfaces"
 import { QuoteFeedItem as QuoteFeedItemType } from "common/types"
 import { QuoteList } from "src/routes/quotes/ListPage"
@@ -20,12 +20,16 @@ export function QuoteFeedItem({
     } satisfies Quote))
     
     return (
-        <div style={{
-            marginLeft: "5px"
-        }}>
+        <Paper
+            sx={{
+                pt: 1.5,
+                px: 1,
+                borderRadius: "10px",
+            }}
+            variant="outlined"
+        >
             <QuotesIcon sx={{
                 marginRight: "9px",
-                marginLeft: "-8px",
                 marginBottom: "-7px",
                 opacity: 0.8,
             }}/>
@@ -44,6 +48,7 @@ export function QuoteFeedItem({
             </Link>  
             <Box sx={{
                 mt: "-10px",
+                marginLeft: "10px",                
                 borderLeftStyle: "solid",
                 borderLeftWidth: "6px",
                 borderLeftColor: theme => theme.palette.divider,
@@ -55,6 +60,6 @@ export function QuoteFeedItem({
                     itemSpacing={quotes.length < 3 ? "0px" : "20px"}
                 />
             </Box>
-        </div>
+        </Paper>
     )
 }
