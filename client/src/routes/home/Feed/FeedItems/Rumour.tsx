@@ -1,9 +1,9 @@
+import RumourIcon from '@mui/icons-material/Hearing'
 import { Box, Link, Stack } from "@mui/material"
 import { Rumour } from "common/interfaces"
 import { RumourFeedItem as RumourFeedItemType } from "common/types"
-import { RumourList } from "src/routes/rumour/RumourPage"
-import RumourIcon from '@mui/icons-material/Hearing'
 import { Link as RouterLink } from "react-router-dom"
+import { RumourList } from "src/routes/rumour/RumourPage"
 
 export function RumourFeedItem({ 
     data, 
@@ -19,12 +19,14 @@ export function RumourFeedItem({
     }) satisfies Rumour)
     
     return (
-        <div>
+        <div style={{
+            marginLeft: "5px"
+        }}>
             <Stack direction="row" 
                 gap="11px"            
                 sx={{
                     marginLeft: "-13px",
-                    marginBottom: "5px",
+                    marginBottom: "-7px",
                 }}
             >
                 <RumourIcon sx={{
@@ -41,7 +43,7 @@ export function RumourFeedItem({
                         opacity: 0.8,
                     }}
                 >
-                    {rumours.length === 1 ? "Rykte" : "Rykter"}
+                    Har du hørt at...
                 </Link> 
             </Stack>
             <Box sx={{
@@ -50,19 +52,10 @@ export function RumourFeedItem({
                 borderLeftColor: theme => theme.palette.divider,
                 paddingLeft: "15px",
             }}>
-                <div style={{
-                    fontWeight: "bold",
-                    fontSize: "small",
-                    opacity: 0.8,
-                    fontStyle: "italic",
-                    marginBottom: "-10px",
-                    marginLeft: "2px"
-                }}>
-                    Har du hørt at...
-                </div>
                 <RumourList 
                     rumours={rumours}
                     onItemChanged={onItemChanged}
+                    itemSpacing={rumours.length < 3 ? "0px" : "10px"}
                     />
             </Box>
         </div>

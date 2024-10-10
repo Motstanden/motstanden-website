@@ -23,7 +23,15 @@ export default function ListPage() {
     )
 }
 
-export function QuoteList({ quotes, onItemChanged }: { quotes: QuoteData[], onItemChanged?: VoidFunction }) {
+export function QuoteList({ 
+    quotes, 
+    onItemChanged,
+    itemSpacing = "25px"
+}: { 
+    quotes: QuoteData[], 
+    onItemChanged?: VoidFunction,
+    itemSpacing?: string
+}) {
 
     const renderItem = (quote: QuoteData) => <ReadOnlyItem quote={quote} />
     const renderEditForm = (props: RenderEditFormProps<QuoteData>) => <EditItem {...props} />
@@ -39,7 +47,7 @@ export function QuoteList({ quotes, onItemChanged }: { quotes: QuoteData[], onIt
             renderItemSkeleton={<QuotesItemSkeleton />}
             deleteItemUrl={(quote) => `/api/quotes/${quote.id}`}
             confirmDeleteItemText="Vil du permanent slette dette sitatet?"
-            itemSpacing="25px"
+            itemSpacing={itemSpacing}
         />
     )
 }

@@ -25,7 +25,15 @@ export function RumourPage() {
     )
 }
 
-export function RumourList({ rumours, onItemChanged }: { rumours: Rumour[], onItemChanged: VoidFunction }) {
+export function RumourList({ 
+    rumours, 
+    onItemChanged,
+    itemSpacing = "15px" 
+}: { 
+    rumours: Rumour[], 
+    onItemChanged: VoidFunction,
+    itemSpacing?: string
+}) {
     const renderItem = (rumour: Rumour) => <ReadOnlyItem rumour={rumour} />
     const renderEditForm = (props: RenderEditFormProps<Rumour>) => <EditItem {...props} />
     const isEqual = (a: Rumour, b: Rumour) => a.rumour === b.rumour
@@ -40,7 +48,7 @@ export function RumourList({ rumours, onItemChanged }: { rumours: Rumour[], onIt
             renderItemSkeleton={<RumourItemSkeleton />}
             deleteItemUrl={(rumour) => `/api/rumours/${rumour.id}`}
             confirmDeleteItemText="Vil du permanent slette dette ryktet?"
-            itemSpacing="15px"
+            itemSpacing={itemSpacing}
         />
     )
 }

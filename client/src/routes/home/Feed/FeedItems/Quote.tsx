@@ -20,7 +20,9 @@ export function QuoteFeedItem({
     } satisfies Quote))
     
     return (
-        <div>
+        <div style={{
+            marginLeft: "5px"
+        }}>
             <QuotesIcon sx={{
                 marginRight: "9px",
                 marginLeft: "-8px",
@@ -50,6 +52,7 @@ export function QuoteFeedItem({
                 <QuoteList 
                     quotes={quotes}
                     onItemChanged={onItemChanged}
+                    itemSpacing={quotes.length < 3 ? "0px" : "20px"}
                 />
             </Box>
         </div>
