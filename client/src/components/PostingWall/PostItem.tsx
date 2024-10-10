@@ -86,13 +86,13 @@ export function PostItem({
 
     return (
         <Paper
-            elevation={2}
+            variant="outlined"
             aria-label='Veggpost'
             sx={{
                 paddingBlock: "20px",
                 paddingInline: { xs: "10px", sm: "20px" },
-                borderWidth: "1px",
                 borderStyle: "solid",
+                borderRadius: "7px",
                 borderColor: theme => theme.palette.divider,
                 ...style,
             }}

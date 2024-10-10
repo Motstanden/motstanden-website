@@ -60,11 +60,11 @@ export function NewPostForm({
 
     return (
         <Paper
-            elevation={2}
+            variant="outlined"
             style={{
                 paddingBlock: "20px",
                 paddingInline: isSmallScreen ? "10px" : "20px",
-                borderWidth: "1px",
+                borderRadius: "7px",
                 borderStyle: "solid",
                 borderColor: theme.palette.divider,
                 ...style,
