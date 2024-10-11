@@ -1,18 +1,18 @@
-import { 
-    FeedItem,
-    NewUserFeedItem as NewUserFeedItemType, 
-    SimpleTextFeedItem as SimpleTextFeedItemType, 
-    SongLyricFeedItem as SongLyricFeedItemType 
-} from "common/types"
-import { InlinePaper } from "../InlinePaper"
-import { FeedEntity } from "common/enums"
+import AddIcon from '@mui/icons-material/Add'
+import EditIcon from '@mui/icons-material/Edit'
+import LyricIcon from '@mui/icons-material/Nightlife'
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt'
+import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import { Box, Link, Skeleton, Stack } from "@mui/material"
+import { FeedEntity } from "common/enums"
+import {
+    NewUserFeedItem as NewUserFeedItemType,
+    SimpleTextFeedItem as SimpleTextFeedItemType,
+    SongLyricFeedItem as SongLyricFeedItemType
+} from "common/types"
 import { Link as RouterLink } from "react-router-dom"
 import { useUserReference } from "src/context/UserReference"
-import LyricIcon from '@mui/icons-material/Nightlife'
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import { InlinePaper } from "../InlinePaper"
 
 export type ActivityFeedItemType = NewUserFeedItemType |
     SimpleTextFeedItemType |
@@ -65,6 +65,13 @@ function ActivityItem({ data }: { data: ActivityFeedItemType }) {
 function NewUserItem( { data }: { data: NewUserFeedItemType }) { 
     return (
         <div>
+            <Box sx={{
+                minWidth: "32px",
+                color: theme => theme.palette.text.disabled,
+                display: "inline-block",
+            }}>
+                <PersonAddAltIcon fontSize="small" sx={{marginBottom: "-3px"}}/>
+            </Box>
             <Link
                 color="secondary"
                 component={RouterLink}
@@ -73,7 +80,7 @@ function NewUserItem( { data }: { data: NewUserFeedItemType }) {
             >
                 {data.fullName}
             </Link>   
-            {` opprettet bruker! 🎉`}     
+            {` er lagt til som bruker! 🎉`}     
         </div>
     )   
 }
