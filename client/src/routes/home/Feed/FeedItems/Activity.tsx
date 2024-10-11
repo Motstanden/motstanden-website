@@ -71,13 +71,16 @@ function NewUserItem( { data }: { data: NewUserFeedItemType }) {
                 color: theme => theme.palette.text.disabled,
                 display: "inline-block",
             }}>
-                <PersonAddAltIcon fontSize="small" sx={{marginBottom: "-3px"}}/>
+                <PersonAddAltIcon fontSize="small" sx={{marginBottom: "-3px", marginLeft: "1px"}}/>
             </Box>
             <Link
                 color="secondary"
                 component={RouterLink}
                 to={`/brukere/${data.id}`}
                 underline="hover"
+                sx={{
+                    fontWeight: "bold",
+                }}
             >
                 {data.fullName}
             </Link>   
@@ -213,7 +216,7 @@ function SongLyricItem({ data }: { data: SongLyricFeedItemType }) {
                 >
                     {user.shortFullName}
                 </Link>   
-                { data.isNew === true  ? " opprettet " : " redigerte " }
+                { data.isNew === true  ? " opprettet trallen " : " redigerte " }
                 <Link
                     color={"secondary"}
                     component={RouterLink}
@@ -223,7 +226,9 @@ function SongLyricItem({ data }: { data: SongLyricFeedItemType }) {
                         fontWeight: "bold",
                     }}
                 >
+                <q>
                     {data.title}
+                </q>
                 </Link>
             </div>
         </Stack>
