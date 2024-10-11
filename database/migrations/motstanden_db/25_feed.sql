@@ -65,8 +65,8 @@ UNION ALL
 SELECT
     'song-lyric' AS entity,
     song_lyric_id AS id,
-    updated_at AS modified_at,
-    updated_by AS modified_by,
+    created_at AS modified_at,
+    created_by AS modified_by,
     null AS full_name,
     null AS quote,
     null AS utterer,
@@ -80,7 +80,7 @@ SELECT
 FROM
     song_lyric
 UNION ALL
--- Edited song lyrics
+-- Updated song lyrics
 SELECT
     'song-lyric' AS entity,
     song_lyric_id AS id,
