@@ -6,8 +6,13 @@ import {
 } from "common/types"
 import { InlinePaper } from "../InlinePaper"
 import { FeedEntity } from "common/enums"
-import { Link } from "@mui/material"
+import { Box, Link, Skeleton, Stack } from "@mui/material"
 import { Link as RouterLink } from "react-router-dom"
+import { useUserReference } from "src/context/UserReference"
+import LyricIcon from '@mui/icons-material/Nightlife'
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 
 export type ActivityFeedItemType = NewUserFeedItemType |
     SimpleTextFeedItemType |
@@ -21,10 +26,27 @@ export function ActivityFeedItem({
     return (
         <InlinePaper
             title="Aktivitet"
+            icon={<TrendingUpIcon sx={{
+                fontSize: "25px",
+                marginBottom: "-3px",
+                marginLeft: "2px",
+                color: theme => theme.palette.text.secondary
+            }} />}
         >
-            {data.map(item => (
-                <ActivityItem key={`${item.entity} ${item.id}`} data={item} /> 
-            ))}
+            <ul style={{
+                listStyleType: "none",
+                padding: 0,
+            }}>
+                {data.map( (item, index) => (
+                    <li key={`${item.entity} ${item.id}`} 
+                        style={{
+                            marginBottom: index === data.length - 1 ? "0px" : "22px"
+                        }}
+                    >
+                        <ActivityItem data={item} /> 
+                    </li>
+                ))}
+            </ul>
         </InlinePaper>
     )
 }
@@ -65,9 +87,62 @@ function SimpleTextItem({ data }: { data: SimpleTextFeedItemType }) {
 }
 
 function SongLyricItem({ data }: { data: SongLyricFeedItemType }) {
+    
+    const { isPending, isError, getUser } = useUserReference()
+
+    if(isPending || isError) 
+        return <Skeleton  />
+
+    const user = getUser(data.modifiedBy)
+
     return (
-        <div>
-            {data.title}
-        </div>
+        <Stack direction="row" >
+            <Box sx={{ 
+                minWidth: "32px",
+                color: theme => theme.palette.text.disabled,
+            }}>
+                <LyricIcon fontSize="small"/>
+                { data.isNew && (
+                    <AddIcon 
+                        sx={{
+                            fontSize: "13px",
+                            marginLeft: "-6px",
+                            marginBottom: "-4px",
+                        }}
+                    /> 
+                )}
+                { !data.isNew && (
+                    <EditIcon 
+                        sx={{
+                            fontSize: "11px",
+                            marginLeft: "-7px",
+                            marginBottom: "-3px",
+                        }}
+                    />
+                )}
+            </Box>
+            <div>            
+                <Link
+                    color="secondary"
+                    component={RouterLink}
+                    to={`/brukere/${data.id}`}
+                    underline="hover"
+                >
+                    {user.shortFullName}
+                </Link>   
+                { data.isNew === true  ? " opprettet " : " redigerte " }
+                <Link
+                    color={"secondary"}
+                    component={RouterLink}
+                    to={`/studenttraller/${data.id}`}
+                    underline="hover"
+                    sx={{
+                        fontWeight: "bold",
+                    }}
+                >
+                    {data.title}
+                </Link>
+            </div>
+        </Stack>
     )
 }
