@@ -61,6 +61,7 @@ SELECT
 FROM
     rumour
 UNION ALL
+-- New song lyrics
 SELECT
     'song-lyric' AS entity,
     song_lyric_id AS id,
@@ -71,13 +72,35 @@ SELECT
     null AS utterer,
     null AS rumour,
     title,
-    CASE WHEN created_at = updated_at THEN 1 ELSE 0 END AS is_new,
+    1 AS is_new,
     null AS type,
     null AS content,
     null AS wall_user_id,
     null AS key
 FROM
     song_lyric
+UNION ALL
+-- Edited song lyrics
+SELECT
+    'song-lyric' AS entity,
+    song_lyric_id AS id,
+    updated_at AS modified_at,
+    updated_by AS modified_by,
+    null AS full_name,
+    null AS quote,
+    null AS utterer,
+    null AS rumour,
+    title,
+    0 AS is_new,
+    null AS type,
+    null AS content,
+    null AS wall_user_id,
+    null AS key
+FROM
+    song_lyric
+WHERE
+    updated_by != created_by OR 
+    updated_at > datetime(created_at, '+2 day')
 UNION ALL
 SELECT
     'poll' AS entity,
