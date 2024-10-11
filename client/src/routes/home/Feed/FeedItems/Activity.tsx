@@ -1,10 +1,11 @@
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
+import EditNoteIcon from '@mui/icons-material/EditNote'
 import LyricIcon from '@mui/icons-material/Nightlife'
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import { Box, Link, Skeleton, Stack } from "@mui/material"
-import { FeedEntity } from "common/enums"
+import { FeedEntity, SimpleTextKey } from "common/enums"
 import {
     NewUserFeedItem as NewUserFeedItemType,
     SimpleTextFeedItem as SimpleTextFeedItemType,
@@ -86,9 +87,84 @@ function NewUserItem( { data }: { data: NewUserFeedItemType }) {
 }
 
 function SimpleTextItem({ data }: { data: SimpleTextFeedItemType }) {
+    
+    const keyToHref = (key: SimpleTextKey | string) => { 
+        switch(key) {
+            case SimpleTextKey.BecomeMember:
+                return "/bli-medlem";
+            case SimpleTextKey.BoardWebsiteListTop:
+            case SimpleTextKey.BoardWebsiteListBottom:
+                return "/styrets-nettsider";
+            case SimpleTextKey.FaqPage:
+                return "/faq";
+            case SimpleTextKey.FrontPage:
+                return "/framside";
+            case SimpleTextKey.HistoryPage:
+                return "/historie";
+            default:
+                return undefined;
+        }
+    }
+
+    const keyToText = (key: SimpleTextKey | string) => { 
+        switch(key) {
+            case SimpleTextKey.BecomeMember:
+                return "bli medlem-siden";
+            case SimpleTextKey.BoardWebsiteListTop:
+            case SimpleTextKey.BoardWebsiteListBottom:
+                return "styrets nettsider";
+            case SimpleTextKey.FaqPage:
+                return "faq-siden";
+            case SimpleTextKey.FrontPage:
+                return "framsiden";
+            case SimpleTextKey.HistoryPage:
+                return "historie-siden";
+            default:
+                return undefined;
+        }
+    }
+
+    const href = keyToHref(data.key)
+    const pageTitle = keyToText(data.key)
+    
+    const { isPending, isError, getUser } = useUserReference()
+
+    if(href === undefined || pageTitle === undefined)
+        return <></>
+    
+    if(isPending || isError) 
+        return <TextLineSkeleton />
+
+    const user = getUser(data.modifiedBy)
+
     return (
         <div>
-            {data.key}
+            <Box sx={{
+                minWidth: "32px",
+                color: theme => theme.palette.text.disabled,
+                display: "inline-block",
+            }}>
+                <EditNoteIcon sx={{marginBottom: "-6.5px"}}/>
+            </Box>
+            <Link
+                color="secondary"
+                component={RouterLink}
+                to={`/brukere/${data.id}`}
+                underline="hover"
+            >
+                {user.shortFullName}
+            </Link>  
+            {" redigerte teksten på "}
+            <Link
+                color="secondary"
+                component={RouterLink}
+                to={href}
+                underline="hover"
+                sx={{
+                    fontWeight: "bold",
+                }}>
+                {pageTitle}
+            </Link>
         </div>
     )
 }
@@ -98,7 +174,7 @@ function SongLyricItem({ data }: { data: SongLyricFeedItemType }) {
     const { isPending, isError, getUser } = useUserReference()
 
     if(isPending || isError) 
-        return <Skeleton  />
+        return <TextLineSkeleton />
 
     const user = getUser(data.modifiedBy)
 
@@ -151,5 +227,11 @@ function SongLyricItem({ data }: { data: SongLyricFeedItemType }) {
                 </Link>
             </div>
         </Stack>
+    )
+}
+
+function TextLineSkeleton() {
+    return (
+        <Skeleton sx={{ maxWidth: "320px"}} />
     )
 }
