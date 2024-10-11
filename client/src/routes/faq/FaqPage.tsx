@@ -1,10 +1,9 @@
 import { Skeleton } from "@mui/material";
+import { SimpleTextKey } from "common/enums"
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
 import { useAppBarHeader } from "src/context/AppBarHeader";
 import { useTitle } from "src/hooks/useTitle";
 import { PageContainer } from "src/layout/PageContainer/PageContainer";
-
-const simpleTextKey = "faq-page"
 
 export function FaqPage() {
     useTitle("FAQ")
@@ -19,7 +18,7 @@ export function FaqPage() {
                 marginTop: "25px",
             }}>
                 <SimpleTextFetcher
-                    textKey={simpleTextKey} 
+                    textKey={SimpleTextKey.FaqPage} 
                     skeleton={<TextSkeleton/>}
                 />
             </article>

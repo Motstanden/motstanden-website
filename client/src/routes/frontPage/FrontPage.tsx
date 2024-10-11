@@ -1,14 +1,13 @@
-import { Theme, useMediaQuery } from "@mui/material";
-import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
-import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton";
-import { useAppBarHeader } from "src/context/AppBarHeader";
-import { useAppTheme } from "src/context/AppTheme";
-import { usePageContainerMargin } from "src/layout/PageContainer/usePageContainerMargin";
-import May17Img from "../../assets/pictures/17mai2021.jpg";
-import { useTitle } from "../../hooks/useTitle";
-import { PageContainer } from "../../layout/PageContainer/PageContainer";
-
-const simpleTextKey = "front-page"
+import { Theme, useMediaQuery } from "@mui/material"
+import { SimpleTextKey } from "common/enums"
+import { SimpleTextFetcher } from "src/components/SimpleTextFetcher"
+import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton"
+import { useAppBarHeader } from "src/context/AppBarHeader"
+import { useAppTheme } from "src/context/AppTheme"
+import { usePageContainerMargin } from "src/layout/PageContainer/usePageContainerMargin"
+import May17Img from "../../assets/pictures/17mai2021.jpg"
+import { useTitle } from "../../hooks/useTitle"
+import { PageContainer } from "../../layout/PageContainer/PageContainer"
 
 export default function FrontPage() {
     useTitle("Framside")
@@ -56,7 +55,7 @@ export default function FrontPage() {
                 marginTop: "25px"
             }}>
                 <SimpleTextFetcher
-                    textKey={simpleTextKey} 
+                    textKey={SimpleTextKey.FrontPage} 
                     skeleton={<SimpleTextSkeleton numberOfSections={4}/>}
                 />
             </div>

@@ -1,10 +1,9 @@
+import { SimpleTextKey } from "common/enums"
 import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
 import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton";
 import { useAppBarHeader } from "src/context/AppBarHeader";
 import { useTitle } from "src/hooks/useTitle";
 import { PageContainer } from "src/layout/PageContainer/PageContainer";
-
-const simpleTextKey = "history-page"
 
 export function HistoryPage() {
     useTitle("Historie")
@@ -18,7 +17,7 @@ export function HistoryPage() {
                 marginTop: "25px",
             }}>
                 <SimpleTextFetcher
-                    textKey={simpleTextKey} 
+                    textKey={SimpleTextKey.HistoryPage} 
                     skeleton={<SimpleTextSkeleton numberOfSections={4}/>}
                 />
             </article>

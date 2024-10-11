@@ -1,13 +1,12 @@
-import { Skeleton, useMediaQuery } from "@mui/material";
-import React, { useState } from "react";
-import { SimpleTextFetcher } from "src/components/SimpleTextFetcher";
-import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton";
-import { useAppTheme } from "../../context/AppTheme";
-import { useTitle } from "../../hooks/useTitle";
-import { PageContainer } from "../../layout/PageContainer/PageContainer";
-import { useAppBarHeader } from "src/context/AppBarHeader";
-
-const simpleTextKey = "become-member"
+import { Skeleton, useMediaQuery } from "@mui/material"
+import { SimpleTextKey } from "common/enums"
+import React, { useState } from "react"
+import { SimpleTextFetcher } from "src/components/SimpleTextFetcher"
+import { SimpleTextSkeleton } from "src/components/SimpleTextSkeleton"
+import { useAppBarHeader } from "src/context/AppBarHeader"
+import { useAppTheme } from "../../context/AppTheme"
+import { useTitle } from "../../hooks/useTitle"
+import { PageContainer } from "../../layout/PageContainer/PageContainer"
 
 export default function BecomeMemberPage() {
     useTitle("Bli medlem!")
@@ -24,7 +23,7 @@ export default function BecomeMemberPage() {
                 marginBottom: "35px",
             }}>
                 <SimpleTextFetcher
-                    textKey={simpleTextKey} 
+                    textKey={SimpleTextKey.BecomeMember} 
                     skeleton={<SimpleTextSkeleton/>}
                 />
             </div>

@@ -1,7 +1,7 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import { Stack } from '@mui/material'
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { UserGroup } from 'common/enums'
+import { SimpleTextKey, UserGroup } from 'common/enums'
 import { SimpleText, UpdateSimpleText } from "common/interfaces"
 import { hasGroupAccess, isNullOrWhitespace } from 'common/utils'
 import { useState } from "react"
@@ -19,7 +19,7 @@ export function SimpleTextFetcher({
     textKey,
     skeleton,
 }: {
-    textKey: string,
+    textKey: SimpleTextKey,
     queryKeyModifier?: (string | number)[]
     skeleton?: React.ReactNode
 }) {

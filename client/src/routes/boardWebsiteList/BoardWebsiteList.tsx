@@ -11,6 +11,7 @@ import {
     TableSortLabel
 } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
+import { SimpleTextKey } from "common/enums"
 import { isNullOrWhitespace, strToNumber } from "common/utils"
 import dayjs, { Dayjs } from "dayjs"
 import { useState } from "react"
@@ -22,10 +23,6 @@ import { useTitle } from "src/hooks/useTitle"
 import { PageContainer } from "src/layout/PageContainer/PageContainer"
 import { Compare } from "src/utils/compareValue"
 import { fetchFn } from "src/utils/fetchAsync"
-
-const topSimpleTextKey = "board-website-list-top"
-
-const bottomSimpleTextKey = "board-website-list-bottom"
 
 export default function BoardWebsiteListPage() {
     useTitle("Styrets nettsider")
@@ -43,7 +40,7 @@ export default function BoardWebsiteListPage() {
                 }}
             >
                 <SimpleTextFetcher
-                    textKey={topSimpleTextKey}
+                    textKey={SimpleTextKey.BoardWebsiteListTop}
                     skeleton={<SimpleTextSkeleton />}
                 />
             </section>
@@ -63,7 +60,7 @@ export default function BoardWebsiteListPage() {
                 }}
             >
                 <SimpleTextFetcher
-                    textKey={bottomSimpleTextKey}
+                    textKey={SimpleTextKey.BoardWebsiteListBottom}
                     skeleton={<SimpleTextSkeleton />}
                 />
             </section>
