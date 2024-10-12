@@ -10,8 +10,7 @@ import { useMemo } from "react"
 import { fetchFn } from "src/utils/fetchAsync"
 import { ActivityFeedItem, ActivityFeedItemType } from "./FeedItems/Activity"
 import { PollFeedItem } from "./FeedItems/Poll"
-import { QuoteFeedItem } from "./FeedItems/Quote"
-import { RumourFeedItem } from "./FeedItems/Rumour"
+import { QuoteAndRumourFeedItem } from "./FeedItems/QuoteAndRumour"
 import { WallPostFeedItem } from "./FeedItems/WallPost"
 import { FeedSkeleton } from "./FeedSkeleton"
 
@@ -123,10 +122,18 @@ function isSameGroup(a: FeedEntity, b: FeedEntity): boolean {
     if(a === b)
         return true
 
+    if(isQuoteOrRumour(a) && isQuoteOrRumour(b))
+        return true
+
     if(isActivityItem(a) && isActivityItem(b))
         return true
 
     return false
+}
+
+function isQuoteOrRumour(entity: FeedEntity) { 
+    return entity === FeedEntity.Quote || 
+        entity === FeedEntity.Rumour
 }
 
 function isActivityItem(entity: FeedEntity) { 
@@ -144,14 +151,13 @@ function FeedItem( { item, onItemChanged }: { item: FeedItemType[], onItemChange
     // However, TypeScript doesn't know that, and it is really cumbersome to prove it to the type checker.
     // So we will just trust that the groupFeedItems function is correct and assert the type.
     switch(item[0].entity) { 
-        case FeedEntity.Quote: 
-            return <QuoteFeedItem data={item as QuoteFeedItemType[]} onItemChanged={onItemChanged}/>
-        case FeedEntity.Rumour:
-            return <RumourFeedItem data={item as RumourFeedItemType[]} onItemChanged={onItemChanged}/>
         case FeedEntity.Poll:
             return <PollFeedItem data={item[0]}/>
         case FeedEntity.WallPost:
             return <WallPostFeedItem data={item[0]}/>
+        case FeedEntity.Quote: 
+        case FeedEntity.Rumour:
+            return <QuoteAndRumourFeedItem data={item as (QuoteFeedItemType | RumourFeedItemType)[]} onItemChanged={onItemChanged}/>
         case FeedEntity.NewUser:
         case FeedEntity.SongLyric:
         case FeedEntity.SimpleText:
