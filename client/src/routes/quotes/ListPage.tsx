@@ -78,8 +78,10 @@ function ReadOnlyItem({ quote }: { quote: QuoteData }) {
 
 function EditItem(props: RenderEditFormProps<QuoteData>) {
     return (
-        <div>
-            <Divider sx={{ mb: 4 }} />
+        <div style={{
+            marginBlock: "40px",
+            marginRight: "10px"
+        }}>
             <UpsertQuoteForm
                 storageKey={["Quotes", "Edit", props.data.id]}
                 initialValue={props.data}

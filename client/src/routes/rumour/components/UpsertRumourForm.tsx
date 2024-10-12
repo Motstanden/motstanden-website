@@ -1,4 +1,4 @@
-import { TextField } from "@mui/material"
+import { Box, TextField } from "@mui/material"
 import { NewRumour, Rumour } from "common/interfaces"
 import { isNullOrWhitespace } from "common/utils"
 import { Form } from "src/components/form/Form"
@@ -56,8 +56,10 @@ export function UpsertRumourForm({
                 disabled={disabled}
                 onAbortClick={handleAbortClick}
                 onSuccess={handlePostSuccess}
+                noDivider
+                noPadding
             >
-                <div style={{ marginBottom: "-1em" }}>
+                <Box sx={{ mb: 4 }}>
                     <TextField
                         label="Har du hørt at...?"
                         name="rumour"
@@ -68,8 +70,8 @@ export function UpsertRumourForm({
                         value={newValue.rumour}
                         onChange={(e) => setNewValue({ ...newValue, rumour: e.target.value })}
                         multiline
-                        minRows={2} />
-                </div>
+                        minRows={1} />
+                </Box>
             </Form>
         </div>
     );

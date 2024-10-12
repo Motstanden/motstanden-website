@@ -1,4 +1,4 @@
-import { TextField } from "@mui/material"
+import { Box, TextField } from "@mui/material"
 import { NewQuote, Quote, Quote as QuoteData } from "common/interfaces"
 import { isNullOrWhitespace } from "common/utils"
 import { Form } from "src/components/form/Form"
@@ -55,9 +55,10 @@ export function UpsertQuoteForm({
                 disabled={disabled}
                 onAbortClick={handleAbortClick}
                 onSuccess={handlePostSuccess}
-
+                noDivider
+                noPadding
             >
-                <div style={{ marginBottom: "-1em" }}>
+                <Box sx={{mb: 4}}>
                     <div>
                         <TextField
                             label="Sitat"
@@ -69,7 +70,7 @@ export function UpsertQuoteForm({
                             value={newValue.quote}
                             onChange={(e) => setNewValue({ ...newValue, quote: e.target.value })}
                             multiline
-                            minRows={4}
+                            minRows={2}
                             sx={{ mb: 4 }} />
                     </div>
                     <div>
@@ -84,7 +85,7 @@ export function UpsertQuoteForm({
                             onChange={(e) => setNewValue({ ...newValue, utterer: e.target.value })}
                             sx={{ maxWidth: "450px" }} />
                     </div>
-                </div>
+                </Box>
             </Form>
         </div>
     );

@@ -1,4 +1,4 @@
-import { Divider, Stack } from "@mui/material"
+import { Stack } from "@mui/material"
 import { Rumour } from "common/interfaces"
 import dayjs from "dayjs"
 import { useOutletContext } from "react-router-dom"
@@ -74,8 +74,10 @@ function ReadOnlyItem({ rumour }: { rumour: Rumour }) {
 
 function EditItem(props: RenderEditFormProps<Rumour>) {
     return (
-        <div style={{ marginRight: "10px" }}>
-            <Divider sx={{ mb: 4 }} />
+        <div style={{
+            marginBlock: "35px", 
+            marginRight: "10px" 
+        }}>
             <UpsertRumourForm
                 storageKey={["Rumours", "Edit", props.data.id]}
                 initialValue={props.data}
