@@ -14,16 +14,19 @@ import { QuoteAndRumourFeedItem } from "./FeedItems/QuoteAndRumour"
 import { WallPostFeedItem } from "./FeedItems/WallPost"
 import { FeedSkeleton } from "./FeedSkeleton"
 
-export function Feed() {
+export function Feed( {style}: {style?: React.CSSProperties}) {
 
     return (
-        <>
-            <FeedFetcher/>
-        </>
+        <div style={{
+            maxWidth: "700px",
+            ...style,
+        }}>
+            <FeedFetcher style={style}/>
+        </div>
     )
 }
 
-function FeedFetcher() {
+function FeedFetcher( {style}: {style?: React.CSSProperties} ) {
     const queryKey = ["feed"]
 
     const { isPending, isError, data, error } = useQuery<FeedItemType[]>({ 
@@ -51,9 +54,7 @@ function FeedList({ items, onItemChanged }: { items: FeedItemType[], onItemChang
     const groupedItems = useMemo(() => groupFeedItems(items), [items])
 
     return (
-        <div style={{
-            maxWidth: "700px",
-        }}>
+        <>
             {groupedItems.map( item => (
                 <div key={`${item[0].entity} ${item[0].id}`}
                     style={{
@@ -63,7 +64,7 @@ function FeedList({ items, onItemChanged }: { items: FeedItemType[], onItemChang
                     <FeedItem item={item} onItemChanged={onItemChanged}/>
                 </div>
             ))}
-        </div>
+        </>
     )
 }
 
